@@ -225,7 +225,7 @@
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Seer</h2>
               <img src="public/assets_seer/images/seer.png" alt="Descripción de la imagen"
-                  style="width: 250px; height: auto;">
+                  style="width: 170px; height: auto;">
             </div>
             <div class="flip-box-back">
                <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br>Sistema integral de Conciliación.</h2>
