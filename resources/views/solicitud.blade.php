@@ -44,52 +44,57 @@
                 background-color:#FFC3D0; /* Cambia el color de fondo al pasar el ratón */
                 border-radius: 5px; /* Bordes redondeados */
             } 
+            .card{
+                border:none;
+            }
+            .card-group{
+                width: 500px;   /* Establece el ancho fijo del botón */
+                height: 100px;
+            }
+            .responsive-img{
+                max-width: 100%;
+                height: auto;
+            }
            
         </style>
         <!-- Custom styles for this template -->
     </head>
     <body>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="rd-navbar-panel">
-                <div class="rd-navbar-brand">
-                    &ensp;<img src="public/assets_seer/images/Logos gobiernos.png"class="img-fluid, mx-auto, my-auto" style="max-width: 8%; position:relative;"></a>
-                    &ensp;<img src="public/assets_seer/images/logo-ccl.png"class="img-fluid, mx-auto, my-auto" style="max-width: 4%; position:relative;"></a>
-                </div>
+            <div class="">
+                <img src="public/assets_seer/images/Logo1.jpeg" class="img" style="" width="150" height="70"></a>&nbsp;&nbsp;
+                <img src="public/assets_seer/images/logo2.jpeg" class="img" style="" width="90" height="90"></a>
             </div>
         </nav>
         <main>
             <div>
                 <h2 style="color: #4A001F; text-align: center;">Realiza tu solicitud en línea</h2>
-                <center><img src="public/assets_seer/images/ccl-r.png" class="mx-auto, my-auto" style="max-width: 45%; position:center;" alt="Descripción de la imagen"></center>
+                <center><img src="public/assets_seer/images/ccl-r.png" class="responsive-img" width="750" height="350" alt="Descripción de la imagen"></center>
             </div>
             <br>
-            <div style="display: block; text-align: center;">
-                <div class="container marketing">
-                    <div class="row">
-                        <div class="col-lg-3">
-                        </div>
-                        <div class="col-lg-2">
-                            <a href="https://michoacan.cencolab.mx/asesoria/10" class="button-link">
-                                SOY <br>TRABAJADOR
-                            </a>
-                        </div>
-                        
-                        <div class="col-lg-2">
-                            <a href="https://michoacan.cencolab.mx/asesoria/20" class="button-link">
-                                SOY <br>PATRÓN    
-                            </a>
-                        </div>
-                        
-                        <div class="col-lg-2">
-                            <a href="https://michoacan.cencolab.mx/solicitudes/create-public?solicitud=4" class="button-link">
-                                SOY<br> SINDICATO
-                            </a>
-                        </div>
-
-                    </div><!-- /.row -->
-
-                </div><!-- /.container -->
-            </div>
+            <center><div class="card-group">
+                <div class="card">   <!-- Inicio Seer -->
+                    <div style="display: block; text-align: center;">
+                        <a href="https://michoacan.cencolab.mx/asesoria/10" class="button-link">
+                            SOY <br>TRABAJADOR
+                        </a> 
+                    </div>  
+                </div>   <!-- fin Seer -->
+                <div class="card">   <!-- Inicio Seer -->
+                    <div style="display: block; text-align: center;">
+                        <a href="https://michoacan.cencolab.mx/asesoria/20" class="button-link">
+                            SOY <br>PATRÓN    
+                        </a>
+                    </div>  
+                </div>   <!-- fin Seer -->
+                <div class="card">   <!-- Inicio Seer -->
+                    <div style="display: block; text-align: center;">
+                        <a href="https://michoacan.cencolab.mx/solicitudes/create-public?solicitud=4" class="button-link">
+                            SOY<br> SINDICATO
+                        </a>
+                    </div>  
+                </div>   <!-- fin Seer -->
+            </div></center><br><br><br>
         </main>
    
         <footer id="contacto" class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
