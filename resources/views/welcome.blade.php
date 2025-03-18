@@ -57,7 +57,7 @@
         <!-- Custom styles for this template -->
     </head>
     <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="">
             <img src="public/assets_seer/images/Logo1.jpeg" class="img" style="" width="150" height="70"></a>&nbsp;&nbsp;
             <img src="public/assets_seer/images/logo2.jpeg" class="img" style="" width="90" height="90"></a>
@@ -81,10 +81,11 @@
         </div>
     </nav>
 
-
     <main>
-    <section id="servicios">
-    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+    <div class="container">
+          <br><br><br><br>
+    </div>
+    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" style="">
       <ol class="carousel-indicators">
         <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
         <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
@@ -92,13 +93,13 @@
       </ol>
       <div class="carousel-inner">
         <div class="carousel-item active">
-          <img class="d-block w-100 vh-100" src="public/assets_seer/images/carusel/portada 1.png" alt="First slide">
+          <img class="d-block w-100 vh-100 rounded mx-auto d-block" src="public/assets_seer/images/carusel/1.png" alt="First slide" style="width:100%">
         </div>
        <div class="carousel-item">
-          <img class="d-block  w-100 vh-100" src="public/assets_seer/images/carusel/portada 3.png" alt="Second slide">
+          <img class="d-block  w-100 vh-100" src="public/assets_seer/images/carusel/2.png" alt="Second slide" style="width:100%">
         </div>
         <div class="carousel-item">
-          <img class="d-block  w-100 vh-100" src="public/assets_seer/images/carusel/portada 2.png" alt="Third slide">
+          <img class="d-block  w-100 vh-100" src="public/assets_seer/images/carusel/3.png" alt="Third slide" style="width:100%">
         </div>
       </div>
       <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
@@ -111,8 +112,9 @@
       </a>
     </div>
    
-  </section> </div>
+
   <!-- INICIANDO SERVICIOS -->
+  <section id="servicios">
   <h3 class="wow fadeInLeft" style="text-align: center ; font-family:Nutmeg, Sans-serif;">Tramites y servicios digitales</h3> <br><br><br>
   <div class="card-group">
     <div class="card">   <!-- Inicio asesoria en línea -->
@@ -243,6 +245,7 @@
       </div>  
      </div>   <!-- fin Seer -->
   </div>
+  </section> 
   <!-- FIN SERVICIOS  -->
   <!--<section class="fondo-guinda" id="sedes">
   <br><br><br><br><br><br>
