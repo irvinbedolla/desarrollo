@@ -15,6 +15,10 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <link rel="icon" href="public/assets_seer/images/logo-ccl.png" type="image/x-icon">
         <style>
+            body{
+                margin: 0;
+                padding: 0;
+            }
           .boton {
             display: inline-block;
             font-weight: 400;
@@ -50,8 +54,10 @@
     </head>
     <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <img src="public/assets_seer/images/Logos gobiernos.png" class="img" style="max-width: 8%"></a>&nbsp;&nbsp;
-        <img src="public/assets_seer/images/logo-ccl.png" class="img" style="max-width: 4%"></a>
+        <div class="">
+            <img src="public/assets_seer/images/Logo1.jpeg" class="img" style="" width="150" height="70"></a>&nbsp;&nbsp;
+            <img src="public/assets_seer/images/logo2.jpeg" class="img" style="" width="90" height="90"></a>
+        </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -63,9 +69,6 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#servicios" style="color: black;">SERVICIOS</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#sedes"style="color: black;">SEDES</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#contacto"style="color: black;">CONTACTO</a>
