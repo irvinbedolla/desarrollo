@@ -15,7 +15,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <link rel="icon" href="public/assets_seer/images/logo-ccl.png" type="image/x-icon">
         <style>
-            .boton {
+          .boton {
             display: inline-block;
             font-weight: 400;
             text-align: center;
@@ -85,13 +85,13 @@
       </ol>
       <div class="carousel-inner">
         <div class="carousel-item active">
-          <img class="d-block w-100" src="public/assets_seer/images/carusel/GM-8M-Cover Facebook-@3x.png" alt="First slide">
+          <img class="d-block w-100 vh-100" src="public/assets_seer/images/carusel/portada 1.png" alt="First slide">
+        </div>
+       <div class="carousel-item">
+          <img class="d-block  w-100 vh-100" src="public/assets_seer/images/carusel/portada 3.png" alt="Second slide">
         </div>
         <div class="carousel-item">
-          <img class="d-block w-100" src="public/assets_seer/images/carusel/GM-Cover Twitter-@4x.png" alt="Second slide">
-        </div>
-        <div class="carousel-item">
-          <img class="d-block w-100" src="public/assets_seer/images/carusel/GM-Kuinchekua-Cover Facebook-@3x.png" alt="Third slide">
+          <img class="d-block  w-100 vh-100" src="public/assets_seer/images/carusel/portada 2.png" alt="Third slide">
         </div>
       </div>
       <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
@@ -103,7 +103,8 @@
         <span class="sr-only">Next</span>
       </a>
     </div>
-  </section>
+   
+  </section> </div>
   <!-- INICIANDO SERVICIOS -->
   <h3 class="wow fadeInLeft" style="text-align: center ; font-family:Nutmeg, Sans-serif;">Tramites y servicios digitales</h3> <br><br><br>
   <div class="card-group">
@@ -223,7 +224,7 @@
           <div class="flip-box-inner">
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Seer</h2>
-              <img src="public/assets_seer/images/ccl-r.png" alt="Descripción de la imagen"
+              <img src="public/assets_seer/images/seer.png" alt="Descripción de la imagen"
                   style="width: 250px; height: auto;">
             </div>
             <div class="flip-box-back">
@@ -236,7 +237,7 @@
      </div>   <!-- fin Seer -->
   </div>
   <!-- FIN SERVICIOS  -->
-  <section class="fondo-guinda" id="sedes">
+  <!--<section class="fondo-guinda" id="sedes">
   <br><br><br><br><br><br>
   <h3 class="wow fadeInLeft" style="text-align: center ; font-family:Nutmeg, Sans-serif;">Oficinas de apoyo</h3> <br><br><br>
     <div class="container marketing">
@@ -301,7 +302,7 @@
         </div>
       </div>
     </div>
-  </section>
+  </section>-->
     </main>
     <footer id="contacto" class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
       <div class="col-md-4 d-flex align-items-center">
