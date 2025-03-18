@@ -15,10 +15,10 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <link rel="icon" href="public/assets_seer/images/logo-ccl.png" type="image/x-icon">
         <style>
-            body{
-                margin: 0;
-                padding: 0;
-            }
+          body{
+            margin: 0;
+            padding: 0;
+          }
           .boton {
             display: inline-block;
             font-weight: 400;
@@ -49,6 +49,10 @@
               text-decoration: none;/* Elimina el subrayado del enlace */
               border-radius: 5px; /* Bordes redondeados */
           } 
+
+          .flip-box{
+            border: none;
+          }
         </style>
         <!-- Custom styles for this template -->
     </head>
@@ -227,7 +231,7 @@
           <div class="flip-box-inner">
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Seer</h2>
-              <img src="public/assets_seer/images/seer.png" alt="Descripción de la imagen"
+              <img src="public/assets_seer/images/seer_1.png" alt="Descripción de la imagen"
                   style="width: 170px; height: auto;">
             </div>
             <div class="flip-box-back">
