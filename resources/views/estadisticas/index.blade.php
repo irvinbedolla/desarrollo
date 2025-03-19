@@ -16,6 +16,7 @@
                                     <a class="btn btn-warning" href="{{ route('create_persona_ratificacion') }}"onclick=nuevo_estadistica();>Ratificación</a>
                                     <a class="btn btn-warning" href="{{ route('index_convenios') }}"            onclick=nuevo_estadistica();>Pagos</a>
                                     <a class="btn btn-warning" href="{{ route('create_asesoria') }}"            onclick=nuevo_estadistica();>Asesorias-{{$asesorias->total}}</a>
+                                    <a class="btn btn-warning" href="{{ route('persona.historial') }}"          onclick=nuevo_estadistica();>Historial</a>
                                 @endif
                                 @if($userRole[0] == "Conciliador")
                                     <a class="btn btn-warning" href="{{ route('index_convenios') }}"    onclick=nuevo_estadistica();>Pagos</a>
@@ -35,7 +36,6 @@
                                                 <th style="color: #fff;">Citado</th>
                                                 <th style="color: #fff;">Detalles</th>
                                                 <th style="color: #fff;">Audiencia</th>
-                                                <th style="color: #fff;">Editar</th>
                                                 <th style="color: #fff;">Borrar</th>
 
                                             </thead>
@@ -52,8 +52,10 @@
                                                         </td>
                                                         <td><a class="btn btn-primary" href="{{ route('seer.estadistica_consultar', $persona->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
                                                         <td><a class="btn btn-primary" href="{{ route('create_persona_con', $persona->id) }}" onclick=consultar_estadistica();>Audiencia</a></td>
-                                                        <td><a class="btn btn-primary" href="{{ route('persona.edit', $persona->id)}}" onclick=consultar_estadistica();>Editar</a></td>
-                                                        <td><a class="btn btn-primary" href="{{ route('create_persona_con', $persona->id) }}" onclick=();>borrar</a></td>
+                                                        <td>{!! Form::open(['method'=>'DELETE', 'route'=> ['seer.delete', $persona->id], 'style'=>'display:inline']) !!}
+                                                                {!! Form::submit('Borrar', ['class'=> 'btn btn-danger', 'onclick' => 'consultar_estadistica()']) !!}
+                                                            {!! Form::close() !!}
+                                                        </td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>

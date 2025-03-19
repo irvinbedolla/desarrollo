@@ -152,7 +152,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div id="div4"  class="col-xs-12 col-sm-12 col-md-12">
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div class="form-group">
                                                 <label for="name">Conflicto</label>
                                                 <textarea name="conflicto" class="form-control"></textarea>
@@ -164,7 +164,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div class="form-group">
                                                 <label for="name">Sedes</label>
-                                                <select name="sede" class="form-control" required>
+                                                <select id="sede" name="sede" class="form-control" onchange="sedes();" required>
                                                     <option value="">Seleccione la sede</option>
                                                     <option value="Morelia">Morelia</option>
                                                     <option value="Uruapan">Uruapan</option>
@@ -175,6 +175,26 @@
                                                 <div class="invalid-feedback">
                                                     La sede es obligatoria.
                                                 </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="form-group">
+                                                <label for="name">Dia</label>
+                                                <input id="fecha" type="date" name="fecha" class="form-control" onchange="diaSemana();" disabled>
+                                                <div class="invalid-feedback">
+                                                    El campo conflicto es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-4">
+                                        <div class="form-group">
+                                            <label for="password">Horario Disponible</label>
+                                            <select id="horarios" name="hora" class="form-control">
+                                                <option value=""> --Primero selecciona un Dia --</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El Horario es obligatorio.
                                             </div>
                                         </div>
                                     </div>
@@ -225,24 +245,23 @@
 
 
     @yield('scripts')
-
-
     <script>
-        $('input[type="checkbox"]').on('change', function(e){
-            if (this.checked) {
-                document.getElementById("div1").style.display = "block";
-                document.getElementById("div2").style.display = "block";
-                document.getElementById("div3").style.display = "block";
-                document.getElementById("div4").style.display = "block";
-            } else {
-                document.getElementById("div1").style.display = "none";
-                document.getElementById("div2").style.display = "none";
-                document.getElementById("div3").style.display = "none";
-                document.getElementById("div4").style.display = "none";
-            }
-        });
-    </script>
+        function sedes(){
+            document.getElementById("fecha").removeAttribute("disabled");
+        }
+        function diaSemana() {
+            var dia_semana  = document.getElementById("fecha").value;
+            var sede        = document.getElementById("sede").value;
 
+            $.get('api/obtenerHorario/'+dia_semana+'/'+sede, function (data){
+                var html_select = '<option value="">--Seleccione un horario --</option>';  
+                for(var i=0; i<data.length; ++i)
+                    html_select += '<option value= "'+data[i].hora+'">'+data[i].hora+'</option>';
+                    $('#horarios').html(html_select);
+
+            });
+        }
+    </script>
 <div id="crear_poder" style ="display: none;">
     <div>.</div>
     <div class="loader"></div>
@@ -250,4 +269,5 @@
 
 @section('scripts')
     <script src="public/js/poderes/general.js"></script>
+    
 @endsection

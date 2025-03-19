@@ -177,8 +177,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('/seer/aserorias',                  [SeerController::class, 'store_asesorias'])->name('seer.store_asesoria');
         Route::delete('/seer/destroy/{id}',             [seerController::class, 'destroy'])->name('seer.delete');
         Route::get('/seer/persona/edit/{id}',           [SeerController::class, 'edit'])->name('persona.edit');
-        Route::patch('seer/persona/update/{post}',        [SeerController::class, 'update'])->name('persona.update');
-
+        Route::get('seer/hitoria',                      [SeerController::class, 'historial'])->name('persona.historial');
         //Rutas de conciliadores
         Route::get('/seer/createCon',                   [SeerController::class, 'create_conciliador'])->name('create_consentrado_con');
         Route::get('/seer/ver',                         [SeerController::class, 'ver_consentrado_con'])->name('ver_consentrado_con');
