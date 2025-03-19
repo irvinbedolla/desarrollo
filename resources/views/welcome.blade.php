@@ -122,8 +122,8 @@
         <div class="flip-box">
           <div class="flip-box-inner">
             <div class="flip-box-front">
-              <h2 style="font-size: 22px; font-family: Arial; color:#000000">Asesoría virtual</h2>
-              <img src="public/assets_seer/images/chatbot.png" alt="Descripción de la imagen"
+              <h2 style="font-size: 22px; font-family: Arial; color:#000000">Asesoría virtual<br><br></h2>
+              <img src="public/assets_seer/images/ASESORIA.png" alt="Descripción de la imagen"
                 style="width: 100px; height: auto;">
             </div>
             <div class="flip-box-back">
@@ -140,7 +140,7 @@
           <div class="flip-box-inner">
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Calculadora de <br>prestaciones</h2>
-              <img src="public/assets_seer/images/calculadora.png" alt="Descripción de la imagen"
+              <img src="public/assets_seer/images/CALCULADORA.png" alt="Descripción de la imagen"
                   style="width: 100px; height: auto;">
             </div>
             <div class="flip-box-back">
@@ -156,8 +156,8 @@
         <div class="flip-box">
           <div class="flip-box-inner">
             <div class="flip-box-front">
-              <h2 style="font-size: 20px; font-family: Arial; color: #000000">Solicitud en línea</h2> <img
-                src="public/assets_seer/images/contrato.png" alt="Descripción de la imagen"
+              <h2 style="font-size: 20px; font-family: Arial; color: #000000">Solicitud en línea<br><br></h2> <img
+                src="public/assets_seer/images/SOLICITUD.png" alt="Descripción de la imagen"
                 style="width: 100px; height: auto;">
             </div>
             <div class="flip-box-back">
@@ -178,7 +178,7 @@
           <div class="flip-box-inner">
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Citas de ratificación de convenios</h2> <img
-                src="public/assets_seer/images/calendario-diario.png" alt="Descripción de la imagen"
+                src="public/assets_seer/images/RATIFICACION.png" alt="Descripción de la imagen"
                 style="width: 100px; height: auto;">
             </div>
             <div class="flip-box-back">
@@ -195,7 +195,7 @@
           <div class="flip-box-inner">
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Registro de <br>representación legal patronal</h2> <img
-                src="public/assets_seer/images/registro.png" alt="Descripción de la imagen"
+                src="public/assets_seer/images/REGISTROPA.png" alt="Descripción de la imagen"
                 style="width: 100px; height: auto;">
             </div>
             <div class="flip-box-back">
@@ -211,8 +211,8 @@
         <div class="flip-box">
           <div class="flip-box-inner">
             <div class="flip-box-front">
-              <h2 style="font-size: 22px; font-family: Arial; color:#000000">Cursos y capacitaciones</h2>
-              <img src="public/assets_seer/images/leccion.png" alt="Descripción de la imagen"
+              <h2 style="font-size: 22px; font-family: Arial; color:#000000">Cursos y capacitaciones<br><br></h2>
+              <img src="public/assets_seer/images/CURSOSYCA.png" alt="Descripción de la imagen"
                 style="width: 100px; height: auto;">
             </div>
             <div class="flip-box-back">
