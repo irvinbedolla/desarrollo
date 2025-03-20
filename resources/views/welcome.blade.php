@@ -22,7 +22,7 @@
           .boton {
             display: inline-block;
             font-weight: 400;
-            text-align: center;
+            text-align: center; 
             white-space: nowrap;
             vertical-align: middle;
             -webkit-user-select: none;
