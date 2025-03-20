@@ -53,6 +53,10 @@
           .flip-box{
             border: none;
           }
+          .flip-box-back{
+            padding: .50rem .30rem;
+            text-align: center;
+          }
         </style>
         <!-- Custom styles for this template -->
     </head>
@@ -123,7 +127,7 @@
                 style="width: 100px; height: auto;">
             </div>
             <div class="flip-box-back">
-               <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br>Es un servicio informático que podrás consultar con la finalidad de atender y resolver preguntas acerca de nuestros servicios.</h2>
+               <h2 style="font-size: 21px; font-family: Arial; color:#ffff;  text-align: center"><br>Es un servicio informático que podrás consultar con la finalidad de atender y resolver preguntas acerca de nuestros servicios.</h2>
             </div>
           </div>
         </div>
@@ -140,7 +144,7 @@
                   style="width: 100px; height: auto;">
             </div>
             <div class="flip-box-back">
-              <h2 style="font-size: 21px; font-family: Arial; color:#ffff">Es una herramienta digital que permite a las personas, conocer los cálculos aproximados de las prestaciones laborales, que serán consideradas dentro de la audiencia de conciliación.</h2>
+              <h2 style="font-size: 21px; font-family: Arial; color:#ffff;">Es una herramienta digital que permite a las personas, conocer los cálculos aproximados de las prestaciones laborales, que serán consideradas dentro de la audiencia de conciliación.</h2>
             </div>
           </div>    
         </div>
@@ -212,7 +216,7 @@
                 style="width: 100px; height: auto;">
             </div>
             <div class="flip-box-back">
-              <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br>Ingresar a los cursos.</h2>
+              <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br><br>&ensp;&ensp;&ensp;Ingresar a los cursos.</h2>
             </div>
           </div>
         </div>
@@ -233,7 +237,7 @@
                   style="width: 170px; height: auto;">
             </div>
             <div class="flip-box-back">
-               <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br>Sistema integral de Conciliación.</h2>
+               <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br><br>Sistema integral de Conciliación.</h2>
             </div>
           </div>
         </div>
