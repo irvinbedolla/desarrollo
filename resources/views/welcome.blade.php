@@ -124,7 +124,7 @@
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Asesoría virtual<br><br></h2>
               <img src="public/assets_seer/images/ASESORIA.png" alt="Descripción de la imagen"
-                style="width: 200px; height:200px;">
+                style="width: 200px; height:200px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
             </div>
             <div class="flip-box-back">
                <h2 style="font-size: 21px; font-family: Arial; color:#ffff;  text-align: center"><br>Es un servicio informático que podrás consultar con la finalidad de atender y resolver preguntas acerca de nuestros servicios.</h2>
@@ -141,7 +141,7 @@
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Calculadora de <br>prestaciones</h2>
               <img src="public/assets_seer/images/CALCULADORA.png" alt="Descripción de la imagen"
-                  style="width: 200px; height:200px;">
+                  style="width: 200px; height:200px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
             </div>
             <div class="flip-box-back">
               <h2 style="font-size: 21px; font-family: Arial; color:#ffff;">Es una herramienta digital que permite a las personas, conocer los cálculos aproximados de las prestaciones laborales, que serán consideradas dentro de la audiencia de conciliación.</h2>
@@ -156,9 +156,9 @@
         <div class="flip-box">
           <div class="flip-box-inner">
             <div class="flip-box-front">
-              <h2 style="font-size: 20px; font-family: Arial; color: #000000">Solicitud en línea<br><br></h2> <img
+              <h2 style="font-size: 20px; font-family: Arial; color: #000000">Solicitud en línea<br></h2> <img
                 src="public/assets_seer/images/SOLICITUD.png" alt="Descripción de la imagen"
-                style="width: 200px; height:200px;">
+                style="width: 200px; height:200px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
             </div>
             <div class="flip-box-back">
                 <h2 style="font-size: 22px; font-family: Arial; color:#ffffff">Es un servicio rápido, eficiente que permite a las personas, tanto trabajadoras como empleadoras iniciar su solicitud para conciliar de forma digital a través de la página web.</h2>
@@ -179,7 +179,7 @@
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Citas de ratificación de convenios</h2> <img
                 src="public/assets_seer/images/RATIFICACION.png" alt="Descripción de la imagen"
-                style="width: 200px; height: 200px;">
+                style="width: 200px; height: 200px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
             </div>
             <div class="flip-box-back">
               <h2 style="font-size: 22px; font-family: Arial; color:#ffff">Es un servicio que permite a las partes que terminan su relación laboral, acudir con previa cita ante el Centro de Concicliación Laboral a ratificar su acuerdo, con el fin de brindar seguridad jurídica.</h2>
@@ -196,7 +196,7 @@
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Registro de <br>representación legal patronal</h2> <img
                 src="public/assets_seer/images/REGISTROPA.png" alt="Descripción de la imagen"
-                style="width: 200px; height: 200px;">
+                style="width: 200px; height: 200px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
             </div>
             <div class="flip-box-back">
               <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br>Es una plataforma digital, que permite a las personas empleadoras registrar a sus representantes legales, con la finalidad de agilizar el procedimiento de conciliación.</h2>
@@ -213,7 +213,7 @@
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Cursos y capacitaciones<br><br></h2>
               <img src="public/assets_seer/images/CURSOSYCA.png" alt="Descripción de la imagen"
-                style="width: 200px; height: 200px;">
+                style="width: 200px; height: 200px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
             </div>
             <div class="flip-box-back">
               <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br><br>&ensp;&ensp;&ensp;Ingresar a los cursos.</h2>
@@ -268,3 +268,5 @@
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     </body>
 </html>
+
+
