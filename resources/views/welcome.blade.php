@@ -259,7 +259,7 @@
           <a href="https://x.com/cclmichoacan?s=11"><img src="public/assets_seer/images/X.png" style="width: 8%"></a>
           &ensp;<a href="https://www.instagram.com/cclmichoacan/"><img src="public/assets_seer/images/IG.png" style="width:10%"></a>
           &ensp;<a href="https://www.facebook.com/conciliacionlaboralmich/?locale=es_LA"><img src="public/assets_seer/images/FC.png" style="width:8%"></a>
-          &ensp;<a href="https://www.tiktok.com/@cclmichoacan0?_t=ZM-8uooi2eSI1V&_r=1"><img src="public/assets_seer/images/TK.png" style="width:8%"></a>
+          &ensp;<a href="https://www.tiktok.com/@cclmichoacan0?_t=ZM-8uooi2eSI1V&_r=1"><img src="public/assets_seer/images/TK.png" style="width:8%"></a> 
         </div>
       </div>
     </footer> 
