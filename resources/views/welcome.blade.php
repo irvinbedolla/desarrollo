@@ -95,9 +95,9 @@
         <li data-target="#carouselExampleIndicators" data-slide-to="1" class="active"></li>
       </ol>
       <div class="carousel-inner">
-       <div class="carousel-item">
-          <!--<img class="d-block  w-100 vh-100" src="public/assets_seer/images/carusel/2.png" alt="Second slide" style="width:100%">-->
-        </div>
+       <!--<div class="carousel-item">
+          <img class="d-block  w-100 vh-100" src="public/assets_seer/images/carusel/2.png" alt="Second slide" style="width:100%">
+        </div>-->
         <div class="carousel-item active">
           <img class="d-block  w-100 vh-100" src="public/assets_seer/images/carusel/3.png" alt="Third slide" style="width:100%">
         </div>
