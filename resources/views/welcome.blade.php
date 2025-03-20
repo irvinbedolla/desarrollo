@@ -156,7 +156,7 @@
         <div class="flip-box">
           <div class="flip-box-inner">
             <div class="flip-box-front">
-              <h2 style="font-size: 20px; font-family: Arial; color: #000000">Solicitud en línea<br></h2> <img
+              <h2 style="font-size: 20px; font-family: Arial; color: #000000">Solicitud en línea<br><br></h2> <img
                 src="public/assets_seer/images/SOLICITUD.png" alt="Descripción de la imagen"
                 style="width: 200px; height:200px;">
             </div>
