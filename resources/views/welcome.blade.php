@@ -1,5 +1,3 @@
-OFWEEEEEEEEE
-
 <!doctype html>
 <html class="wide wow-animation" lang="es">
     <head>
@@ -126,7 +124,7 @@ OFWEEEEEEEEE
 
     <main>
     <div class="container">
-          <br><br><br><br><br><br><br>
+          <br><br><br><br><br>
     </div>
 
     <!-- CARRUSEL-->
@@ -285,7 +283,29 @@ OFWEEEEEEEEE
         </div>
       </div>
     </footer> 
-
+    <script>
+      $(document).ready(function(){
+        $(".owl-carousel").owlCarousel();
+      });
+    
+      var owl = $('.owl-carousel');
+      owl.owlCarousel({
+          items:1,
+          loop:true,
+          margin:10,
+          autoplay:true,
+          autoplayTimeout:5000,
+          autoplayHoverPause:true
+      });
+    
+      $('.play').on('click',function(){
+          owl.trigger('play.owl.autoplay',[5000])
+      })
+      $('.stop').on('click',function(){
+          owl.trigger('stop.owl.autoplay')
+      })
+    
+    </script>
       <!--<script src="public/assets_seer/assets/dist/js/bootstrap.bundle.min.js"></script>-->
       <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -294,27 +314,5 @@ OFWEEEEEEEEE
     </body>
 </html>
 
-<script>
-  $(document).ready(function(){
-    $(".owl-carousel").owlCarousel();
-  });
 
-  var owl = $('.owl-carousel');
-  owl.owlCarousel({
-      items:1,
-      loop:true,
-      margin:10,
-      autoplay:true,
-      autoplayTimeout:5000,
-      autoplayHoverPause:true
-  });
-
-  $('.play').on('click',function(){
-      owl.trigger('play.owl.autoplay',[5000])
-  })
-  $('.stop').on('click',function(){
-      owl.trigger('stop.owl.autoplay')
-  })
-
-</script>
 
