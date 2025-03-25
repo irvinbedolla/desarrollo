@@ -62,7 +62,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="">
             <img src="public/assets_seer/images/Logo2.jpeg" class="img" style="" width="90" height="90"></a>&nbsp;&nbsp;
-            <img src="public/assets_seer/images/logo1.jpeg" class="img" style="" width="150" height="70"></a>
+            <img src="public/assets_seer/images/Logo1.jpeg" class="img" style="" width="150" height="70"></a>
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -98,7 +98,7 @@
           <img class="d-block  w-100 vh-100" src="public/assets_seer/images/carusel/GM.png" alt="Second slide" style="width:100%">
         </div>--> 
         <div class="carousel-item active">
-          <img class="d-block  w-100 vh-100" src="public/assets_seer/images/carusel/1Portada-web.png" alt="Third slide" style="width:100%">
+          <img class="d-block  w-100 vh-100" src="public/assets_seer/images/carusel/3.png" alt="Third slide" style="width:100%">
         </div>
       </div>
       <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
