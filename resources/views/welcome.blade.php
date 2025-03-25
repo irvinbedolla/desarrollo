@@ -1,3 +1,5 @@
+OFWEEEEEEEEE
+
 <!doctype html>
 <html class="wide wow-animation" lang="es">
     <head>
@@ -12,7 +14,46 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         
         <link rel="icon" href="public/assets_seer/images/logo-ccl.png" type="image/x-icon">
+
+        <!-- CARRUSEL -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <link rel="stylesheet" href="resources/css/owl.carousel.css">
+        <link rel="stylesheet" href="resources/css/owl.carousel.min.css">
+        <link rel="stylesheet" href="resources/css/owl.theme.default.min.css">
+        <script src="resources/js/owl.carousel.min.js"></script>
+   
         <style>
+          /*CARRUSEL*/
+          .owl-carousel.owl-loaded{
+            display:block;
+          }
+          .owl-carousel {
+            display: none;
+            width: 100%;
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+            z-index: 1;
+          }
+          .owl-carousel .owl-item img {
+            display: block;
+            width: 100%;
+          }
+          .owl-carousel.owl-drag .owl-item {
+            touch-action: pan-y;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+          }
+          .owl-carousel .owl-item {
+            -webkit-backface-visibility: hidden;
+            float: left;
+            min-height: 1px;
+            position: relative;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+          }
+          /*FIN CARRUSEL*/
           body{
             margin: 0;
             padding: 0;
@@ -85,33 +126,15 @@
 
     <main>
     <div class="container">
-          <br><br><br><br>
+          <br><br><br><br><br><br><br>
     </div>
-    
-    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" style="">
-      <ol class="carousel-indicators">
-        <li data-target="#carouselExampleIndicators" data-slide-to="0"class="active"></li>
-        <!--<li data-target="#carouselExampleIndicators" data-slide-to="1" class="active"></li>-->
-      </ol>
-      <div class="carousel-inner">
-        <!--<div class="carousel-item">
-          <img class="d-block  w-100 vh-100" src="public/assets_seer/images/carusel/GM.png" alt="Second slide" style="width:100%">
-        </div>--> 
-        <div class="carousel-item active">
-          <img class="d-block  w-100 vh-100" src="public/assets_seer/images/carusel/3.png" alt="Third slide" style="width:100%">
-        </div>
-      </div>
-      <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="sr-only">Previous</span>
-      </a>
-      <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
-      </a>
-    </div>
-   
 
+    <!-- CARRUSEL-->
+	  <div class="owl-carousel owl-theme">
+      <img src="public/assets_seer/images/carusel/carrusel_1.png" class="d-block w-100" alt="" loading="lazy">
+    </div>
+    <!-- FIN CARRUSEL-->	
+    
   <!-- INICIANDO SERVICIOS -->
   <section id="servicios">
   <h3 class="wow fadeInLeft" style="text-align: center ; font-family:Nutmeg, Sans-serif;">Tramites y servicios digitales</h3> <br><br><br>
@@ -271,4 +294,27 @@
     </body>
 </html>
 
+<script>
+  $(document).ready(function(){
+    $(".owl-carousel").owlCarousel();
+  });
+
+  var owl = $('.owl-carousel');
+  owl.owlCarousel({
+      items:1,
+      loop:true,
+      margin:10,
+      autoplay:true,
+      autoplayTimeout:5000,
+      autoplayHoverPause:true
+  });
+
+  $('.play').on('click',function(){
+      owl.trigger('play.owl.autoplay',[5000])
+  })
+  $('.stop').on('click',function(){
+      owl.trigger('stop.owl.autoplay')
+  })
+
+</script>
 
