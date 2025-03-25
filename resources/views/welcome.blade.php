@@ -96,7 +96,7 @@
       <div class="carousel-inner">
         <!--<div class="carousel-item">
           <img class="d-block  w-100 vh-100" src="public/assets_seer/images/carusel/GM.png" alt="Second slide" style="width:100%">
-        </div>-->
+        </div>--> 
         <div class="carousel-item active">
           <img class="d-block  w-100 vh-100" src="public/assets_seer/images/carusel/1Portada-web.png" alt="Third slide" style="width:100%">
         </div>
