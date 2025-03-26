@@ -100,8 +100,8 @@
     <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="">
-            <img src="public/assets_seer/images/Logo2.jpeg" class="img" style="" width="90" height="90"></a>&nbsp;&nbsp;
-            <img src="public/assets_seer/images/Logo1.jpeg" class="img" style="" width="150" height="70"></a>
+            <img src="public/assets_seer/images/Logo1.jpeg" class="img" style="" width="150" height="70"></a>&nbsp;&nbsp;
+            <img src="public/assets_seer/images/Logo2.jpeg" class="img" style="" width="90" height="90"></a>
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
