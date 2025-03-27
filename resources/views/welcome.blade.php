@@ -100,8 +100,7 @@
     <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="">
-            <img src="public/assets_seer/images/Logo1.jpeg" class="img" style="" width="150" height="70"></a>&nbsp;&nbsp;
-            <img src="public/assets_seer/images/Logo2.jpeg" class="img" style="" width="90" height="90"></a>
+            <img src="public/assets_seer/images/Logos1.png" class="img" style="" width="300" height="80"></a>
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -254,7 +253,7 @@
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Seer</h2>
               <img src="public/assets_seer/images/seer_1.png" alt="Descripción de la imagen"
-                  style="width: 170px; height: auto;">
+                  style="width: 170px; height: auto; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
             </div>
             <div class="flip-box-back">
                <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br><br>Sistema integral de Conciliación.</h2>
