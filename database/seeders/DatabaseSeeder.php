@@ -2,6 +2,9 @@
 
 namespace Database\Seeders;
 
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Address;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,16 +16,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $faker = \Faker\Factory::create();
-        for ($i = 0; $i < 200; $i++) {
-            \DB::table('blogs')->insert([
-                'title' => $faker->sentence($nbWords = 6, 
-                        $variableNbWords = true),
-                'description' => $faker->paragraph
-                        ($nbSentences = 2,
-                        $variableNbSentences = true),
-                'content' => $faker->text($maxNbChars = 500),
-            ]);
-        }
+        $this->call([
+            UsersSeeder::class,
+            RolesPermissionsSeeder::class,
+        ]);
+
+        \App\Models\User::factory(20)->create();
+
+        Address::factory(20)->create();
+
+        // \App\Models\User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
     }
 }

@@ -29,176 +29,169 @@
                             @endif
 
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                            {!! Form::model($poder, ['method' => 'PATCH', 'files' => true, 'route' => ['poderes.update', $poder ,$poder->idAbogado], 'class' => 'needs-validation','novalidate' ]) !!}
-                            <div class="row">
-                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                    <div class="form-group">
-                                        <label for="name">Nombres</label>
-                                        <input type="text" class="form-control" value="{{ $poder->nombres }}" name="nombresAbogadoAlta" oninput="this.value = this.value.toUpperCase()" required>
-                                    </div>
-                                </div>
-                                
-                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                    <div class="form-group">
-                                        <label for="">Primer Apellido</label>
-                                        <input type="text" class="form-control" value="{{ $poder->primer_apellido }}" name="primer_apellido" id="apellidosAbogadoAlta" oninput="this.value = this.value.toUpperCase()" required>
-                                    </div>
-                                 </div>
-
-                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                    <div class="form-group">
-                                        <label for="">Segundo Apellido</label>
-                                        <input type="text" class="form-control" value="{{ $poder->segundo_apellido }}" name="segundo_apellido"  oninput="this.value = this.value.toUpperCase()" required>
-                                    </div>
-                                </div>                        
-
-                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                    <div class="form-group">
-                                        <label for="">Teléfono</label>
-                                        <input type="text" class="form-control" value="{{ $poder->telefono }}"  name="telefonoAbogadoAlta" maxlength="10" pattern="[0-9]+" required>
-                                    </div>
-                                </div>
-
-                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                    <div class="form-group">
-                                        <label for="">Correo</label>
-                                        <input type="email" class="form-control" value="{{ $poder->email }}" name="correoAbogadoAlta" id="correoAbogadoAlta" required>
-                                    </div>
-                                </div>
-
-                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                    <div class="form-group">
-                                        <label for="">Empresa</label>
-                                        <input type="text" class="form-control" value="{{ $poder->empresa }}" name="empresaAbogadoAlta" oninput="this.value = this.value.toUpperCase()" required>
-                                    </div>
-                                </div>
-
-                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                    <div class="form-group">
-                                        <label for="">CURP</label>
-                                        <input type="text" class="form-control" value="{{ $poder->curp }}" aria-label="CURP" name="curpAbogadoAlta"maxlength="18" oninput="this.value = this.value.toUpperCase()" required>
-                                    </div>
-                                </div>
-
-                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                    <div class="form-group">
-                                        <label for="">Domicilio</label>
-                                        <input type="text" class="form-control" value="{{ $poder->domicilio }}" name="domicilioAbogadoAlta" oninput="this.value = this.value.toUpperCase()" required>
-                                    </div>
-                                </div>
-
-                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                    <div class="form-group">
-                                        <label for="">RFC</label>
-                                        <input type="text" class="form-control" placeholder="RFC Empresa" name="RFCAbogadoAlta" maxlength="10" oninput="this.value = this.value.toUpperCase()">
-                                    </div>
-                                </div>
-
-                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                    <div class="form-group">
-                                        <label for="">Fecha vigencia</label>
-                                        <input type="date" class="form-control" value="{{ $poder->fechaVigencia }}" name="fechaVigenciaAlta" id="fechaVigenciaAlta" min="<?= date("Y-m-d") ?>" required>
-                                    </div>
-                                </div>
-                                
-                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                    <div class="form-group">
-                                        <label for="">Industria</label>
-                                        <input type="text" class="form-control" value="{{ $poder->industria }}" name="industriaAlta" required>
-                                    </div>
-                                </div>
-
-                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                    <div class="form-group">
-                                        <span class="" id="basic-addon1">*Seleccione la region(nes).</i></i></span>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="moreliaSucursal" value="Si" @php if($poder->regionMorelia === "Si") echo "checked"  @endphp>
-                                            <label class="form-check-label" for="flexCheckDefault">Morelia</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="uruapanSucursal" value="Si" @php if($poder->regionUruapan === "Si") echo "checked"  @endphp>
-                                            <label class="form-check-label" for="flexCheckChecked">Uruapan</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="zamoraSucursal" value="Si" @php if($poder->regionZamora === "Si") echo "checked"  @endphp>
-                                            <label class="form-check-label" for="flexCheckDefault">Zamora</label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                    <div class="form-group">
-                                        <label for="">Descripción del poder</label>
-                                        <textarea class="form-control" aria-describedby="basic-addon1" name="descripcionpoderAlta" required>{{ $poder->poder }}</textarea>
-                                    </div>
-                                </div>
-
-                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                    <div class="form-group">
-                                        <label for="">Estatus</label>
-                                        <select class="form-control" name="estatus" required>
-                                            <option value="Pendiente" @php if($poder->estatus === "Pendiente") echo "selected"  @endphp>Pendiente</option>
-                                            <option value="Validado" @php if($poder->estatus === "Validado") echo "selected"  @endphp>Validado</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-
-                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                    <div class="form-group">
-                                        <label>*Identificación oficial</label><br>
-                                        <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{$poder->ine}}">Existente</a>
-                                        {!! Form::file('documentoIne', ['class' => 'form-control-file', 'accept' => '.pdf']) !!}
-                                    </div>
-                                </div>
-
-                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                    <div class="form-group">
-                                        <label>*Documento que acredite la representación</label><br>
-                                        <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{$poder->representacion}}">Existente</a>
-                                        {!! Form::file('documentoRepresentacion', ['class' => 'form-control-file', 'accept' => '.pdf']) !!}
-                                    </div>
-                                </div>
-
-                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                    <div class="form-group">
-                                        <label>Anexos</label><br>
-                                        @php
-                                            if($poder->anexo === "Sin anexo")
-                                                echo "<td>S/A</td>";
-                                            else
-                                                echo "<a target='_blank'  class='btn btn-primary' href='../../storage/app/documentos_abogados/$poder->anexo'>Existente</a>";
-                                        @endphp
-                                        {!! Form::file('documentoAnexo', ['class' => 'form-control-file', 'accept' => '.pdf']) !!}
-                                    </div>
-                                </div>
-
-                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                    <div class="form-group">
-                                        <label>Anexos 2</label><br>
-                                        @php
-                                            if($poder->cedula === "Sin carta poder")
-                                                echo "<td>S/A</td>";
-                                            else
-                                                echo "<a target='_blank' class='btn btn-primary' href='../../storage/app/documentos_abogados/$poder->cedula'>Existente</a>";
-                                        @endphp
-                                        {!! Form::file('documentoPoder', ['class' => 'form-control-file', 'accept' => '.pdf']) !!}
-                                    </div>
-                                </div>
-
-
-                                <div>
-                                {!! Form::open(array('route' => 'poderes.store', 'method' => 'POST')) !!}
+                            <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('poderes.update' ,$poder->idAbogado)}}" enctype='multipart/form-data'>
+                                <input type="hidden" name="_method" value="PATCH">
                                 <input type="hidden" name="id" value="{{ Auth::id() }}">
-                                </div>
-                                
-                                
+                                @csrf
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="name">Nombres</label>
+                                            <input type="text" class="form-control" value="{{ $poder->nombres }}" name="nombresAbogadoAlta" oninput="this.value = this.value.toUpperCase()" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="">Primer Apellido</label>
+                                            <input type="text" class="form-control" value="{{ $poder->primer_apellido }}" name="primer_apellido" id="apellidosAbogadoAlta" oninput="this.value = this.value.toUpperCase()" required>
+                                        </div>
+                                    </div>
 
-                                </div>                                    
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="">Segundo Apellido</label>
+                                            <input type="text" class="form-control" value="{{ $poder->segundo_apellido }}" name="segundo_apellido"  oninput="this.value = this.value.toUpperCase()" required>
+                                        </div>
+                                    </div>                        
+
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="">Teléfono</label>
+                                            <input type="text" class="form-control" value="{{ $poder->telefono }}"  name="telefonoAbogadoAlta" maxlength="10" pattern="[0-9]+" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="">Correo</label>
+                                            <input type="email" class="form-control" value="{{ $poder->email }}" name="correoAbogadoAlta" id="correoAbogadoAlta" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="">Empresa</label>
+                                            <input type="text" class="form-control" value="{{ $poder->empresa }}" name="empresaAbogadoAlta" oninput="this.value = this.value.toUpperCase()" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="">CURP</label>
+                                            <input type="text" class="form-control" value="{{ $poder->curp }}" aria-label="CURP" name="curpAbogadoAlta"maxlength="18" oninput="this.value = this.value.toUpperCase()" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="">Domicilio</label>
+                                            <input type="text" class="form-control" value="{{ $poder->domicilio }}" name="domicilioAbogadoAlta" oninput="this.value = this.value.toUpperCase()" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="">RFC</label>
+                                            <input type="text" class="form-control" placeholder="RFC Empresa" name="RFCAbogadoAlta" maxlength="10" oninput="this.value = this.value.toUpperCase()">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="">Fecha vigencia</label>
+                                            <input type="date" class="form-control" value="{{ $poder->fechaVigencia }}" name="fechaVigenciaAlta" id="fechaVigenciaAlta" min="<?= date("Y-m-d") ?>" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="">Industria</label>
+                                            <input type="text" class="form-control" value="{{ $poder->industria }}" name="industriaAlta" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <span class="" id="basic-addon1">*Seleccione la region(nes).</i></i></span>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="moreliaSucursal" value="Si" @php if($poder->regionMorelia === "Si") echo "checked"  @endphp>
+                                                <label class="form-check-label" for="flexCheckDefault">Morelia</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="uruapanSucursal" value="Si" @php if($poder->regionUruapan === "Si") echo "checked"  @endphp>
+                                                <label class="form-check-label" for="flexCheckChecked">Uruapan</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="zamoraSucursal" value="Si" @php if($poder->regionZamora === "Si") echo "checked"  @endphp>
+                                                <label class="form-check-label" for="flexCheckDefault">Zamora</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="">Descripción del poder</label>
+                                            <textarea class="form-control" aria-describedby="basic-addon1" name="descripcionpoderAlta" required>{{ $poder->poder }}</textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                        <div class="form-group">
+                                            <label for="">Estatus</label>
+                                            <select class="form-control" name="estatus" required>
+                                                <option value="Pendiente" @php if($poder->estatus === "Pendiente") echo "selected"  @endphp>Pendiente</option>
+                                                <option value="Validado" @php if($poder->estatus === "Validado") echo "selected"  @endphp>Validado</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label>*Identificación oficial</label><br>
+                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{$poder->ine}}">Existente</a>
+                                            <input type="file" name="documentoIne" class="form-control-file" accept=".pdf">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label>*Documento que acredite la representación</label><br>
+                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{$poder->representacion}}">Existente</a>
+                                            <input type="file" name="documentoRepresentacion" class="form-control-file" accept=".pdf">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label>Anexos</label><br>
+                                            @php
+                                                if($poder->anexo === "Sin anexo")
+                                                    echo "<td>S/A</td>";
+                                                else
+                                                    echo "<a target='_blank'  class='btn btn-primary' href='../../storage/app/documentos_abogados/$poder->anexo'>Existente</a>";
+                                            @endphp
+                                            <input type="file" name="documentoAnexo" class="form-control-file" accept=".pdf">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label>Anexos 2</label><br>
+                                            @php
+                                                if($poder->cedula === "Sin carta poder")
+                                                    echo "<td>S/A</td>";
+                                                else
+                                                    echo "<a target='_blank' class='btn btn-primary' href='../../storage/app/documentos_abogados/$poder->cedula'>Existente</a>";
+                                            @endphp
+                                            <input type="file" name="documentoPoder" class="form-control-file" accept=".pdf">
+                                        </div>
+                                    </div>
+                                                                    
                                     <button type="submit" class="btn btn-primary">Guardar</button>
-                                    {!! Form::close() !!}
-                            </div>
-
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>

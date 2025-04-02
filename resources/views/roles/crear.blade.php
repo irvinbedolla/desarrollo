@@ -29,12 +29,13 @@
                             @endif
 
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                            {!! Form::open(array('route'=>'roles.store', 'method'=>'POST', 'class' => 'needs-validation','novalidate', 'id' => 'form_roles')) !!}
+                            <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('roles.store')}}">
+                                @csrf
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <label for="name">Nombre del Rol</label>
-                                            {!! Form::text('name', null, array('class'=>'form-control', 'required' => 'required')) !!}
+                                            <input type="text" class="form-control" name="name" required>
                                         </div>
                                     </div>         
                                     <div class="invalid-feedback">
@@ -47,8 +48,8 @@
                                                 <br/>
                                             @foreach($permission as $value)
                                                 <label>
-                                                    {{ Form::checkbox('permission[]', $value->id, false, array('class' => 'name')) }}
-                                                    {{ $value->name }}                                                    
+                                                    <input class="form-check-input" name="permission[]" type="checkbox" value="{{ $value->id }}" id="flexCheckDefault">
+                                                    <label class="form-check-label" for="flexCheckDefault">{{ $value->name }}</label>
                                                 </label>
                                                 <br/>
                                             @endforeach
@@ -58,7 +59,7 @@
                                     </div>
                                     </div>                                    
                                         <button type="submit" class="btn btn-primary">Guardar</button>
-                                        {!! Form::close() !!}
+                                </form>
                                 </div>                            
 
                         </div>

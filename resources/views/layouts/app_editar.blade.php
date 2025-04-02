@@ -6,13 +6,14 @@
     <title>Sí conciliación</title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <!-- Bootstrap 4.1.1 -->
-    <link href="../../public/assets_seer/assets/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../../public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <!-- Ionicons -->
     <link href="//fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
-    <link href="../../public/assets/css/@fortawesome/fontawesome-free/css/all.css" rel="stylesheet" type="text/css">
+    <link href="../../public/assets/css/all.css" rel="stylesheet" type="text/css">
     <link href="../../public/assets/css/iziToast.min.css" rel="stylesheet">
     <link href="../../public/assets/css/sweetalert.css" rel="stylesheet" type="text/css"/>
     <link href="../../public/assets/css/select2.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
     <!-- Agregados para los Select del Formulario Personas-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -38,9 +39,9 @@
 
 @yield('page_css')
 <!-- Template CSS -->
-    <link rel="icon"       href="../../public/assets_seer/images/icono.png" type="image/x-icon">
-    <link rel="stylesheet" href="../../public/web/css/style.css">
-    <link rel="stylesheet" href="../../public/web/css/components.css">
+    <link rel="icon"       href="../../public/assets/images/icono.png" type="image/x-icon">
+    <link rel="stylesheet" href="../../public/assets/css/style.css">
+    <link rel="stylesheet" href="../../public/assets/css/components.css">
     @yield('page_css')
 
     @yield('css')
@@ -67,9 +68,6 @@
     </div>
 </div>
 
-@include('profile.change_password')
-@include('profile.edit_profile')
-
 </body>
 <script src="../../public/assets/js/jquery.min.js"></script>
 <script src="../../public/assets/js/popper.min.js"></script>
@@ -79,10 +77,10 @@
 <script src="../../public/assets/js/jquery.nicescroll.js"></script>
 
 <!-- Template JS File -->
-<script src="../../public/web/js/stisla.js"></script>
-<script src="../../public/web/js/scripts.js"></script>
+<script src="../../public/assets/js/stisla.js"></script>
+<script src="../../public/assets/js/scripts.js"></script>
 <script src="../../public/assets/js/profile.js"></script>
-<script src="../../public/assets/js/custom/custom.js"></script>
+<script src="../../public/assets/js//custom.js"></script>
 @yield('page_js')
 @yield('scripts')
 <script>

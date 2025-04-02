@@ -11,15 +11,15 @@
         <!-- Bootstrap core CSS -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         
-        <link rel="icon" href="public/assets_seer/images/logo-ccl.png" type="image/x-icon">
+        <link rel="icon" href="public/assets/images/logo-ccl.png" type="image/x-icon">
 
         <!-- CARRUSEL -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-        <link rel="stylesheet" href="resources/css/owl.carousel.css">
-        <link rel="stylesheet" href="resources/css/owl.carousel.min.css">
-        <link rel="stylesheet" href="resources/css/owl.theme.default.min.css">
-        <script src="resources/js/owl.carousel.min.js"></script>
+        <link rel="stylesheet" href="public/assets/css/owl.carousel.css">
+        <link rel="stylesheet" href="public/assets/css/owl.carousel.min.css">
+        <link rel="stylesheet" href="public/assets/css/owl.theme.default.min.css">
+        <script src="public/assets/js/owl.carousel.min.js"></script>
    
         <style>
           /*CARRUSEL*/
@@ -100,7 +100,8 @@
     <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="">
-            <img src="public/assets_seer/images/Logos1.png" class="img" style="" width="300" height="80"></a>
+            <img src="public/assets/images/Logos1.png" class="img" style="" width="280" height="90"></a>&nbsp;&nbsp;
+            
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -128,7 +129,7 @@
 
     <!-- CARRUSEL-->
 	  <div class="owl-carousel owl-theme">
-      <img src="public/assets_seer/images/carusel/1Portada-web.png" class="d-block w-100" alt="" loading="lazy">
+      <img src="public/assets/images/carusel/1Portada-web.png" class="d-block w-100" alt="" loading="lazy">
     </div>
     <!-- FIN CARRUSEL-->	
     
@@ -142,7 +143,7 @@
           <div class="flip-box-inner">
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Asesoría virtual<br><br></h2>
-              <img src="public/assets_seer/images/ASESORIA.png" alt="Descripción de la imagen"
+              <img src="public/assets/images/ASESORIA.png" alt="Descripción de la imagen"
                 style="width: 200px; height:200px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
             </div>
             <div class="flip-box-back">
@@ -159,7 +160,7 @@
           <div class="flip-box-inner">
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Calculadora de <br>prestaciones</h2>
-              <img src="public/assets_seer/images/CALCULADORA.png" alt="Descripción de la imagen"
+              <img src="public/assets/images/CALCULADORA.png" alt="Descripción de la imagen"
                   style="width: 200px; height:200px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
             </div>
             <div class="flip-box-back">
@@ -176,7 +177,7 @@
           <div class="flip-box-inner">
             <div class="flip-box-front">
               <h2 style="font-size: 20px; font-family: Arial; color: #000000">Solicitud en línea<br></h2> <img
-                src="public/assets_seer/images/SOLICITUD.png" alt="Descripción de la imagen"
+                src="public/assets/images/SOLICITUD.png" alt="Descripción de la imagen"
                 style="width: 200px; height:200px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
             </div>
             <div class="flip-box-back">
@@ -197,7 +198,7 @@
           <div class="flip-box-inner">
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Citas de ratificación de convenios</h2> <img
-                src="public/assets_seer/images/RATIFICACION.png" alt="Descripción de la imagen"
+                src="public/assets/images/RATIFICACION.png" alt="Descripción de la imagen"
                 style="width: 200px; height: 200px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
             </div>
             <div class="flip-box-back">
@@ -205,7 +206,7 @@
             </div>
           </div>
         </div>
-        <p><a class="boton" href="{{ route('create_cita') }}" target="_blank">Ver más</a></p>   
+        <p><a class="boton" href="{{ route('create_cita') }}">Ver más</a></p>   
       </div>  
     </div>   <!-- fin citas de ratificación -->
     <div class="card"> <!-- Inicio registro de rep. legales -->
@@ -214,7 +215,7 @@
           <div class="flip-box-inner">
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Registro de <br>representación legal patronal</h2> <img
-                src="public/assets_seer/images/REGISTROPA.png" alt="Descripción de la imagen"
+                src="public/assets/images/REGISTROPA.png" alt="Descripción de la imagen"
                 style="width: 200px; height: 200px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
             </div>
             <div class="flip-box-back">
@@ -231,7 +232,7 @@
           <div class="flip-box-inner">
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Cursos y capacitaciones<br><br></h2>
-              <img src="public/assets_seer/images/CURSOSYCA.png" alt="Descripción de la imagen"
+              <img src="public/assets/images/CURSOSYCA.png" alt="Descripción de la imagen"
                 style="width: 200px; height: 200px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
             </div>
             <div class="flip-box-back">
@@ -252,8 +253,8 @@
           <div class="flip-box-inner">
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Seer</h2>
-              <img src="public/assets_seer/images/seer_1.png" alt="Descripción de la imagen"
-                  style="width: 170px; height: auto; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
+              <img src="public/assets/images/seer_1.png" alt="Descripción de la imagen"
+                  style="width: 170px; height: auto;">
             </div>
             <div class="flip-box-back">
                <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br><br>Sistema integral de Conciliación.</h2>
@@ -275,10 +276,10 @@
       </div>
       <div class="col-md-4 d-flex align-items-center">
         <div class="col-md-3, mx-auto, my-auto">
-          <a href="https://x.com/cclmichoacan?s=21"><img src="public/assets_seer/images/X.png" style="width: 8%"></a>
-          &ensp;<a href="https://www.instagram.com/cclmichoacan/"><img src="public/assets_seer/images/IG.png" style="width:10%"></a>
-          &ensp;<a href="https://www.facebook.com/conciliacionlaboralmich/?locale=es_LA"><img src="public/assets_seer/images/FC.png" style="width:8%"></a>
-          &ensp;<a href="https://www.tiktok.com/@cclmichoacan0?_t=ZM-8uooi2eSI1V&_r=1"><img src="public/assets_seer/images/TK.png" style="width:8%"></a>
+          <a href="https://x.com/cclmichoacan?s=21"><img src="public/assets/images/X.png" style="width: 8%"></a>
+          &ensp;<a href="https://www.instagram.com/cclmichoacan/"><img src="public/assets/images/IG.png" style="width:10%"></a>
+          &ensp;<a href="https://www.facebook.com/conciliacionlaboralmich/?locale=es_LA"><img src="public/assets/images/FC.png" style="width:8%"></a>
+          &ensp;<a href="https://www.tiktok.com/@cclmichoacan0?_t=ZM-8uooi2eSI1V&_r=1"><img src="public/assets/images/TK.png" style="width:8%"></a>
         </div>
       </div>
     </footer> 

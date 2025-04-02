@@ -2,7 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+//use Illuminate\Routing\Controller as BaseController;
+/*
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Models\SeerChatP; 
+use App\Models\SeerChatR; 
+use App\Models\SeerChatRP;
+*/
+
+//use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
@@ -18,13 +30,6 @@ use Illuminate\Support\Facades\Auth;
 
 class TurnosController extends Controller
 {
-    function __contruct()
-    {
-        $this->middleware('permission:ver-usuario | crear-usuario | editar-usuario | borrar-usuario', ['only'=>['index']]);
-        $this->middleware('permission:crear-usuario', ['only'=>['create','store']]);
-        $this->middleware('permission:editar-usuario',['only'=>['edit','update']]);
-        $this->middleware('permission:borrar-usuario',['only'=>['destroy']]);
-    }
     
     public function index()
     {
@@ -71,7 +76,7 @@ class TurnosController extends Controller
         return view('turnos.crear', compact('id_usuario'));
     }
 
-    public function store(Request $request)
+    public function store_turnos(Request $request)
     {
         $data = $request->all();
         $id = auth()->user()->id;
@@ -995,11 +1000,28 @@ class TurnosController extends Controller
             'hora'          => $data["hora"],
             'hora_fin'      => $data["hora"],
             'delegacion'    => $data["sede"],
-            'estatus'       => "no atendido",
-            'exepcion'      => "No",
+            'estatus'       => 'no atendido',
+            'exepcion'      => 'No',
             'edad'          => $data["edad"],
             'sexo'          => $data["sexo"],
         );    
+        $turnos = Turnos::create([
+            'consecutivo'   => $numero_consecutivo,
+            'solicitante'   => $data["nombre"],
+            'auxiliar'      => 0,
+            'lugar_auxiliar'=> "Recepción",
+            'tipo'          => $data["tipo"],
+            'fecha'         => $data["fecha"],
+            'hora'          => $data["hora"],
+            'hora_fin'      => $data["hora"],
+            'delegacion'    => $data["sede"],
+            'estatus'       => 'no atendido',
+            'exepcion'      => 'No',
+            'edad'          => $data["edad"],
+            'sexo'          => $data["sexo"],
+        ]);
+
+        //dd($data_insertar);
         Turnos::create($data_insertar);
         return back()->with('success', 'Debes acudir al centro de conciliacion el dia:'.$data["fecha"].' a la hora:'.$data["hora"]); 
     }

@@ -6,11 +6,11 @@
     <title>Sí Conciliación</title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <!-- Bootstrap 4.1.1 -->
-    <link href="public/assets_seer/assets/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <!-- Ionicons -->
-    <link rel="icon" href="public/assets_seer/images/icono.png" type="image/x-icon">
+    <link rel="icon" href="public/assets/images/ccl-r.png" type="image/x-icon">
     <link href="//fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
-    <link href="public/assets/css/@fortawesome/fontawesome-free/css/all.css" rel="stylesheet" type="text/css">
+    <link href="public/assets/css/all.css" rel="stylesheet" type="text/css">
     <link href="public/assets/css/iziToast.min.css" rel="stylesheet">
     <link href="public/assets/css/sweetalert.css" rel="stylesheet" type="text/css"/>
     <link href="public/assets/css/select2.min.css" rel="stylesheet" type="text/css"/>
@@ -53,9 +53,8 @@
     @livewireStyles
 
     @yield('page_css')
-    <!-- Template CSS <img src="public/assets_seer/images/ccl.png" width="180" height="90" style="position: absolute; left: 100px; top: 10px; right:0px;"/>  -->
-    <link rel="stylesheet" href="public/web/css/style.css">
-    <link rel="stylesheet" href="public/web/css/components.css">
+    <link rel="stylesheet" href="public/assets/css/style.css">
+    <link rel="stylesheet" href="public/assets/css/components.css">
     @yield('page_css')
 </head>
 
@@ -64,7 +63,7 @@
             <div class="col-lg-12" >
                 <div style="background-color:#6A0F49">
                     <div align="right"><br>
-                        <img src="public/assets_seer/images/ccl.png" style="max-width: 10%" class="text-center">
+                        <img src="public/assets/images/ccl-r.png" style="max-width: 10%" class="text-center">
                     </div>
                     <h3 class="text-center" style="color:#CEA845">Registro de representaciones legales</h3>    
                 </div>
@@ -103,7 +102,8 @@
                                     <h3 class="text-center" style="color:#CEA845">Datos del representante legal</h3>
                                 </div>    
                                 <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                {!! Form::open(array('route'=>'poderes.publico', 'method'=>'POST', 'files' => true, 'class' => 'needs-validation','novalidate')) !!}
+                                <form class="needs-validation novalidate" method="POST" action="{{route('poderes.publico')}}" enctype="multipart/form-data">
+                                @csrf
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div class="form-group">
@@ -255,7 +255,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div class="form-group">
                                                 <label>*Identificación oficial</label><br>
-                                                {!! Form::file('documentoIne', ['class' => 'form-control-file', 'accept' => '.pdf', 'required']) !!}
+                                                <input type="file" name="documentoIne" class="form-control" accept=".pdf" required>
                                                 <div class="invalid-feedback">
                                                     La Identificación es obligatoria.
                                                 </div>
@@ -265,7 +265,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div class="form-group">
                                                 <label>*Documento que acredite la representación</label><br>
-                                                {!! Form::file('documentoRepresentacion', ['class' => 'form-control-file', 'accept' => '.pdf', 'required']) !!}
+                                                <input type="file" name="documentoRepresentacion" class="form-control" accept=".pdf" required>
                                                 <div class="invalid-feedback">
                                                     El documento de representación es obligatorio.
                                                 </div>
@@ -275,30 +275,25 @@
                                         <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div class="form-group">
                                                 <label>Anexos(Solo si se requiere)</label><br>
-                                                {!! Form::file('documentoAnexo', ['class' => 'form-control-file', 'accept' => '.pdf']) !!}
+                                                <input type="file" name="documentoAnexo" class="form-control" accept=".pdf" required>
                                             </div>
                                         </div>
 
                                         <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div class="form-group">
                                                 <label>Anexos 2(Solo si se requiere)</label><br>
-                                                {!! Form::file('documentoPoder', ['class' => 'form-control-file', 'accept' => '.pdf']) !!}
+                                                <input type="file" name="documentoPoder" class="form-control" accept=".pdf" required>
                                             </div>
-                                        </div>
-
-                                        <div>
-                                            {!! Form::open(array('route' => 'poderes.store', 'method' => 'POST')) !!}
-                                            <input type="hidden" name="id_usuario_registro" value="{{ Auth::id() }}">
                                         </div>
                                         
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div align="center">
                                             <button type="submit" class="btn btn-primary" style="background-color:#CEA845;">Guardar</button>
-                                            <a href="{{ url('/'); }}" class="btn btn-primary" style=" background-color:#CEA845;">Regresar</a>    
+                                            <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845;">Regresar</a>    
                                         </div>
                                     </div>    
-                                {!! Form::close() !!}
+                                </form>
                                 </div>
                             </div>
                         </div>
@@ -315,7 +310,7 @@
     </div>
 
 @section('scripts')
-    <script src="public/js/poderes/general.js"></script>
+    <script src="public/assets/js/poderes/general.js"></script>
 @endsection
 
 
@@ -328,10 +323,10 @@
     <script src="public/assets/js/jquery.nicescroll.js"></script>
 
     <!-- Template JS File -->
-    <script src="public/web/js/stisla.js"></script>
-    <script src="public/web/js/scripts.js"></script>
+    <script src="public/assets/js/stisla.js"></script>
+    <script src="public/assets/js/scripts.js"></script>
     <script src="public/assets/js/profile.js"></script>
-    <script src="public/assets/js/custom/custom.js"></script>
+    <script src="public/assets/js/custom.js"></script>
 
     <script src="https://cdn.datatables.net/2.1.5/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.1.5/js/dataTables.bootstrap4.js"></script>

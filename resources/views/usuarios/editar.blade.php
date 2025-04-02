@@ -1,4 +1,4 @@
-@extends('layouts.app_editar')
+¿@extends('layouts.app_editar')
 
 @section('content')
     <section class="section">
@@ -30,12 +30,14 @@
                             @endif
 
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                            {!! Form::model($user, ['method' => 'PATCH', 'route' => ['usuarios.update', $user->id], 'class' => 'needs-validation','novalidate', 'id' => 'form_usuarios']) !!}
+                            <form class='needs-validation novalidate' method='POST' action="{{route('usuarios.update', $user->id)}}" id="form_usuarios">
+                                <input type="hidden" name="_method" value="PATCH">
+                                @csrf
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <label for="name">Nombre</label>
-                                            {!! Form::text('name', null, array('class'=>'form-control')) !!}
+                                            <input type="text" name="name" class="form-control" value="{{ $user->name }}" required>
                                         </div>
                                     </div>
                                     <div class="invalid-feedback">
@@ -45,7 +47,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <label for="email">Email</label>
-                                            {!! Form::email('email', null, array('class'=>'form-control')) !!}
+                                            <input type="text" name="email" class="form-control" value="{{ $user->email }}" required>
                                         </div>
                                     </div>
                                     <div class="invalid-feedback">
@@ -55,7 +57,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <label for="password">Password</label>
-                                            {!! Form::password('password', array('class'=>'form-control')) !!}
+                                            <input type="password" name="password" class="form-control">
                                         </div>
                                     </div>
                                     <div class="invalid-feedback">
@@ -65,7 +67,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <label for="confirm-password">Confirmar Password</label>
-                                            {!! Form::password('confirm-password', array('class'=>'form-control')) !!}
+                                            <input type="password" name="confirm-password" class="form-control">
                                         </div>
                                     </div>
                                     <div class="invalid-feedback">
@@ -75,7 +77,11 @@
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <label for="name">Roles</label>
-                                            {!! Form::select('roles[]', $roles,$userRole, array('class'=>'form-control')) !!}
+                                            <select name="roles" class="form-control">
+                                                @foreach($roles as $rol)
+                                                    <option value="{{ $rol }}" {{ $userRole == $rol ? "selected" : '' }} >{{ $rol }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="invalid-feedback">
@@ -115,9 +121,7 @@
                                     </div>
                                     
                                 </div>
-                            {!! Form::close() !!}
-        
-
+                            </form>     
                         </div>
                     </div>
                 </div>

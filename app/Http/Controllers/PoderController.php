@@ -15,13 +15,6 @@ use Illuminate\Support\Facades\Storage;
 
 class PoderController extends Controller
 {
-    function __contruct()
-    {
-        $this->middleware('permission:ver-persona | crear-persona | editar-persona | borrar-persona', ['only'=>['index']]);
-        $this->middleware('permission:crear-persona', ['only'=>['create','store']]);
-        $this->middleware('permission:editar-persona',['only'=>['edit','update']]);
-        $this->middleware('permission:borrar-persona',['only'=>['destroy']]);
-    }
 
     public function index()
     {

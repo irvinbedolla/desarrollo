@@ -12,10 +12,13 @@ use Illuminate\Support\Facades\DB;
 use App\Models\SeerChatP; 
 use App\Models\SeerChatR; 
 use App\Models\SeerChatRP;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Traits\HasRoles;
 
 class Controller extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests, HasRoles;
+
     public function solicitud()
     {
         return view('solicitud');
@@ -28,10 +31,10 @@ class Controller extends BaseController
         return view('chat', compact('preguntasChats'));
     }
       
-    public function store(Request $request)
+    public function store_chat(Request $request)
     {
         $data = $request->all();
-
+        
         //validando información
         $validatedData=$request->validate([
             'nombre_completo' => 'required|string',
@@ -103,4 +106,3 @@ class Controller extends BaseController
         return view('RespuestasChat', compact('id','registro','res','ver_res','preguntasChats','idPregunta'));
     }
 }
-

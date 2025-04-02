@@ -13,6 +13,7 @@
     <link href="../../../public/assets/css/iziToast.min.css" rel="stylesheet">
     <link href="../../../public/assets/css/sweetalert.css" rel="stylesheet" type="text/css"/>
     <link href="../../../public/assets/css/select2.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
     <!-- Agregados para los Select del Formulario Personas-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

@@ -11,35 +11,15 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Arr;
 
-class UsuarioController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
 
-    //Se agrega un constructor
-    function __contruct()
-    {
-        $this->middleware('permission:ver-usuario | crear-usuario | editar-usuario | borrar-usuario', ['only'=>['index']]);
-        $this->middleware('permission:crear-usuario', ['only'=>['create','store']]);
-        $this->middleware('permission:editar-usuario',['only'=>['edit','update']]);
-        $this->middleware('permission:borrar-usuario',['only'=>['destroy']]);
-    }
-    
+class UsuarioController extends Controller
+{   
     public function index()
     {
-        //$usuarios = User::paginate(10);
         $usuarios = User::all();
         return view('usuarios.index',compact('usuarios'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //Vamos a traer un usuario para asignarle los roles
@@ -47,23 +27,20 @@ class UsuarioController extends Controller
         return view('usuarios.crear', compact('roles'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
-    {
-        //Procedimiento para almacenar de los campos que vamos a ingresar
-        $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,',
-            'password' => 'required|same:confirm-password',
-            'roles' => 'required',
-            'delegacion' => 'required',
-            'type' => 'required' 
-        ]);
+    {        
+        $data = $request->all();
+
+        //Validar documentacion
+        request()->validate([
+            'name'      => 'required',
+            'email'     => 'required|email|unique:users,email,',
+            'password'  => 'required|same:confirm-password',
+            'roles'     => 'required',
+            'delegacion'=> 'required',
+            'type'      => 'required' 
+        ], $data);
+
 
         $input = $request->all();
         //Hacemos un hash del campo que tiene el password
@@ -77,39 +54,21 @@ class UsuarioController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**w
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         //Se invocan los dos modelos User y rol
         $user = User::find($id);
         $roles = Role::pluck('name','name')->all();
-        $userRole = $user->roles->pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name','name')->first();
+        
         return view('usuarios.editar', compact('user','roles','userRole'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         //Primero se hace la validación como en store

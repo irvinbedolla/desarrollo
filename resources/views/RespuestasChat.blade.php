@@ -80,8 +80,7 @@
 
     </head>
     <body>
-        
-        {!! Form::open(array('route'=>'RespuestasChat.storeUno', 'method'=>'POST', 'files' => true, 'class' => 'needs-validation','novalidate')) !!}
+        <form class="needs-validation novalidate" method="POST" action="{{route('RespuestasChat.storeUno')}}">
             @csrf
             <div class="chat-box" style="position: relative; top:100px; right:0px; left:0px;">
                 <h1>Asistente Centro de Conciliación</h1>
@@ -127,7 +126,7 @@
                 <br><br><br>
                 <button type="submit" style="position: relative; top:0px; right:0px; left:225px;" class="btn">Enviar</button>
             </div>       
-        {!! Form::close() !!}         
+        </form>
     </body>
     <script>
         window.onload = function() {

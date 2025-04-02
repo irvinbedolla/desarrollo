@@ -28,7 +28,8 @@
                             @endif
 
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                            {!! Form::open(array('route'=>'poderes.store', 'method'=>'POST', 'files' => true, 'class' => 'needs-validation','novalidate')) !!}
+                            <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('poderes.store')}}" enctype='multipart/form-data'>
+                                @csrf
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
@@ -168,7 +169,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label>*Identificación oficial</label><br>
-                                            {!! Form::file('documentoIne', ['class' => 'form-control-file', 'accept' => '.pdf']) !!}
+                                            <input type="file" name="documentoIne" class="form-control" accept=".pdf">
                                             <div class="invalid-feedback">
                                                 La Identificación es obligatoria.
                                             </div>
@@ -178,7 +179,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label>*Documento que acredite la representación</label><br>
-                                            {!! Form::file('documentoRepresentacion', ['class' => 'form-control-file', 'accept' => '.pdf']) !!}
+                                            <input type="file" name="documentoRepresentacion" class="form-control" accept=".pdf">
                                             <div class="invalid-feedback">
                                                 El documento de representación es obligatorio.
                                             </div>
@@ -188,25 +189,24 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label>Anexos</label><br>
-                                            {!! Form::file('documentoAnexo', ['class' => 'form-control-file', 'accept' => '.pdf']) !!}
+                                            <input type="file" name="documentoAnexo" class="form-control" accept=".pdf">
                                         </div>
                                     </div>
 
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label>Anexos 2</label><br>
-                                            {!! Form::file('documentoPoder', ['class' => 'form-control-file', 'accept' => '.pdf']) !!}
+                                            <input type="file" name="documentoPoder" class="form-control" accept=".pdf">
                                         </div>
                                     </div>
 
                                     <div>
-                                        {!! Form::open(array('route' => 'poderes.store', 'method' => 'POST')) !!}
                                         <input type="hidden" name="id_usuario_registro" value="{{ Auth::id() }}">
                                     </div>
                                     
                                 </div>                                    
                                 <button type="submit" class="btn btn-primary">Guardar</button>
-                            {!! Form::close() !!}
+                            </form>
                         </div>
                     </div>
                 </div>

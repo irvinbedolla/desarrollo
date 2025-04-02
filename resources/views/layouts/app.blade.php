@@ -3,30 +3,27 @@
     <head>
         <meta charset="UTF-8">
         <meta name="csrf-token" content="{{ csrf_token() }}"/>
-        <title>Sí Conciliación</title>
+        <title>Sí Concilio</title>
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
 
-
         <!-- Bootstrap 5.3.3 -->
-        <link href="../public/assets_seer/assets/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
        
         <!-- Ionicons -->
         <link href="//fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
-        <link href="../public/assets/css/@fortawesome/fontawesome-free/css/all.css" rel="stylesheet" type="text/css">
+        <link href="../public/assets/css/all.css" rel="stylesheet" type="text/css">
         <link href="../public/assets/css/iziToast.min.css" rel="stylesheet">
         <link href="../public/assets/css/sweetalert.css" rel="stylesheet" type="text/css"/>
         <link href="../public/assets/css/select2.min.css" rel="stylesheet" type="text/css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         
         <!-- Agregados para los Select del Formulario Personas-->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-      
-
-
 
         <style>
             .loader {
@@ -44,10 +41,10 @@
         @livewireStyles
 
         @yield('page_css')
-<!-- Template CSS -->
-    <link rel="icon"       href="../public/assets_seer/images/icono.png" type="image/x-icon">
-    <link rel="stylesheet" href="../public/web/css/style.css">
-    <link rel="stylesheet" href="../public/web/css/components.css">
+        <!-- Template CSS -->
+        <link rel="icon"       href="../public/assets/images/ccl-r.png" type="image/x-icon">
+        <link rel="stylesheet" href="../public/assets/css/style.css">
+        <link rel="stylesheet" href="../public/assets/css/components.css">
     @yield('page_css')
 
         @yield('page_css')
@@ -77,9 +74,6 @@
         </div>
 
 
-        @include('profile.change_password')
-        @include('profile.edit_profile')
-
     </body>
         
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
@@ -95,10 +89,10 @@
     <script src="../public/assets/js/jquery.nicescroll.js"></script>
 
     <!-- Template JS File -->
-    <script src="../public/web/js/stisla.js"></script>
-    <script src="../public/web/js/scripts.js"></script>
+    <script src="../public/assets/js/stisla.js"></script>
+    <script src="../public/assets/js/scripts.js"></script>
     <script src="../public/assets/js/profile.js"></script>
-    <script src="../public/assets/js/custom/custom.js"></script>
+    <script src="../public/assets/js/custom.js"></script>
 
     <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.2.1/js/dataTables.bootstrap4.js"></script>

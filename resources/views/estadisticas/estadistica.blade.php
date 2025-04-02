@@ -32,7 +32,8 @@
                                 @endif
 
                                 <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                {!! Form::open(array('route'=>'seer.mostar', 'method'=>'POST', 'class' => 'needs-validation','novalidate')) !!}
+                                <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('seer.mostar')}}">
+                                    @csrf
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-6 col-md-4">
                                             <div class="form-group">
@@ -307,10 +308,11 @@
                                         </div>
                                         
                                         <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <button type="submit" class="btn btn-primary">PDF</button>
                                             <button type="submit" class="btn btn-primary">General</button>
                                         </div>
                                     </div>
-                                {!! Form::close() !!}
+                                </form>
                             @endcan
                         </div>
                     </div>

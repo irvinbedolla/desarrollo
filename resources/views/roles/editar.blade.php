@@ -29,36 +29,33 @@
                             @endif
 
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                            {!! Form::model($role, ['method' => 'PATCH', 'route' => ['roles.update', $role->id]]) !!}
-                            <div class="row">
+                            <form class='needs-validation novalidate' method='POST' action="{{route('roles.update', $role->id)}}">
+                                <input type="hidden" name="_method" value="PATCH">
+                                @csrf
+                                <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <label for="name">Nombre del Rol: </label>
-                                            {!! Form::text('name', null, array('class'=>'form-control')) !!}
+                                            <input type="text" class="form-control" name="name" value="{{ $role->name }}" required>
                                         </div>
                                     </div>                       
-
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <label for="">Permisos para este Rol</label>
                                                 <br/>
                                                 @foreach($permission as $value)
-                                                    <label>{{ Form::checkbox('permission[]', $value->id, in_array($value->id, $rolePermission) ? true : false, array('class' => 'name')) }}
-                                                    {{ $value->name }}</label>
+                                                    <label>
+                                                        <input class="form-check-input" name="permission[]" type="checkbox" value="{{ $value->id }}" {{ $value->id == $rolePermission ? "checked" : '' }}>
+                                                        <label class="form-check-label" for="flexCheckDefault">{{ $value->name }}</label>
+                                                    </label>
                                                 <br/>
                                                 @endforeach
                                         </div>
                                     </div>
-
-                                    <button type="submit" class="btn btn-primary" style="background-color: #6A0F49">Guardar</button>
-                                
-                                    
+                                    <button type="submit" class="btn btn-primary" style="background-color: #6A0F49">Guardar</button>                                
                                 </div>
-                            {!! Form::close() !!}
-
-                            </div>
+                            </form>
                         </div>
-                        
                     </div>
                 </div>
             </div>

@@ -12,47 +12,19 @@ use Illuminate\Support\Facades\DB;
 
 class RolController extends Controller
 {
-    //Se agrega un constructor
-    function __contruct()
-    {
-        $this->middleware('permission:ver-rol | crear-rol | editar-rol | borrar-rol', ['only'=>['index']]);
-        $this->middleware('permission:crear-rol', ['only'=>['create','store']]);
-        $this->middleware('permission:editar-rol',['only'=>['edit','update']]);
-        $this->middleware('permission:borrar-rol',['only'=>['destroy']]);
-
-
-    }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
         $roles = Role::all();
         return view('roles.index', compact('roles'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        //
         $permission = Permission::get();
         return view('roles.crear', compact('permission'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function store_rol(Request $request)
     {
         $check_Role = Role::where(['name'=>$request->name])->first();
         //Si no esta vacia
@@ -64,34 +36,23 @@ class RolController extends Controller
         else{
             $permissions = [];
             $post_permissions = $request->input('permission');
-            $this->validate($request, ['name' => 'required', 'permission' => 'required']);
+            //$this->validate($request, ['name' => 'required', 'permission' => 'required']);
             $role = Role::create(['name' => $request->input('name')]);
             foreach ($post_permissions as $key => $val) {
                 $permissions[intval($val)] = intval($val);
-            }            
+            }   
+            //    $role->givePermissionTo(['create posts', 'edit posts', 'delete posts']);
             $role->syncPermissions($permissions);
             session()->flash('add_data');
             return redirect()->route('roles');
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         $role = Role::find($id);
@@ -103,13 +64,6 @@ class RolController extends Controller
             
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         $role = Role::find($id);
@@ -127,12 +81,6 @@ class RolController extends Controller
         return redirect()->route('roles');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //

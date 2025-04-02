@@ -42,12 +42,12 @@
                                                         @can('editar-usuario')
                                                             <a class="btn btn-info" href="{{ route('usuarios.edit', $usuario->id)}}" onclick=editar_usuario();>Editar</a>
                                                         @endcan
-                                                        <!--Utilizamos las librerías de laravel collective para hacer la 
-                                                        eliminación más sencilla con un formulario utilizando el metodo DELETE-->
                                                         @can('borrar-usuario')
-                                                            {!! Form::open(['method'=>'DELETE', 'route'=> ['usuarios.destroy', $usuario->id], 'style'=>'display:inline']) !!}
-                                                                {!! Form::submit('Borrar', ['class'=> 'btn btn-danger', 'onclick' => 'editar_usuario()']) !!}
-                                                            {!! Form::close() !!}
+                                                            <form method="POST" action="{{ route('usuarios.destroy', $usuario->id) }} ">
+                                                            @csrf
+                                                                <input type="hidden" name="_method" value="DELETE">
+                                                                <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
+                                                            </form>
                                                         @endcan
                                                     </td>
                                                 </tr>
@@ -75,5 +75,5 @@
 
 
 @section('scripts')
-    <script src="../public/js/usuarios/usuarios.js"></script>
+    <script src="../public/assets/js/usuarios/usuarios.js"></script>
 @endsection

@@ -10,26 +10,26 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            
-                            <a class="btn btn-warning" href="{{ route('roles.create') }}" onclick=crear_rol();>Nuevo</a>
+                            @can('crear-rol')
+                                <a class="btn btn-warning" href="{{ route('roles.create') }}" onclick=crear_rol();>Nuevo</a>
+                            @endcan
                             <div class="table-responsive">
                                 <table id="example" class="table table-striped mt-2">
                                     <thead style="background-color:#4A001F">
                                         <th style="color:#fff">Rol</th>
                                         <th style="color:#fff">Acciones</th>
                                     </thead>
-                                    <tbody>
+                                    <tbody> 
                                         @foreach ($roles as $role)
                                         <tr>
                                             <td>{{ $role->name }}</td>
                                             <td>
-                                                
-                                                    <a class="btn btn-primary" href="{{ route('roles.edit', $role->id) }}" onclick=editar_rol();>Editar</a>
-                                                
-
-                                                    {!! Form::open(['method' => 'DELETE', 'route' => ['roles.destroy', $role->id], 'style'=>'display:inline' ]) !!}
-                                                        {!! Form::submit('Borrar', ['class' => 'btn btn-danger', 'onclick' => 'editar_rol()'])  !!}
-                                                    {!! Form::close() !!}
+                                                <a class="btn btn-primary" href="{{ route('roles.edit', $role->id) }}" onclick=editar_rol();>Editar</a>
+                                                <form method="POST" action="{{ route('roles.destroy', $role->id) }} ">
+                                                    @csrf
+                                                    <input type="hidden" name="_method" value="DELETE">
+                                                    <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
+                                                </form>
                                             </td>
                                         </tr>
                                         @endforeach
@@ -56,5 +56,5 @@
 
 
 @section('scripts')
-    <script src="../public/js/general/menu.js"></script>
+    <script src="../public/assets/js/general/menu.js"></script>
 @endsection

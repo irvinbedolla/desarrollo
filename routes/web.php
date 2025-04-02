@@ -1,9 +1,13 @@
 <?php
 
+use App\Http\Controllers\Apps\PermissionManagementController;
+use App\Http\Controllers\Apps\RoleManagementController;
+use App\Http\Controllers\Apps\UserManagementController;
+use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Redirect;
 
-//agregamos los controladores
+use App\Http\Controllers\PDFController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\UsuarioController;
@@ -27,49 +31,50 @@ use App\Http\Controllers\Controller;
 |
 */
 
-Route::get('/', function () {
-   // Route::get('chat', [HomeController::class, 'chats']);
-    return view('welcome');
-});
+    //Ruta Raiz
+    Route::get('/', function () {
+        return view('welcome');
+    });
 
-//Nueva para solicitudes en línea
-Route::get('solicitud', [Controller::class, 'solicitud'])->name('solicitud');
+    Route::get('/logon', function () {
+        return view('../public/welcome');
+    });
 
-//Rutas para el chat
-Route::get('chat', [Controller::class, 'chats'])->name('chat');
-Route::post('/chat/crear',      [Controller::class, 'store'])->name('RespuestasChat.store');
-Route::post('/chat/crearUno/',  [Controller::class, 'storeUno'])->name('RespuestasChat.storeUno');
-//Fin chat
+    //Nueva para solicitudes en línea
+    Route::get('solicitud', [Controller::class, 'solicitud'])->name('solicitud');
+    Route::post('/chat/crear',      [Controller::class, 'store_chat'])->name('RespuestasChat.store');
+    //Rutas para el chat
+    Route::get('chat',              [Controller::class, 'chats'])->name('chat');
+    Route::post('/chat/crearUno/',  [Controller::class, 'storeUno'])->name('RespuestasChat.storeUno');
 
-Route::get('/pantalla', function () {
-    $fecha_actual = date('Y-m-d');
+    //Rutas fuera del login
+    Route::get('/pantalla', function () {
+        $fecha_actual = date('Y-m-d');
+        $turnos = DB::table('turnos')
+        ->leftjoin('users', 'users.id', '=', 'turnos.auxiliar')
+        ->select('users.id', 'turnos.id', 'turnos.tipo', 'turnos.auxiliar', 'turnos.lugar_auxiliar')
+        ->where('turnos.fecha', $fecha_actual)
+        ->where('turnos.estatus', 'no atendido')
+        ->limit(10)
+        ->paginate(10);
 
-    $turnos = DB::table('turnos')
-    ->leftjoin('users', 'users.id', '=', 'turnos.auxiliar')
-    ->select('users.id', 'turnos.id', 'turnos.tipo', 'turnos.auxiliar', 'turnos.lugar_auxiliar')
-    ->where('turnos.fecha', $fecha_actual)
-    ->where('turnos.estatus', 'no atendido')
-    ->limit(10)
-    ->paginate(10);
+        return view('pantalla', compact('turnos'));
+    });
 
-    return view('pantalla', compact('turnos'));
-});
-
-// Gate::authorize('see-reports'); 
-
-    Route::get('publico', [HomeController::class, 'publico'])->name('publico');
-    Route::get('home',    [HomeController::class, 'home'])->name('home');
-    Route::get('/poder-crear', [PoderController::class, 'registro'])->name('poder-crear');
-    Route::get('/poder', [App\Http\Controllers\PoderController::class, 'show'])->name('poder');
+    Route::get('publico',           [HomeController::class, 'publico'])->name('publico');
+    Route::get('home',              [HomeController::class, 'home'])->name('home');
+    Route::get('/poder-crear',      [PoderController::class, 'registro'])->name('poder-crear');
+    Route::get('/poder',            [App\Http\Controllers\PoderController::class, 'show'])->name('poder');
     Route::post('/poderes/publico', [PoderController::class, 'publico'])->name('poderes.publico');
-    Route::get('publico', [HomeController::class, 'publico'])->name('publico');
+    Route::get('publico',           [HomeController::class, 'publico'])->name('publico');
     //Rutas de citas
     Route::get('citas',             [TurnosController::class, 'create_publico'])->name('create_cita');
-    Route::post('/citas/store',     [TurnosController::class, 'store_publico'])->name('turnos.publico');
+    Route::post('/citas/store_publico',     [TurnosController::class, 'store_publico'])->name('turnos.publico');
 
-Auth::routes();
+Route::middleware(['auth', 'verified'])->group(function () {
 
-Route::group(['middleware' => ['auth']], function(){
+    Route::get('/home', [DashboardController::class, 'index'])->name('dashboard');
+
     //Rutas de los menus
         Route::get('/usuarios/index',           [UsuarioController::class, 'index'])->name('usuarios');
         Route::get('/roles/index',              [RolController::class, 'index'])->name('roles');
@@ -77,10 +82,13 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('/miscapacitaciones/index',  [MiscapacitacionController::class, 'index'])->name('miscapacitaciones');
         Route::get('/expedientes/index',        [ExpedienteController::class, 'index'])->name('expedientes');
         Route::get('/seer/index',               [SeerController::class, 'index'])->name('seer');
-        //Route::redirect("/usuario", "usuarios");
+        Route::get('/poderes/index',           [PoderController::class, 'index'])->name('poderes');
+        Route::get('/seer/estadistica',                 [SeerController::class, 'estadistica'])->name('seer.estadistica');
+        Route::get('/turnos/index',           [TurnosController::class, 'index'])->name('turnos');
+        Route::get('/turnos/misturnos',       [TurnosController::class, 'misturnos'])->name('misturnos');
+        Route::get('/turnos/estadistica',     [TurnosController::class, 'estadistica'])->name('turno_estadistica');
     //Fin de ruta de los menus
 
-    
     //Usuarios
         Route::get('/usuarios/index',           [UsuarioController::class, 'index'])->name('usuarios.index');
         Route::get('/usuarios/index',           [UsuarioController::class, 'index'])->name('usuarios');
@@ -96,7 +104,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('/roles/index',           [RolController::class, 'index'])->name('roles');
         Route::get('/roles/create',          [RolController::class, 'create'])->name('roles.create');
         Route::get('/roles/edit/{id}',       [RolController::class, 'edit'])->name('roles.edit');
-        Route::post('/roles/store',          [RolController::class, 'store'])->name('roles.store');
+        Route::post('/roles/guardar',        [RolController::class, 'store_rol'])->name('roles.store');
         Route::patch('/roles/update/{post}', [RolController::class, 'update'])->name('roles.update');
         Route::delete('/roles/destroy/{id}', [RolController::class, 'destroy'])->name('roles.destroy');
     //Fin roles
@@ -136,34 +144,10 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('/capacitaciones/guardar_modulo_editar',        [CapacitacionController::class, 'guardar_modulo_editar'])->name('capacitaciones.editar_modulo_guardar');
         Route::get('/capacitaciones/terminar/{id}',                 [CapacitacionController::class, 'terminar'])->name('capacitaciones.terminado');
         Route::get('/capacitaciones/terminar/{id}',                 [CapacitacionController::class, 'terminar'])->name('capacitaciones.terminado');
-    //Fin capacitaciones
+    //Fin capacitaciones    
 
-    //Mis capacitaciones
-        Route::get('/miscapacitaciones/index',                         [MiscapacitacionController::class, 'index'])->name('miscapacitaciones.index');
-        Route::get('/miscapacitaciones/index',                         [MiscapacitacionController::class, 'index'])->name('miscapacitaciones');
-        Route::get('/miscapacitaciones/create',                        [MiscapacitacionController::class, 'create'])->name('miscapacitaciones.create');
-        Route::get('/miscapacitaciones/edit/{id}',                     [MiscapacitacionController::class, 'edit'])->name('miscapacitaciones.edit');
-        Route::post('/miscapacitaciones/store',                        [MiscapacitacionController::class, 'store'])->name('miscapacitaciones.store');
-        Route::patch('/miscapacitaciones/update/{post}',               [MiscapacitacionController::class, 'update'])->name('miscapacitaciones.update');
-        Route::delete('/miscapacitaciones/destroy/{id}',               [MiscapacitacionController::class, 'destroy'])->name('miscapacitaciones.destroy');
 
-        Route::get('/miscapacitaciones/iniciar/{id}/{mod}',            [MiscapacitacionController::class, 'iniciar'])->name('miscapacitaciones.iniciar');
-        Route::get('/miscapacitaciones/evaluacion/{id}/{mod}',         [MiscapacitacionController::class, 'evaluacion'])->name('miscapacitaciones.prueba');
-        Route::post('/miscapacitaciones/guardar_respuestas',           [MiscapacitacionController::class, 'guardar_respuestas'])->name('miscapacitaciones.guardar_respuestas');
-    //Fin mis capacitaciones
-    
-    //Expedientes
-        Route::get('/expedientes/index',                        [ExpedienteController::class, 'index'])->name('expedientes.index');
-        Route::get('/expedientes/index',                        [ExpedienteController::class, 'index'])->name('expedientes');
-        Route::get('/expedientes/edit/{id}',                    [ExpedienteController::class, 'edit'])->name('expedientes.edit');
-        Route::get('/expedientes/doc/{id}',                     [ExpedienteController::class, 'documento'])->name('expedientes.documento');
-        Route::get('/expedientes/create',                       [ExpedienteController::class, 'create'])->name('expedientes.create');
-        Route::post('/expedientes/store',                       [ExpedienteController::class, 'store'])->name('expedientes.store');
-        Route::get('/expedientes/documentos/{id}',              [ExpedienteController::class, 'personas_documentos'])->name('expedientes.documentos');
-        Route::post('/expedientes/doc',                         [ExpedienteController::class, 'store_documento'])->name('subir_doc');
-        Route::delete('/expedientes/destroy/{id}',              [ExpedienteController::class, 'destroy'])->name('expedientes.delete');
-    //Fin de Expedientes
-    
+ 
     //Seer
         Route::get('/seer/index',                       [SeerController::class, 'index'])->name('seer.index');
         Route::get('/seer/index',                       [SeerController::class, 'index'])->name('seer');
@@ -176,7 +160,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('/seer/asseria',                     [SeerController::class, 'create_asesoria'])->name('create_asesoria');
         Route::post('/seer/aserorias',                  [SeerController::class, 'store_asesorias'])->name('seer.store_asesoria');
         Route::delete('/seer/destroy/{id}',             [seerController::class, 'destroy'])->name('seer.delete');
-        Route::get('/seer/persona/edit/{id}',           [SeerController::class, 'edit'])->name('persona.edit');
+        Route::get('/seer/editar/{id}',                 [SeerController::class, 'editar_persona'])->name('edit_persona');
         Route::get('seer/hitoria',                      [SeerController::class, 'historial'])->name('persona.historial');
         //Rutas de conciliadores
         Route::get('/seer/createCon',                   [SeerController::class, 'create_conciliador'])->name('create_consentrado_con');
@@ -207,32 +191,34 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('/seer/persona/{id}',                [SeerController::class, 'ver_auxiliar'])->name('seer.estadistica_consultar');
     //Fin Seer
 
-    //Turnos
-        Route::get('/turnos/index',           [TurnosController::class, 'index'])->name('turnos.index');
-        Route::get('/turnos/index',           [TurnosController::class, 'index'])->name('turnos');
-        Route::get('/turnos/create',          [TurnosController::class, 'create'])->name('turnos.create');
-        Route::get('/turnos/activo/{id}',     [TurnosController::class, 'activo'])->name('turnos.activo');
-        Route::get('/turnos/noactivo/{id}',   [TurnosController::class, 'noactivo'])->name('turnos.noactivo');
-        Route::post('/turnos/store',          [TurnosController::class, 'store'])->name('turnos.store');
-        Route::get('/turnos/misturnos',       [TurnosController::class, 'misturnos'])->name('misturnos');
-        Route::get('/turnos/terminado/{id}',  [TurnosController::class, 'terminado'])->name('turnos.terminado');
-        Route::get('/turnos/turnos',          [TurnosController::class, 'turnos'])->name('turnos.listado');
-        Route::get('/turnos/estadistica',     [TurnosController::class, 'estadistica'])->name('turno_estadistica');
-        Route::post('/turnos/mostrar',        [TurnosController::class, 'mostrar'])->name('turnos_mostrar');
-        Route::get('/turnos/cambiar/{id}',    [TurnosController::class, 'cambiar'])->name('cambiar');
-        Route::get('/turnos/terminadoR/{id}', [TurnosController::class, 'terminado_confirmar'])->name('turnos.terminado_revisar');
-        Route::post('/turnos/edit',           [TurnosController::class, 'edit'])->name('turnos.edit');
-        Route::get('/turnos/cambio/{id}',     [TurnosController::class, 'cambio'])->name('turnos.cambioexcepcion');
-    //Fin de  turnos
 
-    //Segundo_encuentro
-        Route::get('/registro/index',           [RegistroController::class, 'index'])->name('registro');
-        Route::get('/registro/edit/{id}',       [RegistroController::class, 'edit'])->name('registro.edit');
-        Route::patch('/registro/update/{post}', [RegistroController::class, 'update'])->name('registro.update');
-        Route::get('/registro/create',          [RegistroController::class, 'create'])->name('registro.create');
-        Route::post('/registro/store',          [RegistroController::class, 'store'])->name('registro.store');
-    //FIN Segundo_encuentro
+    //Expedientes
+        Route::get('/expedientes/index',                        [ExpedienteController::class, 'index'])->name('expedientes.index');
+        Route::get('/expedientes/index',                        [ExpedienteController::class, 'index'])->name('expedientes');
+        Route::get('/expedientes/edit/{id}',                    [ExpedienteController::class, 'edit'])->name('expedientes.edit');
+        Route::get('/expedientes/doc/{id}',                     [ExpedienteController::class, 'documento'])->name('expedientes.documento');
+        Route::get('/expedientes/create',                       [ExpedienteController::class, 'create'])->name('expedientes.create');
+        Route::post('/expedientes/store',                       [ExpedienteController::class, 'store'])->name('expedientes.store');
+        Route::get('/expedientes/documentos/{id}',              [ExpedienteController::class, 'personas_documentos'])->name('expedientes.documentos');
+        Route::post('/expedientes/doc',                         [ExpedienteController::class, 'store_documento'])->name('subir_doc');
+        Route::delete('/expedientes/destroy/{id}',              [ExpedienteController::class, 'destroy'])->name('expedientes.delete');
+    //Fin de Expedientes
+
+    Route::get('/pdf/estadistica',  [PDFController::class, 'pdfEstadistica'])->name('PDFestaditica');
+    
+
+    Route::name('user-management.')->group(function () {
+        Route::resource('/user-management/users', UserManagementController::class);
+        Route::resource('/user-management/roles', RoleManagementController::class);
+        Route::resource('/user-management/permissions', PermissionManagementController::class);
+    });
 
 });
 
+Route::get('/error', function () {
+    abort(500);
+});
 
+Route::get('/auth/redirect/{provider}', [SocialiteController::class, 'redirect']);
+
+require __DIR__ . '/auth.php';

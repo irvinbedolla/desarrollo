@@ -76,9 +76,11 @@
                                                             <a class="btn btn-info" href="{{ route('poderes.edit', $persona->idAbogado)}}" onclick=editar_poder();>Editar</a>
                                                         @endcan
                                                         @can('borrar-abogado')
-                                                            {!! Form::open(['method'=>'DELETE', 'route'=> ['poderes.destroy', $persona->idAbogado], 'style'=>'display:inline']) !!}
-                                                                {!! Form::submit('Borrar', ['class'=> 'btn btn-danger', 'onclick' => 'editar_poder()']) !!}
-                                                            {!! Form::close() !!}
+                                                            <form method="POST" action="{{ route('poderes.destroy', $persona->idAbogado) }} ">
+                                                                @csrf
+                                                                <input type="hidden" name="_method" value="DELETE">
+                                                                <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
+                                                            </form>
                                                         @endcan
                                                     </td>
                                                     

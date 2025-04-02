@@ -30,12 +30,13 @@
                             @endif
 
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                            {!! Form::open(array('route'=>'usuarios.store', 'method'=>'POST', 'class' => 'needs-validation','novalidate')) !!}
+                            <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('usuarios.store')}}">
+                                @csrf
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Nombre</label>
-                                            {!! Form::text('name', null, array('class'=>'form-control', 'required')) !!}
+                                            <input type="text" class="form-control" name="name" required>
                                             <div class="invalid-feedback">
                                                 El nombre es obligatorio.
                                             </div>
@@ -45,7 +46,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="email">Email</label>
-                                            {!! Form::email('email', null, array('class'=>'form-control', 'required')) !!}
+                                            <input type="email" class="form-control" name="email" required>
                                             <div class="invalid-feedback">
                                                 El Email es obligatorio.
                                             </div>
@@ -55,7 +56,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="password">Password</label>
-                                            {!! Form::password('password', array('class'=>'form-control', 'required')) !!}
+                                            <input type="password" class="form-control" name="password" required>
                                             <div class="invalid-feedback">
                                                 La contraseña es obligatoria.
                                             </div>
@@ -65,7 +66,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="confirm-password">Confirmar Password</label>
-                                            {!! Form::password('confirm-password', array('class'=>'form-control', 'required')) !!}
+                                            <input type="password" class="form-control" name="confirm-password" required>
                                             <div class="invalid-feedback">
                                                 La contraseña es obligatoria.
                                             </div>
@@ -75,7 +76,11 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Roles</label>
-                                            {!! Form::select('roles[]', $roles,[], array('class'=>'form-control', 'required')) !!}
+                                            <select name="roles" class="form-control" required>
+                                                @foreach($roles as $rol)
+                                                    <option value="{{ $rol }}">{{ $rol }}</option>
+                                                @endforeach
+                                            </select>
                                             <div class="invalid-feedback">
                                                 Debes seleccionar un Rol.
                                             </div>
@@ -117,9 +122,7 @@
                                     </div>
                                     
                                 </div>
-                            {!! Form::close() !!}
-        
-
+                            </form>       
                         </div>
                     </div>
                 </div>

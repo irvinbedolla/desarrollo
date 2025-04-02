@@ -8,13 +8,13 @@
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
 
         <!-- Bootstrap 5.3.3 -->
-        <link href="../public/assets_seer/assets/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
        
         <!-- Ionicons -->
         <link href="//fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
-        <link href="../public/assets/css/@fortawesome/fontawesome-free/css/all.css" rel="stylesheet" type="text/css">
+        <link href="../public/assets/css/all.css" rel="stylesheet" type="text/css">
         <link href="../public/assets/css/iziToast.min.css" rel="stylesheet">
         <link href="../public/assets/css/sweetalert.css" rel="stylesheet" type="text/css"/>
         <link href="../public/assets/css/select2.min.css" rel="stylesheet" type="text/css"/>
@@ -87,7 +87,7 @@
     </head>
     <body>
         <!-- Formulario -->
-        {!! Form::open(array('route'=>'RespuestasChat.store', 'method'=>'POST', 'files' => true, 'class' => 'needs-validation','novalidate')) !!}
+        <form class="needs-validation novalidate" method="POST" action="{{route('RespuestasChat.store')}}">
             @csrf
             <div class="chat-box" style="position: relative; top:50px; right:0px; left:0px;">
                 <h1>Asistente Centro de Conciliación</h1>
@@ -136,7 +136,6 @@
                     </button>     
                 </div>
             </div>
-        {!! Form::close() !!}
-       
+        </form>
     </body>
 </html>

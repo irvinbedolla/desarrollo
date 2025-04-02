@@ -36,6 +36,7 @@
                                                 <th style="color: #fff;">Citado</th>
                                                 <th style="color: #fff;">Detalles</th>
                                                 <th style="color: #fff;">Audiencia</th>
+                                                <th style="color: #fff;">Editar</th>
                                                 <th style="color: #fff;">Borrar</th>
 
                                             </thead>
@@ -52,9 +53,13 @@
                                                         </td>
                                                         <td><a class="btn btn-primary" href="{{ route('seer.estadistica_consultar', $persona->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
                                                         <td><a class="btn btn-primary" href="{{ route('create_persona_con', $persona->id) }}" onclick=consultar_estadistica();>Audiencia</a></td>
-                                                        <td>{!! Form::open(['method'=>'DELETE', 'route'=> ['seer.delete', $persona->id], 'style'=>'display:inline']) !!}
-                                                                {!! Form::submit('Borrar', ['class'=> 'btn btn-danger', 'onclick' => 'consultar_estadistica()']) !!}
-                                                            {!! Form::close() !!}
+                                                        <td><a class="btn btn-info"    href="{{ route('edit_persona', $persona->id) }}" onclick=consultar_estadistica();>Editar</a></td>
+                                                        <td>
+                                                            <form method="POST" action="{{ route('seer.delete', $persona->id) }} ">
+                                                            @csrf
+                                                                <input type="hidden" name="_method" value="DELETE">
+                                                                <button class="btn btn-danger" onclick=consultar_estadistica(); type="submit">Eliminar</button>
+                                                            </form>
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -258,7 +263,7 @@
         </div>
         
 @section('scripts')
-    <script src="../public/js/estadistica/estadistica.js"></script>
+    <script src="../public/assets/js/estadistica/estadistica.js"></script>
 @endsection
         
     </section>

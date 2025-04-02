@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
+use App\Core\KTBootstrap;
+use Illuminate\Database\Schema\Builder;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,7 +25,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Schema::defaultStringLength(191);
-        Paginator::useBootstrap();
+        // Update defaultStringLength
+        //TrimStrings::except(['content']);
+        Builder::defaultStringLength(191);
+        KTBootstrap::init();
     }
 }

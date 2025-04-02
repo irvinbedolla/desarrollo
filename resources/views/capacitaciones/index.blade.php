@@ -41,9 +41,11 @@
                                                     <td><a class="btn btn-success" href="{{ route('capacitaciones.calificaciones', $capacitacion->id)}}" onclick=nuevo_estadistica();>Consultar</a></td>
                                                     <td>{{$capacitacion->inicio}} : {{$capacitacion->fin}}</td>
                                                     <td>
-                                                        {!! Form::open(['method'=>'DELETE', 'route'=> ['capacitaciones.destroy', $capacitacion->id] , 'style'=>'display:inline']) !!}
-                                                            {!! Form::submit('Borrar', ['class'=> 'btn btn-danger']) !!}
-                                                        {!! Form::close() !!}
+                                                        <form method="POST" action="{{ route('capacitaciones.destroy', $capacitacion->id) }} ">
+                                                            @csrf
+                                                            <input type="hidden" name="_method" value="DELETE">
+                                                            <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
+                                                        </form>
                                                     </td>
                                                 </tr>
                                             @endforeach

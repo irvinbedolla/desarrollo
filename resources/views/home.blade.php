@@ -150,14 +150,11 @@
 
 
 @section('scripts')
-    <script src="public/js/general/menu.js"></script>
+    <script src="public/assets/js/general/menu.js"></script>
 @endsection
 
-@include('profile.change_password')
-@include('profile.edit_profile')
 
 </body>
-
 
 
     <script src="public/assets/js/jquery.min.js"></script>

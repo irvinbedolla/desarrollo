@@ -32,7 +32,8 @@
                             @can('crear-seer')
                                 @if($userRole[0] == "Auxiliar")
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                    {!! Form::open(array('route'=>'seer.auxiliar_persona', 'method'=>'POST', 'class' => 'needs-validation','novalidate')) !!}
+                                    <form method="POST" action="{{ route('seer.auxiliar_persona') }}" class="needs-validation novalidate">
+                                        @csrf
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
@@ -188,7 +189,7 @@
                                             </div>
                                             
                                         </div>
-                                    {!! Form::close() !!}
+                                    </form>
                                 @endif
                             @endcan
 
@@ -259,6 +260,6 @@
         });
     });
 </script>
-    <script src="../public/js/estadistica/estadistica.js"></script>
+    <script src="../public/assets/js/estadistica/estadistica.js"></script>
 @endsection
 
