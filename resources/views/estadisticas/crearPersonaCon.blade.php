@@ -32,38 +32,90 @@
                             @can('crear-seer')
                                 @if($userRole[0] == "Auxiliar" || $userRole[0] == "Conciliador")
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                    {!! Form::open(array('route'=>'seer.conciliador_persona', 'method'=>'POST', 'class' => 'needs-validation','novalidate')) !!}
+                                    <form method="POST" action="{{ route('seer.conciliador_persona') }}" class="needs-validation novalidate">
+                                        @csrf
                                         <div class="row">
                                             <input type="hidden" name="id" value="<?=$general["id"]?>">
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Número unico de identificación</label>
-                                                    <input type="text" class="form-control" value="<?=$general["NUE"];?>" readonly >
+                                                    <input type="text" class="form-control" name="NUE" minlength="18" maxlength="18"  oninput="this.value = this.value.toUpperCase()" value="<?=$general["NUE"];?>" >
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
                                                     <label for="email">Solicitante</label>
-                                                    <input type="text" class="form-control" value="<?=$general["solicitante"];?>" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="password">Estado del solicitante</label>
-                                                    <input type="text" class="form-control" value="<?=$estado_solicitante["nombre"];?>" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="password">Municipio del solicitante</label>
-                                                    <input type="text" class="form-control" value="<?=$mun_solicitante["nombre"];?>" readonly>
+                                                    <input type="text" class="form-control" name="solicitante" oninput="this.value = this.value.toUpperCase()" value="<?=$general["solicitante"];?>" >
                                                 </div>
                                             </div>
                                             
-                                            <div class="col-xs-12 col-sm-6 col-md-3">
+                                            <div class="col-xs-12 col-sm-6 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="password">Estado del solicitante</label>
+                                                    <select id="estado_solicitante" class="form-control" name="estado_solicitante" required>
+                                                        <option value="">Seleccione</option>
+                                                        @foreach($estados as $est)
+                                                            <option value="{{$est->id}}"  @php if($est->id === $general->estado_solicitante) echo "selected"  @endphp  >{{$est['nombre']}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El Estado es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-xs-12 col-sm-6 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="password">Municipio del solicitante</label>
+                                                    <select id="municipio_solicitante" name="mun_solicitante" class="form-control" required>
+                                                        @foreach($municipios as $mun)
+                                                            <option value="{{$mun->id}}"  @php if($mun->id === $general->mun_solicitante) echo "selected"  @endphp  >{{$mun['nombre']}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El Municipio es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
                                                     <label for="confirm-password">Notificación</label>
-                                                    <input type="text" class="form-control" value="<?=$auxiliar["notificacion"];?>" readonly>
+                                                    <input type="text" class="form-control" value="<?=$auxiliar["notificacion"];?>" >
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-6 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="confirm-password">Motivo Solicitud</label>
+                                                    <select class="form-control" name="motivo" required>
+                                                        <option value="">Seleccione</option>
+                                                        <option value="Despido" @php if($auxiliar->motivo === "Despido") echo "selected"  @endphp >Despido</option>
+                                                        <option value="Pago de prestaciones" @php if($auxiliar->motivo === "Pago de prestaciones") echo "selected"  @endphp>Pago de prestaciones</option>
+                                                        <option value="Recision de la relación laboral" @php if($auxiliar->motivo === "Recision de la relación laboral") echo "selected"  @endphp>Recision de la relación laboral</option>
+                                                        <option value="Derecho de preferencia" @php if($auxiliar->motivo === "Derecho de preferencia") echo "selected"  @endphp>Derecho de preferencia</option>
+                                                        <option value="Derecho de antiguedad" @php if($auxiliar->motivo === "Derecho de antiguedad") echo "selected"  @endphp>Derecho de antiguedad</option>
+                                                        <option value="Derecho de ascesnso" @php if($auxiliar->motivo === "Derecho de ascesnso") echo "selected"  @endphp>Derecho de ascesnso</option>
+                                                        <option value="Terminación voluntaria de relación laboral" @php if($auxiliar->motivo === "Terminación voluntaria de relación laboral") echo "selected"  @endphp>Terminación voluntaria de relación laboral</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El motivo es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-6 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="confirm-password">Notificación</label>
+                                                    <select class="form-control" name="notificacion" required>
+                                                        <option value="">Seleccione</option>
+                                                        <option value="Trabajador" @php if($auxiliar->notificacion === "Trabajador") echo "selected"  @endphp>Por el trabajador</option>
+                                                        <option value="Centro" @php if($auxiliar->notificacion === "Centro") echo "selected"  @endphp>Por el centro</option>
+                                                        <option value="Ambos" @php if($auxiliar->notificacion === "Ambos") echo "selected"  @endphp>Ambos</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo es obligatorio.
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -77,13 +129,13 @@
                                                     <div class="col-xs-12 col-sm-6 col-md-6">
                                                         <div class="form-group">
                                                             <label for="confirm-password">Citado</label>
-                                                            <input type="text" class="form-control" name="citado" value="<?=$citado["citado"];?>">
+                                                            <input type="text" class="form-control" name="citado[]" value="<?=$citado["citado"];?>">
                                                         </div>
                                                     </div>
                                                     <div class="col-xs-12 col-sm-6 col-md-6">
                                                         <div class="form-group">
                                                             <label for="password">Dirección</label>
-                                                            <input type="text" class="form-control" value="<?=$citado["direccion"];?>" readonly>   
+                                                            <input type="text" class="form-control" name="direccion[]" value="<?=$citado["direccion"];?>" >   
                                                         </div>
                                                     </div>
                                                 @endforeach
@@ -171,7 +223,7 @@
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
                                                     <label for="email">Folio de la audiencia</label>
-                                                    <input type="text" class="form-control" name="numero_audiencia" required>
+                                                    <input type="text" class="form-control" name="numero_audiencia" >
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
@@ -294,7 +346,7 @@
                                             </div>
                                                 
                                         </div>
-                                    {!! Form::close() !!}
+                                    </form>
                                 @endif
                             @endcan
 

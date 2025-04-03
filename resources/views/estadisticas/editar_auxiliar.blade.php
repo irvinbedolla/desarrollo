@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app_editar')
 
 @section('content')
     <section class="section">
@@ -32,8 +32,9 @@
                             @can('crear-seer')
                                 @if($userRole[0] == "Auxiliar")
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                    <form method="POST" action="{{ route('seer.auxiliar_persona') }}" class="needs-validation novalidate">
+                                    <form method="POST" action="{{ route('update_auxiliar') }}" class="needs-validation novalidate">
                                         @csrf
+                                        <input type="hidden" name="id" value="{{ $general->id }}">
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
@@ -48,14 +49,14 @@
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
                                                     <label for="confirm-password">Fecha de confirmación de la solicitud</label>
-                                                    <input type="date" class="form-control" name="fecha_confirmacion" required>
+                                                    <input type="date" class="form-control" name="fecha_confirmacion" required value="{{ $general->fecha_confirmacion }}">
                                                 </div>
                                             </div>
 
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
                                                     <label for="email">Solicitante</label>
-                                                    <input type="text" class="form-control" name="solicitante"  oninput="this.value = this.value.toUpperCase()" required>
+                                                    <input type="text" class="form-control" name="solicitante"  oninput="this.value = this.value.toUpperCase()" required value="{{ $general->solicitante }}">
                                                     <div class="invalid-feedback">
                                                         El Solicitante es obligatorio.
                                                     </div>
@@ -65,7 +66,7 @@
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
                                                     <label for="email">Actividad economica</label>
-                                                    <input type="text" class="form-control" name="actividad_economica"  oninput="this.value = this.value.toUpperCase()" required>
+                                                    <input type="text" class="form-control" name="actividad_economica"  oninput="this.value = this.value.toUpperCase()" required value="{{ $auxiliar->actividad_economica }}">
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
@@ -77,8 +78,8 @@
                                                     <label for="confirm-password">Sexo</label>
                                                     <select class="form-control" name="sexo" required>
                                                         <option value="">Seleccione</option>
-                                                        <option value="H">Hombre</option>
-                                                        <option value="M">Mujer</option>
+                                                        <option value="H" @php if($auxiliar->sexo === "H") echo "selected"  @endphp >Hombre</option>
+                                                        <option value="M" @php if($auxiliar->sexo === "M") echo "selected"  @endphp >Mujer</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         Debes seleccionar al menos un Sexo.
@@ -92,7 +93,7 @@
                                                     <select id="estado_solicitante" class="form-control" name="estado_solicitante" required>
                                                         <option value="">Seleccione</option>
                                                         @foreach($estados as $est)
-                                                            <option value="{{$est['id']}}">{{$est['nombre']}}</option>
+                                                            <option value="{{$est->id}}"  @php if($est->id === $general->estado_solicitante) echo "selected"  @endphp  >{{$est['nombre']}}</option>
                                                         @endforeach
                                                     </select>
                                                     <div class="invalid-feedback">
@@ -104,8 +105,10 @@
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
                                                     <label for="password">Municipio del solicitante</label>
-                                                    <select id="municipio_solicitante" name="mun_solicitante" class="form-control" disabled>
-                                                        <option value=""> --Primero selecciona un estado --</option>
+                                                    <select id="municipio_solicitante" name="mun_solicitante" class="form-control" required>
+                                                        @foreach($municipios as $mun)
+                                                            <option value="{{$mun->id}}"  @php if($mun->id === $general->mun_solicitante) echo "selected"  @endphp  >{{$mun['nombre']}}</option>
+                                                        @endforeach
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El Municipio es obligatorio.
@@ -119,14 +122,33 @@
                                                     <h4 class="text-center">Citado</h4>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-2"><BR>
+
+                                            @foreach($citados as $citado)
+                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="confirm-password">Citado</label>
+                                                        <input type="text" class="form-control" name="citado[]" value="<?=$citado["nombre"];?>">
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="password">Dirección</label>
+                                                        <input type="text" class="form-control" name="direccion[]" value="<?=$citado["direccion"];?>">   
+                                                    </div>
+                                                </div>
+                                            @endforeach
+
+                                            <div class="col-xs-12 col-sm-12 col-md-2"><BR>
                                                 <button id="addRow" type="button" class="btn btn-info">Agregar Citado</button>
+                                                <div id="newRow" ></div>
                                             </div>
                                            
 
-                                            <div id="newRow" ></div>
+                                            
+
 
                                             
+
                                             
                                             
                                             <div class="col-xs-12 col-sm-12 col-md-12">
@@ -140,13 +162,13 @@
                                                     <label for="confirm-password">Motivo Solicitud</label>
                                                     <select class="form-control" name="motivo" required>
                                                         <option value="">Seleccione</option>
-                                                        <option value="Despido">Despido</option>
-                                                        <option value="Pago de prestaciones">Pago de prestaciones</option>
-                                                        <option value="Recision de la relación laboral">Recision de la relación laboral</option>
-                                                        <option value="Derecho de preferencia">Derecho de preferencia</option>
-                                                        <option value="Derecho de antiguedad">Derecho de antiguedad</option>
-                                                        <option value="Derecho de ascesnso">Derecho de ascesnso</option>
-                                                        <option value="Terminación voluntaria de relación laboral">Terminación voluntaria de relación laboral</option>
+                                                        <option value="Despido" @php if($auxiliar->motivo === "Despido") echo "selected"  @endphp >Despido</option>
+                                                        <option value="Pago de prestaciones" @php if($auxiliar->motivo === "Pago de prestaciones") echo "selected"  @endphp>Pago de prestaciones</option>
+                                                        <option value="Recision de la relación laboral" @php if($auxiliar->motivo === "Recision de la relación laboral") echo "selected"  @endphp>Recision de la relación laboral</option>
+                                                        <option value="Derecho de preferencia" @php if($auxiliar->motivo === "Derecho de preferencia") echo "selected"  @endphp>Derecho de preferencia</option>
+                                                        <option value="Derecho de antiguedad" @php if($auxiliar->motivo === "Derecho de antiguedad") echo "selected"  @endphp>Derecho de antiguedad</option>
+                                                        <option value="Derecho de ascesnso" @php if($auxiliar->motivo === "Derecho de ascesnso") echo "selected"  @endphp>Derecho de ascesnso</option>
+                                                        <option value="Terminación voluntaria de relación laboral" @php if($auxiliar->motivo === "Terminación voluntaria de relación laboral") echo "selected"  @endphp>Terminación voluntaria de relación laboral</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El motivo es obligatorio.
@@ -159,9 +181,9 @@
                                                     <label for="confirm-password">Notificación</label>
                                                     <select class="form-control" name="notificacion" required>
                                                         <option value="">Seleccione</option>
-                                                        <option value="Trabajador">Por el trabajador</option>
-                                                        <option value="Centro">Por el centro</option>
-                                                        <option value="Ambos">Ambos</option>
+                                                        <option value="Trabajador" @php if($auxiliar->notificacion === "Trabajador") echo "selected"  @endphp>Por el trabajador</option>
+                                                        <option value="Centro" @php if($auxiliar->notificacion === "Centro") echo "selected"  @endphp>Por el centro</option>
+                                                        <option value="Ambos" @php if($auxiliar->notificacion === "Ambos") echo "selected"  @endphp>Ambos</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
@@ -175,7 +197,7 @@
                                                     <select class="form-control" name="conciliador_id" required>
                                                         <option value="">Seleccione</option>
                                                         @foreach($conciliadores as $con)
-                                                            <option value="{{$con['id']}}">{{$con['name']}}</option>
+                                                            <option value="{{$con['id']}}" @php if($conciliador->id === $con->id) echo "selected"  @endphp>{{$con['name']}}</option>
                                                         @endforeach
                                                     </select>
                                                     <div class="invalid-feedback">
@@ -215,17 +237,17 @@
         // agregar registro
         $("#addRow").click(function () {
             var html = '';
-            html += '<div id="inputFormRow">';
+            html += '<div id="inputFormRow" class="row">';
 
                 //NOMBRE CITADO
-                html +='<div class="col-xs-12 col-sm-6 col-md-6">';
+                html +='<div class="col-xs-12 col-sm-12 col-md-12">';
                 html +='<div class="form-group">';
                 html +='<label for="confirm-password">Citado</label>';
                 html +='<input type="text" class="form-control" name="citado[]"  oninput="this.value = this.value.toUpperCase()" required>';
                 html +='</div> </div>';                                
                 
                 //DIRECCION
-                html += '<div class="col-xs-12 col-sm-12 col-md-6">';
+                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                 html += '<div class="form-group">';
                 html += '<label for="password">Dirección del citado</label>';
                 html +='<input type="text" class="form-control" name="direccion[]"  oninput="this.value = this.value.toUpperCase()" required>';
@@ -234,7 +256,7 @@
                 html += '</div> </div> </div>';
                 
                 //TIPO DE PERSONA
-                html +='<div class="col-xs-12 col-sm-6 col-md-6">';
+                html +='<div class="col-xs-12 col-sm-12 col-md-12">';
                 html +='<div class="form-group">';
                 html +='<label for="confirm-password">Tipo persona</label>';
                 html +='<select class="form-control" name="tipo_persona[]" required>';

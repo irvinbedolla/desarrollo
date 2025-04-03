@@ -1201,11 +1201,17 @@ class SeerController extends Controller
 
         $estado_solicitante = Estados::find($general["estado_citado"]);
         $mun_solicitante    = Municipios::find($general["mun_citado"]);
+        $conciliador        = User::find($general["conciliador_id"]);
+        
+        $citados           = SeerCitados::where("id_solicitud",$id)->get();
+        $notificadores     = SeerCitados::where("id_solicitud",$id)
+        ->join("users","users.id","=","seer_citados.id_notificador")
+        ->select("users.name as notificador", "seer_citados.fecha", "seer_citados.nombre as citado","seer_citados.direccion","seer_citados.estatus")
+        ->get();
+        $audiencia          = SeerPerConciliador::where("id_solicitud",$id)->get();
+        $registro  = User::find($general["user_id"]);
 
-        $conciliador    = User::find($general["conciliador_id"]);
-        $citados = SeerCitados::where("id_solicitud",$id)->get();
-
-        return view('estadisticas.verPersonaAux', compact('userRole','general','auxiliar','estado_citado','mun_citado','estado_solicitante','mun_solicitante','conciliador','citados'));
+        return view('estadisticas.verPersonaAux', compact('userRole','general','auxiliar','estado_citado','mun_citado','estado_solicitante','mun_solicitante','conciliador','citados','audiencia','notificadores','registro'));
     }
 
     public function conciliador_persona(Request $request){
@@ -1213,13 +1219,13 @@ class SeerController extends Controller
         $id = auth()->user()->id;
         $user = User::find($id);
         $fecha_actual = date('y-m-d');
+        $cont = count($data["citado"]);
 
         //Validar documentacion
         request()->validate([
             'id'                    => 'required|numeric',
             'citado'                => 'required',
             'actividad_economica'   => 'required',
-            'numero_audiencia'      => 'required',
             'numero_audiencias'     => 'required',
             'estatus'               => 'required|in:Conciliacion,No conciliacion,Regenerada,Archivada',
             'monto'                 => 'required|numeric',
@@ -1229,15 +1235,14 @@ class SeerController extends Controller
 
 
         if($data["estatus"] == "Conciliacion" || $data["estatus"] == "No conciliacion" || $data["estatus"] == "Archivada"){
-            $data_general = SeerPerGeneral::
-            where('id', $data["id"])
-            ->update(['validado_conciliador' => "Guardado"]);
+            SeerPerGeneral::where('id', $data["id"])
+            ->update(['NUE' => $data["NUE"], 'solicitante' => $data["solicitante"], 'estado_solicitante'  => $data["estado_solicitante"],
+            'mun_solicitante' => $data["mun_solicitante"], 'validado_conciliador' => "Guardado"]);
         }
 
-        $data_general = SeerPerAuxiliar::
-        where('id_solicitud', $data["id"])
-        ->update(['actividad_economica' => $data["actividad_economica"]]);
-
+        SeerPerAuxiliar::where('id_solicitud', $data["id"])
+        ->update(['actividad_economica' => $data["actividad_economica"], 'motivo' => $data["motivo"], 'notificacion' => $data["notificacion"]]);
+        
         $data_conciliador = [
             'id_solicitud'          => $data["id"],
             'numero_audiencia'      => $data["numero_audiencia"],
@@ -1263,6 +1268,21 @@ class SeerController extends Controller
             $data_conciliador["fecha_conclucion"] = $fecha_actual;
         }
         
+        SeerCitados::where('id_solicitud',$data["id"])->delete();
+
+        for($i = 0; $i < $cont; $i++) {
+            $data_citado = [
+                'id_solicitud'  => $data["id"],
+                'fecha'         => $fecha_actual,
+                'nombre'        => $data["citado"][$i],
+                'direccion'     => $data["direccion"][$i], 
+                'id_municipio'  => 0, 
+                'id_estado'     => 0,
+                'observaciones' => ''
+            ];
+            SeerCitados::create($data_citado);
+        }
+
         SeerPerConciliador::create($data_conciliador);  
 
         return redirect()->route('seer');
@@ -1279,16 +1299,20 @@ class SeerController extends Controller
 
         $citados = SeerCitados::
         where("seer_citados.id_solicitud",$id)
-        ->join("seer_general","seer_citados.id_solicitud", "=" , "seer_general.id")
+        //->join("seer_general","seer_citados.id_solicitud", "=" , "seer_general.id")
         ->select('seer_citados.nombre as citado', 'seer_citados.direccion')
-        ->groupBy("seer_citados.id")
+        //->groupBy("seer_citados.id")
         ->get();
 
+        //Voy a mandar todos las variables
+        $estados            = Estados::all();
+        $municipios         = Municipios::all();
         $estado_solicitante = Estados::find($general["estado_solicitante"]);
         $mun_solicitante    = Municipios::find($general["mun_solicitante"]);
         $conciliador        = User::find($general["conciliador_id"]);
+        
 
-        return view('estadisticas.crearPersonaCon', compact('userRole','general','auxiliar','citados','mun_solicitante','estado_solicitante','conciliador','audiencia'));
+        return view('estadisticas.crearPersonaCon', compact('userRole','general','auxiliar','citados','mun_solicitante','estado_solicitante','conciliador','audiencia','estados','municipios'));
     }
 
     public function ver_conciliador($id){
@@ -1526,11 +1550,11 @@ class SeerController extends Controller
     public function destroy($id)
     {
         //Borrar de la tabla Seer Auxiliares
-        $seer_general = SeerPerAuxiliar::where('id_solicitud',$id)->delete();
+        SeerPerAuxiliar::where('id_solicitud',$id)->delete();
         //Borrar de la tabla Seer Auxiliares
-        $seer_general = SeerCitados::where('id_solicitud',$id)->delete();
+        SeerCitados::where('id_solicitud',$id)->delete();
         //Borrar de la tabla Seer General
-        $seer_general = SeerPerGeneral::find($id)->delete();
+        SeerPerGeneral::find($id)->delete();
        
         return redirect()->route('seer');
     }
@@ -1540,59 +1564,78 @@ class SeerController extends Controller
     }
 
     public function editar_persona($id){
-        $id = auth()->user()->id;
-        $user = User::find($id);
+        $id_usurario = auth()->user()->id;
+        $user = User::find($id_usurario);
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
+        $relacionEloquent = "roles";
         
-        $general  = SeerPerGeneral::find($id);
-        $auxiliar = SeerPerAuxiliar::where("id_solicitud",$id)->first();
+        $general    = SeerPerGeneral::find($id);
+        //dd($general);
+        $auxiliar   = SeerPerAuxiliar::where("id_solicitud",$id)->first();
+        //dd($auxiliar);
+        $estados    = Estados::all();
+        $municipios = Municipios::all();
+        $citados    = SeerCitados::where("id_solicitud",$id)->get();
+        //dd($citados);
+        $conciliador= User::find($general["conciliador_id"]);
+        $conciliadores = User::whereHas($relacionEloquent, function ($query) {
+            return $query->where('name', '=', 'Conciliador');
+        })
+        ->where('delegacion', $user["delegacion"])
+        ->get();
         
-        $estado_citado = Estados::find($general["estado_solicitante"]);
-        $mun_citado    = Municipios::find($general["mun_solicitante"]);
-
-        $conciliador    = User::find($general["conciliador_id"]);
-        
-        return view('estadisticas.verPersonaAux', compact('general','auxiliar','estado_citado','mun_citado','conciliador'));  
+        return view('estadisticas.editar_auxiliar', compact('userRole','general','auxiliar','municipios','conciliador','estados','conciliadores','citados'));  
     }
 
-   /* public function update(Request $request,$id){
+   public function update_auxiliar(Request $request){
         $data = $request->all();
-        $persona = User::find($id);
+        $id_usuario = auth()->user()->id;
+        $user = User::find($id_usuario);
+        $fecha_actual = date('y-m-d');
+        $cont = count($data["citado"]);
 
+        //Validar documentacion
         request()->validate([
-            'NUE'                 => 'required',
-            'solicitante'         => 'required',
-            'actividad_economica' => 'required',
-            'estado_solicitante'  => 'required|digits:10',
-            'mun_solicitante'     => 'required',
-            'citado'              => 'required',
-            'estado_citado'       => 'required',
-            'municipio_citado'    => 'required',
-            'tipo_persona'        => 'required',
-            'motivo'              => 'required',
-            'notificacion'        => 'required',
-            'conciliador_id'      => 'required',
+            //General
+            'NUE'                   => 'required|min:18|max:18',
+            'solicitante'           => 'required',
+            'estado_solicitante'    => 'required|numeric',
+            'mun_solicitante'       => 'required|numeric',
+            'actividad_economica'   => 'required',
+            'conciliador_id'        => 'required|numeric',
+
+            //Auxiliares
+            'sexo'                  => 'required|in:H,M',
+            'motivo'                => 'required|in:Despido,Pago de prestaciones,Recision de la relación laboral,Derecho de preferencia,Derecho de antiguedad,Derecho de ascesnso,Terminación voluntaria de relación laboral',
+            'notificacion'          => 'required|in:Trabajador,Centro,Ambos',
+
         ], $data);
 
-        $data_update= array(
-            'NUE'                   => $data["NUE"],
-            'solicitante'           => $data["solicitante"],
-            'actividad_economica'   => $data["actividad_economica"], 
-            'estado_solicitante'    => $data["estado_solicitante"], 
-            'mun_solicitante'       => $data["mun_solicitante"],
-            'citado'                => $data["citado"],
-            'estado_citado'         => $data["estado_citado"],
-            'municipio_citado'      => $data["municipio_citado"],
-            'tipo_persona'          =>$data["tipo_persona"],
-            'motivo'                => $data["motivo"],
-            'notificacion'          => $data["notificacion"],
-            'conciliador_id'        => $data["conciliador_id"],
-        );
+        
 
+        SeerPerGeneral::where('id', $data["id"])
+        ->update(['fecha_confirmacion'   => $data["fecha_confirmacion"], 'NUE' => $data["NUE"], 'solicitante' => $data["solicitante"], 'estado_solicitante'  => $data["estado_solicitante"],
+        'mun_solicitante' => $data["mun_solicitante"], 'user_id' => $id_usuario, 'conciliador_id' => $data["conciliador_id"]]);
+        
+        SeerPerAuxiliar::where('id_solicitud', $data["id"])
+        ->update(['sexo' => $data["sexo"], 'actividad_economica' => $data["actividad_economica"], 'motivo' => $data["motivo"], 'notificacion' => $data["notificacion"]]);
 
-        $persona->update($data_update);
-        return redirect()->route('seer.estadistica_consultar');
-        //return redirect()->route('persona');
-    }*/
+        SeerCitados::where('id_solicitud',$data["id"])->delete();
+
+        for($i = 0; $i < $cont; $i++) {
+            $data_citado = [
+                'id_solicitud'  => $data["id"],
+                'fecha'         => $fecha_actual,
+                'nombre'        => $data["citado"][$i],
+                'direccion'     => $data["direccion"][$i], 
+                'id_municipio'  => 0, 
+                'id_estado'     => 0,
+                'observaciones' => ''
+            ];
+            SeerCitados::create($data_citado);
+        }
+        return redirect()->route('seer'); 
+    }
+
 }

@@ -33,7 +33,6 @@
                                                 <th style="color: #fff;">Fecha</th>
                                                 <th style="color: #fff;">Número unico de identificación</th>
                                                 <th style="color: #fff;">Solicitante</th>
-                                                <th style="color: #fff;">Citado</th>
                                                 <th style="color: #fff;">Detalles</th>
                                                 <th style="color: #fff;">Audiencia</th>
                                                 <th style="color: #fff;">Editar</th>
@@ -47,13 +46,17 @@
                                                         <td>{{$persona->fecha}}</td> 
                                                         <td>{{$persona->NUE}}</td>
                                                         <td>{{$persona->solicitante}}</td>
-                                                        <td>
-                                                            <button onclick="botonVerCitado(<?=$persona->id?>)"; type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_verCitados">
-                                                                Ver</button>
-                                                        </td>
+                                                        @if($persona->validado_conciliador == "Pendiente")
+                                                            <td><a class="btn btn-primary" href="{{ route('create_persona_con', $persona->id) }}" onclick=consultar_estadistica();>Audiencia</a></td>
+                                                        @else 
+                                                            <td>Guardada</td>
+                                                        @endif
                                                         <td><a class="btn btn-primary" href="{{ route('seer.estadistica_consultar', $persona->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
-                                                        <td><a class="btn btn-primary" href="{{ route('create_persona_con', $persona->id) }}" onclick=consultar_estadistica();>Audiencia</a></td>
-                                                        <td><a class="btn btn-info"    href="{{ route('edit_persona', $persona->id) }}" onclick=consultar_estadistica();>Editar</a></td>
+                                                        @if($persona->validado_conciliador == "Pendiente")
+                                                            <td><a class="btn btn-info"    href="{{ route('edit_persona', $persona->id) }}" onclick=consultar_estadistica();>Editar</a></td>
+                                                        @else 
+                                                            <td>Concluida</td>
+                                                        @endif
                                                         <td>
                                                             <form method="POST" action="{{ route('seer.delete', $persona->id) }} ">
                                                             @csrf
@@ -75,7 +78,7 @@
                                                 <th style="color: #fff;">Fecha</th>
                                                 <th style="color: #fff;">Número unico de identificación</th>
                                                 <th style="color: #fff;">Solicitante</th>
-                                                <th style="color: #fff;">Citado</th>
+                                                <th style="color: #fff;">Detalles</th>
                                                 <th style="color: #fff;">Estatus</th>
                                                 <th style="color: #fff;">Detalles</th>
                                             </thead>
@@ -86,10 +89,7 @@
                                                         <td>{{$persona->fecha}}</td>
                                                         <td>{{$persona->NUE}}</td>
                                                         <td>{{$persona->solicitante}}</td>
-                                                        <td>
-                                                            <button onclick="botonVerCitado(<?=$persona->id?>)"; type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_verCitados">
-                                                            Ver</button>
-                                                        </td>
+                                                        <td><a class="btn btn-primary" href="{{ route('seer.estadistica_consultar', $persona->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
                                                         <td>{{$persona->validado_conciliador}}</td>
                                                         @if($persona->validado_conciliador == "Pendiente")
                                                             <td><a class="btn btn-primary" href="{{ route('create_persona_con', $persona->id_solicitud) }}" onclick=consultar_estadistica();>Audiencia</a></td>
