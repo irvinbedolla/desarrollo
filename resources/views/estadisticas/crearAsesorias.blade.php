@@ -31,7 +31,8 @@
 
                             @can('crear-seer')
                                 <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                {!! Form::open(array('route'=>'seer.store_asesoria', 'method'=>'POST', 'class' => 'needs-validation','novalidate')) !!}
+                                <form method="POST" action="{{ route('seer.store_asesoria') }}" class="needs-validation novalidate">
+                                        @csrf
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-6 col-md-6">
                                             <div class="form-group">
@@ -60,7 +61,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <button type="submit" class="btn btn-primary">Guardar</button>
                                         </div>
-                                {!! Form::close() !!}
+                                </form>
                             @endcan
 
 
@@ -80,6 +81,6 @@
 
 
 @section('scripts')
-    <script src="../public/js/estadistica/estadistica.js"></script>
+    <script src="../public/assets/js/estadistica/estadistica.js"></script>
 @endsection
 

@@ -49,7 +49,10 @@ class SeerController extends Controller
         }
         //Si es otro usuario le va mostrar unicamente las del ese usuario
         else if($userRole[0] == "Auxiliar"){
-            $personas     = SeerPerGeneral::where('fecha', $fecha_actual)->where('user_id', $id)->get();
+            $personas     = SeerPerGeneral::where('fecha', $fecha_actual)->where('user_id', $id)
+            ->join('seer_auxiliares','seer_auxiliares.id_solicitud',"=",'seer_general.id')
+            ->select("seer_general.id","seer_general.fecha","seer_general.NUE","seer_general.solicitante","seer_auxiliares.tipo_solicitud","seer_general.validado_conciliador")
+            ->get();
             $estadisticas = SeerAuxiliares::where('fecha', $fecha_actual)->where('user_id', $id)->first();
             $asesorias    = SeerAsesoria::where('fecha', $fecha_actual)->where('id_usuario', $id)
             ->selectRaw('count(seer_asesorias.id) as total')
@@ -76,9 +79,11 @@ class SeerController extends Controller
             ->get();
 
             $estadisticas = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+            ->join('seer_auxiliares','seer_auxiliares.id_solicitud','=','seer_general.id')
             ->select('seer_citados.id','seer_general.NUE','seer_general.solicitante','seer_citados.nombre','seer_citados.direccion','seer_citados.estatus')
             ->where('seer_general.delegacion', $user["delegacion"])
             ->where('seer_citados.id_notificador', 0)
+            ->where('seer_auxiliares.notificacion',"!=", "Trabajador")
             ->get();
         }
 
@@ -1062,6 +1067,12 @@ class SeerController extends Controller
         $fecha_actual = date('y-m-d');
         $cont = count($data["citado"]);
 
+        //Validar el Numero de expediente
+        $nue = SeerPerGeneral::where("NUE",$data["NUE"])->first();
+        if($nue){
+            return back()->withErrors('El Numero de expediente '.$nue->NUE.' ya existe.');
+        }
+
         //Validar documentacion
         request()->validate([
             //General
@@ -1128,7 +1139,11 @@ class SeerController extends Controller
         $user = User::find($id);
         $fecha_actual = date('y-m-d');
         
-
+        //Validar el Numero de expediente
+        $nue = SeerPerGeneral::where("NUE",$data["NUE"])->first();
+        if($nue){
+            return back()->withErrors('El Numero de expediente '.$nue->NUE.' ya existe.');
+        }
         //Validar documentacion
         request()->validate([
             //General
@@ -1152,7 +1167,6 @@ class SeerController extends Controller
             'estado_solicitante'    => $data["estado_solicitante"],
             'mun_solicitante'       => $data["mun_solicitante"],
             'user_id'               => $id,
-            'conciliador_id'        => $data["conciliador_id"],
             'delegacion'            => $user["delegacion"],
         ];
 
@@ -1202,11 +1216,11 @@ class SeerController extends Controller
         $estado_solicitante = Estados::find($general["estado_citado"]);
         $mun_solicitante    = Municipios::find($general["mun_citado"]);
         $conciliador        = User::find($general["conciliador_id"]);
-        
+
         $citados           = SeerCitados::where("id_solicitud",$id)->get();
         $notificadores     = SeerCitados::where("id_solicitud",$id)
         ->join("users","users.id","=","seer_citados.id_notificador")
-        ->select("users.name as notificador", "seer_citados.fecha", "seer_citados.nombre as citado","seer_citados.direccion","seer_citados.estatus")
+        ->select("users.name as notificador", "seer_citados.created_at", "seer_citados.nombre as citado","seer_citados.direccion","seer_citados.estatus")
         ->get();
         $audiencia          = SeerPerConciliador::where("id_solicitud",$id)->get();
         $registro  = User::find($general["user_id"]);
@@ -1216,6 +1230,7 @@ class SeerController extends Controller
 
     public function conciliador_persona(Request $request){
         $data = $request->all();
+        
         $id = auth()->user()->id;
         $user = User::find($id);
         $fecha_actual = date('y-m-d');

@@ -30,7 +30,8 @@
 
 
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                            {!! Form::open(array('route'=>'expedientes.store', 'method'=>'POST', 'files' => true , 'class' => 'needs-validation','novalidate')) !!}
+                            <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('expedientes.store')}}">
+                                @csrf
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         *Los campos con (*) son obligatorios.
@@ -38,31 +39,31 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">*Nombre</label>
-                                            {!! Form::text('nombre', $usuario->name , array('class'=>'form-control', 'readonly')) !!}
+                                            <input type="text" name="nombre" class="form-control" value="{{ $usuario->name }}" readonly> 
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="email">*Email</label>
-                                            {!! Form::email('email', $usuario->email, array('class'=>'form-control', 'readonly')) !!}
+                                            <input type="text" name="email" class="form-control" value="{{ $usuario->email }}" readonly> 
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="password">*Cargo</label>
-                                            {!! Form::text('cargo', ($persona != null) ? $persona->cargo : null, array('class'=>'form-control', 'required')) !!}
+                                            <input type="text" name="cargo" class="form-control" value="{{ $persona->cargo }}" required> 
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="confirm-password">*Area de adscripción</label>
-                                            {!! Form::text('area_adcripcion', ($persona != null) ? $persona->area_adcripcion : null , array('class'=>'form-control', 'required')) !!}
+                                            <input type="text" name="area_adcripcion" class="form-control" value="{{ $persona->area_adcripcion }}" required> 
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">*Telefono</label>
-                                            {!! Form::text('telefono', ($persona != null) ? $persona->telefono : null , array('class'=>'form-control', 'required', 'maxlength=10')) !!}
+                                            <input type="text" name="telefono" class="form-control" value="{{ $persona->telefono }}" maxlength=10 required> 
                                         </div>
                                     </div>
                                 </div>
@@ -73,9 +74,7 @@
                                     </div>
                                     
                                 </div>
-                            {!! Form::close() !!}
-        
-
+                            </form>
                         </div>
                     </div>
                 </div>

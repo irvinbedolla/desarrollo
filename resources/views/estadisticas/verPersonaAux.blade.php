@@ -101,32 +101,32 @@
                                             </div>
                                         </div>
 
-                                        @foreach($notificadores as $citado)
-                                            <div class="col-xs-12 col-sm-6 col-md-4">
+                                        @foreach($notificadores as $noti)
+                                            <div class="col-xs-12 col-sm-6 col-md-3">
                                                 <div class="form-group">
                                                     <label for="confirm-password">Notificó</label>
-                                                    <input type="text" class="form-control" value="<?=$citado["notificador"];?>" readonly>
+                                                    <input type="text" class="form-control" value="<?=$noti["notificador"];?>" readonly>
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-6 col-md-4">
+                                            <div class="col-xs-12 col-sm-6 col-md-3">
                                                 <div class="form-group">
                                                     <label for="confirm-password">Fecha</label>
-                                                    <input type="text" class="form-control" value="<?=$citado["fecha"];?>" readonly>
+                                                    <input type="text" class="form-control" value="<?=$noti["created_at"];?>" readonly>
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-6 col-md-4">
+                                            <div class="col-xs-12 col-sm-6 col-md-3">
                                                 <div class="form-group">
                                                     <label for="confirm-password">Citado</label>
-                                                    <input type="text" class="form-control" value="<?=$citado["citado"];?>" readonly>
+                                                    <input type="text" class="form-control" value="<?=$noti["citado"];?>" readonly>
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-6 col-md-4">
+                                            <div class="col-xs-12 col-sm-6 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="confirm-password">Citado</label>
-                                                    <input type="text" class="form-control" value="<?=$citado["estatus"];?>" readonly>
+                                                    <label for="confirm-password">Estatus</label>
+                                                    <input type="text" class="form-control" value="<?=$noti["estatus"];?>" readonly>
                                                 </div>
                                             </div>
                                         @endforeach

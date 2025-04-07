@@ -32,9 +32,11 @@
                                                     <td><a target="_blank" class="btn btn-info" href="../../storage/app/documentos_personal/{{$doc->id_usuario}}/{{$doc->documento}}">PDF</a></td>
                                                     @if($rol != "Capacitacion Admin")
                                                     <td>
-                                                        {!! Form::open(['method'=>'DELETE', 'route'=> ['expedientes.delete', $doc->id], 'style'=>'display:inline']) !!}
-                                                            {!! Form::submit('Borrar', ['class'=> 'btn btn-danger', 'onclick' => 'nuevo_estadistica()']) !!}
-                                                        {!! Form::close() !!}
+                                                        <form method="POST" action="{{ route('expedientes.delete', $doc->id) }} ">
+                                                            @csrf
+                                                            <input type="hidden" name="_method" value="DELETE">
+                                                            <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
+                                                        </form>
                                                     </td>
                                                     @endif
                                                 </tr>

@@ -80,13 +80,6 @@
                                             
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="confirm-password">Notificación</label>
-                                                    <input type="text" class="form-control" value="<?=$auxiliar["notificacion"];?>" >
-                                                </div>
-                                            </div>
-
-                                            <div class="col-xs-12 col-sm-6 col-md-4">
-                                                <div class="form-group">
                                                     <label for="confirm-password">Motivo Solicitud</label>
                                                     <select class="form-control" name="motivo" required>
                                                         <option value="">Seleccione</option>
@@ -103,6 +96,15 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            
+                                            <div class="col-xs-12 col-sm-6 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="confirm-password">Notificación</label>
+                                                    <input type="text" class="form-control" value="<?=$auxiliar["notificacion"];?>" >
+                                                </div>
+                                            </div>
+
+                                            
 
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">

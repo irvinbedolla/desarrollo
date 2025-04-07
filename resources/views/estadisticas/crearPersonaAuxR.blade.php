@@ -32,7 +32,8 @@
                             @can('crear-seer')
                                 @if($userRole[0] == "Auxiliar")
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                    {!! Form::open(array('route'=>'seer.auxiliar_personar', 'method'=>'POST', 'class' => 'needs-validation','novalidate')) !!}
+                                    <form method="POST" action="{{ route('seer.auxiliar_personar') }}" class="needs-validation novalidate">
+                                        @csrf
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
@@ -153,23 +154,8 @@
 
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="password">Conciliador</label>
-                                                    <select class="form-control" name="conciliador_id" required>
-                                                        <option value="">Seleccione</option>
-                                                        @foreach($conciliadores as $con)
-                                                            <option value="{{$con['id']}}">{{$con['name']}}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        El conciliador es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-xs-12 col-sm-6 col-md-4">
-                                                <div class="form-group">
                                                     <label for="confirm-password">Monto</label>
-                                                    <input type="number" class="form-control" name="monto" required>
+                                                    <input step="0.01" type="number" class="form-control" name="monto" required>
                                                     <div class="invalid-feedback">
                                                         El monto es obligatorio.
                                                     </div>
@@ -196,7 +182,7 @@
                                             </div>
                                             
                                         </div>
-                                    {!! Form::close() !!}
+                                    </form>
                                 @endif
                             @endcan
 
@@ -267,6 +253,6 @@
             });
         });
     </script>
-    <script src="../public/js/estadistica/estadistica.js"></script>
+    <script src="../public/assets/js/estadistica/estadistica.js"></script>
 @endsection
 

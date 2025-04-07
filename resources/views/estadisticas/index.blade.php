@@ -16,7 +16,6 @@
                                     <a class="btn btn-warning" href="{{ route('create_persona_ratificacion') }}"onclick=nuevo_estadistica();>Ratificación</a>
                                     <a class="btn btn-warning" href="{{ route('index_convenios') }}"            onclick=nuevo_estadistica();>Pagos</a>
                                     <a class="btn btn-warning" href="{{ route('create_asesoria') }}"            onclick=nuevo_estadistica();>Asesorias-{{$asesorias->total}}</a>
-                                    <a class="btn btn-warning" href="{{ route('persona.historial') }}"          onclick=nuevo_estadistica();>Historial</a>
                                 @endif
                                 @if($userRole[0] == "Conciliador")
                                     <a class="btn btn-warning" href="{{ route('index_convenios') }}"    onclick=nuevo_estadistica();>Pagos</a>
@@ -33,6 +32,7 @@
                                                 <th style="color: #fff;">Fecha</th>
                                                 <th style="color: #fff;">Número unico de identificación</th>
                                                 <th style="color: #fff;">Solicitante</th>
+                                                <th style="color: #fff;">Tipo</th>
                                                 <th style="color: #fff;">Detalles</th>
                                                 <th style="color: #fff;">Audiencia</th>
                                                 <th style="color: #fff;">Editar</th>
@@ -46,12 +46,13 @@
                                                         <td>{{$persona->fecha}}</td> 
                                                         <td>{{$persona->NUE}}</td>
                                                         <td>{{$persona->solicitante}}</td>
-                                                        @if($persona->validado_conciliador == "Pendiente")
+                                                        <td>{{$persona->tipo_solicitud}}</td>
+                                                        <td><a class="btn btn-primary" href="{{ route('seer.estadistica_consultar', $persona->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
+                                                        @if($persona->tipo_solicitud != "Ratificación")
                                                             <td><a class="btn btn-primary" href="{{ route('create_persona_con', $persona->id) }}" onclick=consultar_estadistica();>Audiencia</a></td>
                                                         @else 
-                                                            <td>Guardada</td>
+                                                            <td>Ratificación</td>
                                                         @endif
-                                                        <td><a class="btn btn-primary" href="{{ route('seer.estadistica_consultar', $persona->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
                                                         @if($persona->validado_conciliador == "Pendiente")
                                                             <td><a class="btn btn-info"    href="{{ route('edit_persona', $persona->id) }}" onclick=consultar_estadistica();>Editar</a></td>
                                                         @else 
@@ -80,7 +81,7 @@
                                                 <th style="color: #fff;">Solicitante</th>
                                                 <th style="color: #fff;">Detalles</th>
                                                 <th style="color: #fff;">Estatus</th>
-                                                <th style="color: #fff;">Detalles</th>
+                                                <th style="color: #fff;">Audiencia</th>
                                             </thead>
                                             <tbody>
                                                 @foreach($personas as $persona)
@@ -89,10 +90,10 @@
                                                         <td>{{$persona->fecha}}</td>
                                                         <td>{{$persona->NUE}}</td>
                                                         <td>{{$persona->solicitante}}</td>
-                                                        <td><a class="btn btn-primary" href="{{ route('seer.estadistica_consultar', $persona->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
+                                                        <td><a class="btn btn-primary" href="{{ route('seer.estadistica_consultar', $persona->id_solicitud) }}" onclick=consultar_estadistica();>Consultar</a></td>
                                                         <td>{{$persona->validado_conciliador}}</td>
                                                         @if($persona->validado_conciliador == "Pendiente")
-                                                            <td><a class="btn btn-primary" href="{{ route('create_persona_con', $persona->id_solicitud) }}" onclick=consultar_estadistica();>Audiencia</a></td>
+                                                            <td><a class="btn btn-primary" href="{{ route('create_persona_con', $persona->id_solicitud) }}" onclick=consultar_estadistica();>Atender</a></td>
                                                         @else 
                                                         <td><a class="btn btn-primary" data-toggle="modal" href="{{ route('persona_ver', $persona->id_solicitud) }}" onclick=consultar_estadistica();>Ver</a></td>
                                                         @endif
@@ -228,7 +229,8 @@
                                                         <td>{{$estadistica->direccion}}</td>
                                                         <td>{{$estadistica->estatus}}</td>
                                                         <td>
-                                                            {!! Form::open(array('route'=>'seer.store_enlace', 'method'=>'POST', 'class' => 'needs-validation','novalidate')) !!}
+                                                            <form method="POST" action="{{ route('seer.store_enlace') }}" class="needs-validation novalidate">
+                                                                @csrf
                                                                 <input type="hidden" name="id" value="{{$estadistica->id}}">
                                                                 <select class="form-control" name="notificador">
                                                                     <option value="">Seleccione</option>
@@ -239,7 +241,7 @@
                                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                                     <button type="submit" class="btn btn-primary">Asignar</button>
                                                                 </div>
-                                                            {!! Form::close() !!}
+                                                            </form>
                                                         </td>
                                                     </tr>
                                                 @endforeach

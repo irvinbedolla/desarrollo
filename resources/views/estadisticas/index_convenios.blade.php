@@ -58,5 +58,5 @@
 
 
 @section('scripts')
-    <script src="../public/js/estadistica/estadistica.js"></script>
+    <script src="../public/assets/js/estadistica/estadistica.js"></script>
 @endsection

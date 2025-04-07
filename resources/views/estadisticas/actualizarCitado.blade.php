@@ -30,7 +30,8 @@
                             @endif
 
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                            {!! Form::open(array('route'=>'seer.cambioEstatus', 'method'=>'POST', 'class' => 'needs-validation','novalidate')) !!}
+                            <form method="POST" action="{{ route('seer.cambioEstatus') }}" class="needs-validation novalidate">
+                                @csrf
                                 <input type="hidden" name="id" value="{{$id}}">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-6 col-md-4">
@@ -48,7 +49,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-4">
+                                    <div class="col-xs-12 col-sm-6 col-md-8">
                                         <div class="form-group">
                                             <label for="name">observaciones</label>
                                             <input type="text" class="form-control" name="observaciones">
@@ -59,7 +60,7 @@
                                         <button type="submit" class="btn btn-primary">Guardar</button>
                                     </div>
                                 </div>
-                            {!! Form::close() !!}    
+                            </form>
                         </div>
                     </div>
                 </div>

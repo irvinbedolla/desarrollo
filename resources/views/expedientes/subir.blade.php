@@ -30,13 +30,14 @@
 
 
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                            {!! Form::open(array('route'=>'subir_doc', 'method'=>'POST', 'files' => true , 'class' => 'needs-validation','novalidate')) !!}
+                            <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('subir_doc')}}" enctype='multipart/form-data'>
+                                @csrf
                                 <input type="hidden" name="id" value="<?=$id?>">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">*Nombre Documentos</label>
-                                            {!! Form::text('tilulo_universitario', ($persona != null) ? $persona->tilulo_universitario : null , array('class'=>'form-control')) !!}
+                                            <input type="text" name="tilulo_universitario" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
@@ -52,9 +53,7 @@
                                     </div>
                                     
                                 </div>
-                            {!! Form::close() !!}
-        
-
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -70,6 +69,6 @@
 
 
 @section('scripts')
-    <script src="../../public/js/estadistica/estadistica.js"></script>
+    <script src="../../public/assets/js/estadistica/estadistica.js"></script>
 @endsection
 
