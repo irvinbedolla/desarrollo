@@ -326,277 +326,322 @@ class SeerController extends Controller
 
     public function mostrar_reporte(Request $request){
         $data = $request->all();
-
         //Primero vamos a validar si el reporte sera cuanticativo o detallado
         //Validar documentacion
         request()->validate([
             //General
-            'tipo_reporte'  => 'required|in:Cuantificaciones,Detallado,Concentrado',
+            'tipo_reporte'  => 'required|in:UERSJL,Detallado,Concentrado',
         ], $data);
-        //Filtros
-            if(isset($data["sede"]))
-                $sede = $data["sede"];
-            else
-                $sede = "";
-            if(isset($data["conciliador"]))
-                $conciliador = $data["conciliador"];
-            else
-                $conciliador = "";
-            if(isset($data["auxiliar"]))
-                $auxiliar = $data["auxiliar"];
-            else
-                $auxiliar = "";
-            if(isset($data["notificador"]))
-                $notificador = $data["notificador"];
-            else
-                $notificador = "";
-            if(isset($data["tipo_audiencia"]))
-                $tipo_audiencia = $data["tipo_audiencia"];
-            else
-                $tipo_audiencia = "";
-            if(isset($data["sexo"]))
-                $sexo = $data["sexo"];
-            else
-                $sexo = "";
-            if(isset($data["tipo_solicitud"]))
-                $tipo_solicitud = $data["tipo_solicitud"];
-            else
-                $tipo_solicitud = "";
-            if(isset($data["estado_solicitante"]))
-                $estado_solicitante = $data["estado_solicitante"];
-            else
-                $estado_solicitante = "";
-            if(isset($data["mun_solicitante"]))
-                $mun_solicitante = $data["mun_solicitante"];
-            else
-                $mun_solicitante = "";
-            if(isset($data["centro"]))
-                $centro = $data["centro"];
-            else
-                $centro = "";
-            if(isset($data["motivo"]))
-                $motivo = $data["motivo"];
-            else
-                $motivo = "";
-            if(isset($data["estatus"]))
-                $estatus = $data["estatus"];
-            else
-                $estatus = "";
-            if(isset($data["tipo_persona"]))
-                $tipo_persona = $data["tipo_persona"];
-            else
-                $tipo_persona = "";
-            if(isset($data["NUE"]))
-                $NUE = $data["NUE"];
-            else
-                $NUE = "";
-            if(isset($data["fecha_inicial"]))
-                $fecha_inicial = $data["fecha_inicial"];
-            else
-                $fecha_inicial = "";
-            if(isset($data["fecha_final"]))
-                $fecha_final = $data["fecha_final"];
-            else
-                $fecha_final = "";
-            if(isset($data["nuc"]))
-                $nue = $data["nuc"];
-            else
-                $nue = "";
-            if(isset($data["estado_citado"]))
-                $estado_citado = $data["estado_citado"];
-            else
-                $estado_citado = "";
-            if(isset($data["mun_citado"]))
-                $mun_citado = $data["mun_citado"];
-            else
-                $mun_citado = "";
-        //Filtros end
+
+        if(isset($data["sede"]))
+            $sede = $data["sede"];
+        else
+            $sede = "";
+        $fecha_inicial = $data["fecha_inicial"];
+        $fecha_final   = $data["fecha_final"];
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        $relacionEloquent = "roles";
+
         //Primeramente reporte detallado
-        if($data["tipo_reporte"] == "Detallado"){
-            /*
-            //SOLICITUDES
-                $solicitudes = SeerPerGeneral::where("seer_general.fecha",">=",$data["fecha_inicial"])->where("seer_general.fecha","<=",$data["fecha_final"]);
-                $solicitudes = $solicitudes->join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id")
-                ->join("estados","estados.id","=","seer_general.estado_solicitante")
-                ->join("municipios","municipios.id","=","seer_general.mun_solicitante")
-                ->join("seer_citados","seer_citados.id_solicitud","=","seer_general.id")
-                ->join("seer_conciliadores","seer_conciliadores.id_solicitud","=","seer_general.id")
-                ->join("users","users.id","=","seer_general.user_id");
+        if($data["tipo_reporte"] == "UERSJL"){
+            //Tabla 1
+                $conciliadores = User::whereHas($relacionEloquent, function ($query) {
+                    return $query->where('name', '=', 'Conciliador');
+                })
+                ->where('delegacion', $user["delegacion"])
+                ->where('remember_token', "Hombres")
+                ->select(DB::raw('count(users.id) as hombres'))
+                ->first();
 
-                if($sede != ""){
-                    $solicitudes = $solicitudes->where("seer_general.delegacion", $sede);
-                }
-                if($tipo_persona != ""){
-                    $solicitudes = $solicitudes->where("seer_auxiliares.tipo_persona", $tipo_persona);
-                }
-                if($motivo != ""){
-                    $solicitudes = $solicitudes->where("seer_auxiliares.motivo", $motivo);
-                }
-                if($estatus != ""){
-                    $solicitudes = $solicitudes->where("seer_auxiliares.estatus", $estatus);
-                }
-                if($centro != ""){
-                    $solicitudes = $solicitudes->where("seer_auxiliares.notificacion", $centro);
-                }
-                if($auxiliar != ""){
-                    $solicitudes = $solicitudes->where("seer_general.user_id", $auxiliar);
-                }
-                if($notificador != ""){
-                    $solicitudes = $solicitudes->where("seer_general.user_id", $notificador);
-                }
-                if($sexo != ""){
-                    $solicitudes = $solicitudes->where("seer_auxiliares.sexo", $sexo);
-                }
-                if($estado_solicitante != ""){
-                    $solicitudes = $solicitudes->where("seer_general.estado_solicitante", $estado_solicitante);
-                }
-                if($mun_solicitante != ""){
-                    $solicitudes = $solicitudes->where("seer_general.mun_solicitante", $mun_solicitante);
-                }
-                if($nue != ""){
-                    $solicitudes = $solicitudes->where("seer_general.NUE", $nue);
-                }
-                $solicitudes = $solicitudes->select("seer_general.id","seer_general.fecha_confirmacion","seer_general.fecha_confirmacion",
-                "seer_general.NUE","seer_general.solicitante","seer_auxiliares.actividad_economica",
-                "estados.nombre as estado","municipios.nombre as municipio",
-                "seer_citados.nombre as citado","seer_citados.direccion","seer_auxiliares.sexo",
-                "seer_conciliadores.fecha_conclucion",
-                "seer_auxiliares.tipo_persona","seer_auxiliares.motivo",
-                "seer_auxiliares.notificacion","users.name as usuario")
-                ->where("seer_auxiliares.tipo_solicitud", "Solicitud")
-                ->distinct("seer_auxiliares.NUE")
-                ->get();
+                $conciliadoras = User::whereHas($relacionEloquent, function ($query) {
+                    return $query->where('name', '=', 'Conciliador');
+                })
+                ->where('delegacion', $user["delegacion"])
+                ->where('remember_token', "Mujer")
+                ->select(DB::raw('count(users.id) as mujeres'))
+                ->first();
+            //Tabla 2
+                $notificador = User::whereHas($relacionEloquent, function ($query) {
+                    return $query->where('name', '=', 'Notificador');
+                })
+                ->where('delegacion', $user["delegacion"])
+                ->where('remember_token', "Hombres")
+                ->select(DB::raw('count(users.id) as hombres'))
+                ->first();
 
-            //RATIFICACIONES
-                $ratificaciones  = SeerPerGeneral::where("seer_general.fecha",">=",$data["fecha_inicial"])->where("seer_general.fecha","<=",$data["fecha_final"])
-                ->join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id")
-                ->join("estados","estados.id","=","seer_general.estado_solicitante")
-                ->join("municipios","municipios.id","=","seer_general.mun_solicitante")
-                ->join("seer_citados","seer_citados.id_solicitud","=","seer_general.id")
-                //->join("estados as estado_citado","estado_citado.id","=","seer_general.estado_citado")
-                //->join("municipios as municipio_citado","municipio_citado.id","=","seer_general.mun_solicitante")
-                ->join("users","users.id","=","seer_general.user_id");
+                $notificadora = User::whereHas($relacionEloquent, function ($query) {
+                    return $query->where('name', '=', 'Notificador');
+                })
+                ->where('delegacion', $user["delegacion"])
+                ->where('remember_token', "Mujer")
+                ->select(DB::raw('count(users.id) as mujeres'))
+                ->first();
+            //ASESORIAS
+                $asesorias = SeerAsesoria::join("users","users.id","=","seer_asesorias.id_usuario");
                 if($fecha_inicial != ""){
-                    $ratificaciones = $ratificaciones->where("seer_general.fecha",">=",$fecha_inicial);
+                    $asesorias = $asesorias->where("fecha",">=",$fecha_inicial);
                 }   
                 if($fecha_final != ""){
-                    $ratificaciones = $ratificaciones->where("seer_general.fecha","<=",$fecha_final);
+                    $asesorias = $asesorias->where("fecha","<=",$data["fecha_final"]);
                 }
                 if($sede != ""){
-                    $ratificaciones = $ratificaciones->where("seer_general.delegacion", $sede);
+                    $asesorias = $asesorias->where("sede","=",$sede);
                 }
-                if($auxiliar != ""){
-                    $ratificaciones = $ratificaciones->where("seer_general.user_id", $auxiliar);
-                }
-                if($sexo != ""){
-                    $ratificaciones = $ratificaciones->where("seer_auxiliares.sexo", $sexo);
-                }
-                if($estado_solicitante != ""){
-                    $ratificaciones = $ratificaciones->where("seer_general.estado_solicitante", $estado_solicitante);
-                }
-                if($mun_solicitante != ""){
-                    $ratificaciones = $ratificaciones->where("seer_general.mun_solicitante", $mun_solicitante);
-                }
-                if($nue != ""){
-                    $ratificaciones = $ratificaciones->where("seer_general.NUE", $nue);
-                }
-                $ratificaciones = $ratificaciones->select("seer_general.id","seer_general.fecha","seer_general.fecha_confirmacion","seer_general.NUE","seer_general.solicitante",
-                "seer_auxiliares.actividad_economica","estados.nombre as estado","municipios.nombre as municipio",
-                //"estado_citado.nombre as estado_citado","municipio_citado.nombre as municipio_citado",
-                "seer_auxiliares.sexo","seer_auxiliares.tipo_persona","seer_auxiliares.motivo",
-                "seer_citados.nombre as citado","seer_citados.direccion",
-                "seer_auxiliares.monto","seer_auxiliares.estatus","users.name as usuario")
-                ->where("seer_auxiliares.tipo_solicitud", "Ratificación")
-                ->get();
-            //AUDIENCIA
-                $audiencia  = SeerPerGeneral::where("seer_general.fecha",">=",$data["fecha_inicial"])->where("seer_general.fecha","<=",$data["fecha_final"])
-                ->join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id")
-                ->join("seer_conciliadores","seer_conciliadores.id_solicitud","=","seer_general.id")
-                ->join("estados","estados.id","=","seer_general.estado_solicitante")
-                ->join("municipios","municipios.id","=","seer_general.mun_solicitante")
-                ->join("users","users.id","=","seer_general.user_id")
-                ->join("seer_citados","seer_citados.id_solicitud","=","seer_general.id");
-                if($fecha_inicial != ""){
-                    $audiencia = $audiencia->where("seer_general.fecha",">=",$fecha_inicial);
-                }   
-                if($fecha_final != ""){
-                    $audiencia = $audiencia->where("seer_general.fecha","<=",$fecha_final);
-                }
-                if($sede != ""){
-                    $audiencia = $audiencia->where("seer_general.delegacion", $sede);
-                }
-                if($conciliador != ""){
-                    $audiencia = $audiencia->where("seer_general.conciliador_id", $conciliador);
-                }
-                if($tipo_audiencia != ""){
-                    $audiencia = $audiencia->where("seer_conciliadores.estatus_conciliacion", $tipo_audiencia);
-                }
-                if($sexo != ""){
-                    $audiencia = $audiencia->where("seer_auxiliares.sexo", $sexo);
-                }
-                if($estado_solicitante != ""){
-                    $audiencia = $audiencia->where("seer_general.estado_solicitante", $estado_solicitante);
-                }
-                if($mun_solicitante != ""){
-                    $audiencia = $audiencia->where("seer_general.mun_solicitante", $mun_solicitante);
-                }
-                if($nue != ""){
-                    $audiencia = $audiencia->where("seer_general.NUE", $nue);
-                }
-                $audiencia = $audiencia->select("seer_general.id","seer_general.fecha","seer_general.NUE",
-                "seer_general.solicitante","seer_general.fecha_confirmacion",
-                "seer_citados.nombre as citado","seer_citados.direccion",
-                "seer_auxiliares.actividad_economica",
-                "seer_conciliadores.numero_audiencias","seer_conciliadores.estatus_conciliacion","seer_conciliadores.monto",
-                "seer_conciliadores.cumplimiento_pago","seer_conciliadores.fecha_conclucion",
-                "seer_conciliadores.observaciones","seer_conciliadores.multa","seer_conciliadores.tipo",
-                "estados.nombre as estado","municipios.nombre as municipio","users.name as usuario")
-                ->where("seer_auxiliares.tipo_solicitud", "Solicitud")
-                ->get();
-            //COLECTIVAS
-                $colectivas = SeerColectivas::where("fecha",">=",$data["fecha_inicial"])->where("fecha","<=",$data["fecha_final"])
-                ->join("users","users.id","=","seer_colectivas.conciliador");
-                if($fecha_inicial != ""){
-                    $colectivas = $colectivas->where("fecha",">=",$fecha_inicial);
-                }   
-                if($fecha_final != ""){
-                    $colectivas = $colectivas->where("fecha","<=",$data["fecha_final"]);
-                }
-                if($conciliador != ""){
-                    $colectivas = $colectivas->where("seer_colectivas.conciliador", $conciliador);
-                }
-                if($estado_solicitante != ""){
-                    $colectivas = $colectivas->where("seer_colectivas.estado_solicitante", $estado_solicitante);
-                }
-                if($nue != ""){
-                    $colectivas = $colectivas->where("seer_colectivas.NUE", $nue);
-                }
-                $colectivas = $colectivas->select("seer_colectivas.*","users.name as usuario")
-                ->get();
-            //CONVENIOS
-                $convenios = SeerConvenios::where("fecha",">=",$data["fecha_inicial"])->where("fecha","<=",$data["fecha_final"])
-                ->join("users","users.id","=","seer_convenios.user_id");
-                if($fecha_inicial != ""){
-                    $convenios = $convenios->where("fecha",">=",$fecha_inicial);
-                }   
-                if($fecha_final != ""){
-                    $convenios = $convenios->where("fecha","<=",$data["fecha_final"]);
-                }
-                if($conciliador != ""){
-                    $convenios = $convenios->where("seer_convenios.user_id", $conciliador);
-                }
-                if($estado_solicitante != ""){
-                    $convenios = $convenios->where("seer_convenios.estado_solicitante", $estado_solicitante);
-                }
-                if($nue != ""){
-                    $solicitudes = $solicitudes->where("seer_convenios.NUE", $nue);
-                }
-                $convenios = $convenios->select("seer_convenios.*","users.name as usuario")
-                ->get();
-                */
+                $asesorias = $asesorias->select(DB::raw('count(seer_asesorias.id) as asesorias'))
+                ->first();
+            //Tabla 4
+                //Despido
+                    $despido_h  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
+                    $despido_h = $despido_h->join("users","users.id","=","seer_general.user_id");
+                    if($fecha_inicial != ""){
+                        $despido_h = $despido_h->where("fecha",">=",$fecha_inicial);
+                    }   
+                    if($fecha_final != ""){
+                        $despido_h = $despido_h->where("fecha","<=",$fecha_final);
+                    }
+                    if($sede != ""){
+                        $despido_h = $despido_h->where("seer_general.delegacion", $sede);
+                    }
+                    $despido_h = $despido_h->where("seer_auxiliares.motivo", "Despido");
+                    $despido_h = $despido_h->where("seer_auxiliares.tipo_solicitud", "Solicitud");
+                    $despido_h = $despido_h->where("seer_auxiliares.sexo", "H")
+                    ->select(DB::raw('count(seer_general.id) as solicitudes'))
+                    ->first();
 
-                
-            return view('estadisticas.ver_reporte', compact('solicitudes','ratificaciones','audiencia','colectivas','convenios'));
+                    $despido_m  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
+                    $despido_m = $despido_m->join("users","users.id","=","seer_general.user_id");
+                    if($fecha_inicial != ""){
+                        $despido_m = $despido_m->where("fecha",">=",$fecha_inicial);
+                    }   
+                    if($fecha_final != ""){
+                        $despido_m = $despido_m->where("fecha","<=",$fecha_final);
+                    }
+                    if($sede != ""){
+                        $despido_m = $despido_m->where("seer_general.delegacion", $sede);
+                    }
+                    $despido_m = $despido_m->where("seer_auxiliares.motivo", "Despido");
+                    $despido_m = $despido_m->where("seer_auxiliares.tipo_solicitud", "Solicitud");
+                    $despido_m = $despido_m->where("seer_auxiliares.sexo", "M")
+                    ->select(DB::raw('count(seer_general.id) as solicitudes'))
+                    ->first();
+
+                //Recision de la relación laboral
+                    $prestaciones_h  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
+                    $prestaciones_h = $prestaciones_h->join("users","users.id","=","seer_general.user_id");
+                    if($fecha_inicial != ""){
+                        $prestaciones_h = $prestaciones_h->where("fecha",">=",$fecha_inicial);
+                    }   
+                    if($fecha_final != ""){
+                        $prestaciones_h = $prestaciones_h->where("fecha","<=",$fecha_final);
+                    }
+                    if($sede != ""){
+                        $prestaciones_h = $prestaciones_h->where("seer_general.delegacion", $sede);
+                    }
+                    $prestaciones_h = $prestaciones_h->where("seer_auxiliares.motivo", "Recision de la relación laboral");
+                    $prestaciones_h = $prestaciones_h->where("seer_auxiliares.tipo_solicitud", "Solicitud");
+                    $prestaciones_h = $prestaciones_h->where("seer_auxiliares.sexo", "H")
+                    ->select(DB::raw('count(seer_general.id) as solicitudes'))
+                    ->first();
+
+                    $prestaciones_m  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
+                    $prestaciones_m = $prestaciones_m->join("users","users.id","=","seer_general.user_id");
+                    if($fecha_inicial != ""){
+                        $prestaciones_m = $prestaciones_m->where("fecha",">=",$fecha_inicial);
+                    }   
+                    if($fecha_final != ""){
+                        $prestaciones_m = $prestaciones_m->where("fecha","<=",$fecha_final);
+                    }
+                    if($sede != ""){
+                        $prestaciones_m = $prestaciones_m->where("seer_general.delegacion", $sede);
+                    }
+                    $prestaciones_m = $prestaciones_m->where("seer_auxiliares.motivo", "Recision de la relación laboral");
+                    $prestaciones_m = $prestaciones_m->where("seer_auxiliares.tipo_solicitud", "Solicitud");
+                    $prestaciones_m = $prestaciones_m->where("seer_auxiliares.sexo", "M")
+                    ->select(DB::raw('count(seer_general.id) as solicitudes'))
+                    ->first();
+
+                //Derecho de preferencia
+                    $preferencia_h  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
+                    $preferencia_h = $preferencia_h->join("users","users.id","=","seer_general.user_id");
+                    if($fecha_inicial != ""){
+                        $preferencia_h = $preferencia_h->where("fecha",">=",$fecha_inicial);
+                    }   
+                    if($fecha_final != ""){
+                        $preferencia_h = $preferencia_h->where("fecha","<=",$fecha_final);
+                    }
+                    if($sede != ""){
+                        $preferencia_h = $preferencia_h->where("seer_general.delegacion", $sede);
+                    }
+                    $preferencia_h = $preferencia_h->where("seer_auxiliares.motivo", "Recision de la relación laboral");
+                    $preferencia_h = $preferencia_h->orWhere("seer_auxiliares.motivo", "Derecho de antiguedad");
+                    $preferencia_h = $preferencia_h->where("seer_auxiliares.tipo_solicitud", "Solicitud");
+                    $preferencia_h = $preferencia_h->where("seer_auxiliares.sexo", "H")
+                    ->select(DB::raw('count(seer_general.id) as solicitudes'))
+                    ->first();
+
+                    $preferencia_m  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
+                    $preferencia_m = $preferencia_m->join("users","users.id","=","seer_general.user_id");
+                    if($fecha_inicial != ""){
+                        $preferencia_m = $preferencia_m->where("fecha",">=",$fecha_inicial);
+                    }   
+                    if($fecha_final != ""){
+                        $preferencia_m = $preferencia_m->where("fecha","<=",$fecha_final);
+                    }
+                    if($sede != ""){
+                        $preferencia_m = $preferencia_m->where("seer_general.delegacion", $sede);
+                    }
+                    $preferencia_m = $preferencia_m->where("seer_auxiliares.motivo", "Recision de la relación laboral");
+                    $preferencia_m = $preferencia_m->orWhere("seer_auxiliares.motivo", "Derecho de antiguedad");
+                    $preferencia_m = $preferencia_m->where("seer_auxiliares.tipo_solicitud", "Solicitud");
+                    $preferencia_m = $preferencia_m->where("seer_auxiliares.sexo", "M")
+                    ->select(DB::raw('count(seer_general.id) as solicitudes'))
+                    ->first();
+
+                //Pago de prestaciones
+                    $recision_h  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
+                    $recision_h = $recision_h->join("users","users.id","=","seer_general.user_id");
+                    if($fecha_inicial != ""){
+                        $recision_h = $recision_h->where("fecha",">=",$fecha_inicial);
+                    }   
+                    if($fecha_final != ""){
+                        $recision_h = $recision_h->where("fecha","<=",$fecha_final);
+                    }
+                    if($sede != ""){
+                        $recision_h = $recision_h->where("seer_general.delegacion", $sede);
+                    }
+                    $recision_h = $recision_h->where("seer_auxiliares.motivo", "Pago de prestaciones");
+                    $recision_h = $recision_h->where("seer_auxiliares.tipo_solicitud", "Solicitud");
+                    $recision_h = $recision_h->where("seer_auxiliares.sexo", "H")
+                    ->select(DB::raw('count(seer_general.id) as solicitudes'))
+                    ->first();
+
+                    $recision_m  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
+                    $recision_m = $recision_m->join("users","users.id","=","seer_general.user_id");
+                    if($fecha_inicial != ""){
+                        $recision_m = $recision_m->where("fecha",">=",$fecha_inicial);
+                    }   
+                    if($fecha_final != ""){
+                        $recision_m = $recision_m->where("fecha","<=",$fecha_final);
+                    }
+                    if($sede != ""){
+                        $recision_m = $recision_m->where("seer_general.delegacion", $sede);
+                    }
+                    $recision_m = $recision_m->where("seer_auxiliares.motivo", "Pago de prestaciones");
+                    $recision_m = $recision_m->where("seer_auxiliares.tipo_solicitud", "Solicitud");
+                    $recision_m = $recision_m->where("seer_auxiliares.sexo", "M")
+                    ->select(DB::raw('count(seer_general.id) as solicitudes'))
+                    ->first();
+                //Terminacion voluntaria
+                    $terminacion_h  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
+                    $terminacion_h = $terminacion_h->join("users","users.id","=","seer_general.user_id");
+                    if($fecha_inicial != ""){
+                        $terminacion_h = $terminacion_h->where("fecha",">=",$fecha_inicial);
+                    }   
+                    if($fecha_final != ""){
+                        $terminacion_h = $terminacion_h->where("fecha","<=",$fecha_final);
+                    }
+                    if($sede != ""){
+                        $terminacion_h = $terminacion_h->where("seer_general.delegacion", $sede);
+                    }
+                    $terminacion_h = $terminacion_h->where("seer_auxiliares.motivo", "Terminación voluntaria de relación laboral");
+                    $terminacion_h = $terminacion_h->where("seer_auxiliares.tipo_solicitud", "Solicitud");
+                    $terminacion_h = $terminacion_h->where("seer_auxiliares.sexo", "H")
+                    ->select(DB::raw('count(seer_general.id) as solicitudes'))
+                    ->first();
+
+                    $terminacion_m  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
+                    $terminacion_m = $terminacion_m->join("users","users.id","=","seer_general.user_id");
+                    if($fecha_inicial != ""){
+                        $terminacion_m = $terminacion_m->where("fecha",">=",$fecha_inicial);
+                    }   
+                    if($fecha_final != ""){
+                        $terminacion_m = $terminacion_m->where("fecha","<=",$fecha_final);
+                    }
+                    if($sede != ""){
+                        $terminacion_m = $terminacion_m->where("seer_general.delegacion", $sede);
+                    }
+                    $terminacion_m = $terminacion_m->where("seer_auxiliares.motivo", "Terminación voluntaria de relación laboral");
+                    $terminacion_m = $terminacion_m->where("seer_auxiliares.tipo_solicitud", "Solicitud");
+                    $terminacion_m = $terminacion_m->where("seer_auxiliares.sexo", "M")
+                    ->select(DB::raw('count(seer_general.id) as solicitudes'))
+                    ->first();
+                //Supuestos
+                    $supuestos_h  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
+                    $supuestos_h = $supuestos_h->join("users","users.id","=","seer_general.user_id");
+                    if($fecha_inicial != ""){
+                        $supuestos_h = $supuestos_h->where("fecha",">=",$fecha_inicial);
+                    }   
+                    if($fecha_final != ""){
+                        $supuestos_h = $supuestos_h->where("fecha","<=",$fecha_final);
+                    }
+                    if($sede != ""){
+                        $supuestos_h = $supuestos_h->where("seer_general.delegacion", $sede);
+                    }
+                    $supuestos_h = $supuestos_h->where("seer_auxiliares.motivo", "Supuestos de Excepción 685-Ter LFT");
+                    $supuestos_h = $supuestos_h->where("seer_auxiliares.tipo_solicitud", "Solicitud");
+                    $supuestos_h = $supuestos_h->where("seer_auxiliares.sexo", "H")
+                    ->select(DB::raw('count(seer_general.id) as solicitudes'))
+                    ->first();
+
+
+                    $supuestos_m  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
+                    $supuestos_m = $supuestos_m->join("users","users.id","=","seer_general.user_id");
+                    if($fecha_inicial != ""){
+                        $supuestos_m = $supuestos_m->where("fecha",">=",$fecha_inicial);
+                    }   
+                    if($fecha_final != ""){
+                        $supuestos_m = $supuestos_m->where("fecha","<=",$fecha_final);
+                    }
+                    if($sede != ""){
+                        $supuestos_m = $supuestos_m->where("seer_general.delegacion", $sede);
+                    }
+                    $supuestos_m = $supuestos_m->where("seer_auxiliares.motivo", "Supuestos de Excepción 685-Ter LFT");
+                    $supuestos_m = $supuestos_m->where("seer_auxiliares.tipo_solicitud", "Solicitud");
+                    $supuestos_m = $supuestos_m->where("seer_auxiliares.sexo", "M")
+                    ->select(DB::raw('count(seer_general.id) as solicitudes'))
+                    ->first();
+                //Otros
+                    $otros_h  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
+                    $otros_h = $otros_h->join("users","users.id","=","seer_general.user_id");
+                    if($fecha_inicial != ""){
+                        $otros_h = $otros_h->where("fecha",">=",$fecha_inicial);
+                    }   
+                    if($fecha_final != ""){
+                        $otros_h = $otros_h->where("fecha","<=",$fecha_final);
+                    }
+                    if($sede != ""){
+                        $otros_h = $otros_h->where("seer_general.delegacion", $sede);
+                    }
+                    $otros_h = $otros_h->where("seer_auxiliares.motivo", "Otros");
+                    $otros_h = $otros_h->where("seer_auxiliares.tipo_solicitud", "Solicitud");
+                    $otros_h = $otros_h->where("seer_auxiliares.sexo", "H")
+                    ->select(DB::raw('count(seer_general.id) as solicitudes'))
+                    ->first();
+
+
+                    $otros_m  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
+                    $otros_m = $otros_m->join("users","users.id","=","seer_general.user_id");
+                    if($fecha_inicial != ""){
+                        $otros_m = $otros_m->where("fecha",">=",$fecha_inicial);
+                    }   
+                    if($fecha_final != ""){
+                        $otros_m = $otros_m->where("fecha","<=",$fecha_final);
+                    }
+                    if($sede != ""){
+                        $otros_m = $otros_m->where("seer_general.delegacion", $sede);
+                    }
+                    $otros_m = $otros_m->where("seer_auxiliares.motivo", "Otros");
+                    $otros_m = $otros_m->where("seer_auxiliares.tipo_solicitud", "Solicitud");
+                    $otros_m = $otros_m->where("seer_auxiliares.sexo", "M")
+                    ->select(DB::raw('count(seer_general.id) as solicitudes'))
+                    ->first();
+
+
+                $pdf = \PDF::loadView('PDF/reporte-UERSJL', compact('conciliadores','conciliadoras','notificador','notificadora','asesorias','despido_h','despido_m','prestaciones_h','prestaciones_m','recision_h',
+                'recision_m','preferencia_h','preferencia_m','terminacion_h','terminacion_m','supuestos_h','supuestos_m','otros_h','otros_m'));
+                return $pdf->stream('archivo.pdf');
+
         }
         else if($data["tipo_reporte"] == "Cuantificaciones"){
             //SOLICITUDES
@@ -1043,7 +1088,7 @@ class SeerController extends Controller
 
             //Auxiliares
             'sexo'                  => 'required|in:H,M',
-            'motivo'                => 'required|in:Despido,Pago de prestaciones,Recision de la relación laboral,Derecho de preferencia,Derecho de antiguedad,Derecho de ascesnso,Terminación voluntaria de relación laboral',
+            'motivo'                => 'required|in:Despido,Pago de prestaciones,Recision de la relación laboral,Derecho de preferencia,Derecho de antiguedad,Derecho de ascesnso,Terminación voluntaria de relación laboral|Supuestos de Excepción 685-Ter LFT|Otros',
             'notificacion'          => 'required|in:Trabajador,Centro,Ambos',
 
         ], $data);

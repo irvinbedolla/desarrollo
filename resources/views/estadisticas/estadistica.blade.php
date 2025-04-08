@@ -40,7 +40,7 @@
                                                 <label multiple for="name">Tipo de reporte</label>
                                                 <select id="reporte" class="form-control" name="tipo_reporte" required>
                                                     <option value="">Seleccione</option>
-                                                    <option value="Cuantificaciones">Resumido</option>
+                                                    <option value="UERSJL">UERSJL</option>
                                                     <option value="Detallado">Detallado</option>
                                                     <option value="Concentrado">Concentrado</option>
                                                 </select>

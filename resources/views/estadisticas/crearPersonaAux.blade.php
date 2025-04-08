@@ -147,6 +147,8 @@
                                                         <option value="Derecho de antiguedad">Derecho de antiguedad</option>
                                                         <option value="Derecho de ascesnso">Derecho de ascesnso</option>
                                                         <option value="Terminación voluntaria de relación laboral">Terminación voluntaria de relación laboral</option>
+                                                        <option value="Supuestos de Excepción 685-Ter LFT">Supuestos de Excepción 685-Ter LFT</option>
+                                                        <option value="Otros">Otros</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El motivo es obligatorio.

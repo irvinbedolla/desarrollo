@@ -48,7 +48,7 @@
                                                         <td>{{$persona->solicitante}}</td>
                                                         <td>{{$persona->tipo_solicitud}}</td>
                                                         <td><a class="btn btn-primary" href="{{ route('seer.estadistica_consultar', $persona->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
-                                                        @if($persona->tipo_solicitud != "Ratificación")
+                                                        @if($persona->validado_conciliador == "Pendiente")
                                                             <td><a class="btn btn-primary" href="{{ route('create_persona_con', $persona->id) }}" onclick=consultar_estadistica();>Audiencia</a></td>
                                                         @else 
                                                             <td>Ratificación</td>
@@ -59,11 +59,15 @@
                                                             <td>Concluida</td>
                                                         @endif
                                                         <td>
-                                                            <form method="POST" action="{{ route('seer.delete', $persona->id) }} ">
-                                                            @csrf
-                                                                <input type="hidden" name="_method" value="DELETE">
-                                                                <button class="btn btn-danger" onclick=consultar_estadistica(); type="submit">Eliminar</button>
-                                                            </form>
+                                                            @if($persona->validado_conciliador == "Pendiente")
+                                                                <form method="POST" action="{{ route('seer.delete', $persona->id) }} ">
+                                                                @csrf
+                                                                    <input type="hidden" name="_method" value="DELETE">
+                                                                    <button class="btn btn-danger" onclick=consultar_estadistica(); type="submit">Eliminar</button>
+                                                                </form>
+                                                            @else 
+                                                                <td>Concluida</td>
+                                                            @endif
                                                         </td>
                                                     </tr>
                                                 @endforeach
