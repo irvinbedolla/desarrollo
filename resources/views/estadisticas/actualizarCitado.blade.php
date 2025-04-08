@@ -36,13 +36,14 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
-                                            <label for="email">Estatus</label>
+                                            <label for="email">Tipo de notificación</label>
                                             <select name="estatus" class="form-control" required>
                                                 <option value="">Selecciona</option>
-                                                <option value="Notificada">Notificado</option>
-                                                <option value="No notificada">No notificado</option>
-                                                <option value="Exhorto">Exhorto</option>
-                                                <option value="Juez">Notificado por Juez</option>
+                                                <option value="Persona">Finalizado exitosamente (persona)</option>
+                                                <option value="Puerta">Exitoso por instructivo (fijado en puerta)</option>
+                                                <option value="Constituye">No existe se constituye</option>
+                                                <option value="Amparo">No existe no se constituye (amparo)</option>
+                                                <option value="Notificado">Notificado</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
@@ -68,6 +69,7 @@
         </div>
     </section>
 @endsection
+
 
 
 <div id="menu_carga" style ="display: none;">
