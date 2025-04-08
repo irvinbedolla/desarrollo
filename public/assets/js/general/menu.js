@@ -49,3 +49,7 @@ function editar_rol() {
 function turnos() {
     $('#menu_carga').show();
 }
+
+function historial() {
+    $('#menu_carga').show();
+}

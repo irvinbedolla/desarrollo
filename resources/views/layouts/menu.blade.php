@@ -35,6 +35,9 @@
             <a class="nav-link" href="{{ route('turno_estadistica') }}">
                 <i class="bi bi-graph-up"></i><span class="text-dark" onclick="estadistica_turno()">Estadistica turno</span>
             </a>
+            <a class="nav-link" href="{{ route('persona.historial') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
+            </a>
         @endrole
     @endauth
 
@@ -73,6 +76,9 @@
             <a class="nav-link" href="{{ route('turno_estadistica') }}">
                 <i class="bi bi-graph-up"></i><span class="text-dark" onclick="estadistica_turno()">Estadistica turno</span>
             </a>
+            <a class="nav-link" href="{{ route('persona.historial') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
+            </a>
         @endrole
     @endauth
 
@@ -93,6 +99,9 @@
             <a class="nav-link" href="{{ route('misturnos') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="turnos()">Mis turnos</span>
             </a>
+            <a class="nav-link" href="{{ route('persona.historial') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
+            </a>
         @endrole
     @endauth
 
@@ -110,6 +119,9 @@
             <a class="nav-link" href="{{ route('expedientes') }}">
                 <i class="bi bi-graph-down"></i><span class="text-dark" onclick="expedientes()">Mi Expediente</span>
             </a>
+            <a class="nav-link" href="{{ route('persona.historial') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
+            </a>
         @endrole
     @endauth
 
@@ -124,6 +136,9 @@
             <a class="nav-link" href="{{ route('expedientes') }}">
                 <i class="bi bi-graph-down"></i><span class="text-dark" onclick="expedientes()">Mi Expediente</span>
             </a>
+            <a class="nav-link" href="{{ route('persona.historial') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
+            </a>
         @endrole
     @endauth
     
@@ -134,6 +149,9 @@
             </a>
             <a class="nav-link" href="{{ route('expedientes') }}">
                 <i class="bi bi-graph-down"></i><span class="text-dark" onclick="expedientes()">Expediente</span>
+            </a>
+            <a class="nav-link" href="{{ route('persona.historial') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
             </a>
         @endrole
     @endauth
@@ -154,6 +172,9 @@
             </a>
             <a class="nav-link" href="{{ route('turno_estadistica') }}">
                 <i class="bi bi-graph-up"></i><span class="text-dark" onclick="estadistica_turno()">Estadistica turno</span>
+            </a>
+            <a class="nav-link" href="{{ route('persona.historial') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
             </a>
         @endrole
     @endauth
@@ -220,6 +241,9 @@
             </a>
             <a class="nav-link" href="{{ route('seer.estadistica') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadisticas</span>
+            </a>
+            <a class="nav-link" href="{{ route('persona.historial') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
             </a>
         @endrole
     @endauth

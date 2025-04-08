@@ -151,6 +151,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Seer
         Route::get('/seer/index',                       [SeerController::class, 'index'])->name('seer.index');
         Route::get('/seer/index',                       [SeerController::class, 'index'])->name('seer');
+        Route::get('seer/historial',                    [SeerController::class, 'ver_historial'])->name('persona.historial');
+        Route::post('seer/historial',                   [SeerController::class, 'historial'])->name('persona.historial');
         //Rutas de auxiliares
         Route::get('/seer/create',                      [SeerController::class, 'create'])->name('create_consentrado_aux');
         Route::get('/seer/ver',                         [SeerController::class, 'ver_consentrado_aux'])->name('create_consentrado_ver');
@@ -162,7 +164,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/seer/destroy/{id}',             [seerController::class, 'destroy'])->name('seer.delete');
         Route::get('/seer/editar/{id}',                 [SeerController::class, 'editar_persona'])->name('edit_persona');
         Route::post('/seer/update_auxiliar',            [SeerController::class, 'update_auxiliar'])->name('update_auxiliar');
-        Route::get('seer/hitoria',                      [SeerController::class, 'historial'])->name('persona.historial');
         //Rutas de conciliadores
         Route::get('/seer/createCon',                   [SeerController::class, 'create_conciliador'])->name('create_consentrado_con');
         Route::get('/seer/ver',                         [SeerController::class, 'ver_consentrado_con'])->name('ver_consentrado_con');

@@ -1532,10 +1532,6 @@ class SeerController extends Controller
         return redirect()->route('seer');
     }
 
-    public function historial(){
-        return redirect()->route('seer');
-    }
-
     public function editar_persona($id){
         $id_usurario = auth()->user()->id;
         $user = User::find($id_usurario);
@@ -1609,6 +1605,42 @@ class SeerController extends Controller
             SeerCitados::create($data_citado);
         }
         return redirect()->route('seer'); 
+    }
+
+    public function ver_historial(){
+        return view('estadisticas.generaHistorial');
+    }
+
+    public function historial(Request $request){
+        $request->validate([
+            'fecha_inicio' => 'required|date',
+            'fecha_final' => 'required|date|after_or_equal:fecha_inicio',
+        ]);
+
+        $fechaInicio = $request->input('fecha_inicio');
+        $fechaFin = $request->input('fecha_final');
+        $personas = SeerPerGeneral::join('seer_auxiliares', 'seer_auxiliares.id_solicitud', '=', 'seer_general.id')
+            ->join('seer_citados', 'seer_citados.id_solicitud', '=', 'seer_general.id')
+            
+            ->leftjoin('seer_conciliadores', 'seer_conciliadores.id_solicitud', '=', 'seer_general.id')
+                
+            ->select(
+                'seer_auxiliares.motivo',
+                'seer_auxiliares.estatus',
+                'seer_auxiliares.actividad_economica',
+                'seer_general.fecha',
+                'seer_general.NUE',
+                'seer_general.solicitante',
+                'seer_citados.nombre as citado',
+                'seer_citados.id_solicitud',
+                'seer_citados.direccion',
+                'seer_conciliadores.id',
+            )
+            ->whereBetween('seer_general.created_at', [$fechaInicio, $fechaFin])
+            ->get();
+        
+        return view('estadisticas.verHistorial', compact('personas'));    
+
     }
 
 }
