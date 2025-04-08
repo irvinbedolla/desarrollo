@@ -30,7 +30,7 @@
                             @endif
 
                             @can('crear-seer')
-                                @if($userRole[0] == "Auxiliar" || $userRole[0] == "Conciliador")
+                                
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-6 col-md-4">
                                             <div class="form-group">
@@ -218,7 +218,7 @@
                                         </div>
                                             
                                     </div>
-                                @endif
+                               
                             @endcan
 
 
