@@ -413,6 +413,7 @@ class SeerController extends Controller
         //Filtros end
         //Primeramente reporte detallado
         if($data["tipo_reporte"] == "Detallado"){
+            /*
             //SOLICITUDES
                 $solicitudes = SeerPerGeneral::where("seer_general.fecha",">=",$data["fecha_inicial"])->where("seer_general.fecha","<=",$data["fecha_final"]);
                 $solicitudes = $solicitudes->join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id")
@@ -592,6 +593,9 @@ class SeerController extends Controller
                 }
                 $convenios = $convenios->select("seer_convenios.*","users.name as usuario")
                 ->get();
+                */
+
+                
             return view('estadisticas.ver_reporte', compact('solicitudes','ratificaciones','audiencia','colectivas','convenios'));
         }
         else if($data["tipo_reporte"] == "Cuantificaciones"){
@@ -887,34 +891,14 @@ class SeerController extends Controller
                 }
                 if($sede != ""){
                     $ratificaciones = $ratificaciones->where("seer_general.delegacion", $sede);
-                }
-                if($auxiliar != ""){
-                    $ratificaciones = $ratificaciones->where("seer_general.user_id", $auxiliar);
-                }                
+                }            
                 $ratificaciones  = $ratificaciones->where("seer_auxiliares.tipo_solicitud", "Ratificación");
-                $ratificaciones  = $ratificaciones->select('users.id', 'users.name', DB::raw('count(seer_general.id) as ratificaciones'))
-                ->groupBy('users.id', 'users.name')
-                ->get();
-            //MONTO DE AUDIENCIA
-                $montoratificaciones  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
-                $montoratificaciones = $montoratificaciones->join("users","users.id","=","seer_general.user_id");
-                if($fecha_inicial != ""){
-                    $montoratificaciones = $montoratificaciones->where("fecha",">=",$fecha_inicial);
-                }   
-                if($fecha_final != ""){
-                    $montoratificaciones = $montoratificaciones->where("fecha","<=",$fecha_final);
-                }
-                if($sede != ""){
-                    $montoratificaciones = $montoratificaciones->where("seer_general.delegacion", $sede);
-                }
-                $montoratificaciones = $montoratificaciones->where("seer_auxiliares.tipo_solicitud", "Ratificación");
-                $montoratificaciones  = $montoratificaciones->select('users.id', 'users.name', DB::raw('sum(seer_auxiliares.monto) as ratificaciones'))
+                $ratificaciones  = $ratificaciones->select('users.id', 'users.name', DB::raw('count(seer_general.id) as ratificaciones'), DB::raw('sum(seer_auxiliares.monto) as monto'))
                 ->groupBy('users.id', 'users.name')
                 ->get();
             //AUDIENCIA 
-                $audiencia  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
-                $audiencia  = $audiencia->join("seer_conciliadores","seer_conciliadores.id_solicitud","=","seer_general.id");
-                $audiencia  = $audiencia->join("users","users.id","=","seer_general.user_id");
+                $audiencia  = SeerPerGeneral::join("seer_conciliadores","seer_conciliadores.id_solicitud","=","seer_general.id");
+                $audiencia  = $audiencia->join("users","users.id","=","seer_general.conciliador_id");
                 if($fecha_inicial != ""){
                     $audiencia = $audiencia->where("fecha",">=",$fecha_inicial);
                 }   
@@ -925,8 +909,7 @@ class SeerController extends Controller
                     $audiencia = $audiencia->where("seer_general.delegacion", $sede);
                 }
                 
-                $audiencia  = $audiencia->where("seer_auxiliares.tipo_solicitud", "Solicitud");
-                $audiencia  = $audiencia->select('users.id', 'users.name', DB::raw('count(seer_general.id) as audiencia'))
+                $audiencia  = $audiencia->select('users.id', 'users.name', DB::raw('count(seer_general.id) as audiencia'),  DB::raw('sum(seer_conciliadores.monto) as suma_audiencia'))
                 ->groupBy('users.id', 'users.name')
                 ->get();
             //MONTO DE AUDIENCIA
@@ -965,18 +948,7 @@ class SeerController extends Controller
                 if($fecha_final != ""){
                     $convenios = $convenios->where("fecha","<=",$data["fecha_final"]);
                 }
-                $convenios = $convenios->select('users.id', 'users.name', DB::raw('count(seer_convenios.id) as convenios'))
-                ->groupBy('users.id', 'users.name')
-                ->get();
-
-                $total_pagos = SeerConvenios::join("users","users.id","=","seer_convenios.user_id");
-                if($fecha_inicial != ""){
-                    $total_pagos = $total_pagos->where("fecha",">=",$fecha_inicial);
-                }   
-                if($fecha_final != ""){
-                    $total_pagos = $total_pagos->where("fecha","<=",$data["fecha_final"]);
-                }
-                $total_pagos = $total_pagos->select('users.id', 'users.name', DB::raw('SUM(seer_convenios.monto) as monto_pagos'))
+                $convenios = $convenios->select('users.id', 'users.name', DB::raw('count(seer_convenios.id) as convenios'), DB::raw('SUM(seer_convenios.monto) as monto_pagos'))
                 ->groupBy('users.id', 'users.name')
                 ->get();
             //ASESORIAS
@@ -990,34 +962,20 @@ class SeerController extends Controller
                 $asesorias = $asesorias->select('users.id', 'users.name', DB::raw('count(seer_asesorias.id) as asesorias'))
                 ->groupBy('users.id', 'users.name')
                 ->get();
-            //El numero de convenios con contancias de no conciliacion
-                $no_conciliacion  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
-                $no_conciliacion  = $no_conciliacion->join("seer_conciliadores","seer_conciliadores.id_solicitud","=","seer_general.id");
-                $no_conciliacion = $no_conciliacion->join("users","users.id","=","seer_general.user_id");
-                if($fecha_inicial != ""){
-                    $no_conciliacion = $no_conciliacion->where("fecha",">=",$fecha_inicial);
-                }   
-                if($fecha_final != ""){
-                    $no_conciliacion = $no_conciliacion->where("fecha","<=",$fecha_final);
-                }
-                if($sede != ""){
-                    $no_conciliacion = $no_conciliacion->where("seer_general.delegacion", $sede);
-                }
-
-                $no_conciliacion  = $no_conciliacion->where("seer_conciliadores.estatus_conciliacion", "No conciliacion");
-                $no_conciliacion  = $no_conciliacion->select('users.id', 'users.name', DB::raw('count(seer_general.id) as audiencia'))
-                ->groupBy('users.id', 'users.name')
-                ->get();
+            
 
                 //$convenios_total = $solicitudes["solicitudes"] + $ratificaciones["ratificaciones"];
                 //$porcenaje = ($convenios_total) / ($convenios_total + $no_conciliacion["audiencia"]);
                 $porcenaje=0;
-                $pdf = \PDF::loadView('PDF/vista-prueba', compact('solicitudes','ratificaciones','montoratificaciones','audiencia','montoaudiencia','colectivas','convenios','porcenaje'));
+                $pdf = \PDF::loadView('PDF/vista-prueba', compact('solicitudes','ratificaciones','audiencia','montoaudiencia','colectivas','convenios','porcenaje','asesorias'));
     
-            return $pdf->download('archivo.pdf');
+            return $pdf->stream('archivo.pdf');
+            //return $pdf->download('archivo.pdf');
 
             //return view('estadisticas.ver_reporte_cuantitativo', compact('solicitudes','ratificaciones','montoratificaciones','audiencia','montoaudiencia','colectivas','convenios','porcenaje'));
         }
+
+
     }
 
     public function create_persona_s(){
