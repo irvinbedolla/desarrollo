@@ -129,7 +129,8 @@
 
     <!-- CARRUSEL-->
 	  <div class="owl-carousel owl-theme">
-      <img src="public/assets/images/carusel/1Portada-web.png" class="d-block w-100" alt="" loading="lazy">
+      <img src="public/assets/images/carusel/carrusel_1.png" class="d-block w-100" alt="" loading="lazy">
+      <img src="public/assets/images/carusel/carrusel_2.png" class="d-block w-100" alt="" loading="lazy">
     </div>
     <!-- FIN CARRUSEL-->	
     
