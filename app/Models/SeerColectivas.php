@@ -10,6 +10,6 @@ class SeerColectivas extends Model
     //use HasFactory;
     protected $table = 'seer_colectivas';
     protected $primaryKey = 'id';
-    protected $fillable = ['conciliador','fecha','NUE', 'solicitante', 'citado', 'juzgado', 'estado'];
+    protected $fillable = ['conciliador','fecha','NUE', 'solicitante', 'citado', 'juzgado', 'estado', 'delegacion'];
 
 }

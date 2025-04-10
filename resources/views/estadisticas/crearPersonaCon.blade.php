@@ -279,6 +279,7 @@
                                                         <option value="No conciliacion">No Conciliacion</option>
                                                         <option value="Regenerada">Reagendada</option>
                                                         <option value="Archivada">Archivada</option>
+                                                        <option value="Archivado por incomparecencia">Archivado por incomparecencia</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
@@ -312,7 +313,7 @@
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
                                                     <label for="password">Monto del convenio</label>
-                                                    <input type="number" step="0.01" name="monto" class="form-control"  required>   
+                                                    <input type="number" step="0.01" name="monto" class="form-control" >   
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>

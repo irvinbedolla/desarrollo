@@ -61,15 +61,17 @@ use App\Http\Controllers\Controller;
         return view('pantalla', compact('turnos'));
     });
 
-    Route::get('publico',           [HomeController::class, 'publico'])->name('publico');
-    Route::get('home',              [HomeController::class, 'home'])->name('home');
-    Route::get('/poder-crear',      [PoderController::class, 'registro'])->name('poder-crear');
-    Route::get('/poder',            [App\Http\Controllers\PoderController::class, 'show'])->name('poder');
-    Route::post('/poderes/publico', [PoderController::class, 'publico'])->name('poderes.publico');
-    Route::get('publico',           [HomeController::class, 'publico'])->name('publico');
+    Route::get('publico',               [HomeController::class, 'publico'])->name('publico');
+    Route::get('home',                  [HomeController::class, 'home'])->name('home');
+    Route::get('/poder-crear',          [PoderController::class, 'registro'])->name('poder-crear');
+    Route::get('/poder',                [App\Http\Controllers\PoderController::class, 'show'])->name('poder');
+    Route::post('/poderes/publico',     [PoderController::class, 'publico'])->name('poderes.publico');
+    Route::get('publico',               [HomeController::class, 'publico'])->name('publico');
     //Rutas de citas
-    Route::get('citas',             [TurnosController::class, 'create_publico'])->name('create_cita');
-    Route::post('/citas/store_publico',     [TurnosController::class, 'store_publico'])->name('turnos.publico');
+    Route::get('citas',                 [TurnosController::class, 'create_publico'])->name('create_cita');
+    Route::post('/citas/store_publico', [TurnosController::class, 'store_publico'])->name('turnos.publico');
+    //Ruta de agregar citados
+    Route::get('/agrega_citado/{id}',   [SeerController::class, 'vista_citado'])->name('agregar_citado');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -82,11 +84,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/miscapacitaciones/index',  [MiscapacitacionController::class, 'index'])->name('miscapacitaciones');
         Route::get('/expedientes/index',        [ExpedienteController::class, 'index'])->name('expedientes');
         Route::get('/seer/index',               [SeerController::class, 'index'])->name('seer');
-        Route::get('/poderes/index',           [PoderController::class, 'index'])->name('poderes');
-        Route::get('/seer/estadistica',                 [SeerController::class, 'estadistica'])->name('seer.estadistica');
-        Route::get('/turnos/index',           [TurnosController::class, 'index'])->name('turnos');
-        Route::get('/turnos/misturnos',       [TurnosController::class, 'misturnos'])->name('misturnos');
-        Route::get('/turnos/estadistica',     [TurnosController::class, 'estadistica'])->name('turno_estadistica');
+        Route::get('/poderes/index',            [PoderController::class, 'index'])->name('poderes');
+        Route::get('/seer/estadistica',         [SeerController::class, 'estadistica'])->name('seer.estadistica');
+        Route::get('/turnos/index',             [TurnosController::class, 'index'])->name('turnos');
+        Route::get('/turnos/misturnos',         [TurnosController::class, 'misturnos'])->name('misturnos');
+        Route::get('/turnos/estadistica',       [TurnosController::class, 'estadistica'])->name('turno_estadistica');
     //Fin de ruta de los menus
 
     //Usuarios

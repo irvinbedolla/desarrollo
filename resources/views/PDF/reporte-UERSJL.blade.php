@@ -119,7 +119,6 @@
                                     </tbody>
                                 </table>
                             </div>
-
                             <spam>II. Conciliacion en Materia Individual</spam><br>
                             <spam>3. Total de asesorías brindadas: {{$asesorias->asesorias}}</spam>
                             <div class="table-responsive">
@@ -165,6 +164,59 @@
                                             <td style=" text-align: center;">g. Otros</td>
                                             <td style=" text-align: center;">{{$otros_h->solicitudes}}</td>
                                             <td style=" text-align: center;">{{$otros_m->solicitudes}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="table-responsive">
+                                <spam>6. Total de solicitudes que fueron declaradas como incompetencia por parte del Centro de Conciliación Local/Federal:</spam>
+                                <table class="table table-striped mt-2">
+                                    <thead style="background-color: #4A001F;">
+                                        <th style="color: #fff;  text-align: center;">Antes de admisión (confirmación):</th>
+                                        <th style="color: #fff;  text-align: center;">Después de admisión:</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style=" text-align: center;">{{$incopetencia->solicitudes}}</td>
+                                            <td style=" text-align: center;">{{$incopetencia->solicitudes}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="table-responsive">
+                                <spam>7. Citatorios emitidos durante el periodo:</spam>
+                                <table class="table table-striped mt-2">
+                                    <thead style="background-color: #4A001F;">
+                                        <th style="color: #fff;  text-align: center;">a. Diligenciados por autoridad</th>
+                                        <th style="color: #fff;  text-align: center;">b. Diligenciados por trabajador</th>
+                                        <th style="color: #fff;  text-align: center;">c. Dilegenciados por ambos</th>
+                                        <th style="color: #fff;  text-align: center;">Total</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style=" text-align: center;">{{$citatorios_C->centro}}</td>
+                                            <td style=" text-align: center;">{{$citatorios_N->centro}}</td>
+                                            <td style=" text-align: center;">{{$citatorios_A->centro}}</td>
+                                            <td style=" text-align: center;">{{ $citatorios_N->centro + $citatorios_A->centro + $citatorios_C->centro}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <spam>8. Asuntos archivados por falta de interés durante el periodo: {{$falta_interes->falta_interes}}</spam><br>
+                            <spam>9. Total de asuntos en trámite a la fecha (incluyendo asuntos no resueltos de periodos anteriores): {{$tramite->tramite}}</spam><br>
+                            <spam>10. Audiencias celebradas durante el periodo: {{$audiencias->audiencias}}</spam><br>
+
+                            <div class="table-responsive">
+                                <spam>11. Total de asuntos NO conciliados durante el periodo:</spam>
+                                <table class="table table-striped mt-2">
+                                    <thead style="background-color: #4A001F;">
+                                        <th style="color: #fff;  text-align: center;">a. Derivados de conciliación:</th>
+                                        <th style="color: #fff;  text-align: center;">b. Incomparecencia del citado:</th>
+¿                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style=" text-align: center;">{{$citatorios_C->centro}}</td>
+                                            <td style=" text-align: center;">{{$citatorios_N->centro}}</td>
                                         </tr>
                                     </tbody>
                                 </table>
