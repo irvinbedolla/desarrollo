@@ -100,7 +100,7 @@
     <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="">
-            <img src="public/assets/images/Logos1_1.png" class="img" style="" width="250" height="80"></a>&nbsp;&nbsp;
+            <img src="public/assets/images/Logos 2.png" class="img" style="" width="330" height="80"></a>&nbsp;&nbsp;
             
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -135,8 +135,8 @@
     <!-- FIN CARRUSEL-->	
     
   <!-- INICIANDO SERVICIOS -->
-  <section id="servicios">
-  <h3 class="wow fadeInLeft" style="text-align: center ; font-family:Nutmeg, Sans-serif;">Tramites y servicios digitales</h3> <br><br><br>
+  <section id="servicios"><br><br>
+  <h3 class="wow fadeInLeft" style="text-align: center ; font-family:Gibson, font-weight: 600;">Tramites y servicios digitales</h3> <br><br><br>
   <div class="card-group">
     <div class="card">   <!-- Inicio asesoria en línea -->
       <div style="display: block; text-align: center;">
@@ -177,12 +177,12 @@
         <div class="flip-box">
           <div class="flip-box-inner">
             <div class="flip-box-front">
-              <h2 style="font-size: 20px; font-family: Arial; color: #000000">Solicitud en línea<br></h2> <img
+              <h2 style="font-size: 22px; font-family: Arial; color: #000000">Solicitud en línea<br></h2> <img
                 src="public/assets/images/SOLICITUD.png" alt="Descripción de la imagen"
                 style="width: 200px; height:200px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
             </div>
             <div class="flip-box-back">
-                <h2 style="font-size: 22px; font-family: Arial; color:#ffffff">Es un servicio rápido, eficiente que permite a las personas, tanto trabajadoras como empleadoras iniciar su solicitud para conciliar de forma digital a través de la página web.</h2>
+                <h2 style="font-size: 21px; font-family: Arial; color:#ffffff">Es un servicio rápido, eficiente que permite a las personas, tanto trabajadoras como empleadoras iniciar su solicitud para conciliar de forma digital a través de la página web.</h2>
             </div>
           </div>
         </div> 
@@ -203,7 +203,7 @@
                 style="width: 200px; height: 200px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
             </div>
             <div class="flip-box-back">
-              <h2 style="font-size: 22px; font-family: Arial; color:#ffff">Es un servicio que permite a las partes que terminan su relación laboral, acudir con previa cita ante el Centro de Concicliación Laboral a ratificar su acuerdo, con el fin de brindar seguridad jurídica.</h2>
+              <h2 style="font-size: 21px; font-family: Arial; color:#ffff">Es un servicio que permite a las partes que terminan su relación laboral, acudir con previa cita ante el Centro de Concicliación Laboral a ratificar su acuerdo, con el fin de brindar seguridad jurídica.</h2>
             </div>
           </div>
         </div>
@@ -248,7 +248,8 @@
 
   <!-- TERCER BLOQUE DE SERVICIOS-->
   <div class="card-group">
-     <div class="card">   <!-- Inicio Seer -->
+    <div class="card"> </div>
+    <div class="card">   <!-- Inicio Seer -->
       <div style="display: block; text-align: center;">
         <div class="flip-box">
           <div class="flip-box-inner">
@@ -264,9 +265,10 @@
         </div>
         <p><a class="boton" href="{{ route('login') }}">Ver más</a></p>   
       </div>  
-     </div>   <!-- fin Seer -->
+    </div>   <!-- fin Seer -->
+    <div class="card"> </div>
   </div>
-  </section> 
+</section> 
     </main>
     <footer id="contacto" class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
       <div class="col-md-4 d-flex align-items-center">
