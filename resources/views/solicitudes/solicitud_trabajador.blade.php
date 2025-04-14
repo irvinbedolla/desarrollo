@@ -1,19 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="csrf-token" content="{{ csrf_token() }}"/>
-    <title>Sí Conciliación</title>
-    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
-    <!-- Bootstrap 5.3.3 -->
-    <link href="public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-    <!-- Ionicons -->
-    <link rel="icon" href="public/assets/images/ccl-r.png" type="image/x-icon">
-    <link href="//fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
-    <link href="public/assets/css/all.css" rel="stylesheet" type="text/css">
-    <link href="public/assets/css/iziToast.min.css" rel="stylesheet">
-    <link href="public/assets/css/sweetalert.css" rel="stylesheet" type="text/css"/>
-    <link href="public/assets/css/select2.min.css" rel="stylesheet" type="text/css"/>
+    <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+        <meta name="generator" content="Ing. ISBM">
+        <link href="public/assets/css/carousel.css" rel="stylesheet">
+        <title>Si Conciliación</title>
+        <!-- Bootstrap core CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        
+        <link rel="icon" href="public/assets/images/logo-ccl.png" type="image/x-icon">
     
     <!-- Agregados para los Select del Formulario Personas-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -34,26 +32,35 @@
             opacity: .8;
         }
         
-    </style>
-
-    @livewireStyles
-
-    @yield('page_css')
-    <!-- Template CSS <img src="public/assets_seer/images/ccl.png" width="180" height="90" style="position: absolute; left: 100px; top: 10px; right:0px;"/>  -->
-    <link rel="stylesheet" href="public/assets/css/style.css">
-    <link rel="stylesheet" href="public/assets/css/components.css">
-    @yield('page_css')
+    </style>   
 </head>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <div class="">
+        <img src="public/assets/images/Logos 2.png" class="img" style="" width="330" height="80"></a>&nbsp;&nbsp;
+    </div> 
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent" >
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="#" style="color: black;">INICIO<span class="sr-only"></span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#servicios" style="color: black;">SERVICIOS</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#contacto"style="color: black;">CONTACTO</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container">
+    <br><br><br>
+</div>
     <div id="app">  
         <section class="section">
-            <div class="col-lg-12" >
-                <div style="background-color:#6A0F49">
-                    <div align="right"><br>
-                        <img src="public/assets/images/ccl-r.png" style="max-width: 10%" class="text-center">
-                    </div>
-                    <h3 class="text-center" style="color:#CEA845">Solicitud de trabajador</h3>    
-                </div>
-            </div>
             <div class="section-body">
                 <div class="row"> 
                     <div class="col-lg-12" >
@@ -84,8 +91,11 @@
                                             </button>
                                         </div>
                                     @endif
-                                    <div style="background-color:#6A0f49">
-                                        <h3 class="text-center" style="color:#CEA845">Datos generales de la solicitud</h3>
+                                    <div>
+                                    <br></div>
+                                    <h3 class="text-center" style="color:#CEA845;">Solicitud de trabajador</h3>
+                                    <div style="background-color:#D2D3D5; width:100%; height:40px;">
+                                        <h3 class="text-center" style="color:black;">Datos generales de la solicitud</h3>
                                     </div>   
                                     <h6 class="text-center" style="color:black"><b>Nota: Los campos marcados con (*) son datos obligatorios, favor de proporcionarlos.</b></h6> 
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
@@ -106,8 +116,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-6"></div>
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-3 col-sm-3 col-md-2">
                                                 <div class="form-group">
                                                     <label for="name">Fecha de conflicto (*)</label>
                                                     <input type="date" id="fechaConflicto" name="fechaConflicto" class="form-control" required> 
@@ -116,7 +125,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-6 col-sm-6 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Objeto de la solicitud (*)</label>
                                                     <select  class="form-control" id="motivo_solicitud">
@@ -130,16 +139,15 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-6">
+                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-6"><br>
                                                 <table id="tabla" name="motivo_solicitud[]" class="table table-striped mt-1" style="margin: 0 center; text-align:center;">
-                                                    <thead style="background-color: #4A001F;">
-                                                        <th style="color: #fff;">Objeto de la solicitud</th>
-                                                        <th style="color: #fff;">Acción</th>
+                                                    <thead style="background-color: #D2D3D5;">
+                                                        <th style="color: black;">Objeto de la solicitud</th>
+                                                        <th style="color: black;">Acción</th>
                                                     </thead>
                                                     <tbody></tbody>
                                                 </table>
                                             </div>
-                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-6"></div>
                                             <div id="div1"  class="col-xs-12 col-sm-12 col-md-6">
                                                 <p>Rama industrial del negocio</p>
                                                 <div class="form-group">
@@ -155,20 +163,18 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="div2"  class="col-xs-12 col-sm-12 col-md-6"><br><br>
+                                            <div id="div2"  class="col-xs-12 col-sm-12 col-md-6">
+                                                <p>Ejemplos: comercio de productos al por menor, construcción, servicios médicos...</p>
                                                 <div class="form-group">
                                                 <label for="name">Paso 2: Actividad económica del patrón (*)</label>
                                                     <select id="actividad_economica" name="actividad_economica" class="form-control" disabled>
-                                                        <option value=""> --Primero selecciona una rama industrial --</option>
-                                                        
+                                                        <option value=""> --Primero selecciona una rama industrial --</option>  
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El campo actividad económica del patrón es obligatorio.
                                                     </div>
-                                                    <p>Ejemplos: comercio de productos al por menor, construcción, servicios médicos...</p>
                                                 </div>
-                                            </div>
-                                            
+                                            </div>  
                                         </div>
                                         <div align="center">
                                             <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color: #CEA845">Guardar</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
