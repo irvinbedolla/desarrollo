@@ -1857,8 +1857,10 @@ class SeerController extends Controller
         return view('solicitudes.solicitud_revision');
     }
     
-    //Solicitud en línea trabajador revisión
-    public function revision(){
-        return view('solicitudes.solicitud_revision');
+    public function vista_citado(){
+        $estados = Estados::all();
+        $municipios = Municipios::all();
+
+        return view('solicitudes.citados',compact('estados'));
     }
 }

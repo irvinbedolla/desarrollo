@@ -141,7 +141,7 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Nombre *</label>
+                                                    <label for="name">Nombre(s) *</label>
                                                     <input type="text" name="nombre" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
@@ -169,20 +169,20 @@
                                                 </div>
                                             </div>
 
-                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-6">
+                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Fecha de nacimiento</label>
-                                                    <input type="date" name="nacimiento" class="form-control" required> 
+                                                    <input type="date" id="fecha_nacimiento" name="nacimiento" onchange="validarfechaNacimiento(this)" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-6">
+                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Edad</label>
-                                                    <input type="number" name="edad" class="form-control" required> 
+                                                    <input type="number" name="edad" class="form-control" id="años_edad" required> 
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatorio.
                                                     </div>
@@ -218,29 +218,38 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Nacionalidad</label>
-                                                    <input id="fecha" type="date" name="fecha" class="form-control" >
+                                                    <select name="nacionalidad" class="form-control" required>
+                                                        <option value="">Seleccione</option>
+                                                        <option value="Mexicana">Mexicana</option>
+                                                        <option value="Otra">Otra</option>
+                                                    </select>
                                                     <div class="invalid-feedback">
                                                         La nacionalidad es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-6 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Estado</label>
-                                                    <input id="fecha" type="date" name="fecha" class="form-control" >
+                                                    <label for="password">Estado del solicitante</label>
+                                                    <select id="estado_solicitante" class="form-control" name="estado_solicitante" required>
+                                                        <option value="">Seleccione</option>
+                                                        @foreach($estados as $est)
+                                                            <option value="{{$est['id']}}">{{$est['nombre']}}</option>
+                                                        @endforeach
+                                                    </select>
                                                     <div class="invalid-feedback">
-                                                        El estado es obligatoria.
+                                                        El Estado es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">
-                                                <label class="btn btn-outline-primary" for="btncheck1">Requiere Traductor</label>
+                                                <spam for="btncheck1">Requiere Traductor</spam>
+                                                <input type="checkbox" class="btn-check" id="check_lenguaje" autocomplete="off">
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-6" id="lenguaje_señas">
                                                 <div class="form-group">
                                                     <label for="name">Requiere Traductor</label>
                                                     <input id="fecha" type="date" name="fecha" class="form-control" >
@@ -286,6 +295,7 @@
     <script src="../public/assets/js/sweetalert.min.js"></script>
     <script src="../public/assets/js/select2.min.js"></script>
     <script src="../public/assets/js/jquery.nicescroll.js"></script>
+    <script src="../public/assets/js/moment.js"></script>
 
     <!-- Template JS File -->
     <script src="../public/assets/js/stisla.js"></script>
@@ -299,6 +309,7 @@
 
 
     @yield('scripts')
+    <script src="../public/assets/js/validaciones.js"></script> 
     <script>
         function sedes(){
             document.getElementById("fecha").removeAttribute("disabled");
@@ -316,12 +327,7 @@
             });
         }
     </script>
-<div id="crear_poder" style ="display: none;">
-    <div>.</div>
-    <div class="loader"></div>
-</div>
-
-@section('scripts')
-    <script src="../public/assets/js/validaciones.js"></script>
-    
-@endsection
+    <div id="crear_poder" style ="display: none;">
+        <div>.</div>
+        <div class="loader"></div>
+    </div>
