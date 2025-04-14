@@ -47,8 +47,8 @@ use App\Http\Controllers\Controller;
     Route::post('solicitud_trabajador', [SeerController::class, 'solicitud_parte1'])->name('parte1');
     
     Route::get('solicitud_revision',    [SeerController::class, 'revision'])->name('solicitud_revision');
-    Route::get('solicitud_solicitante',             [SeerController::class, 'solicitud_solicitante'])->name('solicitante');
-    Route::get('solicitud_trabajador2',             [SeerController::class, 'solicitud_parte2'])->name('parte2');
+    Route::get('solicitud_solicitante', [SeerController::class, 'solicitud_solicitante'])->name('solicitante');
+    Route::post('solicitud_trabajador2',[SeerController::class, 'solicitud_parte2'])->name('parte2');
     
     //Rutas para el chat
     Route::post('/chat/crear',      [Controller::class, 'store_chat'])->name('RespuestasChat.store');
@@ -80,7 +80,8 @@ use App\Http\Controllers\Controller;
     Route::post('/citas/store_publico', [TurnosController::class, 'store_publico'])->name('turnos.publico');
     //Ruta de agregar citados
     Route::get('/agrega_citado/{id}',   [SeerController::class, 'vista_citado'])->name('agregar_citado');
-
+    Route::post('/agrega_citado',       [SeerController::class, 'guardar_citado'])->name('seer.citados');
+    
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/home', [DashboardController::class, 'index'])->name('dashboard');

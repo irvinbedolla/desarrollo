@@ -1830,7 +1830,7 @@ class SeerController extends Controller
         $data = $request->all();
         
         //validando información
-        $validatedData=$request->validate([
+        $request->validate([
             'fechaConflicto'      => 'required|date',
             'ramaIndustrial'      => 'required',
             'actividad_economica' => 'required',
@@ -1854,7 +1854,7 @@ class SeerController extends Controller
                 ]);
             }
         }
-        return view('solicitudes.solicitante');
+        return view('solicitudes.solicitud_revision');
     }
     
     public function vista_citado(){
@@ -1863,4 +1863,148 @@ class SeerController extends Controller
 
         return view('solicitudes.citados',compact('estados'));
     }
+
+
+    public function solicitud_parte2(Request $request){
+        $data = $request->all();
+        //dd($data);
+        //validando información
+        /*
+        $request->validate([
+            'tipo'              => 'required|in:Fisica,Moral',
+            'curp'              => 'required|min:18|max:18',
+            'nombre'            => 'required',
+            'primer_apellido'   => 'required',
+            'segundo_apellido'  => 'required',
+            'nacimiento'        => 'required|date',
+            'edad'              => 'required|numeric',
+            'sexo'              => 'required|in:H,M,NB,LGBTTTIQ',
+            'nacionalidad'      => 'required|in:Mexicana,Otra',
+            'estado_solicitante'=> 'required'
+        ]);
+        
+        $data_insert=array(
+            'id_solicitud'      => $data["id"],
+            'tipo_persona'      => $data["tipo"],
+            'curp'              => $data["curp"],
+            'nombre'            => $data["nombre"],
+            'primer_apellido'   => $data["primer_apellido"],
+            'segundo_apellido'  => $data["segundo_apellido"],
+            'fecha_nacimiento'  => $data["nacimiento"],
+            'edad'              => $data["edad"],
+            'sexo'              => $data["sexo"],
+            'nacionalidad'      => $data["nacionalidad"],
+            'estado_solicitante'=> $data["estado_solicitante"],
+        );
+
+        if(isset($data["rfc"])){
+            $data_insert["rfc"] =  $data["rfc"];
+        }
+        if(isset($data["traductor"])){
+            $data_insert["traductor"] =  $data["traductor"];
+            $data_insert["lenguaje"]  =  $data["lenguaje"];
+        }
+
+        SeerCitados::create($data_insert); 
+        */
+        return back()->with('success', 'Citado agregado correctamente, puedes agregar otro o continuar.');
+    }
+
+    public function guardar_citado(Request $request){
+        $data = $request->all();
+        //dd($data);
+        //validando información
+        $request->validate([
+            'tipo'              => 'required|in:Fisica,Moral',
+            'curp'              => 'required|min:18|max:18',
+            'nombre'            => 'required',
+            'primer_apellido'   => 'required',
+            'segundo_apellido'  => 'required',
+            'nacimiento'        => 'required|date',
+            'edad'              => 'required|numeric',
+            'sexo'              => 'required|in:H,M,NB,LGBTTTIQ',
+            'nacionalidad'      => 'required|in:Mexicana,Otra',
+            'estado_solicitante'=> 'required'
+        ]);
+        
+        $data_insert=array(
+            'id_solicitud'      => $data["id"],
+            'tipo_persona'      => $data["tipo"],
+            'curp'              => $data["curp"],
+            'nombre'            => $data["nombre"],
+            'primer_apellido'   => $data["primer_apellido"],
+            'segundo_apellido'  => $data["segundo_apellido"],
+            'fecha_nacimiento'  => $data["nacimiento"],
+            'edad'              => $data["edad"],
+            'sexo'              => $data["sexo"],
+            'nacionalidad'      => $data["nacionalidad"],
+            'estado_solicitante'=> $data["estado_solicitante"],
+        );
+
+        if(isset($data["rfc"])){
+            $data_insert["rfc"] =  $data["rfc"];
+        }
+        if(isset($data["traductor"])){
+            $data_insert["traductor"] =  $data["traductor"];
+            $data_insert["lenguaje"]  =  $data["lenguaje"];
+        }
+
+        SeerCitados::create($data_insert); 
+
+        return back()->with('success', 'Citado agregado correctamente, puedes agregar otro o continuar.');
+    }
+
+
+    public function guardar_citado(Request $request){
+        $data = $request->all();
+        //dd($data);
+        //validando información
+        $request->validate([
+            'tipo'              => 'required|in:Fisica,Moral',
+            'curp'              => 'required|min:18|max:18',
+            'nombre'            => 'required',
+            'primer_apellido'   => 'required',
+            'segundo_apellido'  => 'required',
+            'nacimiento'        => 'required|date',
+            'edad'              => 'required|numeric',
+            'sexo'              => 'required|in:H,M,NB,LGBTTTIQ',
+            'nacionalidad'      => 'required|in:Mexicana,Otra',
+            'estado_solicitante'=> 'required'
+        ]);
+        
+        $data_insert=array(
+            'id_solicitud'      => $data["id"],
+            'tipo_persona'      => $data["tipo"],
+            'curp'              => $data["curp"],
+            'nombre'            => $data["nombre"],
+            'primer_apellido'   => $data["primer_apellido"],
+            'segundo_apellido'  => $data["segundo_apellido"],
+            'fecha_nacimiento'  => $data["nacimiento"],
+            'edad'              => $data["edad"],
+            'sexo'              => $data["sexo"],
+            'nacionalidad'      => $data["nacionalidad"],
+            'estado_solicitante'=> $data["estado_solicitante"],
+        );
+
+        if(isset($data["rfc"])){
+            $data_insert["rfc"] =  $data["rfc"];
+        }
+        if(isset($data["traductor"])){
+            $data_insert["traductor"] =  $data["traductor"];
+            $data_insert["lenguaje"]  =  $data["lenguaje"];
+        }
+
+        SeerCitados::create($data_insert); 
+
+        return back()->with('success', 'Citado agregado correctamente, puedes agregar otro o continuar.');
+    }
+
+
+    public function vista_citado(){
+        $estados = Estados::all();
+        $municipios = Municipios::all();
+
+        return view('solicitudes.citados',compact('estados'));
+    }
+
 }

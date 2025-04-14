@@ -374,7 +374,6 @@
     <script>
         $('#estatus').change(function(){
             var valorCambiado = $('#estatus').val();
-            console.log(valorCambiado);
             if((valorCambiado == 'Archivada')){
                 $('#Archivadas').css('display','block');
                 $('#Reprogramada').css('display','none');

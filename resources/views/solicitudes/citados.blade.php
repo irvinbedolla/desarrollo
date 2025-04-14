@@ -110,9 +110,11 @@
                                     <div style="background-color:#6A0f49">
                                         <h3 class="text-center" style="color:#CEA845">Ingresa los datos de citado</h3>
                                     </div>    
+
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                    <form class="needs-validation novalidate" method="POST" action="{{route('turnos.publico')}}">
+                                    <form class="needs-validation novalidate" method="POST" action="{{route('seer.citados')}}">
                                         @csrf
+                                        <input type="hidden" name="id" value="1">
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
@@ -142,7 +144,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Nombre(s) *</label>
-                                                    <input type="text" name="nombre" class="form-control" required> 
+                                                    <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
                                                     </div>
@@ -152,7 +154,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Primer apellido *</label>
-                                                    <input type="text" name="primer_apellido" class="form-control" required> 
+                                                    <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
                                                     </div>
@@ -162,7 +164,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Segundo apellido *</label>
-                                                    <input type="text" name="segundi_A" class="form-control" required> 
+                                                    <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
                                                     </div>
@@ -192,7 +194,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">RFC</label>
-                                                    <input type="text" name="rfc" class="form-control" > 
+                                                    <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" > 
                                                     <div class="invalid-feedback">
                                                         El campo conflicto es obligatorio.
                                                     </div>
@@ -246,13 +248,13 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <spam for="btncheck1">Requiere Traductor</spam>
-                                                <input type="checkbox" class="btn-check" id="check_lenguaje" autocomplete="off">
+                                                <input type="checkbox" class="btn-check" id="check_lenguaje" name="traductor" autocomplete="off">
                                             </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-6" id="lenguaje_señas">
                                                 <div class="form-group">
-                                                    <label for="name">Requiere Traductor</label>
-                                                    <input id="fecha" type="date" name="fecha" class="form-control" >
+                                                    <label for="name">Que tipo de lenguaje require</label>
+                                                    <input type="text" name="lenguaje" class="form-control">
                                                     <div class="invalid-feedback">
                                                         La nacionalidad es obligatoria.
                                                     </div>
@@ -263,8 +265,9 @@
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div align="center">
-                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845;">Guardar</button>
-                                                <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845;">Regresar</a>    
+                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845;">Agregar</button>
+                                                <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845;">Regresar</a> 
+                                                <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845;">Terminar</a>    
                                             </div>
                                         </div>    
                                     </form>
