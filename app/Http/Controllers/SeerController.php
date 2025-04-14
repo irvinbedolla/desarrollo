@@ -1807,9 +1807,9 @@ class SeerController extends Controller
         return view('solicitud');
     }
 
-    public function vista_citado(){
-        return view('solicitudes.citados');
-    }
+    //public function vista_citado(){
+    //    return view('solicitudes.citados');
+    //}
     
     //Solicitud en línea trabajador
     public function trabajador()
@@ -1854,7 +1854,7 @@ class SeerController extends Controller
                 ]);
             }
         }
-        return view('solicitudes.solicitud_revision');
+        return view('solicitudes.solicitante');
     }
     
     public function vista_citado(){
