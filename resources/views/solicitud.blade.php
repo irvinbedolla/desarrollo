@@ -68,7 +68,7 @@
         <main>
             <div>
                 <h2 style="color: #4A001F; text-align: center;">Realiza tu solicitud en línea</h2>
-                <center><img src="public/assets/images/ccl-r.png" class="responsive-img" width="750" height="350" alt="Descripción de la imagen"></center>
+                <center><img src="public/assets/images/Logo pantalla.png" class="responsive-img" width="750" height="350" alt="Descripción de la imagen"></center>
             </div>
             <br>
             <center><div class="card-group">
