@@ -6,14 +6,14 @@
     <title>Sí Conciliación</title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <!-- Bootstrap 5.3.3 -->
-    <link href="public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <!-- Ionicons -->
-    <link rel="icon" href="public/assets/images/ccl-r.png" type="image/x-icon">
+    <link rel="icon" href="../public/assets/images/ccl-r.png" type="image/x-icon">
     <link href="//fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
-    <link href="public/assets/css/all.css" rel="stylesheet" type="text/css">
-    <link href="public/assets/css/iziToast.min.css" rel="stylesheet">
-    <link href="public/assets/css/sweetalert.css" rel="stylesheet" type="text/css"/>
-    <link href="public/assets/css/select2.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../public/assets/css/all.css" rel="stylesheet" type="text/css">
+    <link href="../public/assets/css/iziToast.min.css" rel="stylesheet">
+    <link href="../public/assets/css/sweetalert.css" rel="stylesheet" type="text/css"/>
+    <link href="../public/assets/css/select2.min.css" rel="stylesheet" type="text/css"/>
     
     <!-- Agregados para los Select del Formulario Personas-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -29,9 +29,17 @@
             width: 100%;
             height: 100%;
             z-index: 9999;
-            background: url('public/assets/images/pageLoader.gif') 50% 50% no-repeat rgb(249,249,249);
+            background: url('../public/assets/images/pageLoader.gif') 50% 50% no-repeat rgb(249,249,249);
            /* background-color: #6A0F49;/*<p style="color: #CEA845*/
             opacity: .8;
+        }
+        #resultado {
+            background-color: red;
+            color: white;
+            font-weight: bold;
+        }
+        #resultado.ok {
+            background-color: green;
         }
     </style>
 
@@ -54,8 +62,8 @@
 
     @yield('page_css')
     <!-- Template CSS <img src="public/assets_seer/images/ccl.png" width="180" height="90" style="position: absolute; left: 100px; top: 10px; right:0px;"/>  -->
-    <link rel="stylesheet" href="public/assets/css/style.css">
-    <link rel="stylesheet" href="public/assets/css/components.css">
+    <link rel="stylesheet" href="../public/assets/css/style.css">
+    <link rel="stylesheet" href="../public/assets/css/components.css">
     @yield('page_css')
 </head>
 
@@ -64,7 +72,7 @@
             <div class="col-lg-12" >
                 <div style="background-color:#6A0F49">
                     <div align="right"><br>
-                        <img src="public/assets/images/ccl-r.png" style="max-width: 10%" class="text-center">
+                        <img src="../public/assets/images/ccl-r.png" style="max-width: 10%" class="text-center">
                     </div>
                     <h3 class="text-center" style="color:#CEA845">Agregar Citados</h3>    
                 </div>
@@ -111,11 +119,22 @@
                                                     <label for="name">Tipo de personas</label>
                                                     <select name="tipo" class="form-control" required>
                                                         <option value="">Seleccione</option>
-                                                        <option value="Solicitud">Fisica</option>
-                                                        <option value="Ratificación">Moral</option>
+                                                        <option value="Fisica">Fisica</option>
+                                                        <option value="Moral">Moral</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El tipo de persona es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">CURP *</label>
+                                                    <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control" required> 
+                                                    <pre id="resultado"></pre>
+                                                    <div class="invalid-feedback">
+                                                        El nombre es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
@@ -152,6 +171,16 @@
 
                                             <div id="div1"  class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
+                                                    <label for="name">Fecha de nacimiento</label>
+                                                    <input type="date" name="nacimiento" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo edad es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
                                                     <label for="name">Edad</label>
                                                     <input type="number" name="edad" class="form-control" required> 
                                                     <div class="invalid-feedback">
@@ -159,9 +188,20 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">RFC</label>
+                                                    <input type="text" name="rfc" class="form-control" > 
+                                                    <div class="invalid-feedback">
+                                                        El campo conflicto es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <div id="div2"  class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                <label for="name">Sexo</label>
+                                                <label for="name">Genero</label>
                                                     <select name="sexo" class="form-control" required>
                                                         <option value="">Seleccione</option>
                                                         <option value="H">Hombre</option>
@@ -174,51 +214,43 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <div class="form-group">
-                                                    <label for="name">Conflicto</label>
-                                                    <textarea name="conflicto" class="form-control"></textarea>
-                                                    <div class="invalid-feedback">
-                                                        El campo conflicto es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Sedes</label>
-                                                    <select id="sede" name="sede" class="form-control" onchange="sedes();" required>
-                                                        <option value="">Seleccione la sede</option>
-                                                        <option value="Morelia">Morelia</option>
-                                                        <option value="Uruapan">Uruapan</option>
-                                                        <option value="Zamora">Zamora</option>
-                                                        <option value="Zitácuaro">Zitácuaro</option>
-                                                        <option value="Lázaro Cárdenas">Lázaro Cárdenas</option>
-                                                    </select>
+                                                    <label for="name">Nacionalidad</label>
+                                                    <input id="fecha" type="date" name="fecha" class="form-control" >
                                                     <div class="invalid-feedback">
-                                                        La sede es obligatoria.
+                                                        La nacionalidad es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Dia</label>
-                                                    <input id="fecha" type="date" name="fecha" class="form-control" onchange="diaSemana();" disabled>
+                                                    <label for="name">Estado</label>
+                                                    <input id="fecha" type="date" name="fecha" class="form-control" >
                                                     <div class="invalid-feedback">
-                                                        El campo conflicto es obligatorio.
+                                                        El estado es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-6">
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">
+                                                <label class="btn btn-outline-primary" for="btncheck1">Requiere Traductor</label>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="password">Horario Disponible</label>
-                                                    <select id="horarios" name="hora" class="form-control">
-                                                        <option value=""> --Primero selecciona un Dia --</option>
-                                                    </select>
+                                                    <label for="name">Requiere Traductor</label>
+                                                    <input id="fecha" type="date" name="fecha" class="form-control" >
                                                     <div class="invalid-feedback">
-                                                        El Horario es obligatorio.
+                                                        La nacionalidad es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>
+                                            
+
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div align="center">
@@ -243,23 +275,23 @@
     </div>
 
 @section('scripts')
-    <script src="public/assets/js/poderes/general.js"></script>
+    <script src="../public/assets/js/poderes/general.js"></script>
 @endsection
 
 
 
-    <script src="public/assets/js/jquery.min.js"></script>
-    <script src="public/assets/js/popper.min.js"></script>
-    <script src="public/assets/js/bootstrap.min.js"></script>
-    <script src="public/assets/js/sweetalert.min.js"></script>
-    <script src="public/assets/js/select2.min.js"></script>
-    <script src="public/assets/js/jquery.nicescroll.js"></script>
+    <script src="../public/assets/js/jquery.min.js"></script>
+    <script src="../public/assets/js/popper.min.js"></script>
+    <script src="../public/assets/js/bootstrap.min.js"></script>
+    <script src="../public/assets/js/sweetalert.min.js"></script>
+    <script src="../public/assets/js/select2.min.js"></script>
+    <script src="../public/assets/js/jquery.nicescroll.js"></script>
 
     <!-- Template JS File -->
-    <script src="public/assets/js/stisla.js"></script>
-    <script src="public/assets/js/scripts.js"></script>
-    <script src="public/assets/js/profile.js"></script>
-    <script src="public/assets/js/custom.js"></script>
+    <script src="../public/assets/js/stisla.js"></script>
+    <script src="../public/assets/js/scripts.js"></script>
+    <script src="../public/assets/js/profile.js"></script>
+    <script src="../public/assets/js/custom.js"></script>
 
     <script src="https://cdn.datatables.net/2.1.5/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.1.5/js/dataTables.bootstrap4.js"></script>
@@ -290,6 +322,6 @@
 </div>
 
 @section('scripts')
-    <script src="public/js/poderes/general.js"></script>
+    <script src="../public/assets/js/validaciones.js"></script>
     
 @endsection
