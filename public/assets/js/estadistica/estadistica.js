@@ -168,3 +168,24 @@ function buscarCCT(cct){
         }
     });
 }
+
+//Solicitud en línea trabajadores
+
+
+$(function(){
+    $('#ramaIndustrial').on('change', onSelectestadoChange);
+})
+
+function onSelectestadoChange(){
+    var economica_id = $(this).val();
+    $('#actividad_economica').prop('disabled', false);
+    
+    $.get('./api/v1/actividadEconomica/'+economica_id, function (data){
+        console.log(data);
+        var html_select = '<option value="">--Seleccione una rama industrial --</option>';        
+        for(var i=0; i<data.length; ++i)
+            html_select += '<option value= "'+data[i].id+'">'+data[i].act_economica+'</option>';
+            $('#actividad_economica').html(html_select);
+    });
+}
+

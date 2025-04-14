@@ -14,6 +14,11 @@ use App\Models\SeerColectivas;
 use App\Models\SeerConvenios;
 use App\Models\SeerCitados;
 use App\Models\SeerAsesoria;
+use App\Models\SeerMotivo;
+use App\Models\SolicitudMotivo;
+use App\Models\SolicitudRama;
+use App\Models\SolicitudEconomica;
+use App\Models\SeerMotivoSolicitud;
 
 //Para sacar el Id del usuario
 use Illuminate\Support\Facades\Auth;
@@ -1712,7 +1717,7 @@ class SeerController extends Controller
         return view('estadisticas.editar_auxiliar', compact('userRole','general','auxiliar','municipios','conciliador','estados','conciliadores','citados'));  
     }
 
-   public function update_auxiliar(Request $request){
+    public function update_auxiliar(Request $request){
         $data = $request->all();
         $id_usuario = auth()->user()->id;
         $user = User::find($id_usuario);
@@ -1796,9 +1801,64 @@ class SeerController extends Controller
         
         return view('estadisticas.verHistorial', compact('personas'));    
 
+    } 
+
+    public function solicitudesLinea(){
+        return view('solicitud');
     }
 
     public function vista_citado(){
         return view('solicitudes.citados');
+    }
+    
+    //Solicitud en línea trabajador
+    public function trabajador()
+    {
+        $motivos = SolicitudMotivo::all();
+        $ramas = SolicitudRama::all();
+        $actividad=SolicitudEconomica::all();
+        $del=Sedes::all();
+        return view('solicitudes.solicitud_trabajador', compact('motivos', 'ramas','actividad','del'));
+    }
+
+    public function obtenerActEconomica($id){
+        return SolicitudEconomica::where('id_rama', $id)->get();
+    }
+
+    public function solicitud_parte1(Request $request)
+    {
+        $data = $request->all();
+        
+        //validando información
+        $validatedData=$request->validate([
+            'fechaConflicto'      => 'required|date',
+            'ramaIndustrial'      => 'required',
+            'actividad_economica' => 'required',
+            'motivo_solicitud'    => 'required',           
+        ]);
+        
+        $data_insert=array(
+            'fecha_conflicto' =>  $data["fechaConflicto"],
+            'id_rama'         =>  $data["ramaIndustrial"],
+            'id_actividad'    =>  $data["actividad_economica"],
+            'delegacion'      =>  $data["dSolicitud"],
+        );
+       
+        SeerPerGeneral::create($data_insert); 
+        $id_general  = SeerPerGeneral::latest('id')->first();
+        if (!empty($data["motivo_solicitud"])) {
+            foreach ($data["motivo_solicitud"] as $motivoId) {
+                SeerMotivo::create([
+                    'id_solicitud' => $id_general["id"],
+                    'id_motivo'    => $motivoId
+                ]);
+            }
+        }
+        return view('solicitudes.solicitud_revision');
+    }
+    
+    //Solicitud en línea trabajador revisión
+    public function revision(){
+        return view('solicitudes.solicitud_revision');
     }
 }

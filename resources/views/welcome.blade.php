@@ -136,7 +136,7 @@
     
   <!-- INICIANDO SERVICIOS -->
   <section id="servicios"><br><br>
-  <h3 class="wow fadeInLeft" style="text-align: center ; font-family:Gibson, font-weight: 600;">Tramites y servicios digitales</h3> <br><br><br>
+  <h3 class="wow fadeInLeft" style="text-align: center ; font-family:Gibson, font-weight: 600;">Trámites y servicios digitales</h3> <br><br><br>
   <div class="card-group">
     <div class="card">   <!-- Inicio asesoria en línea -->
       <div style="display: block; text-align: center;">

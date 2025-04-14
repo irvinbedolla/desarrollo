@@ -74,7 +74,7 @@
             <center><div class="card-group">
                 <div class="card">   <!-- Inicio Seer -->
                     <div style="display: block; text-align: center;">
-                        <a href="{{ route('agregar_citado', 1) }}" class="button-link">
+                        <a href="{{ route('solicitud_trabajador') }}" class="button-link">
                             SOY <br>TRABAJADOR
                         </a> 
                     </div>  

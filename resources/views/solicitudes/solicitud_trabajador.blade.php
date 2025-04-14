@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}"/>
+    <title>Sí Conciliación</title>
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+    <!-- Bootstrap 5.3.3 -->
+    <link href="public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <!-- Ionicons -->
+    <link rel="icon" href="public/assets/images/ccl-r.png" type="image/x-icon">
+    <link href="//fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+    <link href="public/assets/css/all.css" rel="stylesheet" type="text/css">
+    <link href="public/assets/css/iziToast.min.css" rel="stylesheet">
+    <link href="public/assets/css/sweetalert.css" rel="stylesheet" type="text/css"/>
+    <link href="public/assets/css/select2.min.css" rel="stylesheet" type="text/css"/>
+    
+    <!-- Agregados para los Select del Formulario Personas-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+    <style>
+        .loader {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: url('public/assets/images/pageLoader.gif') 50% 50% no-repeat rgb(249,249,249);
+           /* background-color: #6A0F49;/*<p style="color: #CEA845*/
+            opacity: .8;
+        }
+        
+    </style>
+
+    @livewireStyles
+
+    @yield('page_css')
+    <!-- Template CSS <img src="public/assets_seer/images/ccl.png" width="180" height="90" style="position: absolute; left: 100px; top: 10px; right:0px;"/>  -->
+    <link rel="stylesheet" href="public/assets/css/style.css">
+    <link rel="stylesheet" href="public/assets/css/components.css">
+    @yield('page_css')
+</head>
+    <div id="app">  
+        <section class="section">
+            <div class="col-lg-12" >
+                <div style="background-color:#6A0F49">
+                    <div align="right"><br>
+                        <img src="public/assets/images/ccl-r.png" style="max-width: 10%" class="text-center">
+                    </div>
+                    <h3 class="text-center" style="color:#CEA845">Solicitud de trabajador</h3>    
+                </div>
+            </div>
+            <div class="section-body">
+                <div class="row"> 
+                    <div class="col-lg-12" >
+                        <div class="card">
+                            <div class="card-body">
+                                    @if(session()->has('success'))
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                            <strong>¡Registro correcto!</strong>
+                                            {{ session()->get('success') }}
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    @endif
+
+                                    <!--Se realiza la validación de campos para ver si dejó alguno vacío-->
+                                    @if ($errors->any())
+                                        <div class="alert alert-dark alert-dismissible fade show" role="alert">
+                                            <strong>¡Revise los campos!</strong>
+                                            <ul>
+                                                @foreach ($errors->all() as $error)
+                                                    <li>{{ $error }}</li>
+                                                    <!--<span class="badge badge-danger">{{ $error }}</span>-->
+                                                @endforeach
+                                            </ul>
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    @endif
+                                    <div style="background-color:#6A0f49">
+                                        <h3 class="text-center" style="color:#CEA845">Datos generales de la solicitud</h3>
+                                    </div>   
+                                    <h6 class="text-center" style="color:black"><b>Nota: Los campos marcados con (*) son datos obligatorios, favor de proporcionarlos.</b></h6> 
+                                    <!--Se realiza el envío de datos con formulario de Laravel Collective-->
+                                    <form class="needs-validation novalidate" method="POST" action="{{route('parte1')}}">
+                                        @csrf
+                                        <div class="row">
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">Delegación a presentarse (*)</label>
+                                                    <select id="dSolicitud" class="form-control" name="dSolicitud">
+                                                        <option value="">Seleccione</option>
+                                                        @foreach($del as $de)
+                                                            <option value="{{$de['nombre']}}">{{$de['nombre']}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        La delegación es obligatoria.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-6"></div>
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">Fecha de conflicto (*)</label>
+                                                    <input type="date" id="fechaConflicto" name="fechaConflicto" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        La fecha es obligatoria.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">Objeto de la solicitud (*)</label>
+                                                    <select  class="form-control" id="motivo_solicitud">
+                                                        <option value="">Seleccione</option>
+                                                        @foreach($motivos as $motivo)
+                                                            <option value="{{$motivo['id']}}">{{$motivo['motivo']}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El objeto de solicitud es obligatoria.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-6">
+                                                <table id="tabla" name="motivo_solicitud[]" class="table table-striped mt-1" style="margin: 0 center; text-align:center;">
+                                                    <thead style="background-color: #4A001F;">
+                                                        <th style="color: #fff;">Objeto de la solicitud</th>
+                                                        <th style="color: #fff;">Acción</th>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+                                            </div>
+                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-6"></div>
+                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-6">
+                                                <p>Rama industrial del negocio</p>
+                                                <div class="form-group">
+                                                    <label for="name">Paso 1. Rama industrial (*)</label>
+                                                    <select id="ramaIndustrial" class="form-control" name="ramaIndustrial" required>
+                                                        <option value="">Seleccione</option>
+                                                        @foreach($ramas as $rama)
+                                                            <option value="{{$rama['id']}}">{{$rama['rama_industrial']}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo rama industrial es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="div2"  class="col-xs-12 col-sm-12 col-md-6"><br><br>
+                                                <div class="form-group">
+                                                <label for="name">Paso 2: Actividad económica del patrón (*)</label>
+                                                    <select id="actividad_economica" name="actividad_economica" class="form-control" disabled>
+                                                        <option value=""> --Primero selecciona una rama industrial --</option>
+                                                        
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo actividad económica del patrón es obligatorio.
+                                                    </div>
+                                                    <p>Ejemplos: comercio de productos al por menor, construcción, servicios médicos...</p>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                        <div align="center">
+                                            <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color: #CEA845">Guardar</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color: #CEA845">Regresar</a>    
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="./public/assets/js/estadistica/estadistica.js"></script>
+    <script src="https://cdn.datatables.net/2.1.5/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.1.5/js/dataTables.bootstrap4.js"></script>
+       
+    <script>
+        //Fecha conflicto limitada a la fecha actual
+        fechaConflicto.max = new Date().toISOString().split("T")[0];
+        //Solicitud en línea trabajador parte 1
+        $(document).ready(function() {
+            let motivosSeleccionados = [];
+
+            $('#motivo_solicitud').change(function() {
+                var opcionSeleccionada = $(this).val();
+                var opcionTexto = $("#motivo_solicitud option:selected").text();
+
+                // Verifica si ya fue agregado ese motivo
+                if (motivosSeleccionados.includes(opcionSeleccionada)) {
+                    alert('Este motivo ya ha sido seleccionado.');
+                    $(this).val('');
+                    return;
+                }
+
+                motivosSeleccionados.push(opcionSeleccionada);
+
+                $('#tabla tbody').append(
+                    '<tr data-id="' + opcionSeleccionada + '">' +
+                        '<td>' + opcionTexto + '</td>' +
+                        '<td><button type="button" class="eliminar btn btn-danger btn-sm">Eliminar</button></td>' +
+                    '</tr>'
+                );
+
+                $('#div1').append(
+                    '<input type="hidden" name="motivo_solicitud[]" value="' + opcionSeleccionada + '" id="input-motivo-' + opcionSeleccionada + '">'
+                );
+
+                // Reinicia el select
+                $(this).val('');
+            });
+
+            // Eliminar fila e input hidden
+            $(document).on('click', '.eliminar', function() {
+                var fila = $(this).closest('tr');
+                var idMotivo = fila.attr('data-id');
+
+                // Elimina input y fila
+                $('#input-motivo-' + idMotivo).remove();
+                fila.remove();
+
+                // Actualiza la lista de los motivos seleccionados
+                motivosSeleccionados = motivosSeleccionados.filter(id => id !== idMotivo);
+            });
+        });
+    </script>

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\SeerController;
 use App\Http\Controllers\TurnosController;
+use App\Http\Controllers\Controller;
 
 /*
 |--------------------------------------------------------------------------
@@ -127,5 +128,8 @@ Route::prefix('v1')->group(function () {
     Route::get('/citados/{id}',         [SeerController::class, 'obtenerCitados']);
     //Ruta  de citas para ver el numero de citas por dia
     Route::get('/obtenerHorario/{id}/{sede}',  [TurnosController::class, 'obtenerHorario']);
+
+    //Rutas solicitud en línea trabajadores
+    Route::get('/actividadEconomica/{id}',  [SeerController::class, 'obtenerActEconomica']);
 
 });

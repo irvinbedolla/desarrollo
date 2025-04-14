@@ -40,10 +40,16 @@ use App\Http\Controllers\Controller;
         return view('../public/welcome');
     });
 
-    //Nueva para solicitudes en línea
-    Route::get('solicitud', [Controller::class, 'solicitud'])->name('solicitud');
-    Route::post('/chat/crear',      [Controller::class, 'store_chat'])->name('RespuestasChat.store');
+    Route::get('solicitudes',           [SeerController::class, 'solicitudesLinea'])->name('solicitud');
+
+    //Solicitudes en línea trabajador
+    Route::get('solicitud_trabajador',  [SeerController::class, 'trabajador'])->name('solicitud_trabajador');
+    Route::post('solicitud_trabajador', [SeerController::class, 'solicitud_parte1'])->name('parte1');
+    
+    Route::get('solicitud_revision',    [SeerController::class, 'revision'])->name('solicitud_revision');
+    
     //Rutas para el chat
+    Route::post('/chat/crear',      [Controller::class, 'store_chat'])->name('RespuestasChat.store');
     Route::get('chat',              [Controller::class, 'chats'])->name('chat');
     Route::post('/chat/crearUno/',  [Controller::class, 'storeUno'])->name('RespuestasChat.storeUno');
 
@@ -154,7 +160,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/seer/index',                       [SeerController::class, 'index'])->name('seer.index');
         Route::get('/seer/index',                       [SeerController::class, 'index'])->name('seer');
         Route::get('seer/historial',                    [SeerController::class, 'ver_historial'])->name('persona.historial');
-        Route::post('seer/historial',                   [SeerController::class, 'historial'])->name('persona.historial');
+        Route::post('seer/historial',                   [SeerController::class, 'historial'])->name('historial');
         //Rutas de auxiliares
         Route::get('/seer/create',                      [SeerController::class, 'create'])->name('create_consentrado_aux');
         Route::get('/seer/ver',                         [SeerController::class, 'ver_consentrado_aux'])->name('create_consentrado_ver');
