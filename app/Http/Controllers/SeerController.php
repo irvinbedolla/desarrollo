@@ -1843,6 +1843,7 @@ class SeerController extends Controller
        
         SeerPerGeneral::create($data_insert); 
         $id_general  = SeerPerGeneral::latest('id')->first();
+        $id=$id_general["id"];
         if (!empty($data["motivo_solicitud"])) {
             foreach ($data["motivo_solicitud"] as $motivoId) {
                 SeerMotivo::create([
@@ -1853,14 +1854,14 @@ class SeerController extends Controller
         }
         $estados = Estados::all();
         $municipios = Municipios::all();
-        return view('solicitudes.solicitante', compact('estados','municipios'));
+        return view('solicitudes.solicitante', compact('estados','municipios','id'));
     }
     
     public function solicitud_parte2(Request $request){
         $data = $request->all();
-
+        //dd($data);
         //validando información
-        $request->validate([
+       /* $request->validate([
             'tipo'               => 'required|in:Fisica,Moral',
             'curp'               => 'required|min:18|max:18',
             'nombre'             => 'required',
@@ -1879,16 +1880,16 @@ class SeerController extends Controller
             'referencias'        => 'required|string|max:300',
             'calle1'             => 'required',
             'calle2'             => 'required',
-        ]);
+        ]);*/
         $data_insert=array(
             'id_solicitud'         => $data["id"],
             'tipo_persona'         => $data["tipo"],
             'curp'                 => $data["curp"],
             'nombre'               => $data["nombre"],
+            'fecha_nacimiento'     => $data["fecha_nacimiento"],
             'sexo'                 => $data["genero"],
             'nacionalidad'         => $data["nacionalidad"],
-            'estado'               => $data["estado_solicitante"],
-            'fecha_nacimiento'     => $data["nacimiento"],
+            'estado'               => $data["estado_nacimiento"],
             'edad'                 => $data["edad"],
             'telefono'             => $data["telefono"],
             'email'                => $data["correo"],
@@ -1897,20 +1898,20 @@ class SeerController extends Controller
             'calle'                => $data["vialidad_calle"],
             'num_ext'              => $data["numExt"],
             'colonia'              => $data["colonia_solicitante"],
-            'municipio_domicilio'  => $data["municipio_alcaldia"],
+            'municipio_domicilio'  => $data["municipio_solicitante"],
             'codigo_postal'        => $data["codigo_solicitante"],
             'referencia'           => $data["referencias"],
             'calle2'               => $data["calle1"],
             'calle3'               => $data["calle2"],
             'nss'                  => $data["seguro"],
             'puesto'               => $data["puesto"],
-            'oficio'               => $data["tipo"],
+            'oficio'               => $data["oficio"],
             'pago'                 => $data["pago"],
-            'periodo_pago'         => $data["tipo"],
+            'periodo_pago'         => $data["tiempo_pago"],
             'horas_semana'         => $data["horas"],
-            'fecha_ingreso'        => $data["fecha ingreso"],
-            'fecha_salida'         => $data["fecha salida"],
-            'jornada'              => $data["tipo"],
+            'fecha_ingreso'        => $data["fecha_ingreso"],
+            'fecha_salida'         => $data["fecha_salida"],
+            'jornada'              => $data["jornada"],
             
         );
 
