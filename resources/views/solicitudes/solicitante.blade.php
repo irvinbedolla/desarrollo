@@ -34,41 +34,28 @@
             opacity: .8;
         }
     </style>
-
-    <style>
-       /* .cabecera{   
-            width:2000px;
-            height:100px;
-        }*/
-    </style>
-    <style>
-        /*.img{
-            display: flex;
-            justify-content: center;
-        }
-       /* .btn btn-primary{
-
-        }*/
-    </style>
-    @livewireStyles
-
-    @yield('page_css')
-    <!-- Template CSS <img src="public/assets_seer/images/ccl.png" width="180" height="90" style="position: absolute; left: 100px; top: 10px; right:0px;"/>  -->
-    <link rel="stylesheet" href="public/assets/css/style.css">
-    <link rel="stylesheet" href="public/assets/css/components.css">
-    @yield('page_css')
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <div class="">
+            <img src="public/assets/images/Logos 2.png" class="img" style="" width="330" height="80"></a>&nbsp;&nbsp;
+        </div> 
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent" >
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ route('publico') }}" style="color: black;">INICIO<span class="sr-only"></span></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <br><br><br><br>
+    </div>
 </head>
 
     <div id="app">  
         <section class="section">
-            <div class="col-lg-12" >
-                <div style="background-color:#6A0F49">
-                    <div align="right"><br>
-                        <img src="public/assets/images/ccl-r.png" style="max-width: 10%" class="text-center">
-                    </div>
-                    <h3 class="text-center" style="color:#CEA845">Solicitante trabajador</h3>    
-                </div>
-            </div>
             <div class="section-body">
                 <div class="row"> 
                     <div class="col-lg-12" >
@@ -99,8 +86,8 @@
                                             </button>
                                         </div>
                                     @endif
-                                    <div style="background-color:#6A0f49">
-                                        <h3 class="text-center" style="color:#CEA845">Datos de identificación</h3>
+                                    <div style="background-color:#D2D3D5; width:100%; height:40px;">
+                                        <h3 class="text-center" style="color:black">Datos de identificación</h3>
                                     </div>    
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                                     <form class="needs-validation novalidate" method="POST" action="{{route('parte2')}}">
@@ -200,8 +187,8 @@
                                                 </div>
                                             </div>
                                                 
-                                            <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#6A0f49">
-                                                <h3 class="text-center" style="color:#CEA845">Contacto</h3>
+                                            <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
+                                                <h3 class="text-center" style="color:black">Contacto</h3>
                                             </div>  
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
@@ -221,8 +208,106 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#6A0f49">
-                                                <h3 class="text-center" style="color:#CEA845">Datos laborales</h3>
+                                            <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
+                                                <h3 class="text-center" style="color:black">Domicilio</h3>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-6 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="password">Estado del solicitante</label>
+                                                    <select id="estado_solicitante" class="form-control" name="estado_solicitante" required>
+                                                        <option value="">Seleccione</option>
+                                                        @foreach($estados as $est)
+                                                            <option value="{{$est['id']}}">{{$est['nombre']}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo Estado es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Tipo de vialidad (*)</label>
+                                                    <input type="text" name="vialidad" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo vialidad es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Nombre de la vialidad o calle (*)</label>
+                                                    <input type="text" name="vialidad_calle" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo vialidad o calle es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Número exterior (*)</label>
+                                                    <input type="text" name="numExt" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo número es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Número interior</label>
+                                                    <input type="text" name="numInt" class="form-control"> 
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Colonia (*)</label>
+                                                    <input type="text" name="colonia_solicitante" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo colonia es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Nombre del municipio o alcaldía (*)</label>
+                                                    <input type="text" name="municipio_alcaldia" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo municipio o alcaldía es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">Código postal (*)</label>
+                                                    <input type="number" name="codigo_solicitante" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo código postal es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Referencias</label>
+                                                    <input type="text" name="referencias" class="form-control"> 
+                                                    <div class="invalid-feedback">
+                                                        El campo referencia es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Entre calle</label>
+                                                    <input type="text" name="calle1" class="form-control"> 
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">y calle</label>
+                                                    <input type="text" name="calle2" class="form-control">                                     
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
+                                                <h3 class="text-center" style="color:black">Datos laborales</h3>
                                             </div>  
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
@@ -318,8 +403,8 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div align="center">
-                                                    <button type="submit" class="btn btn-primary" style="background-color:#CEA845;">Guardar</button>
-                                                    <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845;">Regresar</a>    
+                                                    <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
+                                                    <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845; border-color:#CEA845;">Regresar</a>    
                                                 </div>
                                             </div>    
                                     </form>

@@ -47,7 +47,7 @@ use App\Http\Controllers\Controller;
     Route::post('solicitud_trabajador', [SeerController::class, 'solicitud_parte1'])->name('parte1');
     
     Route::get('solicitud_revision',    [SeerController::class, 'revision'])->name('solicitud_revision');
-    Route::get('solicitud_solicitante', [SeerController::class, 'solicitud_solicitante'])->name('solicitante');
+    Route::get('solicitud_solicitante', [SeerController::class, 'vista_solicitante'])->name('solicitante');
     Route::post('solicitud_trabajador2',[SeerController::class, 'solicitud_parte2'])->name('parte2');
     
     //Rutas para el chat

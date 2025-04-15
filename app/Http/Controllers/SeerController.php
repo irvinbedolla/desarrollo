@@ -1853,13 +1853,12 @@ class SeerController extends Controller
         return view('solicitudes.solicitante');
     }
     
-    /*public function vista_citado(){
+    public function vista_solicitante(){
         $estados = Estados::all();
         $municipios = Municipios::all();
 
-        return view('solicitudes.citados',compact('estados'));
-    }*/
-
+        return view('solicitudes.solicitante', compact('estados','municipios'));
+    }
 
     public function solicitud_parte2(Request $request){
         $data = $request->all();
