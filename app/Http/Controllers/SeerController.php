@@ -1850,20 +1850,35 @@ class SeerController extends Controller
                 ]);
             }
         }
-        return view('solicitudes.solicitante');
-    }
-    
-    public function vista_solicitante(){
         $estados = Estados::all();
         $municipios = Municipios::all();
-
         return view('solicitudes.solicitante', compact('estados','municipios'));
     }
-
+    
     public function solicitud_parte2(Request $request){
         $data = $request->all();
-        //dd($data);
+
         //validando información
+        $request->validate([
+            'tipo'               => 'required|in:Fisica,Moral',
+            'curp'               => 'required|min:18|max:18',
+            'nombre'             => 'required|string',
+            'nacimiento'         => 'required|date',
+            'edad'               => 'required|numeric',
+            'genero'             => 'required|in:H,M,NB,LGBTTTIQ',
+            'nacionalidad'       => 'required|in:Mexicana,Otra',
+            'estado_nacimiento'  => 'required',
+            'estado_solicitante' => 'required',
+            'vialidad'           => 'required|string',
+            'vialidad_calle'     => 'required|string',
+            'numExt'             => 'required',
+            'colonia_solicitante'=> 'required|string',
+            'municipio_alcaldia' => 'required|string',
+            'codigo_solicitante' => 'required|numeric',
+            'referencias'        => 'required|string|max:300',
+            'calle1'             => 'required|string',
+            'calle2'             => 'required|string',
+        ]);
         /*
         $request->validate([
             'tipo'              => 'required|in:Fisica,Moral',
@@ -1902,7 +1917,7 @@ class SeerController extends Controller
 
         SeerCitados::create($data_insert); 
         */
-        return back()->with('success', 'Citado agregado correctamente, puedes agregar otro o continuar.');
+        return back()->with('success', 'Solicitante agregado correctamente, puedes agregar otro o continuar.');
     }
 
     public function guardar_citado(Request $request){
