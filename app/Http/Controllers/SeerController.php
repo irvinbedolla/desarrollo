@@ -19,6 +19,7 @@ use App\Models\SolicitudMotivo;
 use App\Models\SolicitudRama;
 use App\Models\SolicitudEconomica;
 use App\Models\SeerMotivoSolicitud;
+use App\Models\SeerSolicitante;
 
 //Para sacar el Id del usuario
 use Illuminate\Support\Facades\Auth;
@@ -1862,49 +1863,55 @@ class SeerController extends Controller
         $request->validate([
             'tipo'               => 'required|in:Fisica,Moral',
             'curp'               => 'required|min:18|max:18',
-            'nombre'             => 'required|string',
+            'nombre'             => 'required',
             'nacimiento'         => 'required|date',
             'edad'               => 'required|numeric',
             'genero'             => 'required|in:H,M,NB,LGBTTTIQ',
             'nacionalidad'       => 'required|in:Mexicana,Otra',
             'estado_nacimiento'  => 'required',
             'estado_solicitante' => 'required',
-            'vialidad'           => 'required|string',
-            'vialidad_calle'     => 'required|string',
+            'vialidad'           => 'required',
+            'vialidad_calle'     => 'required',
             'numExt'             => 'required',
-            'colonia_solicitante'=> 'required|string',
-            'municipio_alcaldia' => 'required|string',
+            'colonia_solicitante'=> 'required',
+            'municipio_alcaldia' => 'required',
             'codigo_solicitante' => 'required|numeric',
             'referencias'        => 'required|string|max:300',
-            'calle1'             => 'required|string',
-            'calle2'             => 'required|string',
+            'calle1'             => 'required',
+            'calle2'             => 'required',
         ]);
-        /*
-        $request->validate([
-            'tipo'              => 'required|in:Fisica,Moral',
-            'curp'              => 'required|min:18|max:18',
-            'nombre'            => 'required',
-            'primer_apellido'   => 'required',
-            'segundo_apellido'  => 'required',
-            'nacimiento'        => 'required|date',
-            'edad'              => 'required|numeric',
-            'sexo'              => 'required|in:H,M,NB,LGBTTTIQ',
-            'nacionalidad'      => 'required|in:Mexicana,Otra',
-            'estado_solicitante'=> 'required'
-        ]);
-        
         $data_insert=array(
-            'id_solicitud'      => $data["id"],
-            'tipo_persona'      => $data["tipo"],
-            'curp'              => $data["curp"],
-            'nombre'            => $data["nombre"],
-            'primer_apellido'   => $data["primer_apellido"],
-            'segundo_apellido'  => $data["segundo_apellido"],
-            'fecha_nacimiento'  => $data["nacimiento"],
-            'edad'              => $data["edad"],
-            'sexo'              => $data["sexo"],
-            'nacionalidad'      => $data["nacionalidad"],
-            'estado_solicitante'=> $data["estado_solicitante"],
+            'id_solicitud'         => $data["id"],
+            'tipo_persona'         => $data["tipo"],
+            'curp'                 => $data["curp"],
+            'nombre'               => $data["nombre"],
+            'sexo'                 => $data["genero"],
+            'nacionalidad'         => $data["nacionalidad"],
+            'estado'               => $data["estado_solicitante"],
+            'fecha_nacimiento'     => $data["nacimiento"],
+            'edad'                 => $data["edad"],
+            'telefono'             => $data["telefono"],
+            'email'                => $data["correo"],
+            'estado_domicilio'     => $data["estado_solicitante"],
+            'tipo_vialidad'        => $data["vialidad"],
+            'calle'                => $data["vialidad_calle"],
+            'num_ext'              => $data["numExt"],
+            'colonia'              => $data["colonia_solicitante"],
+            'municipio_domicilio'  => $data["municipio_alcaldia"],
+            'codigo_postal'        => $data["codigo_solicitante"],
+            'referencia'           => $data["referencias"],
+            'calle2'               => $data["calle1"],
+            'calle3'               => $data["calle2"],
+            'nss'                  => $data["seguro"],
+            'puesto'               => $data["puesto"],
+            'oficio'               => $data["tipo"],
+            'pago'                 => $data["pago"],
+            'periodo_pago'         => $data["tipo"],
+            'horas_semana'         => $data["horas"],
+            'fecha_ingreso'        => $data["fecha ingreso"],
+            'fecha_salida'         => $data["fecha salida"],
+            'jornada'              => $data["tipo"],
+            
         );
 
         if(isset($data["rfc"])){
@@ -1914,10 +1921,12 @@ class SeerController extends Controller
             $data_insert["traductor"] =  $data["traductor"];
             $data_insert["lenguaje"]  =  $data["lenguaje"];
         }
+        if(isset($data["numInt"])){
+            $data_insert["num_int"] =  $data["numInt"];
+        }
 
-        SeerCitados::create($data_insert); 
-        */
-        return back()->with('success', 'Solicitante agregado correctamente, puedes agregar otro o continuar.');
+        SeerSolicitante::create($data_insert);
+        return view('solicitudes.solicitante')->with('success', 'Solicitante agregado correctamente, puedes agregar otro o continuar.');
     }
 
     public function guardar_citado(Request $request){
