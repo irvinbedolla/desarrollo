@@ -102,7 +102,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Curp del solicitante</label>
+                                                    <label for="name">Curp del solicitante (*)</label>
                                                     <input type="text" name="curp" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El curp es obligatorio.
@@ -111,7 +111,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Nombre del solicitante</label>
+                                                    <label for="name">Nombre(s) del solicitante (*) </label>
                                                     <input type="text" name="nombre" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
@@ -120,7 +120,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Fecha de nacimiento</label>
+                                                    <label for="name">Fecha de nacimiento (*)</label>
                                                     <input type="date" name="fecha nacimiento" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         La fecha de nacimiento es obligatoria.
@@ -129,8 +129,8 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Edad del solicitante</label>
-                                                    <input type="text" name="edad" class="form-control" required> 
+                                                    <label for="name">Edad del solicitante (*)</label>
+                                                    <input type="number" name="edad" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         La edad es obligatoria.
                                                     </div>
@@ -139,7 +139,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">RFC del solicitante</label>
-                                                    <input type="text" name="rfc" class="form-control" required> 
+                                                    <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" required> 
                                                     <div class="invalid-feedback">
                                                         El RFC es obligatorio.
                                                     </div>
@@ -147,8 +147,13 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Genero</label>
-                                                    <input type="text" name="genero" class="form-control" required> 
+                                                    <label for="name">Genero (*)</label>
+                                                    <select name="tipo" class="form-control" required>
+                                                        <option value="">Seleccione</option>
+                                                        <option value="masculino">Masculino</option>
+                                                        <option value="femenino">Femenino</option>
+                                                        <option value="otro">Otro</option>
+                                                    </select>
                                                     <div class="invalid-feedback">
                                                         El genero es obligatorio.
                                                     </div>
@@ -156,11 +161,11 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Nacionalidad</label>
+                                                    <label for="name">Nacionalidad (*)</label>
                                                     <select name="tipo" class="form-control" required>
                                                         <option value="">Seleccione</option>
-                                                        <option value="Solicitud">Méxicana</option>
-                                                        <option value="Ratificación">Otra</option>
+                                                        <option value="">Méxicana</option>
+                                                        <option value="">Otra</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         La nacionalidad es obligatoria.
@@ -169,31 +174,37 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Estado de nacimiento</label>
-                                                    <select name="tipo" class="form-control" required>
-                                                        <option value="">Seleccione</option>
-                                                        <option value="">Aguascalientes</option>
-                                                        <option value="">Michoacán</option>
+                                                    <label for="name">Estado de nacimiento (*)</label>
+                                                    <select id="estado solicitante" name="estado_solicitante" class="form-control" required>
+                                                        @foreach($estados as $est)
+                                                            <option value="{{$est['id']}}">{{$est['nombre']}}</option>
+                                                        @endforeach
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El estado es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <div class="form-group">
-                                                    <label for="name">Solicita traductor</label><br>
-                                                    <input name="" type="checkbox" checked="checked" />
-                                                </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <spam for="btncheck1">Solicita traductor</spam>
+                                                <input name="traductor" type="checkbox" class="btn-check" id="check_lenguaje" checked="checked" />
                                             </div>
-                                                
+                                            <div class="col-xs-12 col-sm-12 col-md-6" id="lenguaje_señas">
+                                                <div class="form-group">
+                                                    <label for="name">Que tipo de lenguaje require</label>
+                                                    <input type="text" name="lenguaje" class="form-control">
+                                                    <div class="invalid-feedback">
+                                                        El lenguaje es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>    
                                             <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
                                                 <h3 class="text-center" style="color:black">Contacto</h3>
                                             </div>  
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Teléfono</label>
-                                                    <input type="text" name="telefono" class="form-control" required> 
+                                                    <label for="name">Teléfono (*)</label>
+                                                    <input type="number" name="telefono" minlength="10" maxlength="10" class="form-control"  required> 
                                                     <div class="invalid-feedback">
                                                         El teléfono  es obligatorio.
                                                     </div>
@@ -201,8 +212,8 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Email</label>
-                                                    <input type="text" name="correo" class="form-control" required> 
+                                                    <label for="name">Email (*)</label>
+                                                    <input type="mail" name="correo" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El Email es obligatorio.
                                                     </div>
@@ -213,7 +224,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="password">Estado del solicitante</label>
+                                                    <label for="password">Estado del solicitante (*)</label>
                                                     <select id="estado_solicitante" class="form-control" name="estado_solicitante" required>
                                                         <option value="">Seleccione</option>
                                                         @foreach($estados as $est)
@@ -296,13 +307,13 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Entre calle</label>
+                                                    <label for="name">Entre calle (*)</label>
                                                     <input type="text" name="calle1" class="form-control"> 
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">y calle</label>
+                                                    <label for="name">y calle (*)</label>
                                                     <input type="text" name="calle2" class="form-control">                                     
                                                 </div>
                                             </div>
@@ -311,7 +322,7 @@
                                             </div>  
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Número de seguro social</label>
+                                                    <label for="name">Número de seguro social (*)</label>
                                                     <input type="text" name="seguro" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                     </div>
@@ -319,7 +330,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Puesto</label>
+                                                    <label for="name">Puesto (*)</label>
                                                     <input type="text" name="puesto" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El puesto es obligatorio.
@@ -329,17 +340,13 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Oficio</label>
-                                                    <select name="tipo" class="form-control" required>
-                                                        <option value="">Seleccione</option>
-                                                        <option value="">Cajero(a) de maquina registradora</option>
-                                                        <option value="">cantinero(a) preparador de bebidas</option>
-                                                    </select>
+                                                    <input type="text" name="oficio" class="form-control" required> >
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">¿Cuánto le pagan?</label>
-                                                    <input type="text" name="pago" class="form-control" required> 
+                                                    <label for="name">¿Cuánto le pagan? (*)</label>
+                                                    <input type="number" name="pago" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         Es obligatorio.
                                                     </div>
@@ -348,7 +355,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">¿Cada cuándo le pagan?</label>
-                                                    <select name="tipo" class="form-control" required>
+                                                    <select name="tiempo_pago" class="form-control" required>
                                                         <option value="">Seleccione</option>
                                                         <option value="">Semanal</option>
                                                         <option value="">Quincenal</option>
@@ -360,7 +367,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Horas semanales</label>
-                                                    <input type="text" name="horas" class="form-control" required> 
+                                                    <input type="number" name="horas" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         Es obligatorio.
                                                     </div>
@@ -448,6 +455,7 @@
 
 
     @yield('scripts')
+    <script src="../public/assets/js/validaciones.js"></script> 
     <script>
         function sedes(){
             document.getElementById("fecha").removeAttribute("disabled");
