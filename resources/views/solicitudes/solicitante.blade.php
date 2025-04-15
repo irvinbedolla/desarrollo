@@ -106,15 +106,14 @@
                                     <form class="needs-validation novalidate" method="POST" action="{{route('parte2')}}">
                                         @csrf
                                         <div class="row">
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <div class="form-group">
-                                                    <label for="name">Tipo de persona</label><br>
-                                                    <input name="" type="checkbox" checked="checked" />Física
-                                                    <!--<input type="text" name="nombre" class="form-control" required> -->
-
-                                                </div>
-                                            </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <label for="name">Tipo persona</label>
+                                                <select name="tipo" class="form-control" required>
+                                                    <option value="fisica">Fisica</option>
+                                                    <option value="moral">Moral</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Curp del solicitante</label>
                                                     <input type="text" name="curp" class="form-control" required> 
@@ -186,8 +185,8 @@
                                                     <label for="name">Estado de nacimiento</label>
                                                     <select name="tipo" class="form-control" required>
                                                         <option value="">Seleccione</option>
-                                                        <option value="Solicitud">Aguascalientes</option>
-                                                        <option value="Ratificación">Michoacán</option>
+                                                        <option value="">Aguascalientes</option>
+                                                        <option value="">Michoacán</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El estado es obligatoria.
@@ -198,7 +197,6 @@
                                                 <div class="form-group">
                                                     <label for="name">Solicita traductor</label><br>
                                                     <input name="" type="checkbox" checked="checked" />
-                                                    <!--<input type="text" name="nombre" class="form-control" required> -->
                                                 </div>
                                             </div>
                                                 
@@ -207,33 +205,123 @@
                                             </div>  
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Tipo de contacto</label>
-                                                    <select name="tipo" class="form-control" required>
-                                                        <option value="">Seleccione</option>
-                                                        <option value="tcelular">Telefono celular</option>
-                                                        <option value="celular">Celular</option>
-                                                        <option value="mail">Email</option>
-                                                    </select>
+                                                    <label for="name">Teléfono</label>
+                                                    <input type="text" name="telefono" class="form-control" required> 
                                                     <div class="invalid-feedback">
-                                                        El contacto es obligatorio.
+                                                        El teléfono  es obligatorio.
+                                                    </div>
+                                                </div>   
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Email</label>
+                                                    <input type="text" name="correo" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El Email es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#6A0f49">
+                                                <h3 class="text-center" style="color:#CEA845">Datos laborales</h3>
+                                            </div>  
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Número de seguro social</label>
+                                                    <input type="text" name="seguro" class="form-control" required> 
+                                                    <div class="invalid-feedback">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Contacto</label>
-                                                    <input type="text" name="contacto" class="form-control" required> 
+                                                    <label for="name">Puesto</label>
+                                                    <input type="text" name="puesto" class="form-control" required> 
                                                     <div class="invalid-feedback">
-                                                        El contacto es obligatorio.
+                                                        El puesto es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-12">
-                                            <div align="center">
-                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845;">Guardar</button>
-                                                <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845;">Regresar</a>    
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Oficio</label>
+                                                    <select name="tipo" class="form-control" required>
+                                                        <option value="">Seleccione</option>
+                                                        <option value="">Cajero(a) de maquina registradora</option>
+                                                        <option value="">cantinero(a) preparador de bebidas</option>
+                                                    </select>
+                                                </div>
                                             </div>
-                                        </div>    
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">¿Cuánto le pagan?</label>
+                                                    <input type="text" name="pago" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        Es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">¿Cada cuándo le pagan?</label>
+                                                    <select name="tipo" class="form-control" required>
+                                                        <option value="">Seleccione</option>
+                                                        <option value="">Semanal</option>
+                                                        <option value="">Quincenal</option>
+                                                        <option value="">Mensual</option>
+                                                        <option value="">Diario</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Horas semanales</label>
+                                                    <input type="text" name="horas" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        Es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <label for="name">Labora actualmente</label><br>
+                                                    <input name="" type="checkbox" checked="checked" />
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Fecha de ingreso</label>
+                                                    <input type="date" name="fecha ingreso" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        La fecha de ingreso es obligatoria.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Fecha de salida</label>
+                                                    <input type="date" name="fecha salida" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        La fecha de salida es obligatoria.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Jornada</label>
+                                                    <select name="tipo" class="form-control" required>
+                                                        <option value="">Seleccione</option>
+                                                        <option value="">Diurna</option>
+                                                        <option value="">Nocturna</option>
+                                                        <option value="">Mixta</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div align="center">
+                                                    <button type="submit" class="btn btn-primary" style="background-color:#CEA845;">Guardar</button>
+                                                    <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845;">Regresar</a>    
+                                                </div>
+                                            </div>    
                                     </form>
                                 </div>
                             </div>
