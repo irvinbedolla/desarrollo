@@ -89,7 +89,7 @@
                                     <div style="background-color:#D2D3D5; width:100%; height:40px;">
                                         <h3 class="text-center" style="color:black">Datos de identificación</h3>
                                     </div>    
-                                    <!--Se realiza el envío de datos con formulario de Laravel Collective-->
+                                    <!--Se realiza el envío de datos con formulario-->
                                     <form class="needs-validation novalidate" method="POST" action="{{route('parte2')}}">
                                         @csrf
                                         <input type="hidden" name="id" value="{{$id}}">
