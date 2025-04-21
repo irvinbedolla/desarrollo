@@ -240,7 +240,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Fin de  turnos
 
     Route::get('/pdf/estadistica',  [PDFController::class, 'pdfEstadistica'])->name('PDFestaditica');
-    
+    Route::get('/pdf/citados/{id}', [PDFController::class, 'pdfCitatorio'])->name('PDFcitatorio'); //ANA
 
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);
