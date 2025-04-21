@@ -10,5 +10,6 @@ class SeerCitados extends Model
     //use HasFactory;
     protected $table = 'seer_citados';
     protected $primaryKey = 'id';
-    protected $fillable = ['id_solicitud','tipo_persona','curp','rfc','nombre','primer_apellido','segundo_apellido','fecha_nacimiento','edad','sexo','nacionalidad','estado_solicitante','estatus']; 
+    protected $fillable = ['id_solicitud','tipo_persona','curp','rfc','nombre','primer_apellido','segundo_apellido','fecha_nacimiento','edad','sexo','nacionalidad','estado_solicitante','traductor','lenguaje',
+    'colonia','cp','calle1','calle2','n_ext','n_int','estatus']; 
 }

@@ -6,14 +6,14 @@
     <title>Sí Conciliación</title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <!-- Bootstrap 5.3.3 -->
-    <link href="public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <!-- Ionicons -->
     <link rel="icon" href="public/assets/images/ccl-r.png" type="image/x-icon">
     <link href="//fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
-    <link href="public/assets/css/all.css" rel="stylesheet" type="text/css">
-    <link href="public/assets/css/iziToast.min.css" rel="stylesheet">
-    <link href="public/assets/css/sweetalert.css" rel="stylesheet" type="text/css"/>
-    <link href="public/assets/css/select2.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../public/assets/css/all.css" rel="stylesheet" type="text/css">
+    <link href="../public/assets/css/iziToast.min.css" rel="stylesheet">
+    <link href="../public/assets/css/sweetalert.css" rel="stylesheet" type="text/css"/>
+    <link href="../public/assets/css/select2.min.css" rel="stylesheet" type="text/css"/>
     
     <!-- Agregados para los Select del Formulario Personas-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -29,14 +29,14 @@
             width: 100%;
             height: 100%;
             z-index: 9999;
-            background: url('public/assets/images/pageLoader.gif') 50% 50% no-repeat rgb(249,249,249);
-           /* background-color: #6A0F49;/<p style="color: #CEA845 */
+            background: url('../public/assets/images/pageLoader.gif') 50% 50% no-repeat rgb(249,249,249);
+           /* background-color: #6A0F49;/*<p style="color: #CEA845*/
             opacity: .8;
         }
     </style>
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="">
-            <img src="public/assets/images/Logos 2.png" class="img" style="" width="330" height="80"></a>&nbsp;&nbsp;
+            <img src="../public/assets/images/Logos 2.png" class="img" style="" width="330" height="80"></a>&nbsp;&nbsp;
         </div> 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -61,10 +61,10 @@
                     <div class="col-lg-12" >
                         <div class="card">
                             <div class="card-body">
-                                    @if(session()->has('success'))
+                                    @if(isset($success))
                                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                                             <strong>¡Registro correcto!</strong>
-                                            {{ session()->get('success') }}
+                                            {{ $success }}
                                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -89,7 +89,7 @@
                                     <div style="background-color:#D2D3D5; width:100%; height:40px;">
                                         <h3 class="text-center" style="color:black">Datos de identificación</h3>
                                     </div>    
-                                    <!--Se realiza el envío de datos con formulario de Laravel Collective-->
+                                    <!--Se realiza el envío de datos con formulario-->
                                     <form class="needs-validation novalidate" method="POST" action="{{route('parte2')}}">
                                         @csrf
                                         <input type="hidden" name="id" value="{{$id}}">
@@ -97,6 +97,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <label for="name">Tipo persona</label>
                                                 <select name="tipo" class="form-control" required>
+                                                    <option value="">Seleccione</option>
                                                     <option value="Fisica">Fisica</option>
                                                     <option value="Moral">Moral</option>
                                                 </select>
@@ -140,7 +141,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">RFC del solicitante</label>
-                                                    <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" required> 
+                                                    <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13"> 
                                                     <div class="invalid-feedback">
                                                         El RFC es obligatorio.
                                                     </div>
@@ -415,8 +416,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div align="center">
                                                     <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar</button>
-                                                    <a href="{{ route('solicitud_trabajador'); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Regresar</a> 
-                                                    <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Terminar</a>    
+                                                    <a href="{{ route('agregar_citado', $id); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Continuar</a>    
                                                 </div>
                                             </div>     
                                     </form>
@@ -436,23 +436,23 @@
     </div>
 
 @section('scripts')
-    <script src="public/assets/js/poderes/general.js"></script>
+    <script src="../public/assets/js/poderes/general.js"></script>
 @endsection
 
 
 
-    <script src="public/assets/js/jquery.min.js"></script>
-    <script src="public/assets/js/popper.min.js"></script>
-    <script src="public/assets/js/bootstrap.min.js"></script>
-    <script src="public/assets/js/sweetalert.min.js"></script>
-    <script src="public/assets/js/select2.min.js"></script>
-    <script src="public/assets/js/jquery.nicescroll.js"></script>
+    <script src="../public/assets/js/jquery.min.js"></script>
+    <script src="../public/assets/js/popper.min.js"></script>
+    <script src="../public/assets/js/bootstrap.min.js"></script>
+    <script src="../public/assets/js/sweetalert.min.js"></script>
+    <script src="../public/assets/js/select2.min.js"></script>
+    <script src="../public/assets/js/jquery.nicescroll.js"></script>
 
     <!-- Template JS File -->
-    <script src="public/assets/js/stisla.js"></script>
-    <script src="public/assets/js/scripts.js"></script>
-    <script src="public/assets/js/profile.js"></script>
-    <script src="public/assets/js/custom.js"></script>
+    <script src="../public/assets/js/stisla.js"></script>
+    <script src="../public/assets/js/scripts.js"></script>
+    <script src="../public/assets/js/profile.js"></script>
+    <script src="../public/assets/js/custom.js"></script>
 
     <script src="https://cdn.datatables.net/2.1.5/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.1.5/js/dataTables.bootstrap4.js"></script>
@@ -484,6 +484,6 @@
 </div>
 
 @section('scripts')
-    <script src="public/js/poderes/general.js"></script>
-    
+    <script src="../public/js/poderes/general.js"></script>
+    
 @endsection

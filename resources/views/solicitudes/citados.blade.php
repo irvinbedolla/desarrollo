@@ -6,7 +6,6 @@
         <meta name="description" content="">
         <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
         <meta name="generator" content="Ing. ISBM">
-        <link href="public/assets/css/carousel.css" rel="stylesheet">
         <title>Si Conciliación</title>
     <!-- Bootstrap 5.3.3 -->
     <link href="../public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
@@ -51,7 +50,7 @@
 </head>
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="">
-        <img src="public/assets/images/Logos 2.png" class="img" style="" width="330" height="80"></a>&nbsp;&nbsp;
+        <img src="../public/assets/images/Logos 2.png" class="img" style="" width="330" height="80"></a>&nbsp;&nbsp;
     </div> 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -100,13 +99,13 @@
                                         </div>
                                     @endif
                                     <div style="background-color:#D2D3D5; width:100%; height:40px;">
-                                        <h3 class="text-center" style="color:black">Ingresa los datos de citado</h3>
+                                        <h3 class="text-center" style="color:black">Ingresa los datos de citado (Debes capturar al menos un Citado)</h3>
                                     </div>    
 
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                                     <form class="needs-validation novalidate" method="POST" action="{{route('seer.citados')}}">
                                         @csrf
-                                        <input type="hidden" name="id" value="1">
+                                        <input type="hidden" name="id" value="{{ $id }}">
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
@@ -253,14 +252,79 @@
                                                 </div>
                                             </div>
                                             
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <h4 class="text-center">Dirección del citado</h4>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">Colonia</label>
+                                                    <input type="text" name="colonia" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo colonia es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">Código Postal</label>
+                                                    <input type="text" name="cp" class="form-control" minlength="5" maxlength="5" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo Código Postal es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">Entre calle</label>
+                                                    <input type="text" name="calle1" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo calle es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">y calle</label>
+                                                    <input type="text" name="calle2" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo calle es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">Num ext.</label>
+                                                    <input type="text" name="exterior" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo calle es obligatorio.
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">Num int.</label>
+                                                    <input type="text" name="interior" class="form-control" > 
+                                                    <div class="invalid-feedback">
+                                                        El campo calle es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div align="center">
                                                 <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar</button>
-                                                <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Regresar</a> 
-                                                <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Terminar</a>    
-                                            </div>
+                                                <a href="{{ route('agregar_documentos', $id); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Continuar</a>    
+                                                </div>
                                         </div>    
                                     </form>
                             </div>

@@ -42,10 +42,7 @@ use App\Http\Controllers\Controller;
 
     Route::get('solicitudes',           [SeerController::class, 'solicitudesLinea'])->name('solicitud');
 
-    //Solicitudes en línea trabajador
-    Route::get('solicitud_trabajador',  [SeerController::class, 'trabajador'])->name('solicitud_trabajador');
-    Route::post('solicitud_trabajador', [SeerController::class, 'solicitud_parte1'])->name('parte1');
-    Route::post('solicitud_solicitante',[SeerController::class, 'solicitud_parte2'])->name('parte2');
+   
     
     //Rutas para el chat
     Route::post('/chat/crear',      [Controller::class, 'store_chat'])->name('RespuestasChat.store');
@@ -75,9 +72,18 @@ use App\Http\Controllers\Controller;
     //Rutas de citas
     Route::get('citas',                 [TurnosController::class, 'create_publico'])->name('create_cita');
     Route::post('/citas/store_publico', [TurnosController::class, 'store_publico'])->name('turnos.publico');
+
+    
+    //Solicitudes en línea trabajador
+    Route::get('solicitud_trabajador',      [SeerController::class, 'trabajador'])->name('solicitud_trabajador');
+    Route::post('guardar_trabajador',       [SeerController::class, 'solicitud_parte1'])->name('parte1');
+    Route::post('solicitud_solicitante',    [SeerController::class, 'solicitud_parte2'])->name('parte2');
+    Route::get('vista_solicitante/{id}' ,   [SeerController::class, 'vista_solicitante'])->name('solicitante');
     //Ruta de agregar citados
-    Route::get('/agrega_citado/{id}',   [SeerController::class, 'vista_citado'])->name('agregar_citado');
-    Route::post('/agrega_citado',       [SeerController::class, 'guardar_citado'])->name('seer.citados');
+    Route::get('/agrega_citado/{id}',       [SeerController::class, 'vista_citado'])->name('agregar_citado');
+    Route::post('/agrega_citado',           [SeerController::class, 'guardar_citado'])->name('seer.citados');
+    Route::get('/agrega_documento/{id}',    [SeerController::class, 'vista_documentos'])->name('agregar_documentos');
+    Route::post('/agrega_documentos',       [SeerController::class, 'guardar_documentos'])->name('seer.documentos');
     
 Route::middleware(['auth', 'verified'])->group(function () {
 

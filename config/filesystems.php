@@ -75,7 +75,8 @@ return [
         public_path('documentos')           => storage_path('app/documentos_abogados'),
         public_path('documentosPersonal')   => storage_path('app/documentos_personal'),
         public_path('documentosModulos')    => storage_path('app/documentos_modulo'),
-        public_path('images')               => storage_path('app/images')
+        public_path('images')               => storage_path('app/images'),
+        public_path('documentosSolicitud')  => storage_path('app/documentos_solicitud')
     ],
 
 ];

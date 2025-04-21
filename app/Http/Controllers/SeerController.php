@@ -1825,7 +1825,7 @@ class SeerController extends Controller
     public function solicitud_parte1(Request $request)
     {
         $data = $request->all();
-        
+
         //validando información
         $request->validate([
             'fechaConflicto'      => 'required|date',
@@ -1859,28 +1859,41 @@ class SeerController extends Controller
     
     public function solicitud_parte2(Request $request){
         $data = $request->all();
-        //dd($data);
+        $id = $data['id'];
+
         //validando información
-       /* $request->validate([
-            'tipo'               => 'required|in:Fisica,Moral',
-            'curp'               => 'required|min:18|max:18',
-            'nombre'             => 'required',
-            'nacimiento'         => 'required|date',
-            'edad'               => 'required|numeric',
-            'genero'             => 'required|in:H,M,NB,LGBTTTIQ',
-            'nacionalidad'       => 'required|in:Mexicana,Otra',
-            'estado_nacimiento'  => 'required',
-            'estado_solicitante' => 'required',
-            'vialidad'           => 'required',
-            'vialidad_calle'     => 'required',
-            'numExt'             => 'required',
-            'colonia_solicitante'=> 'required',
-            'municipio_alcaldia' => 'required',
-            'codigo_solicitante' => 'required|numeric',
-            'referencias'        => 'required|string|max:300',
-            'calle1'             => 'required',
-            'calle2'             => 'required',
-        ]);*/
+       $request->validate([
+            'tipo'                  => 'required|in:Fisica,Moral',
+            'curp'                  => 'required|min:18|max:18',
+            'nombre'                => 'required',
+            'fecha_nacimiento'      => 'required|date',
+            'edad'                  => 'required|numeric',
+            'genero'                => 'required|in:H,M,NB,LGBTTTIQ',
+            'nacionalidad'          => 'required|in:Mexicana,Otra',
+            'estado_nacimiento'     => 'required',
+            'telefono'              => 'required',
+            'correo'                => 'required',
+            'estado_solicitante'    => 'required',
+            'vialidad'              => 'required',
+            'vialidad_calle'        => 'required',
+            'numExt'                => 'required',
+            'colonia_solicitante'   => 'required',
+            'municipio_solicitante' => 'required',
+            'codigo_solicitante'    => 'required|numeric',
+            'referencias'           => 'required|string|max:300',
+            'calle1'                => 'required',
+            'calle2'                => 'required',
+            'seguro'                => 'required',
+            'puesto'                => 'required',
+            'oficio'                => 'required',  
+            'tiempo_pago'           => 'required',
+            'pago'                  => 'required',
+            'horas'                 => 'required',
+            'fecha_ingreso'         => 'required',
+            'fecha_salida'          => 'required',
+            'jornada'               => 'required'
+        ]);
+        
         $data_insert=array(
             'id_solicitud'         => $data["id"],
             'tipo_persona'         => $data["tipo"],
@@ -1912,14 +1925,13 @@ class SeerController extends Controller
             'fecha_ingreso'        => $data["fecha_ingreso"],
             'fecha_salida'         => $data["fecha_salida"],
             'jornada'              => $data["jornada"],
-            
         );
 
         if(isset($data["rfc"])){
             $data_insert["rfc"] =  $data["rfc"];
         }
         if(isset($data["traductor"])){
-            $data_insert["traductor"] =  $data["traductor"];
+            $data_insert["traductor"] =  "Si";
             $data_insert["lenguaje"]  =  $data["lenguaje"];
         }
         if(isset($data["numInt"])){
@@ -1927,12 +1939,13 @@ class SeerController extends Controller
         }
 
         SeerSolicitante::create($data_insert);
-        return view('solicitudes.solicitante')->with('success', 'Solicitante agregado correctamente, puedes agregar otro o continuar.');
+
+        return redirect()->route('solicitante', ['id' => $id] ); 
     }
 
     public function guardar_citado(Request $request){
         $data = $request->all();
-        //dd($data);
+
         //validando información
         $request->validate([
             'tipo'              => 'required|in:Fisica,Moral',
@@ -1944,7 +1957,12 @@ class SeerController extends Controller
             'edad'              => 'required|numeric',
             'sexo'              => 'required|in:H,M,NB,LGBTTTIQ',
             'nacionalidad'      => 'required|in:Mexicana,Otra',
-            'estado_solicitante'=> 'required'
+            'estado_solicitante'=> 'required',
+            'colonia'           => 'required',
+            'cp'                => 'required|numeric',
+            'calle1'            => 'required',
+            'calle2'            => 'required',
+            'exterior'          => 'required',
         ]);
         
         $data_insert=array(
@@ -1959,26 +1977,87 @@ class SeerController extends Controller
             'sexo'              => $data["sexo"],
             'nacionalidad'      => $data["nacionalidad"],
             'estado_solicitante'=> $data["estado_solicitante"],
+            'colonia'           => $data["colonia"],
+            'cp'                => $data["cp"],
+            'calle1'            => $data["calle1"],
+            'calle2'            => $data["calle2"],
+            'n_ext'             => $data["exterior"],
         );
 
         if(isset($data["rfc"])){
             $data_insert["rfc"] =  $data["rfc"];
         }
         if(isset($data["traductor"])){
-            $data_insert["traductor"] =  $data["traductor"];
+            $data_insert["traductor"] =  1;
             $data_insert["lenguaje"]  =  $data["lenguaje"];
         }
+        if(isset($data["interior"])){
+            $data_insert["n_int"] =  $data["interior"];
+        }
+
 
         SeerCitados::create($data_insert); 
 
         return back()->with('success', 'Citado agregado correctamente, puedes agregar otro o continuar.');
     }
 
-    public function vista_citado(){
+    public function vista_citado($id){
         $estados = Estados::all();
         $municipios = Municipios::all();
 
-        return view('solicitudes.citados',compact('estados'));
+        return view('solicitudes.citados',compact('estados','id'));
     }
 
+    public function vista_solicitante($id){
+        $estados = Estados::all();
+        $municipios = Municipios::all();
+
+        return view('solicitudes.solicitante_nuevo', compact('estados','municipios','id'))->with('success', 'Solicitante agregado correctamente, puedes agregar otro o continuar.');
+    }
+
+    public function vista_documentos($id){
+        return view('solicitudes.documentos',compact('id'));
+    }
+
+    public function guardar_documentos(Request $request){
+        $data = $request->all();
+
+        //validando información
+        $request->validate([
+            'id'             => 'required',
+            'tipo'           => 'required',
+            'curp'           => 'required',
+            'documentoIne'   => 'required',
+            'documentoCurp'  => 'required',
+            'documentoActa'  => 'required',
+        ]);
+
+        $folio = $data["id"];
+        $solicitud = SeerPerGeneral::find($data["id"]);
+        $nombre_ine = $data["curp"]."_IDENTIFICACION.pdf";
+            $path = Storage::putFileAs(
+                'documentosSolicitud', $request->file('documentoIne'), $nombre_ine
+            );
+        $nombre_curp = $data["curp"]."_CURP.pdf";
+            $path = Storage::putFileAs(
+                'documentosSolicitud', $request->file('documentoCurp'), $nombre_curp
+            );
+        $nombre_acta = $data["curp"]."_ACTA.pdf";
+            $path = Storage::putFileAs(
+                'documentosSolicitud', $request->file('documentoActa'), $nombre_acta
+            );
+
+
+        $data_update= array(
+            'tipo'          => $data["tipo"],
+            'curp'          => $data["curp"],
+            'documentoIne'  => $nombre_ine, 
+            'documentoCurp' => $nombre_curp, 
+            'documentoActa' => $nombre_acta
+        );
+    
+        $solicitud->update($data_update);
+
+        return view('solicitudes.aviso',compact('folio'));
+    }
 }
