@@ -46,21 +46,30 @@
 
     @yield('page_css')
     <!-- Template CSS <img src="public/assets_seer/images/ccl.png" width="180" height="90" style="position: absolute; left: 100px; top: 10px; right:0px;"/>  -->
-    <link rel="stylesheet" href="../public/assets/css/style.css">
     <link rel="stylesheet" href="../public/assets/css/components.css">
     @yield('page_css')
-</head>
 
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <div class="">
+            <img src="../public/assets/images/Logos 2.png" class="img" style="" width="330" height="80"></a>&nbsp;&nbsp;
+        </div> 
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent" >
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ route('publico') }}" style="color: black;">INICIO<span class="sr-only"></span></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <br><br><br><br>
+    </div>
+</head>
     <div id="app">  
         <section class="section">
-            <div class="col-lg-12" >
-                <div style="background-color:#6A0F49">
-                    <div align="right"><br>
-                        <img src="../public/assets/images/ccl-r.png" style="max-width: 10%" class="text-center">
-                    </div>
-                    <h3 class="text-center" style="color:#CEA845">Agregar Documentos</h3>    
-                </div>
-            </div>
             <div class="section-body">
                 <div class="row"> 
                     <div class="col-lg-12" >
@@ -131,7 +140,7 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label>*Identificación oficial</label><br>
+                                                    <label>*Identificación oficial</label>
                                                     <input type="file" name="documentoIne" class="form-control" accept=".pdf , .jpg, .png, .jpeg ">
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
@@ -141,7 +150,7 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label>*Curp</label><br>
+                                                    <label>*Curp</label>
                                                     <input type="file" name="documentoCurp" class="form-control" accept=".pdf">
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
@@ -151,7 +160,7 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label>*Acta de nacimiento</label><br>
+                                                    <label>*Acta de nacimiento</label>
                                                     <input type="file" name="documentoActa" class="form-control" accept=".pdf">
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
@@ -162,7 +171,7 @@
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div align="center">
-                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845;">Agregar</button>
+                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar</button>
                                             </div>
                                         </div>    
                                     </form>
@@ -181,9 +190,9 @@
         <div class="loader"></div>
     </div>
 
-@section('scripts')
-    <script src="../public/assets/js/poderes/general.js"></script>
-@endsection
+    @section('scripts')
+        <script src="../public/assets/js/poderes/general.js"></script>
+    @endsection
 
 
 
