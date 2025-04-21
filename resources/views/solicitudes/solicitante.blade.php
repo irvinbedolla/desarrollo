@@ -33,6 +33,14 @@
            /* background-color: #6A0F49;/<p style="color: #CEA845 */
             opacity: .8;
         }
+        #resultado {
+            background-color: red;
+            color: white;
+            font-weight: bold;
+        }
+        #resultado.ok {
+            background-color: green;
+        }
     </style>
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="">
@@ -104,7 +112,8 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Curp del solicitante (*)</label>
-                                                    <input type="text" name="curp" class="form-control" required> 
+                                                    <input type="text" name="curp" id="curp_input" oninput="validarInput(this)"class="form-control" required> 
+                                                    <pre id="resultado"></pre>
                                                     <div class="invalid-feedback">
                                                         El curp es obligatorio.
                                                     </div>
@@ -119,19 +128,19 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div id="div1" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Fecha de nacimiento (*)</label>
-                                                    <input type="date" name="fecha_nacimiento" class="form-control" required> 
+                                                    <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" onchange="validarfechaNacimiento(this)" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         La fecha de nacimiento es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div id="div1" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Edad del solicitante (*)</label>
-                                                    <input type="number" name="edad" class="form-control" required> 
+                                                    <input type="number" name="edad" class="form-control" id="años_edad" required> 
                                                     <div class="invalid-feedback">
                                                         La edad es obligatoria.
                                                     </div>
@@ -327,7 +336,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Número de seguro social (*)</label>
-                                                    <input type="text" name="seguro" class="form-control" required> 
+                                                    <input type="text" name="seguro" minlength="10" maxlength="10" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                     </div>
                                                 </div>
@@ -447,6 +456,7 @@
     <script src="public/assets/js/sweetalert.min.js"></script>
     <script src="public/assets/js/select2.min.js"></script>
     <script src="public/assets/js/jquery.nicescroll.js"></script>
+    <script src="public/assets/js/moment.js"></script>
 
     <!-- Template JS File -->
     <script src="public/assets/js/stisla.js"></script>
@@ -460,8 +470,8 @@
 
 
     @yield('scripts')
-    <script src="../public/assets/js/validaciones.js"></script> 
-    <script>
+    <script src="./public/assets/js/validaciones.js"></script> 
+    <script> 
         function sedes(){
             document.getElementById("fecha").removeAttribute("disabled");
         }
