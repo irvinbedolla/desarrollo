@@ -242,6 +242,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/pdf/estadistica',  [PDFController::class, 'pdfEstadistica'])->name('PDFestaditica');
     Route::get('/pdf/citados/{id}', [PDFController::class, 'pdfCitatorio'])->name('PDFcitatorio'); //ANA
 
+    //Solicitudes
+    Route::get('/solicitudes/index',        [SeerController::class, 'solicitudes_pendientes'])->name('solicitudes_pendientes');
+    Route::get('/solicitudes/{id}',         [SeerController::class, 'solicitudes_pendientes_revisar'])->name('solicitud_revisar');
+    Route::post('/confirmar_solicitudes',   [SeerController::class, 'solicitud_confirmar'])->name('confirmar_solicitud');
+    
+
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);
         Route::resource('/user-management/roles', RoleManagementController::class);

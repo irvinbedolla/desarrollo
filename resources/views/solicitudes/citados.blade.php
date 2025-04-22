@@ -123,8 +123,8 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">CURP *</label>
-                                                    <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control" required> 
+                                                    <label for="name">CURP</label>
+                                                    <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control"> 
                                                     <pre id="resultado"></pre>
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
@@ -145,7 +145,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Primer apellido *</label>
-                                                    <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
                                                     </div>
@@ -155,7 +155,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Segundo apellido *</label>
-                                                    <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
                                                     </div>

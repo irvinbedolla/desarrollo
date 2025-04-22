@@ -38,6 +38,9 @@
             <a class="nav-link" href="{{ route('persona.historial') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
             </a>
+            <a class="nav-link" href="{{ route('solicitudes_pendientes') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Solicitudes Pendientes</span>
+            </a>
         @endrole
     @endauth
 
@@ -101,6 +104,9 @@
             </a>
             <a class="nav-link" href="{{ route('persona.historial') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
+            </a>
+            <a class="nav-link" href="{{ route('solicitudes_pendientes') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Solicitudes Pendientes</span>
             </a>
         @endrole
     @endauth

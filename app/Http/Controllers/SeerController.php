@@ -1817,8 +1817,8 @@ class SeerController extends Controller
         $del=Sedes::all();
         return view('solicitudes.solicitud_trabajador', compact('motivos', 'ramas','del'));
     }
-
-   /* public function obtenerActEconomica($id){
+   
+    /* public function obtenerActEconomica($id){
         return SolicitudEconomica::where('id_rama', $id)->get();
     }*/
 
@@ -1939,6 +1939,7 @@ class SeerController extends Controller
         }
 
         SeerSolicitante::create($data_insert);
+
         return redirect()->route('solicitante', ['id' => $id] ); 
     }
 
@@ -1948,10 +1949,7 @@ class SeerController extends Controller
         //validando información
         $request->validate([
             'tipo'              => 'required|in:Fisica,Moral',
-            'curp'              => 'required|min:18|max:18',
             'nombre'            => 'required',
-            'primer_apellido'   => 'required',
-            'segundo_apellido'  => 'required',
             'nacimiento'        => 'required|date',
             'edad'              => 'required|numeric',
             'sexo'              => 'required|in:H,M,NB,LGBTTTIQ',
@@ -1986,6 +1984,9 @@ class SeerController extends Controller
         if(isset($data["rfc"])){
             $data_insert["rfc"] =  $data["rfc"];
         }
+        if(isset($data["curp"])){
+            $data_insert["curp"] =  $data["curp"];
+        }
         if(isset($data["traductor"])){
             $data_insert["traductor"] =  1;
             $data_insert["lenguaje"]  =  $data["lenguaje"];
@@ -1994,7 +1995,11 @@ class SeerController extends Controller
             $data_insert["n_int"] =  $data["interior"];
         }
 
-
+        //Se van a generar el citatorio
+        SeerCitados::create($data_insert); 
+        //Se van a generar quien resulte responsable
+        $data_insert["nombre"] =  "REPRESENTANTE LEGAL  DE: QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O
+        USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN ".$data["calle1"].", NÚMERO ".$data["exterior"]." COLONIA ".$data["colonia"].", MORELIA, MICHOACÁN.";
         SeerCitados::create($data_insert); 
 
         return back()->with('success', 'Citado agregado correctamente, puedes agregar otro o continuar.');
@@ -2058,5 +2063,32 @@ class SeerController extends Controller
         $solicitud->update($data_update);
 
         return view('solicitudes.aviso',compact('folio'));
+    }
+
+    public function solicitudes_pendientes(){
+        $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
+        ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
+        ->select('seer_general.id','seer_general.fecha','seer_general.fecha_conflicto','seer_general.curp','seer_general.delegacion','seer_general.actividad','catalogo_rama.rama_industrial')
+        ->orderBy('seer_general.fecha')
+        ->get();
+
+        return view('solicitudes.solicitudes_pendientes', compact('solicitudes'));
+    }
+
+    public function solicitudes_pendientes_revisar($id){
+        $general        = SeerPerGeneral::find($id);
+        $rama           = SolicitudRama::find($general["id_rama"]);
+        $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
+        $citados        = SeerCitados::where("id_solicitud",$id)->get();
+        $estados        = Estados::all();
+
+        return view('solicitudes.revisar_solicitud', compact('general','solicitantes','citados','rama','estados'));
+    }
+
+    public function solicitud_confirmar(Request $request){
+        dd("confirmada");
+        //Se van a generar los citatortios
+        //Se van asignar fecha de audiencia y hora de manera aleatoria
+        //Se manda la notificacion por correo o Whats
     }
 }

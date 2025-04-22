@@ -148,9 +148,15 @@
                                                 </div>
                                             </div>
 
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <h4 class="text-center">En caso de ser menor de edad ingresar la Curp o Acta de Nacimiento</h4>
+                                                </div>
+                                            </div>
+
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label>*Curp</label>
+                                                    <label>Curp</label>
                                                     <input type="file" name="documentoCurp" class="form-control" accept=".pdf">
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
@@ -160,7 +166,7 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label>*Acta de nacimiento</label>
+                                                    <label>Acta de nacimiento</label>
                                                     <input type="file" name="documentoActa" class="form-control" accept=".pdf">
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
