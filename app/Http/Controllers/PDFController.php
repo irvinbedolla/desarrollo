@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
 
 use App\Models\SeerPerGeneral;
 use App\Models\SeerCitados;
@@ -38,21 +40,27 @@ class PDFController extends Controller
     }
     public function pdfCitatorio($id){
         $solicitud = SeerPerGeneral::findOrFail($id);
-        $solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
+        $solicitantes = SeerSolicitante::where('id_solicitud', $id)->get();
         $citados = SeerCitados::where('id_solicitud', $id)->get();
         $motivoIds = SeerMotivo::where('id_solicitud', $id)->pluck('id_motivo');
         $motivos = SolicitudMotivo::whereIn('id', $motivoIds)->get();
-       
-        foreach ($citados as $citado) {
-            $pdf = \PDF::loadView('PDF.citatorio', compact(
-                'solicitud',
-                'solicitante',
-                'citado',
-                'motivos',
-            ));
 
-            return $pdf->download('citatorio_' . $solicitud->id . '.pdf');
-        }
+        $SolicitudPDFs = [];
+
+        foreach ($solicitantes as $solicitante) {
+            foreach ($citados as $citado) {
+                $pdf = \PDF::loadView('PDF/citatorio', compact(
+                    'solicitud',
+                    'solicitante',
+                    'citado',
+                    'motivos',
+                ));
+                $nombreArchivo = 'citatorio_' . $solicitud->id . '_' . $solicitante->nombre . '_' . $citado->nombre . '.pdf';
+                Storage::put("documentosCitatorios/{$nombreArchivo}", $pdf->output());
+                $SolicitudPDFs[] = $nombreArchivo; 
+            }
+        } 
+        return view('solicitudes.descargaCitatorios', compact('SolicitudPDFs'));   
         
     }    
 }

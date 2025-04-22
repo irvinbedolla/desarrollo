@@ -17,13 +17,12 @@
         <link rel="stylesheet" href="../public/assets/css/components.css">
 
         <style>
-        .header img { 
-            width: 330px; height: 80px; 
-        }
-        .p { 
-            /*margin: 5px 0;*/
-            color:black;
-        }
+            .header img { 
+                width: 330px; height: 80px; 
+            }
+            .p { 
+                color:black;
+            }
         </style>
     </head>
     <body>
@@ -35,7 +34,6 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                           <strong>
                            <p> AUDIENCIA DE CONCILIACIÓN PREJUDICIAL</p>
                            <p>FECHA DE EMISIÓN DEL CITATORIO:  {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}</p>
                            <p>SOLICITANTE:{{ $solicitante->nombre }}</p>
@@ -47,7 +45,6 @@
                            <p>NÚMERO DE IDENTIFICACIÓN ÚNICO: {{ $solicitud->NUE }}</p>
                            <p>{{ $citado->primer_apellido}} <br> {{ $citado->segundo_apellido}}</p>
                            <p>P R E S E N T E</p>
-                           </strong>
                            <p>En cumplimiento y observancia a la fracción XX, del artículo 123 Constitucional, apartado A; así como los de los
                             Principios Procesales contenidos en los artículos 684-E, 684-F fracción I y 685 de la Ley Federal del Trabajo, que
                             regulan el procedimiento obligatorio prejudicial conciliatorio; se notifica al C. REPRESENTANTE LEGAL
@@ -75,5 +72,5 @@
                 </div>
             </div>
         </div>
-    </body>    
-
+    </body> 
+    

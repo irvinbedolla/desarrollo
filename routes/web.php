@@ -240,7 +240,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Fin de  turnos
 
     Route::get('/pdf/estadistica',  [PDFController::class, 'pdfEstadistica'])->name('PDFestaditica');
-    Route::get('/pdf/citados/{id}', [PDFController::class, 'pdfCitatorio'])->name('PDFcitatorio'); //ANA
+    Route::get('/pdf/descarga/{id}', [PDFController::class, 'pdfCitatorio'])->name('PDFcitatorio');
 
     //Solicitudes
     Route::get('/solicitudes/index',        [SeerController::class, 'solicitudes_pendientes'])->name('solicitudes_pendientes');
