@@ -162,6 +162,42 @@ function validarcheckseñales(){
 
 }
 
+$(function(){
+  $('#check_discapacidad').on('change', validarcheckdiscapacidad);
+})
+
+function validarcheckdiscapacidad(){
+  var check = document.getElementById("check_discapacidad").value;
+
+  tipo = document.getElementById("discapacidad").style.display;
+  if (tipo == "none") {
+    document.getElementById("discapacidad").style.display = "block";
+  }
+  else{
+    document.getElementById("discapacidad").style.display = "none";
+  }
+
+}
+
+$(function(){
+  $('#check_fecha').on('change', validarcheckfecha);
+})
+
+function validarcheckfecha(){
+  var check = document.getElementById("fecha_fin").value;
+
+  tipo = document.getElementById("fecha_fin").style.display;
+  if (tipo == "none") {
+    document.getElementById("fecha_fin").style.display = "block";
+  }
+  else{
+    document.getElementById("fecha_fin").style.display = "none";
+  }
+
+}
+
 //Inicializacion variables
 document.getElementById("lenguaje_señas").style.display = "none";
+document.getElementById("discapacidad").style.display = "none";
+//document.getElementById("fecha_fin").style.display = "none";
 fecha_nacimiento.max = new Date().toISOString().split("T")[0];

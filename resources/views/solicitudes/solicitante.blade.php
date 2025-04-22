@@ -105,8 +105,8 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <label for="name">Tipo persona</label>
                                                 <select name="tipo" class="form-control" required>
-                                                    <option value="Fisica">Fisica</option>
-                                                    <option value="Moral">Moral</option>
+                                                    <option value="Fisica">FÍSICA</option>
+                                                    <option value="Moral">MORAL</option>
                                                 </select>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
@@ -121,8 +121,8 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Nombre(s) del solicitante (*) </label>
-                                                    <input type="text" name="nombre" class="form-control" required> 
+                                                    <label for="name">Nombre(s) y apellidos del solicitante (*) </label>
+                                                    <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
                                                     </div>
@@ -149,7 +149,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">RFC del solicitante</label>
-                                                    <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" required> 
+                                                    <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El RFC es obligatorio.
                                                     </div>
@@ -159,10 +159,10 @@
                                                 <div class="form-group">
                                                     <label for="name">Genero (*)</label>
                                                     <select name="genero" class="form-control" required>
-                                                        <option value="">Seleccione</option>
-                                                        <option value="H">Hombre</option>
-                                                        <option value="M">Mujer</option>
-                                                        <option value="NB">No Binarios</option>
+                                                        <option value="">SELECCIONE</option>
+                                                        <option value="H">HOMBRE</option>
+                                                        <option value="M">MUJER</option>
+                                                        <option value="NB">NO BINARIOS</option>
                                                         <option value="LGBTTTIQ">LGBTTTIQ+</option>
                                                     </select>
                                                     <div class="invalid-feedback">
@@ -174,9 +174,9 @@
                                                 <div class="form-group">
                                                     <label for="name">Nacionalidad (*)</label>
                                                     <select name="nacionalidad" class="form-control" required>
-                                                        <option value="">Seleccione</option>
-                                                        <option value="Mexicana">Mexicana</option>
-                                                        <option value="Otra">Otra</option>
+                                                        <option value="">SELECCIONE</option>
+                                                        <option value="Mexicana">MEXICANA</option>
+                                                        <option value="Otra">OTRA</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         La nacionalidad es obligatoria.
@@ -200,19 +200,38 @@
                                                 <spam for="btncheck1">¿Requiere traductor?</spam>
                                                 <input type="checkbox" class="btn-check" id="check_lenguaje" name="traductor" autocomplete="off">
                                             </div>
-                                            <div class="col-xs-6 col-sm-12 col-md-3" id="lenguaje_señas">
+                                            <div class="col-xs-6 col-sm-12 col-md-6" id="lenguaje_señas">
                                                 <div class="form-group">
                                                     <label for="name">¿Qué tipo de lenguaje require?</label>
-                                                    <input type="text" name="lenguaje" class="form-control">
+                                                    <input type="text" name="lenguaje" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                                                 </div>
-                                            </div>    
+                                            </div> 
+                                            <div class="col-xs-6 col-sm-12 col-md-3"><br>
+                                                <spam for="btncheck1">¿Tiene alguna discapacidad?</spam>
+                                                <input type="checkbox" class="btn-check" id="check_discapacidad" name="discapacidad" autocomplete="off">
+                                            </div>   
+                                             <div class="col-xs-6 col-sm-12 col-md-6" id="discapacidad">
+                                                <div class="form-group">
+                                                    <label for="name">¿Cuál es su discapacidad?</label>
+                                                    <input type="text" name="incapacidad" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
+                                                </div>
+                                            </div> 
                                             <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
                                                 <h3 class="text-center" style="color:black">Contacto</h3>
                                             </div>  
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Teléfono (*)</label>
-                                                    <input type="number" name="telefono" minlength="10" maxlength="10" class="form-control"  required> 
+                                                    <label for="name">Teléfono celular (*)</label>
+                                                    <input type="number" name="telefono1" minlength="10" maxlength="10" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El teléfono  es obligatorio.
+                                                    </div>
+                                                </div>   
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">Teléfono casa ()</label>
+                                                    <input type="number" name="telefono2" minlength="10" maxlength="10" class="form-control"> 
                                                     <div class="invalid-feedback">
                                                         El teléfono  es obligatorio.
                                                     </div>
@@ -247,7 +266,13 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Tipo de vialidad (*)</label>
-                                                    <input type="text" name="vialidad" class="form-control" required> 
+                                                    <select name="tiempo_pago" class="form-control" required>
+                                                        <option value="">SELECCIONE</option>
+                                                        <option value="Calle">CALLE</option>
+                                                        <option value="Avenida">AVENIDA</option>
+                                                        <option value="Calzada">CALZADA</option>
+                                                        <option value="Boulevard">BOULEVARD</option>
+                                                    </select>
                                                     <div class="invalid-feedback">
                                                         El campo vialidad es obligatorio.
                                                     </div>
@@ -256,7 +281,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Nombre de la vialidad o calle (*)</label>
-                                                    <input type="text" name="vialidad_calle" class="form-control" required> 
+                                                    <input type="text" name="vialidad_calle" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo vialidad o calle es obligatorio.
                                                     </div>
@@ -265,7 +290,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Número exterior (*)</label>
-                                                    <input type="text" name="numExt" class="form-control" required> 
+                                                    <input type="number" name="numExt" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo número es obligatorio.
                                                     </div>
@@ -274,13 +299,13 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Número interior</label>
-                                                    <input type="text" name="numInt" class="form-control"> 
+                                                    <input type="number" name="numInt" class="form-control"> 
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Colonia (*)</label>
-                                                    <input type="text" name="colonia_solicitante" class="form-control" required> 
+                                                    <input type="text" name="colonia_solicitante" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo colonia es obligatorio.
                                                     </div>
@@ -312,7 +337,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Referencias (*)</label>
-                                                    <input type="text" name="referencias" class="form-control" required> 
+                                                    <input type="text" name="referencias" class="form-control" oninput="this.value = this.value.toUpperCase()"required> 
                                                     <div class="invalid-feedback">
                                                         El campo referencia es obligatorio.
                                                     </div>
@@ -321,13 +346,13 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Entre calle (*)</label>
-                                                    <input type="text" name="calle1" class="form-control" required> 
+                                                    <input type="text" name="calle1" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">y calle (*)</label>
-                                                    <input type="text" name="calle2" class="form-control" required>                                     
+                                                    <input type="text" name="calle2" class="form-control" oninput="this.value = this.value.toUpperCase()" required>                                     
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
@@ -335,8 +360,8 @@
                                             </div>  
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Número de seguro social (*)</label>
-                                                    <input type="text" name="seguro" minlength="10" maxlength="10" class="form-control" required> 
+                                                    <label for="name">Número de seguro social ()</label>
+                                                    <input type="text" name="seguro" minlength="11" maxlength="12" class="form-control"> 
                                                     <div class="invalid-feedback">
                                                     </div>
                                                 </div>
@@ -344,27 +369,22 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Puesto (*)</label>
-                                                    <input type="text" name="puesto" class="form-control" required> 
+                                                    <input type="text" name="puesto" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El puesto es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="name">Oficio</label>
-                                                    <input type="text" name="oficio" class="form-control" required>
-                                                </div>
-                                            </div>
+                                           
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">¿Cada cuándo te pagan?</label>
                                                     <select name="tiempo_pago" class="form-control" required>
-                                                        <option value="">Seleccione</option>
-                                                        <option value="Semana">Semanal</option>
-                                                        <option value="Quincenal">Quincenal</option>
-                                                        <option value="Mensual">Mensual</option>
-                                                        <option value="Diario">Diario</option>
+                                                        <option value="">SELECCIONE</option>
+                                                        <option value="Semana">SEMANAL</option>
+                                                        <option value="Quincenal">QUINCENAL</option>
+                                                        <option value="Mensual">MENSUAL</option>
+                                                        <option value="Diario">DIARIO</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -389,7 +409,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
                                                     <label for="btncheck1">¿Labora actualmente?</label><br>
-                                                    <input name="labora" type="checkbox" class="btn-check" id="check_lenguaje" autocomplete="off"/>
+                                                    <input name="labora" type="checkbox" class="btn-check" id="check_fecha" autocomplete="off"/>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
@@ -403,22 +423,23 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
+                                                    <label for="name">Jornada</label>
+                                                    <select name="jornada" class="form-control" required>
+                                                        <option value="">SELECCIONE</option>
+                                                        <option value="Diurna">DIURNA</option>
+                                                        <option value="Nocturna">NOCTURNA</option>
+                                                        <option value="Mixta">MIXTA</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-xs-12 col-sm-12 col-md-4" id="fecha_fin">
+                                                <div class="form-group">
                                                     <label for="name">Fecha de salida</label>
                                                     <input type="date" name="fecha_salida" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         La fecha de salida es obligatoria.
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="name">Jornada</label>
-                                                    <select name="jornada" class="form-control" required>
-                                                        <option value="">Seleccione</option>
-                                                        <option value="Diurna">Diurna</option>
-                                                        <option value="Nocturna">Nocturna</option>
-                                                        <option value="Mixta">Mixta</option>
-                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-12">
