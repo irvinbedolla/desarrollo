@@ -45,13 +45,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent" >
         <ul class="navbar-nav ml-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#" style="color: black;">INICIO<span class="sr-only"></span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#servicios" style="color: black;">SERVICIOS</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#contacto"style="color: black;">CONTACTO</a>
+                <a class="nav-link" href="{{ route('publico') }}" style="color: black;">INICIO<span class="sr-only"></span></a>
             </li>
         </ul>
     </div>
@@ -166,10 +160,11 @@
                                             <div id="div2"  class="col-xs-12 col-sm-12 col-md-6">
                                                 <p>Ejemplos: comercio de productos al por menor, construcción, servicios médicos...</p>
                                                 <div class="form-group">
-                                                <label for="name">Paso 2: Actividad económica del patrón (*)</label>
-                                                    <select id="actividad_economica" name="actividad_economica" class="form-control" disabled>
+                                                    <label for="name">Paso 2: Actividad económica del patrón (*)</label>
+                                                    <input type="text" name="actividad_economica" id="actividad_economica" oninput="this.value = this.value.toUpperCase()" class="form-control" required> 
+                                                <!--<select id="actividad_economica" name="actividad_economica" class="form-control" disabled>
                                                         <option value=""> --Primero selecciona una rama industrial --</option>  
-                                                    </select>
+                                                    </select>-->
                                                     <div class="invalid-feedback">
                                                         El campo actividad económica del patrón es obligatorio.
                                                     </div>

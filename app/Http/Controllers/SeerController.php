@@ -1813,14 +1813,14 @@ class SeerController extends Controller
     {
         $motivos = SolicitudMotivo::all();
         $ramas = SolicitudRama::all();
-        $actividad=SolicitudEconomica::all();
+       // $actividad=SolicitudEconomica::all();
         $del=Sedes::all();
-        return view('solicitudes.solicitud_trabajador', compact('motivos', 'ramas','actividad','del'));
+        return view('solicitudes.solicitud_trabajador', compact('motivos', 'ramas','del'));
     }
 
-    public function obtenerActEconomica($id){
+   /* public function obtenerActEconomica($id){
         return SolicitudEconomica::where('id_rama', $id)->get();
-    }
+    }*/
 
     public function solicitud_parte1(Request $request)
     {
@@ -1837,7 +1837,7 @@ class SeerController extends Controller
         $data_insert=array(
             'fecha_conflicto' =>  $data["fechaConflicto"],
             'id_rama'         =>  $data["ramaIndustrial"],
-            'id_actividad'    =>  $data["actividad_economica"],
+            'actividad'       =>  $data["actividad_economica"],
             'delegacion'      =>  $data["dSolicitud"],
         );
        
@@ -1939,7 +1939,6 @@ class SeerController extends Controller
         }
 
         SeerSolicitante::create($data_insert);
-
         return redirect()->route('solicitante', ['id' => $id] ); 
     }
 
