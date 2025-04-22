@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="UTF-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <meta name="csrf-token" content="{{ csrf_token() }}"/>
         <title>Sí Concilio</title>
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
@@ -18,13 +18,42 @@
 
         <style>
             .header img { 
-                width: 330px; height: 80px; 
+                width: 180px; height: 45px; 
             }
-            .p { 
-                color:black;
+            body {
+                font-family: sans-serif;
+                font-size: 12px;
+                text-align: justify;
+                color: black;
+            }
+            p {
+                line-height: 1.5;
             }
         </style>
     </head>
+    @php     
+        $direccion_sede='';
+        if($solicitud->delegacion === 'Morelia'){
+            $direccion_sede='BLVD. GARCÍA DE LEÓN NO. 1575, COL. CHAPULTEPEC ORIENTE, C.P.58260 MORELIA, MICHOACÁN DE OCAMPO';
+        }    
+        if($solicitud->delegacion === 'Uruapan'){
+            $direccion_sede='NUEVO PARICUTÍN NO. 308, COL. JARDINES DE SAN RAFAEL, C.P.30136 URUAPAN, MICHOACÁN DE OCAMPO. SE ENCUENTRA DENTRO DEL RECINTÓ DONDE ESTA RENTAS DEL
+                ESTADO, POR LA CLÍNICA DEL IMSS NO.76.';
+        }
+        if($solicitud->delegacion === 'Zamora') {
+            $direccion_sede='JUSTO SIERRA PONIENTE NO. 290, COL. JARDINES DE CATEDRAL, C.P.59600 ZAMORA, MICHOACÁN DE OCAMPO';
+        }  
+        if($solicitud->delegacion === 'Zitácuaro') {
+            $direccion_sede='CUAUHTEMOC ORIENTE NO. 15, COL. CUAUHTEMOC, C.P. 61506ZITÁCUARO, MICHOACÁN DE OCAMPO';
+        } 
+        if($solicitud->delegacion === 'Lázaro Cárdenas') {
+            $direccion_sede='PARACHO NO. 26, COL. 600 CASAS, C.P.60950 LÁZARO CÁRDENAS, MICHOACÁN DE OCAMPO';
+        }  
+        if($solicitud->delegacion === 'Sahuayo') {
+            $direccion_sede='AV. UNIVERSIDAD SUR NO. 300, COL. LOMAS DE UNIVERSIDAD, C.P.59103 SAHUAYO DE MORELOS, MICHOACÁN DE OCAMPO';
+        }  
+    @endphp
+
     <body>
         <div class="header">
             <img src="{{ public_path('assets/images/Logos 2.png') }}" alt="Encabezado">
@@ -34,43 +63,46 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                           <p> AUDIENCIA DE CONCILIACIÓN PREJUDICIAL</p>
-                           <p>FECHA DE EMISIÓN DEL CITATORIO:  {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}</p>
-                           <p>SOLICITANTE:{{ $solicitante->nombre }}</p>
-                           <p>NÚMERO DE SEGURIDAD SOCIAL DEL SOLICITANTE(S): {{ $solicitante->nss ?? 'N/A'}}</p>
-                           <p>CURP DEL SOLICITANTE(S): {{ $solicitante->curp }}</p>
-                           <p>CITADO: {{ $citado->nombre}} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}</p>
-                           <p>OBJETO DE LA SOLICITUD: {{ $motivos->pluck('motivo')->implode(', ') }}</p>
+                           <p><b>ASUNTO: AUDIENCIA DE CONCILIACIÓN PREJUDICIAL<br>
+                              FECHA DE EMISIÓN DEL CITATORIO:  {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}<br>
+                              SOLICITANTE:{{ $solicitante->nombre }}<br>
+                              NÚMERO DE SEGURIDAD SOCIAL DEL SOLICITANTE(S): {{ $solicitante->nss ?? 'N/A'}}<br>
+                              CURP DEL SOLICITANTE(S): {{ $solicitante->curp }}<br>
+                              CITADO: {{ $citado->nombre}} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}<br>
+                              OBJETO DE LA SOLICITUD: {{ $motivos->pluck('motivo')->implode(', ') }}<br>
+                            </b></p>  
 
-                           <p>NÚMERO DE IDENTIFICACIÓN ÚNICO: {{ $solicitud->NUE }}</p>
-                           <p>{{ $citado->primer_apellido}} <br> {{ $citado->segundo_apellido}}</p>
-                           <p>P R E S E N T E</p>
+                           <p><b>NÚMERO DE IDENTIFICACIÓN ÚNICO: {{ $solicitud->NUE }}</b></p>
+                           <p><b>C. REPRESENTANTE LEGAL DE: {{ $citado->primer_apellido}} <br> {{ $citado->segundo_apellido}}</b></p>
+                           <p><b>P R E S E N T E</b></p>
                            <p>En cumplimiento y observancia a la fracción XX, del artículo 123 Constitucional, apartado A; así como los de los
                             Principios Procesales contenidos en los artículos 684-E, 684-F fracción I y 685 de la Ley Federal del Trabajo, que
-                            regulan el procedimiento obligatorio prejudicial conciliatorio; se notifica al C. REPRESENTANTE LEGAL
-                            DE: {{ $citado->nombre}} para que asista a la Audiencia de Conciliación de fecha 30 de Enero de 2025 a las
-                            12:45:00 horas, en la sala URU-1 de la Delegación Regional de {{ $solicitud->delegacion}} del Centro de Conciliación Laboral del
-                            Estado de Michoacán de Ocampo, CALLE NUEVO PARICUTIN NO. 308, JARDINES DE SAN RAFAEL , URUAPAN,
-                            MICHOACÁN DE OCAMPO, C.P. 60136, SE ENCUENTRA DENTRO DEL RECINTÓ DONDE ESTA RENTAS DEL
-                            ESTADO, POR LA CLÍNICA DEL IMSS NO.76.</p>
+                            regulan el procedimiento obligatorio prejudicial conciliatorio; se notifica al <b>C. REPRESENTANTE LEGAL
+                            DE: {{ $citado->nombre}}</b> para que asista a la <b>Audiencia de Conciliación</b> de fecha <b>30 de Enero de 2025</b> a las
+                            <b>12:45:00 horas</b>, en la sala <b>URU-1</b> de la Delegación Regional de <b>{{ $solicitud->delegacion}}</b> del Centro de Conciliación Laboral del
+                            Estado de Michoacán de Ocampo, <b>{{$direccion_sede}}.</b></p>
                             <p>La audiencia será presidida por una conciliadora o conciliador del Centro de Conciliación Laboral del Estado de
                             Michoacán de Ocampo, en cumplimiento al artículo 684-H, manteniendo en todo momento los principios de
                             conciliación, imparcialidad, neutralidad, flexibilidad, legalidad, equidad, buena fe, información, honestidad, y
                             confidencialidad.
                             </p>
-                            <p><<strong>>Con fundamento en los artículos 742, fracción XIII y 684-E, antepenúltimo párrafo, el presente citatorio es
-                                entregado por el solicitante.</<strong>></p>
+                            <p>Este citatorio se notifica de manera personal conforme al artículo 739, 739 Ter fracción I y IV, 742 fracción XIII, 743,
+                                744 y 745 Ter de la Ley Federal del Trabajo.
+                            </p>
+                            <p>Con fundamento en el artículo 684-E. fracción IV, se apercibe al citado que de no comparecer por sí o por conducto de
+                                su representante legal, o bien por medio de apoderado con facultades suficientes, se le impondrá una multa entre 50 y
+                                100 veces la Unidad de Medida y Actualización, y se le tendrá por inconforme con todo arreglo conciliatorio.
+                            </p>
                             
-                            <center><p><b>ATENTAMENTE</b></p>
-                               
-                            <p><b>Diana Guadalupe Negrete Ramírez<br>
-                                ___________________________________<br>
-                                FUNCIONARIA CONCILIADORA<br>
+                            <center><p><b>ATENTAMENTE</b></p><br><br>
+                            <p><b>___________________________________<br>
+                                Diana Guadalupe Negrete Ramírez<br>
+                                FUNCIONARIA CONCILIADORA/<br>
                                 FUNCIONARIO CONCILIADOR</b></p></center>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </body> 
-    
+    </body>
+

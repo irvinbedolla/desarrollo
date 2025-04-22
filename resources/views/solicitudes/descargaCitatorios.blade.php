@@ -6,12 +6,11 @@
         <meta name="description" content="">
         <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
         <meta name="generator" content="Ing. ISBM">
-        <link href="public/assets/css/carousel.css" rel="stylesheet">
         <title>Si Conciliación</title>
         <!-- Bootstrap core CSS -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         
-        <link rel="icon" href="public/assets/images/logo-ccl.png" type="image/x-icon">
+        <link rel="icon" href="/public/assets/images/logo-ccl.png" type="image/x-icon">
     
     <!-- Agregados para los Select del Formulario Personas-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -37,7 +36,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="">
-        <img src="public/assets/images/Logos 2.png" class="img" style="" width="330" height="80">
+        <img src="/public/assets/images/Logos 2.png" class="img" style="" width="330" height="80">
     </div> 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -63,7 +62,7 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
-                                            <h4 class="text-center">Doumentos del expediente</h4>
+                                            <h4 class="text-center">Documentos del expediente</h4>
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
@@ -96,6 +95,6 @@
             </div>    
         </section>
     </div>
-    <script src="./public/assets/js/estadistica/estadistica.js"></script>
+    <script src="/public/assets/js/estadistica/estadistica.js"></script>
     <script src="https://cdn.datatables.net/2.1.5/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.1.5/js/dataTables.bootstrap4.js"></script>   
