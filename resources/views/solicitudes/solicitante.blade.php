@@ -203,7 +203,7 @@
                                             <div class="col-xs-6 col-sm-12 col-md-6" id="lenguaje_señas">
                                                 <div class="form-group">
                                                     <label for="name">¿Qué tipo de lenguaje require?</label>
-                                                    <input type="text" name="lenguaje" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
+                                                    <input type="text" name="lenguaje" class="form-control" oninput="this.value = this.value.toUpperCase()">
                                                 </div>
                                             </div> 
                                             <div class="col-xs-6 col-sm-12 col-md-3"><br>
@@ -213,7 +213,7 @@
                                              <div class="col-xs-6 col-sm-12 col-md-6" id="discapacidad">
                                                 <div class="form-group">
                                                     <label for="name">¿Cuál es su discapacidad?</label>
-                                                    <input type="text" name="incapacidad" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
+                                                    <input type="text" name="incapacidad" class="form-control" oninput="this.value = this.value.toUpperCase()">
                                                 </div>
                                             </div> 
                                             <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
@@ -266,7 +266,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Tipo de vialidad (*)</label>
-                                                    <select name="tiempo_pago" class="form-control" required>
+                                                    <select name="vialidad" class="form-control" required>
                                                         <option value="">SELECCIONE</option>
                                                         <option value="Calle">CALLE</option>
                                                         <option value="Avenida">AVENIDA</option>
@@ -436,7 +436,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4" id="fecha_fin">
                                                 <div class="form-group">
                                                     <label for="name">Fecha de salida</label>
-                                                    <input type="date" name="fecha_salida" class="form-control" required> 
+                                                    <input type="date" name="fecha_salida" class="form-control"> 
                                                     <div class="invalid-feedback">
                                                         La fecha de salida es obligatoria.
                                                     </div>

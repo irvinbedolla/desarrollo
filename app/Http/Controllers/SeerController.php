@@ -1871,7 +1871,7 @@ class SeerController extends Controller
             'genero'                => 'required|in:H,M,NB,LGBTTTIQ',
             'nacionalidad'          => 'required|in:Mexicana,Otra',
             'estado_nacimiento'     => 'required',
-            'telefono'              => 'required',
+            'telefono1'             => 'required',
             'correo'                => 'required',
             'estado_solicitante'    => 'required',
             'vialidad'              => 'required',
@@ -1884,13 +1884,11 @@ class SeerController extends Controller
             'calle1'                => 'required',
             'calle2'                => 'required',
             'seguro'                => 'required',
-            'puesto'                => 'required',
-            'oficio'                => 'required',  
+            'puesto'                => 'required', 
             'tiempo_pago'           => 'required',
             'pago'                  => 'required',
             'horas'                 => 'required',
             'fecha_ingreso'         => 'required',
-            'fecha_salida'          => 'required',
             'jornada'               => 'required'
         ]);
         
@@ -1904,7 +1902,7 @@ class SeerController extends Controller
             'nacionalidad'         => $data["nacionalidad"],
             'estado'               => $data["estado_nacimiento"],
             'edad'                 => $data["edad"],
-            'telefono'             => $data["telefono"],
+            'telefono1'            => $data["telefono1"],
             'email'                => $data["correo"],
             'estado_domicilio'     => $data["estado_solicitante"],
             'tipo_vialidad'        => $data["vialidad"],
@@ -1916,14 +1914,11 @@ class SeerController extends Controller
             'referencia'           => $data["referencias"],
             'calle2'               => $data["calle1"],
             'calle3'               => $data["calle2"],
-            'nss'                  => $data["seguro"],
             'puesto'               => $data["puesto"],
-            'oficio'               => $data["oficio"],
             'pago'                 => $data["pago"],
             'periodo_pago'         => $data["tiempo_pago"],
             'horas_semana'         => $data["horas"],
             'fecha_ingreso'        => $data["fecha_ingreso"],
-            'fecha_salida'         => $data["fecha_salida"],
             'jornada'              => $data["jornada"],
         );
 
@@ -1936,6 +1931,20 @@ class SeerController extends Controller
         }
         if(isset($data["numInt"])){
             $data_insert["num_int"] =  $data["numInt"];
+        }
+        if(isset($data["discapacidad"])){
+            $data_insert["discapacidad"] =  "Si";
+            $data_insert["tipo_discapacidad"] =  $data["tipo_discapacidad"];
+        }
+        if(isset($data["labora"])){
+            $data_insert["labora"] =  "Si";
+            $data_insert["fecha_salida"]  =  $data["fecha_salida"];
+        }
+        if(isset($data["telefono2"])){
+            $data_insert["telefono2"] =  $data["telefono2"];
+        }
+        if(isset($data["seguro"])){
+            $data_insert["nss"] =  $data["nss"];
         }
 
         SeerSolicitante::create($data_insert);
