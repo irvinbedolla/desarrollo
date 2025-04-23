@@ -162,8 +162,7 @@
                                                         <option value="">SELECCIONE</option>
                                                         <option value="H">HOMBRE</option>
                                                         <option value="M">MUJER</option>
-                                                        <option value="NB">NO BINARIOS</option>
-                                                        <option value="LGBTTTIQ">LGBTTTIQ+</option>
+                                                        <option value="NC">PREFIERO NO CONTESTAR</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El genero es obligatorio.

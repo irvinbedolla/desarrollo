@@ -1869,7 +1869,7 @@ class SeerController extends Controller
             'nombre'                => 'required',
             'fecha_nacimiento'      => 'required|date',
             'edad'                  => 'required|numeric',
-            'genero'                => 'required|in:H,M,NB,LGBTTTIQ',
+            'genero'                => 'required|in:H,M,NC',
             'nacionalidad'          => 'required|in:Mexicana,Otra',
             'estado_nacimiento'     => 'required',
             'telefono1'             => 'required|min:10|max:10',
@@ -1956,8 +1956,7 @@ class SeerController extends Controller
         SeerSolicitante::create($data_insert);
 
         $estados=Estados::all();
-        //return redirect()->route('agregar_citado', ['id' => $id] ); 
-        return view('solicitudes.citados',compact('id', 'estados'));
+        return redirect()->route('agregar_citado', ['id' => $id] ); 
     }
 
     public function guardar_citado(Request $request){
