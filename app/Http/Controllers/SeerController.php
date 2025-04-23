@@ -1859,6 +1859,7 @@ class SeerController extends Controller
     
     public function solicitud_parte2(Request $request){
         $data = $request->all();
+        //dd($data['telefono2']);
         $id = $data['id'];
 
         //validando información
@@ -1871,7 +1872,7 @@ class SeerController extends Controller
             'genero'                => 'required|in:H,M,NB,LGBTTTIQ',
             'nacionalidad'          => 'required|in:Mexicana,Otra',
             'estado_nacimiento'     => 'required',
-            'telefono1'             => 'required',
+            'telefono1'             => 'required|min:10|max:10',
             'correo'                => 'required',
             'estado_solicitante'    => 'required',
             'vialidad'              => 'required',
@@ -1921,21 +1922,25 @@ class SeerController extends Controller
             'fecha_ingreso'        => $data["fecha_ingreso"],
             'jornada'              => $data["jornada"],
         );
-
+        
         if(isset($data["rfc"])){
             $data_insert["rfc"] =  $data["rfc"];
         }
+        
         if(isset($data["traductor"])){
             $data_insert["traductor"] =  "Si";
             $data_insert["lenguaje"]  =  $data["lenguaje"];
         }
+        
         if(isset($data["numInt"])){
             $data_insert["num_int"] =  $data["numInt"];
         }
+        
         if(isset($data["discapacidad"])){
             $data_insert["discapacidad"] =  "Si";
             $data_insert["tipo_discapacidad"] =  $data["tipo_discapacidad"];
         }
+        
         if(isset($data["labora"])){
             $data_insert["labora"] =  "Si";
             $data_insert["fecha_salida"]  =  $data["fecha_salida"];
@@ -1943,13 +1948,16 @@ class SeerController extends Controller
         if(isset($data["telefono2"])){
             $data_insert["telefono2"] =  $data["telefono2"];
         }
+        
         if(isset($data["seguro"])){
-            $data_insert["nss"] =  $data["nss"];
+            $data_insert["nss"] =  $data["seguro"];
         }
-
+       
         SeerSolicitante::create($data_insert);
 
-        return redirect()->route('solicitante', ['id' => $id] ); 
+        $estados=Estados::all();
+        //return redirect()->route('agregar_citado', ['id' => $id] ); 
+        return view('solicitudes.citados',compact('id', 'estados'));
     }
 
     public function guardar_citado(Request $request){

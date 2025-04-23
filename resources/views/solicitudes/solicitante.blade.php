@@ -213,7 +213,7 @@
                                              <div class="col-xs-6 col-sm-12 col-md-6" id="discapacidad">
                                                 <div class="form-group">
                                                     <label for="name">¿Cuál es su discapacidad?</label>
-                                                    <input type="text" name="incapacidad" class="form-control" oninput="this.value = this.value.toUpperCase()">
+                                                    <input type="text" name="tipo_discapacidad" class="form-control" oninput="this.value = this.value.toUpperCase()">
                                                 </div>
                                             </div> 
                                             <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
@@ -222,7 +222,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Teléfono celular (*)</label>
-                                                    <input type="number" name="telefono1" minlength="10" maxlength="10" class="form-control" required> 
+                                                    <input type="text" name="telefono1" minlength="10" maxlength="10" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El teléfono  es obligatorio.
                                                     </div>
@@ -231,7 +231,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Teléfono casa ()</label>
-                                                    <input type="number" name="telefono2" minlength="10" maxlength="10" class="form-control"> 
+                                                    <input type="text" name="telefono2" minlength="10" maxlength="10" class="form-control"> 
                                                     <div class="invalid-feedback">
                                                         El teléfono  es obligatorio.
                                                     </div>
@@ -446,7 +446,6 @@
                                                 <div align="center">
                                                     <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar</button>
                                                     <a href="{{ route('solicitud_trabajador'); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Regresar</a> 
-                                                    <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Terminar</a>    
                                                 </div>
                                             </div>     
                                     </form>
