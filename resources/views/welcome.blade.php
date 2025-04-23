@@ -82,7 +82,7 @@
           /* Estilo al pasar el mouse */
           .boton:hover {
               color: #4A001F;
-              background-color: #FFC3D0; /* Nuevo color de fondo cuando el mouse está sobre el botón */
+              background-color: white; /* Nuevo color de fondo cuando el mouse está sobre el botón */
               text-decoration: none;/* Elimina el subrayado del enlace */
               border-radius: 5px; /* Bordes redondeados */
           } 
@@ -122,30 +122,23 @@
         </div>
     </nav>
 
-    <main>
+  <main>
     <div class="container">
-          <br><br><br><br><br>
+          <br><br><br>
     </div>
 
-    <!-- CARRUSEL-->
-	  <div class="owl-carousel owl-theme">
-      <img src="public/assets/images/Baner.png" class="d-block w-100" alt="" loading="lazy">
-      <!--<img src="public/assets/images/carusel/carrusel_2.png" class="d-block w-100" alt="" loading="lazy">-->
-    </div>
-    <!-- FIN CARRUSEL-->	
-    
   <!-- INICIANDO SERVICIOS -->
-  <section id="servicios"><br><br>
+  <section id="servicios"><br>
   <h3 class="wow fadeInLeft" style="text-align: center ; font-family:Gibson, font-weight: 600;">Trámites y servicios digitales</h3> <br><br><br>
   <div class="card-group">
-    <div class="card">   <!-- Inicio asesoria en línea -->
+    <div class="card" style="background-color: #FFC3D0">   <!-- Inicio asesoria en línea -->
       <div style="display: block; text-align: center;">
         <div class="flip-box">
           <div class="flip-box-inner">
-            <div class="flip-box-front">
-              <h2 style="font-size: 22px; font-family: Arial; color:#000000">Asesoría virtual<br><br></h2>
+            <div class="flip-box-front" style="background-color: #FFC3D0">
+              <h2 style="font-size: 22px; font-family: Arial; color:#000000; background-color: #FFC3D0">Asesoría virtual<br><br></h2>
               <img src="public/assets/images/ASESORIA.png" alt="Descripción de la imagen"
-                style="width: 200px; height:200px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
+                style="width: 250px; height:250px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
             </div>
             <div class="flip-box-back">
                <h2 style="font-size: 21px; font-family: Arial; color:#ffff;  text-align: center"><br>Es un servicio informático que podrás consultar con la finalidad de atender y resolver preguntas acerca de nuestros servicios.</h2>
@@ -162,7 +155,7 @@
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Calculadora de <br>prestaciones</h2>
               <img src="public/assets/images/CALCULADORA.png" alt="Descripción de la imagen"
-                  style="width: 200px; height:200px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
+                  style="width: 250px; height:250px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
             </div>
             <div class="flip-box-back">
               <h2 style="font-size: 21px; font-family: Arial; color:#ffff;">Es una herramienta digital que permite a las personas, conocer los cálculos aproximados de las prestaciones laborales, que serán consideradas dentro de la audiencia de conciliación.</h2>
@@ -179,10 +172,10 @@
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color: #000000">Solicitud en línea<br></h2> <img
                 src="public/assets/images/SOLICITUD.png" alt="Descripción de la imagen"
-                style="width: 200px; height:200px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
+                style="width: 250px; height:250px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
             </div>
             <div class="flip-box-back">
-                <h2 style="font-size: 21px; font-family: Arial; color:#ffffff">Es un servicio rápido, eficiente que permite a las personas, tanto trabajadoras como empleadoras iniciar su solicitud para conciliar de forma digital a través de la página web.</h2>
+                <h2 style="font-size: 21px; font-family: Arial; color:#ffffff">Es un servicio rápido, eficiente que permite a las personas, tanto trabajadoras como empleadoras iniciar su solicitud para conciliar de forma digital a través de la página: siconcilio.cclmichoacan.gob.mx.</h2>
             </div>
           </div>
         </div> 
@@ -200,10 +193,10 @@
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Citas de ratificación de convenios</h2> <img
                 src="public/assets/images/RATIFICACION.png" alt="Descripción de la imagen"
-                style="width: 200px; height: 200px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
+                style="width: 250px; height: 250px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
             </div>
             <div class="flip-box-back">
-              <h2 style="font-size: 21px; font-family: Arial; color:#ffff">Es un servicio que permite a las partes que terminan su relación laboral, acudir con previa cita ante el Centro de Concicliación Laboral a ratificar su acuerdo, con el fin de brindar seguridad jurídica.</h2>
+              <h2 style="font-size: 21px; font-family: Arial; color:#ffff">Es un servicio que permite a las partes, que terminan su relación laboral, acudir con previa cita ante el Centro de Concicliación Laboral a ratificar su acuerdo, con el fin de brindar seguridad jurídica.</h2>
             </div>
           </div>
         </div>
@@ -217,7 +210,7 @@
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Registro de <br>representación legal patronal</h2> <img
                 src="public/assets/images/REGISTROPA.png" alt="Descripción de la imagen"
-                style="width: 200px; height: 200px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
+                style="width: 250px; height: 250px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
             </div>
             <div class="flip-box-back">
               <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br>Es una plataforma digital, que permite a las personas empleadoras registrar a sus representantes legales, con la finalidad de agilizar el procedimiento de conciliación.</h2>
@@ -234,7 +227,7 @@
             <div class="flip-box-front">
               <h2 style="font-size: 22px; font-family: Arial; color:#000000">Cursos y capacitaciones<br><br></h2>
               <img src="public/assets/images/CURSOSYCA.png" alt="Descripción de la imagen"
-                style="width: 200px; height: 200px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
+                style="width: 250px; height: 250px; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);">
             </div>
             <div class="flip-box-back">
               <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br><br>&ensp;&ensp;&ensp;Ingresar a los cursos.</h2>
@@ -269,7 +262,13 @@
     <div class="card"> </div>
   </div>
 </section> 
-    </main>
+</main>
+     <!-- CARRUSEL-->
+	  <div class="owl-carousel owl-theme">
+      <img src="public/assets/images/Baner.png" class="d-block w-100" alt="" loading="lazy">
+      <!--<img src="public/assets/images/carusel/carrusel_2.png" class="d-block w-100" alt="" loading="lazy">-->
+    </div>
+    <!-- FIN CARRUSEL-->	
     <footer id="contacto" class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
       <div class="col-md-4 d-flex align-items-center">
         <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">

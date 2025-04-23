@@ -34,40 +34,22 @@
             opacity: .8;
         }
     </style>
-
-    <style>
-       /* .cabecera{   
-            width:2000px;
-            height:100px;
-        }*/
-    </style>
-    <style>
-        /*.img{
-            display: flex;
-            justify-content: center;
-        }
-       /* .btn btn-primary{
-
-        }*/
-    </style>
     @livewireStyles
 
     @yield('page_css')
-    <link rel="stylesheet" href="public/assets/css/style.css">
     <link rel="stylesheet" href="public/assets/css/components.css">
     @yield('page_css')
 </head>
-
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" style="background-color:#f8f9fa;">
+    <div class="">
+        <img src="public/assets/images/Logos 2.png" class="img" style="" width="330" height="80">
+    </div> 
+</nav>
+<div class="container">
+    <br><br><br><br>
+</div>
     <div id="app">  
         <section class="section">
-            <div class="col-lg-12" >
-                <div style="background-color:#6A0F49">
-                    <div align="right"><br>
-                        <img src="public/assets/images/ccl-r.png" style="max-width: 10%" class="text-center">
-                    </div>
-                    <h3 class="text-center" style="color:#CEA845">Registro de representaciones legales</h3>    
-                </div>
-            </div>
             <div class="section-body">
                 <div class="row"> 
                     <div class="col-lg-12" >
@@ -98,9 +80,14 @@
                                         </button>
                                     </div>
                                 @endif
-                                <div style="background-color:#6A0f49">
-                                    <h3 class="text-center" style="color:#CEA845">Datos del representante legal</h3>
+                                <div style="background-color:#D2D3D5">
+                                    <h3 class="text-center" style="color:black">Registro de representaciones legales</h3>
                                 </div>    
+                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                    <div class="form-group">
+                                        <h4 class="text-center" style="color:#CEA845">Datos del representante legal</h4>
+                                    </div>
+                                </div>
                                 <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                                 <form class="needs-validation novalidate" method="POST" action="{{route('poderes.publico')}}" enctype="multipart/form-data">
                                 @csrf
@@ -289,8 +276,8 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div align="center">
-                                            <button type="submit" class="btn btn-primary" style="background-color:#CEA845;">Guardar</button>
-                                            <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845;">Regresar</a>    
+                                            <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
+                                            <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845; border-color:#CEA845;">Regresar</a>    
                                         </div>
                                     </div>    
                                 </form>

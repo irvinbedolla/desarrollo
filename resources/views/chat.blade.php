@@ -79,13 +79,21 @@
             .needs-validation
             {
                 
-                background-color: #4A001F;
+                background-color: #D2D3D5;
             }
             
         </style>
 
     </head>
     <body>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+            <div class="">
+                <img src="public/assets/images/Logos 2.png" class="img" style="" width="330" height="80">
+            </div> 
+        </nav>
+        <div class="container">
+            <br><br><br><br>
+        </div>
         <!-- Formulario -->
         <form class="needs-validation novalidate" method="POST" action="{{route('RespuestasChat.store')}}">
             @csrf

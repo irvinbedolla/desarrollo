@@ -59,12 +59,14 @@
         <!-- Custom styles for this template -->
     </head>
     <body>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
             <div class="">
-                <img src="public/assets/images/Logo1.jpeg" class="img" style="" width="150" height="70"></a>&nbsp;&nbsp;
-                <img src="public/assets/images/Logo2.jpeg" class="img" style="" width="90" height="90"></a>
-            </div>
+                <img src="public/assets/images/Logos 2.png" class="img" style="" width="330" height="80">
+            </div> 
         </nav>
+        <div class="container">
+            <br><br><br><br>
+        </div>
         <main>
             <div>
                 <h2 style="color: #4A001F; text-align: center;">Realiza tu solicitud en línea</h2>
