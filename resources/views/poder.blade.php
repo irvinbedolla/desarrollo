@@ -42,7 +42,7 @@
 </head>
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" style="background-color:#f8f9fa;">
     <div class="">
-        <img src="public/assets/images/Logos 2.png" class="img" style="" width="330" height="80">
+        <img src="public/assets/images/Logos 2.png" class="img" width="260" height="90">
     </div> 
 </nav>
 <div class="container">

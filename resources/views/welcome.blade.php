@@ -100,8 +100,7 @@
     <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="">
-            <img src="public/assets/images/Logos 2.png" class="img" style="" width="330" height="80"></a>&nbsp;&nbsp;
-            
+            <img src="public/assets/images/Logos 2.png" class="img" width="260" height="90">&nbsp;&nbsp;
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -124,7 +123,7 @@
 
   <main>
     <div class="container">
-          <br><br><br>
+          <br><br><br><br>
     </div>
   <!-- CARRUSEL-->
   <div class="owl-carousel owl-theme">
@@ -254,7 +253,7 @@
             <div class="flip-box-inner">
               <div class="flip-box-front" style="background-color: #FFC3D0">
                 <h2 style="font-size: 22px; font-family: Arial; color:#000000">Seer</h2>
-                <img src="public/assets/images/seer_1.png" alt="Descripción de la imagen"
+                <img src="public/assets/images/Seer.png" alt="Descripción de la imagen"
                     style="width: 170px; height: auto; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
               </div>
               <div class="flip-box-back">
