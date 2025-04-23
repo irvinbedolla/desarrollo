@@ -65,7 +65,7 @@
             </div> 
         </nav>
         <div class="container">
-            <br><br><br><br>
+            <br><br><br><br><br>
         </div>
         <main>
             <div>
@@ -76,10 +76,10 @@
             <center><div class="card-group">
                 <div class="card">   <!-- Inicio Seer -->
                     <div style="display: block; text-align: center;">
-                        <a href="{{ route('solicitud_trabajador') }}" class="button-link">
+                        <a href="https://michoacan.cencolab.mx/asesoria/20" class="button-link">
                             SOY <br>TRABAJADOR
                         </a> 
-                    </div>  
+                    </div> 
                 </div>   <!-- fin Seer -->
                 <div class="card">   <!-- Inicio Seer -->
                     <div style="display: block; text-align: center;">
