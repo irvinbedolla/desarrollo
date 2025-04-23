@@ -94,6 +94,9 @@
             padding: .50rem .30rem;
             text-align: center;
           }
+          .card{
+            border: none;
+          }
         </style>
         <!-- Custom styles for this template -->
     </head>
@@ -143,12 +146,12 @@
               <div class="flip-box-front" style="background-color: #FFC3D0">
                 <h2 style="font-size: 22px; font-family: Arial; color:#000000;">Asesoría virtual<br><br></h2>
                 <img src="public/assets/images/ASESORIA.png" alt="Descripción de la imagen"
-                  style="width: 250px; height:250px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
+                  style="width: 120px; height:120px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
               </div>
               <div class="flip-box-back">
                  <h2 style="font-size: 21px; font-family: Arial; color:#ffff;  text-align: center"><br>Es un servicio informático que podrás consultar con la finalidad de atender y resolver preguntas acerca de nuestros servicios.</h2>
               </div>
-            </div><br>  
+            </div> 
           </div>
             <p><a class="boton" href="{{ route('chat') }}" onclick="window.open(this.href, 'mywin', 'left=' + (window.innerWidth - 500) + ',top=' + (window.innerHeight - 550) + ',width=500,height=550,toolbar=1,resizable=0'); return false;" target="_self">Ver más</a></p>
         </div>  
@@ -160,12 +163,12 @@
               <div class="flip-box-front" style="background-color: #FFC3D0">
                 <h2 style="font-size: 22px; font-family: Arial; color:#000000">Calculadora de <br>prestaciones</h2>
                 <img src="public/assets/images/CALCULADORA.png" alt="Descripción de la imagen"
-                    style="width: 250px; height:250px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
+                    style="width: 120px; height:120px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
               </div>
               <div class="flip-box-back">
                 <h2 style="font-size: 21px; font-family: Arial; color:#ffff;">Es una herramienta digital que permite a las personas, conocer los cálculos aproximados de las prestaciones laborales, que serán consideradas dentro de la audiencia de conciliación.</h2>
               </div>
-            </div><br>   
+            </div>   
           </div>
             <p><a class="boton" href="https://cclmichoacan.gob.mx/Calculadora.html" target="_blank">Ver más</a></p>
         </div>    
@@ -177,12 +180,12 @@
               <div class="flip-box-front" style="background-color: #FFC3D0">
                 <h2 style="font-size: 22px; font-family: Arial; color: #000000">Solicitud en línea<br></h2> <img
                   src="public/assets/images/SOLICITUD.png" alt="Descripción de la imagen"
-                  style="width: 110px; height:110px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
+                  style="width: 120px; height:120px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
               </div>
               <div class="flip-box-back">
                   <h2 style="font-size: 21px; font-family: Arial; color:#ffffff">Es un servicio rápido, eficiente que permite a las personas, tanto trabajadoras como empleadoras iniciar su solicitud para conciliar de forma digital a través de la página: siconcilio.cclmichoacan.gob.mx.</h2>
               </div>
-            </div><br>  
+            </div> 
           </div> 
           <p><a class="boton" href="{{ route('solicitud') }}">Ver más</a></p> 
         </div> 
@@ -198,12 +201,12 @@
               <div class="flip-box-front" style="background-color: #FFC3D0">
                 <h2 style="font-size: 22px; font-family: Arial; color:#000000">Citas de ratificación de convenios</h2> <img
                   src="public/assets/images/RATIFICACION.png" alt="Descripción de la imagen"
-                  style="width: 110px; height: 110px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
+                  style="width: 120px; height:120px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
               </div>
               <div class="flip-box-back">
                 <h2 style="font-size: 21px; font-family: Arial; color:#ffff">Es un servicio que permite a las partes, que terminan su relación laboral, acudir con previa cita ante el Centro de Concicliación Laboral a ratificar su acuerdo, con el fin de brindar seguridad jurídica.</h2>
               </div>
-            </div><br>
+            </div>
           </div>
           <p><a class="boton" href="{{ route('create_cita') }}">Ver más</a></p>   
         </div>  
@@ -215,12 +218,12 @@
               <div class="flip-box-front" style="background-color: #FFC3D0">
                 <h2 style="font-size: 22px; font-family: Arial; color:#000000">Registro de <br>representación legal patronal</h2> <img
                   src="public/assets/images/REGISTROPA.png" alt="Descripción de la imagen"
-                  style="width: 250px; height: 250px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
+                  style="width: 120px; height:120px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
               </div>
               <div class="flip-box-back">
                 <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br>Es una plataforma digital, que permite a las personas empleadoras registrar a sus representantes legales, con la finalidad de agilizar el procedimiento de conciliación.</h2>
               </div>
-            </div><br>
+            </div>
           </div>
           <p><a class="boton" href="{{ route('poder-crear') }}" target="_blank">Ver más</a></p>
         </div>    
@@ -232,12 +235,12 @@
               <div class="flip-box-front" style="background-color: #FFC3D0">
                 <h2 style="font-size: 22px; font-family: Arial; color:#000000">Cursos y capacitaciones<br><br></h2>
                 <img src="public/assets/images/CURSOSYCA.png" alt="Descripción de la imagen"
-                  style="width: 250px; height: 250px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
+                  style="width: 120px; height:120px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
               </div>
               <div class="flip-box-back">
                 <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br><br>&ensp;&ensp;&ensp;Ingresar a los cursos.</h2>
               </div>
-            </div><br>
+            </div>
           </div>
           <p><a class="boton" href="#" target="_blank">Ver más</a></p> 
         </div> 
@@ -254,12 +257,12 @@
               <div class="flip-box-front" style="background-color: #FFC3D0">
                 <h2 style="font-size: 22px; font-family: Arial; color:#000000">Seer</h2>
                 <img src="public/assets/images/seer_1.png" alt="Descripción de la imagen"
-                    style="width: 170px; height: auto; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
+                    style="width: 180px; height: auto; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
               </div>
               <div class="flip-box-back">
                  <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br><br>Sistema integral de Conciliación.</h2>
               </div>
-            </div><br>
+            </div>
           </div>
           <p><a class="boton" href="{{ route('login') }}">Ver más</a></p>   
         </div>  
