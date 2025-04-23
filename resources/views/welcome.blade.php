@@ -197,7 +197,7 @@
             <div class="flip-box-inner">
               <div class="flip-box-front" style="background-color: #FFC3D0">
                 <h2 style="font-size: 22px; font-family: Arial; color:#000000">Citas de ratificación de convenios</h2> <img
-                  src="public/assets/images/cita.png" alt="Descripción de la imagen"
+                  src="public/assets/images/RATIFICACION.png" alt="Descripción de la imagen"
                   style="width: 110px; height: 110px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
               </div>
               <div class="flip-box-back">
@@ -253,7 +253,7 @@
             <div class="flip-box-inner">
               <div class="flip-box-front" style="background-color: #FFC3D0">
                 <h2 style="font-size: 22px; font-family: Arial; color:#000000">Seer</h2>
-                <img src="public/assets/images/Seer.png" alt="Descripción de la imagen"
+                <img src="public/assets/images/seer_1.png" alt="Descripción de la imagen"
                     style="width: 170px; height: auto; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
               </div>
               <div class="flip-box-back">
