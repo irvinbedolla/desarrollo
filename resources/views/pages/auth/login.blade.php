@@ -1,6 +1,6 @@
 @extends('layouts.auth_app')
 @section('title')
-    SI conciliación
+    Si Concilio
 @endsection
 @section('content')
     <div class="card card-primary">

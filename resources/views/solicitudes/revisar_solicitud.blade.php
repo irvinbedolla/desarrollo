@@ -300,7 +300,7 @@
 
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Confirmar</button>
-                                            <a class="btn btn-danger" href="{{ route('solicitud_rechazar') }}">Rechazar</a>
+                                            <a class="btn btn-danger" href="{{ route('rechazar_solicitud') }}">Rechazar</a>
                                         </div>
                                     </div>
                                 </form>

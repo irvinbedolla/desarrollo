@@ -159,7 +159,6 @@ function validarcheckseñales(){
   else{
     document.getElementById("lenguaje_señas").style.display = "none";
   }
-
 }
 
 $(function(){
@@ -193,11 +192,12 @@ function validarcheckfecha(){
   else{
     document.getElementById("fecha_fin").style.display = "none";
   }
-
 }
+
 
 //Inicializacion variables
 document.getElementById("lenguaje_señas").style.display = "none";
 document.getElementById("discapacidad").style.display = "none";
+
 //document.getElementById("fecha_fin").style.display = "none";
 fecha_nacimiento.max = new Date().toISOString().split("T")[0];

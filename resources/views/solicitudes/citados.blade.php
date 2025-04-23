@@ -6,7 +6,7 @@
         <meta name="description" content="">
         <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
         <meta name="generator" content="Ing. ISBM">
-        <title>Si Conciliación</title>
+        <title>Si Concilio</title>
     <!-- Bootstrap 5.3.3 -->
     <link href="../public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
 
@@ -107,6 +107,83 @@
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $id }}">
                                         <div class="row">
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <h4 class="text-center">Dirección del citado</h4>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">Colonia</label>
+                                                    <input type="text" name="colonia" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo colonia es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">Código Postal</label>
+                                                    <input type="text" name="cp" class="form-control" minlength="5" maxlength="5" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo Código Postal es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">Entre calle</label>
+                                                    <input type="text" name="calle1" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo calle es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">y calle</label>
+                                                    <input type="text" name="calle2" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo calle es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">Num ext.</label>
+                                                    <input type="text" name="exterior" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo calle es obligatorio.
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">Num int.</label>
+                                                    <input type="text" name="interior" class="form-control" > 
+                                                    <div class="invalid-feedback">
+                                                        El campo calle es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
+
+                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <spam for="btncheck1">Cuenta con los datos del Patron/Empresa</spam>
+                                                <input type="checkbox" class="btn-check" id="check_datos" autocomplete="off">
+                                            </div>
+                                            
+                                        <div class="row" id="div_datos_citado" style="display:none">
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Tipo de personas</label>
@@ -192,35 +269,6 @@
                                                 </div>
                                             </div>
 
-                                            <div id="div2"  class="col-xs-12 col-sm-12 col-md-6">
-                                                <div class="form-group">
-                                                <label for="name">Genero</label>
-                                                    <select name="sexo" class="form-control" required>
-                                                        <option value="">Seleccione</option>
-                                                        <option value="H">Hombre</option>
-                                                        <option value="M">Mujer</option>
-                                                        <option value="NB">No Binarios</option>
-                                                        <option value="LGBTTTIQ">LGBTTTIQ+</option>
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        El campo sexo es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="name">Nacionalidad</label>
-                                                    <select name="nacionalidad" class="form-control" required>
-                                                        <option value="">Seleccione</option>
-                                                        <option value="Mexicana">Mexicana</option>
-                                                        <option value="Otra">Otra</option>
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        La nacionalidad es obligatoria.
-                                                    </div>
-                                                </div>
-                                            </div>
 
                                             <div class="col-xs-12 col-sm-6 col-md-6">
                                                 <div class="form-group">
@@ -251,75 +299,10 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <div class="form-group">
-                                                    <h4 class="text-center">Dirección del citado</h4>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="name">Colonia</label>
-                                                    <input type="text" name="colonia" class="form-control" required> 
-                                                    <div class="invalid-feedback">
-                                                        El campo colonia es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="name">Código Postal</label>
-                                                    <input type="text" name="cp" class="form-control" minlength="5" maxlength="5" required> 
-                                                    <div class="invalid-feedback">
-                                                        El campo Código Postal es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="name">Entre calle</label>
-                                                    <input type="text" name="calle1" class="form-control" required> 
-                                                    <div class="invalid-feedback">
-                                                        El campo calle es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="name">y calle</label>
-                                                    <input type="text" name="calle2" class="form-control" required> 
-                                                    <div class="invalid-feedback">
-                                                        El campo calle es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="name">Num ext.</label>
-                                                    <input type="text" name="exterior" class="form-control" required> 
-                                                    <div class="invalid-feedback">
-                                                        El campo calle es obligatorio.
-
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="name">Num int.</label>
-                                                    <input type="text" name="interior" class="form-control" > 
-                                                    <div class="invalid-feedback">
-                                                        El campo calle es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-
                                         </div>
+
+
+
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div align="center">
                                                 <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar</button>
@@ -368,6 +351,23 @@
     @yield('scripts')
     <script src="../public/assets/js/validaciones.js"></script> 
     <script>
+        
+        $(function(){
+            $('#check_datos').on('change', mostrarDatos);
+            console.log("llego");
+        })
+
+        function mostrarDatos(){
+            var check = document.getElementById("div_datos_citado").value;
+            console.log(check);
+            if (check == "none") {
+                document.getElementById("div_datos_citado").style.display = "block";
+            }
+            else{
+                document.getElementById("div_datos_citado").style.display = "none";
+            }
+        }
+
         function sedes(){
             document.getElementById("fecha").removeAttribute("disabled");
         }

@@ -6,7 +6,7 @@
         <meta name="description" content="">
         <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
         <meta name="generator" content="Ing. ISBM">
-        <title>Si Conciliación</title>
+        <title>Si Concilio</title>
         
         <!-- Bootstrap 5.3.3 -->
         <link href="../public/assets_seer/assets/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
