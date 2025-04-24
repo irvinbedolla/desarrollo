@@ -138,7 +138,7 @@ function validarfechaNacimiento(){
     años = moment(actual).diff(moment(fechaNacimiento), 'year');
     //Si la fecha de nacimiento es menos a 15 años
     if(años <= 15) {
-      alert("Debes tener al menos 15 años de edad.");
+      alert("Fecha no valida.");
     }
 
     $('#años_edad').val(años);

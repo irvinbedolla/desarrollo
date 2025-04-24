@@ -111,17 +111,7 @@
                                                 <div class="form-group">
                                                     <h4 class="text-center">Dirección del citado</h4>
                                                 </div>
-                                            </div>
-
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="name">Colonia</label>
-                                                    <input type="text" name="colonia" class="form-control" required> 
-                                                    <div class="invalid-feedback">
-                                                        El campo colonia es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            </div>                                        
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
@@ -137,6 +127,16 @@
                                                 <div class="form-group">
                                                     <label for="name">Calle</label>
                                                     <input type="text" name="calle" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo colonia es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">Colonia</label>
+                                                    <input type="text" name="colonia" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo colonia es obligatorio.
                                                     </div>
@@ -206,7 +206,7 @@
                                         </div>
 
                                         <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <spam for="btncheck1">Cuenta con los datos del Patron/Empresa</spam>
+                                                <spam for="btncheck1">Datos adicionales del Patron/Empresa</spam>
                                                 <input type="checkbox" class="btn-check" id="check_datos" autocomplete="off">
                                             </div>
                                             
@@ -272,22 +272,6 @@
                                                     <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" > 
                                                     <div class="invalid-feedback">
                                                         El campo conflicto es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
-                                            <div class="col-xs-12 col-sm-6 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="password">Estado del solicitante</label>
-                                                    <select id="estado_solicitante" class="form-control" name="estado_solicitante" required>
-                                                        <option value="">Seleccione</option>
-                                                        @foreach($estados as $est)
-                                                            <option value="{{$est['id']}}">{{$est['nombre']}}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        El Estado es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>

@@ -67,8 +67,10 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    <strong>¡Registro completo!</strong>
-                                    <label>Tu solicitud fue capturada correctamente, tu número de folio: {{$folio}}, es un perido de 3 dias hábiles vas a recibir notificación/llamada a tu correo o tu télefono registrado.
+                                    <strong>¡Registro completo!</strong><br>
+                                    <label>Tu solicitud fue capturada correctamente, tu número de folio es: {{$folio}}, en un periodo máximo de 3 dias hábiles, recibirás un correo electrónico de confirmación con la fecha y hora de tu audiencia.<br><br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NOTA: En caso de detectar algún error en los datos proporcionados, el personal del centro se pondrá en contacto contigo.<br><br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Para dudas y/o aclaraciones comunícate al número telefónico (000) 0000 000 o acude a tu Delegación u Oficina de Apoyo del Centro de Conciliación Laboral más cercana.
                                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>

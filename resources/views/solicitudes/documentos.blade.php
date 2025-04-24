@@ -142,7 +142,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label>Identificación oficial de atras</label>
-                                                    <input type="file" name="documentoINEAtras" class="form-control" accept=".pdf , .jpg, .png, .jpeg ">
+                                                    <input type="file" name="documentoINEAtras" class="form-control" accept=".pdf , .jpg, .png, .jpeg " required>
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
                                                     </div>

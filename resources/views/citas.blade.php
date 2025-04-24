@@ -91,7 +91,7 @@
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Nombre del solicitante</label>
+                                                    <label for="name">Nombre del Solicitante (Persona que Acudira a la Cita)</label>
                                                     <input type="text" name="nombre" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
@@ -100,21 +100,17 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Tipo Solicitud</label>
-                                                    <select name="tipo" class="form-control" required>
-                                                        <option value="">Seleccione</option>
-                                                        <option value="Solicitud">Solicitud</option>
-                                                        <option value="Ratificación">Ratificación</option>
-                                                    </select>
+                                                    <label for="name">Nombre del Patron</label>
+                                                    <input type="text" name="nombre" class="form-control" required> 
                                                     <div class="invalid-feedback">
-                                                        El tipo de solicitud es obligatoria.
+                                                        El nombre es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div id="div1"  class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Edad</label>
+                                                    <label for="name">Edad del Solicitante</label>
                                                     <input type="number" name="edad" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatorio.
@@ -128,8 +124,6 @@
                                                         <option value="">Seleccione</option>
                                                         <option value="H">Hombre</option>
                                                         <option value="M">Mujer</option>
-                                                        <option value="NB">No Binarios</option>
-                                                        <option value="LGBTTTIQ">LGBTTTIQ+</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El campo sexo es obligatorio.
