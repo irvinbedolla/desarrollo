@@ -11,5 +11,5 @@ class SeerPerGeneral extends Model
     protected $table = 'seer_general';
     protected $primaryKey = 'id';
     protected $fillable = ['fecha', 'fecha_conflicto','fecha_confirmacion','NUE', 'id_motivo','actividad','id_rama','solicitante', 'estado_solicitante', 'mun_solicitante', 'user_id','delegacion','conciliador_id',
-    'curp','tipo','documentoIne','documentoCurp','documentoActa','validado_conciliador'];
+    'curp','tipo','documentoINEFrente','documentoINEAtras','documentoCurp','documentoActa','validado_conciliador'];
 }

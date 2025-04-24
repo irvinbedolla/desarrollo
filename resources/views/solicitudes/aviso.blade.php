@@ -68,12 +68,15 @@
                             <div class="card-body">
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                                     <strong>¡Registro completo!</strong>
-                                    <label>Tu solicitud fue capturada correctamente, tu número de folio: {{$folio}}, es un perido de 48 horas vas a recibir una notificacion de confirmación a tu correo o tu telefono registrado.
+                                    <label>Tu solicitud fue capturada correctamente, tu número de folio: {{$folio}}, es un perido de 3 dias hábiles vas a recibir notificación/llamada a tu correo o tu télefono registrado.
                                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
-                            </div>
+                                    <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Terminar</a>   
+                                </div>
+                                
+                                 
                         </div>
                     </div>
                 </div>

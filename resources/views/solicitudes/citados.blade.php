@@ -125,6 +125,26 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
+                                                    <label for="name">Tipo de Vialidad</label>
+                                                    <input type="text" name="vialidad" class="form-control" placeholder="Calle, Avenida " required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo colonia es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">Calle</label>
+                                                    <input type="text" name="calle" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo colonia es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
                                                     <label for="name">Código Postal</label>
                                                     <input type="text" name="cp" class="form-control" minlength="5" maxlength="5" required> 
                                                     <div class="invalid-feedback">
@@ -136,7 +156,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Entre calle</label>
-                                                    <input type="text" name="calle1" class="form-control" required> 
+                                                    <input type="text" name="calle1" class="form-control"> 
                                                     <div class="invalid-feedback">
                                                         El campo calle es obligatorio.
                                                     </div>
@@ -146,7 +166,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">y calle</label>
-                                                    <input type="text" name="calle2" class="form-control" required> 
+                                                    <input type="text" name="calle2" class="form-control"> 
                                                     <div class="invalid-feedback">
                                                         El campo calle es obligatorio.
                                                     </div>
@@ -173,10 +193,17 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                <label for="floatingTextarea">Referencia</label>
+                                                    <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencia"></textarea>
+                                                    <div class="invalid-feedback">
+                                                        El campo calle es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-
-
-
 
                                         <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <spam for="btncheck1">Cuenta con los datos del Patron/Empresa</spam>
@@ -187,7 +214,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Tipo de personas</label>
-                                                    <select name="tipo" class="form-control" required>
+                                                    <select name="tipo" class="form-control">
                                                         <option value="">Seleccione</option>
                                                         <option value="Fisica">Fisica</option>
                                                         <option value="Moral">Moral</option>
@@ -212,7 +239,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Nombre(s) *</label>
-                                                    <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
                                                     </div>
@@ -235,26 +262,6 @@
                                                     <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-3">
-                                                <div class="form-group">
-                                                    <label for="name">Fecha de nacimiento</label>
-                                                    <input type="date" id="fecha_nacimiento" name="nacimiento" onchange="validarfechaNacimiento(this)" class="form-control" required> 
-                                                    <div class="invalid-feedback">
-                                                        El campo edad es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-3">
-                                                <div class="form-group">
-                                                    <label for="name">Edad</label>
-                                                    <input type="number" name="edad" class="form-control" id="años_edad" required> 
-                                                    <div class="invalid-feedback">
-                                                        El campo edad es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
@@ -358,7 +365,7 @@
         })
 
         function mostrarDatos(){
-            var check = document.getElementById("div_datos_citado").value;
+            var check = document.getElementById("div_datos_citado").style.display;
             console.log(check);
             if (check == "none") {
                 document.getElementById("div_datos_citado").style.display = "block";

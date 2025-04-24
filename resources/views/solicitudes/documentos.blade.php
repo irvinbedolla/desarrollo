@@ -104,7 +104,7 @@
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                                     <form class="needs-validation novalidate" method="POST" action="{{route('seer.documentos')}}" enctype='multipart/form-data'>
                                         @csrf
-                                        <input type="hidden" name="id" value="42">
+                                        <input type="hidden" name="id" value="{{$id}}">
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
@@ -114,21 +114,7 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Tipo de audiencia</label>
-                                                    <select name="tipo" class="form-control" required>
-                                                        <option value="">Seleccione</option>
-                                                        <option value="Presencial">Presencial</option>
-                                                        <option value="Virtual">Virtual</option>
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        El tipo de audiencia es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="name">CURP(De la persona de los documentos)</label>
+                                                    <label for="name">*CURP (De la persona de los documentos)</label>
                                                     <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control" required> 
                                                     <pre id="resultado"></pre>
                                                     <div class="invalid-feedback">
@@ -137,11 +123,26 @@
                                                 </div>
                                             </div>
 
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <h4 class="text-center">En caso de ser mayor de edad</h4>
+                                                </div>
+                                            </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label>*Identificación oficial</label>
-                                                    <input type="file" name="documentoIne" class="form-control" accept=".pdf , .jpg, .png, .jpeg ">
+                                                    <label>Identificación oficial de frente</label>
+                                                    <input type="file" name="documentoINEFrente" class="form-control" accept=".pdf , .jpg, .png, .jpeg ">
+                                                    <div class="invalid-feedback">
+                                                        La Identificación es obligatoria.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label>Identificación oficial de atras</label>
+                                                    <input type="file" name="documentoINEAtras" class="form-control" accept=".pdf , .jpg, .png, .jpeg ">
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
                                                     </div>
@@ -157,7 +158,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label>Curp</label>
-                                                    <input type="file" name="documentoCurp" class="form-control" accept=".pdf">
+                                                    <input type="file" name="documentoCurp" class="form-control" accept=".pdf, .jpg, .png, .jpeg ">
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
                                                     </div>
@@ -167,7 +168,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label>Acta de nacimiento</label>
-                                                    <input type="file" name="documentoActa" class="form-control" accept=".pdf">
+                                                    <input type="file" name="documentoActa" class="form-control" accept=".pdf, .jpg, .png, .jpeg ">
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
                                                     </div>
