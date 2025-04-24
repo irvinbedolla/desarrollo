@@ -9,7 +9,7 @@
         <title>Si Concilio</title>
         
         <!-- Bootstrap 5.3.3 -->
-        <link href="../public/assets_seer/assets/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+       
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
@@ -32,7 +32,7 @@
                 padding: 10px;
                 box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
                 max-width: 500px;
-                /*max-height: 600px;*/
+                max-height: 600px;
                 margin: 0 auto;
             }
             .form-container h2 {
@@ -46,6 +46,9 @@
             h1 {
                 text-align: center;
                 color:  #496163;
+            }
+            p{
+                text-align: justify;
             }
             .preg{
                 color: #CEA845;
@@ -72,28 +75,26 @@
             }
             .needs-validation
             {
-                
-                background-color: #4A001F;
-            }
-            
+                background-color: #f8f9fa;
+                height: 100px;
+            }  
         </style>
 
     </head>
-    <body>
-        <form class="needs-validation novalidate" method="POST" action="{{route('RespuestasChat.storeUno')}}">
-            @csrf
-            <div class="chat-box" style="position: relative; top:100px; right:0px; left:0px;">
-                <h1>Asistente Centro de Conciliación</h1>
-                <p align="center"><b>¿Cómo te podemos ayudar?</b></p>
-                <div class="form-container">
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-6">
-                            <h2 >Hola {{ $registro->nombre_completo }}</h2>
+    <main>
+        <div id="app">
+            <form class="needs-validation novalidate" method="POST" style="position: relative; top:10px;" action="{{route('RespuestasChat.storeUno')}}">   
+                &nbsp;&nbsp;<img src="../public/assets/images/Logos 2.png" class="img" width="240" height="90">
+                @csrf
+                <div class="chat-box" style="position: relative; top:10px; right:0px; left:0px;">
+                    <h1>Asistente Centro de Conciliación</h1>
+                    <div class="form-container">
+                        <div class="row">
+                            <h2>Hola {{ $registro->nombre_completo }}</h2>
                             @if(isset($idPregunta))
                                 <p><b>{{ $ver_res->pregunta }}</b></p>                   
                                 <p>{{ $ver_res->respuesta }}</p>    
-                            @endif
-                                
+                            @endif    
                             @if($registro)
                                 @if(isset($idPregunta))
                                     @foreach($res as $re)
@@ -104,9 +105,7 @@
                                 @endif
                             @endif
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="row"> 
                             <div class="form-group">
                                 <label class="preg" for="pregunta">Selecciona una pregunta:</label>
                                 <select  class="form-control" name="idPregunta" id="preguntasChat" required autofocus>
@@ -117,17 +116,15 @@
                                     @endforeach 
                                 </select>  
                             </div>
+                            <input type="hidden" class="form-control" name="id" value="{{ $id }}">       
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-6">
-                            <input type="hidden" class="form-control" name="id" value="{{ $id }}">
-                        </div>          
+                        <br>
+                        <button type="submit" style="position: relative; top:0px; right:0px; left:225px;" class="btn">Enviar</button>
+                        <br><br>
                     </div>
-                </div> 
-                <br><br><br>
-                <button type="submit" style="position: relative; top:0px; right:0px; left:225px;" class="btn">Enviar</button>
-            </div>       
-        </form>
-    </body>
+                </div>       
+            </form>
+        </main>
     <script>
         window.onload = function() {
             document.LoginForm.occupationSelect.focus();

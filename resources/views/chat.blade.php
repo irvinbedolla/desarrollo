@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="es">
     <head>
@@ -64,7 +63,6 @@
                 border-radius: 5px;
             }
             .btn {
-               
                 background-color: #CEA845;
                 color: white;
                 border: none;
@@ -78,51 +76,44 @@
             }
             .needs-validation
             {
-                
-                background-color: #D2D3D5;
+                background-color: #f8f9fa;
+                height: 100px;
             }
             
         </style>
 
     </head>
-    <body>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-            <div class="">
-                <img src="public/assets/images/Logos 2.png" class="img" width="260" height="90">
-            </div> 
-        </nav>
-        <div class="container">
-            <br><br><br><br>
-        </div>
-        <!-- Formulario -->
-        <form class="needs-validation novalidate" method="POST" action="{{route('RespuestasChat.store')}}">
-            @csrf
-            <div class="chat-box" style="position: relative; top:50px; right:0px; left:0px;">
-                <h1>Asistente Centro de Conciliación</h1>
-                <p align="center"><b>¿Cómo te podemos ayudar?</b></p>
-                <div class="form-container">
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-6">
-                            <div class="form-group">
-                                <p for="nombre_completo" class="preg">Nombre completo</p>
-                                <input type="text" class="form-control" placeholder="*Nombre(s)" name="nombre_completo" oninput="this.value = this.value.toUpperCase()" required>
-                                <div class="invalid-feedback">
-                                    El nombre es obligatorio.
-                                </div>
-                            </div> <br>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-6">
-                            <div class="form-group">
+    <main>
+        <div id="app">
+            <!-- Formulario -->
+            <form class="needs-validation novalidate" method="POST" style="position: relative; top:10px;" action="{{route('RespuestasChat.store')}}">
+                &nbsp;&nbsp;<img src="public/assets/images/Logos 2.png" class="img" width="240" height="90">
+                @csrf
+                <div class="chat-box" style="position: relative; top:10px; right:0px; left:0px;">
+                    <h1>Asistente Centro de Conciliación</h1>
+                    <p align="center"><b>¿Cómo te podemos ayudar?</b></p>
+                    <div class="form-container">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-6">
                                 <div class="form-group">
-                                    <p for="ciudad" class="preg">Ciudad</p>
-                                    <input type="text" class="form-control" placeholder="*Ciudad" name="ciudad" oninput="this.value = this.value.toUpperCase()" required>
+                                    <p for="nombre_completo" class="preg">Nombre completo</p>
+                                    <input type="text" class="form-control" placeholder="*Nombre(s)" name="nombre_completo" oninput="this.value = this.value.toUpperCase()" required>
                                     <div class="invalid-feedback">
-                                        La ciudad es obligatoria.
+                                        El nombre es obligatorio.
                                     </div>
-                                </div>
-                            </div>  <br> 
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                </div> <br>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <p for="ciudad" class="preg">Ciudad</p>
+                                        <input type="text" class="form-control" placeholder="*Ciudad" name="ciudad" oninput="this.value = this.value.toUpperCase()" required>
+                                        <div class="invalid-feedback">
+                                            La ciudad es obligatoria.
+                                        </div>
+                                    </div>
+                                </div>  <br> 
+                            </div>
                             <div class="form-group">
                                 <div class="form-group">
                                     <!-- muestra las preguntas guardadas -->
@@ -135,15 +126,15 @@
                                         @endforeach 
                                     </select>
                                 </div>
-                            </div><br>
-                        </div>            
-                    </div>  
-                    <br><br>
-                    <button type="submit" class="btn" style="position: relative; top:0px; right:0px; left:225px;">
-                        Enviar
-                    </button>     
+                            </div><br>            
+                        </div>  
+                        <br><br>
+                        <button type="submit" class="btn" style="position: relative; top:0px; right:0px; left:225px;">
+                            Enviar
+                        </button>     
+                    </div>
                 </div>
-            </div>
-        </form>
-    </body>
+            </form>
+        </div>    
+    </main>
 </html>
