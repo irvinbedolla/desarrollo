@@ -91,7 +91,8 @@
                                     <div style="background-color:#D2D3D5; width:100%; height:40px;">
                                         <h3 class="text-center" style="color:black;">Datos generales de la solicitud</h3>
                                     </div>   
-                                    <h6 class="text-center" style="color:black"><b>Nota: Los campos marcados con (*) son datos obligatorios, favor de proporcionarlos.</b></h6> 
+                                    <h6 class="text-center" style="color: #828282"><b>Requisitos para realizar tu solicitud:</b></h6> 
+                                    <h6 class="text-center" style="color: #828282"><b>Teléfono, correo electrónico, identificación oficial(INE, PASAPORTE), en caso de ser menor de edad tu identificación son tu CURP o Acta de Nacimiento.</b></h6> 
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                                     <form class="needs-validation novalidate" method="POST" action="{{route('parte1')}}">
                                         @csrf
@@ -101,21 +102,12 @@
                                                     <label for="name">Municipio de la fuente de empleo(*)</label>
                                                     <select id="dSolicitud" class="form-control" name="dSolicitud">
                                                         <option value="">Seleccione</option>
-                                                        @foreach($del as $de)
-                                                            <option value="{{$de['nombre']}}">{{$de['nombre']}}</option>
+                                                        @foreach($municipios as $municipio)
+                                                            <option value="{{$municipio['id']}}">{{$municipio['nombre']}}</option>
                                                         @endforeach
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         La delegación es obligatoria.
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-3 col-sm-3 col-md-2">
-                                                <div class="form-group">
-                                                    <label for="name">Fecha de conflicto (*)</label>
-                                                    <input type="date" id="fechaConflicto" name="fechaConflicto" class="form-control" required> 
-                                                    <div class="invalid-feedback">
-                                                        La fecha es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>
@@ -133,7 +125,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-6"><br>
+                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-12"><br>
                                                 <table id="tabla" name="motivo_solicitud[]" class="table table-striped mt-1" style="margin: 0 center; text-align:center;">
                                                     <thead style="background-color: #D2D3D5;">
                                                         <th style="color: black;">Objeto de la solicitud</th>
@@ -156,11 +148,11 @@
                                                         El campo rama industrial es obligatorio.
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div>                  
                                             <div id="div2"  class="col-xs-12 col-sm-12 col-md-6">
-                                                <p>Ejemplos: comercio de productos al por menor, construcción, servicios médicos...</p>
-                                                <div class="form-group">
-                                                    <label for="name">Paso 2: Actividad económica del patrón (*)</label>
+                                                <p style="color: white">.</p>
+                                                <div class="form-group">  
+                                                    <label for="name">Paso 2: Actividad económica del patrón/empresa (*)   <em>Ejemplos: comercio de productos al por menor, construcción, servicios médicos...</em></label>
                                                     <input type="text" name="actividad_economica" id="actividad_economica" oninput="this.value = this.value.toUpperCase()" class="form-control" required> 
                                                 <!--<select id="actividad_economica" name="actividad_economica" class="form-control" disabled>
                                                         <option value=""> --Primero selecciona una rama industrial --</option>  
@@ -191,7 +183,7 @@
        
     <script>
         //Fecha conflicto limitada a la fecha actual
-        fechaConflicto.max = new Date().toISOString().split("T")[0];
+        //fechaConflicto.max = new Date().toISOString().split("T")[0];
         //Solicitud en línea trabajador parte 1
         $(document).ready(function() {
             let motivosSeleccionados = [];

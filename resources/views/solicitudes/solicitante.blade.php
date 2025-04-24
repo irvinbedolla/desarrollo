@@ -398,7 +398,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Cantidad de horas trabajadas por semana</label>
+                                                    <label for="name">Cantidad de horas trabajadas por semana (*)</label>
                                                     <input type="number" name="horas" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         Es obligatorio.

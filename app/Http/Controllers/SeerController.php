@@ -1815,7 +1815,8 @@ class SeerController extends Controller
         $ramas = SolicitudRama::all();
        // $actividad=SolicitudEconomica::all();
         $del=Sedes::all();
-        return view('solicitudes.solicitud_trabajador', compact('motivos', 'ramas','del'));
+        $municipios=Municipios::where('estado',16)->get();
+        return view('solicitudes.solicitud_trabajador', compact('motivos', 'ramas','del','municipios'));
     }
    
     /* public function obtenerActEconomica($id){
