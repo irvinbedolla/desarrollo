@@ -127,8 +127,7 @@
                                     </select>
                                 </div>
                             </div><br>            
-                        </div>  
-                        <br><br>
+                        </div><br>
                         <button type="submit" class="btn" style="position: relative; top:0px; right:0px; left:225px;">
                             Enviar
                         </button>     

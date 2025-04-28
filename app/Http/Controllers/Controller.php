@@ -99,7 +99,7 @@ class Controller extends BaseController
         ->join('chat_registro','chat_registro.id','=','chat_rp.id_registro')
         ->where('chat_registro.id',$data["id"])
         ->select('chat_preguntas.pregunta','chat_preguntas.respuesta','chat_rp.id')
-        ->orderBy('chat_rp.id', 'DESC')
+        ->orderBy('chat_rp.id', 'ASC')
         ->get();
         //dd($res);
         //ID de registro
