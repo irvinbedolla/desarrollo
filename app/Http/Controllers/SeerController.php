@@ -1829,14 +1829,12 @@ class SeerController extends Controller
 
         //validando información
         $request->validate([
-            'fechaConflicto'      => 'required|date',
             'ramaIndustrial'      => 'required',
             'actividad_economica' => 'required',
             'motivo_solicitud'    => 'required',           
         ]);
         
         $data_insert=array(
-            'fecha_conflicto' =>  $data["fechaConflicto"],
             'id_rama'         =>  $data["ramaIndustrial"],
             'actividad'       =>  $data["actividad_economica"],
             'delegacion'      =>  $data["dSolicitud"],
@@ -1891,7 +1889,9 @@ class SeerController extends Controller
             'pago'                  => 'required',
             'horas'                 => 'required',
             'fecha_ingreso'         => 'required',
-            'jornada'               => 'required'
+            'jornada'               => 'required',
+            
+            
         ]);
         
         $data_insert=array(
@@ -1955,6 +1955,22 @@ class SeerController extends Controller
         }
        
         SeerSolicitante::create($data_insert);
+        
+        // se agregan los documentos
+
+       
+        $solicitud = SeerPerGeneral::find($data["id"]);
+       
+        $identificacion = $data["curp"].".pdf";
+        $path = Storage::putFileAs(
+            'documentosSolicitud', $request->file('documento'), $identificacion
+        );
+
+        $data_update= array(
+            'documento'         => $identificacion
+        );
+    
+        $solicitud->update($data_update);
 
         $estados=Estados::all();
         return redirect()->route('agregar_citado', ['id' => $id] ); 
@@ -2090,7 +2106,6 @@ class SeerController extends Controller
 
 
         $data_update= array(
-            'tipo'                  => "Presencial",
             'curp'                  => $data["curp"],
             'documentoINEFrente'    => $nombre_ineF, 
             'documentoINEAtras'     => $nombre_ineA, 

@@ -37,7 +37,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="">
-        <img src="public/assets/images/Logos 2.png" class="img" style="" width="330" height="80"></a>&nbsp;&nbsp;
+        <img src="public/assets/images/Logos 2.png" class="img" style="" width="260" height="90"></a>&nbsp;&nbsp;
     </div> 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -163,6 +163,7 @@
                                                 </div>
                                             </div>  
                                         </div>
+                                        
                                         <div align="center">
                                             <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color: #CEA845">Guardar</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color: #CEA845">Regresar</a>    

@@ -138,9 +138,11 @@ function validarfechaNacimiento(){
     años = moment(actual).diff(moment(fechaNacimiento), 'year');
     //Si la fecha de nacimiento es menos a 15 años
     if(años <= 15) {
-      alert("Fecha no valida.");
+      alert("No puedes hacer tu solicitud.");
     }
-
+    if(años > 15 && años < 18){
+      alert("Debes presentarte con tu tutor.");
+    }
     $('#años_edad').val(años);
     
 }

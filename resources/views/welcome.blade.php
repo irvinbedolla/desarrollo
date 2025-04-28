@@ -103,7 +103,7 @@
     <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="">
-            <img src="public/assets/images/Logos 2.png" class="img" width="260" height="90">&nbsp;&nbsp;
+          <a href="#"><img src="public/assets/images/Logos 2.png" class="img" width="260" height="90"></a>&nbsp;&nbsp;
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -138,6 +138,7 @@
   <!-- INICIANDO SERVICIOS -->
   <section id="servicios"><br>
     <h3 class="wow fadeInLeft" style="text-align: center ; font-family:Gibson, font-weight: 600;">Trámites y servicios digitales</h3> <br><br><br>
+    <div>
     <div class="card-group">
       <div class="card" style="background-color: #FFC3D0">   <!-- Inicio asesoria en línea -->
         <div style="display: block; text-align: center;">
@@ -269,6 +270,7 @@
       </div>   <!-- fin Seer -->
       <div class="card" style="background-color: #FFC3D0"> </div>
     </div>
+  </div>
   </section> 
   </main> 
       <!-- CARRUSEL-->

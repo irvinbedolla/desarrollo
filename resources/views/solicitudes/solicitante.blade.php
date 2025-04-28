@@ -44,7 +44,7 @@
     </style>
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="">
-            <img src="public/assets/images/Logos 2.png" class="img" style="" width="330" height="80"></a>&nbsp;&nbsp;
+            <img src="public/assets/images/Logos 2.png" class="img" style="" width="260" height="90"></a>&nbsp;&nbsp;
         </div> 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -98,7 +98,7 @@
                                         <h3 class="text-center" style="color:black">Datos de identificación</h3>
                                     </div>    
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                    <form class="needs-validation novalidate" method="POST" action="{{route('parte2')}}">
+                                    <form class="needs-validation novalidate" method="POST" action="{{route('parte2')}}" enctype='multipart/form-data'>
                                         @csrf
                                         <input type="hidden" name="id" value="{{$id}}">
                                         <div class="row">
@@ -441,6 +441,19 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
+                                                <h3 class="text-center" style="color:black">Documentos</h3>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label>Identificación oficial (INE, ACTA DE NACIMIENTO, CURP)</label>
+                                                    <input type="file" name="documento" class="form-control" accept=".pdf, .jpg, .png, .jpeg " required>
+                                                    <div class="invalid-feedback">
+                                                        La Identificación es obligatoria.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div align="center">
                                                     <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar</button>
