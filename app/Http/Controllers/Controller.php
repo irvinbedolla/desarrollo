@@ -46,6 +46,7 @@ class Controller extends BaseController
             'nombre_completo'  => $data["nombre_completo"],
              'ciudad'=> $data["ciudad"],
         );
+        //dd($data_insert);
         SeerChatR::create($data_insert); 
 
         $idRegistro = SeerChatR::latest('id')->first();
@@ -53,19 +54,22 @@ class Controller extends BaseController
             'id_registro'  => $idRegistro->id,
             'id_pregunta'  => $data["idPregunta"],
         );
+        //dd($data_insertP);
         SeerChatRP::create($data_insertP); 
         //Obtienes Ciudad y el nombre
         $registro=SeerChatR::find($idRegistro->id);
         //Obtiene todas las preguntas
         $preguntasChats=SeerChatP::all();
-        //Historial de preguntas
-        $res=SeerChatRP::where('id_registro',$idRegistro->id);
         //ID de registro
         $id=$idRegistro->id;
-        //$datos = SeerChatR::latest()->first();
+        $res=SeerChatRP::join('chat_preguntas','chat_preguntas.id','=','chat_rp.id_pregunta')
+        ->join('chat_registro','chat_registro.id','=','chat_rp.id_registro')
+        ->where('chat_registro.id',$id)
+        ->select('chat_preguntas.pregunta','chat_preguntas.respuesta','chat_rp.id')
+        ->orderBy('chat_rp.id', 'DESC')
+        ->get();
         $idPregunta = SeerChatRP::latest('id_pregunta')->first();
-        //Obtiene la ultima pregunta
-        $ver_res=SeerChatP::find($idPregunta->id_pregunta);
+        $ver_res = null;
 
         return view('RespuestasChat', compact('id','registro','res','ver_res','preguntasChats','idPregunta'));
     }
@@ -83,6 +87,7 @@ class Controller extends BaseController
             'id_registro'  =>  $data["id"],
             'id_pregunta'  => $data["idPregunta"],
         );
+        //dd($data_insertP);
         SeerChatRP::create($data_insertP); 
 
         //Obtienes Ciudad y el nombre
@@ -92,8 +97,9 @@ class Controller extends BaseController
         //Historial de preguntas
         $res=SeerChatRP::join('chat_preguntas','chat_preguntas.id','=','chat_rp.id_pregunta')
         ->join('chat_registro','chat_registro.id','=','chat_rp.id_registro')
-        ->where('id_registro',$data["id"])
-        ->select('chat_preguntas.pregunta','chat_preguntas.respuesta')
+        ->where('chat_registro.id',$data["id"])
+        ->select('chat_preguntas.pregunta','chat_preguntas.respuesta','chat_rp.id')
+        ->orderBy('chat_rp.id', 'DESC')
         ->get();
         //dd($res);
         //ID de registro

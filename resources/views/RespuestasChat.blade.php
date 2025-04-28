@@ -91,10 +91,6 @@
                     <div class="form-container">
                         <div class="row">
                             <h2>Hola {{ $registro->nombre_completo }}</h2>
-                            @if(isset($idPregunta))
-                                <p><b>{{ $ver_res->pregunta }}</b></p>                   
-                                <p>{{ $ver_res->respuesta }}</p>    
-                            @endif    
                             @if($registro)
                                 @if(isset($idPregunta))
                                     @foreach($res as $re)
