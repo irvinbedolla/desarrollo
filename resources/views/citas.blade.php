@@ -83,7 +83,7 @@
                                         </div>
                                     @endif
                                     <div style="background-color:#D2D3D5; width:100%; height:40px;">
-                                        <h3 class="text-center" style="color:black">Genera tu cita para ratificación</h3>
+                                        <h3 class="text-center" style="color:black">Genera tu cita para Ratificación</h3>
                                     </div>    
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                                     <form class="needs-validation novalidate" method="POST" action="{{route('turnos.publico')}}">
@@ -92,7 +92,7 @@
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
-                                                    <h4 class="text-center">Solicitante (Persona que Acudira a la Cita)</h4>
+                                                    <h4 class="text-center">Solicitante</h4>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
@@ -106,7 +106,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Nombre</label>
+                                                    <label for="name">Nombre (Persona que Acude a la Cita)</label>
                                                     <input type="text" name="nombre" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
@@ -138,7 +138,7 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
-                                                    <h4 class="text-center">Trabajador/ Ex Trabajador</h4>
+                                                    <h4 class="text-center">Trabajador</h4>
                                                 </div>
                                             </div>
 
@@ -182,13 +182,26 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
-                                                    <label for="name">Motivo de la solicitud</label>
+                                                    <label for="name">Prestaciónes a pagar</label>
                                                     <textarea name="conflicto" class="form-control"></textarea>
                                                     <div class="invalid-feedback">
                                                         El campo conflicto es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">
+                                                    <a href="https://cclmichoacan.gob.mx/Calculadora.html" target="_blank">Calcular</a>
+                                                    </label>
+                                                    
+                                                    <div class="invalid-feedback">
+                                                        El campo conflicto es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Sedes</label>
@@ -244,7 +257,17 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label>Poder(Em caso de ser necesario)</label><br>
+                                                    <label>Acta constitutiva (Si acude en reprecentación)</label><br>
+                                                    <input type="file" name="documentoPoder" class="form-control" accept=".pdf" required>
+                                                    <div class="invalid-feedback">
+                                                        La Identificación es obligatoria.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label>Poder general o Carta poder(Si acude en reprecentación)</label><br>
                                                     <input type="file" name="documentoPoder" class="form-control" accept=".pdf" required>
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.

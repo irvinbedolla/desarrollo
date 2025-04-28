@@ -81,7 +81,7 @@
                                     </div>
                                 @endif
                                 <div style="background-color:#D2D3D5">
-                                    <h3 class="text-center" style="color:black">Registro de representaciones legales</h3>
+                                    <h3 class="text-center" style="color:black">Registro de Representación Legal Patronal</h3>
                                 </div>    
                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                     <div class="form-group">
@@ -207,7 +207,7 @@
 
                                         <div class="col-xs-12 col-sm-12 col-md-3">
                                             <div class="form-group">
-                                                <span class="" id="basic-addon1">*Seleccione la region(nes).</i></i></span>
+                                                <span class="" id="basic-addon1">*Seleccione la región(nes).</i></i></span>
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="checkbox" name="moreliaSucursal" value="Si">
                                                     <label class="form-check-label" for="flexCheckDefault">Morelia</label>
@@ -261,7 +261,7 @@
 
                                         <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div class="form-group">
-                                                <label>Anexos(Solo si se requiere)</label><br>
+                                                <label>Anexos(Solo si se requiere, Acata Constitutiva, Poder General con facultades para sustituir o delegar poder)</label><br>
                                                 <input type="file" name="documentoAnexo" class="form-control" accept=".pdf" required>
                                             </div>
                                         </div>
