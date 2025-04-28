@@ -966,14 +966,18 @@ class TurnosController extends Controller
         $data = $request->all();
 
         request()->validate([
-            'nombre'    => 'required',
-            'edad'      => 'required|numeric',
-            'sexo'      => 'required|in:H,M,NB,LGBTTTIQ',
-            'conflicto' => 'required',
-            'sede'      => 'required',
-            'tipo'      => 'required',
-            'fecha'     => 'required',
-            'hora'      => 'required',
+            'empresa'           => 'required',
+            'nombre'            => 'required',
+            'edad'              => 'required|numeric',
+            'sexo'              => 'required|in:H,M,NB,LGBTTTIQ',
+            'trabajador'        => 'required',
+            'trabajador_edad'   => 'required',
+            'trabajador_sexo'   => 'required',
+            'conflicto'         => 'required',
+            'sede'              => 'required',
+            'tipo'              => 'required',
+            'fecha'             => 'required',
+            'hora'              => 'required',
         ], $data);
 
         //Vamos a buscar la proxima fecha disponible de la sede
@@ -991,35 +995,27 @@ class TurnosController extends Controller
         }
 
         $data_insertar= array(
-            'consecutivo'   => $numero_consecutivo,
-            'solicitante'   => $data["nombre"],
-            'auxiliar'      => 0,
-            'lugar_auxiliar'=> "Recepción",
-            'tipo'          => $data["tipo"],
-            'fecha'         => $data["fecha"],
-            'hora'          => $data["hora"],
-            'hora_fin'      => $data["hora"],
-            'delegacion'    => $data["sede"],
-            'estatus'       => 'no atendido',
-            'exepcion'      => 'No',
-            'edad'          => $data["edad"],
-            'sexo'          => $data["sexo"],
+            'consecutivo'       => $numero_consecutivo,
+            'solicitante'       => $data["nombre"],
+            'auxiliar'          => 0,
+            'lugar_auxiliar'    => "Recepción",
+            'tipo'              => $data["tipo"],
+
+            
+            'fecha'             => $data["fecha"],
+            'hora'              => $data["hora"],
+            'hora_fin'          => $data["hora"],
+            'delegacion'        => $data["sede"],
+            'estatus'           => 'no atendido',
+            'exepcion'          => 'No',
+            'edad'              => $data["edad"],
+            'sexo'              => $data["sexo"],
+
+            'empresa'           => $data["fecha"],
+            'trabajador'        => $data["fecha"],
+            'trabajador_edad'   => $data["fecha"],
+            'trabajador_sexo'   => $data["fecha"]
         );    
-        $turnos = Turnos::create([
-            'consecutivo'   => $numero_consecutivo,
-            'solicitante'   => $data["nombre"],
-            'auxiliar'      => 0,
-            'lugar_auxiliar'=> "Recepción",
-            'tipo'          => $data["tipo"],
-            'fecha'         => $data["fecha"],
-            'hora'          => $data["hora"],
-            'hora_fin'      => $data["hora"],
-            'delegacion'    => $data["sede"],
-            'estatus'       => 'no atendido',
-            'exepcion'      => 'No',
-            'edad'          => $data["edad"],
-            'sexo'          => $data["sexo"],
-        ]);
 
         //dd($data_insertar);
         Turnos::create($data_insertar);
