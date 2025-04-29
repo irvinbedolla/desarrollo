@@ -40,8 +40,8 @@ use App\Http\Controllers\Controller;
         return view('../public/welcome');
     });
 
-    Route::get('solicitudes',           [SeerController::class, 'solicitudesLinea'])->name('solicitud');
-
+    Route::get('solicitudes',    [SeerController::class, 'solicitudesLinea'])->name('solicitud');
+    Route::get('tipoIndustria',  [SeerController::class, 'Industrias'])->name('solicitud.industria');
    
     
     //Rutas para el chat

@@ -60,7 +60,6 @@ class PDFController extends Controller
                 $SolicitudPDFs[] = $nombreArchivo; 
             }
         } 
-        return view('solicitudes.descargaCitatorios', compact('SolicitudPDFs'));   
-        
+        return view('solicitudes.descargaCitatorios', compact('SolicitudPDFs'));    
     }    
 }

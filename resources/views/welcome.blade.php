@@ -103,7 +103,7 @@
     <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="">
-          <a href="#"><img src="public/assets/images/Logos 2.png" class="img" width="260" height="90"></a>&nbsp;&nbsp;
+          <a href="#"><img src="public/assets/images/Logos 2.png" class="img" width="250" height="90"></a>&nbsp;&nbsp;
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>

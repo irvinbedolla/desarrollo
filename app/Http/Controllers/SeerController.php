@@ -2144,4 +2144,7 @@ class SeerController extends Controller
         //Se van asignar fecha de audiencia y hora de manera aleatoria
         //Se manda la notificacion por correo o Whats
     }
+    public function Industrias(){
+        return view('solicitudes.tipoIndustria');
+    } 
 }

@@ -61,7 +61,7 @@
     <body>
         <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
             <div class="">
-                <img src="public/assets/images/Logos 2.png" class="img" width="260" height="90">
+                &nbsp;&nbsp;<img src="public/assets/images/Logos 2.png" class="img" width="250" height="90">
             </div> 
         </nav>
         <div class="container">
@@ -76,7 +76,7 @@
             <center><div class="card-group">
                 <div class="card">   <!-- Inicio Seer -->
                     <div style="display: block; text-align: center;">
-                        <a href="{{route('solicitud_trabajador')}}" class="button-link">
+                        <a href="{{route('solicitud.industria')}}" class="button-link" type="button" onclick="mostrarAviso()">
                             SOY <br>TRABAJADOR
                         </a> 
                     </div> 
