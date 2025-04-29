@@ -71,13 +71,14 @@ return [
 
     'links' => [
         //public_path('storage')              => storage_path('app/public'),
-        public_path('publico')              => storage_path('app/public'),
-        public_path('documentos')           => storage_path('app/documentos_abogados'),
-        public_path('documentosPersonal')   => storage_path('app/documentos_personal'),
-        public_path('documentosModulos')    => storage_path('app/documentos_modulo'),
-        public_path('images')               => storage_path('app/images'),
-        public_path('documentosSolicitud')  => storage_path('app/documentos_solicitud'),
-        public_path('documentosCitatorios')  => storage_path('app/documentos_citatorios')
+        public_path('publico')                  => storage_path('app/public'),
+        public_path('documentos')               => storage_path('app/documentos_abogados'),
+        public_path('documentosPersonal')       => storage_path('app/documentos_personal'),
+        public_path('documentosModulos')        => storage_path('app/documentos_modulo'),
+        public_path('images')                   => storage_path('app/images'),
+        public_path('documentosSolicitud')      => storage_path('app/documentos_solicitud'),
+        public_path('documentosCitatorios')     => storage_path('app/documentos_citatorios'),
+        public_path('documentos_ratificacion')  => storage_path('app/documentos_ratificacion')
     ],
 
 ];

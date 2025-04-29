@@ -21,6 +21,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Turnos;
 use App\Models\TurnoDisponible;
+use App\Models\Poder; 
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -965,20 +966,40 @@ class TurnosController extends Controller
     {
         $data = $request->all();
 
-        request()->validate([
-            'empresa'           => 'required',
-            'nombre'            => 'required',
-            'edad'              => 'required|numeric',
-            'sexo'              => 'required|in:H,M,NB,LGBTTTIQ',
-            'trabajador'        => 'required',
-            'trabajador_edad'   => 'required',
-            'trabajador_sexo'   => 'required',
-            'conflicto'         => 'required',
-            'sede'              => 'required',
-            'tipo'              => 'required',
-            'fecha'             => 'required',
-            'hora'              => 'required',
-        ], $data);
+        if(isset($data["folio"])){
+            request()->validate([
+                'folio'             => 'required',
+                'trabajador'        => 'required',
+                'trabajador_edad'   => 'required',
+                'trabajador_sexo'   => 'required',
+                'monto'             => 'required',
+                'frecuencia'        => 'required',
+                'tipo_pago'         => 'required',
+                'sede'              => 'required',
+                'dias'              => 'required',
+                'fecha'             => 'required',
+                'hora'              => 'required'
+            ], $data);
+        }
+        else{
+            request()->validate([
+                'empresa'           => 'required',
+                'nombre'            => 'required',
+                'email'             => 'required',
+                'telefono'          => 'required',
+                'documentoIne'      => 'required',
+                'documentoPoder'    => 'required',
+                'trabajador'        => 'required',
+                'trabajador_edad'   => 'required',
+                'trabajador_sexo'   => 'required',
+                'monto'             => 'required',
+                'frecuencia'        => 'required',
+                'tipo_pago'         => 'required',
+                'sede'              => 'required',
+                'dias'              => 'required',
+                'hora'              => 'required'
+            ], $data);
+        }
 
         //Vamos a buscar la proxima fecha disponible de la sede
         $numero_consecutivo = 0;
@@ -994,32 +1015,63 @@ class TurnosController extends Controller
             $numero_consecutivo++;
         }
 
-        $data_insertar= array(
-            'consecutivo'       => $numero_consecutivo,
-            'solicitante'       => $data["nombre"],
-            'auxiliar'          => 0,
-            'lugar_auxiliar'    => "Recepción",
-            'tipo'              => $data["tipo"],
+        if(isset($data["folio"])){
+            $representante  = Poder::find($data["folio"]);
 
-            
-            'fecha'             => $data["fecha"],
-            'hora'              => $data["hora"],
-            'hora_fin'          => $data["hora"],
-            'delegacion'        => $data["sede"],
-            'estatus'           => 'no atendido',
-            'exepcion'          => 'No',
-            'edad'              => $data["edad"],
-            'sexo'              => $data["sexo"],
+            $data_insertar= array(
+                'consecutivo'       => $numero_consecutivo,    
+                'empresa'           => $representante["empresa"],
+                'solicitante'       => $representante["nombres"]." ".$representante["primer_apellido"]." ".$representante["segundo_apellido"],
+                'trabajador'        => $data["trabajador"],
+                'edad'              => $data["trabajador_edad"],
+                'sexo'              => $data["trabajador_sexo"],
+                'monto'             => $data["monto"],
+                'frecuencia'        => $data["frecuencia"],
+                'dias'              => $data["dias"],
+                'fecha'             => $data["fecha"],
+                'hora'              => $data["hora"],
+                'hora_fin'          => $data["hora"],
+                'auxiliar'          => 0,
+                'lugar_auxiliar'    => "Recepción",
+                'delegacion'        => $data["sede"],
+                'estatus'           => 'no atendido',
+                'exepcion'          => 'No',
+                'ine'               => $representante["ine"],
+                'representacion'    => $representante["representacion"],
+                'email'             => $representante["email"],
+                'telefono'          => $representante["telefono"],
+            ); 
+        }
+        else{
+            $data_insertar= array(
+                'consecutivo'       => $numero_consecutivo,    
+                'empresa'           => $data["empresa"],
+                'solicitante'       => $data["nombres"],
+                'trabajador'        => $data["trabajador"],
+                'edad'              => $data["edad"],
+                'sexo'              => $data["sexo"],
+                'monto'             => $data["monto"],
+                'frecuencia'        => $data["frecuencia"],
+                'dias'              => $data["dias"],
+                'fecha'             => $data["fecha"],
+                'hora'              => $data["hora"],
+                'hora_fin'          => $data["hora"],
+                'auxiliar'          => 0,
+                'lugar_auxiliar'    => "Recepción",
+                'delegacion'        => $data["sede"],
+                'estatus'           => 'no atendido',
+                'exepcion'          => 'No',
+                'ine'               => $data["ine"],
+                'reprecentante'     => $data["representacion"],
+                'email'             => $data["email"],
+                'telefono'          => $data["telefono"],
+            ); 
+        }
 
-            'empresa'           => $data["fecha"],
-            'trabajador'        => $data["fecha"],
-            'trabajador_edad'   => $data["fecha"],
-            'trabajador_sexo'   => $data["fecha"]
-        );    
 
         //dd($data_insertar);
         Turnos::create($data_insertar);
-        return back()->with('success', 'Debes acudir al centro de conciliacion el dia:'.$data["fecha"].' a la hora:'.$data["hora"]); 
+        //return back()->with('success', 'Debes acudir al centro de conciliacion el dia:'.$data["fecha"].' a la hora:'.$data["hora"]); 
     }
 
     public function obtenerHorario($fecha_revisar,$sede){

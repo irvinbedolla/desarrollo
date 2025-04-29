@@ -83,55 +83,83 @@
                                         </div>
                                     @endif
                                     <div style="background-color:#D2D3D5; width:100%; height:40px;">
-                                        <h3 class="text-center" style="color:black">Genera tu cita para Ratificación</h3>
+                                        <h3 class="text-center" style="color:black">Genera tu cita para ratificación</h3>
                                     </div>    
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                                     <form class="needs-validation novalidate" method="POST" action="{{route('turnos.publico')}}">
                                         @csrf
                                         <br><br>
                                         <div class="row">
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
-                                                    <h4 class="text-center">Solicitante</h4>
+                                                    <label for="btncheck1">¿Cuenta con folio interno de Centro de Conciacion laboral del Estado de Michoacan de Ocampo?<br> 
+                                                        Puede registrarse en la siguiente liga (Para tramites posteriores) <a href="{{ route('poder-crear'); }}">Registrar</a>
+                                                    </label><br>
+                                                    <input name="labora" type="checkbox" class="btn-check" id="check_folio" autocomplete="off"/>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+
+                                            <div id="folio" class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Patron/Empresa</label>
-                                                    <input type="text" name="empresa" class="form-control" required> 
+                                                    <label for="name">*Folio Interno de CCL</label>
+                                                    <input type="text" name="folio" class="form-control"> 
+                                                    <div class="invalid-feedback">
+                                                        El folio es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div id="empresa" class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">*Nombre de la empresa o patrón</label>
+                                                    <input type="text" name="empresa" class="form-control"> 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div id="nombre" class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Nombre (Persona que Acude a la Cita)</label>
-                                                    <input type="text" name="nombre" class="form-control" required> 
+                                                    <label for="name">*Nombre (Persona que Acude a la Cita)</label>
+                                                    <input type="text" name="nombre" class="form-control"> 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-3">
+                                            <div id="edad" class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Edad</label>
-                                                    <input type="number" name="edad" class="form-control" required> 
+                                                    <label for="name">Email</label>
+                                                    <input type="email" name="email" class="form-control"> 
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="div2"  class="col-xs-12 col-sm-12 col-md-3">
+                                            <div id="sexo" class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                <label for="name">Sexo</label>
-                                                    <select name="sexo" class="form-control" required>
-                                                        <option value="">Seleccione</option>
-                                                        <option value="H">Hombre</option>
-                                                        <option value="M">Mujer</option>
-                                                    </select>
+                                                <label for="name">Télefono</label>
+                                                <input type="number" name="telefono" class="form-control"> 
                                                     <div class="invalid-feedback">
                                                         El campo sexo es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="ine" class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label>*Identificación oficial(PDF,PNG,JPG)</label><br>
+                                                    <input type="file" name="documentoIne" class="form-control" accept=".pdf, jpe, .png, .jpeg">
+                                                    <div class="invalid-feedback">
+                                                        La Identificación es obligatoria.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="acta" class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label>Acta constitutiva (Si acude en reprecentación *PDF,PNG,JPG) </label><br>
+                                                    <input type="file" name="documentoPoder" class="form-control" accept=".pdf, jpe, .png, .jpeg">
+                                                    <div class="invalid-feedback">
+                                                        La Identificación es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>
@@ -174,35 +202,75 @@
                                                 </div>
                                             </div>
 
+
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
                                                     <h4 class="text-center">Datos de la solicitud</h4>
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Prestaciónes a pagar</label>
-                                                    <textarea name="conflicto" class="form-control"></textarea>
+                                                    <label for="name">Salario</label>
+                                                    <input type="number" name="monto" class="form-control" required> 
                                                     <div class="invalid-feedback">
-                                                        El campo conflicto es obligatorio.
+                                                        Este campo es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">
-                                                    <a href="https://cclmichoacan.gob.mx/Calculadora.html" target="_blank">Calcular</a>
-                                                    </label>
-                                                    
+                                                    <label for="name">Frecuencia de pago</label>
+                                                    <select name="frecuencia" class="form-control"  required>
+                                                        <option value="">Seleccione la sede</option>
+                                                        <option value="Diario">Diario</option>
+                                                        <option value="Semanal">Semanal</option>
+                                                        <option value="Quincenal">Quincenal</option>
+                                                        <option value="Mensual">Mensual</option>
+                                                    </select>
                                                     <div class="invalid-feedback">
-                                                        El campo conflicto es obligatorio.
+                                                        Este campo es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">Dias a la semana trabajados</label>
+                                                    <input type="number" name="dias" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        Este campo es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">Monto del convenio a pagar</label>
+                                                    <input type="number" name="monto" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo edad es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">Forma de pago</label>
+                                                    <select name="tipo_pago" class="form-control"  required>
+                                                        <option value="">Seleccione la sede</option>
+                                                        <option value="Efectivo">Efectivo</option>
+                                                        <option value="Transferencia">Transferencia</option>
+                                                        <option value="Cheque">Cheque</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo edad es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Sedes</label>
                                                     <select id="sede" name="sede" class="form-control" onchange="sedes();" required>
@@ -218,16 +286,16 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Dia</label>
+                                                    <label for="name">Día</label>
                                                     <input id="fecha" type="date" name="fecha" class="form-control" onchange="diaSemana();" disabled>
                                                     <div class="invalid-feedback">
                                                         El campo conflicto es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-4">
+                                            <div class="col-xs-12 col-sm-6 col-md-3">
                                                 <div class="form-group">
                                                     <label for="password">Horario Disponible</label>
                                                     <select id="horarios" name="hora" class="form-control">
@@ -239,44 +307,18 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <div class="col-xs-12 col-sm-6 col-md-2">
                                                 <div class="form-group">
-                                                    <h4 class="text-center">Documentos</h4>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label>*Identificación oficial</label><br>
-                                                    <input type="file" name="documentoIne" class="form-control" accept=".pdf" required>
+                                                    <label for="name">
+                                                    <a href="https://cclmichoacan.gob.mx/Calculadora.html" target="_blank">* Calcula el aproximado de la ratificación.</a>
+                                                    </label>
+                                                    
                                                     <div class="invalid-feedback">
-                                                        La Identificación es obligatoria.
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label>Acta constitutiva (Si acude en reprecentación)</label><br>
-                                                    <input type="file" name="documentoPoder" class="form-control" accept=".pdf" required>
-                                                    <div class="invalid-feedback">
-                                                        La Identificación es obligatoria.
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label>Poder general o Carta poder(Si acude en reprecentación)</label><br>
-                                                    <input type="file" name="documentoPoder" class="form-control" accept=".pdf" required>
-                                                    <div class="invalid-feedback">
-                                                        La Identificación es obligatoria.
+                                                        El campo conflicto es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-
-                                        
 
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div align="center">
@@ -326,6 +368,16 @@
 
     @yield('scripts')
     <script>
+        document.getElementById("folio").style.display = "none";
+        document.getElementById("empresa").style.display = "none";
+        document.getElementById("nombre").style.display = "none";
+        document.getElementById("edad").style.display = "none";
+        document.getElementById("sexo").style.display = "none";
+        document.getElementById("ine").style.display = "none";
+        document.getElementById("acta").style.display = "none";
+        document.getElementById("poder").style.display = "none";
+
+
         function sedes(){
             document.getElementById("fecha").removeAttribute("disabled");
         }
@@ -341,6 +393,35 @@
 
             });
         }
+
+        $(function(){
+            $('#check_folio').on('change', validarcheckfolio);
+        })
+
+        function validarcheckfolio(){
+            tipo = document.getElementById("folio").style.display;
+            if (tipo == "none") {
+                document.getElementById("folio").style.display = "block";
+                document.getElementById("empresa").style.display = "none";
+                document.getElementById("nombre").style.display = "none";
+                document.getElementById("edad").style.display = "none";
+                document.getElementById("sexo").style.display = "none";
+                document.getElementById("ine").style.display = "none";
+                document.getElementById("acta").style.display = "none";
+                document.getElementById("poder").style.display = "none";
+            }
+            else{
+                document.getElementById("folio").style.display = "none";
+                document.getElementById("empresa").style.display = "block";
+                document.getElementById("nombre").style.display = "block";
+                document.getElementById("edad").style.display = "block";
+                document.getElementById("sexo").style.display = "block";
+                document.getElementById("ine").style.display = "block";
+                document.getElementById("acta").style.display = "block";
+                document.getElementById("poder").style.display = "block";
+            }
+        }
+
     </script>
 <div id="crear_poder" style ="display: none;">
     <div>.</div>
