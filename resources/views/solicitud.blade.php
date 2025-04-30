@@ -76,7 +76,7 @@
             <center><div class="card-group">
                 <div class="card">   <!-- Inicio Seer -->
                     <div style="display: block; text-align: center;">
-                        <a href="{{route('solicitud.industria')}}" class="button-link" type="button" onclick="mostrarAviso()">
+                        <a href="https://michoacan.cencolab.mx/asesoria/10" class="button-link" type="button" onclick="mostrarAviso()">
                             SOY <br>TRABAJADOR
                         </a> 
                     </div> 
