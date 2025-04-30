@@ -9,9 +9,7 @@
         <link href="public/assets/css/carousel.css" rel="stylesheet">
         <title>Si Concilio</title>
         <!-- Bootstrap core CSS -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         
-        <link rel="icon" href="public/assets/images/logo-ccl.png" type="image/x-icon">
 
         <!-- CARRUSEL -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -20,7 +18,9 @@
         <link rel="stylesheet" href="public/assets/css/owl.carousel.min.css">
         <link rel="stylesheet" href="public/assets/css/owl.theme.default.min.css">
         <script src="public/assets/js/owl.carousel.min.js"></script>
-   
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        
+        <link rel="icon" href="public/assets/images/logo-ccl.png" type="image/x-icon">
         <style>
           /*CARRUSEL*/
           .owl-carousel.owl-loaded{
@@ -36,6 +36,7 @@
           .owl-carousel .owl-item img {
             display: block;
             width: 100%;
+           
           }
           .owl-carousel.owl-drag .owl-item {
             touch-action: pan-y;
@@ -86,7 +87,6 @@
               text-decoration: none;/* Elimina el subrayado del enlace */
               border-radius: 5px; /* Bordes redondeados */
           } 
-
           .flip-box{
             border: none;
           }
@@ -96,7 +96,18 @@
           }
           .card{
             border: none;
+            background-color: rgba(255, 195, 208, 0);
           }
+          #servicios {
+            background-image: url('./public/assets/images/Degradado.png') !important;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;    
+          }
+          .flip-box-front{
+            background-color: rgba(255, 195, 208, 0);
+          }
+
         </style>
         <!-- Custom styles for this template -->
     </head>
@@ -140,11 +151,11 @@
     <h3 class="wow fadeInLeft" style="text-align: center ; font-family:Gibson, font-weight: 600;">Trámites y servicios digitales</h3> <br><br><br>
     <div>
     <div class="card-group">
-      <div class="card" style="background-color: #FFC3D0">   <!-- Inicio asesoria en línea -->
+      <div class="card">   <!-- Inicio asesoria en línea -->
         <div style="display: block; text-align: center;">
           <div class="flip-box">
             <div class="flip-box-inner">
-              <div class="flip-box-front" style="background-color: #FFC3D0">
+              <div class="flip-box-front" >
                 <h2 style="font-size: 22px; font-family: Arial; color:#000000;">Asesoría virtual<br><br></h2>
                 <img src="public/assets/images/ASESORIA.png" alt="Descripción de la imagen"
                   style="width: 120px; height:120px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
@@ -157,11 +168,11 @@
             <p><a class="boton" href="{{ route('chat') }}" onclick="window.open(this.href, 'mywin', 'left=' + (window.innerWidth - 500) + ',top=' + (window.innerHeight - 550) + ',width=500,height=550,toolbar=1,resizable=0'); return false;" target="_self">Ver más</a></p>
         </div>  
       </div>   <!-- fin asesoria en línea -->
-      <div class="card" style="background-color: #FFC3D0"> <!-- Inicio calculadora de prestaciones -->
+      <div class="card" > <!-- Inicio calculadora de prestaciones -->
         <div style="display: block; text-align: center;">
           <div class="flip-box">
             <div class="flip-box-inner">
-              <div class="flip-box-front" style="background-color: #FFC3D0">
+              <div class="flip-box-front">
                 <h2 style="font-size: 22px; font-family: Arial; color:#000000">Calculadora de <br>prestaciones</h2>
                 <img src="public/assets/images/CALCULADORA.png" alt="Descripción de la imagen"
                     style="width: 120px; height:120px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
@@ -174,11 +185,11 @@
             <p><a class="boton" href="https://cclmichoacan.gob.mx/Calculadora.html" target="_blank">Ver más</a></p>
         </div>    
       </div> <!-- Fin calculadora de prestaciones -->
-      <div class="card" style="background-color: #FFC3D0"> <!-- Inicio solicitud en línea -->
+      <div class="card"> <!-- Inicio solicitud en línea -->
         <div style="display: block; text-align: center;">
           <div class="flip-box">
             <div class="flip-box-inner">
-              <div class="flip-box-front" style="background-color: #FFC3D0">
+              <div class="flip-box-front">
                 <h2 style="font-size: 22px; font-family: Arial; color: #000000">Solicitud en línea<br></h2> <img
                   src="public/assets/images/SOLICITUD.png" alt="Descripción de la imagen"
                   style="width: 120px; height:120px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
@@ -195,11 +206,11 @@
   
   <!-- SEGUNDO BLOQUE DE SERVICIOS-->
     <div class="card-group">
-      <div class="card" style="background-color: #FFC3D0">   <!-- Inicio citas de ratificación -->
+      <div class="card">   <!-- Inicio citas de ratificación -->
         <div style="display: block; text-align: center;">
           <div class="flip-box">
             <div class="flip-box-inner">
-              <div class="flip-box-front" style="background-color: #FFC3D0">
+              <div class="flip-box-front">
                 <h2 style="font-size: 22px; font-family: Arial; color:#000000">Citas de ratificación de convenios</h2> <img
                   src="public/assets/images/RATIFICACION.png" alt="Descripción de la imagen"
                   style="width: 120px; height:120px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
@@ -212,11 +223,11 @@
           <p><a class="boton" href="{{ route('create_cita') }}">Ver más</a></p>   
         </div>  
       </div>   <!-- fin citas de ratificación -->
-      <div class="card" style="background-color: #FFC3D0"> <!-- Inicio registro de rep. legales -->
+      <div class="card"> <!-- Inicio registro de rep. legales -->
         <div style="display: block; text-align: center;">
           <div class="flip-box">
             <div class="flip-box-inner">
-              <div class="flip-box-front" style="background-color: #FFC3D0">
+              <div class="flip-box-front">
                 <h2 style="font-size: 22px; font-family: Arial; color:#000000">Registro de <br>representación legal patronal</h2> <img
                   src="public/assets/images/REGISTROPA.png" alt="Descripción de la imagen"
                   style="width: 120px; height:120px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
@@ -229,11 +240,11 @@
           <p><a class="boton" href="{{ route('poder-crear') }}" target="_blank">Ver más</a></p>
         </div>    
       </div> <!-- Fin registro de rep. legales -->
-      <div class="card" style="background-color: #FFC3D0"> <!-- Inicio cursos y capacitaciones -->
+      <div class="card"> <!-- Inicio cursos y capacitaciones -->
         <div style="display: block; text-align: center;">
           <div class="flip-box">
             <div class="flip-box-inner">
-              <div class="flip-box-front" style="background-color: #FFC3D0">
+              <div class="flip-box-front">
                 <h2 style="font-size: 22px; font-family: Arial; color:#000000">Cursos y capacitaciones<br><br></h2>
                 <img src="public/assets/images/CURSOSYCA.png" alt="Descripción de la imagen"
                   style="width: 120px; height:120px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
@@ -250,12 +261,28 @@
   
     <!-- TERCER BLOQUE DE SERVICIOS-->
     <div class="card-group">
-      <div class="card" style="background-color: #FFC3D0"> </div>
-      <div class="card" style="background-color: #FFC3D0">   <!-- Inicio Seer -->
+      <div class="card"> 
         <div style="display: block; text-align: center;">
           <div class="flip-box">
             <div class="flip-box-inner">
-              <div class="flip-box-front" style="background-color: #FFC3D0">
+              <div class="flip-box-front">
+                <h2 style="font-size: 22px; font-family: Arial; color:#000000">Audiencias</h2>
+                <img src="public/assets/images/Audiencias e.png" alt="Descripción de la imagen"
+                    style="width: 120px; height: 120px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
+              </div>
+              <div class="flip-box-back">
+                 <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br><br>Audiencias.</h2>
+              </div>
+            </div>
+          </div>
+          <p><a class="boton" href="#">Ver más</a></p>   
+        </div>
+      </div>
+      <div class="card">   <!-- Inicio Seer -->
+        <div style="display: block; text-align: center;">
+          <div class="flip-box">
+            <div class="flip-box-inner">
+              <div class="flip-box-front">
                 <h2 style="font-size: 22px; font-family: Arial; color:#000000">Seer</h2>
                 <img src="public/assets/images/seer_1.png" alt="Descripción de la imagen"
                     style="width: 180px; height: auto; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
@@ -268,7 +295,7 @@
           <p><a class="boton" href="{{ route('login') }}">Ver más</a></p>   
         </div>  
       </div>   <!-- fin Seer -->
-      <div class="card" style="background-color: #FFC3D0"> </div>
+      <div class="card" > </div>
     </div>
   </div>
   </section> 
@@ -327,10 +354,10 @@
     
     </script>
       <!--<script src="public/assets_seer/assets/dist/js/bootstrap.bundle.min.js"></script>-->
-      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+      <!--<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-      <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>-->
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>-->
     </body>
 </html>
 
