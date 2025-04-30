@@ -239,8 +239,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/turnos/cambio/{id}',     [TurnosController::class, 'cambio'])->name('turnos.cambioexcepcion');
     //Fin de  turnos
 
-    Route::get('/pdf/estadistica',  [PDFController::class, 'pdfEstadistica'])->name('PDFestaditica');
-    Route::get('/pdf/descarga/{id}', [PDFController::class, 'pdfCitatorio'])->name('PDFcitatorio');
+    Route::get('/pdf/estadistica',       [PDFController::class, 'pdfEstadistica'])->name('PDFestaditica');
+    Route::get('/pdf/descarga/{id}',     [PDFController::class, 'pdfCitatorio'])->name('PDFcitatorio');
+    Route::get('/pdf/ratificacion',      [PDFController::class, 'pdfRatificacion'])->name('PDFratificacion');
 
     //Solicitudes
         Route::get('/solicitudes/index',        [SeerController::class, 'solicitudes_pendientes'])->name('solicitudes_pendientes');

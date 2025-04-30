@@ -61,5 +61,9 @@ class PDFController extends Controller
             }
         } 
         return view('solicitudes.descargaCitatorios', compact('SolicitudPDFs'));    
-    }    
+    }  
+    public function pdfRatificacion(){
+        return view('PDF.ratificacion');    
+    }  
+
 }
