@@ -87,7 +87,7 @@
                                     @endif
                                     <div>
                                     <br></div>
-                                    <h3 class="text-center" style="color:#CEA845;">Solicitud de trabajador</h3>
+                                    <h3 class="text-center" style="color:#CEA845;">Solicitud de trabajador (a)</h3>
                                     <div style="background-color:#D2D3D5; width:100%; height:40px;">
                                         <h3 class="text-center" style="color:black;">Datos generales de la solicitud</h3>
                                     </div>   
@@ -116,7 +116,7 @@
                                                     <label for="name">Objeto de la solicitud (*)</label>
                                                     <select  class="form-control" id="motivo_solicitud">
                                                         <option value="">Seleccione</option>
-                                                        @foreach($motivos as $motivo)
+                                                        @foreach($mostrarMotivos as $motivo)
                                                             <option value="{{$motivo['id']}}">{{$motivo['motivo']}}</option>
                                                         @endforeach
                                                     </select>

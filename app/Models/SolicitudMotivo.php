@@ -10,6 +10,6 @@ class SolicitudMotivo extends Model
     //use HasFactory;
     protected $table = 'catalogo_motivos';
     protected $primaryKey = 'id';
-    protected $fillable = ['motivo'];
+    protected $fillable = ['tipo_solicitud','motivo'];
 
 }

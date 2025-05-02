@@ -1809,22 +1809,34 @@ class SeerController extends Controller
     }
     
     //Solicitud en línea trabajador
-    public function trabajador()
-    {
-        $motivos = SolicitudMotivo::all();
+    public function trabajador(){  
+        
+        $mostrarMotivos=SolicitudMotivo::whereIn('tipo_solicitud', [1, 2, 3])->exists();
+        $bandera = $mostrarMotivos ? ['1'] : ['0'];
+
+        if ($bandera[0] == "1") {
+            $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '1')
+            ->select('catalogo_motivos.motivo','catalogo_motivos.tipo_solicitud')
+            ->get();
+        }
         $ramas = SolicitudRama::all();
        // $actividad=SolicitudEconomica::all();
         $del=Sedes::all();
         $municipios=Municipios::where('estado',16)->get();
-        return view('solicitudes.solicitud_trabajador', compact('motivos', 'ramas','del','municipios'));
+       /* if($bandera[0] == "1"){
+            //$personas = null;
+            $motivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '1')
+            ->select('catalogo_motivos.motivo','seer_general.NUE','seer_general.solicitante','seer_citados.nombre','seer_citados.direccion','seer_citados.estatus')
+            ->get();
+        }*/
+        return view('solicitudes.solicitud_trabajador', compact('ramas','del','municipios','bandera','mostrarMotivos'));
     }
    
     /* public function obtenerActEconomica($id){
         return SolicitudEconomica::where('id_rama', $id)->get();
     }*/
 
-    public function solicitud_parte1(Request $request)
-    {
+    public function solicitud_parte1(Request $request){
         $data = $request->all();
 
         //validando información
