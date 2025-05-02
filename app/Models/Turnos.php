@@ -11,5 +11,5 @@ class Turnos extends Model
     protected $table = 'turnos';
     protected $primaryKey = 'id';
     protected $fillable = ['consecutivo','fecha','hora','hora_fin','auxiliar','solicitante','tipo','lugar_auxiliar','exepcion',
-    'edad','sexo','vulnerables','monto','empresa','trabajador','frecuencia','dias','estatus','delegacion','ine','representacion','email','telefono'];
+    'edad','sexo','vulnerables','monto','empresa','trabajador','frecuencia','dias','estatus','delegacion','ine','representacion','email','telefono','turnos','JLCA','motivo'];
 }

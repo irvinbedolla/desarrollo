@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}"/>
-    <title>Sí Conciliación</title>
+    <title>Si concilio</title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <!-- Bootstrap 5.3.3 -->
     <link href="public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
@@ -255,17 +255,51 @@
                                                 </div>
                                             </div>
 
-                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-3">
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Forma de pago</label>
                                                     <select name="tipo_pago" class="form-control"  required>
-                                                        <option value="">Seleccione la sede</option>
+                                                        <option value="">Seleccione el tipo de pago</option>
                                                         <option value="Efectivo">Efectivo</option>
                                                         <option value="Transferencia">Transferencia</option>
                                                         <option value="Cheque">Cheque</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div  class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">¿Existe procedimiento previo en la JLCA?</label>
+                                                    <select name="JLCA" class="form-control"  required>
+                                                        <option value="">Seleccione el tipo de pago</option>
+                                                        <option value="Si">Si</option>
+                                                        <option value="No">No</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">Motivo de la conciliación</label>
+                                                    <select name="motivo" class="form-control"  required>
+                                                        <option value="">Seleccione el motivo</option>
+                                                        <option value="Despido">Despido</option>
+                                                        <option value="Pago de prestaciones">Pago de prestaciones</option>
+                                                        <option value="Rescisión de la relación de trabajo">Rescisión de la relación de trabajo</option>
+                                                        <option value="Derecho de preferencia">Derecho de preferencia</option>
+                                                        <option value="Derecho de antigüedad">Derecho de antigüedad</option>
+                                                        <option value="Derecho de asens">Derecho de asenso</option>
+                                                        <option value="Terminación voluntaria de la relación de trabajo">Terminación voluntaria de la relación de trabajo</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
@@ -375,7 +409,6 @@
         document.getElementById("sexo").style.display = "none";
         document.getElementById("ine").style.display = "none";
         document.getElementById("acta").style.display = "none";
-        document.getElementById("poder").style.display = "none";
 
 
         function sedes(){
@@ -408,7 +441,6 @@
                 document.getElementById("sexo").style.display = "none";
                 document.getElementById("ine").style.display = "none";
                 document.getElementById("acta").style.display = "none";
-                document.getElementById("poder").style.display = "none";
             }
             else{
                 document.getElementById("folio").style.display = "none";
@@ -418,7 +450,6 @@
                 document.getElementById("sexo").style.display = "block";
                 document.getElementById("ine").style.display = "block";
                 document.getElementById("acta").style.display = "block";
-                document.getElementById("poder").style.display = "block";
             }
         }
 

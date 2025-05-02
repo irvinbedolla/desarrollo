@@ -18,10 +18,12 @@ use App\Models\SeerChatRP;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
+//use App\Http\Controllers\PDFController; 
 use App\Models\User;
 use App\Models\Turnos;
 use App\Models\TurnoDisponible;
 use App\Models\Poder; 
+
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -29,7 +31,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
 
-class TurnosController extends Controller
+class TurnosController extends Controller 
 {
     
     public function index()
@@ -978,7 +980,9 @@ class TurnosController extends Controller
                 'sede'              => 'required',
                 'dias'              => 'required',
                 'fecha'             => 'required',
-                'hora'              => 'required'
+                'hora'              => 'required',
+                'JLCA'              => 'required',
+                'motivo'            => 'required'
             ], $data);
         }
         else{
@@ -997,7 +1001,9 @@ class TurnosController extends Controller
                 'tipo_pago'         => 'required',
                 'sede'              => 'required',
                 'dias'              => 'required',
-                'hora'              => 'required'
+                'hora'              => 'required',
+                'JLCA'              => 'required',
+                'motivo'            => 'required'
             ], $data);
         }
 
@@ -1040,13 +1046,17 @@ class TurnosController extends Controller
                 'representacion'    => $representante["representacion"],
                 'email'             => $representante["email"],
                 'telefono'          => $representante["telefono"],
+                'JLCA'              => $data["JLCA"],
+                'motivo'            => $data["motivo"]
             ); 
+            $nombre = $data["trabajador"];
+            $email  = $representante["email"];
         }
         else{
             $data_insertar= array(
                 'consecutivo'       => $numero_consecutivo,    
                 'empresa'           => $data["empresa"],
-                'solicitante'       => $data["nombres"],
+                'solicitante'       => $data["nombre"],
                 'trabajador'        => $data["trabajador"],
                 'edad'              => $data["edad"],
                 'sexo'              => $data["sexo"],
@@ -1065,13 +1075,37 @@ class TurnosController extends Controller
                 'reprecentante'     => $data["representacion"],
                 'email'             => $data["email"],
                 'telefono'          => $data["telefono"],
+                'JLCA'              => $data["JLCA"],
+                'motivo'            => $data["motivo"]
             ); 
+            $nombre = $data["trabajador"];
+            $email  = $data["email"];
         }
 
-
-        //dd($data_insertar);
         Turnos::create($data_insertar);
-        //return back()->with('success', 'Debes acudir al centro de conciliacion el dia:'.$data["fecha"].' a la hora:'.$data["hora"]); 
+
+       
+        //Revisar si ya existe el correo
+        $usuario = User::where('email',$email)->first();
+        if(!isset($usuario)){
+            $data_insertar_user= array(
+                'name'      => $nombre,
+                'email'     => $email,
+                'delegacion'=> $data["sede"],
+                'type'      => "Seer"
+            ); 
+            
+            //Hacemos un hash del campo que tiene el password
+            $data_insertar_user['password'] = Hash::make("CCLMICHOACAN");
+            //dd($data_insertar_user);
+            $usuario = User::create($data_insertar_user);
+            $usuario->assignRole(('Solicitante'));
+        }
+        $mensaje = " el correo:".$usuario["email"]." y la contraseña:CCLMICHOACAN para continuar tú trámite.";
+        
+
+        return back()->with('success', 'Debes ingresar a '. 
+        ' http://siconcilio.cclmichoacan.gob.mx/login con'.$mensaje  ); 
     }
 
     public function obtenerHorario($fecha_revisar,$sede){
@@ -1113,5 +1147,11 @@ class TurnosController extends Controller
         //->where('hora', $hora_solicitud)
         //->where('delegacion', $data["sede"])->get();
         //return Municipios::where('estado', $id)->get();
+    }
+
+    public function VerPDF($id){
+        $id = 2;
+        $pdf = \PDF::loadView('PDF/vista-prueba', compact('id'));    
+        return $pdf->stream('archivo.pdf');
     }
 }

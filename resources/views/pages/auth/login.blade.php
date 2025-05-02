@@ -4,7 +4,7 @@
 @endsection
 @section('content')
     <div class="card card-primary">
-        <div class="card-header"><h4>Sí conciliación</h4></div>
+        <div class="card-header"><h4>Si concilio</h4></div>
 
         <div class="card-body">
             <form method="POST" action="{{ route('login') }}" id="login">

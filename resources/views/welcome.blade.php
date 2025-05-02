@@ -145,7 +145,9 @@
     <!--<img src="public/assets/images/carusel/carrusel_2.png" class="d-block w-100" alt="" loading="lazy">-->
   </div>
   <!-- FIN CARRUSEL-->	
-
+  <div class="container">
+      <br><br><br><br><br>
+    </div>
   <!-- INICIANDO SERVICIOS -->
   <section id="servicios"><br>
     <h3 class="wow fadeInLeft" style="text-align: center ; font-family:Gibson, font-weight: 600;">Trámites y servicios digitales</h3> <br><br><br>

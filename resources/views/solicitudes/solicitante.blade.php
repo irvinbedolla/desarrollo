@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}"/>
-    <title>Sí Conciliación</title>
+    <title></title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <!-- Bootstrap 5.3.3 -->
     <link href="public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>

@@ -55,14 +55,6 @@
                                         <th style="color: #fff;  text-align: center;">Usuario</th>
                                         <th style="color: #fff;  text-align: center;">Solicitudes</th>
                                     </thead>
-                                    <tbody>
-                                        @foreach($solicitudes as $solicitud)
-                                        <tr>
-                                            <td style=" text-align: center;">{{$solicitud->name}}</td>
-                                            <td style=" text-align: center;">{{$solicitud->solicitudes}}</td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
                                 </table>
                             </div>
 
@@ -74,15 +66,6 @@
                                         <th style="color: #fff; text-align: center;">Ratificaciones</th>
                                         <th style="color: #fff; text-align: center;">Monto</th>
                                     </thead>
-                                    <tbody>
-                                    @foreach($ratificaciones as $rati)
-                                        <tr>
-                                            <td style="text-align: center;">{{$rati->name}}</td>
-                                            <td style="text-align: center;">{{$rati->ratificaciones}}</td>
-                                            <td style="text-align: center;">${{number_format($rati->monto,2)}}</td>
-                                        </tr>
-                                     @endforeach
-                                    </tbody>
                                 </table>
                             </div>
 
@@ -94,15 +77,6 @@
                                         <th style="color: #fff;  text-align: center;">Audiencia</th>
                                         <th style="color: #fff;  text-align: center;">Monto</th>
                                     </thead>
-                                    <tbody>
-                                        @foreach($audiencia as $audi)
-                                            <tr>
-                                                <td style="text-align: center;">{{$audi->name}}</td>
-                                                <td style="text-align: center;">{{$audi->audiencia}}</td>
-                                                <td style="text-align: center;">${{number_format($audi->suma_audiencia,2)}}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
                                 </table>
                             </div>
 
@@ -113,13 +87,6 @@
                                         <th style="color: #fff;  text-align: center;">Usuario</th>
                                         <th style="color: #fff;  text-align: center;">Audiencia</th>
                                     </thead>
-                                    <tbody>
-                                    @foreach($colectivas as $colectiva)
-                                        <tr>
-                                            <td style="text-align: center;">{{$colectiva->name}}</td>
-                                            <td style="text-align: center;">{{$colectiva->colectiva}}</td>
-                                        </tr>
-                                    @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -132,15 +99,6 @@
                                         <th style="color: #fff;  text-align: center;">Pagos</th>
                                         <th style="color: #fff;  text-align: center;">Total</th>
                                     </thead>
-                                    <tbody>
-                                        @foreach($convenios as $convenio)
-                                            <tr>
-                                                <td style="text-align: center;">{{$convenio->name}}</td>
-                                                <td style="text-align: center;">{{$convenio->convenios}}</td>
-                                                <td style="text-align: center;">${{number_format($convenio->monto_pagos,2)}}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
                                 </table>
                             </div>
 
@@ -151,14 +109,6 @@
                                         <th style="color: #fff;  text-align: center;">Usuario</th>
                                         <th style="color: #fff;  text-align: center;">Total</th>
                                     </thead>
-                                    <tbody>
-                                        @foreach($asesorias as $asesoria)
-                                            <tr>
-                                                <td style="text-align: center;">{{$asesoria->name}}</td>
-                                                <td style="text-align: center;">{{$asesoria->asesorias}}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
                                 </table>
                             </div>
 
