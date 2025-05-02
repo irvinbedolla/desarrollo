@@ -116,7 +116,7 @@
             <a class="nav-link" href="{{ route('poderes') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
-            <a class="nav-link" href="{{ route('seer') }}">
+            <<a class="nav-link" href="{{ route('seer') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">SEER</span>
             </a>
             <a class="nav-link" href="{{ route('miscapacitaciones') }}">
@@ -250,6 +250,13 @@
             </a>
             <a class="nav-link" href="{{ route('persona.historial') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
+            </a>
+        @endrole
+    @endauth
+    @auth
+        @role('Solicitante')
+            <a class="nav-link" href="{{ route('ratificacion') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Mis citas</span>
             </a>
         @endrole
     @endauth

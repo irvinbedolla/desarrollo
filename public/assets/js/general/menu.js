@@ -53,3 +53,7 @@ function turnos() {
 function historial() {
     $('#menu_carga').show();
 }
+
+function mis_citas() {
+    $('#menu_carga').show();
+}

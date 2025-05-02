@@ -1154,4 +1154,8 @@ class TurnosController extends Controller
         $pdf = \PDF::loadView('PDF/vista-prueba', compact('id'));    
         return $pdf->stream('archivo.pdf');
     }
+    public function indexr(){
+        return view('indexr');
+    }
+
 }

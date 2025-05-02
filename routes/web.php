@@ -72,6 +72,7 @@ use App\Http\Controllers\Controller;
     //Rutas de citas
     Route::get('citas',                 [TurnosController::class, 'create_publico'])->name('create_cita');
     Route::post('/citas/store_publico', [TurnosController::class, 'store_publico'])->name('turnos.publico');
+    Route::get('indexr',                [TurnosController::class, 'indexr'])->name('ratificacion');
 
     
     //Solicitudes en línea trabajador
