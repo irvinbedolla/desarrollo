@@ -1058,8 +1058,8 @@ class TurnosController extends Controller
                 'empresa'           => $data["empresa"],
                 'solicitante'       => $data["nombre"],
                 'trabajador'        => $data["trabajador"],
-                'edad'              => $data["edad"],
-                'sexo'              => $data["sexo"],
+                'edad'              => $data["trabajador_edad"],
+                'sexo'              => $data["trabajador_sexo"],
                 'monto'             => $data["monto"],
                 'frecuencia'        => $data["frecuencia"],
                 'dias'              => $data["dias"],
@@ -1071,8 +1071,8 @@ class TurnosController extends Controller
                 'delegacion'        => $data["sede"],
                 'estatus'           => 'no atendido',
                 'exepcion'          => 'No',
-                'ine'               => $data["ine"],
-                'reprecentante'     => $data["representacion"],
+                'ine'               => $data["documentoIne"],
+                'representacion'    => $data["documentoPoder"],
                 'email'             => $data["email"],
                 'telefono'          => $data["telefono"],
                 'JLCA'              => $data["JLCA"],
@@ -1097,7 +1097,6 @@ class TurnosController extends Controller
             
             //Hacemos un hash del campo que tiene el password
             $data_insertar_user['password'] = Hash::make("CCLMICHOACAN");
-            //dd($data_insertar_user);
             $usuario = User::create($data_insertar_user);
             $usuario->assignRole(('Solicitante'));
         }
@@ -1105,7 +1104,7 @@ class TurnosController extends Controller
         
 
         return back()->with('success', 'Debes ingresar a '. 
-        ' http://siconcilio.cclmichoacan.gob.mx/login con'.$mensaje  ); 
+        ' http://siconcilio.cclmichoacan.gob.mx/ en el apartado de buzón electrónico con'.$mensaje  ); 
     }
 
     public function obtenerHorario($fecha_revisar,$sede){
@@ -1150,10 +1149,25 @@ class TurnosController extends Controller
     }
 
     public function VerPDF($id){
-        $id = 2;
-        $pdf = \PDF::loadView('PDF/vista-prueba', compact('id'));    
+        
+        $solicitud = Turnos::find($id);
+        //dd($solicitud);
+
+        
+        //$pdf = new Dompdf(); 
+
+
+        $pdf = \PDF::loadView('PDF/ratificacion', compact('id','solicitud'))
+        ->setPaper('letter', 'portrait');
+        //->setSourceFile("demo.pdf"); 
         return $pdf->stream('archivo.pdf');
+
+        
+        //return $pdf->stream('archivo.pdf');
+        //return view('PDF.ratificacion');
+        //return PDF::loadView('PDF.ratificacion', $data)->stream('archivo.pdf');
     }
+    
     public function indexr(){
         return view('indexr');
     }

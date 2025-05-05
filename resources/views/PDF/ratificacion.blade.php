@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <meta charset="UTF-8">
         <meta name="csrf-token" content="{{ csrf_token() }}"/>
         <title>Sí Concilio</title>
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
@@ -11,11 +11,32 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
        
+        <!-- Ionicons -->
+        <link href="//fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+        <link href="../public/assets/css/all.css" rel="stylesheet" type="text/css">
+        <link href="../public/assets/css/iziToast.min.css" rel="stylesheet">
+        <link href="../public/assets/css/sweetalert.css" rel="stylesheet" type="text/css"/>
+        <link href="../public/assets/css/select2.min.css" rel="stylesheet" type="text/css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        
+        <!-- Agregados para los Select del Formulario Personas-->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+        @livewireStyles
+
+        @yield('page_css')
         <!-- Template CSS -->
         <link rel="icon"       href="../public/assets/images/ccl-r.png" type="image/x-icon">
         <link rel="stylesheet" href="../public/assets/css/style.css">
         <link rel="stylesheet" href="../public/assets/css/components.css">
+    @yield('page_css')
 
+        @yield('page_css')
+        <!-- Template CSS -->
+        @yield('page_css')
         <style>
             .header img { 
                 width: 180px; height: 45px; 
@@ -25,14 +46,19 @@
                 font-size: 12px;
                 text-align: justify;
                 color: black;
+
+                background-image: url('/public/assets/images/ccl-r.png');
+                background-size: cover;
+                background-attachment: fixed;
             }
             p {
                 line-height: 1.5;
             }
         </style>
     </head>
+   
     @php     
-       /* $direccion_sede='';
+       $direccion_sede='';
         if($solicitud->delegacion === 'Morelia'){
             $direccion_sede='BLVD. GARCÍA DE LEÓN NO. 1575, COL. CHAPULTEPEC ORIENTE, C.P.58260 MORELIA, MICHOACÁN DE OCAMPO';
         }    
@@ -51,19 +77,16 @@
         }  
         if($solicitud->delegacion === 'Sahuayo') {
             $direccion_sede='AV. UNIVERSIDAD SUR NO. 300, COL. LOMAS DE UNIVERSIDAD, C.P.59103 SAHUAYO DE MORELOS, MICHOACÁN DE OCAMPO';
-        } */ 
+        } 
     @endphp
 
     <body>
-        <div class="header">
-            <img src="{{ public_path('assets/images/Logos 2.png') }}" alt="Encabezado">
-        </div>
         <div class="content">
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                           <p><b>FECHA DE LA SOLICITUD O EMISIÓN DEL DOCUMENTO:  {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}</b></p>
+                           <p><b>FECHA DE LA SOLICITUD O EMISIÓN DEL DOCUMENTO:  </b></p>
                            <p> 
                               EMPRESA/PATRÓN:<br>
                               TRABAJADOR: <br>
@@ -85,11 +108,6 @@
                                     La cantidad total a pagar estará sujeta a la revisión del Personal del Centro de Conciliación, para verificar que no exista Renuncia de Derechos y 
                                     proceder con la Ratificación del Convenio.
                                 </p>
-
-                            
-                            <center><p><b>
-                                ___________________________________<br>
-                                </b>NOMBRE Y FIRMA</p><br><br></center>
                         </div>
                     </div>
                 </div>

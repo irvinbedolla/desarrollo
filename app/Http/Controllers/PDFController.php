@@ -31,7 +31,7 @@ class PDFController extends Controller
     
         $pdf = \PDF::loadView('PDF/vista-prueba', $data);
     
-        return $pdf->download('archivo.pdf');
+        return $pdf->loadView('archivo.pdf');
 
 
         //$pdf = \PDF::loadView('vista-pdf', $data);

@@ -402,7 +402,7 @@
 
     @yield('scripts')
     <script>
-        document.getElementById("folio").style.display = "none";
+        document.getElementById("folio").style.display = "block";
         document.getElementById("empresa").style.display = "none";
         document.getElementById("nombre").style.display = "none";
         document.getElementById("edad").style.display = "none";

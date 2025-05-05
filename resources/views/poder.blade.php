@@ -262,14 +262,14 @@
                                         <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div class="form-group">
                                                 <label>Anexos(Solo si se requiere, Acata Constitutiva, Poder General con facultades para sustituir o delegar poder)</label><br>
-                                                <input type="file" name="documentoAnexo" class="form-control" accept=".pdf" required>
+                                                <input type="file" name="documentoAnexo" class="form-control" accept=".pdf">
                                             </div>
                                         </div>
 
                                         <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div class="form-group">
                                                 <label>Anexos 2(Solo si se requiere)</label><br>
-                                                <input type="file" name="documentoPoder" class="form-control" accept=".pdf" required>
+                                                <input type="file" name="documentoPoder" class="form-control" accept=".pdf">
                                             </div>
                                         </div>
                                         
