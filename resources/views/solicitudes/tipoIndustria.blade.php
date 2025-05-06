@@ -269,6 +269,12 @@
         border-radius: 4px;
         transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     }
+    p{
+        text-align: justify;
+    }
+    li{
+        text-align: justify;
+    }
     
 </style>
 
@@ -286,33 +292,24 @@
         <div class="modal-content">
             <div class="modal-header header-default font-size-14" style="height: 38px">
                 <div class="col-md-12">
-                    <center><h4>PROCEDIMIENTO DE CONCILIACIÓN INDIVIDUAL</h4></center>
+                    <center><h4>DATOS PERSONALES</h4></center>
                 </div>
             </div>
             <div class="modal-body">
                 <div class="col-md-12 gray-small-text">
-                    <p>El Centro de Conciliación Laboral del Estado de Nuevo León hace de tu conocimiento que los datos personales aquí recabados son tratados conforme a lo dispuesto por 
-                        la Ley General de Protección de Datos Personales en Posesión de Sujetos Obligados y la demás normatividad que resulte aplicable, para realizar el procedimiento de 
-                        conciliación individual.</p>
-                    <p>Los datos personales que sean recabados serán utilizados para las siguientes finalidades:</p>
+                    <p>Los Datos Personales recabados por el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, servirán únicamente para realizar el Procedimiento de Conciliación Individual Prejudicial, 
+                        serán tratados conforme lo dispuesto por la Ley General de Protección de Datos Personales en Posesión de Sujetos Obligados y demás normativa aplicable.</p>
+                    <p>Los datos considerados sensibles no serán recabados, ni tratados, ni se realizaran transferencias de datos personales, salvo aquellos que no requieran el consentimiento de los titulares y que 
+                        sean necesarios para atender su solicitud o requerimientos de información realizados por autoridad competente, siempre y cuando se encuentren debidamente fundados y motivados; lo anterior, de 
+                        conformidad con los artículos 22, 66 y 70 de la Ley General de Protección de Datos Personales en Posesión de Sujetos Obligados.</p>
+                    <p>Los datos personales que sean recabados serán empleados con los fines siguientes:</p>
                     <ul>
-                        <li>Con la finalidad de registrar al usuario en la plataforma digital denominada SINACOL (Sistema Nacional de Conciliación Laboral), dar seguimiento y trámite a su solicitud.</li>
-                        <li>Para administrar la información y datos del solicitante para efectuar el procedimiento de conciliación prejudicial obligatorio y las notificaciones que deriven del mismo.</li>
-                        <li>Para generar información estadística y de control, en la que sus datos personales serán disociados de la información estadística para que no sea posible identificar a los titulares.</li>
-                        <li>Establecer comunicación con los trabajadores y patrones por correo electrónico, por escrito, mediante mensajería, correo ordinario o por teléfono, sobre aspectos relaciones con las fases y etapas del procedimiento de conciliación individual.</li>
+                        <li>Registrar al usuario en la plataforma digital denominada SICONCILIO (Sistema Integral para la Conciliación), dar seguimiento y trámite a su solicitud.</li><br>
+                        <li>Administrar la información y datos del solicitante para efectuar el Procedimiento de Conciliación Prejudicial obligatorio y las notificaciones que deriven del mismo.</li><br>
+                        <li>Generar información estadística y de control, en la que sus datos personales serán disociados de la información estadística para que no sea posible identificar a los titulares.</li><br>
+                        <li>Establecer comunicación con los trabajadores y patrones por correo electrónico, por escrito, mediante correo ordinario o por teléfono, sobre aspectos relacionados con las 
+                            fases y etapas del procedimiento de conciliación individual.</li>
                     </ul>
-                    <p></p>
-                    <p>Se le informa que no se recabarán ni tratarán datos personales que se consideren sensibles. Cabe destacar que no se realizarán transferencias de datos personales, salvo aquéllas que no 
-                        requieran el consentimiento de los titulares y que sean necesarias para atender su solicitud o requerimientos de información de una autoridad competente, que estén debidamente fundados 
-                        y motivados; esto con base en los artículos 22, 66 y 70 de la Ley General de Protección de Datos Personales en Posesión de Sujetos Obligados.</p>
-
-                    <p>Así mismo se le informa que puede manifestar la negativa al tratamiento de sus datos personales para las finalidades o transferencias que no sean necesarias, mediante comparecencia ante 
-                        la Unidad de Transparencia o a través de una solicitud por escrito debidamente firmada y enviada al correo electrónico de transparencia@centrodeconciliacionlaboralnl.mx o presentada ante 
-                        nuestras instalaciones.</p>
-                    <p>
-                        Cambios en el aviso de privacidad:
-                        En caso de que existan cambios en el aviso de privacidad, lo haremos de su conocimiento a través de la página www.centrodeconciliacionlaboralnl.mx/aviso-de-privacidad/o bien, de manera 
-                        presencial en nuestras instalaciones.</p>
                 </div>
                 <div class="col-md-12 row">
                     <div class="col-md-12">

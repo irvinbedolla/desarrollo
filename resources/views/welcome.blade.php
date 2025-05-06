@@ -268,12 +268,12 @@
           <div class="flip-box">
             <div class="flip-box-inner">
               <div class="flip-box-front">
-                <h2 style="font-size: 22px; font-family: Arial; color:#000000">Buzón tributario</h2>
+                <h2 style="font-size: 22px; font-family: Arial; color:#000000">Buzón electrónico</h2>
                 <img src="public/assets/images/Audiencias e.png" alt="Descripción de la imagen"
                     style="width: 120px; height: 120px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
               </div>
               <div class="flip-box-back">
-                 <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br><br>Buzón tributario.</h2>
+                 <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br><br>Buzón electrónico.</h2>
               </div>
             </div>
           </div>
