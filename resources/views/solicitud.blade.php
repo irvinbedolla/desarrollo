@@ -76,21 +76,21 @@
             <center><div class="card-group">
                 <div class="card">   <!-- Inicio Seer -->
                     <div style="display: block; text-align: center;">
-                        <a href="https://michoacan.cencolab.mx/asesoria/10" class="button-link" type="button" onclick="mostrarAviso()">
+                        <a href="{{ route('solicitud.industria', ['tipo_solicitud' =>1]) }}" class="button-link">
                             SOY <br>TRABAJADOR
                         </a> 
                     </div> 
                 </div>   <!-- fin Seer -->
                 <div class="card">   <!-- Inicio Seer -->
                     <div style="display: block; text-align: center;">
-                        <a href="https://michoacan.cencolab.mx/asesoria/20" class="button-link">
+                        <a href="{{ route('solicitud.industria', ['tipo_solicitud' =>2]) }}" class="button-link">
                             SOY <br>PATRÓN    
                         </a>
                     </div>  
                 </div>   <!-- fin Seer -->
                 <div class="card">   <!-- Inicio Seer -->
                     <div style="display: block; text-align: center;">
-                        <a href="https://michoacan.cencolab.mx/solicitudes/create-public?solicitud=4" class="button-link">
+                        <a href="{{ route('solicitud.industria', ['tipo_solicitud' =>3]) }}" class="button-link">
                             SOY<br> SINDICATO
                         </a>
                     </div>  

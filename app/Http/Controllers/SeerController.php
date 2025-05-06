@@ -1807,29 +1807,34 @@ class SeerController extends Controller
     public function solicitudesLinea(){
         return view('solicitud');
     }
-    
-    //Solicitud en línea trabajador
-    public function trabajador(){  
-        
-        $mostrarMotivos=SolicitudMotivo::whereIn('tipo_solicitud', [1, 2, 3])->exists();
-        $bandera = $mostrarMotivos ? ['1'] : ['0'];
 
-        if ($bandera[0] == "1") {
-            $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '1')
-            ->select('catalogo_motivos.motivo','catalogo_motivos.tipo_solicitud')
-            ->get();
+    public function Industrias($tipo_solicitud){
+       // dd($tipo_solicitud);
+        return view('solicitudes.tipoIndustria', compact('tipo_solicitud'));
+    } 
+
+    //Solicitud en línea trabajador
+    public function trabajador($tipo_solicitud){  
+        if ($tipo_solicitud == "1") {
+            $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '1') ->get();
+        }
+        elseif ($tipo_solicitud == "2") {
+            $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '2') ->get();
+        }
+        elseif ($tipo_solicitud == "3") {
+            $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '3') ->get();
         }
         $ramas = SolicitudRama::all();
        // $actividad=SolicitudEconomica::all();
         $del=Sedes::all();
         $municipios=Municipios::where('estado',16)->get();
-       /* if($bandera[0] == "1"){
+       /* if($tipo_solicitud[0] == "1"){
             //$personas = null;
             $motivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '1')
             ->select('catalogo_motivos.motivo','seer_general.NUE','seer_general.solicitante','seer_citados.nombre','seer_citados.direccion','seer_citados.estatus')
             ->get();
         }*/
-        return view('solicitudes.solicitud_trabajador', compact('ramas','del','municipios','bandera','mostrarMotivos'));
+        return view('solicitudes.solicitud_trabajador', compact('ramas','del','municipios','tipo_solicitud','mostrarMotivos'));
     }
    
     /* public function obtenerActEconomica($id){
@@ -1850,6 +1855,7 @@ class SeerController extends Controller
             'id_rama'         =>  $data["ramaIndustrial"],
             'actividad'       =>  $data["actividad_economica"],
             'delegacion'      =>  $data["dSolicitud"],
+            'tipo_solicitud'  =>  $data["tipo_solicitud"],
         );
        
         SeerPerGeneral::create($data_insert); 
@@ -1858,8 +1864,9 @@ class SeerController extends Controller
         if (!empty($data["motivo_solicitud"])) {
             foreach ($data["motivo_solicitud"] as $motivoId) {
                 SeerMotivo::create([
-                    'id_solicitud' => $id_general["id"],
-                    'id_motivo'    => $motivoId
+                    'id_solicitud'    => $id_general["id"],
+                    'id_motivo'       => $motivoId,
+                    
                 ]);
             }
         }
@@ -1891,13 +1898,12 @@ class SeerController extends Controller
             'numExt'                => 'required',
             'colonia_solicitante'   => 'required',
             'municipio_solicitante' => 'required',
-            'codigo_solicitante'    => 'required|numeric',
+            'cp'                    => 'required|numeric',
             'referencias'           => 'required|string|max:300',
             'calle1'                => 'required',
             'calle2'                => 'required',
-            'seguro'                => 'required',
             'puesto'                => 'required', 
-            'tiempo_pago'           => 'required',
+            'frecuencia_pago'       => 'required',
             'pago'                  => 'required',
             'horas'                 => 'required',
             'fecha_ingreso'         => 'required',
@@ -1924,13 +1930,13 @@ class SeerController extends Controller
             'num_ext'              => $data["numExt"],
             'colonia'              => $data["colonia_solicitante"],
             'municipio_domicilio'  => $data["municipio_solicitante"],
-            'codigo_postal'        => $data["codigo_solicitante"],
+            'codigo_postal'        => $data["cp"],
             'referencia'           => $data["referencias"],
             'calle2'               => $data["calle1"],
             'calle3'               => $data["calle2"],
             'puesto'               => $data["puesto"],
             'pago'                 => $data["pago"],
-            'periodo_pago'         => $data["tiempo_pago"],
+            'periodo_pago'         => $data["frecuencia_pago"],
             'horas_semana'         => $data["horas"],
             'fecha_ingreso'        => $data["fecha_ingreso"],
             'jornada'              => $data["jornada"],
@@ -2156,7 +2162,5 @@ class SeerController extends Controller
         //Se van asignar fecha de audiencia y hora de manera aleatoria
         //Se manda la notificacion por correo o Whats
     }
-    public function Industrias(){
-        return view('solicitudes.tipoIndustria');
-    } 
+    
 }

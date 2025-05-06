@@ -41,7 +41,7 @@ use App\Http\Controllers\Controller;
     });
 
     Route::get('solicitudes',    [SeerController::class, 'solicitudesLinea'])->name('solicitud');
-    Route::get('tipoIndustria',  [SeerController::class, 'Industrias'])->name('solicitud.industria');
+    Route::get('tipoIndustria/{tipo_solicitud}',  [SeerController::class, 'Industrias'])->name('solicitud.industria');
    
     
     //Rutas para el chat
@@ -76,7 +76,7 @@ use App\Http\Controllers\Controller;
 
     
     //Solicitudes en línea trabajador
-    Route::get('solicitud_trabajador',      [SeerController::class, 'trabajador'])->name('solicitud_trabajador');
+    Route::get('solicitud_trabajador/{tipo_solicitud}',      [SeerController::class, 'trabajador'])->name('solicitud_trabajador');
     Route::post('guardar_trabajador',       [SeerController::class, 'solicitud_parte1'])->name('parte1');
     Route::post('solicitud_solicitante',    [SeerController::class, 'solicitud_parte2'])->name('parte2');
     Route::get('vista_solicitante/{id}' ,   [SeerController::class, 'vista_solicitante'])->name('solicitante');

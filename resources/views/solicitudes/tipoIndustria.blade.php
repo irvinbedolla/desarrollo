@@ -5,11 +5,11 @@
         <meta name="description" content="">
         <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
         <meta name="generator" content="Ing. ISBM">
-        <link href="public/assets/css/carousel.css" rel="stylesheet">
+        <link href="../public/assets/css/carousel.css" rel="stylesheet">
         <title>Si Concilio</title>
         <!-- Bootstrap core CSS -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <link rel="icon" href="public/assets/images/logo-ccl.png" type="image/x-icon">
+        <link rel="icon" href="../public/assets/images/logo-ccl.png" type="image/x-icon">
         <!-- ================== LIBRERIAS AGREGADAS ================== -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -352,7 +352,7 @@
 </section>
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="">
-        <img src="public/assets/images/Logos 2.png" class="img" style="" width="250" height="90"></a>&nbsp;&nbsp;
+        <img src="../public/assets/images/Logos 2.png" class="img" style="" width="250" height="90"></a>&nbsp;&nbsp;
     </div>
     <div class=" navbar-collapse">
          <!-- begin breadcrumb -->
@@ -998,11 +998,11 @@
             $('#modal-competencia').modal('show');
             return;
         }else{
-            window.location.href = "solicitud_trabajador";
+            window.location.href = "{{ route('solicitud_trabajador', ['tipo_solicitud' => $tipo_solicitud]) }}";
         }
     }
     function sendIndustria() {
-        window.location.href = "solicitud_trabajador";
+        window.location.href = "{{ route('solicitud_trabajador', ['tipo_solicitud' => $tipo_solicitud]) }}";
     }
 </script>
 </body></html>
