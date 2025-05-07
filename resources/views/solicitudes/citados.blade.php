@@ -297,7 +297,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div align="center">
                                                 <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar</button>
-                                                <a href="{{ route('agregar_documentos', $id); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Continuar</a>    
+                                                <a href="{{ route('solicitudes.aviso'); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Finalizar</a>    
                                                 </div>
                                         </div>    
                                     </form>
@@ -375,6 +375,7 @@
             });
         }
     </script>
+    
     <div id="crear_poder" style ="display: none;">
         <div>.</div>
         <div class="loader"></div>

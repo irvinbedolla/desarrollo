@@ -105,6 +105,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <label for="name">Tipo persona</label>
                                                 <select name="tipo" class="form-control" required>
+                                                    <option value="">SELECCIONE</option>
                                                     <option value="Fisica">FÍSICA</option>
                                                     <option value="Moral">MORAL</option>
                                                 </select>
@@ -453,14 +454,47 @@
                                                 <h3 class="text-center" style="color:black">Documentos</h3>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label>Identificación oficial (*) (INE, ACTA DE NACIMIENTO, CURP)</label>
-                                                    <input type="file" name="documento" class="form-control" accept=".pdf, .jpg, .png, .jpeg " required>
-                                                    <div class="invalid-feedback">
-                                                        El campo identificación es obligatoria.
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Curp</label>
+                                                        <input type="file" name="documentoCurp" class="form-control" accept=".pdf, .jpg, .png, .jpeg ">
+                                                        <div class="invalid-feedback">
+                                                            El campo curp es obligatorio.
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-6" id="documentacionAdulto" style="display:none;">
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Identificación oficial (*) (frente)</label>
+                                                        <input type="file" name="documentoINEFrente" class="form-control" accept=".pdf , .jpg, .png, .jpeg ">
+                                                        <div class="invalid-feedback">
+                                                            El campo identificación es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Identificación oficial (*) (atras)</label>
+                                                        <input type="file" name="documentoINEAtras" class="form-control" accept=".pdf , .jpg, .png, .jpeg " required>
+                                                        <div class="invalid-feedback">
+                                                            El campo identificación es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-6" id="documentacionMenor" style="display:none;">
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Acta de nacimiento</label>
+                                                        <input type="file" name="documentoActa" class="form-control" accept=".pdf, .jpg, .png, .jpeg ">
+                                                        <div class="invalid-feedback">
+                                                            La Identificación es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>     
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div align="center">
