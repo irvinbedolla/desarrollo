@@ -971,9 +971,18 @@ class TurnosController extends Controller
         if(isset($data["folio"])){
             request()->validate([
                 'folio'             => 'required',
+                'primero_trabajador'=> 'required',
+                'segundo_trabajador'=> 'required',
                 'trabajador'        => 'required',
                 'trabajador_edad'   => 'required',
                 'trabajador_sexo'   => 'required',
+                'trabajador_curp'   => 'required',
+                'documentoCurp'     => 'required',
+                'tipo_identificacion'=> 'required',
+                'documentoidentificacion'=> 'required',
+                'fecha_inicio'      => 'required',
+                'fecha_termino'     => 'required',
+                'categoria'         => 'required',
                 'monto'             => 'required',
                 'frecuencia'        => 'required',
                 'tipo_pago'         => 'required',
@@ -988,14 +997,25 @@ class TurnosController extends Controller
         else{
             request()->validate([
                 'empresa'           => 'required',
-                'nombre'            => 'required',
+                'primero_empresa'   => 'required',
+                'segundo_empresa'   => 'required',
+                'nombre_empresa'    => 'required',
                 'email'             => 'required',
                 'telefono'          => 'required',
                 'documentoIne'      => 'required',
                 'documentoPoder'    => 'required',
+                'primero_trabajador'=> 'required',
+                'segundo_trabajador'=> 'required',
                 'trabajador'        => 'required',
                 'trabajador_edad'   => 'required',
                 'trabajador_sexo'   => 'required',
+                'trabajador_curp'   => 'required',
+                'documentoCurp'     => 'required',
+                'tipo_identificacion'=> 'required',
+                'documentoidentificacion'=> 'required',
+                'fecha_inicio'      => 'required',
+                'fecha_termino'     => 'required',
+                'categoria'         => 'required',
                 'monto'             => 'required',
                 'frecuencia'        => 'required',
                 'tipo_pago'         => 'required',
@@ -1006,6 +1026,7 @@ class TurnosController extends Controller
                 'motivo'            => 'required'
             ], $data);
         }
+
 
         //Vamos a buscar la proxima fecha disponible de la sede
         $numero_consecutivo = 0;
@@ -1023,14 +1044,29 @@ class TurnosController extends Controller
 
         if(isset($data["folio"])){
             $representante  = Poder::find($data["folio"]);
-
+            if(!isset($representante)){
+                return back()->with('error', 'El representante legal no existe');
+            }
+           
             $data_insertar= array(
                 'consecutivo'       => $numero_consecutivo,    
                 'empresa'           => $representante["empresa"],
-                'solicitante'       => $representante["nombres"]." ".$representante["primer_apellido"]." ".$representante["segundo_apellido"],
+                'primero_empresa'   => $representante["primer_apellido"],
+                'segundo_empresa'   => $representante["segundo_apellido"],
+                'nombre_empresa'    => $representante["nombres"],
+                'primero_trabajador'=> $data["primero_trabajador"],
+                'segundo_trabajador'=> $data["segundo_trabajador"],
                 'trabajador'        => $data["trabajador"],
                 'edad'              => $data["trabajador_edad"],
                 'sexo'              => $data["trabajador_sexo"],
+                'trabajador_curp'   => $data["trabajador_curp"],
+                'documentoCurp'     => $data["documentoCurp"],
+                'tipo_identificacion'=> $data["tipo_identificacion"],
+                'documentoidentificacion'=> $data["documentoidentificacion"],
+                'fecha_inicio'      => $data["fecha_inicio"],
+                'fecha_termino'     => $data["fecha_termino"],
+                'categoria'         => $data["categoria"],
+                'tipo_pago'         => $data["tipo_pago"],
                 'monto'             => $data["monto"],
                 'frecuencia'        => $data["frecuencia"],
                 'dias'              => $data["dias"],
@@ -1054,34 +1090,84 @@ class TurnosController extends Controller
         }
         else{
             $data_insertar= array(
-                'consecutivo'       => $numero_consecutivo,    
-                'empresa'           => $data["empresa"],
-                'solicitante'       => $data["nombre"],
-                'trabajador'        => $data["trabajador"],
-                'edad'              => $data["trabajador_edad"],
-                'sexo'              => $data["trabajador_sexo"],
-                'monto'             => $data["monto"],
-                'frecuencia'        => $data["frecuencia"],
-                'dias'              => $data["dias"],
-                'fecha'             => $data["fecha"],
-                'hora'              => $data["hora"],
-                'hora_fin'          => $data["hora"],
-                'auxiliar'          => 0,
-                'lugar_auxiliar'    => "Recepción",
-                'delegacion'        => $data["sede"],
-                'estatus'           => 'no atendido',
-                'exepcion'          => 'No',
-                'ine'               => $data["documentoIne"],
-                'representacion'    => $data["documentoPoder"],
-                'email'             => $data["email"],
-                'telefono'          => $data["telefono"],
-                'JLCA'              => $data["JLCA"],
-                'motivo'            => $data["motivo"]
+                'consecutivo'               => $numero_consecutivo,    
+                'empresa'                   => $data["empresa"],
+                'primero_empresa'           => $data["primero_empresa"],
+                'segundo_empresa'           => $data["segundo_empresa"],
+                'nombre_empresa'            => $data["nombre_empresa"],
+                'email'                     => $data["email"],
+                'telefono'                  => $data["telefono"],
+                'documentoIne'              => $data["documentoIne"],
+                'documentoPoder'            => $data["documentoPoder"],
+                'primero_trabajador'        => $data["primero_trabajador"],
+                'segundo_trabajador'        => $data["segundo_trabajador"],
+                'trabajador'                => $data["trabajador"],
+                'edad'                      => $data["trabajador_edad"],
+                'sexo'                      => $data["trabajador_sexo"],
+                'trabajador_curp'           => $data["trabajador_curp"],
+                'documentoCurp'             => $data["documentoCurp"],
+                'tipo_identificacion'       => $data["tipo_identificacion"],
+                'documentoidentificacion'   => $data["documentoidentificacion"],
+                'fecha_inicio'              => $data["fecha_inicio"],
+                'fecha_termino'             => $data["fecha_termino"],
+                'categoria'                 => $data["categoria"],
+                'tipo_pago'                 => $data["tipo_pago"],
+                'monto'                     => $data["monto"],
+                'frecuencia'                => $data["frecuencia"],
+                'dias'                      => $data["dias"],
+                'fecha'                     => $data["fecha"],
+                'hora'                      => $data["hora"],
+                'hora_fin'                  => $data["hora"],
+                'auxiliar'                  => 0,
+                'lugar_auxiliar'            => "Recepción",
+                'delegacion'                => $data["sede"],
+                'estatus'                   => 'no atendido',
+                'exepcion'                  => 'No',
+                'ine'                       => $data["documentoIne"],
+                'representacion'            => $data["documentoPoder"],
+                'email'                     => $data["email"],
+                'telefono'                  => $data["telefono"],
+                'JLCA'                      => $data["JLCA"],
+                'motivo'                    => $data["motivo"]
             ); 
             $nombre = $data["trabajador"];
             $email  = $data["email"];
         }
 
+        //Variables opcionales
+        if(isset($data["Aguinaldo"])){
+            $data_insert["Aguinaldo"] =  $data["Aguinaldo"];
+        }
+        if(isset($data["Vacaciones"])){
+            $data_insert["Vacaciones"] =  $data["Vacaciones"];
+        }
+        if(isset($data["PrimaVacacional"])){
+            $data_insert["PrimaVacacional"] =  $data["PrimaVacacional"];
+        }
+        if(isset($data["PagoPTU"])){
+            $data_insert["PagoPTU"] =  $data["PagoPTU"];
+        }
+        if(isset($data["Gratificación"])){
+            $data_insert["Gratificación"] =  $data["Gratificación"];
+        }
+        if(isset($data["PrimaAntigüedad"])){
+            $data_insert["PrimaAntigüedad"] =  $data["PrimaAntigüedad"];
+        }
+        if(isset($data["Otras"])){
+            $data_insert["Otras"] =  $data["Otras"];
+        }
+        if(isset($data["Especifique"])){
+            $data_insert["Especifique"] =  $data["Especifique"];
+        }
+        if(isset($data["cuantificacion"])){
+            $data_insert["cuantificacion"] =  $data["cuantificacion"];
+        }
+        if(isset($data["tipo_otros"])){
+            $data_insert["tipo_otros"] =  $data["tipo_otros"];
+        }
+        
+
+       
         Turnos::create($data_insertar);
 
        
@@ -1099,8 +1185,12 @@ class TurnosController extends Controller
             $data_insertar_user['password'] = Hash::make("CCLMICHOACAN");
             $usuario = User::create($data_insertar_user);
             $usuario->assignRole(('Solicitante'));
+            $mensaje = " el correo:".$usuario["email"]." y la contraseña:CCLMICHOACAN para continuar tú trámite.";
         }
-        $mensaje = " el correo:".$usuario["email"]." y la contraseña:CCLMICHOACAN para continuar tú trámite.";
+        else{
+            $mensaje = " el correo:".$usuario["email"]." para continuar tú trámite.";
+        }
+        
         
 
         return back()->with('success', 'Debes ingresar a '. 
@@ -1167,9 +1257,9 @@ class TurnosController extends Controller
         //return view('PDF.ratificacion');
         //return PDF::loadView('PDF.ratificacion', $data)->stream('archivo.pdf');
     }
-    
+
     public function indexr(){
-        return view('indexr');
+        return view('/solicitudes/indexr');
     }
 
 }

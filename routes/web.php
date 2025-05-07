@@ -72,7 +72,6 @@ use App\Http\Controllers\Controller;
     //Rutas de citas
     Route::get('citas',                 [TurnosController::class, 'create_publico'])->name('create_cita');
     Route::post('/citas/store_publico', [TurnosController::class, 'store_publico'])->name('turnos.publico');
-    Route::get('indexr',                [TurnosController::class, 'indexr'])->name('ratificacion');
 
     
     //Solicitudes en línea trabajador
@@ -239,6 +238,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/turnos/edit',           [TurnosController::class, 'edit'])->name('turnos.edit');
         Route::get('/turnos/cambio/{id}',     [TurnosController::class, 'cambio'])->name('turnos.cambioexcepcion');
         Route::get('/Verpdf/{id}',            [TurnosController::class, 'VerPDF'])->name('PDFratifi');
+        Route::get('turnos/index',            [TurnosController::class, 'indexr'])->name('ratificacion');
     //Fin de  turnos
 
         Route::get('/pdf/estadistica',       [PDFController::class, 'pdfEstadistica'])->name('PDFestaditica');

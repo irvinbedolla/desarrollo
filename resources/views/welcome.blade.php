@@ -273,11 +273,11 @@
                     style="width: 120px; height: 120px; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
               </div>
               <div class="flip-box-back">
-                 <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br><br>Buzón electrónico.</h2>
+                 <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br><br>Buzón Electrónico.</h2>
               </div>
             </div>
           </div>
-          <p><a class="boton" href="#">Ver más</a></p>   
+          <p><a class="boton" href="{{ route('login') }}">Ver más</a></p>   
         </div>
       </div>
       <div class="card">   <!-- Inicio Seer -->
@@ -290,7 +290,7 @@
                     style="width: 180px; height: auto; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
               </div>
               <div class="flip-box-back">
-                 <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br><br>Sistema integral de Conciliación.</h2>
+                 <h2 style="font-size: 21px; font-family: Arial; color:#ffff"><br><br>Sistema Integral de Conciliación.</h2>
               </div>
             </div>
           </div>

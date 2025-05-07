@@ -68,15 +68,10 @@
                                     @endif
 
                                     <!--Se realiza la validación de campos para ver si dejó alguno vacío-->
-                                    @if ($errors->any())
+                                    @if (session()->has('error'))
                                         <div class="alert alert-dark alert-dismissible fade show" role="alert">
                                             <strong>¡Revise los campos!</strong>
-                                            <ul>
-                                                @foreach ($errors->all() as $error)
-                                                    <li>{{ $error }}</li>
-                                                    <!--<span class="badge badge-danger">{{ $error }}</span>-->
-                                                @endforeach
-                                            </ul>
+                                            {{ session()->get('error') }}
                                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -92,7 +87,7 @@
                                         <div class="row">
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
-                                                    <label for="btncheck1">¿Cuenta con folio interno de Centro de Conciacion laboral del Estado de Michoacan de Ocampo?<br> 
+                                                    <label for="btncheck1">¿Cuenta con Folio Interno de Registro de Representación Legal Patronal?<br> 
                                                         Puede registrarse en la siguiente liga (Para tramites posteriores) <a href="{{ route('poder-crear'); }}">Registrar</a>
                                                     </label><br>
                                                     <input name="labora" type="checkbox" class="btn-check" id="check_folio" autocomplete="off"/>
@@ -101,7 +96,7 @@
 
                                             <div id="folio" class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">*Folio Interno de CCL</label>
+                                                    <label for="name">*Folio Interno de Registro de Representación Legal Patronal</label>
                                                     <input type="text" name="folio" class="form-control"> 
                                                     <div class="invalid-feedback">
                                                         El folio es obligatorio.
@@ -109,25 +104,44 @@
                                                 </div>
                                             </div>
 
-                                            <div id="empresa" class="col-xs-12 col-sm-12 col-md-6">
+                                            <div id="empresa" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">*Nombre de la empresa o patrón</label>
+                                                    <label for="name">*Nombre de la Empresa o Patrón</label>
                                                     <input type="text" name="empresa" class="form-control"> 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="nombre" class="col-xs-12 col-sm-12 col-md-6">
+                                            <div id="primero" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">*Nombre (Persona que Acude a la Cita)</label>
-                                                    <input type="text" name="nombre" class="form-control"> 
+                                                    <label for="name">Primer apellido</label>
+                                                    <input type="text" name="primero_empresa" class="form-control" > 
+                                                    <div class="invalid-feedback">
+                                                        El campo es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="segundo" class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Segundo apellido</label>
+                                                    <input type="text" name="segundo_empresa" class="form-control" > 
+                                                    <div class="invalid-feedback">
+                                                        El campo es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div  id="nombre" class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Nombre(s)</label>
+                                                    <input type="text" name="nombre_empresa" class="form-control" > 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="edad" class="col-xs-12 col-sm-12 col-md-3">
+
+                                            <div id="edad" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Email</label>
                                                     <input type="email" name="email" class="form-control"> 
@@ -136,7 +150,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="sexo" class="col-xs-12 col-sm-12 col-md-3">
+                                            <div id="sexo" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                 <label for="name">Télefono</label>
                                                 <input type="number" name="telefono" class="form-control"> 
@@ -166,20 +180,38 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
-                                                    <h4 class="text-center">Trabajador</h4>
+                                                    <h4 class="text-center">Datos del Trabajador</h4>
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Nombre</label>
+                                                    <label for="name">Primer apellido</label>
+                                                    <input type="text" name="primero_trabajador" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Segundo apellido</label>
+                                                    <input type="text" name="segundo_trabajador" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Nombre(s)</label>
                                                     <input type="text" name="trabajador" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-3">
+                                            <div  class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
                                                     <label for="name">Edad</label>
                                                     <input type="number" name="trabajador_edad" class="form-control" required> 
@@ -188,7 +220,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="div2"  class="col-xs-12 col-sm-12 col-md-3">
+                                            <div   class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
                                                 <label for="name">Sexo</label>
                                                     <select name="trabajador_sexo" class="form-control" required>
@@ -201,29 +233,98 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <div i class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
-                                                    <h4 class="text-center">Datos de la solicitud</h4>
+                                                    <label for="name">CURP</label>
+                                                    <input type="text" name="trabajador_curp" class="form-control" maxlength="18" minlength="18" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo edad es obligatorio.
+                                                    </div>
                                                 </div>
                                             </div>
-
+                                            <div  class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">Documento de la CURP</label>
+                                                    <input type="file" name="documentoCurp" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo edad es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Salario</label>
-                                                    <input type="number" name="monto" class="form-control" required> 
+                                                    <label for="name">Identificación Oficial</label>
+                                                    <select id="tipo_identificacion" name="tipo_identificacion" class="form-control"  required>
+                                                        <option value="">Seleccione el tipo de indentificación</option>
+                                                        <option value="INE">INE</option>
+                                                        <option value="Pasaporte">Pasaporte</option>
+                                                        <option value="CédulaProfesional">Cédula Profesional</option>
+                                                        <option value="Licencia">Licencia para Conducir</option>
+                                                        <option value="Otro">Otros</option>
+                                                    </select>
                                                     <div class="invalid-feedback">
                                                         Este campo es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div id="espesificar_tipo_identificacion" class="col-xs-12 col-sm-12 col-md-3" style="display:none">
+                                                <div class="form-group">
+                                                    <label for="name">Especificar</label>
+                                                    <input type="text" name="tipo_otros" class="form-control" > 
+                                                    <div class="invalid-feedback">
+                                                        El campo edad es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div  class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">Subir Identificación Ofícial</label>
+                                                    <input type="file" name="documentoidentificacion" class="form-control" > 
+                                                    <div class="invalid-feedback">
+                                                        El campo edad es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <h4 class="text-center">Datos de la Relación Laboral</h4>
+                                                </div>
+                                            </div>
 
+                                            
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">Fecha de inicio de la relación laboral</label>
+                                                    <input type="date" name="fecha_inicio" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo edad es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">Fecha de término de la relación laboral</label>
+                                                    <input type="date" name="fecha_termino" class="form-control" > 
+                                                    <div class="invalid-feedback">
+                                                        El campo edad es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div  class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">Categoria o Puesto que desempeña</label>
+                                                    <input type="text" name="categoria" class="form-control" > 
+                                                    <div class="invalid-feedback">
+                                                        El campo edad es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Frecuencia de pago</label>
                                                     <select name="frecuencia" class="form-control"  required>
-                                                        <option value="">Seleccione la sede</option>
+                                                        <option value="">Seleccione</option>
                                                         <option value="Diario">Diario</option>
                                                         <option value="Semanal">Semanal</option>
                                                         <option value="Quincenal">Quincenal</option>
@@ -234,7 +335,16 @@
                                                     </div>
                                                 </div>
                                             </div>
-
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">Salario</label>
+                                                    <input type="text" name="monto" class="form-control"  placeholder="$" 
+                                                    class="myInput" required> 
+                                                    <div class="invalid-feedback">
+                                                        Este campo es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Dias a la semana trabajados</label>
@@ -244,14 +354,108 @@
                                                     </div>
                                                 </div>
                                             </div>
-
+                                            
+                                            <div  class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">¿Existe procedimiento previo en la JLCA?</label>
+                                                    <select name="JLCA" class="form-control"  required>
+                                                        <option value="">Seleccione</option>
+                                                        <option value="Si">Si</option>
+                                                        <option value="No">No</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Monto del convenio a pagar</label>
+                                                    <label for="name">Motivo de la conciliación</label>
+                                                    <select id="motivo" name="motivo" class="form-control"  required>
+                                                        <option value="">Seleccione</option>
+                                                        <option value="Pago de prestaciones">Pago de prestaciones</option>
+                                                        <option value="Terminación voluntaria de la relación de trabajo">Terminación voluntaria de la relación de trabajo</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div id="motivo_pago" class="col-xs-12 col-sm-12 col-md-2" style="display:none">
+                                                <div class="form-group">
+                                                    <label for="name">* Selecciona las casillas correspondientes</label>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="Aguinaldo">
+                                                        <label class="form-check-label" for="flexCheckDefault">
+                                                        Aguinaldo
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="Vacaciones">
+                                                        <label class="form-check-label" for="flexCheckDefault">
+                                                        Vacaciones
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="PrimaVacacional">
+                                                        <label class="form-check-label" for="flexCheckDefault">
+                                                        Prima Vacacional
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="PagoPTU">
+                                                        <label class="form-check-label" for="flexCheckDefault">
+                                                            Pago de PTU
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="Gratificación">
+                                                        <label class="form-check-label" for="flexCheckDefault">
+                                                        Gratificación
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="PrimaAntigüedad">
+                                                        <label class="form-check-label" for="flexCheckDefault">
+                                                        Prima de Antigüedad
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="Otras" id="otras">
+                                                        <label class="form-check-label" for="flexCheckDefault">
+                                                        Otras
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div id="div_otras" class="col-xs-12 col-sm-12 col-md-3" style="display:none">
+                                                <div class="form-group">
+                                                    <label for="name">Especifique</label>
+                                                    <input type="text" name="Especifique" class="form-control" > 
+                                                    <div class="invalid-feedback">
+                                                        El campo es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-xs-12 col-sm-12 col-md-2">
+                                                <div class="form-group">
+                                                    <label for="name">Monto total del convenio a pagar</label>
                                                     <input type="number" name="monto" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatorio.
                                                     </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-6 col-md-2">
+                                                <div class="form-group">
+                                                    <label for="name">
+                                                    <a href="https://cclmichoacan.gob.mx/Calculadora.html" target="_blank">* Calcula el monto aproximado del convenio.</a>
+                                                    </label>
                                                 </div>
                                             </div>
 
@@ -270,41 +474,23 @@
                                                 </div>
                                             </div>
 
-                                            <div  class="col-xs-12 col-sm-12 col-md-3">
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">¿Existe procedimiento previo en la JLCA?</label>
-                                                    <select name="JLCA" class="form-control"  required>
-                                                        <option value="">Seleccione el tipo de pago</option>
-                                                        <option value="Si">Si</option>
-                                                        <option value="No">No</option>
-                                                    </select>
+                                                    <label for="name">Sube tu cuantificación(Opcional)</label>
+                                                    <input type="file" name="cuantificacion" class="form-control" > 
                                                     <div class="invalid-feedback">
-                                                        El campo es obligatorio.
+                                                        El campo edad es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
 
-
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
-                                                    <label for="name">Motivo de la conciliación</label>
-                                                    <select name="motivo" class="form-control"  required>
-                                                        <option value="">Seleccione el motivo</option>
-                                                        <option value="Despido">Despido</option>
-                                                        <option value="Pago de prestaciones">Pago de prestaciones</option>
-                                                        <option value="Rescisión de la relación de trabajo">Rescisión de la relación de trabajo</option>
-                                                        <option value="Derecho de preferencia">Derecho de preferencia</option>
-                                                        <option value="Derecho de antigüedad">Derecho de antigüedad</option>
-                                                        <option value="Derecho de asens">Derecho de asenso</option>
-                                                        <option value="Terminación voluntaria de la relación de trabajo">Terminación voluntaria de la relación de trabajo</option>
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        El campo es obligatorio.
-                                                    </div>
+                                                    <h4 class="text-center">Seleccionar la fecha</h4>
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Sedes</label>
                                                     <select id="sede" name="sede" class="form-control" onchange="sedes();" required>
@@ -314,13 +500,14 @@
                                                         <option value="Zamora">Zamora</option>
                                                         <option value="Zitácuaro">Zitácuaro</option>
                                                         <option value="Lázaro Cárdenas">Lázaro Cárdenas</option>
+                                                        <option value="Sahuayo ">Sahuayo </option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         La sede es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Día</label>
                                                     <input id="fecha" type="date" name="fecha" class="form-control" onchange="diaSemana();" disabled>
@@ -329,7 +516,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-3">
+                                            <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
                                                     <label for="password">Horario Disponible</label>
                                                     <select id="horarios" name="hora" class="form-control">
@@ -341,17 +528,6 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-6 col-md-2">
-                                                <div class="form-group">
-                                                    <label for="name">
-                                                    <a href="https://cclmichoacan.gob.mx/Calculadora.html" target="_blank">* Calcula el aproximado de la ratificación.</a>
-                                                    </label>
-                                                    
-                                                    <div class="invalid-feedback">
-                                                        El campo conflicto es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </div>
 
                                         <div class="col-xs-12 col-sm-12 col-md-12">
@@ -402,13 +578,15 @@
 
     @yield('scripts')
     <script>
-        document.getElementById("folio").style.display = "block";
-        document.getElementById("empresa").style.display = "none";
-        document.getElementById("nombre").style.display = "none";
-        document.getElementById("edad").style.display = "none";
-        document.getElementById("sexo").style.display = "none";
-        document.getElementById("ine").style.display = "none";
-        document.getElementById("acta").style.display = "none";
+        document.getElementById("folio").style.display = "none";
+        document.getElementById("empresa").style.display = "block";
+        document.getElementById("primero").style.display = "block";
+        document.getElementById("segundo").style.display = "block";
+        document.getElementById("nombre").style.display = "block";
+        document.getElementById("edad").style.display = "block";
+        document.getElementById("sexo").style.display = "block";
+        document.getElementById("ine").style.display = "block";
+        document.getElementById("acta").style.display = "block";
 
 
         function sedes(){
@@ -436,6 +614,8 @@
             if (tipo == "none") {
                 document.getElementById("folio").style.display = "block";
                 document.getElementById("empresa").style.display = "none";
+                document.getElementById("primero").style.display = "none";
+                document.getElementById("segundo").style.display = "none";
                 document.getElementById("nombre").style.display = "none";
                 document.getElementById("edad").style.display = "none";
                 document.getElementById("sexo").style.display = "none";
@@ -445,6 +625,8 @@
             else{
                 document.getElementById("folio").style.display = "none";
                 document.getElementById("empresa").style.display = "block";
+                document.getElementById("primero").style.display = "block";
+                document.getElementById("segundo").style.display = "block";
                 document.getElementById("nombre").style.display = "block";
                 document.getElementById("edad").style.display = "block";
                 document.getElementById("sexo").style.display = "block";
@@ -453,11 +635,40 @@
             }
         }
 
+        const tipo_iden = document.getElementById('tipo_identificacion');
+        tipo_iden.addEventListener('change', function() {
+            const valorSeleccionado = this.value;
+            // Realiza la validación o acciones necesarias
+            if (valorSeleccionado === 'Otro') {
+                document.getElementById('espesificar_tipo_identificacion').style.display = "block";
+            } else {
+                document.getElementById('espesificar_tipo_identificacion').style.display = "none";
+            }
+        });
+
+        const motivo = document.getElementById('motivo');
+        motivo.addEventListener('change', function() {
+            const valorSeleccionado = this.value;
+            // Realiza la validación o acciones necesarias
+            if (valorSeleccionado === 'Pago de prestaciones') {
+                document.getElementById('motivo_pago').style.display = "block";
+            } else {
+                document.getElementById('motivo_pago').style.display = "none";
+            }
+        });        
+        
+        const otras = document.getElementById('otras');
+        otras.addEventListener('click', function() {
+            const valorSeleccionado = this.value;
+                document.getElementById('div_otras').style.display = "block";
+        });
+        
     </script>
-<div id="crear_poder" style ="display: none;">
-    <div>.</div>
-    <div class="loader"></div>
-</div>
+
+    <div id="crear_poder" style ="display: none;">
+        <div>.</div>
+        <div class="loader"></div>
+    </div>
 
 @section('scripts')
     <script src="public/js/poderes/general.js"></script>
