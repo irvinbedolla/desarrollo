@@ -256,7 +256,7 @@
     @auth
         @role('Solicitante')
             <a class="nav-link" href="{{ route('ratificacion') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Mis citas</span>
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Mis ratificaciones</span>
             </a>
         @endrole
     @endauth

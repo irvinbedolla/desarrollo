@@ -19,12 +19,12 @@
                                             <th style="color: #fff;">Folio</th>
                                             <th style="color: #fff;">Fecha</th>
                                             <th style="color: #fff;">Empresa</th>
+                                            <th style="color: #fff;">Trabajador</th>
                                             <th style="color: #fff;">Telefono</th>
                                             <th style="color: #fff;">Correo</th>
-                                            <th style="color: #fff;">Trabajador</th>
                                             <th style="color: #fff;">Estatus</th>
                                             <th style="color: #fff;">Detalles</th>
-                                            <th style="color: #fff;">Acciones</th>
+                                            <th style="color: #fff;">Documentos</th>
                                         </thead>
                                         <tbody>
                                             @foreach($solicitudes as $solicitud)
@@ -32,18 +32,16 @@
                                                     <td>{{$solicitud->id}}</td>
                                                     <td>{{$solicitud->fecha}}</td> 
                                                     <td>{{$solicitud->empresa}}</td>
+                                                    <td>{{$solicitud->trabajador}}</td>
                                                     <td>{{$solicitud->telefono}}</td>
                                                     <td>{{$solicitud->email}}</td>
-                                                    <td>{{$solicitud->trabajador}}</td>
                                                     <td>{{$solicitud->estatus}}</td>
                                                     <td><a class="btn btn-primary" href="{{ route('seer.estadistica_consultar', $solicitud->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
                                                     <td>
-                                                        <a class="btn btn-success" href="{{ route('seer.estadistica_consultar', $solicitud->id) }}" onclick=consultar_estadistica();>Aceptar</a>
-                                                        <form method="POST" action="{{ route('seer.delete', $solicitud->id) }} ">
-                                                        @csrf
-                                                            <input type="hidden" name="_method" value="DELETE">
-                                                            <button class="btn btn-danger" onclick=consultar_estadistica(); type="submit">Rechazar</button>
-                                                        </form>
+                                                        <a class="btn btn-success" href="{{ route('PDFratifi', $solicitud->id) }}" onclick=consultar_estadistica(); tarjet="_black">Acuse</a>
+                                                        @if($solicitud->estatus === "Aceptado")
+                                                            <a class="btn btn-success" href="{{ route('PDFconvenio', $solicitud->id) }}" onclick=consultar_estadistica(); tarjet="_black">Convenio</a>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @endforeach

@@ -238,7 +238,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/turnos/edit',           [TurnosController::class, 'edit'])->name('turnos.edit');
         Route::get('/turnos/cambio/{id}',     [TurnosController::class, 'cambio'])->name('turnos.cambioexcepcion');
         Route::get('/Verpdf/{id}',            [TurnosController::class, 'VerPDF'])->name('PDFratifi');
-        Route::get('turnos/index',            [TurnosController::class, 'indexr'])->name('ratificacion');
+        Route::get('/Verpdfc/{id}',           [TurnosController::class, 'VerPDFConvenio'])->name('PDFconvenio');
+        Route::get('turnos/index',            [TurnosController::class, 'index_empresa'])->name('ratificacion');
     //Fin de  turnos
 
         Route::get('/pdf/estadistica',       [PDFController::class, 'pdfEstadistica'])->name('PDFestaditica');

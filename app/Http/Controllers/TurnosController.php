@@ -1087,6 +1087,7 @@ class TurnosController extends Controller
             ); 
             $nombre = $data["trabajador"];
             $email  = $representante["email"];
+            //$empres =
         }
         else{
             $data_insertar= array(
@@ -1178,7 +1179,8 @@ class TurnosController extends Controller
                 'name'      => $nombre,
                 'email'     => $email,
                 'delegacion'=> $data["sede"],
-                'type'      => "Seer"
+                'type'      => "Seer",
+                //'remember_token' =>
             ); 
             
             //Hacemos un hash del campo que tiene el password
@@ -1258,8 +1260,21 @@ class TurnosController extends Controller
         //return PDF::loadView('PDF.ratificacion', $data)->stream('archivo.pdf');
     }
 
+    public function index_empresa(){
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        //dd($user);
+        $solicitudes = Turnos::where('tipo','Ratificación')
+        //->where('empresa','Pendiente')
+        ->get();
+        return view('/solicitudes/misratificaciones',compact('solicitudes'));
+    }
+
     public function indexr(){
-        return view('/solicitudes/indexr');
+        $solicitudes = Turnos::where('tipo','Ratificación')
+        ->where('estatus','Pendiente')
+        ->get();
+        return view('/solicitudes/indexr',compact('solicitudes'));
     }
 
 }
