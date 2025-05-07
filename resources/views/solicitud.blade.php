@@ -77,14 +77,14 @@
                 <div class="card">   <!-- Inicio Seer -->
                     <div style="display: block; text-align: center;">
                         <a href="{{ route('solicitud.industria', ['tipo_solicitud' =>1]) }}" class="button-link">
-                            SOY <br>TRABAJADOR
+                            SOY <br>TRABAJADOR(a)
                         </a> 
                     </div> 
                 </div>   <!-- fin Seer -->
                 <div class="card">   <!-- Inicio Seer -->
                     <div style="display: block; text-align: center;">
                         <a href="{{ route('solicitud.industria', ['tipo_solicitud' =>2]) }}" class="button-link">
-                            SOY <br>PATRÓN    
+                            SOY <br>PATRÓN(a)    
                         </a>
                     </div>  
                 </div>   <!-- fin Seer -->

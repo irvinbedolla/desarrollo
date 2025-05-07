@@ -18,12 +18,12 @@
                                         <thead style="background-color: #4A001F;">
                                             <th style="color: #fff;">Folio</th>
                                             <th style="color: #fff;">Fecha</th>
-                                            <th style="color: #fff;">Empresa</th>
-                                            <th style="color: #fff;">Trabajador</th>
-                                            <th style="color: #fff;">Telefono</th>
+                                            <th style="color: #fff;">Empresa/Patrón(a)</th>
+                                            <th style="color: #fff;">Trabajador(a)</th>
+                                            <th style="color: #fff;">Teléfono</th>
                                             <th style="color: #fff;">Correo</th>
                                             <th style="color: #fff;">Estatus</th>
-                                            <th style="color: #fff;">Detalles</th>
+                                            <th style="color: #fff;">Informe general</th>
                                             <th style="color: #fff;">Documentos</th>
                                         </thead>
                                         <tbody>
@@ -39,7 +39,7 @@
                                                     <td><a class="btn btn-primary" href="{{ route('seer.estadistica_consultar', $solicitud->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
                                                     <td>
                                                         <a class="btn btn-success" href="{{ route('PDFratifi', $solicitud->id) }}" onclick=consultar_estadistica(); tarjet="_black">Acuse</a>
-                                                        @if($solicitud->estatus === "Aceptado")
+                                                        @if($solicitud->estatus === "Confirmado")
                                                             <a class="btn btn-success" href="{{ route('PDFconvenio', $solicitud->id) }}" onclick=consultar_estadistica(); tarjet="_black">Convenio</a>
                                                         @endif
                                                     </td>

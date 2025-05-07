@@ -1909,7 +1909,6 @@ class SeerController extends Controller
             'fecha_ingreso'         => 'required',
             'jornada'               => 'required',
             'documentoINEFrente'    => 'required',
-            'documentoINEAtras'     => 'required',
             'documentoCurp'         => 'required',
             'documentoActa'         => 'required',
             

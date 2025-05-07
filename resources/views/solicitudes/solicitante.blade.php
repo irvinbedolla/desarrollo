@@ -95,7 +95,7 @@
                                         </div>
                                     @endif
                                     <div style="background-color:#D2D3D5; width:100%; height:40px;">
-                                        <h3 class="text-center" style="color:black">Datos de identificación</h3>
+                                        <h3 class="text-center" style="color:black">Datos del Solicitante</h3>
                                     </div>    
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                                     <form class="needs-validation novalidate" method="POST" action="{{route('parte2')}}" enctype='multipart/form-data'>
@@ -103,7 +103,7 @@
                                         <input type="hidden" name="id" value="{{$id}}">
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-4">
-                                                <label for="name">Tipo persona</label>
+                                                <label for="name">Tipo de Persona</label>
                                                 <select name="tipo" class="form-control" required>
                                                     <option value="">SELECCIONE</option>
                                                     <option value="Fisica">FÍSICA</option>
@@ -112,7 +112,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Curp del solicitante (*)</label>
+                                                    <label for="name">CURP del Solicitante (*)</label>
                                                     <input type="text" name="curp" id="curp_input" oninput="validarInput(this)"class="form-control" required> 
                                                     <pre id="resultado"></pre>
                                                     <div class="invalid-feedback">
@@ -122,7 +122,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Nombre(s) y apellidos del solicitante (*) </label>
+                                                    <label for="name">Nombre(s) y Apellidos del Solicitante (*) </label>
                                                     <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo nombre es obligatorio.
@@ -131,7 +131,7 @@
                                             </div>
                                             <div id="div1" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Fecha de nacimiento (*)</label>
+                                                    <label for="name">Fecha de Nacimiento (*)</label>
                                                     <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" onchange="validarfechaNacimiento(this)" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo fecha de nacimiento es obligatoria.
@@ -140,7 +140,7 @@
                                             </div>
                                             <div id="div1" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Edad del solicitante (*)</label>
+                                                    <label for="name">Edad del Solicitante (*)</label>
                                                     <input type="number" name="edad" class="form-control" id="años_edad" required> 
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatoria.
@@ -149,7 +149,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">RFC del solicitante (*)</label>
+                                                    <label for="name">RFC del Solicitante (*)</label>
                                                     <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo RFC es obligatorio.
@@ -158,7 +158,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Genero (*)</label>
+                                                    <label for="name">Sexo (*)</label>
                                                     <select name="genero" class="form-control" required>
                                                         <option value="">SELECCIONE</option>
                                                         <option value="H">HOMBRE</option>
@@ -166,7 +166,7 @@
                                                         <option value="NC">PREFIERO NO CONTESTAR</option>
                                                     </select>
                                                     <div class="invalid-feedback">
-                                                        El campo genero es obligatorio.
+                                                        El campo es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
@@ -185,7 +185,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Estado de nacimiento (*)</label>
+                                                    <label for="name">Entidad Federativa de Nacimiento (*)</label>
                                                     <select id="estado_nacimiento" name="estado_nacimiento" class="form-control" required>
                                                         @foreach($estados as $est)
                                                             <option value="{{$est['id']}}">{{$est['nombre']}}</option>
@@ -221,7 +221,7 @@
                                             </div>  
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Teléfono celular (*)</label>
+                                                    <label for="name">Teléfono Celular (*)</label>
                                                     <input type="text" name="telefono1" minlength="10" maxlength="10" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo teléfono es obligatorio.
@@ -230,13 +230,13 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Teléfono casa</label>
+                                                    <label for="name">Teléfono Fijo</label>
                                                     <input type="text" name="telefono2" minlength="10" maxlength="10" class="form-control"> 
                                                 </div>   
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Email (*)</label>
+                                                    <label for="name">Correo Electrónico (*)</label>
                                                     <input type="mail" name="correo" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo email es obligatorio.
@@ -248,7 +248,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="password">Estado del solicitante (*)</label>
+                                                    <label for="password">Entidad Federativa del Solicitante (*)</label>
                                                     <select id="estado_solicitante" class="form-control" name="estado_solicitante" required>
                                                         <option value="">Seleccione</option>
                                                         @foreach($estados as $est)
@@ -262,7 +262,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Tipo de vialidad (*)</label>
+                                                    <label for="name">Tipo de Vialidad (*)</label>
                                                     <select name="vialidad" class="form-control" required>
                                                         <option value="">SELECCIONE</option>
                                                         <option value="Calle">CALLE</option>
@@ -277,7 +277,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Nombre de la vialidad o calle (*)</label>
+                                                    <label for="name">Nombre de la Vialidad(*)</label>
                                                     <input type="text" name="vialidad_calle" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo vialidad o calle es obligatorio.
@@ -286,7 +286,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Número exterior (*)</label>
+                                                    <label for="name">Número Exterior (*)</label>
                                                     <input type="number" name="numExt" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo número es obligatorio.
@@ -295,7 +295,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Número interior</label>
+                                                    <label for="name">Número Interior</label>
                                                     <input type="number" name="numInt" class="form-control"> 
                                                 </div>
                                             </div>
@@ -310,7 +310,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Nombre del municipio o alcaldía (*)</label>
+                                                    <label for="name">Nombre del Municipio o Alcaldía (*)</label>
                                                     <select id="municipio_solicitante" class="form-control" name="municipio_solicitante" required>
                                                         <option value="">Seleccione</option>
                                                         @foreach($municipios as $mun)
@@ -324,7 +324,7 @@
                                             </div>
                                             <div id="div1"  class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Código postal (*)</label>
+                                                    <label for="name">Código Postal (*)</label>
                                                     <input type="text" name="cp" class="form-control" minlength="5" maxlength="5" required> 
                                                     <div class="invalid-feedback">
                                                         El campo código postal es obligatorio.
@@ -363,7 +363,7 @@
                                             </div>  
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Número de seguro social</label>
+                                                    <label for="name">Número de Seguro Social</label>
                                                     <input type="text" name="seguro" minlength="11" maxlength="12" class="form-control"> 
                                                     <div class="invalid-feedback">
                                                     </div>
@@ -381,13 +381,13 @@
                                            
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">¿Cada cuándo te pagan? (*)</label>
+                                                    <label for="name">Frecuencia de Pago (*)</label>
                                                     <select name="frecuencia_pago" class="form-control" required>
                                                         <option value="">SELECCIONE</option>
-                                                        <option value="Semana">SEMANAL</option>
+                                                        <option value="Diario">DIARIO</option>
+                                                        <option value="Semanal">SEMANAL</option>
                                                         <option value="Quincenal">QUINCENAL</option>
                                                         <option value="Mensual">MENSUAL</option>
-                                                        <option value="Diario">DIARIO</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El campo frecuencia de pagos es obligatorio.
@@ -405,7 +405,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Cantidad de horas trabajadas por semana (*)</label>
+                                                    <label for="name">Cantidad total de horas trabajadas por semana (*)</label>
                                                     <input type="number" name="horas" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo cantidad de horas trabajadas es obligatorio.
@@ -414,13 +414,13 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
-                                                    <label for="btncheck1">¿Labora actualmente?</label><br>
+                                                    <label for="btncheck1">¿Laboras actualmente?</label><br>
                                                     <input name="labora" type="checkbox" class="btn-check" id="check_fecha" autocomplete="off"/>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Fecha de ingreso (*)</label>
+                                                    <label for="name">Fecha de Ingreso (*)</label>
                                                     <input type="date" name="fecha_ingreso" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo fecha de ingreso es obligatoria.
@@ -443,7 +443,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4" id="fecha_fin">
                                                 <div class="form-group">
-                                                    <label for="name">Fecha de salida</label>
+                                                    <label for="name">Fecha de Salida</label>
                                                     <input type="date" name="fecha_salida" class="form-control"> 
                                                     <div class="invalid-feedback">
                                                         El campo fecha de salida es obligatoria.
@@ -456,7 +456,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label>Curp</label>
+                                                        <label>CURP</label>
                                                         <input type="file" name="documentoCurp" class="form-control" accept=".pdf, .jpg, .png, .jpeg ">
                                                         <div class="invalid-feedback">
                                                             El campo curp es obligatorio.
@@ -467,17 +467,8 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6" id="documentacionAdulto" style="display:none;">
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label>Identificación oficial (*) (frente)</label>
+                                                        <label>Identificación oficial (*) </label>
                                                         <input type="file" name="documentoINEFrente" class="form-control" accept=".pdf , .jpg, .png, .jpeg ">
-                                                        <div class="invalid-feedback">
-                                                            El campo identificación es obligatoria.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label>Identificación oficial (*) (atras)</label>
-                                                        <input type="file" name="documentoINEAtras" class="form-control" accept=".pdf , .jpg, .png, .jpeg " required>
                                                         <div class="invalid-feedback">
                                                             El campo identificación es obligatoria.
                                                         </div>

@@ -95,10 +95,7 @@
     <script>
         $('.open-modal').click(function() {
             const id = $(this).data('id'); // Obtiene el valor de data-id
-            //$('#modal-id').val(id); // Asigna el ID al input oculto
             document.getElementById('modal-id').value = id;
-            valor = document.getElementById('modal-id').value = id;
-            console.log(valor);
         });
     </script>
     <script src="../public/assets/js/poderes/general.js"></script>
