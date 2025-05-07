@@ -19,6 +19,8 @@ use App\Http\Controllers\SeerController;
 use App\Http\Controllers\TurnosController;
 use App\Http\Controllers\RegistroController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\CitaController;
+use App\Http\Controllers\CalendarController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,6 +50,10 @@ use App\Http\Controllers\Controller;
     Route::post('/chat/crear',      [Controller::class, 'store_chat'])->name('RespuestasChat.store');
     Route::get('chat',              [Controller::class, 'chats'])->name('chat');
     Route::post('/chat/crearUno/',  [Controller::class, 'storeUno'])->name('RespuestasChat.storeUno');
+
+    //Ruta calendario
+    Route::get('/calendario', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendario.index');
+    Route::get('/calendario/create', [App\Http\Controllers\CitaController::class, 'create'])->name('citas.citas');
 
     //Rutas fuera del login
     Route::get('/pantalla', function () {
