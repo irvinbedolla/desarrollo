@@ -991,7 +991,8 @@ class TurnosController extends Controller
                 'fecha'             => 'required',
                 'hora'              => 'required',
                 'JLCA'              => 'required',
-                'motivo'            => 'required'
+                'motivo'            => 'required',
+                'salario'           => 'required'
             ], $data);
         }
         else{
@@ -1000,6 +1001,7 @@ class TurnosController extends Controller
                 'primero_empresa'   => 'required',
                 'segundo_empresa'   => 'required',
                 'nombre_empresa'    => 'required',
+                'curp'              => 'required',
                 'email'             => 'required',
                 'telefono'          => 'required',
                 'documentoIne'      => 'required',
@@ -1023,7 +1025,8 @@ class TurnosController extends Controller
                 'dias'              => 'required',
                 'hora'              => 'required',
                 'JLCA'              => 'required',
-                'motivo'            => 'required'
+                'motivo'            => 'required',
+                'salario'           => 'required'
             ], $data);
         }
 
@@ -1083,11 +1086,13 @@ class TurnosController extends Controller
                 'email'             => $representante["email"],
                 'telefono'          => $representante["telefono"],
                 'JLCA'              => $data["JLCA"],
-                'motivo'            => $data["motivo"]
+                'motivo'            => $data["motivo"],
+                'curp_solicitante'  => $representante["curp"],
+                'salario'           => $data["salario"]
             ); 
             $nombre = $data["trabajador"];
             $email  = $representante["email"];
-            //$empres =
+            $curp   = $representante["curp"];
         }
         else{
             $data_insertar= array(
@@ -1129,10 +1134,13 @@ class TurnosController extends Controller
                 'email'                     => $data["email"],
                 'telefono'                  => $data["telefono"],
                 'JLCA'                      => $data["JLCA"],
-                'motivo'                    => $data["motivo"]
+                'motivo'                    => $data["motivo"],
+                'curp_solicitante'          => $data["curp"],
+                'salario'                   => $data["salario"]
             ); 
             $nombre = $data["trabajador"];
             $email  = $data["email"];
+            $curp   = $data["curp"];
         }
 
         //Variables opcionales
@@ -1176,11 +1184,11 @@ class TurnosController extends Controller
         $usuario = User::where('email',$email)->first();
         if(!isset($usuario)){
             $data_insertar_user= array(
-                'name'      => $nombre,
-                'email'     => $email,
-                'delegacion'=> $data["sede"],
-                'type'      => "Seer",
-                //'remember_token' =>
+                'name'              => $nombre,
+                'email'             => $email,
+                'delegacion'        => $data["sede"],
+                'type'              => "Seer",
+                'remember_token'    => $curp
             ); 
             
             //Hacemos un hash del campo que tiene el password
@@ -1263,9 +1271,10 @@ class TurnosController extends Controller
     public function index_empresa(){
         $id = auth()->user()->id;
         $user = User::find($id);
-        //dd($user);
+
         $solicitudes = Turnos::where('tipo','Ratificación')
-        //->where('empresa','Pendiente')
+        ->join('users','turnos.curp_solicitante','=','users.remember_token')
+        ->where('curp_solicitante',$user["remember_token"])
         ->get();
         return view('/solicitudes/misratificaciones',compact('solicitudes'));
     }
@@ -1277,4 +1286,19 @@ class TurnosController extends Controller
         return view('/solicitudes/indexr',compact('solicitudes'));
     }
 
+    public function aceptacion($id){
+        $aceptar = Turnos::find($id)
+        ->update(['estatus' => 'Aceptado']);
+        return redirect()->route('Ratificacion');
+    }
+
+    public function guardar_rechazo(Request $request){
+        $data = $request->all();
+        
+        $rechazar = Turnos::find($data["id"])
+        ->update(['estatus' => 'Rechazado'])
+        ->update(['observaciones' => $data["observaciones"]]);
+
+        return redirect()->route('Ratificacion');
+    }
 }

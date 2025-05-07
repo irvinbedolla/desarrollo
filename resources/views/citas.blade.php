@@ -146,7 +146,7 @@
                                                     <label for="name">Email</label>
                                                     <input type="email" name="email" class="form-control"> 
                                                     <div class="invalid-feedback">
-                                                        El campo edad es obligatorio.
+                                                        El campo es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
@@ -155,7 +155,16 @@
                                                 <label for="name">Télefono</label>
                                                 <input type="number" name="telefono" class="form-control"> 
                                                     <div class="invalid-feedback">
-                                                        El campo sexo es obligatorio.
+                                                        El campo es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="curp" class="col-xs-12 col-sm-12 col-md-2">
+                                                <div class="form-group">
+                                                    <label for="name">CURP</label>
+                                                    <input type="text" name="curp" class="form-control" maxlength="18" minlength="18" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
@@ -338,7 +347,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Salario</label>
-                                                    <input type="text" name="monto" class="form-control"  placeholder="$" 
+                                                    <input type="text" name="salario" class="form-control"  placeholder="$" 
                                                     class="myInput" required> 
                                                     <div class="invalid-feedback">
                                                         Este campo es obligatorio.

@@ -38,12 +38,10 @@
                                                     <td>{{$solicitud->estatus}}</td>
                                                     <td><a class="btn btn-primary" href="{{ route('seer.estadistica_consultar', $solicitud->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
                                                     <td>
-                                                        <a class="btn btn-success" href="{{ route('seer.estadistica_consultar', $solicitud->id) }}" onclick=consultar_estadistica();>Aceptar</a>
-                                                        <form method="POST" action="{{ route('seer.delete', $solicitud->id) }} ">
-                                                        @csrf
-                                                            <input type="hidden" name="_method" value="DELETE">
-                                                            <button class="btn btn-danger" onclick=consultar_estadistica(); type="submit">Rechazar</button>
-                                                        </form>
+                                                        <a class="btn btn-success" href="{{ route('turno.aceptar', $solicitud->id) }}" onclick=consultar_estadistica();>Aceptar</a>
+                                                        <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $solicitud->id }}">
+                                                            Rechazar
+                                                        </button>
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -65,11 +63,43 @@
     </section>
 @endsection
 
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <form class='needs-validation novalidate'  method='POST' action="{{route('rechazar_turnos')}}">
+        @csrf
+        <input type="hidden" id="modal-id" name="id" value="">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Motivo de rechazo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea name="observaciones" style="width:100%"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
 <div id="nuevo_poder" style ="display: none;">
     <div>.</div>
     <div class="loader"></div>
 </div>
 
 @section('scripts')
-    <script src="./public/assets/js/poderes/general.js"></script>
+    <script>
+        $('.open-modal').click(function() {
+            const id = $(this).data('id'); // Obtiene el valor de data-id
+            //$('#modal-id').val(id); // Asigna el ID al input oculto
+            document.getElementById('modal-id').value = id;
+            valor = document.getElementById('modal-id').value = id;
+            console.log(valor);
+        });
+    </script>
+    <script src="../public/assets/js/poderes/general.js"></script>
 @endsection
