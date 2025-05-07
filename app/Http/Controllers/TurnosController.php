@@ -1249,23 +1249,13 @@ class TurnosController extends Controller
     }
 
     public function VerPDF($id){
-        
         $solicitud = Turnos::find($id);
-        //dd($solicitud);
-
         
-        //$pdf = new Dompdf(); 
-
-
         $pdf = \PDF::loadView('PDF/ratificacion', compact('id','solicitud'))
         ->setPaper('letter', 'portrait');
-        //->setSourceFile("demo.pdf"); 
-        return $pdf->stream('archivo.pdf');
-
-        
-        //return $pdf->stream('archivo.pdf');
-        //return view('PDF.ratificacion');
-        //return PDF::loadView('PDF.ratificacion', $data)->stream('archivo.pdf');
+        $nombreArchivo = 'ratificaion_' . $solicitud->empresa .'.pdf';
+       
+        return $pdf->stream($nombreArchivo);               
     }
 
     public function index_empresa(){
