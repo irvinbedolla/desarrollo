@@ -68,29 +68,41 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                           <p><b>FECHA DE LA SOLICITUD O EMISIÓN DEL DOCUMENTO: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}</b></p>
-                           <p> 
+                            <center><p><b>ACUSE DE RATIFICACIÓN DE CONVENIO<br>
+                                CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO
+                                </b></p></center>
+                           <p><b>FECHA DE LA SOLICITUD: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}</b></p>
+                           <p><b> 
                               EMPRESA/PATRÓN: {{ $solicitud->empresa }}<br>
-                              TRABAJADOR: {{ $solicitud->trabajador }} <br>
-                              CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO <br><br>
-                            </p>  
-                            <p>Usted ha guardado exitosamente la Solicitud de <b>Ratificación de Convenio</b>. El Centro de Conciliación Laboral del Estado 
-                                de Michoacán de Ocampo con domicilio en <b>{{$direccion_sede}}</b>, misma que tiene un horario de 09:00 a 15:00 hrs, 
-                                está facultada para atender su solicitud.</p>
-                            <p>Con fecha {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y \s\i\e\n\d\o \l\a\s H:i:s') }} horas, ante esta 
-                                autoridad conciliadora, <b>{{ $solicitud->trabajador }}</b> con un salario de <b>{{ $solicitud->salario }} pesos {{ $solicitud->frecuencia }}</b> 
-                                y cubriendo la cantidad de <b>{{ $solicitud->dias }}</b> días trabajados por semana, me doy por notificado (a) personalmente de la fecha para la 
-                                celebración de Ratificación de Convenio, misma que tendrá lugar el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{ $solicitud->hora }}</b> horas, en la 
-                                Delegación Regional/Oficina de Apoyo de <b>{{ $solicitud->delegacion }}</b> del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con domicilio en 
-                                <b>{{$direccion_sede}}</b>, para la entrega de la cantidad convenida a pagar de <b>{{ $solicitud->monto }} {{ ucfirst($solicitud->montoTexto) }}</b> pesos M.N en <b> 
-                                {{ $solicitud->tipo_pago }}</b>.</p>
+                              PERSONA QUE ACUDE EN REPRESENTACIÓN PATRONAL: {{ $solicitud->empresa }}<br>
+                              NOMBRE DEL TRABAJADOR/A: {{ $solicitud->trabajador }} <br>
+                              OBJETO DE LA SOLICITUD:  {{ $solicitud->motivo }} <br>
+                              DELEGACIÓN REGIONAL/OFICINA DE APOYO: {{ $solicitud->delegacion }}<br><br>
+                            </b></p> 
                             
-                                <p>Las partes deberán presentar su identificación oficial el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>. De conformidad con el articulo 684-E, fracción XIII, los convenios 
-                                    celebrados ante el Centro de Conciliación adquirirán la condición de Cosa Juzgada.</p>
-                                <p>
-                                    La cantidad total a pagar estará sujeta a la revisión del Personal del Centro de Conciliación, para verificar que no exista Renuncia de Derechos y 
-                                    proceder con la Ratificación del Convenio.
-                                </p>
+                            <p> Por este conducto se notifica a la parte solicitante que se ha generado exitosamente su cita para la <b>Ratificación de Convenio</b>, misma que tendrá lugar 
+                                el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>  a las <b>{{ $solicitud->hora }}</b> horas, en la Delegación Regional/Oficina de Apoyo de 
+                                <b>{{ $solicitud->delegacion }}</b> del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con domicilio en <b>{{$direccion_sede}}</b>, para la entrega de la cantidad convenida a pagar 
+                                <b>{{ $solicitud->monto }} {{ ucfirst($solicitud->montoTexto) }}</b> pesos M.N en <b> {{ $solicitud->tipo_pago }}</b>, 
+                                apercibiéndolo  que de no presentarse cualquiera de las partes en la fecha y hora señalada, su solicitud quedará <b>archivada</b>, dejando a salvo el derecho de cualquiera de las partes para iniciar su solicitud. 
+                            </p>
+                            <p>
+                                Agradecemos presentarse a la dirección proporcionada con diez minutos de anticipación de la hora citada, acompañado de sus documentos originales para cotejo (Identificaciones, Poder Notarial/Carta 
+                                Poder, en caso de no contar con Folio Interno de Registro de Representación Patronal, y cheque en caso de que sea la opción de pago). 
+                                <br>
+                                <span style="color: red;"><b>NOTA</b></span>: La cantidad total a pagar estará sujeta a la revisión del Personal del Centro de Conciliación, para verificar que no exista Renuncia de Derechos, así como a la aceptación voluntaria de la 
+                                persona trabajadora para proceder en la fecha y hora señalada a la firma de la Ratificación de su Convenio.
+                                <br>
+                                Lo anterior, con fundamento en los artículos 123 fracción XX de la Constitución Política de los Estados Unidos Mexicanos, artículos 33, 590-E, 684-C, 684-E , 684-F de la Ley Federal del Trabajo, 
+                                articulo 17 y 20 del Reglamento Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, función 1.3.1.1 De los Auxiliares de Conciliadores del Manual de Organización del 
+                                Centro de Conciliación Laboral del Estado de Michoacán de Ocampo y demás normativa aplicable.
+                            </p>
+                            <br><br><br><br><br><br>
+                            <center><p>ATENTAMENTE</p><br><br> 
+                                <p><b>___________________________________<br>
+                                     [CONCILIADOR_NOMBRE_COMPLETO] <br>   
+                                     FUNCIONARIA CONCILIADORA/<br>
+                                     FUNCIONARIO CONCILIADOR</b></p></center>
                         </div>
                     </div>
                 </div>

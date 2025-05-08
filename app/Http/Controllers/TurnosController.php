@@ -24,6 +24,7 @@ use App\Models\Turnos;
 use App\Models\TurnoDisponible;
 use App\Models\Poder; 
 
+
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
