@@ -24,7 +24,6 @@ use App\Models\Turnos;
 use App\Models\TurnoDisponible;
 use App\Models\Poder; 
 
-
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -1248,7 +1247,7 @@ class TurnosController extends Controller
         //->where('delegacion', $data["sede"])->get();
         //return Municipios::where('estado', $id)->get();
     }
-
+//PDF Acuse de Ratificación
     public function VerPDF($id){
         $solicitud = Turnos::find($id);
         
@@ -1257,6 +1256,16 @@ class TurnosController extends Controller
         $nombreArchivo = 'ratificaion_' . $solicitud->empresa .'.pdf';
        
         return $pdf->stream($nombreArchivo);               
+    }
+//PDF Convenio Ratificación 
+    public function VerPDFConvenio($id){
+        $solicitud = Turnos::find($id);
+
+        $pdf = \PDF::loadView('PDF/convenioTerminacion', compact('id','solicitud'))
+        ->setPaper('letter', 'portrait');
+        $nombreArchivo = 'Convenio_terminacion_' . '.pdf';
+       
+        return $pdf->stream($nombreArchivo);              
     }
 
     public function index_empresa(){
