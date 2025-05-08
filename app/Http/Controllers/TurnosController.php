@@ -1261,6 +1261,7 @@ class TurnosController extends Controller
     public function VerPDFConvenio($id){
         $solicitud = Turnos::find($id);
 
+        dd($solicitud);        
         $pdf = \PDF::loadView('PDF/convenioTerminacion', compact('id','solicitud'))
         ->setPaper('letter', 'portrait');
         $nombreArchivo = 'Convenio_terminacion_' . '.pdf';
@@ -1304,9 +1305,11 @@ class TurnosController extends Controller
         }
         //validar si hay disponibles
         $random = array_rand($listado_auxiliares);
+        $conciliador = $listado_auxiliares[$random];        
+        $user = User::find($conciliador);
 
         $aceptar = Turnos::find($id)
-        ->update( ['estatus' => 'Aceptado'],['auxiliar' => $random["id"]],['lugar_auxiliar' => $random["name"] ] );
+        ->update(['auxiliar' => $user["id"],'lugar_auxiliar' => $user["name"],'estatus' => 'Confirmado']);
 
         return redirect()->route('Ratificacion');
     }
@@ -1315,8 +1318,7 @@ class TurnosController extends Controller
         $data = $request->all();
         
         $rechazar = Turnos::find($data["id"])
-        ->update(['estatus' => 'Rechazado'])
-        ->update(['observaciones' => $data["observaciones"]]);
+        ->update(['estatus' => 'Rechazado', 'observaciones' => $data["observaciones"]]);
 
         return redirect()->route('Ratificacion');
     }
@@ -1327,8 +1329,25 @@ class TurnosController extends Controller
 
         $solicitudes = Turnos::where('tipo','Ratificación')
         ->where('auxiliar',$user["id"])
-        ->where('estatus','Pendiente')
+        ->where('estatus','Confirmado')
         ->get();
-        return view('/solicitudes/indexr',compact('solicitudes'));
+        return view('/solicitudes/indexauxiliar',compact('solicitudes'));
+    }
+
+    public function concluir_ratificaciones($id){
+        return view('/solicitudes/concluir',compact('id'));
+    }
+
+    public function guardar_manifestacion(Request $request){
+        $data = $request->all();
+        //dd($data);
+        $rechazar = Turnos::find($data["id"])
+        ->update(['resolucion_primera'  => $data["primera"],
+        'resolucion_trabajadores'       => $data["trabajadores"],
+        'resolucion_justificacion'      => $data["justificacion"],
+        'resolucion_segunda'            => $data["segunda"],
+        'estatus'                       => 'Conluida']);
+
+        return redirect()->route('atender_ratificacion');
     }
 }

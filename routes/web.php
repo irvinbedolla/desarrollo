@@ -256,8 +256,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/rechazar_solicitudes',     [SeerController::class, 'rechazar_solicitud'])->name('rechazar_solicitud');
 
     //Ratificaciones
-        Route::get('/rechazar_solicitudes',     [TurnosController::class, 'revisar_ratificaciones'])->name('atender_ratificacion');
-
+        Route::get('/ratificaciones/index',         [TurnosController::class, 'revisar_ratificaciones'])->name('atender_ratificacion');
+        Route::get('/ratificaciones/concluir/{id}', [TurnosController::class, 'concluir_ratificaciones'])->name('ratificacion_concluir');
+        Route::post('/guardar_manifestaciones',     [TurnosController::class, 'guardar_manifestacion'])->name('solicitudes.manidestaciones');
+        
 
     
     Route::name('user-management.')->group(function () {

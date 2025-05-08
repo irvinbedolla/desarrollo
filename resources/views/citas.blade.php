@@ -153,7 +153,7 @@
                                             <div id="sexo" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                 <label for="name">Télefono</label>
-                                                <input type="number" name="telefono" class="form-control" maxlength="10" minlength="10" required> 
+                                                <input type="text" name="telefono" class="form-control" maxlength="10" minlength="10" required> 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
@@ -288,7 +288,7 @@
                                             <div  class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Subir Identificación Ofícial</label>
-                                                    <input type="file" name="documentoidentificacion" class="form-control" > 
+                                                    <input type="file" name="documentoidentificacion" class="form-control" accept=".pdf" required> 
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatorio.
                                                     </div>

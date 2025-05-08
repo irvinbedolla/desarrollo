@@ -26,7 +26,7 @@
             <a class="nav-link" href="{{ route('seer.estadistica') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadisticas</span>
             </a>
-            <a class="nav-link" href="{{ route('expedientes') }}">
+            <a class="nav-link" href="{{ route('turnos') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="turnos()">Turnos</span>
             </a>
             <a class="nav-link" href="{{ route('misturnos') }}">
