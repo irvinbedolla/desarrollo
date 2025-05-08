@@ -479,7 +479,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label>Acta de nacimiento</label>
-                                                        <input type="file" name="documentoActa" class="form-control" accept=".pdf, .jpg, .png, .jpeg ">
+                                                        <input type="file" name="documentoINEFrente" class="form-control" accept=".pdf, .jpg, .png, .jpeg ">
                                                         <div class="invalid-feedback">
                                                             La Identificación es obligatoria.
                                                         </div>

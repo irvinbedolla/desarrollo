@@ -34,7 +34,7 @@ use Illuminate\Support\Facades\Auth;
 class TurnosController extends Controller 
 {
     
-    public function index()
+    public function index_turnos()
     {
         $fecha_actual = date('Y-m-d');
         $relacionEloquent = 'roles';
@@ -1079,7 +1079,7 @@ class TurnosController extends Controller
                 'auxiliar'          => 0,
                 'lugar_auxiliar'    => "Recepción",
                 'delegacion'        => $data["sede"],
-                'estatus'           => 'no atendido',
+                'estatus'           => 'Pendiente',
                 'exepcion'          => 'No',
                 'ine'               => $representante["ine"],
                 'representacion'    => $representante["representacion"],
@@ -1127,7 +1127,7 @@ class TurnosController extends Controller
                 'auxiliar'                  => 0,
                 'lugar_auxiliar'            => "Recepción",
                 'delegacion'                => $data["sede"],
-                'estatus'                   => 'no atendido',
+                'estatus'                   => 'Pendiente',
                 'exepcion'                  => 'No',
                 'ine'                       => $data["documentoIne"],
                 'representacion'            => $data["documentoPoder"],
@@ -1265,6 +1265,7 @@ class TurnosController extends Controller
         $solicitudes = Turnos::where('tipo','Ratificación')
         ->join('users','turnos.curp_solicitante','=','users.remember_token')
         ->where('curp_solicitante',$user["remember_token"])
+        ->select('turnos.id','turnos.fecha','turnos.empresa','turnos.trabajador','turnos.telefono','turnos.email','turnos.estatus')
         ->get();
         return view('/solicitudes/misratificaciones',compact('solicitudes'));
     }
@@ -1277,8 +1278,26 @@ class TurnosController extends Controller
     }
 
     public function aceptacion($id){
+        $turno = Turnos::find($id);
+
+        $listado_auxiliares = array();
+        $relacionEloquent = 'roles';
+        $usuariosauxiliares = User::whereHas($relacionEloquent, function ($query) {
+            return $query->where('name', '=', 'Auxiliar');
+        })
+        ->where('delegacion', $turno["delegacion"])
+        ->get();
+        
+        foreach($usuariosauxiliares as $token ){
+            //Validar que solo sea morelia
+            array_push($listado_auxiliares, $token["id"]);
+        }
+        //validar si hay disponibles
+        $random = array_rand($listado_auxiliares);
+
         $aceptar = Turnos::find($id)
-        ->update(['estatus' => 'Aceptado']);
+        ->update( ['estatus' => 'Aceptado'],['auxiliar' => $random["id"]],['lugar_auxiliar' => $random["name"] ] );
+
         return redirect()->route('Ratificacion');
     }
 
@@ -1290,5 +1309,16 @@ class TurnosController extends Controller
         ->update(['observaciones' => $data["observaciones"]]);
 
         return redirect()->route('Ratificacion');
+    }
+
+    public function revisar_ratificaciones(){
+        $id = auth()->user()->id;
+        $user = User::find($id);
+
+        $solicitudes = Turnos::where('tipo','Ratificación')
+        ->where('auxiliar',$user["id"])
+        ->where('estatus','Pendiente')
+        ->get();
+        return view('/solicitudes/indexr',compact('solicitudes'));
     }
 }

@@ -108,6 +108,9 @@
             <a class="nav-link" href="{{ route('solicitudes_pendientes') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Solicitudes Pendientes</span>
             </a>
+            <a class="nav-link" href="{{ route('atender_ratificacion') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Ratificaciones</span>
+            </a>
         @endrole
     @endauth
 

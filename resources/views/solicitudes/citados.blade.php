@@ -113,12 +113,18 @@
                                                 </div>
                                             </div>                                        
 
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Tipo de Vialidad</label>
-                                                    <input type="text" name="vialidad" class="form-control" placeholder="Calle, Avenida " required> 
+                                                    <label for="name">Tipo de Vialidad (*)</label>
+                                                    <select name="vialidad" class="form-control" required>
+                                                        <option value="">SELECCIONE</option>
+                                                        <option value="Calle">CALLE</option>
+                                                        <option value="Avenida">AVENIDA</option>
+                                                        <option value="Calzada">CALZADA</option>
+                                                        <option value="Boulevard">BOULEVARD</option>
+                                                    </select>
                                                     <div class="invalid-feedback">
-                                                        El campo colonia es obligatorio.
+                                                        El campo vialidad es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
@@ -297,7 +303,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div align="center">
                                                 <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar</button>
-                                                <a href="{{ route('solicitudes.aviso'); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Finalizar</a>    
+                                                <a href="{{ route('seer.documentos',$id); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Finalizar</a>    
                                                 </div>
                                         </div>    
                                     </form>

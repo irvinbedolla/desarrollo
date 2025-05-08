@@ -153,34 +153,34 @@
                                             <div id="sexo" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                 <label for="name">Télefono</label>
-                                                <input type="number" name="telefono" class="form-control"> 
+                                                <input type="number" name="telefono" class="form-control" maxlength="10" minlength="10" required> 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="curp" class="col-xs-12 col-sm-12 col-md-2">
+                                            <div id="curp" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">CURP</label>
-                                                    <input type="text" name="curp" class="form-control" maxlength="18" minlength="18" required> 
+                                                    <input type="text" name="curp" class="form-control" maxlength="18" minlength="18"  id="curp_input" oninput="validarInput(this)" required> 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="ine" class="col-xs-12 col-sm-12 col-md-6">
+                                            <div id="ine" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label>*Identificación oficial(PDF,PNG,JPG)</label><br>
-                                                    <input type="file" name="documentoIne" class="form-control" accept=".pdf, jpe, .png, .jpeg">
+                                                    <input type="file" name="documentoIne" class="form-control" accept=".pdf">
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="acta" class="col-xs-12 col-sm-12 col-md-6">
+                                            <div id="acta" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label>Acta constitutiva (Si acude en reprecentación *PDF,PNG,JPG) </label><br>
-                                                    <input type="file" name="documentoPoder" class="form-control" accept=".pdf, jpe, .png, .jpeg">
+                                                    <input type="file" name="documentoPoder" class="form-control" accept=".pdf">
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
                                                     </div>
@@ -254,7 +254,7 @@
                                             <div  class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Documento de la CURP</label>
-                                                    <input type="file" name="documentoCurp" class="form-control" required> 
+                                                    <input type="file" name="documentoCurp" class="form-control" accept=".pdf" required> 
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatorio.
                                                     </div>
@@ -680,6 +680,7 @@
     </div>
 
 @section('scripts')
+    <script src="../public/assets/js/validaciones.js"></script> 
     <script src="public/js/poderes/general.js"></script>
     
 @endsection

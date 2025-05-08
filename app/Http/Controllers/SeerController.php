@@ -1908,10 +1908,7 @@ class SeerController extends Controller
             'horas'                 => 'required',
             'fecha_ingreso'         => 'required',
             'jornada'               => 'required',
-            'documentoINEFrente'    => 'required',
             'documentoCurp'         => 'required',
-            'documentoActa'         => 'required',
-            
         ]);
         
         $data_insert=array(
@@ -1942,9 +1939,8 @@ class SeerController extends Controller
             'horas_semana'         => $data["horas"],
             'fecha_ingreso'        => $data["fecha_ingreso"],
             'jornada'              => $data["jornada"],
+        ); 
 
-        );
-        
         if(isset($data["rfc"])){
             $data_insert["rfc"] =  $data["rfc"];
         }
@@ -1974,53 +1970,40 @@ class SeerController extends Controller
         if(isset($data["seguro"])){
             $data_insert["nss"] =  $data["seguro"];
         }
-       
+
+
+
+        //Voy a insertar en la tabla de solicitante
         SeerSolicitante::create($data_insert);
         
-        // se agregan los documentos
+        // Voy a realizar una busqueda de la tabla general
         $solicitud = SeerPerGeneral::find($data["id"]);
        
-        $identificacion = $data["curp"].".pdf";
+
+        //CURP
+        $identificacion = $data["curp"]."_CURP.pdf";
         $path = Storage::putFileAs(
-            'documentosSolicitud', $request->file('documento'), $identificacion
+            'documentosSolicitud', $request->file('documentoCurp'), $identificacion
+        );
+        //Documento
+        $nombre_acta = $data["curp"]."_Identificacion.pdf";
+        $path = Storage::putFileAs(
+            'documentosSolicitud', $request->file('documentoINEFrente'), $nombre_acta
         );
 
-        $data_update= array(
-            'documento'         => $identificacion
-        );
-    
-       // $solicitud->update($data_update);
-        // se agregan los documentos en el modelo Documentos
         
-        $nombre_ineF = $data["curp"]."_IDENTIFICACION_FENTE.pdf";
-            $path = Storage::putFileAs(
-                'documentosSolicitud', $request->file('documentoINEFrente'), $nombre_ineF
-            );
-        $nombre_ineA = $data["curp"]."_IDENTIFICACION_ATRAS.pdf";
-        $path = Storage::putFileAs(
-            'documentosSolicitud', $request->file('documentoINEAtras'), $nombre_ineA
-        );
-        $nombre_curp = $data["curp"]."_CURP.pdf";
-        $path = Storage::putFileAs(
-            'documentosSolicitud', $request->file('documentoCurp'), $nombre_curp
-        );
-        $nombre_acta = $data["curp"]."_ACTA.pdf";
-        $path = Storage::putFileAs(
-            'documentosSolicitud', $request->file('documentoActa'), $nombre_acta
-        );
+        
         $data_update= array(
-            /*'curp'                  => $data["curp"],*/
-            'documentoINEFrente'    => $nombre_ineF, 
-            'documentoINEAtras'     => $nombre_ineA, 
-            'documentoCurp'         => $nombre_curp, 
-            'documentoActa'         => $nombre_acta
+            'documento'     => $data["documentoINEFrente"],
+            'documentocurp' => $data["documentoCurp"]
         );
-    
+
         $solicitud->update($data_update);
         
+
         //return view('solicitudes.aviso',compact('folio'));
     
-        $estados=Estados::all();
+        //$estados=Estados::all();
         return redirect()->route('agregar_citado', ['id' => $id] ); 
     }
 
@@ -2121,50 +2104,10 @@ class SeerController extends Controller
         return view('solicitudes.documentos',compact('id'));
     }*/
 
-    /*public function guardar_documentos(Request $request){
-        $data = $request->all();
-        //validando información
-        $request->validate([
-            'id'                    => 'required',
-            /*'curp'                  => 'required',*/
-           /* 'documentoINEFrente'    => 'required',
-            'documentoINEAtras'     => 'required',
-            'documentoCurp'         => 'required',
-            'documentoActa'         => 'required',
-        ]);
-
-        $folio = $data["id"];
-        $solicitud = SeerPerGeneral::find($data["id"]);
-        $nombre_ineF = $data["curp"]."_IDENTIFICACION_FENTE.pdf";
-            $path = Storage::putFileAs(
-                'documentosSolicitud', $request->file('documentoINEFrente'), $nombre_ineF
-            );
-        $nombre_ineA = $data["curp"]."_IDENTIFICACION_ATRAS.pdf";
-        $path = Storage::putFileAs(
-            'documentosSolicitud', $request->file('documentoINEAtras'), $nombre_ineA
-        );
-        $nombre_curp = $data["curp"]."_CURP.pdf";
-        $path = Storage::putFileAs(
-            'documentosSolicitud', $request->file('documentoCurp'), $nombre_curp
-        );
-        $nombre_acta = $data["curp"]."_ACTA.pdf";
-        $path = Storage::putFileAs(
-            'documentosSolicitud', $request->file('documentoActa'), $nombre_acta
-        );
-
-
-        $data_update= array(
-            /*'curp'                  => $data["curp"],*/
-           /* 'documentoINEFrente'    => $nombre_ineF, 
-            'documentoINEAtras'     => $nombre_ineA, 
-            'documentoCurp'         => $nombre_curp, 
-            'documentoActa'         => $nombre_acta
-        );
-    
-        $solicitud->update($data_update);
-
-        return view('solicitudes.aviso',compact('folio'));
-    }*/
+    public function guardar_documentos($id){
+        
+        return view('solicitudes.aviso',compact('id'));
+    }
 
     public function solicitudes_pendientes(){
         $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')

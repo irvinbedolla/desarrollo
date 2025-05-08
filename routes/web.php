@@ -83,7 +83,7 @@ use App\Http\Controllers\Controller;
     Route::get('/agrega_citado/{id}',       [SeerController::class, 'vista_citado'])->name('agregar_citado');
     Route::post('/agrega_citado',           [SeerController::class, 'guardar_citado'])->name('seer.citados');
     Route::get('/agrega_documento/{id}',    [SeerController::class, 'vista_documentos'])->name('agregar_documentos');
-    Route::post('/agrega_documentos',       [SeerController::class, 'guardar_documentos'])->name('seer.documentos');
+    Route::get('/agrega_documentos/{id}',   [SeerController::class, 'guardar_documentos'])->name('seer.documentos');
     
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -98,7 +98,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/seer/index',               [SeerController::class, 'index'])->name('seer');
         Route::get('/poderes/index',            [PoderController::class, 'index'])->name('poderes');
         Route::get('/seer/estadistica',         [SeerController::class, 'estadistica'])->name('seer.estadistica');
-        //Route::get('/turnos/index',             [TurnosController::class, 'index'])->name('turnos');
+        Route::get('/turnos/index',             [TurnosController::class, 'index_turnos'])->name('turnos');
         Route::get('/turnos/misturnos',         [TurnosController::class, 'misturnos'])->name('misturnos');
         Route::get('/turnos/estadistica',       [TurnosController::class, 'estadistica'])->name('turno_estadistica');
     //Fin de ruta de los menus
@@ -222,8 +222,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     //Turnos
-        Route::get('/turnos/index',           [TurnosController::class, 'index'])->name('turnos.index');
-        Route::get('/turnos/index',           [TurnosController::class, 'index'])->name('turnos');
+        Route::get('/turnos/index1',           [TurnosController::class, 'index'])->name('turnos.index');
+        //Route::get('/turnos/index',           [TurnosController::class, 'index'])->name('turnos');
         Route::get('/turnos/create',          [TurnosController::class, 'create'])->name('turnos.create');
         Route::get('/turnos/activo/{id}',     [TurnosController::class, 'activo'])->name('turnos.activo');
         Route::get('/turnos/noactivo/{id}',   [TurnosController::class, 'noactivo'])->name('turnos.noactivo');
@@ -239,7 +239,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/turnos/cambio/{id}',     [TurnosController::class, 'cambio'])->name('turnos.cambioexcepcion');
         Route::get('/Verpdf/{id}',            [TurnosController::class, 'VerPDF'])->name('PDFratifi');
         Route::get('/Verpdfc/{id}',           [TurnosController::class, 'VerPDFConvenio'])->name('PDFconvenio');
-        Route::get('turnos/index',            [TurnosController::class, 'index_empresa'])->name('ratificacion');
+        Route::get('turnos/index2',           [TurnosController::class, 'index_empresa'])->name('ratificacion');
         Route::get('turnos/indexr',           [TurnosController::class, 'indexr'])->name('Ratificacion');
         Route::get('turnos/aceptar/{id}',     [TurnosController::class, 'aceptacion'])->name('turno.aceptar');
         Route::post('/turnos/guardar',        [TurnosController::class, 'guardar_rechazo'])->name('rechazar_turnos');
@@ -255,6 +255,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/confirmar_solicitudes',   [SeerController::class, 'solicitud_confirmar'])->name('confirmar_solicitud');
         Route::get('/rechazar_solicitudes',     [SeerController::class, 'rechazar_solicitud'])->name('rechazar_solicitud');
 
+    //Ratificaciones
+        Route::get('/rechazar_solicitudes',     [TurnosController::class, 'revisar_ratificaciones'])->name('atender_ratificacion');
+
+
+    
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);
         Route::resource('/user-management/roles', RoleManagementController::class);
