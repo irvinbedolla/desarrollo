@@ -185,14 +185,13 @@
 </body>
 
 
-    <script src="public/assets/js/calendar.js"></script>
-
     <script src="public/assets/js/jquery.min.js"></script>
     <script src="public/assets/js/popper.min.js"></script>
     <script src="public/assets/js/bootstrap.min.js"></script>
     <script src="public/assets/js/sweetalert.min.js"></script>
     <script src="public/assets/js/select2.min.js"></script>
     <script src="public/assets/js/jquery.nicescroll.js"></script>
+    <script src="public/assets/js/calendar.js"></script>
 
     <!-- Template JS File -->
     <script src="public/assets/js/stisla.js"></script>

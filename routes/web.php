@@ -53,7 +53,7 @@ use App\Http\Controllers\CalendarController;
 
     //Ruta calendario
     Route::get('/calendario', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendario.index');
-    Route::get('/calendario/create', [App\Http\Controllers\CitaController::class, 'create'])->name('citas.citas');
+    Route::get('/citas/eventos', [App\Http\Controllers\CitaController::class, 'eventos'])->name('citas.eventos');
 
     //Rutas fuera del login
     Route::get('/pantalla', function () {

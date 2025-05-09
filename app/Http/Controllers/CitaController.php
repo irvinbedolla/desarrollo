@@ -17,20 +17,19 @@ class CitaController extends Controller
         ]);
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'motive' => 'required|string|max:500',
-            'fecha' => 'required|date|after_or_equal:today',
-            'hora' => 'required|date_format:H:i',
-            'usuario' => 'required|exists:users,id',
-            'estatus' => 'required|in:' . implode(',', Cita::ESTADOS),
-            'tipo' => 'required|in:' . implode(',', Cita::TIPOS)
-        ]);
+    public function eventos() {
+        $citas = Cita::all();
 
-        Cita::create($validated);
-
-        return redirect()->route('citas.create')
-            ->with('success', 'Cita creada exitosamente!');
+        $eventos = [];
+        foreach ($citas as $cita) {
+            $eventos[] = [
+                'id' => $cita->id,
+                'title' => $cita->motivo . ' - ' . $cita->hora->format('H:i'), // Formato 24h
+                'start' => $cita->fecha->format('Y-m-d') . 'T' . $cita->hora->format('H:i:s'), // ISO8601
+                'color' => '#6A0F49', // Color personalizado
+            ];
     }
+
+    return response()->json($eventos);
+}
 }

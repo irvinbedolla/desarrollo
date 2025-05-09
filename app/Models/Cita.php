@@ -24,11 +24,10 @@ class Cita extends Model
     ];
 
     public const ESTADOS = ['pendiente', 'confirmada', 'cancelada'];
-    public const TIPOS = ['solicitud', 'ratificación'];
+    public const TIPOS = ['solicitud', 'ratificacion'];
 
-    // Relación con User
-    public function user()
+    /*public function user()
     {
         return $this->belongsTo(User::class);
-    }
+    }*/
 }
