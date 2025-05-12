@@ -302,7 +302,8 @@
                                             </div>
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12">
-                                            <a class="btn btn-primary" href="{{ route('ratificacion') }}">Regresar</a>
+                                            <a class="btn btn-primary" href="{{ route('Ratificacion') }}">Regresar</a>
+                                            <button type="submit" class="btn btn-primary">Guardar</button>
                                         </div>    
                                     </div>
 
