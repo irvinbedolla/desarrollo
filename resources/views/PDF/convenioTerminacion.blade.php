@@ -12,9 +12,42 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
         <style>
             @page {
-                margin: 0cm;
+                margin: 0px 0px;
+            }
+            body {
+                counter-reset: page;
+                font-family: sans-serif;
             }
 
+            footer {
+                position: fixed; 
+                bottom: -40px; 
+                left: 0; 
+                right: 0;
+                height: 80px;
+                text-align: center;
+                font-size: 12px;
+            }
+
+            .footer-content::after {
+                content: "Página " counter(page) " de " counter(pages);
+            }
+            /*
+            .pagenum:before {
+                content: counter(page);
+            }
+            .pagecount:before {
+                content: counter(pages);
+            }
+            footer {
+                position: fixed; 
+                bottom: -60px; 
+                left: 0px; 
+                right: 0px;
+                height: 50px;
+                text-align: center;
+                font-size: 12px;
+            }*/
             body {
                 margin: 0cm;
                 padding: 0cm;
@@ -47,9 +80,13 @@
     </head>
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
-        <div class="content">
-            <div class="row">
-                <div class="col-lg-12">
+        <footer>
+            <div class="footer-content"></div>
+        </footer>
+        <main>
+            <div class="content">
+                <div class="row">
+                    <div class="col-lg-12">
                             <b><p>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</p>
                             <p>SOLICITUD RATIFICACIÓN DE CONVENIO TERMINACIÓN VOLUNTARIA <br>
                               NÚMERO DE IDENTIFICACIÓN ÚNICO [  ]<br><br>
@@ -99,9 +136,9 @@
                                 &emsp;&emsp;&emsp;a)  Que el presente convenio se celebra con la finalidad de dar por concluida la relación laboral de manera voluntaria para ambas partes , así como el expediente de Conciliación en el que 
                                 se actúa, seguido ante el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, bajo el número de identificación único <b>[NUMERO DE EXPEDIENTE]</b>.<br>
                                 &emsp;&emsp;&emsp;b) Por tanto, las partes al haber llegado a un acuerdo para dirimir el conflicto suscitado, se sujetan al tenor de las siguientes:<br><br>
-                                
+                            </p>    
                                 <center>C L A U S U L A S:</center>
-
+                            <p>
                                 <br><br><b>PRIMERA</b>. Las <b>PARTES</b> han determinado que por así convenir a sus intereses dan por concluida la relación laboral por mutuo acuerdo, conforme a lo estipulado por el artículo 53, 
                                 fracción I, de la Ley Federal del Trabajo.<br> 
                                 <br><b>SEGUNDA</b>. La parte <b>TRABAJADORA</b> manifiesta bajo protesta de decir verdad, que el vínculo laboral lo mantuvo exclusivamente con la parte <b>EMPLEADORA</b>. Por lo anterior, expresa
@@ -171,15 +208,22 @@
                                     <p><center><b>___________________________________<br>
                                                  [CONCILIADOR_NOMBRE_COMPLETO] <br>   
                                                  FUNCIONARIA CONCILIADORA/<br>
-                                                 FUNCIONARIO CONCILIADOR</b></center> </p>                                       
+                                                 FUNCIONARIO CONCILIADOR</b></center> </p>     
+
+                    </div>
                 </div>
             </div>
-        </div>
+        </main>    
         <script type="text/php">
             if (isset($pdf)) {
                 $pdf->page_script('
                     $font = $fontMetrics->get_font("Arial", "normal");
-                    $pdf->text(520, 820, "Página $PAGE_NUM de $PAGE_COUNT", $font, 10);
+                    $size = 10;
+                    $text = "Página " . $PAGE_NUM . " de " . $PAGE_COUNT;
+                    $width = $fontMetrics->get_text_width($text, $font, $size);
+                    $x = 540 - $width;
+                    $y = 820;
+                    $pdf->text($x, $y, $text, $font, $size);
                 ');
             }
         </script>

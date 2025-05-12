@@ -44,6 +44,7 @@
                 background-color: transparent !important;
                 font-family: Arial, Helvetica, sans-serif;
                 font-size: 12px;
+                color: black;
             }
 
             .fondo-membrete {

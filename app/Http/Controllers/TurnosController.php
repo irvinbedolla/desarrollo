@@ -1270,10 +1270,14 @@ class TurnosController extends Controller
 
         if ($solicitud && $solicitud->dias !== null) {
             $dias_descanso = 7 - $solicitud->dias;
-        }   
-        $pdf = \PDF::loadView('PDF/convenioTerminacion', compact('id','solicitud','dias_descanso'))
+        } 
+        $html = view('PDF/convenioTerminacion', compact('id','solicitud','dias_descanso'))->render();
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true);  
+       /* $pdf = \PDF::loadView('PDF/convenioTerminacion', compact('id','solicitud','dias_descanso'))
         ->setPaper('a4', 'portrait')
-        ->setOption('isHtml5ParserEnabled', true);
+        ->setOption('isHtml5ParserEnabled', true);*/
         $nombreArchivo = 'Convenio_terminacion_' . '.pdf';
         //$pdf = PDF::loadHTML($html)->setOption('isHtml5ParserEnabled', true);
         return $pdf->stream($nombreArchivo);                           
