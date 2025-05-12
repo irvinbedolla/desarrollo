@@ -1826,11 +1826,13 @@ class SeerController extends Controller
         $request->validate([
             'nombre'      => 'required',
             'rfc'         => 'required', 
+            'telefono'    => 'required'
         ]);
         
         $data_insert=array(
             'nombre'         =>  $data["nombre"],
             'rfc'            =>  $data["rfc"],
+            'telefono'       =>  $data["telefono"]
         );
        
         PreRegistro::create($data_insert); 

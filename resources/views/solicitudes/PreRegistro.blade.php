@@ -111,6 +111,15 @@
                                                     </div>
                                                 </div>
                                             </div> 
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">Teléfono Celular (*)</label>
+                                                    <input type="text" name="telefono" minlength="10" maxlength="10" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo teléfono es obligatorio.
+                                                    </div>
+                                                </div>   
+                                            </div>
                                         </div> 
                                         <div align="center">
                                             <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color: #CEA845">
@@ -131,5 +140,7 @@
     <script src="../public/assets/js/estadistica/estadistica.js"></script>
     <script src="https://cdn.datatables.net/2.1.5/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.1.5/js/dataTables.bootstrap4.js"></script>
+
+    <script src="../public/assets/js/validaciones.js"></script> 
        
    

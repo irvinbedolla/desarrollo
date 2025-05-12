@@ -10,5 +10,5 @@ class PreRegistro extends Model
     //use HasFactory;
     protected $table = 'pre_registro';
     protected $primaryKey = 'id';
-    protected $fillable = ['nombre','rfc'];
+    protected $fillable = ['nombre','rfc','telefono'];
 }
