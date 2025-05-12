@@ -1254,7 +1254,7 @@ class TurnosController extends Controller
         $solicitud = Turnos::find($id);
         
         $pdf = \PDF::loadView('PDF/ratificacion', compact('id','solicitud'))
-        ->setPaper('letter', 'portrait');
+        ->setPaper('a4', 'portrait');
         $nombreArchivo = 'ratificaion_' . $solicitud->empresa .'.pdf';
        
         return $pdf->stream($nombreArchivo);               
@@ -1272,9 +1272,10 @@ class TurnosController extends Controller
             $dias_descanso = 7 - $solicitud->dias;
         }   
         $pdf = \PDF::loadView('PDF/convenioTerminacion', compact('id','solicitud','dias_descanso'))
-        ->setPaper('letter', 'portrait');
+        ->setPaper('a4', 'portrait')
+        ->setOption('isHtml5ParserEnabled', true);
         $nombreArchivo = 'Convenio_terminacion_' . '.pdf';
-       
+        //$pdf = PDF::loadHTML($html)->setOption('isHtml5ParserEnabled', true);
         return $pdf->stream($nombreArchivo);                           
     }
 
