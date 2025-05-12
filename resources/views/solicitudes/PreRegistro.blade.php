@@ -120,7 +120,7 @@
                                                     </div>
                                                 </div>   
                                             </div>
-                                        </div> 
+                                        </div>
                                         <div align="center">
                                             <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color: #CEA845">
                                                 Continuar

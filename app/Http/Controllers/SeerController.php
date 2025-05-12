@@ -1836,7 +1836,6 @@ class SeerController extends Controller
         );
        
         PreRegistro::create($data_insert); 
-
         return redirect()->away('https://michoacan.cencolab.mx/solicitudes/create?solicitud=2');
     }
     //Fin registro para solicitudes
