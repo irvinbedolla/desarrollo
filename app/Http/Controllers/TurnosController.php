@@ -1347,6 +1347,11 @@ class TurnosController extends Controller
         return view('/solicitudes/concluir',compact('id'));
     }
 
+    public function consultar_ratificaciones($id){
+        $folio = Turnos::find($id);
+        return view('/solicitudes/verratificacion',compact('folio'));
+    }
+    
     public function guardar_manifestacion(Request $request){
         $data = $request->all();
         //Revisar si existe
