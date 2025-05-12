@@ -37,12 +37,20 @@
                                                     <td>{{$solicitud->trabajador}}</td>
                                                     <td>{{$solicitud->estatus}}</td>
                                                     <td><a class="btn btn-primary" href="{{ route('seer.estadistica_consultar', $solicitud->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
-                                                    <td><a class="btn btn-info" href="{{ route('ratificacion_concluir', $solicitud->id) }}" onclick=consultar_estadistica();>Concluir</a></td>
                                                     <td>
-                                                        <a class="btn btn-success" href="{{ route('turno.aceptar', $solicitud->id) }}" onclick=consultar_estadistica();>Aceptar</a>
-                                                        <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $solicitud->id }}">
-                                                            Rechazar
-                                                        </button>
+                                                        @if($solicitud->estatus == "Confirmado")
+                                                            <a class="btn btn-info" href="{{ route('ratificacion_concluir', $solicitud->id) }}" onclick=consultar_estadistica();>Concluir</a>
+                                                        @endif
+                                                        @if($solicitud->estatus == "Concluida Pagos")
+                                                            <a class="btn btn-info" href="{{ route('ratificacion_pagar', $solicitud->id) }}" onclick=consultar_estadistica();>Pagar</a>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if($solicitud->estatus == "Conluida")
+                                                            <a class="btn btn-success" href="{{ route('PDFconvenio', $solicitud->id) }}" onclick=consultar_estadistica(); tarjet="_black">Convenio</a>
+                                                        @elseif($solicitud->estatus == "Confirmado")
+                                                            <a class="btn btn-success" href="{{ route('PDFratifi', $solicitud->id) }}" onclick=consultar_estadistica(); tarjet="_black">Acuse</a>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @endforeach

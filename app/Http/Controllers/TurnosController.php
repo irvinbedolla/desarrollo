@@ -23,6 +23,8 @@ use App\Models\User;
 use App\Models\Turnos;
 use App\Models\TurnoDisponible;
 use App\Models\Poder; 
+use App\Models\Pagos; 
+use App\Models\Concepto; 
 
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
@@ -967,7 +969,7 @@ class TurnosController extends Controller
     public function store_publico(Request $request)
     {
         $data = $request->all();
-
+        //dd($data);
         if(isset($data["folio"])){
             request()->validate([
                 'folio'             => 'required',
@@ -1329,7 +1331,7 @@ class TurnosController extends Controller
 
         $solicitudes = Turnos::where('tipo','Ratificación')
         ->where('auxiliar',$user["id"])
-        ->where('estatus','Confirmado')
+        //->where('estatus','Confirmado')
         ->get();
         return view('/solicitudes/indexauxiliar',compact('solicitudes'));
     }
@@ -1341,13 +1343,65 @@ class TurnosController extends Controller
     public function guardar_manifestacion(Request $request){
         $data = $request->all();
         //dd($data);
+        //Insertar los datos de los pagos
+
+        //Revisar si existe
+        if(isset($data["dias_pagos"])){
+            $conteo = count($data["dias_pagos"]);
+            for($i = 0; $i < $conteo; $i++) {
+                $data_citado = [
+                    'id_solicitud'  => $data["id"],
+                    'fecha'         => $data["dias_pagos"][$i],
+                    'hora'          => $data["hora_pagos"][$i], 
+                    'monto'         => $data["monto_pagos"][$i], 
+                    'descripcion'   => $data["descripcion_pagos"][$i],
+                    'estatus'       => "Pendiente", 
+                ];
+                Pagos::create($data_citado);
+            }
+        }
+        //Regresar error
+        else{
+            return back()->withErrors('Debes agregar por lo menos una fecha de pago.');
+        }
+        if(isset($data["tipo_pago"])){
+            $conteo = count($data["dias_pagos"]);
+            for($i = 0; $i < $conteo; $i++) {
+                $data_citado = [
+                    'id_solicitud'  => $data["id"],
+                    'fecha'         => $data["tipo_pago"][$i],
+                    'hora'          => $data["dia_pago"][$i], 
+                    'monto'         => $data["monto_pago"][$i], 
+                    'descripcion'   => $data["descripcion_pago"][$i],
+                    'estatus'       => "Pendiente", 
+                ];
+                Concepto::create($data_citado);
+            }
+        }
+        //Regresar error
+        else{
+            return back()->withErrors('Debes agregar por lo menos un concepto de pago.');
+        }
+
+        
         $rechazar = Turnos::find($data["id"])
         ->update(['resolucion_primera'  => $data["primera"],
         'resolucion_trabajadores'       => $data["trabajadores"],
         'resolucion_justificacion'      => $data["justificacion"],
         'resolucion_segunda'            => $data["segunda"],
-        'estatus'                       => 'Conluida']);
 
+        'vacaciones_dias'               => $data["vacaciones"],
+        'aguinaldo_dias'                => $data["aguinaldo"],
+        'otros_dias'                    => $data["otros"],
+        'horario'                       => $data["horario"],
+        'comida'                        => $data["comida"],
+        'domicilio'                     => $data["domicilio"],
+
+        'estatus'                       => 'Conluida']);
         return redirect()->route('atender_ratificacion');
+    }
+
+    public function pagar_ratificacion($id){
+        
     }
 }

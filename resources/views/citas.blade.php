@@ -486,7 +486,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Sube tu cuantificación(Opcional)</label>
-                                                    <input type="file" name="cuantificacion" class="form-control" > 
+                                                    <input type="file" name="cuantificacion" class="form-control" accept=".pdf, .jpeg, .png, .jpg"> 
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatorio.
                                                     </div>
