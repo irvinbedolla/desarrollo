@@ -1254,7 +1254,9 @@ class TurnosController extends Controller
         $solicitud = Turnos::find($id);
         
         $pdf = \PDF::loadView('PDF/ratificacion', compact('id','solicitud'))
-        ->setPaper('a4', 'portrait');
+        ->setPaper('a4', 'portrait')
+        ->setOption('isHtml5ParserEnabled', true)
+        ->setOption('isPhpEnabled', true);
         $nombreArchivo = 'ratificaion_' . $solicitud->empresa .'.pdf';
        
         return $pdf->stream($nombreArchivo);               
@@ -1262,25 +1264,17 @@ class TurnosController extends Controller
 //PDF Convenio Ratificación 
     public function VerPDFConvenio($id){
         $solicitud = Turnos::find($id);
+        $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
+        $salario_diario= $solicitud->salario !== null ? $solicitud->salario /30 : null;
 
-        /*$conciliador = SeerPerGeneral::join('users', 'users.id', '=', 'seer_general.user_id')
-        ->where('users.id', '=', $id)
-        ->select('users.id')
-        ->first(); */
+        $html = view('PDF/convenioTerminacion', compact('id', 'solicitud', 'dias_descanso', 'salario_diario'))->render();
 
-        if ($solicitud && $solicitud->dias !== null) {
-            $dias_descanso = 7 - $solicitud->dias;
-        } 
-        $html = view('PDF/convenioTerminacion', compact('id','solicitud','dias_descanso'))->render();
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
-            ->setOption('isHtml5ParserEnabled', true);  
-       /* $pdf = \PDF::loadView('PDF/convenioTerminacion', compact('id','solicitud','dias_descanso'))
-        ->setPaper('a4', 'portrait')
-        ->setOption('isHtml5ParserEnabled', true);*/
-        $nombreArchivo = 'Convenio_terminacion_' . '.pdf';
-        //$pdf = PDF::loadHTML($html)->setOption('isHtml5ParserEnabled', true);
-        return $pdf->stream($nombreArchivo);                           
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); // MUY IMPORTANTE
+
+        return $pdf->stream('Convenio_terminacion.pdf');                   
     }
 
     public function index_empresa(){

@@ -27,10 +27,10 @@
 
             footer {
                 position: fixed; 
-                bottom: -40px; 
+                bottom: -60px; 
                 left: 0; 
                 right: 0;
-                height: 80px;
+                height: 50px;
                 text-align: center;
                 font-size: 12px;
             }
@@ -94,7 +94,14 @@
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
         <footer>
-            <div class="footer-content"></div>
+            <script type="text/php">
+                if (isset($pdf)) {
+                    $font = $fontMetrics->get_font("Arial", "normal");
+                    $size = 10;
+                    $text = "Página " . $PAGE_NUM . " de " . $PAGE_COUNT;
+                    $pdf->text(500, 820, $text, $font, $size);
+                }
+            </script>
         </footer>
         <main>
             <div class="content">
