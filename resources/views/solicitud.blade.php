@@ -18,7 +18,7 @@
                 padding: 1px 10px;
                 font-size: 16px;
                 text-align: center;
-                width: 130px;   /* Establece el ancho fijo del botón */
+                width: 138px;   /* Establece el ancho fijo del botón */
                 height: 50px;  
                 background-color: #CEA845; /* Color de fondo */
                 color: white; /* Color del texto */
@@ -77,14 +77,14 @@
                 <div class="card">   <!-- Inicio Seer -->
                     <div style="display: block; text-align: center;">
                         <a href="{{ route('solicitud.industria', ['tipo_solicitud' =>1]) }}" class="button-link">
-                            SOY <br>TRABAJADOR(a)
+                            SOY <br>TRABAJADOR(A)
                         </a> 
                     </div> 
                 </div>   <!-- fin Seer -->
                 <div class="card">   <!-- Inicio Seer -->
                     <div style="display: block; text-align: center;">
                         <a href="{{ route('solicitud.industria', ['tipo_solicitud' =>2]) }}" class="button-link">
-                            SOY <br>PATRÓN(a)    
+                            SOY <br>PATRÓN(A)    
                         </a>
                     </div>  
                 </div>   <!-- fin Seer -->

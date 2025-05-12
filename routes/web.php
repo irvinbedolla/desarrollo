@@ -69,10 +69,14 @@ use App\Http\Controllers\Controller;
     Route::get('/poder',                [App\Http\Controllers\PoderController::class, 'show'])->name('poder');
     Route::post('/poderes/publico',     [PoderController::class, 'publico'])->name('poderes.publico');
     Route::get('publico',               [HomeController::class, 'publico'])->name('publico');
+    
     //Rutas de citas
     Route::get('citas',                 [TurnosController::class, 'create_publico'])->name('create_cita');
     Route::post('/citas/store_publico', [TurnosController::class, 'store_publico'])->name('turnos.publico');
 
+    //Pre registro de solicitudes
+    Route::get('registro', [SeerController::class, 'RTemportal'])->name('PreRegistro');
+    Route::post('registro_solicitud', [SeerController::class, 'GuardarRTemportal'])->name('guardar_registro_solicitud');
     
     //Solicitudes en línea trabajador
     Route::get('solicitud_trabajador/{tipo_solicitud}',      [SeerController::class, 'trabajador'])->name('solicitud_trabajador');

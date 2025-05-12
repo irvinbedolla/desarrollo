@@ -1263,12 +1263,19 @@ class TurnosController extends Controller
     public function VerPDFConvenio($id){
         $solicitud = Turnos::find($id);
 
-        dd($solicitud);        
-        $pdf = \PDF::loadView('PDF/convenioTerminacion', compact('id','solicitud'))
+        /*$conciliador = SeerPerGeneral::join('users', 'users.id', '=', 'seer_general.user_id')
+        ->where('users.id', '=', $id)
+        ->select('users.id')
+        ->first(); */
+
+        if ($solicitud && $solicitud->dias !== null) {
+            $dias_descanso = 7 - $solicitud->dias;
+        }   
+        $pdf = \PDF::loadView('PDF/convenioTerminacion', compact('id','solicitud','dias_descanso'))
         ->setPaper('letter', 'portrait');
         $nombreArchivo = 'Convenio_terminacion_' . '.pdf';
        
-        return $pdf->stream($nombreArchivo);              
+        return $pdf->stream($nombreArchivo);                           
     }
 
     public function index_empresa(){

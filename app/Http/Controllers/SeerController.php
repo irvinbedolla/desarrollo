@@ -20,6 +20,8 @@ use App\Models\SolicitudRama;
 use App\Models\SolicitudEconomica;
 use App\Models\SeerMotivoSolicitud;
 use App\Models\SeerSolicitante;
+use App\Models\PreRegistro;
+
 
 //Para sacar el Id del usuario
 use Illuminate\Support\Facades\Auth;
@@ -1812,7 +1814,31 @@ class SeerController extends Controller
        // dd($tipo_solicitud);
         return view('solicitudes.tipoIndustria', compact('tipo_solicitud'));
     } 
+    
+    //Pre registro para solicitudes
+    public function RTemportal(){
+        // dd($tipo_solicitud);
+        return view('solicitudes.PreRegistro');
+    }
 
+    public function GuardarRTemportal(Request $request){
+        $data = $request->all();
+        $request->validate([
+            'nombre'      => 'required',
+            'rfc'         => 'required', 
+        ]);
+        
+        $data_insert=array(
+            'nombre'         =>  $data["nombre"],
+            'rfc'            =>  $data["rfc"],
+        );
+       
+        PreRegistro::create($data_insert); 
+
+        return redirect()->away('https://michoacan.cencolab.mx/solicitudes/create?solicitud=2');
+    }
+    //Fin registro para solicitudes
+    
     //Solicitud en línea trabajador
     public function trabajador($tipo_solicitud){  
         if ($tipo_solicitud == "1") {
