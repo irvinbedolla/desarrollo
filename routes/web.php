@@ -266,6 +266,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/ratificaciones/pagos/{id}',    [TurnosController::class, 'pagar_ratificacion'])->name('ratificacion_pagar');
         Route::get('/ratificaciones/pagoA/{id}',    [TurnosController::class, 'pagoA_ratificacion'])->name('ratificacion_pagoA');
         Route::get('/ratificaciones/pagoR/{id}',    [TurnosController::class, 'pagoR_ratificacion'])->name('ratificacion_pagoR');
+        Route::get('ratificaciones/consultar/{id}', [TurnosController::class, 'consultar_ratificaciones'])->name('consultar_ratificacion');
         
     
     Route::name('user-management.')->group(function () {
