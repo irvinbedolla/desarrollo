@@ -46,7 +46,7 @@
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        @if($solicitud->estatus == "Conluida")
+                                                        @if($solicitud->estatus == "Conluida" || $solicitud->estatus == "Concluida Pagos")
                                                             <a class="btn btn-success" href="{{ route('PDFconvenio', $solicitud->id) }}" onclick=consultar_estadistica(); tarjet="_black">Convenio</a>
                                                         @elseif($solicitud->estatus == "Confirmado")
                                                             <a class="btn btn-success" href="{{ route('PDFratifi', $solicitud->id) }}" onclick=consultar_estadistica(); tarjet="_black">Acuse</a>

@@ -1342,9 +1342,6 @@ class TurnosController extends Controller
 
     public function guardar_manifestacion(Request $request){
         $data = $request->all();
-        //dd($data);
-        //Insertar los datos de los pagos
-
         //Revisar si existe
         if(isset($data["dias_pagos"])){
             $conteo = count($data["dias_pagos"]);
@@ -1365,8 +1362,8 @@ class TurnosController extends Controller
             return back()->withErrors('Debes agregar por lo menos una fecha de pago.');
         }
         if(isset($data["tipo_pago"])){
-            $conteo = count($data["dias_pagos"]);
-            for($i = 0; $i < $conteo; $i++) {
+            $cont = count($data["dias_pagos"]);
+            for($i = 0; $i < $cont; $i++) {
                 $data_citado = [
                     'id_solicitud'  => $data["id"],
                     'fecha'         => $data["tipo_pago"][$i],
@@ -1383,25 +1380,49 @@ class TurnosController extends Controller
             return back()->withErrors('Debes agregar por lo menos un concepto de pago.');
         }
 
-        
+        if($conteo >= 2){
+            $estatus = "Concluida Pagos";
+        }
+        else{
+            $estatus = "Conluida";
+        }
+
         $rechazar = Turnos::find($data["id"])
         ->update(['resolucion_primera'  => $data["primera"],
         'resolucion_trabajadores'       => $data["trabajadores"],
         'resolucion_justificacion'      => $data["justificacion"],
         'resolucion_segunda'            => $data["segunda"],
-
         'vacaciones_dias'               => $data["vacaciones"],
         'aguinaldo_dias'                => $data["aguinaldo"],
         'otros_dias'                    => $data["otros"],
         'horario'                       => $data["horario"],
         'comida'                        => $data["comida"],
         'domicilio'                     => $data["domicilio"],
-
-        'estatus'                       => 'Conluida']);
+        'estatus'                       => $estatus]);
         return redirect()->route('atender_ratificacion');
     }
 
     public function pagar_ratificacion($id){
+        //Revisar todos los pagos
+        $pagos = Pagos::where('id_solicitud',$id)->get();
+
+        return view('/solicitudes/pagos',compact('id','pagos'));
+    }
+
+    public function pagoA_ratificacion($id){
         
+        $pagos = Pagos::where('id_solicitud',$id)->get();
+        $rechazar = Pagos::find($id)
+        ->update(['estatus'  => "Pagado"]);
+
+        return view('/solicitudes/pagos',compact('id','pagos'));
+    }
+
+    public function pagoR_ratificacion($id){
+        $pagos = Pagos::where('id_solicitud',$id)->get();
+        $rechazar = Pagos::find($id)
+        ->update(['estatus'  => "No pagado"]);
+
+        return view('/solicitudes/pagos',compact('id','pagos'));
     }
 }
