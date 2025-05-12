@@ -36,7 +36,7 @@
                                                     <td>{{$solicitud->email}}</td>
                                                     <td>{{$solicitud->trabajador}}</td>
                                                     <td>{{$solicitud->estatus}}</td>
-                                                    <td><a class="btn btn-primary" href="{{ route('consultar_ratificacion', $solicitud->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
+                                                    <td><a class="btn btn-primary" href="{{ route('seer.estadistica_consultar', $solicitud->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
                                                     <td>
                                                         <a class="btn btn-success" href="{{ route('turno.aceptar', $solicitud->id) }}" onclick=consultar_estadistica();>Aceptar</a>
                                                         <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $solicitud->id }}">
