@@ -510,9 +510,6 @@
                                                         <option value="Morelia">Morelia</option>
                                                         <option value="Uruapan">Uruapan</option>
                                                         <option value="Zamora">Zamora</option>
-                                                        <option value="Zitácuaro">Zitácuaro</option>
-                                                        <option value="Lázaro Cárdenas">Lázaro Cárdenas</option>
-                                                        <option value="Sahuayo ">Sahuayo </option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         La sede es obligatoria.

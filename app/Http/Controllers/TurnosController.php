@@ -1409,6 +1409,7 @@ class TurnosController extends Controller
     }
      public function editar_ratificaciones(Request $request){
         $data = $request->all();
+        dd($data);
         $id_solicitud =$data['fecha'];
         dd($id_solicitud);
         //$solicitud = Turnos::find($id);
@@ -1418,7 +1419,7 @@ class TurnosController extends Controller
         //Validar 
         request()->validate([
             //General
-            ''                   => 'required|min:18|max:18',
+            'curp'                   => 'required|min:18|max:18',
             'solicitante'           => 'required',
             'estado_solicitante'    => 'required|numeric',
             'mun_solicitante'       => 'required|numeric',
@@ -1430,6 +1431,8 @@ class TurnosController extends Controller
             'notificacion'          => 'required|in:Trabajador,Centro,Ambos',
 
         ], $data);
+
+
         return redirect()->route('Ratificacion');
     }
     
@@ -1480,6 +1483,11 @@ class TurnosController extends Controller
             $estatus = "Conluida";
         }
 
+        //Generar numero de expediente
+        $delegacion = Turnos::find($data["id"]);
+        //dd($delegacion);
+        $expediente = $this->GeneraExpediente($delegacion["delegacion"]);
+
         $rechazar = Turnos::find($data["id"])
         ->update(['resolucion_primera'  => $data["primera"],
         'resolucion_trabajadores'       => $data["trabajadores"],
@@ -1491,7 +1499,9 @@ class TurnosController extends Controller
         'horario'                       => $data["horario"],
         'comida'                        => $data["comida"],
         'domicilio'                     => $data["domicilio"],
+        'NUE'                           => $expediente,
         'estatus'                       => $estatus]);
+        
         return redirect()->route('atender_ratificacion');
     }
 
@@ -1517,5 +1527,26 @@ class TurnosController extends Controller
         ->update(['estatus'  => "No pagado"]);
 
         return view('/solicitudes/pagos',compact('id','pagos'));
+    }
+
+    public function GeneraExpediente($delegacion){
+        $año_actual = date('Y');
+        $id = Turnos::select('id')->orderBy('id', 'desc')->first();
+    
+        if($delegacion == "Morelia"){
+            $del = "MOR";
+        }
+        else if($delegacion == "Uruapan"){
+            $del = "URU";
+        }
+        else if($delegacion == "Zamora"){
+            $del = "ZAM";
+        }
+        $consecutivo = $id["id"]+1;
+        //contar el numero de ceros
+        $numeroConCeros = str_pad($consecutivo, 5, "0", STR_PAD_LEFT);
+        $folio = "RAT/".$del."/".$año_actual."/".$numeroConCeros;
+    
+        return $folio;
     }
 }

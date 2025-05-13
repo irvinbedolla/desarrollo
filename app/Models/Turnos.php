@@ -15,7 +15,8 @@ class Turnos extends Model {
     'trabajador_curp','documentoCurp','tipo_identificacion','documentoidentificacion','fecha_inicio','fecha_termino','categoria','tipo_pago',
     'Aguinaldo','Vacaciones','PrimaVacacional','PagoPTU','Gratificación','PrimaAntigüedad','Otras','Especifique','documentoCuanti','tipo_otros',
     'observaciones','curp_solicitante','salario','primero_empresa','segundo_empresa','nombre_empresa','primero_trabajador','segundo_trabajador',
-    'vacaciones_dias','aguinaldo_dias','otros_dias','horario','comida','domicilio','resolucion_primera','resolucion_trabajadores','resolucion_justificacion','resolucion_segunda']; 
+    'vacaciones_dias','aguinaldo_dias','otros_dias','horario','comida','domicilio','resolucion_primera','resolucion_trabajadores','resolucion_justificacion','resolucion_segunda',
+    'NUE']; 
     
     //método para convertir una cantidad númerica a texto
     public function getMontoTextoAttribute() {
