@@ -34,7 +34,8 @@
             background: url('public/assets/images/pageLoader.gif') 50% 50% no-repeat rgb(249,249,249);
             opacity: .8;
         }
-</style>
+        
+    </style>
 
     @livewireStyles
 
@@ -162,8 +163,8 @@
                 Cita
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <a href="{{ url('/calendario') }}" class="btn btn-info">Ver detalle</a>
             </div>
         </div>
     </div>

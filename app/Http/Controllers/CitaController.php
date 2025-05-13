@@ -22,11 +22,29 @@ class CitaController extends Controller
 
         $eventos = [];
         foreach ($citas as $cita) {
+
+            if ($cita->estatus === 'cancelada') {
+                $color = '#DA0909';
+            } elseif ($cita->estatus === 'pendiente') {
+                $color = '#EAE300';
+            } elseif ($cita->estatus === 'confirmada') {
+                $color = '#00CE1C';
+            } else {
+                $color = '#CCCCCC';
+            }
+
             $eventos[] = [
                 'id' => $cita->id,
-                'title' => $cita->motivo . ' - ' . $cita->hora->format('H:i'), // Formato 24h
-                'start' => $cita->fecha->format('Y-m-d') . 'T' . $cita->hora->format('H:i:s'), // ISO8601
-                'color' => '#6A0F49', // Color personalizado
+                'title' => $cita->motivo,
+                'start' => $cita->fecha->format('Y-m-d') . 'T' . $cita->hora->format('H:i:s'),
+                'extendedProps' => [
+                    'hora' => $cita->hora->format('h:i A'),
+                    'color' => $color,
+                    'fecha' => $cita->fecha->format('d/m/Y'),
+                    'estatus' => $cita->estatus,
+                    'tipo' => $cita->tipo,
+                    'usuario' => $cita->usuario,
+                ]
             ];
     }
 

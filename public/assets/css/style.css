@@ -4177,3 +4177,41 @@ body:not(.sidebar-mini) .sidebar-style-2 .sidebar-menu li.active ul.dropdown-men
 .f-left{
     float: left;
 }
+
+.fc-event-main {
+    padding: 2px;
+    line-height: 1.2;
+    text-align: left;
+}
+.fc-event-main div {
+    margin: 2px 0;
+}
+
+/* Estilos para el contenido del evento */
+.fc-event-content {
+    padding: 3px;
+    line-height: 1.3;
+}
+
+/* Indicador de color */
+.color-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 5px;
+    border: 1px solid #666;
+}
+
+/* Alineación del texto */
+.fc-event-title {
+    font-weight: bold;
+    align-items: right;
+    margin-bottom: 2px;
+}
+
+.fc-event-time {
+    display: flex;
+    align-items: right;
+    font-size: 0.9em;
+}
