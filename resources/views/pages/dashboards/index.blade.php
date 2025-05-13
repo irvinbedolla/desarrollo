@@ -133,7 +133,7 @@
                                             </li>
                                         </ul>
                                         <div class="container">
-                                            <h1>Calendar</h1>
+                                            <h1>Calendario de citas</h1>
                                             <div id="calendar">
                                             </div>
                                             <div class="mt-3 mb-3 text-center">
@@ -199,6 +199,7 @@
     <script src="public/assets/js/sweetalert.min.js"></script>
     <script src="public/assets/js/select2.min.js"></script>
     <script src="public/assets/js/jquery.nicescroll.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/locales-all.min.js"></script>
     <script src="public/assets/js/calendar.js"></script>
 
     <!-- Template JS File -->

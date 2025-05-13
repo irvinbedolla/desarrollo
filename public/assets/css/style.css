@@ -4215,3 +4215,26 @@ body:not(.sidebar-mini) .sidebar-style-2 .sidebar-menu li.active ul.dropdown-men
     align-items: right;
     font-size: 0.9em;
 }
+
+.fc-toolbar-title,
+.fc-col-header-cell-cushion,
+.fc-daygrid-day-number {
+    text-transform: capitalize;
+}
+
+
+.fc-daygrid-day-frame {
+    height: 50px !important;
+    overflow-y: auto !important;
+}
+.fc-daygrid-event-harness {
+    white-space: normal !important;
+}
+
+.fc-daygrid-day-frame {
+    height: 50px !important;
+    overflow-y: auto !important;
+}
+.fc-daygrid-event-harness {
+    white-space: normal !important;
+}
