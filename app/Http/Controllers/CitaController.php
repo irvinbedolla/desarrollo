@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Cita;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\CitasExport;
 
 class CitaController extends Controller
 {
@@ -46,8 +48,14 @@ class CitaController extends Controller
                     'usuario' => $cita->usuario,
                 ]
             ];
+        }
+
+        return response()->json($eventos);
     }
 
-    return response()->json($eventos);
-}
+    public function exportarExcel()
+    {
+        return Excel::download(new CitasExport, 'citas.xlsx');
+    }
+
 }

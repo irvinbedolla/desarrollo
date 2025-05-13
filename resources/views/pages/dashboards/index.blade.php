@@ -136,6 +136,13 @@
                                             <h1>Calendar</h1>
                                             <div id="calendar">
                                             </div>
+                                            <div class="mt-3 mb-3 text-center">
+                                                <form action="{{ url('citas/exportar-excel') }}" method="GET">
+                                                    <button type="submit" class="btn btn-success">
+                                                        <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

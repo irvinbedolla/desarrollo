@@ -13,13 +13,13 @@
   ),
   'diglactic/laravel-breadcrumbs' => 
   array (
-    'providers' => 
-    array (
-      0 => 'Diglactic\\Breadcrumbs\\ServiceProvider',
-    ),
     'aliases' => 
     array (
       'Breadcrumbs' => 'Diglactic\\Breadcrumbs\\Breadcrumbs',
+    ),
+    'providers' => 
+    array (
+      0 => 'Diglactic\\Breadcrumbs\\ServiceProvider',
     ),
   ),
   'laravel/breeze' => 
@@ -70,6 +70,17 @@
     'aliases' => 
     array (
       'Livewire' => 'Livewire\\Livewire',
+    ),
+  ),
+  'maatwebsite/excel' => 
+  array (
+    'aliases' => 
+    array (
+      'Excel' => 'Maatwebsite\\Excel\\Facades\\Excel',
+    ),
+    'providers' => 
+    array (
+      0 => 'Maatwebsite\\Excel\\ExcelServiceProvider',
     ),
   ),
   'nesbot/carbon' => 
