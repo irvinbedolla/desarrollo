@@ -1181,34 +1181,48 @@ class TurnosController extends Controller
 
         //Documentos si cargaron el folio
         if(isset($data["folio"])){
-            //Los documentos ya estan cargados unicamente 
-            $nombre_ine = $representante["nombres"]."".$representante["primer_apellido"]."".$representante["segundo_apellido"]."-".$representante["empresa"]."_IDENTIFICACION.pdf";
-            $ruta_del_archivo = "storage/app/documentos_abogados/$nombre_ine";
-            //dd($ruta_del_archivo);
-            //$documento = Storage::get($ruta_del_archivo);
-            $documento = Storage::disk('abogados')->get($nombre_ine);
-            
-            if(isset($documento)){
-                $path = Storage::putFileAs('documentos_ratificacion', $request->file($documento) , $nombre_ine);
-            }
-            else{
-                dd("no llego");
-            }
-            
-            
-
-            dd("lelgo");
+            $nombre_ine             = $representante["nombres"]."".$representante["primer_apellido"]."".$representante["segundo_apellido"]."-".$representante["empresa"]."_IDENTIFICACION.pdf";
+            $nombre_representación  = $representante["nombres"]."".$representante["primer_apellido"]."".$representante["segundo_apellido"]."-".$representante["empresa"]."_REPRESENTACION.pdf";
         }
         else{
-
+            //Se carga el INE del abogado
+            $nombre_ine = $data["nombre_empresa"]."".$data["primero_empresa"]."".$data["segundo_empresa"]."-".$data["empresa"]."_IDENTIFICACION.pdf";
+            $path = Storage::putFileAs(
+                'documentos_ratificacion', $request->file('documentoIne'), $nombre_ine
+            );
+            
+            //Se carga el Poder del abogado
+            $nombre_representación = $data["nombre_empresa"]."".$data["primero_empresa"]."".$data["segundo_empresa"]."-".$data["empresa"]."_PODER.pdf";
+            $path = Storage::putFileAs(
+                'documentos_ratificacion', $request->file('documentoPoder'), $nombre_representación
+            );
         }
-        $nombre_anexo = $data["nombresAbogadoAlta"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresaAbogadoAlta"]."_ANEXO.pdf";
+        
+        $trabajador_curp = $data["trabajador_curp"].".pdf";
         $path = Storage::putFileAs(
-            'documentos_abogados', $request->file('documentoAnexo'), $nombre_anexo
+            'documentos_ratificacion', $request->file('documentoCurp'), $trabajador_curp
         );
 
+        $trabajador_identificacion  = $data["trabajador_curp"]."_IDENTIFICACION.pdf";
+        $path = Storage::putFileAs(
+            'documentos_ratificacion', $request->file('documentoidentificacion'), $trabajador_identificacion
+        );
+
+        $data_insertar["ine"]                       = $nombre_ine;
+        $data_insertar["representacion"]            = $nombre_representación;   
+        $data_insertar["documentoCurp"]             = $trabajador_curp;
+        $data_insertar["documentoidentificacion"]   = $trabajador_identificacion;  
 
 
+        if(isset($data["cuantificacion"])){
+            $cuantificacion  = $data["trabajador_curp"]."_CUANTIFICACION.pdf";
+            $path = Storage::putFileAs(
+                'documentos_ratificacion', $request->file('cuantificacion'), $cuantificacion
+            );
+            $data_insertar["documentoCuanti"] = $cuantificacion;
+        }
+
+        //Se van insetar todos los datos
         Turnos::create($data_insertar);
 
        
@@ -1379,7 +1393,19 @@ class TurnosController extends Controller
 
     public function consultar_ratificaciones($id){
         $folio = Turnos::find($id);
-        return view('/solicitudes/verratificacion',compact('folio'));
+        //Validar si existe el abogado
+        //dd($folio["curp_solicitante"]);
+
+        $valida = Poder::where('curp',$folio["curp_solicitante"])->get();
+        //dd($valida);
+        if(count($valida) != 0){
+            $ruta_abogado = "../../storage/app/documentos_abogados/";
+        }
+        else{
+            $ruta_abogado = "../../storage/app/documentos_ratificacion/";
+        }
+        
+        return view('/solicitudes/verratificacion',compact('folio','ruta_abogado'));
     }
     
     public function guardar_manifestacion(Request $request){

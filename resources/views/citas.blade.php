@@ -81,7 +81,7 @@
                                         <h3 class="text-center" style="color:black">Genera tu cita para ratificación</h3>
                                     </div>    
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                    <form class="needs-validation novalidate" method="POST" action="{{route('turnos.publico')}}">
+                                    <form class="needs-validation novalidate" method="POST" action="{{route('turnos.publico')}}" enctype="multipart/form-data">
                                         @csrf
                                         <br><br>
                                         <div class="row">
@@ -171,7 +171,7 @@
                                             </div>
                                             <div id="ine" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label>*Identificación oficial(PDF,PNG,JPG)</label><br>
+                                                    <label>*Identificación oficial(PDF)</label><br>
                                                     <input type="file" name="documentoIne" class="form-control" accept=".pdf">
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
@@ -180,7 +180,7 @@
                                             </div>
                                             <div id="acta" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label>Acta constitutiva (Si acude en reprecentación *PDF,PNG,JPG) </label><br>
+                                                    <label>Acta constitutiva (Si acude en reprecentación *PDF) </label><br>
                                                     <input type="file" name="documentoPoder" class="form-control" accept=".pdf">
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
@@ -489,7 +489,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Sube tu cuantificación(Opcional)</label>
-                                                    <input type="file" name="cuantificacion" class="form-control" accept=".pdf, .jpeg, .png, .jpg"> 
+                                                    <input type="file" name="cuantificacion" class="form-control" accept=".pdf"> 
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatorio.
                                                     </div>
