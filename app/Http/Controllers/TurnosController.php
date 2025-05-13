@@ -1294,7 +1294,8 @@ class TurnosController extends Controller
         //->where('delegacion', $data["sede"])->get();
         //return Municipios::where('estado', $id)->get();
     }
-//PDF Acuse de Ratificación
+
+    //PDF Acuse de Ratificación
     public function VerPDF($id){
         $solicitud = Turnos::find($id);
         
@@ -1302,10 +1303,12 @@ class TurnosController extends Controller
         ->setPaper('a4', 'portrait')
         ->setOption('isHtml5ParserEnabled', true)
         ->setOption('isPhpEnabled', true);
+
         $nombreArchivo = 'ratificaion_' . $solicitud->empresa .'.pdf';
        
         return $pdf->stream($nombreArchivo);               
     }
+
 //PDF Convenio Ratificación 
     public function VerPDFConvenio($id){
         $solicitud = Turnos::find($id);
@@ -1317,9 +1320,83 @@ class TurnosController extends Controller
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
-            ->setOption('isPhpEnabled', true); // MUY IMPORTANTE
+            ->setOption('isPhpEnabled', true);
 
         return $pdf->stream('Convenio_terminacion.pdf');                   
+    }
+
+//PDF Acta de multa
+    public function VerPDFMulta($id){
+        $solicitud = Turnos::find($id);
+       
+        $html = view('PDF/ActaMulta', compact('id', 'solicitud'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'multa_' . $solicitud->empresa .'.pdf';
+        return $pdf->stream($nombreArchivo);                  
+    }
+
+//PDF Acta por falta de interés
+    public function VerPDFInteres($id){
+        $solicitud = Turnos::find($id);
+       
+        $html = view('PDF/ActaFaltaInteres', compact('id', 'solicitud'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'falta_de_interes_' . $solicitud->trabajador .'.pdf';
+        return $pdf->stream($nombreArchivo);                  
+    }
+
+//PDF Copnstancia de cumplimiento
+    public function VerPDFCumplimiento($id){
+        $solicitud = Turnos::find($id);
+       
+        $html = view('PDF/ConstanciaCumplimiento', compact('id', 'solicitud'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'constancia_de_cumplimiento_' . $solicitud->trabajador .'.pdf';
+        return $pdf->stream($nombreArchivo);                  
+    }
+
+//PDF Acta de Audiencia
+    public function VerPDFAudiencia($id){
+        $solicitud = Turnos::find($id);
+       
+        $html = view('PDF/ActaAudiencia', compact('id', 'solicitud'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'acta_de_audiencia_' . $solicitud->trabajador .'.pdf';
+        return $pdf->stream($nombreArchivo);                  
+    }
+//PDF Constancia de Incumplimiento
+    public function VerPDFIncumplimiento($id){
+        $solicitud = Turnos::find($id);
+       
+        $html = view('PDF/Incumplimiento', compact('id', 'solicitud'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'constancia_de_incumplimiento_'  .'.pdf';
+        return $pdf->stream($nombreArchivo);                  
     }
 
     public function index_empresa(){

@@ -14,8 +14,11 @@
             @page {
                 margin: 0px 0px;
             }
+            body{
+                padding-top: 85px;
+            }
             main{
-                margin: 120px 50px 100px 50px;
+                margin: 50px 50px 50px 40px; /*Para colocar el texto*/
             }
             header {
                 position: fixed;
@@ -36,11 +39,11 @@
                 text-align: center;
                 font-size: 12px;
             }
-
             .content {
                 font-family: sans-serif;
                 font-size: 12px;
                 text-align: justify;
+                margin-top: 50px;
             }
             .fondo-membrete {
                 position: fixed;
@@ -50,70 +53,6 @@
                 height: 100%;
                 z-index: -1;
             }
-           /* @page {
-                margin: 0px 0px;
-            }
-            body {
-                counter-reset: page;
-                font-family: sans-serif;
-            }
-
-            footer {
-                position: fixed; 
-                bottom: -40px; 
-                left: 0; 
-                right: 0;
-                height: 80px;
-                text-align: center;
-                font-size: 12px;
-            }
-
-            .footer-content::after {
-                content: "Página " counter(page) " de " counter(pages);
-            }
-            /*
-            .pagenum:before {
-                content: counter(page);
-            }
-            .pagecount:before {
-                content: counter(pages);
-            }
-            footer {
-                position: fixed; 
-                bottom: -60px; 
-                left: 0px; 
-                right: 0px;
-                height: 50px;
-                text-align: center;
-                font-size: 12px;
-            }*/
-           /* body {
-                margin: 0cm;
-                padding: 0cm;
-                background-color: transparent !important;
-                font-family: Arial, Helvetica, sans-serif;
-                font-size: 12px;
-            }
-
-            .fondo-membrete {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                z-index: -1;
-            }
-            .content {
-                padding: 3cm 2cm 3cm 2cm;
-                position: relative;*/
-                /*padding: 4cm 2cm 3cm 2cm; /* Deja espacio para encabezado y pie  padding: 100px 50px;*/
-            /*    z-index: 1;
-            }
-            p {
-                line-height: 1.5;
-                text-align: justify;
-            }*/
-  
         </style>
         
     </head>
@@ -131,138 +70,144 @@
         </footer>
         <main>
             <div class="content">
-                <div class="row">
-                    <div class="col-lg-12">
-                            <p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br>
-                              SOLICITUD RATIFICACIÓN DE CONVENIO TERMINACIÓN VOLUNTARIA <br>
-                              NÚMERO DE IDENTIFICACIÓN ÚNICO [  ]<br><br>
-                              SOLICITANTES:<br>
-                              {{ $solicitud->empresa }}<br>
-                              {{ $solicitud->trabajador }}<br>
-                            </b></p>  
-                            <p><b><center>CONVENIO DE CONCILIACIÓN</center></b></p><br>
-                            <p>Con fundamento en los artículos 123, apartado A, fracción XXVII, inciso h) párrafo segundo, de la Constitución Política de los Estados Unidos Mexicanos; 
-                                artículos 33, 53 fracción I y 684-E de la Ley Federal del Trabajo; artículo 20, fracción V y X del Reglamento Interior del Centro de Conciliación Laboral de Michoacán de Ocampo, se celebra el presente convenio por una parte <b>{{ $solicitud->trabajador }}</b> quién en lo 
-                                subsecuente se denominará la parte <b>“TRABAJADORA”</b> y, por otro <b>{{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}</b> 
-                                a quién en lo subsecuente se le denominará la parte <b>“EMPLEADORA”</b>, 
-                                a quienes en lo sucesivo de forma conjunta se les denominará las <b>“PARTES”</b>, quienes se someten y obligan en términos de las siguientes declaraciones y cláusulas:
-                            </p><br>
-                            <p><center>D E C L A R A C I O N E S:</center></p><br>
-                            <p><b>PRIMERA</b>. {{ $solicitud->resolucion_primera }}.  <br></p>
-                            <br><p><b>SEGUNDA</b>. {{ $solicitud->resolucion_segunda }}</p>.  <br>
-                            <br><p><b>TERCERA</b>. Declara la parte <b>TRABAJADORA</b>:<br>
-                                a) Que fue contratada por la parte <b>EMPLEADORA</b> desde el <b>{{ \Carbon\Carbon::parse($solicitud->fecha_inicio)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, para prestar sus servicios como <b>{{ $solicitud->puesto }}</b>, 
-                                puesto en el que se desempeñó 
-                                hasta el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha_termino)->translatedFormat('d \d\e F \d\e\l Y') }}</b>.
-                                <br>
-                                b) Que por el desempeño de sus labores contaba con las siguientes prestaciones:<br>
-                                &emsp;- Salario mensual: <b> SALARIO MENSUAL (SALARIO EN LETRA M.N)</b>. <br>
-                                &emsp;- Días de descanso: <b>{{ $dias_descanso }}</b><br>
-                                &emsp;- Vacaciones: <b>{{ $solicitud->vacaciones_dias }}</b> días al año.<br>
-                                &emsp;- Aguinaldo: <b>{{ $solicitud->aguinaldo_dias }}</b> días al año.<br>
-                                &emsp;- Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>{{ $solicitud->Otras }}</b>.
-                                <br>
-                                c) Que desempeñaba sus actividades laborales en las siguientes condiciones: <br>
-                                &emsp;- Horario: <b>{{ $solicitud->horario }}</b>.<br>
-                                &emsp;- Horario de comida: de <b>{{ $solicitud->comida }}</b> de las instalaciones.<br>
-                                &emsp;- Domicilio donde prestaba sus servicios: <b>{{ $solicitud->domicilio }}</b>.
-                                <br>
-                                <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
-                                d) Que el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> presentó solicitud para solicitar iniciar el procedimiento de conciliación prejudicial ante el Centro de Conciliación Laboral del
-                                 Estado de Michoacán de Ocampo, por motivo de Ratificación De Convenio por concepto de <b>{{ $solicitud->motivo }}</b>.
-                                <br>
-                                e) Que el Centro Estatal, fijó la audiencia de conciliación para el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>.
-                                <br>
-                                <br><b>CUARTA</b>. Declara la parte <b>EMPLEADORA</b>:<br>
-                                &emsp;&emsp;&emsp;a) Que la parte <b>TRABAJADORA</b> fue contratada en los términos señalados en la declaración inmediata anterior. <br>
-                                &emsp;&emsp;&emsp;b) Que con motivo del citatorio de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> emitido por el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, la 
+                <p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br>
+                    SOLICITUD RATIFICACIÓN DE CONVENIO TERMINACIÓN VOLUNTARIA <br>
+                    NÚMERO DE IDENTIFICACIÓN ÚNICO [  ]<br><br>
+                    SOLICITANTES:<br>
+                    {{ $solicitud->empresa }}<br>
+                    {{ $solicitud->trabajador }}<br>
+                </b></p>  
+                <p><b><center>CONVENIO DE CONCILIACIÓN</center></b></p><br>
+                <p>Con fundamento en los artículos 123, apartado A, fracción XXVII, inciso h) párrafo segundo, de la Constitución Política de los Estados Unidos Mexicanos; 
+                    artículos 33, 53 fracción I y 684-E de la Ley Federal del Trabajo; artículo 20, fracción V y X del Reglamento Interior del Centro de Conciliación Laboral de Michoacán de Ocampo, se celebra el presente convenio por una parte <b>{{ $solicitud->trabajador }}</b> quién en lo 
+                    subsecuente se denominará la parte <b>“TRABAJADORA”</b> y, por otro <b>{{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}</b> 
+                    a quién en lo subsecuente se le denominará la parte <b>“EMPLEADORA”</b>, 
+                    a quienes en lo sucesivo de forma conjunta se les denominará las <b>“PARTES”</b>, quienes se someten y obligan en términos de las siguientes declaraciones y cláusulas:
+                </p><br>
+
+                <p><center>D E C L A R A C I O N E S:</center></p><br>
+
+                <p><b>PRIMERA</b>. {{ $solicitud->resolucion_primera }}.</p>  <br><br>
+
+                <p><b>SEGUNDA</b>. {{ $solicitud->resolucion_segunda }}</p>.  <br><br>
+
+                <p><b>TERCERA</b>. Declara la parte <b>TRABAJADORA</b>:<br>
+                        a) Que fue contratada por la parte <b>EMPLEADORA</b> desde el <b>{{ \Carbon\Carbon::parse($solicitud->fecha_inicio)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, para prestar sus servicios como <b>{{ $solicitud->puesto }}</b>, 
+                            puesto en el que se desempeñó 
+                            hasta el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha_termino)->translatedFormat('d \d\e F \d\e\l Y') }}</b>.<br>
+                                    
+                        b) Que por el desempeño de sus labores contaba con las siguientes prestaciones:<br>
+                            - Salario mensual: <b> SALARIO MENSUAL (SALARIO EN LETRA M.N)</b>. <br>
+                            - Días de descanso: <b>{{ $dias_descanso }}</b><br>
+                            - Vacaciones: <b>{{ $solicitud->vacaciones_dias }}</b> días al año.<br>
+                            - Aguinaldo: <b>{{ $solicitud->aguinaldo_dias }}</b> días al año.<br>
+                            - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>{{ $solicitud->Otras }}</b>.<br>
+
+                        c) Que desempeñaba sus actividades laborales en las siguientes condiciones: <br>
+                            - Horario: <b>{{ $solicitud->horario }}</b>.<br>
+                            - Horario de comida: de <b>{{ $solicitud->comida }}</b> de las instalaciones.<br>
+                            - Domicilio donde prestaba sus servicios: <b>{{ $solicitud->domicilio }}</b>.<br>
+
+                        <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
+
+                        d) Que el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> presentó solicitud para solicitar iniciar el procedimiento de conciliación prejudicial ante el Centro de Conciliación Laboral del
+                            Estado de Michoacán de Ocampo, por motivo de Ratificación De Convenio por concepto de <b>{{ $solicitud->motivo }}</b>.<br>
+                            
+                        e) Que el Centro Estatal, fijó la audiencia de conciliación para el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>.<br><br>
+                                    
+                        <b>CUARTA</b>. Declara la parte <b>EMPLEADORA</b>:<br>
+                            a) Que la parte <b>TRABAJADORA</b> fue contratada en los términos señalados en la declaración inmediata anterior. <br>
+                            
+                            b) Que con motivo del citatorio de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> emitido por el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, la 
                                 parte <b>EMPLEADORA</b> 
-                                comparece para desahogar la etapa de conciliación prejudicial conforme al Artículos 33, 53 fracción I y 684-E fracción VI de la Ley Federal del Trabajo.<br>
-                                
-                                <br><b>QUINTA</b>. Declaran las <b>PARTES</b>:<br>  
-                                &emsp;&emsp;&emsp;a)  Que el presente convenio se celebra con la finalidad de dar por concluida la relación laboral de manera voluntaria para ambas partes, así como el expediente de Conciliación en el que 
+                                comparece para desahogar la etapa de conciliación prejudicial conforme al Artículos 33, 53 fracción I y 684-E fracción VI de la Ley Federal del Trabajo.<br><br>
+                                    
+                        <b>QUINTA</b>. Declaran las <b>PARTES</b>:<br>  
+                            a)  Que el presente convenio se celebra con la finalidad de dar por concluida la relación laboral de manera voluntaria para ambas partes, así como el expediente de Conciliación en el que 
                                 se actúa, seguido ante el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, bajo el número de identificación único <b>[NUMERO DE EXPEDIENTE]</b>.<br>
-                                b) Que el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, se celebro la audiencia de conciliación y que, por así convenir a sus intereses, <b>LAS PARTES</b>
+                            b) Que el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, se celebro la audiencia de conciliación y que, por así convenir a sus intereses, <b>LAS PARTES</b>
                                 al haber llegado a un acuerdo para dirimir el conflicto suscitado, se sujetan al tenor de las siguientes:<br><br>
-                            </p>    
-                                <center>C L Á U S U L A S:</center>
-                            <p>
-                                <br><br><b>PRIMERA</b>. Las <b>PARTES</b> han determinado que por así convenir a sus intereses dan por concluida la relación laboral por mutuo acuerdo, conforme a lo estipulado por el artículo 53, 
-                                fracción I, de la Ley Federal del Trabajo.<br> 
-                                <br><b>SEGUNDA</b>. La parte <b>TRABAJADORA</b> manifiesta bajo protesta de decir verdad, que el vínculo laboral lo mantuvo exclusivamente con la parte <b>EMPLEADORA</b>. Por lo anterior, expresa
-                                 que no existió relación laboral alguna con otras personas, incluido el personal que fungía como superior jerárquico en el centro de trabajo donde la parte <b>TRABAJADORA</b> desempeñaba sus labores.<br>
-                                <br><b>TERCERA</b>. La <b>EMPLEADORA</b> otorgará en favor de la <b>TRABAJADORA</b> el pago acordado conforme a las disposiciones de la Ley Federal del Trabajo y respetando los derechos consagrados en el 
-                                mismo ordenamiento legal. <br>
 
-                                Asimismo, la <b>TRABAJADORA</b> manifiesta su entera conformidad y la aceptación de éste, así como la forma en que se obtuvieron los conceptos que se describen en la cláusula <b>QUINTA</b>.<br>
-                                <br><b>CUARTA</b>. La parte <b>TRABAJADORA</b> manifiesta que durante el tiempo que laboró para la parte <b>EMPLEADORA</b>, se cubrió en tiempo y forma el pago su salario; cada una de las 
-                                prestaciones ordinarias y extraordinarias y en especie que conforme a derecho le corresponden, así mismo como cualquier riesgo o accidente de trabajo que haya sufrido. Por lo anterior, 
-                                la parte <b>EMPLEADORA</b> no adeuda pago de concepto alguno.<br><br>
+                    </p>    
+                    
+                    <center>C L Á U S U L A S:</center>
+                    
+                    <p><br><br>
+                        <b>PRIMERA</b>. Las <b>PARTES</b> han determinado que por así convenir a sus intereses dan por concluida la relación laboral por mutuo acuerdo, conforme a lo estipulado por el artículo 53, 
+                            fracción I, de la Ley Federal del Trabajo.<br> <br>
 
-                                <b>QUINTA</b>. La <b>TRABAJADORA</b> recibirá por parte de la <b>EMPLEADORA</b> la cantidad de <b>${{ $solicitud->monto }} {{ ucfirst($solicitud->montoTexto) }} M.N</b>, conforme a 
-                                los siguientes conceptos:<br>
-                                <p>tabla de prestaciones</p>
-                                <p> leyenda del comentario de abajo</p>
-                                <p>Manifestación en caso d q se haya liquidado pero no las cantidades correctas</p>
-                                <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
-                            </p>
-                                <!-- (CONDICIONAL, SOLO CUANDO SEA EN PAGOS DIFERIDOS)  -->
+                        <b>SEGUNDA</b>. La parte <b>TRABAJADORA</b> manifiesta bajo protesta de decir verdad, que el vínculo laboral lo mantuvo exclusivamente con la parte <b>EMPLEADORA</b>. Por lo anterior, expresa
+                            que no existió relación laboral alguna con otras personas, incluido el personal que fungía como superior jerárquico en el centro de trabajo donde la parte <b>TRABAJADORA</b> 
+                            desempeñaba sus labores.<br><br>
+                                    
+                        <b>TERCERA</b>. La <b>EMPLEADORA</b> otorgará en favor de la <b>TRABAJADORA</b> el pago acordado conforme a las disposiciones de la Ley Federal del Trabajo y respetando los derechos consagrados en el 
+                            mismo ordenamiento legal. <br>
+
+                        Asimismo, la <b>TRABAJADORA</b> manifiesta su entera conformidad y la aceptación de éste, así como la forma en que se obtuvieron los conceptos que se describen en la cláusula <b>QUINTA</b>.<br><br>
+                        
+                        <b>CUARTA</b>. La parte <b>TRABAJADORA</b> manifiesta que durante el tiempo que laboró para la parte <b>EMPLEADORA</b>, se cubrió en tiempo y forma el pago su salario; cada una de las 
+                            prestaciones ordinarias y extraordinarias y en especie que conforme a derecho le corresponden, así mismo como cualquier riesgo o accidente de trabajo que haya sufrido. Por lo anterior, 
+                            la parte <b>EMPLEADORA</b> no adeuda pago de concepto alguno.<br><br>
+
+                        <b>QUINTA</b>. La <b>TRABAJADORA</b> recibirá por parte de la <b>EMPLEADORA</b> la cantidad de <b>${{ $solicitud->monto }} {{ ucfirst($solicitud->montoTexto) }} M.N</b>, conforme a 
+                            los siguientes conceptos:<br>
+                            <p>tabla de prestaciones</p>
+                            <p> leyenda del comentario de abajo</p>
+                            <p>Manifestación en caso d q se haya liquidado pero no las cantidades correctas</p>
+
+                            <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
+                    </p><br>
+                            <!-- (CONDICIONAL, SOLO CUANDO SEA EN PAGOS DIFERIDOS)  -->
                                 
-                            <br><p><b>SEXTA</b>. La <b>EMPLEADORA</b> manifiesta en fecha <b>[FECHA DE SOLICITUD]</b> que pagará en <b>[CANTIDAD DE PAGOS]</b> exhibiciones, hasta culminar la cantidad de 
-                                    <b>[$MONTO TOTAL A PAGAR (MONTO TOTAL A PAGAR EN LETRA M.N)]</b>, tal como se muestra:<br>
-                                    <b>[RESOLUCION_PAGOS_DIFERIDOS] TABLA DE PAGOS </b><br> 
-                                    <p>
-                                        <!-- CONDICIONAL EN BASE A LO LLENADO EN FORMULARIO SE AGREGA PAGOS-->
-     
-                                     </p>
-                                </p>
+                    <p><b>SEXTA</b>. La <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará en <b>[CANTIDAD DE PAGOS]</b> exhibiciones, hasta culminar la cantidad de 
+                        <b>[$MONTO TOTAL A PAGAR (MONTO TOTAL A PAGAR EN LETRA M.N)]</b>, tal como se muestra:<br>
+                        <b>[RESOLUCION_PAGOS_DIFERIDOS] TABLA DE PAGOS </b><br> 
+                        
+                        <!-- CONDICIONAL EN BASE A LO LLENADO EN FORMULARIO SE AGREGA PAGOS-->
+                                    
+                    </p>
 
-                                <p>En caso de que la parte <b>EMPLEADORA</b> no cubra el pago de la cantidad estipulada y dentro del plazo determinado en esta cláusula, deberá pagar a la parte <b>TRABAJADORA</b> 
-                                el equivalente a un día de salario diario, el cual se fijará en razón del salario que percibía dicha parte antes de finalizar la relación de trabajo correspondiente a la cantidad de 
-                                <b>$[salario diario]</b>. Esa cantidad se sumará a la previamente pactada, por cada día que transcurra, sin que se dé cabal cumplimiento al convenio, con 
-                                fundamento en el artículo 684-E, fracción XIV, último párrafo, de la Ley Federal del Trabajo.</p><br>
+                    <p>En caso de que la parte <b>EMPLEADORA</b> no cubra el pago de la cantidad estipulada y dentro del plazo determinado en esta cláusula, deberá pagar a la parte <b>TRABAJADORA</b> 
+                        el equivalente a un día de salario diario, el cual se fijará en razón del salario que percibía dicha parte antes de finalizar la relación de trabajo correspondiente a la cantidad de 
+                        <b>$[salario diario]</b>. Esa cantidad se sumará a la previamente pactada, por cada día que transcurra, sin que se dé cabal cumplimiento al convenio, con 
+                        fundamento en el artículo 684-E, fracción XIV, último párrafo, de la Ley Federal del Trabajo.</p><br>
                                
-                                <p>Asimismo, manifiestan estar de acuerdo que de no pagarse el primero de los pagos convenidos en la fecha de su vencimiento, quedará a salvo el derecho de cualquiera de las partes para 
-                                exigir el cumplimiento del pago total de la cantidad pactada ante la autoridad competente, a parte de los días que transcurran de pena convencional. <br>
-                                <br><b>SÉPTIMA</b>. Las <b>PARTES</b> solicitan se apruebe y sancione este convenio, toda vez que se elaboró conforme a las disposiciones aplicables de la Ley Federal del Trabajo como resultado del diálogo
-                                 de la conciliación entre la parte <b>TRABAJADORA</b> y la parte <b>EMPLEADORA</b>. Así mismo, manifiestan que se encuentran conformes con el presente acuerdo por no contener cláusula contraria a la costumbre, 
-                                 a la moral, ni renuncia a los derechos de las <b>PARTES</b>.<br>
-                                <br><b>OCTAVA</b>. Las <b>PARTES</b> manifiestan que es su voluntad ratificar el presente convenio en todas y cada una de sus partes y la aprobación de su contenido, por lo que no se reservan acción legal 
-                                o derecho alguno para ejercitar con posterioridad a la firma del presente convenio.<br>
-                                <br><b>NOVENA</b>. Las <b>PARTES</b> solicitan ante el Centro Estatal de Conciliación Laboral que les sean expedidas las copias autorizadas del convenio, y en el momento en que se haya cumplido totalmente, 
-                                se les expida acta en la que conste el cumplimiento de éste, en términos del artículo 684-E, fracción XIV, primer párrafo, de la Ley Federal del Trabajo.<br>
-                                <br><b>DÉCIMA</b>. Las <b>PARTES</b> manifiestan que en la celebración del presente convenio no existió violencia, mala fe, dolo, lesión o cualquier otro tipo de vicio del consentimiento que pudiera nulificarlo.<br>
-                                <br><b>DÉCIMA PRIMERA</b>. En caso de que no se cumplan los términos de lo convenido en el presente instrumento, las <b>PARTES</b> deberán acudir a los juzgados Laborales del fuero común a efecto de que se realice el 
-                                procedimiento de ejecución que la Ley Federal del Trabajo contempla. <br>
-                                <br>Enteradas las <b>PARTES</b> del alcance legal del presente convenio que se eleva a cosa juzgada, conforme al artículo 684-E fracción XIII, mismo que se firma en SEDE de Michoacán de Ocampo  a los 
-                                <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, ante la fe de <b>[ CONCILIADOR]</b>, funcionario conciliador, quien lo sanciona en este mismo acto. <b>Doy fe</b>.
-                                </p>
-                                    
-                                    <br><br><br><br><br><br>
-                                    <div class="row">
-                                        <div class="col-12 text-center">
-                                            <div style="display: inline-block; margin-right: 50px;">
-                                                <p><center><b>___________________________________<br>
-                                                      {{ $solicitud->trabajador }}  <br>                               
-                                                    LA PARTE TRABAJADORA<br></b></center></p>
-                                            </div>
-                                    
-                                            <div style="display: inline-block;">
-                                               <p><center><b>___________________________________<br>                                 
-                                                    {{ $solicitud->empresa }}<br>
-                                                    LA PARTE EMPLEADORA<br></b></center></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <br><br><br><br>
-                                    <p><center><b>___________________________________<br>
-                                                 [CONCILIADOR_NOMBRE_COMPLETO] <br>   
-                                                 FUNCIONARIA CONCILIADORA/<br>
-                                                 FUNCIONARIO CONCILIADOR</b></center> </p>     
+                    <p>Asimismo, manifiestan estar de acuerdo que de no pagarse el primero de los pagos convenidos en la fecha de su vencimiento, quedará a salvo el derecho de cualquiera de las partes para 
+                        exigir el cumplimiento del pago total de la cantidad pactada ante la autoridad competente, a parte de los días que transcurran de pena convencional. <br><br>
 
+                        <b>SÉPTIMA</b>. Las <b>PARTES</b> solicitan se apruebe y sancione este convenio, toda vez que se elaboró conforme a las disposiciones aplicables de la Ley Federal del Trabajo como resultado del diálogo
+                            de la conciliación entre la parte <b>TRABAJADORA</b> y la parte <b>EMPLEADORA</b>. Así mismo, manifiestan que se encuentran conformes con el presente acuerdo por no contener cláusula contraria a la costumbre, 
+                            a la moral, ni renuncia a los derechos de las <b>PARTES</b>.<br><br>
+                                    
+                        <b>OCTAVA</b>. Las <b>PARTES</b> manifiestan que es su voluntad ratificar el presente convenio en todas y cada una de sus partes y la aprobación de su contenido, por lo que no se reservan acción legal 
+                            o derecho alguno para ejercitar con posterioridad a la firma del presente convenio.<br><br>
+                                    
+                        <b>NOVENA</b>. Las <b>PARTES</b> solicitan ante el Centro Estatal de Conciliación Laboral que les sean expedidas las copias autorizadas del convenio, y en el momento en que se haya cumplido totalmente, 
+                            se les expida acta en la que conste el cumplimiento de éste, en términos del artículo 684-E, fracción XIV, primer párrafo, de la Ley Federal del Trabajo.<br><br>
+                                    
+                        <b>DÉCIMA</b>. Las <b>PARTES</b> manifiestan que en la celebración del presente convenio no existió violencia, mala fe, dolo, lesión o cualquier otro tipo de vicio del consentimiento que pudiera nulificarlo.<br><br>
+                                    
+                        <b>DÉCIMA PRIMERA</b>. En caso de que no se cumplan los términos de lo convenido en el presente instrumento, las <b>PARTES</b> deberán acudir a los juzgados Laborales del fuero común a efecto de que se realice el 
+                            procedimiento de ejecución que la Ley Federal del Trabajo contempla. <br>
+                        <br>Enteradas las <b>PARTES</b> del alcance legal del presente convenio que se eleva a cosa juzgada, conforme al artículo 684-E fracción XIII, mismo que se firma en SEDE de Michoacán de Ocampo  a los 
+                        <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, ante la fe de <b>[ CONCILIADOR]</b>, funcionario conciliador, quien lo sanciona en este mismo acto. <b>Doy fe</b>.
+                    </p>
+                                    
+                    <br><br><br><br><br><br>
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <div style="display: inline-block; margin-right: 50px;">
+                                <p><center><b>___________________________________<br> {{ $solicitud->trabajador }}  <br> LA PARTE TRABAJADORA<br></b></center></p>
+                            </div>
+                                    
+                            <div style="display: inline-block;">
+                                <p><center><b>___________________________________<br> {{ $solicitud->empresa }}<br>LA PARTE EMPLEADORA<br></b></center></p>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                    <br><br><br><br>
+                    <p><center><b>___________________________________<br> [CONCILIADOR_NOMBRE_COMPLETO] <br> FUNCIONARIA CONCILIADORA/<br> FUNCIONARIO CONCILIADOR</b></center> </p>     
             </div>
         </main>    
-        
     </body>
+</html>    

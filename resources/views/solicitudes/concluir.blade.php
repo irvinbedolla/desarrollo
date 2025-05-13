@@ -115,7 +115,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <label for="name">Domicilio de la empresa</label>
                                             <input type="text" name="domicilio" class="form-control" required> 
@@ -139,17 +139,15 @@
                                         </div>
                                     </div>
                                     -->
-                                    <div id="div_pagos_diferidos1">
-                                        <div class="col-xs-12 col-sm-12 col-md-12"><BR>
+                                    <div class="col-xs-12 col-sm-12 col-md-12"></div>
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div id="div_pagos_diferidos1">
                                             <button id="addPago" type="button" class="btn btn-info">Agregar Pago</button>
+                                            <div id="newRowaPago"></div>
                                         </div>
-                                    
-                                        <div id="newRowaPago"></div>
                                     </div>
 
-                                    <div id="div_pagos_diferidos">
-                                    </div>
-
+                                    <div id="div_pagos_diferidos"></div>
 
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
@@ -163,11 +161,8 @@
                                        
                                     <div id="newRow"></div>
 
-
-                                    
-                                    
                                     <div class="col-xs-12 col-sm-12 col-md-12">
-                                        <button type="submit" class="btn btn-primary">Guardar</button>
+                                        <br><button type="submit" class="btn btn-primary">Guardar</button>
                                     </div>
                                     
                                 </div>
@@ -187,15 +182,13 @@
 
 
 @section('scripts')
-    <script src="../public/assets/js/turnos/turnos.js"></script>
+    <script src="../../public/assets/js/turnos/turnos.js"></script>
 
 
     <script>
-
         document.getElementById("div_pagos_diferidos").style.display = "none";
-
-
         $( document ).ready(function() {
+
         // agregar registro
         $("#addRow").click(function () {
             var html = '';
@@ -326,6 +319,7 @@
         $(document).on('click', '#removeRow', function () {
             $(this).closest('#inputFormRow').remove();
         });
+        
     });
     </script>
 @endsection

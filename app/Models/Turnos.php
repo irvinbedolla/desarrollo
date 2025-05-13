@@ -18,9 +18,16 @@ class Turnos extends Model {
     'vacaciones_dias','aguinaldo_dias','otros_dias','horario','comida','domicilio','resolucion_primera','resolucion_trabajadores','resolucion_justificacion','resolucion_segunda',
     'NUE']; 
     
-    //método para convertir una cantidad númerica a texto
-    public function getMontoTextoAttribute() {
-        $montoTexto = new NumeroALetras();
-        return $montoTexto->toWords($this->monto);
-    }
+   //método para convertir una cantidad númerica a texto
+   public function getMontoTextoAttribute(){
+    $formato = new NumeroALetras();
+
+    $cantidad = explode('.', number_format($this->monto, 2, '.', ''));
+    $parteEntera = (int) $cantidad[0];
+    $parteDecimal = $cantidad[1];
+
+    $letras = strtoupper($formato->toWords($parteEntera));
+
+    return "{$letras} PESOS {$parteDecimal}/100";
+}
 }
