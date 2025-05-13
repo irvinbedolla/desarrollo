@@ -1538,12 +1538,9 @@ class TurnosController extends Controller
             $cont = count($data["dias_pagos"]);
             for($i = 0; $i < $cont; $i++) {
                 $data_citado = [
-                    'id_solicitud'  => $data["id"],
-                    'fecha'         => $data["tipo_pago"][$i],
-                    'hora'          => $data["dia_pago"][$i], 
+                    'id_solicitud'  => $data["id"], 
                     'monto'         => $data["monto_pago"][$i], 
-                    'descripcion'   => $data["descripcion_pago"][$i],
-                    'estatus'       => "Pendiente", 
+                    'descripcion'   => $data["tipo_pago"][$i],
                 ];
                 Concepto::create($data_citado);
             }
@@ -1595,7 +1592,7 @@ class TurnosController extends Controller
         $rechazar = Pagos::find($id)
         ->update(['estatus'  => "Pagado"]);
 
-        return view('/solicitudes/pagos',compact('id','pagos'));
+        return redirect()->route('atender_ratificacion');
     }
 
     public function pagoR_ratificacion($id){
@@ -1603,7 +1600,7 @@ class TurnosController extends Controller
         $rechazar = Pagos::find($id)
         ->update(['estatus'  => "No pagado"]);
 
-        return view('/solicitudes/pagos',compact('id','pagos'));
+        return redirect()->route('atender_ratificacion');
     }
 
     public function GeneraExpediente($delegacion){

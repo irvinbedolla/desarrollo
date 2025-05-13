@@ -192,12 +192,12 @@
         // agregar registro
         $("#addRow").click(function () {
             var html = '';
-            html += '<div id="inputFormRow" class="col-xs-12 col-sm-6 col-md-12">';
+            html += '<div id="  " class="col-xs-12 col-sm-6 col-md-12">';
 
                 //TIPO DE PAGO
                 html +='<div class="col-xs-12 col-sm-12 col-md-12">';
                     html +='<div class="form-group">';
-                    html +='<label for="confirm-password">Tipo pago</label>';
+                    html +='<label for="confirm-password">Prestación</label>';
                     html +='<select class="form-control" name="tipo_pago[]" required>';
                     html +='<option value="">Seleccione</option>';
                     html +='<option value="Fisica">Dias de aguinaldo</option>';
@@ -215,14 +215,7 @@
                     html +='</select>';
                     html +='<div class="invalid-feedback">';
                     html +='El tipo de pago es obligatorio.';
-                    html += '</div> </div> </div>'
-
-                    //NOMBRE CITADO
-                    html +='<div class="col-xs-12 col-sm-12 col-md-12">';
-                    html +='<div class="form-group">';
-                    html +='<label for="confirm-password">Dia a pagar</label>';
-                    html +='<input type="date" class="form-control" name="dia_pago[]"  oninput="this.value = this.value.toUpperCase()" required>';
-                    html +='</div> </div>';                                
+                    html += '</div> </div> </div>'                              
                     
                     //DIRECCION
                     html += '<div class="col-xs-12 col-sm-12 col-md-12">';
@@ -232,20 +225,11 @@
                     html += '<div class="invalid-feedback">';
                     html += 'La Dirección es obligatoria.';
                     html += '</div> </div> </div>';
-
-                    //DIRECCION
-                    html += '<div class="col-xs-12 col-sm-12 col-md-12">';
-                    html += '<div class="form-group">';
-                    html += '<label for="password">Descripcion</label>';
-                    html +='<input type="text" class="form-control" name="descripcion_pago[]"  oninput="this.value = this.value.toUpperCase()" required>';
-                    html += '<div class="invalid-feedback">';
-                    html += 'La Dirección es obligatoria.';
-                    html += '</div> </div> </div>';
                     
                 ;                                    
                     
                 html += '<div class="input-group-append">';
-                html += '<button id="removeRow" type="button" class="btn btn-danger">Borrar</button>';
+                html += '<button id="removeRow1" type="button" class="btn btn-danger">Borrar</button>';
                 html += '</div>';
             html += '</div>';
 
@@ -254,7 +238,7 @@
         
         $("#addPago").click(function () {
             var html = '';
-            html += '<div id="inputFormRow" class="col-xs-12 col-sm-6 col-md-12">';
+            html += '<div id="inputFormRow2" class="col-xs-12 col-sm-6 col-md-12">';
 
                 //TIPO DE PAGO
                 html +='<div class="col-xs-12 col-sm-12 col-md-12">';
@@ -297,7 +281,7 @@
                 ;                                    
                     
                 html += '<div class="input-group-append">';
-                html += '<button id="removeRow" type="button" class="btn btn-danger">Borrar</button>';
+                html += '<button id="removeRow2" type="button" class="btn btn-danger">Borrar</button>';
                 html += '</div>';
             html += '</div>';
 
@@ -316,9 +300,10 @@
         });
 
         // borrar registro
-        $(document).on('click', '#removeRow', function () {
-            $(this).closest('#inputFormRow').remove();
+        $(document).on('click', '#removeRow1', function () {
+            $(this).closest('#inputFormRow1').remove();
         });
+
         
     });
     </script>

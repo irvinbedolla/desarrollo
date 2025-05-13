@@ -39,9 +39,13 @@
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        @if($pago->estatus != "Pendiente")
-                                                            <a class="btn btn-info" href="{{ route('ratificacion_concluir', $pago->id) }}" onclick=consultar_estadistica();>PDF</a>
+                                                        @if($pago->estatus == "Pagado")
+                                                            <a class="btn btn-info" href="{{ route('PDFcumplimiento', $pago->id) }}" onclick=consultar_estadistica();>PDF</a>
+                                                        @elseif($pago->estatus == "No pagado")
+                                                            <a class="btn btn-info" href="{{ route('VerPDFIncumplimiento', $pago->id) }}" onclick=consultar_estadistica();>PDF</a>
                                                         @endif
+
+                                                        VerPDFIncumplimiento
                                                     </td>
                                                 </tr>
                                             @endforeach

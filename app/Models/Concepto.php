@@ -10,6 +10,6 @@ class Concepto extends Model
     //use HasFactory;
     protected $table = 'concepto_pago';
     protected $primaryKey = 'id';
-    protected $fillable = ['id_solicitud','fecha','hora','monto','descripcion','estatus'];
+    protected $fillable = ['id_solicitud','descripcion','monto'];
     
 }
