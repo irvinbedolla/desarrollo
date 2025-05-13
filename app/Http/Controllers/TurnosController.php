@@ -31,6 +31,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 
 class TurnosController extends Controller 
@@ -1178,7 +1179,36 @@ class TurnosController extends Controller
         }
         
 
-       
+        //Documentos si cargaron el folio
+        if(isset($data["folio"])){
+            //Los documentos ya estan cargados unicamente 
+            $nombre_ine = $representante["nombres"]."".$representante["primer_apellido"]."".$representante["segundo_apellido"]."-".$representante["empresa"]."_IDENTIFICACION.pdf";
+            $ruta_del_archivo = "storage/app/documentos_abogados/$nombre_ine";
+            //dd($ruta_del_archivo);
+            //$documento = Storage::get($ruta_del_archivo);
+            $documento = Storage::disk('abogados')->get($nombre_ine);
+            
+            if(isset($documento)){
+                $path = Storage::putFileAs('documentos_ratificacion', $request->file($documento) , $nombre_ine);
+            }
+            else{
+                dd("no llego");
+            }
+            
+            
+
+            dd("lelgo");
+        }
+        else{
+
+        }
+        $nombre_anexo = $data["nombresAbogadoAlta"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresaAbogadoAlta"]."_ANEXO.pdf";
+        $path = Storage::putFileAs(
+            'documentos_abogados', $request->file('documentoAnexo'), $nombre_anexo
+        );
+
+
+
         Turnos::create($data_insertar);
 
        
@@ -1190,7 +1220,8 @@ class TurnosController extends Controller
                 'email'             => $email,
                 'delegacion'        => $data["sede"],
                 'type'              => "Seer",
-                'remember_token'    => $curp
+                'remember_token'    => $curp,
+                'profile_photo_path'=> $curp
             ); 
             
             //Hacemos un hash del campo que tiene el password

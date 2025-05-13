@@ -107,7 +107,7 @@
                                             <div id="empresa" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">*Nombre de la Empresa o Patrón</label>
-                                                    <input type="text" name="empresa" class="form-control"> 
+                                                    <input type="text" name="empresa" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
                                                     </div>
@@ -116,7 +116,7 @@
                                             <div id="primero" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Primer apellido</label>
-                                                    <input type="text" name="primero_empresa" class="form-control" > 
+                                                    <input type="text" name="primero_empresa" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
@@ -125,7 +125,7 @@
                                             <div id="segundo" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Segundo apellido</label>
-                                                    <input type="text" name="segundo_empresa" class="form-control" > 
+                                                    <input type="text" name="segundo_empresa" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
@@ -134,7 +134,7 @@
                                             <div  id="nombre" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Nombre(s)</label>
-                                                    <input type="text" name="nombre_empresa" class="form-control" > 
+                                                    <input type="text" name="nombre_empresa" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
                                                     </div>
@@ -153,7 +153,7 @@
                                             <div id="sexo" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                 <label for="name">Télefono</label>
-                                                <input type="text" name="telefono" class="form-control" maxlength="10" minlength="10" required> 
+                                                <input type="text" name="telefono" class="form-control" maxlength="10" minlength="10" > 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
@@ -162,7 +162,8 @@
                                             <div id="curp" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">CURP</label>
-                                                    <input type="text" name="curp" class="form-control" maxlength="18" minlength="18"  id="curp_input" oninput="validarInput(this)" required> 
+                                                    <input type="text" name="curp" class="form-control" maxlength="18" minlength="18"  id="curp_input" oninput="validarInput(this)" 
+                                                    oninput="this.value = this.value.toUpperCase()" > 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
@@ -196,7 +197,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Primer apellido</label>
-                                                    <input type="text" name="primero_trabajador" class="form-control" required> 
+                                                    <input type="text" name="primero_trabajador" class="form-control" oninput="this.value = this.value.toUpperCase()"  required> 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
@@ -205,7 +206,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Segundo apellido</label>
-                                                    <input type="text" name="segundo_trabajador" class="form-control" required> 
+                                                    <input type="text" name="segundo_trabajador" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
@@ -214,7 +215,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Nombre(s)</label>
-                                                    <input type="text" name="trabajador" class="form-control" required> 
+                                                    <input type="text" name="trabajador" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
                                                     </div>
@@ -245,7 +246,7 @@
                                             <div i class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
                                                     <label for="name">CURP</label>
-                                                    <input type="text" name="trabajador_curp" class="form-control" maxlength="18" minlength="18" required> 
+                                                    <input type="text" name="trabajador_curp" class="form-control" maxlength="18" minlength="18" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatorio.
                                                     </div>
@@ -476,6 +477,8 @@
                                                         <option value="Efectivo">Efectivo</option>
                                                         <option value="Transferencia">Transferencia</option>
                                                         <option value="Cheque">Cheque</option>
+                                                        <option value="Cheque Electronio">Cheque Electronio</option>
+                                                        <option value="Orden de Pago">Orden de Pago</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatorio.
@@ -630,6 +633,7 @@
                 document.getElementById("sexo").style.display = "none";
                 document.getElementById("ine").style.display = "none";
                 document.getElementById("acta").style.display = "none";
+                document.getElementById("curp").style.display = "none";
             }
             else{
                 document.getElementById("folio").style.display = "none";
@@ -641,6 +645,7 @@
                 document.getElementById("sexo").style.display = "block";
                 document.getElementById("ine").style.display = "block";
                 document.getElementById("acta").style.display = "block";
+                document.getElementById("curp").style.display = "block";
             }
         }
 

@@ -56,6 +56,12 @@ return [
             'throw' => false,
         ],
 
+        'abogados' => [
+            'driver' => 'local',
+            'root' => storage_path('app/documentos_abogados'),
+            //'url' => env('APP_URL').'/fotos-de-usuarios',
+            'visibility' => 'public',
+        ],
     ],
 
     /*

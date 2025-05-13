@@ -36,7 +36,7 @@
                                                     <td>{{$solicitud->email}}</td>
                                                     <td>{{$solicitud->trabajador}}</td>
                                                     <td>{{$solicitud->estatus}}</td>
-                                                    <td><a class="btn btn-primary" href="{{ route('seer.estadistica_consultar', $solicitud->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
+                                                    <td><a class="btn btn-primary" href="{{ route('consultar_ratificacion', $solicitud->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
                                                     <td>
                                                         @if($solicitud->estatus == "Confirmado")
                                                             <a class="btn btn-info" href="{{ route('ratificacion_concluir', $solicitud->id) }}" onclick=consultar_estadistica();>Concluir</a>
