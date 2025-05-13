@@ -1407,6 +1407,31 @@ class TurnosController extends Controller
         
         return view('/solicitudes/verratificacion',compact('folio','ruta_abogado'));
     }
+     public function editar_ratificaciones(Request $request){
+        $data = $request->all();
+        $id_solicitud =$data['fecha'];
+        dd($id_solicitud);
+        //$solicitud = Turnos::find($id);
+        
+
+
+        //Validar 
+        request()->validate([
+            //General
+            ''                   => 'required|min:18|max:18',
+            'solicitante'           => 'required',
+            'estado_solicitante'    => 'required|numeric',
+            'mun_solicitante'       => 'required|numeric',
+            'actividad_economica'   => 'required',
+            'conciliador_id'        => 'required|numeric',
+
+            'sexo'                  => 'required|in:H,M',
+            'motivo'                => 'required|in:Despido,Pago de prestaciones,Recision de la relación laboral,Derecho de preferencia,Derecho de antiguedad,Derecho de ascesnso,Terminación voluntaria de relación laboral',
+            'notificacion'          => 'required|in:Trabajador,Centro,Ambos',
+
+        ], $data);
+        return redirect()->route('Ratificacion');
+    }
     
     public function guardar_manifestacion(Request $request){
         $data = $request->all();
