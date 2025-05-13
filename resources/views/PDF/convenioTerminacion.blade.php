@@ -53,6 +53,11 @@
                 height: 100%;
                 z-index: -1;
             }
+            .sangria {
+                margin-left: 20px;
+                text-indent: -15px; 
+                padding-left: 15px; 
+            }
         </style>
         
     </head>
@@ -77,7 +82,7 @@
                     {{ $solicitud->empresa }}<br>
                     {{ $solicitud->trabajador }}<br>
                 </b></p>  
-                <p><b><center>CONVENIO DE CONCILIACIÓN</center></b></p><br>
+                <p><center><b>CONVENIO DE CONCILIACIÓN</b></center></p><br>
                 <p>Con fundamento en los artículos 123, apartado A, fracción XXVII, inciso h) párrafo segundo, de la Constitución Política de los Estados Unidos Mexicanos; 
                     artículos 33, 53 fracción I y 684-E de la Ley Federal del Trabajo; artículo 20, fracción V y X del Reglamento Interior del Centro de Conciliación Laboral de Michoacán de Ocampo, se celebra el presente convenio por una parte <b>{{ $solicitud->trabajador }}</b> quién en lo 
                     subsecuente se denominará la parte <b>“TRABAJADORA”</b> y, por otro <b>{{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}</b> 
@@ -85,52 +90,62 @@
                     a quienes en lo sucesivo de forma conjunta se les denominará las <b>“PARTES”</b>, quienes se someten y obligan en términos de las siguientes declaraciones y cláusulas:
                 </p><br>
 
-                <p><center>D E C L A R A C I O N E S:</center></p><br>
+                <p><center><b>D E C L A R A C I O N E S:</b></center></p><br>
 
                 <p><b>PRIMERA</b>. {{ $solicitud->resolucion_primera }}.</p>  <br><br>
 
                 <p><b>SEGUNDA</b>. {{ $solicitud->resolucion_segunda }}</p>.  <br><br>
 
-                <p><b>TERCERA</b>. Declara la parte <b>TRABAJADORA</b>:<br>
+                <b>TERCERA</b>. Declara la parte <b>TRABAJADORA</b>:
+                    <p class="sangria">
                         a) Que fue contratada por la parte <b>EMPLEADORA</b> desde el <b>{{ \Carbon\Carbon::parse($solicitud->fecha_inicio)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, para prestar sus servicios como <b>{{ $solicitud->puesto }}</b>, 
                             puesto en el que se desempeñó 
-                            hasta el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha_termino)->translatedFormat('d \d\e F \d\e\l Y') }}</b>.<br>
-                                    
+                            hasta el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha_termino)->translatedFormat('d \d\e F \d\e\l Y') }}</b>.
+                    </p>
+                    <p class="sangria">                
                         b) Que por el desempeño de sus labores contaba con las siguientes prestaciones:<br>
                             - Salario mensual: <b> SALARIO MENSUAL (SALARIO EN LETRA M.N)</b>. <br>
                             - Días de descanso: <b>{{ $dias_descanso }}</b><br>
                             - Vacaciones: <b>{{ $solicitud->vacaciones_dias }}</b> días al año.<br>
                             - Aguinaldo: <b>{{ $solicitud->aguinaldo_dias }}</b> días al año.<br>
-                            - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>{{ $solicitud->Otras }}</b>.<br>
-
+                            - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>{{ $solicitud->Otras }}</b>.
+                    </p>
+                    <p class="sangria">
                         c) Que desempeñaba sus actividades laborales en las siguientes condiciones: <br>
                             - Horario: <b>{{ $solicitud->horario }}</b>.<br>
                             - Horario de comida: de <b>{{ $solicitud->comida }}</b> de las instalaciones.<br>
-                            - Domicilio donde prestaba sus servicios: <b>{{ $solicitud->domicilio }}</b>.<br>
-
+                            - Domicilio donde prestaba sus servicios: <b>{{ $solicitud->domicilio }}</b>.
+                    </p>
                         <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
-
+                    <p class="sangria">
                         d) Que el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> presentó solicitud para solicitar iniciar el procedimiento de conciliación prejudicial ante el Centro de Conciliación Laboral del
-                            Estado de Michoacán de Ocampo, por motivo de Ratificación De Convenio por concepto de <b>{{ $solicitud->motivo }}</b>.<br>
-                            
-                        e) Que el Centro Estatal, fijó la audiencia de conciliación para el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>.<br><br>
-                                    
-                        <b>CUARTA</b>. Declara la parte <b>EMPLEADORA</b>:<br>
-                            a) Que la parte <b>TRABAJADORA</b> fue contratada en los términos señalados en la declaración inmediata anterior. <br>
-                            
+                            Estado de Michoacán de Ocampo, por motivo de Ratificación De Convenio por concepto de <b>{{ $solicitud->motivo }}</b>.
+                    </p>
+                    <p class="sangria">     
+                        e) Que el Centro Estatal, fijó la audiencia de conciliación para el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>.
+                    </p>  
+
+                    <b>CUARTA</b>. Declara la parte <b>EMPLEADORA</b>:
+                        <p class="sangria">
+                            a) Que la parte <b>TRABAJADORA</b> fue contratada en los términos señalados en la declaración inmediata anterior. 
+                        </p>
+                        <p class="sangria">
                             b) Que con motivo del citatorio de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> emitido por el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, la 
                                 parte <b>EMPLEADORA</b> 
-                                comparece para desahogar la etapa de conciliación prejudicial conforme al Artículos 33, 53 fracción I y 684-E fracción VI de la Ley Federal del Trabajo.<br><br>
-                                    
-                        <b>QUINTA</b>. Declaran las <b>PARTES</b>:<br>  
+                                comparece para desahogar la etapa de conciliación prejudicial conforme al Artículos 33, 53 fracción I y 684-E fracción VI de la Ley Federal del Trabajo.
+                        </p> 
+                                   
+                    <b>QUINTA</b>. Declaran las <b>PARTES</b>:  
+                        <p class="sangria">
                             a)  Que el presente convenio se celebra con la finalidad de dar por concluida la relación laboral de manera voluntaria para ambas partes, así como el expediente de Conciliación en el que 
-                                se actúa, seguido ante el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, bajo el número de identificación único <b>[NUMERO DE EXPEDIENTE]</b>.<br>
+                                se actúa, seguido ante el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, bajo el número de identificación único <b>[NUMERO DE EXPEDIENTE]</b>.
+                        </p>
+                        <p class="sangria">        
                             b) Que el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, se celebro la audiencia de conciliación y que, por así convenir a sus intereses, <b>LAS PARTES</b>
-                                al haber llegado a un acuerdo para dirimir el conflicto suscitado, se sujetan al tenor de las siguientes:<br><br>
-
-                    </p>    
+                                al haber llegado a un acuerdo para dirimir el conflicto suscitado, se sujetan al tenor de las siguientes:
+                        </p>   
                     
-                    <center>C L Á U S U L A S:</center>
+                    <center><b>C L Á U S U L A S:</b></center>
                     
                     <p><br><br>
                         <b>PRIMERA</b>. Las <b>PARTES</b> han determinado que por así convenir a sus intereses dan por concluida la relación laboral por mutuo acuerdo, conforme a lo estipulado por el artículo 53, 
