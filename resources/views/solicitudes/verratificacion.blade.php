@@ -114,8 +114,8 @@
                                         <div class="form-group">
                                             <label for="email">Sexo</label>
                                             <select class="form-control" name="sexo" required>
-                                                <option value="Diario" @php if($folio->sexo === "H") echo "selected"  @endphp>Hombre</option>
-                                                <option value="Semanal" @php if($folio->sexo === "M") echo "selected"  @endphp>Mujer</option>
+                                                <option value="H" @php if($folio->sexo === "H") echo "selected"  @endphp>Hombre</option>
+                                                <option value="M" @php if($folio->sexo === "M") echo "selected"  @endphp>Mujer</option>
                                             </select>
                                         </div>
                                     </div>
