@@ -563,6 +563,8 @@
 
 @section('scripts')
     <script src="public/assets/js/poderes/general.js"></script>
+    <script src="public/assets/js/validaciones.js"></script> 
+    <script src="public/assets/js/poderes/general.js"></script>
 @endsection
 
 
@@ -680,9 +682,3 @@
         <div>.</div>
         <div class="loader"></div>
     </div>
-
-@section('scripts')
-    <script src="../public/assets/js/validaciones.js"></script> 
-    <script src="public/js/poderes/general.js"></script>
-    
-@endsection

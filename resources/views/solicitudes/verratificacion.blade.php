@@ -233,16 +233,17 @@
                                         <div class="form-group">
                                             <label for="email">Motivo de la conciliación</label>
                                             <select class="form-control" id="motivo" name="motivo" required>
+                                                <option value="">Seleccione</option>
                                                 <option value="Pago de prestaciones" @php if($folio->motivo === "Pago de prestaciones") echo "selected"  @endphp>Pago de prestaciones</option>
                                                 <option value="Terminación voluntaria de la relación de trabajo" @php if($folio->motivo === "Terminación voluntaria de la relación de trabajo") echo "selected"  @endphp>Terminación voluntaria de la relación de trabajo</option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div id="motivo_pago" class="col-xs-12 col-sm-12 col-md-2" style="display:none">
+                                    <div id="motivo_pago" class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
                                                     <label for="name">* Selecciona las casillas correspondientes</label>
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="Aguinaldo">
+                                                        <input class="form-check-input" type="checkbox" name="Aguinaldo" @php if($folio->Aguinaldo == 1) echo "checked" @endphp >
                                                         <label class="form-check-label" for="flexCheckDefault">
                                                         Aguinaldo
                                                         </label>

@@ -1148,36 +1148,36 @@ class TurnosController extends Controller
 
         //Variables opcionales
         if(isset($data["Aguinaldo"])){
-            $data_insert["Aguinaldo"] =  "Si";
+            $data_insertar["Aguinaldo"] =  1;
         }
         if(isset($data["Vacaciones"])){
-            $data_insert["Vacaciones"] =  "1";
+            $data_insertar["Vacaciones"] =  1;
         }
         if(isset($data["PrimaVacacional"])){
-            $data_insert["PrimaVacacional"] =  $data["PrimaVacacional"];
+            $data_insertar["PrimaVacacional"] = 1;
         }
         if(isset($data["PagoPTU"])){
-            $data_insert["PagoPTU"] =  $data["PagoPTU"];
+            $data_insertar["PagoPTU"] =  1;
         }
         if(isset($data["Gratificación"])){
-            $data_insert["Gratificación"] =  $data["Gratificación"];
+            $data_insertar["Gratificación"] =  1;
         }
         if(isset($data["PrimaAntigüedad"])){
-            $data_insert["PrimaAntigüedad"] =  $data["PrimaAntigüedad"];
+            $data_insertar["PrimaAntigüedad"] =  1;
         }
         if(isset($data["Otras"])){
-            $data_insert["Otras"] =  $data["Otras"];
+            $data_insertar["Otras"] =  1;
         }
         if(isset($data["Especifique"])){
-            $data_insert["Especifique"] =  $data["Especifique"];
+            $data_insertar["Especifique"] =  $data["Especifique"];
         }
         if(isset($data["cuantificacion"])){
-            $data_insert["cuantificacion"] =  $data["cuantificacion"];
+            $data_insertar["cuantificacion"] =  $data["cuantificacion"];
         }
         if(isset($data["tipo_otros"])){
-            $data_insert["tipo_otros"] =  $data["tipo_otros"];
+            $data_insertar["tipo_otros"] =  $data["tipo_otros"];
         }
-        
+        //dd($data_insertar);
 
         //Documentos si cargaron el folio
         if(isset($data["folio"])){
@@ -1404,8 +1404,8 @@ class TurnosController extends Controller
         $user = User::find($id);
 
         $solicitudes = Turnos::where('tipo','Ratificación')
-        ->join('users','turnos.curp_solicitante','=','users.remember_token')
-        ->where('curp_solicitante',$user["remember_token"])
+        ->join('users','turnos.curp_solicitante','=','users.profile_photo_path')
+        ->where('curp_solicitante',$user["profile_photo_path"])
         ->select('turnos.id','turnos.fecha','turnos.empresa','turnos.trabajador','turnos.telefono','turnos.email','turnos.estatus')
         ->get();
         return view('/solicitudes/misratificaciones',compact('solicitudes'));
@@ -1471,7 +1471,7 @@ class TurnosController extends Controller
     public function consultar_ratificaciones($id){
         $folio = Turnos::find($id);
         //Validar si existe el abogado
-        //dd($folio["curp_solicitante"]);
+        //dd($folio);
 
         $valida = Poder::where('curp',$folio["curp_solicitante"])->get();
         //dd($valida);
@@ -1484,49 +1484,39 @@ class TurnosController extends Controller
         
         return view('/solicitudes/verratificacion',compact('folio','ruta_abogado'));
     }
-     public function editar_ratificaciones(Request $request){
+
+    public function editar_ratificaciones(Request $request){
         $data = $request->all();
-        dd($data);
-        $id_solicitud =$data['fecha'];
+        //dd($data);
         $solicitud = Turnos::find($id);
     
-        //Validar 
-        $request->validate([
-                'empresa'           => 'required',
-                'primero_empresa'   => 'required',
-                'segundo_empresa'   => 'required',
-                'nombre_empresa'    => 'required',
-                'curp'              => 'required',
-                'email'             => 'required',
-                'telefono'          => 'required',
-                'documentoIne'      => 'required',
-                'documentoPoder'    => 'required',
-                'primero_trabajador'=> 'required',
-                'segundo_trabajador'=> 'required',
-                'trabajador'        => 'required',
-                'trabajador_edad'   => 'required',
-                'trabajador_sexo'   => 'required',
-                'trabajador_curp'   => 'required',
-                'documentoCurp'     => 'required',
-                'tipo_identificacion'=> 'required',
-                'documentoidentificacion'=> 'required',
-                'fecha_inicio'      => 'required',
-                'fecha_termino'     => 'required',
-                'categoria'         => 'required',
-                'monto'             => 'required',
-                'frecuencia'        => 'required',
-                'tipo_pago'         => 'required',
-                'sede'              => 'required',
-                'dias'              => 'required',
-                'hora'              => 'required',
-                'JLCA'              => 'required',
-                'motivo'            => 'required',
-                'salario'           => 'required'
-            ], $data);
 
-        $data_insert=array(
-
-        );
+        //Validar para cada documento
+        
+        //Validar si existe el documnento nuevo
+        if(isset($data["documentoIne"])){
+            $nombre_ine = $data["nombres"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresa"]."_IDENTIFICACION.pdf";
+            $path = Storage::putFileAs(
+                'documentos_ratificacion', $request->file('documentoIne'), $nombre_ine
+            );
+        }
+        
+        //Agregar todos los campos de la tabla turnos
+        $data_update = Turnos::find($data["id"])
+        ->update([
+            'resolucion_primera'            => $data["primera"],
+            'resolucion_trabajadores'       => $data["trabajadores"],
+            'resolucion_justificacion'      => $data["justificacion"],
+            'resolucion_segunda'            => $data["segunda"],
+            'vacaciones_dias'               => $data["vacaciones"],
+            'aguinaldo_dias'                => $data["aguinaldo"],
+            'otros_dias'                    => $data["otros"],
+            'horario'                       => $data["horario"],
+            'comida'                        => $data["comida"],
+            'domicilio'                     => $data["domicilio"],
+            'NUE'                           => $expediente,
+            'estatus'                       => $estatus
+        ]);
 
 
         return redirect()->route('Ratificacion');
