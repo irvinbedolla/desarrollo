@@ -1148,10 +1148,10 @@ class TurnosController extends Controller
 
         //Variables opcionales
         if(isset($data["Aguinaldo"])){
-            $data_insert["Aguinaldo"] =  $data["Aguinaldo"];
+            $data_insert["Aguinaldo"] =  "Si";
         }
         if(isset($data["Vacaciones"])){
-            $data_insert["Vacaciones"] =  $data["Vacaciones"];
+            $data_insert["Vacaciones"] =  "1";
         }
         if(isset($data["PrimaVacacional"])){
             $data_insert["PrimaVacacional"] =  $data["PrimaVacacional"];
@@ -1488,26 +1488,45 @@ class TurnosController extends Controller
         $data = $request->all();
         dd($data);
         $id_solicitud =$data['fecha'];
-        dd($id_solicitud);
-        //$solicitud = Turnos::find($id);
-        
-
-
+        $solicitud = Turnos::find($id);
+    
         //Validar 
-        request()->validate([
-            //General
-            'curp'                   => 'required|min:18|max:18',
-            'solicitante'           => 'required',
-            'estado_solicitante'    => 'required|numeric',
-            'mun_solicitante'       => 'required|numeric',
-            'actividad_economica'   => 'required',
-            'conciliador_id'        => 'required|numeric',
+        $request->validate([
+                'empresa'           => 'required',
+                'primero_empresa'   => 'required',
+                'segundo_empresa'   => 'required',
+                'nombre_empresa'    => 'required',
+                'curp'              => 'required',
+                'email'             => 'required',
+                'telefono'          => 'required',
+                'documentoIne'      => 'required',
+                'documentoPoder'    => 'required',
+                'primero_trabajador'=> 'required',
+                'segundo_trabajador'=> 'required',
+                'trabajador'        => 'required',
+                'trabajador_edad'   => 'required',
+                'trabajador_sexo'   => 'required',
+                'trabajador_curp'   => 'required',
+                'documentoCurp'     => 'required',
+                'tipo_identificacion'=> 'required',
+                'documentoidentificacion'=> 'required',
+                'fecha_inicio'      => 'required',
+                'fecha_termino'     => 'required',
+                'categoria'         => 'required',
+                'monto'             => 'required',
+                'frecuencia'        => 'required',
+                'tipo_pago'         => 'required',
+                'sede'              => 'required',
+                'dias'              => 'required',
+                'hora'              => 'required',
+                'JLCA'              => 'required',
+                'motivo'            => 'required',
+                'salario'           => 'required'
+            ], $data);
 
-            'sexo'                  => 'required|in:H,M',
-            'motivo'                => 'required|in:Despido,Pago de prestaciones,Recision de la relación laboral,Derecho de preferencia,Derecho de antiguedad,Derecho de ascesnso,Terminación voluntaria de relación laboral',
-            'notificacion'          => 'required|in:Trabajador,Centro,Ambos',
+        $data_insert=array(
 
-        ], $data);
+        );
 
 
         return redirect()->route('Ratificacion');

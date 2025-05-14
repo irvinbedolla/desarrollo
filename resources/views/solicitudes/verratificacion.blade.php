@@ -158,28 +158,28 @@
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label for="email">INE</label>
-                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentosSolicitud/{{$folio->ine}}">Existente</a>
+                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_ratificacion/{{$folio->ine}}">Existente</a>
                                             <input type="file" name="documentoIne" class="form-control-file" accept=".pdf">        
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label>*Documento que acredite la representación</label><br>
-                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentosSolicitud/{{$folio->representacion}}">Existente</a>
+                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_ratificacion/{{$folio->representacion}}">Existente</a>
                                             <input type="file" name="documentoRepresentacion" class="form-control-file" accept=".pdf">
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label for="email"> Documento curp</label>
-                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentosSolicitud/{{$folio->documentoCurp}}">Existente</a>
+                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_ratificacion/{{$folio->documentoCurp}}">Existente</a>
                                             <input type="file" name="documentoCurp" class="form-control-file" accept=".pdf">        
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label for="email">Documento identificación</label>
-                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentosSolicitud/{{$folio->documentoidentificacion}}">Existente</a>
+                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_ratificacion/{{$folio->documentoidentificacion}}">Existente</a>
                                             <input type="file" name="documentoidentificacion" class="form-control-file" accept=".pdf">        
                                         </div>
                                     </div>
@@ -232,16 +232,59 @@
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label for="email">Motivo de la conciliación</label>
-                                            <input type="text" class="form-control" name="motivo" value="<?=$folio["motivo"];?>">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="email">Motivo de la conciliación</label>
-                                            <select class="form-control" name="motivo" required>
-                                                <option value="Pprestaciones" @php if($folio->motivo === "Pago de prestaciones") echo "selected"  @endphp>Pago de prestaciones</option>
-                                                <option value="Tvoluntaria" @php if($folio->motivo === "Terminación voluntaria de la relación de trabajo") echo "selected"  @endphp>Terminación voluntaria de la relación de trabajo</option>
+                                            <select class="form-control" id="motivo" name="motivo" required>
+                                                <option value="Pago de prestaciones" @php if($folio->motivo === "Pago de prestaciones") echo "selected"  @endphp>Pago de prestaciones</option>
+                                                <option value="Terminación voluntaria de la relación de trabajo" @php if($folio->motivo === "Terminación voluntaria de la relación de trabajo") echo "selected"  @endphp>Terminación voluntaria de la relación de trabajo</option>
                                             </select>
                                         </div>
                                     </div>
+                                    <div id="motivo_pago" class="col-xs-12 col-sm-12 col-md-2" style="display:none">
+                                                <div class="form-group">
+                                                    <label for="name">* Selecciona las casillas correspondientes</label>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="Aguinaldo">
+                                                        <label class="form-check-label" for="flexCheckDefault">
+                                                        Aguinaldo
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="Vacaciones">
+                                                        <label class="form-check-label" for="flexCheckDefault">
+                                                        Vacaciones
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="PrimaVacacional">
+                                                        <label class="form-check-label" for="flexCheckDefault">
+                                                        Prima Vacacional
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="PagoPTU">
+                                                        <label class="form-check-label" for="flexCheckDefault">
+                                                            Pago de PTU
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="Gratificación">
+                                                        <label class="form-check-label" for="flexCheckDefault">
+                                                        Gratificación
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="PrimaAntigüedad">
+                                                        <label class="form-check-label" for="flexCheckDefault">
+                                                        Prima de Antigüedad
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="Otras" id="otras">
+                                                        <label class="form-check-label" for="flexCheckDefault">
+                                                        Otras
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label for="email">Monto total del convenio a pagar</label>
@@ -304,21 +347,21 @@
 </div>
 
 @section('scripts')
-    <script src="public/assets/js/poderes/general.js"></script>
+    <script src="../../public/assets/js/poderes/general.js"></script>
 @endsection
 
-    <script src="public/assets/js/jquery.min.js"></script>
-    <script src="public/assets/js/popper.min.js"></script>
-    <script src="public/assets/js/bootstrap.min.js"></script>
-    <script src="public/assets/js/sweetalert.min.js"></script>
-    <script src="public/assets/js/select2.min.js"></script>
-    <script src="public/assets/js/jquery.nicescroll.js"></script>
+    <script src="../../public/assets/js/jquery.min.js"></script>
+    <script src="../../public/assets/js/popper.min.js"></script>
+    <script src="../../public/assets/js/bootstrap.min.js"></script>
+    <script src="../../public/assets/js/sweetalert.min.js"></script>
+    <script src="../../public/assets/js/select2.min.js"></script>
+    <script src="../../public/assets/js/jquery.nicescroll.js"></script>
 
     <!-- Template JS File -->
-    <script src="public/assets/js/stisla.js"></script>
-    <script src="public/assets/js/scripts.js"></script>
-    <script src="public/assets/js/profile.js"></script>
-    <script src="public/assets/js/custom.js"></script>
+    <script src="../../public/assets/js/stisla.js"></script>
+    <script src="../../public/assets/js/scripts.js"></script>
+    <script src="../../public/assets/js/profile.js"></script>
+    <script src="../../public/assets/js/custom.js"></script>
 
     <script src="https://cdn.datatables.net/2.1.5/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.1.5/js/dataTables.bootstrap4.js"></script>
@@ -327,93 +370,25 @@
 
     @yield('scripts')
     <script>
-        document.getElementById("folio").style.display = "none";
-        document.getElementById("empresa").style.display = "block";
-        document.getElementById("primero").style.display = "block";
-        document.getElementById("segundo").style.display = "block";
-        document.getElementById("nombre").style.display = "block";
-        document.getElementById("edad").style.display = "block";
-        document.getElementById("sexo").style.display = "block";
-        document.getElementById("ine").style.display = "block";
-        document.getElementById("acta").style.display = "block";
-
-
-        function sedes(){
-            document.getElementById("fecha").removeAttribute("disabled");
-        }
-        function diaSemana() {
-            var dia_semana  = document.getElementById("fecha").value;
-            var sede        = document.getElementById("sede").value;
-
-            $.get('api/obtenerHorario/'+dia_semana+'/'+sede, function (data){
-                var html_select = '<option value="">--Seleccione un horario --</option>';  
-                for(var i=0; i<data.length; ++i)
-                    html_select += '<option value= "'+data[i].hora+'">'+data[i].hora+'</option>';
-                    $('#horarios').html(html_select);
-
-            });
-        }
 
         $(function(){
-            $('#check_folio').on('change', validarcheckfolio);
+            const motivo = document.getElementById('motivo');
+            motivo.addEventListener('change', function() {
+                const valorSeleccionado = this.value;
+                // Realiza la validación o acciones necesarias
+                if (valorSeleccionado === 'Pago de prestaciones') {
+                    document.getElementById('motivo_pago').style.display = "block";
+                } else {
+                    document.getElementById('motivo_pago').style.display = "none";
+                }
+            });        
+            
+            const otras = document.getElementById('otras');
+            otras.addEventListener('click', function() {
+                const valorSeleccionado = this.value;
+                    document.getElementById('div_otras').style.display = "block";
+            });
         })
-
-        function validarcheckfolio(){
-            tipo = document.getElementById("folio").style.display;
-            if (tipo == "none") {
-                document.getElementById("folio").style.display = "block";
-                document.getElementById("empresa").style.display = "none";
-                document.getElementById("primero").style.display = "none";
-                document.getElementById("segundo").style.display = "none";
-                document.getElementById("nombre").style.display = "none";
-                document.getElementById("edad").style.display = "none";
-                document.getElementById("sexo").style.display = "none";
-                document.getElementById("ine").style.display = "none";
-                document.getElementById("acta").style.display = "none";
-                document.getElementById("curp").style.display = "none";
-            }
-            else{
-                document.getElementById("folio").style.display = "none";
-                document.getElementById("empresa").style.display = "block";
-                document.getElementById("primero").style.display = "block";
-                document.getElementById("segundo").style.display = "block";
-                document.getElementById("nombre").style.display = "block";
-                document.getElementById("edad").style.display = "block";
-                document.getElementById("sexo").style.display = "block";
-                document.getElementById("ine").style.display = "block";
-                document.getElementById("acta").style.display = "block";
-                document.getElementById("curp").style.display = "block";
-            }
-        }
-
-        const tipo_iden = document.getElementById('tipo_identificacion');
-        tipo_iden.addEventListener('change', function() {
-            const valorSeleccionado = this.value;
-            // Realiza la validación o acciones necesarias
-            if (valorSeleccionado === 'Otro') {
-                document.getElementById('espesificar_tipo_identificacion').style.display = "block";
-            } else {
-                document.getElementById('espesificar_tipo_identificacion').style.display = "none";
-            }
-        });
-
-        const motivo = document.getElementById('motivo');
-        motivo.addEventListener('change', function() {
-            const valorSeleccionado = this.value;
-            // Realiza la validación o acciones necesarias
-            if (valorSeleccionado === 'Pago de prestaciones') {
-                document.getElementById('motivo_pago').style.display = "block";
-            } else {
-                document.getElementById('motivo_pago').style.display = "none";
-            }
-        });        
-        
-        const otras = document.getElementById('otras');
-        otras.addEventListener('click', function() {
-            const valorSeleccionado = this.value;
-                document.getElementById('div_otras').style.display = "block";
-        });
-        
     </script>
 
 @section('scripts')
