@@ -55,7 +55,6 @@
                 z-index: -1;
             } 
         </style>
-        
     </head>
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
@@ -73,28 +72,32 @@
             <div class="content">
                 <p><b>
                     CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACAN DE OCAMPO  <br>
-                    NÚMERO IDENTIFICACIÓN ÚNICO: [NUMERO DE EXPEDIENTE ]                   
+                    NÚMERO IDENTIFICACIÓN ÚNICO: {{ $solicitud->NUE }}                   
                 </b></p>  
 
                 <p>
-                    En el <b>Centro de Conciliación Laboral del Estado de Michoacán de Ocampo con sede en [SEDE]</b>, siendo las  <b>[HORA DEL DIA horas del FECHA DE LA CITA]</b> , hora y día 
-                    señalados para la celebración de la Audiencia de Conciliación Prejudicial vía remota, relativa al número de expediente electrónico con Número de Identificación Único 
-                    <b>[NUMERO DE EXPEDIENTE]</b>, misma que se celebra ante  <b>[NOMBRE DEL FUNCIONARIO CONCILIADOR]</b>, Funcionaria Conciliadora/Funcionario Conciliador adscrito al Centro de Conciliación 
+                    En el <b>Centro de Conciliación Laboral del Estado de Michoacán de Ocampo con sede en {{ $solicitud->delegacion }}</b>, siendo las <b>{{ $solicitud->hora }} horas del
+                    {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> , hora y día señalados para la celebración de la Audiencia de Conciliación 
+                    Prejudicial vía remota, relativa al número de expediente electrónico con Número de Identificación Único <b>{{ $solicitud->NUE }}</b>, misma que se celebra ante  
+                    <b>[NOMBRE DEL FUNCIONARIO CONCILIADOR]</b>, Funcionaria Conciliadora/Funcionario Conciliador adscrito al Centro de Conciliación 
                     Laboral del Estado de Michoacán de Ocampo,  con fundamento en los artículos 33, 590-E, 590-F, 684-A, 684-B, 684-C, 684-D, 684-E, fracción V, 684-F, 684-G y 684-I, de la 
                     Ley Federal del Trabajo, articulo 27 de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, y artículo 20 del Reglamento Interior del 
                     Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, <b>declara abierta</b> la Audiencia de Conciliación Prejudicial en la que comparecen: <br><br>
 
-                    La parte solicitante <b>[NOMBRE DEL SOLICITANTE]</b> y, por la parte citada <b>[NOMBRE DE LA EMPRESA/PATRON] (MANIFESTACIÓN DE QUIEN COMPARECE EN REPRESANTACIÓN DE LA PARTE 
-                    CITADA Y DOCUMENTO CON QUE SE IDENTIFICA)</b>, identificaciones que concuerdan fisionómicamente con las partes y, que, en este acto, se agrega copia cotejada al expediente 
+                    La parte solicitante <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> y, por la parte citada 
+                    <b>{{ $solicitud->empresa }} [MANIFESTACIÓN DE QUIEN COMPARECE EN REPRESANTACIÓN DE LA PARTE 
+                    CITADA Y DOCUMENTO CON QUE SE IDENTIFICA]</b>, identificaciones que concuerdan fisionómicamente con las partes y, que, en este acto, se agrega copia cotejada al expediente 
                     electrónico para que conste como corresponda; documentos que les son devueltos por ser innecesaria su retención. <br><br>
 
-                    La parte solicitante manifiesta que presentó solicitud el <b>[FECHA DE LA SOLICITUD]</b> para iniciar el Procedimiento de Conciliación Prejudicial ante el Centro de 
-                    Conciliación Laboral del Estado de Michoacán de Ocampo, por concepto o motivo de <b>[MOTIVO DE SOLICITUD (TERMINACIÓN/PAGO DE PRESTACIONES)]</b>.<br><br>
+                    La parte solicitante manifiesta que presentó solicitud el <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> para iniciar el 
+                    Procedimiento de Conciliación Prejudicial ante el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, por concepto o motivo de <b>{{ $solicitud->motivo }}</b>.<br><br>
                     <!-- Colocar condicional -->
-                    [SI_SOLICITANTE_NOTIFICA] La parte citada <b>[NOMBRE EMPRESA/PATRON]</b> fue notificada por el solicitante con el citatorio emitido el <b>[FECHA DE PRESENTACIÓN DE LA SOLICITUD]</b>, 
+                    [SI_SOLICITANTE_NOTIFICA] 
+                    La parte citada <b>{{ $solicitud->empresa }}</b> fue notificada por el solicitante con el citatorio emitido el 
+                    <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, 
                     con fundamento en el segundo párrafo del artículo 684-E de la ley de la Ley Federal del Trabajo.<br><br>
 
-                    Por tanto, esta Autoridad Conciliadora se encuentra en condiciones para desahogar la <b>Audiencia de Conciliación Prejudicial.</b> [FIN_SI_SOLICITUD_VIRTUAL]<br><br>
+                    Por tanto, esta Autoridad Conciliadora se encuentra en condiciones para desahogar la <b>Audiencia de Conciliación Prejudicial.</b><br><br>
 
                     Se hace del conocimiento del trabajador(a) que podrá comparecer asistido por abogado(a) o persona de su confianza, pero no se reconocerá a ésta como apoderado, por tratarse 
                     de un Procedimiento de Conciliación y no de un juicio; por lo que respecta al empleador, éste podrá comparecer a través de su representante, siempre y cuando cuente con las 
@@ -111,7 +114,8 @@
 
                     A continuación, se cede el uso de la voz de manera ordenada y respetuosa a los presentes en esta audiencia, para manifestar en relación al proceso de conciliación: <br>
                     
-                    [RESOLUCION_PRIMERA_MANIFESTACION] (CAPTURADA MANUALMENTE POR QUIEN ATIENDE A LAS PARTES)<br><br>
+                    [RESOLUCION_PRIMERA_MANIFESTACION]
+                    {{ $solicitud->resolucion_primera }}<br><br>
 
                     Así, resulta procedente exponer a los presentes la propuesta de un acuerdo conciliatorio justo y equitativo que beneficie a ambas partes del conflicto; haciendo de su conocimiento 
                     que, en el caso de estar conformes con dicho acuerdo, se procederá a realizar el convenio por escrito, mismo que deberá ratificarse en el presente acto y, posteriormente, se les 
@@ -119,16 +123,19 @@
 
                     La propuesta referida, se encuentra formulada en los términos siguientes:<br>
                     
-                    [RESOLUCION_PROPUESTAS_TRABAJADORES] <br>
-                    [RESOLUCION_JUSTIFICACION_PROPUESTA] <br>
-                    (CAPTURADO MANUALMENTE POR QUIEN ATIENDE A LAS PARTES)<br>
+                    [RESOLUCION_PROPUESTAS_TRABAJADORES] 
+                    {{ $solicitud->resolucion_trabajadores }}<br><br>
+
+                    [RESOLUCION_JUSTIFICACION_PROPUESTA]
+                    {{ $solicitud->resolucion_justificacion }}<br><br>
 
                     A efecto de conocer la opinión de las partes, se cede el uso de la voz de manera ordenada y respetuosa a los presentes en esta audiencia, con la finalidad de escuchar lo que 
                     tengan que expresar en torno a la propuesta y sus alcances, <b>haciendo de su conocimiento que no se podrán negociar derechos y prestaciones irrenunciables en términos de la Ley 
                     Federal del Trabajo</b>, y respetando los adquiridos; de no estar de acuerdo se podrá solicitar una nueva audiencia que tendrá verificativo dentro de los cinco días siguientes al 
                     cierre de esta diligencia.<br><br>
 
-                    [RESOLUCION_SEGUNDA_MANIFESTACION] (CAPTURADA MANUALMENTE POR QUIEN ATIENDE A LAS PARTES)<br><br>
+                    [RESOLUCION_SEGUNDA_MANIFESTACION]
+                    {{ $solicitud->resolucion_segunda }}
 
                     Por tanto, en caso de que las partes hayan expresado estar conformes con la propuesta sugerida, se procede a la celebración del convenio respectivo, el cual tendrá valor de cosa juzgada 
                     y, tendrá la calidad de un título para iniciar acciones ejecutivas sin necesidad de ratificación lo anterior con fundamento en el artículo 684-E fracción XIII de la Ley Federal del Trabajo.<br><br>
@@ -154,7 +161,7 @@
                     <div class="row">
                         <div class="col-12 text-center">
                             <div style="display: inline-block; margin-right: 50px;">
-                                <p><center><b>___________________________________<br> {{ $solicitud->trabajador }}  <br> LA PARTE TRABAJADORA<br></b></center></p>
+                                <p><center><b>___________________________________<br> {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}  <br> LA PARTE TRABAJADORA<br></b></center></p>
                             </div>
                                     
                             <div style="display: inline-block;">

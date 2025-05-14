@@ -75,27 +75,27 @@
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                             <tr>    
                                 <td><b>Número de identificación único: </b></td>
-                                <td>[EXPEDIENTE_FOLIO] </td>
+                                <td>{{ $solicitud->NUE }} </td>
                             </tr> 
                             <tr>    
                                 <td><b>Buzón electrónico: </b></td>
-                                <td>[SOLICITADO_CORREO_BUZON]   </td>
+                                <td>{{ $solicitud->email }}   </td>
                             </tr>
                             <tr>   
                                 <td><b>Centro de conciliación: </b></td>
-                                <td>[CENTRO_NOMBRE] </td>
+                                <td>{{ $solicitud->delegacion }} </td>
                             </tr>
                             <tr>
                                 <td><b>Sala de conciliación: </b></td>
-                                <td>[SALA_SALA] </td>
+                                <td>SALA VIRTUAL </td>
                             </tr>
                     </table>
                 </div><br><br><br><br><br><br>
                
                 <p><b>
-                    Solicitante: [SOLICITANTE_NOMBRE_COMPLETO] <br> 
-                    Citado(a): [RESOLUCION_CITADOS_CONVENIO] <br>
-                    Fecha y hora de audiencia: [AUDIENCIA_FECHA_AUDIENCIA]  [AUDIENCIA_HORA_INICIO] <br> 
+                    Solicitante: {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
+                    Citado(a): {{ $solicitud->empresa }} [RESOLUCION_CITADOS_CONVENIO] <br>
+                    Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
                     Asistencia de los interesados: Si. <br>
                     Fecha del conflicto: [SOLICITUD_FECHA_CONFLICTO]  <br>
                     Posible prescripción de derechos: [SOLICITUD_PRESCRIPCION] <br> 
@@ -111,8 +111,10 @@
                     y artículo 20 del Reglamento Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<br><br>
 
                     <b>Motivación:</b> Conforme a la determinación de dar por terminado el conflicto laboral, la parte <b>TRABAJADORA</b> y la parte <b>EMPLEADORA</b>, 
-                    celebraron el Convenio de Conciliación de fecha <b>[AUDIENCIA_FECHA_AUDIENCIA]</b> ante esta Autoridad Conciliadora como resultado de la audiencia 
-                    de conciliación celebrada <b>[AUDIENCIA_FECHA_AUDIENCIA]</b> de <b>[AUDIENCIA_HORA_INICIO]</b> a <b>[AUDIENCIA_HORA_FIN]</b>.<br><br>
+                    celebraron el Convenio de Conciliación de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> ante esta 
+                    Autoridad Conciliadora como resultado de la audiencia 
+                    de conciliación celebrada <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> de 
+                    <b>{{ $solicitud->hora }}</b> a <b>{{ $solicitud->hora_fin }}</b>.<br><br>
                                 
                     De acuerdo con lo establecido en el convenio referido el <b>EMPLEADOR</b> se obligó al pago de los siguientes conceptos: <br><br>
                                 

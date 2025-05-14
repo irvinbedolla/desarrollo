@@ -55,8 +55,29 @@
                 z-index: -1;
             } 
         </style>
-        
     </head>
+    @php     
+        $direccion_sede='';
+        if($solicitud->delegacion === 'Morelia'){
+            $direccion_sede='BLVD. GARCÍA DE LEÓN NO. 1575, COL. CHAPULTEPEC ORIENTE, C.P.58260 MORELIA, MICHOACÁN DE OCAMPO';
+        }    
+        if($solicitud->delegacion === 'Uruapan'){
+            $direccion_sede='NUEVO PARICUTÍN NO. 308, COL. JARDINES DE SAN RAFAEL, C.P.30136 URUAPAN, MICHOACÁN DE OCAMPO. SE ENCUENTRA DENTRO DEL RECINTÓ DONDE ESTA RENTAS DEL
+                ESTADO, POR LA CLÍNICA DEL IMSS NO.76.';
+        }
+        if($solicitud->delegacion === 'Zamora') {
+            $direccion_sede='JUSTO SIERRA PONIENTE NO. 290, COL. JARDINES DE CATEDRAL, C.P.59600 ZAMORA, MICHOACÁN DE OCAMPO';
+        }  
+        if($solicitud->delegacion === 'Zitácuaro') {
+            $direccion_sede='CUAUHTEMOC ORIENTE NO. 15, COL. CUAUHTEMOC, C.P. 61506ZITÁCUARO, MICHOACÁN DE OCAMPO';
+        } 
+        if($solicitud->delegacion === 'Lázaro Cárdenas') {
+            $direccion_sede='PARACHO NO. 26, COL. 600 CASAS, C.P.60950 LÁZARO CÁRDENAS, MICHOACÁN DE OCAMPO';
+        }  
+        if($solicitud->delegacion === 'Sahuayo') {
+            $direccion_sede='AV. UNIVERSIDAD SUR NO. 300, COL. LOMAS DE UNIVERSIDAD, C.P.59103 SAHUAYO DE MORELOS, MICHOACÁN DE OCAMPO';
+        } 
+    @endphp
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
         <footer>
@@ -72,29 +93,31 @@
         <main>
             <div class="content">
                 <p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br>
-                        sunto: Archivo de asunto por falta de interés<br>
-                        Solicitante: [SOLICITANTE_NOMBRE_COMPLETO] <br> 
-                        Número de identificación único: [EXPEDIENTE FOLIO] <br>
+                        Asunto: Archivo de asunto por falta de interés<br>
+                        Solicitante: {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
+                        Número de identificación único: {{ $solicitud->NUE }} <br>
                 </b></p>  
-                <p>En <b>[CENTRO_DOMICILIO_ESTADO] a [FECHA_ACTUAL],</b></p>
+                <p>En <b>{{ $direccion_sede }} a [FECHA_ACTUAL],</b></p>
                 <p>
-                    <b>VISTO</b> el estado que guarda el expediente identificado con el número <b>[EXPEDIENTE_FOLIO]</b> relativo a la solicitud de conciliación realizada por
-                    <b>[SOLICITANTE_NOMBRE_COMPLETO]</b>, por falta de interés se formula resolución en atención a los siguientes:
+                    <b>VISTO</b> el estado que guarda el expediente identificado con el número <b>{{ $solicitud->NUE }}</b> relativo a la solicitud de conciliación realizada por
+                    <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b>, por falta de interés se formula resolución en atención a los siguientes:
                 </p>
                 <p>
                     <center><b>RESULTANDOS</b></center>
                 </p><br>
                 <p>
-                    <b>Primero.</b> El <b>[SOLICITUD_FECHA_RECEPCION]</b>, <b>[SOLICITANTE_NOMBRE_COMPLETO]</b> solicitó ante este Centro, iniciar con el Procedimiento 
-                    de Conciliación Prejudicial con el(los) citados <b>[SOLICITUD_NOMBRES_CITADOS]</b> por objeto de <b>[SOLICITUD_OBJETO_SOLICITUDES]</b>.<br><br>
+                    <b>Primero.</b> El <b>[SOLICITUD_FECHA_RECEPCION]</b>, <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> solicitó ante este Centro, iniciar con el Procedimiento 
+                    de Conciliación Prejudicial con el(los) citados <b>[SOLICITUD_NOMBRES_CITADOS]</b> por objeto de <b>{{ $solicitud->motivo }}</b>.<br><br>
 
-                    <b>Segundo.</b> El <b>[SOLICITUD_FECHA_RATIFICACION]</b>, el Centro de Conciliación <b>[CENTRO_NOMBRE]</b> admitió la solicitud de Conciliación,
+                    <b>Segundo.</b> El <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, el Centro de Conciliación <b>{{ $solicitud->delegacion }}</b> admitió la 
+                    solicitud de Conciliación,
                     señalando que la celebración de la Audiencia de Conciliación se realizaría el <b>[AUDIENCIA_FECHA_AUDIENCIA]</b> a las <b>[AUDIENCIA_HORA_INICIO]</b> 
-                    horas en la sala de audiencia <b>[SALA_NOMBRE]</b>, en las instalaciones de este Centro.<br><br>
+                    horas en la sala de audiencia <b>SALA VIRTUAL</b>, en las instalaciones de este Centro.<br><br>
 
-                    <b>Tercero.</b> El <b>[SOLICITUD_FECHA_RATIFICACION]</b>, se concluyó la notificación personal de él(los) citado(s).<br><br>
+                    <b>Tercero.</b> El <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, se concluyó la notificación personal de él(los) citado(s).<br><br>
 
-                    <b>Cuarto.</b> El día de la audiencia, <b>[SOLICITANTE_NOMBRE_COMPLETO]</b> no se presentó en ningún momento durante el tiempo que se tenía programado para la audiencia.<br>
+                    <b>Cuarto.</b> El día de la audiencia, <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> no se presentó en ningún momento 
+                              durante el tiempo que se tenía programado para la audiencia.<br>
                                 
                     <br>En esas condiciones, este Centro expone los siguientes: 
                 </p>
@@ -110,15 +133,16 @@
 
                     Y toda vez que la solicitud de Ratificación de Convenio presentada y admitida de conformidad con lo establecido por los artículos 33 párrafo segundo, 
                     684-C y 684-E de la Ley Federal del Trabajo. Señalándose <b>[FECHA Y HORA]</b> para la Audiencia de Ratificación de Convenio, se notificó a la parte 
-                    solicitante <b>[SOLICITANTE_NOMBRE_COMPLETO]</b>, sin embargo, no acudió, no obrando una causa justificada de la incomparecencia. <br><br> 
+                    solicitante <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b>, sin embargo, no acudió, no 
+                    obrando una causa justificada de la incomparecencia. <br><br> 
                     Por lo anteriormente expuesto, se:
                 </p>       
                 <p>
                     <center><b>RESUELVE</b></center>
                 </p><br>
                 <p>
-                    <b>Primero.</b> Se archiva el expediente <b>[EXPEDIENTE_FOLIO]</b> que consta desde el <b>[SOLICITUD_FECHA_RATIFICACION]</b>, en este Centro, por falta de interés 
-                    del Solicitante.<br><br>
+                    <b>Primero.</b> Se archiva el expediente <b>{{ $solicitud->NUE }}</b> que consta desde el <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, 
+                    en este Centro, por falta de interés del Solicitante.<br><br>
 
                     <b>Segundo.</b> Se le informa que el plazo de prescripción se reanuda a partir del día siguiente en que fue programada la audiencia, de conformidad con el artículo 684-E, 
                     fracción X de la Ley Federal del Trabajo.<br><br>

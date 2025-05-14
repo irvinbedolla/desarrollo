@@ -1295,7 +1295,7 @@ class TurnosController extends Controller
         //return Municipios::where('estado', $id)->get();
     }
 
-    //PDF Acuse de Ratificación
+//PDF Acuse de Ratificación
     public function VerPDF($id){
         $solicitud = Turnos::find($id);
         
@@ -1305,17 +1305,18 @@ class TurnosController extends Controller
         ->setOption('isPhpEnabled', true);
 
         $nombreArchivo = 'ratificaion_' . $solicitud->empresa .'.pdf';
-       
+    
         return $pdf->stream($nombreArchivo);               
     }
 
 //PDF Convenio Ratificación 
     public function VerPDFConvenio($id){
         $solicitud = Turnos::find($id);
+        $pagos = Pagos::where('id_solicitud', $id)->get();
         $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
         $salario_diario= $solicitud->salario !== null ? $solicitud->salario /30 : null;
 
-        $html = view('PDF/convenioTerminacion', compact('id', 'solicitud', 'dias_descanso', 'salario_diario'))->render();
+        $html = view('PDF/convenioTerminacion', compact('id', 'solicitud', 'dias_descanso', 'salario_diario','pagos'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -1328,7 +1329,7 @@ class TurnosController extends Controller
 //PDF Acta de multa
     public function VerPDFMulta($id){
         $solicitud = Turnos::find($id);
-       
+    
         $html = view('PDF/ActaMulta', compact('id', 'solicitud'))->render();
 
         $pdf = \PDF::loadHTML($html)
@@ -1343,7 +1344,7 @@ class TurnosController extends Controller
 //PDF Acta por falta de interés
     public function VerPDFInteres($id){
         $solicitud = Turnos::find($id);
-       
+    
         $html = view('PDF/ActaFaltaInteres', compact('id', 'solicitud'))->render();
 
         $pdf = \PDF::loadHTML($html)
@@ -1355,10 +1356,10 @@ class TurnosController extends Controller
         return $pdf->stream($nombreArchivo);                  
     }
 
-//PDF Copnstancia de cumplimiento
+//PDF Constancia de cumplimiento
     public function VerPDFCumplimiento($id){
         $solicitud = Turnos::find($id);
-       
+    
         $html = view('PDF/ConstanciaCumplimiento', compact('id', 'solicitud'))->render();
 
         $pdf = \PDF::loadHTML($html)
@@ -1373,7 +1374,7 @@ class TurnosController extends Controller
 //PDF Acta de Audiencia
     public function VerPDFAudiencia($id){
         $solicitud = Turnos::find($id);
-       
+    
         $html = view('PDF/ActaAudiencia', compact('id', 'solicitud'))->render();
 
         $pdf = \PDF::loadHTML($html)
@@ -1384,10 +1385,11 @@ class TurnosController extends Controller
         $nombreArchivo = 'acta_de_audiencia_' . $solicitud->trabajador .'.pdf';
         return $pdf->stream($nombreArchivo);                  
     }
+
 //PDF Constancia de Incumplimiento
     public function VerPDFIncumplimiento($id){
         $solicitud = Turnos::find($id);
-       
+    
         $html = view('PDF/Incumplimiento', compact('id', 'solicitud'))->render();
 
         $pdf = \PDF::loadHTML($html)

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "509ec2605ee8b4d25245317bd6e1e653",
+    "content-hash": "0977777a0802379d5939310f9f879bbc",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -1531,6 +1531,59 @@
             "time": "2023-12-03T19:50:20+00:00"
         },
         {
+            "name": "kwn/number-to-words",
+            "version": "2.11.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kwn/number-to-words.git",
+                "reference": "c1fede59c3494c2c99b7d8d9ff7242cf89d36db7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kwn/number-to-words/zipball/c1fede59c3494c2c99b7d8d9ff7242cf89d36db7",
+                "reference": "c1fede59c3494c2c99b7d8d9ff7242cf89d36db7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.6",
+                "squizlabs/php_codesniffer": "^3.7.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "NumberToWords\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Karol Wnuk",
+                    "email": "k.wnuk@ascetic.pl"
+                }
+            ],
+            "description": "Multi language standalone PHP number to words converter. Fully tested, open for extensions and new languages.",
+            "keywords": [
+                "currency",
+                "money",
+                "number",
+                "numbers",
+                "string",
+                "to",
+                "words"
+            ],
+            "support": {
+                "issues": "https://github.com/kwn/number-to-words/issues",
+                "source": "https://github.com/kwn/number-to-words/tree/2.11.2"
+            },
+            "time": "2025-01-07T18:42:09+00:00"
+        },
+        {
             "name": "laravel/framework",
             "version": "v11.18.1",
             "source": {
@@ -2656,16 +2709,16 @@
         },
         {
             "name": "luecano/numero-a-letras",
-            "version": "v4.0.1",
+            "version": "v4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lecano/php-numero-a-letras.git",
-                "reference": "7de9fae684bd8da14ec295ee618b2893410587fb"
+                "reference": "bc966735c788f5ea9423157a45f509b988c7163e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lecano/php-numero-a-letras/zipball/7de9fae684bd8da14ec295ee618b2893410587fb",
-                "reference": "7de9fae684bd8da14ec295ee618b2893410587fb",
+                "url": "https://api.github.com/repos/lecano/php-numero-a-letras/zipball/bc966735c788f5ea9423157a45f509b988c7163e",
+                "reference": "bc966735c788f5ea9423157a45f509b988c7163e",
                 "shasum": ""
             },
             "require": {
@@ -2701,7 +2754,7 @@
             ],
             "support": {
                 "issues": "https://github.com/lecano/php-numero-a-letras/issues",
-                "source": "https://github.com/lecano/php-numero-a-letras/tree/v4.0.1"
+                "source": "https://github.com/lecano/php-numero-a-letras/tree/v4.0.0"
             },
             "funding": [
                 {
@@ -2709,7 +2762,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-01-29T15:23:56+00:00"
+            "time": "2024-10-05T01:11:08+00:00"
         },
         {
             "name": "maennchen/zipstream-php",
@@ -10513,12 +10566,12 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.0"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
 }

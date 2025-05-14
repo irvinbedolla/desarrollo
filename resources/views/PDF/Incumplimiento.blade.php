@@ -75,23 +75,23 @@
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                             <tr>    
                                 <td><b>Número de identificación único: </b></td>
-                                <td>[EXPEDIENTE_FOLIO] </td>
+                                <td>{{ $solicitud->NUE }} </td>
                             </tr> 
                             <tr>   
                                 <td><b>Centro de conciliación: </b></td>
-                                <td>[CENTRO_NOMBRE] </td>
+                                <td>{{ $solicitud->delegacion }} </td>
                             </tr>
                             <tr>
                                 <td><b>Sala de conciliación: </b></td>
-                                <td>[SALA_SALA] </td>
+                                <td>SALA VIRTUAL </td>
                             </tr>
                     </table>
                 </div><br><br><br><br><br>
                 <p><b>
-                    Solicitante: [SOLICITANTE_NOMBRE_COMPLETO] <br> 
+                    Solicitante: {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
                     Citado(a): [RESOLUCION_CITADOS_CONVENIO] <br>
-                    Fecha y hora de audiencia: [AUDIENCIA_FECHA_AUDIENCIA]  [AUDIENCIA_HORA_INICIO] <br> 
-                    Fecha que se emite la constancia de incumplimiento: <br>
+                    Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
+                    Fecha que se emite la constancia de incumplimiento: [ FECHA ]<br>
                     Pena Convencional: Si <br>
                     Días de pena convencional [ 3 tres días hábiles]
                 </b></p>  
@@ -102,14 +102,15 @@
                     De conformidad con el artículo 123 fracción XX de la Constitución Política de los Estados Unidos Mexicanos y artículos 33, 590-E, 590-F, 684-C y 684-E, 
                     987 y 990 de la Ley Federal del Trabajo; así como los artículos 17 y 20 del Reglamento Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<br><br>
 
-                    Ante la falta de pago pactado en las cláusulas <b>QUINTA</b> y <b>SEXTA</b> del <b>CONVENIO DE CONCILIACIÓN</b> relacionada con el expediente <b>[NÚMERO DE IDENTIFICACIÓN ÚNICO]</b> 
-                    y el Convenio ratificado ante esta autoridad conciliadora en fecha <b>[FECHA DEL CONVENIO Y DE LA AUDIENCIA O CITA]</b>, por tanto,  se emite el siguiente:<br><br>
+                    Ante la falta de pago pactado en las cláusulas <b>QUINTA</b> y <b>SEXTA</b> del <b>CONVENIO DE CONCILIACIÓN</b> relacionada con el expediente <b>{{ $solicitud->NUE }}</b> 
+                    y el Convenio ratificado ante esta autoridad conciliadora en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, por tanto,  
+                    se emite el siguiente:<br><br>
                                 
                     <p><center><b>ACUERDO:</b></center></p><br>
                                 
                     En atención a los principios de legalidad, imparcialidad, confiabilidad, eficacia, objetividad, profesionalismo, transparencia y se emite <b>CONSTANCIA DE INCUMPLIMIENTO DE CONVENIO</b> 
-                    a favor de la parte <b>[TRABAJADORA/EMPLEADORA]</b>; dejando a salvo sus derechos para ejercer las acciones pertinentes ante el Tribunal Laboral que corresponda. Se ordena el archivo 
-                    del presente <b>asunto como concluido. Doy Fe.</b>
+                    a favor de la parte <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b>; dejando a salvo sus derechos para ejercer las 
+                    acciones pertinentes ante el Tribunal Laboral que corresponda. Se ordena el archivo del presente <b>asunto como concluido. Doy Fe.</b>
                 </p>
 
                 <br><br><br><br>       
