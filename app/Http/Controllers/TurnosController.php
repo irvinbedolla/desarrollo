@@ -1519,10 +1519,10 @@ class TurnosController extends Controller
                 'documentos_ratificacion', $request->file('documentoidentificacion'), $trabajador_identificacion
             );
         }
-        $data_update["ine"]                       = $nombre_ine;
-        $data_update["representacion"]            = $nombre_representación;   
-        $data_update["documentoCurp"]             = $trabajador_curp;
-        $data_update["documentoidentificacion"]   = $trabajador_identificacion; 
+        //$data_update["ine"]                       = $nombre_ine;
+        //$data_update["representacion"]            = $nombre_representación;   
+        //$data_update["documentoCurp"]             = $trabajador_curp;
+        //$data_update["documentoidentificacion"]   = $trabajador_identificacion; 
         
         //Agregar todos los campos de la tabla turnos
         $data_update = Turnos::find($data["id"])
