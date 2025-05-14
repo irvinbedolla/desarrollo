@@ -34,7 +34,9 @@
                                                     <td>{{$pago->estatus}}</td>
                                                     <td>
                                                         @if($pago->estatus == "Pendiente")
-                                                            <a class="btn btn-info" href="{{ route('ratificacion_pagoA', $pago->id) }}" onclick=consultar_estadistica();>Pagar</a>
+                                                            <button type="button" class="btn btn-info open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $pago->id }}">
+                                                                Pagar
+                                                            </button>
                                                             <a class="btn btn-danger" href="{{ route('ratificacion_pagoR', $pago->id) }}" onclick=consultar_estadistica();>Rechazar</a>
                                                         @endif
                                                     </td>
@@ -66,6 +68,28 @@
     </section>
 @endsection
 
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <form class='needs-validation novalidate'  method='POST' action="{{route('ratificacion_pagoA')}}">
+        @csrf
+        <input type="hidden" id="modal-id" name="id" value="">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Descripción</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea name="observaciones" style="width:100%"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 
 <div id="nuevo_poder" style ="display: none;">
     <div>.</div>
@@ -73,5 +97,11 @@
 </div>
 
 @section('scripts')
+    <script>
+        $('.open-modal').click(function() {
+            const id = $(this).data('id'); // Obtiene el valor de data-id
+            document.getElementById('modal-id').value = id;
+        });
+    </script>
     <script src="../public/assets/js/poderes/general.js"></script>
 @endsection

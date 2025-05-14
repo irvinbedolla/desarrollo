@@ -1492,7 +1492,7 @@ class TurnosController extends Controller
     
 
         //Validar para cada documento
-        
+
         //Validar si existe el documnento nuevo
         if(isset($data["documentoIne"])){
             $nombre_ine = $data["nombres"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresa"]."_IDENTIFICACION.pdf";
@@ -1595,11 +1595,12 @@ class TurnosController extends Controller
         return view('/solicitudes/pagos',compact('id','pagos'));
     }
 
-    public function pagoA_ratificacion($id){
-        
-        $pagos = Pagos::where('id_solicitud',$id)->get();
+    public function pagoA_ratificacion(Request $request){
+        $data = $request->all();
+
+        $pagos = Pagos::where('id_solicitud',$data["id"])->get();
         $rechazar = Pagos::find($id)
-        ->update(['estatus'  => "Pagado"]);
+        ->update(['estatus'  => "Pagado", 'observaciones' => $data["observaciones"]]);
 
         return redirect()->route('atender_ratificacion');
     }
