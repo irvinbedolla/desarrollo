@@ -1485,14 +1485,13 @@ class TurnosController extends Controller
         return view('/solicitudes/verratificacion',compact('folio','ruta_abogado'));
     }
 
-    public function editar_ratificaciones(Request $request){
+   public function editar_ratificaciones(Request $request){
         $data = $request->all();
         //dd($data);
-        $solicitud = Turnos::find($id);
     
 
         //Validar para cada documento
-
+        
         //Validar si existe el documnento nuevo
         if(isset($data["documentoIne"])){
             $nombre_ine = $data["nombres"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresa"]."_IDENTIFICACION.pdf";
@@ -1500,22 +1499,67 @@ class TurnosController extends Controller
                 'documentos_ratificacion', $request->file('documentoIne'), $nombre_ine
             );
         }
+        if(isset($data["documentoRepresentacion"])){
+            $nombre_representación = $data["nombre_empresa"]."".$data["primero_empresa"]."".$data["segundo_empresa"]."-".$data["empresa"]."_PODER.pdf";
+            $path = Storage::putFileAs(
+                'documentos_ratificacion', $request->file('documentoPoder'), $nombre_representación
+            );
+        }
+        if(isset($data["documentoCurp"])){
+            $trabajador_curp = $data["trabajador_curp"].".pdf";
+            $path = Storage::putFileAs(
+                'documentos_ratificacion', $request->file('documentoCurp'), $trabajador_curp
+            );
+        }
+        if(isset($data["documentoidentificacion"])){
+            $trabajador_identificacion = $data["trabajador_curp"]."_IDENTIFICACION.pdf";
+            $path = Storage::putFileAs(
+                'documentos_ratificacion', $request->file('documentoidentificacion'), $trabajador_identificacion
+            );
+        }
+        $data_update["ine"]                       = $nombre_ine;
+        $data_update["representacion"]            = $nombre_representación;   
+        $data_update["documentoCurp"]             = $trabajador_curp;
+        $data_update["documentoidentificacion"]   = $trabajador_identificacion; 
         
         //Agregar todos los campos de la tabla turnos
         $data_update = Turnos::find($data["id"])
         ->update([
-            'resolucion_primera'            => $data["primera"],
-            'resolucion_trabajadores'       => $data["trabajadores"],
-            'resolucion_justificacion'      => $data["justificacion"],
-            'resolucion_segunda'            => $data["segunda"],
-            'vacaciones_dias'               => $data["vacaciones"],
-            'aguinaldo_dias'                => $data["aguinaldo"],
-            'otros_dias'                    => $data["otros"],
-            'horario'                       => $data["horario"],
-            'comida'                        => $data["comida"],
-            'domicilio'                     => $data["domicilio"],
-            'NUE'                           => $expediente,
-            'estatus'                       => $estatus
+            'empresa'                       => $data["empresa"],
+            'primero_empresa'               => $data["primero_empresa"],
+            'segundo_empresa'               => $data["segundo_empresa"],
+            'nombre_empresa'                => $data["nombre_empresa"],
+            'curp_solicitante'              => $data["curp_solicitante"],
+            'telefono'                      => $data["telefono"],
+            'trabajador'                    => $data["nombre_trabajador"],
+            'primero_trabajador'            => $data["primer_apellidot"],
+            'segundo_trabajador'            => $data["segundo_apellidot"],
+            'edad'                          => $data["edad"],
+            'sexo'                          => $data["sexo"],
+            'trabajador_curp'               => $data["trabajador_curp"],
+            'email'                         => $data["email"],
+            'telefono'                      => $data["telefono"],
+            'tipo_identificacion'           => $data["tipo_identificacion"],
+            'fecha_inicio'                  => $data["fecha_inicio"],
+            'fecha_termino'                 => $data["fecha_termino"],
+            'categoria'                     => $data["categoria"],
+            'frecuencia'                    => $data["frecuencia"],
+            'salario'                       => $data["salario"],
+            'dias'                          => $data["dias"],
+            'motivo'                        => $data["motivo"],
+            'Aguinaldo'                     => $data["Aguinaldo"],      
+            'Vacaciones'                    => $data["Vacaciones"],
+            'PrimaVacacional'               => $data["PrimaVacacional"],
+            'PagoPTU'                       => $data["PagoPTU"],
+            'Gratificación'                 => $data["Gratificación"],
+            'PrimaAntigüedad'               => $data["PrimaAntigüedad"],
+            'Otras'                         => $data["Otras"],
+            'monto'                         => $data["monto"],
+            'tipo_pago'                     => $data["tipo_pago"],
+            'delegacion'                    => $data["delegacion"],
+            'fecha'                         => $data["fecha_pago"],
+            'hora'                          => $data["hora_pago"],
+            'observaciones'                 => $data["observaciones"],
         ]);
 
 

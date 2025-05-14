@@ -66,7 +66,7 @@
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label for="email">Email</label>
-                                            <input type="text" class="form-control" name="email"value="<?=$folio["email"];?>">
+                                            <input type="text" class="form-control" name="email"value="<?=$folio["email"];?>"readonly>
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-4">
@@ -249,37 +249,37 @@
                                                         </label>
                                                     </div>
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="Vacaciones">
+                                                        <input class="form-check-input" type="checkbox" name="Vacaciones" @php if($folio->Vacaciones == 1) echo "checked" @endphp>
                                                         <label class="form-check-label" for="flexCheckDefault">
                                                         Vacaciones
                                                         </label>
                                                     </div>
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="PrimaVacacional">
+                                                        <input class="form-check-input" type="checkbox" name="PrimaVacacional" @php if($folio->PrimaVacacional == 1) echo "checked" @endphp>
                                                         <label class="form-check-label" for="flexCheckDefault">
                                                         Prima Vacacional
                                                         </label>
                                                     </div>
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="PagoPTU">
+                                                        <input class="form-check-input" type="checkbox" name="PagoPTU" @php if($folio->PagoPTU == 1) echo "checked" @endphp>
                                                         <label class="form-check-label" for="flexCheckDefault">
                                                             Pago de PTU
                                                         </label>
                                                     </div>
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="Gratificación">
+                                                        <input class="form-check-input" type="checkbox" name="Gratificación" @php if($folio->Gratificación == 1) echo "checked" @endphp>
                                                         <label class="form-check-label" for="flexCheckDefault">
                                                         Gratificación
                                                         </label>
                                                     </div>
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="PrimaAntigüedad">
+                                                        <input class="form-check-input" type="checkbox" name="PrimaAntigüedad" @php if($folio->PrimaAntigüedad == 1) echo "checked" @endphp>
                                                         <label class="form-check-label" for="flexCheckDefault">
                                                         Prima de Antigüedad
                                                         </label>
                                                     </div>
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="Otras" id="otras">
+                                                        <input class="form-check-input" type="checkbox" name="Otras" id="otras" @php if($folio->Otras == 1) echo "checked" @endphp>
                                                         <label class="form-check-label" for="flexCheckDefault">
                                                         Otras
                                                         </label>
