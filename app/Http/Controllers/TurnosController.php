@@ -1632,30 +1632,53 @@ public function VerPDFPagos($id){
         }
         //Variables opcionales
         if(isset($data["Aguinaldo"])){
-            $data_insertar["Aguinaldo"] =  1;
+            $Aguinaldo =  1;
+        }
+        else{
+            $Aguinaldo =  0;
         }
         if(isset($data["Vacaciones"])){
-            $data_insertar["Vacaciones"] =  1;
+            $Vacaciones =  1;
+        }
+        else{
+            $Vacaciones =  0;
         }
         if(isset($data["PrimaVacacional"])){
-            $data_insertar["PrimaVacacional"] = 1;
+            $PrimaVacacional = 1;
+        }
+        else{
+            $PrimaVacacional = 0;
         }
         if(isset($data["PagoPTU"])){
-            $data_insertar["PagoPTU"] =  1;
+            $PagoPTU =  1;
+        }
+        else{
+            $PagoPTU = 0;
         }
         if(isset($data["Gratificación"])){
-            $data_insertar["Gratificación"] =  1;
+            $Gratificación =  1;
+        }
+        else{
+            $Gratificación = 0;
         }
         if(isset($data["PrimaAntigüedad"])){
-            $data_insertar["PrimaAntigüedad"] =  1;
+            $PrimaAntigüedad =  1;
+        }
+        else{
+            $PrimaAntigüedad = 0;
         }
         if(isset($data["Otras"])){
-            $data_insertar["Otras"] =  1;
+            $Otras =  1;
+        }
+        else{
+            $Otras =  0;
         }
         if(isset($data["Especifique"])){
-            $data_insertar["Especifique"] =  $data["Especifique"];
+            $Especifique =  $data["Especifique"];
         }
-        
+        else{
+            $Especifique = 0;
+        }
         //Agregar todos los campos de la tabla turnos
         if($userRole[0] == "Solicitante"){
             $data_update = Turnos::find($data["id"])
@@ -1682,6 +1705,14 @@ public function VerPDFPagos($id){
                 'salario'                       => $data["salario"],
                 'dias'                          => $data["dias"],
                 'motivo'                        => $data["motivo"],
+                'Aguinaldo'                     => $Aguinaldo,
+                'Vacaciones'                    => $Vacaciones,
+                'PrimaVacacional'               => $PrimaVacacional,
+                'PagoPTU'                       => $PagoPTU,
+                'Gratificación'                 => $Gratificación,
+                'PrimaAntigüedad'               => $PrimaAntigüedad,
+                'Otras'                         => $Otras,
+                'Especifique'                   => $Especifique,
                 'monto'                         => $data["monto"],
                 'tipo_pago'                     => $data["tipo_pago"],
             ]);
@@ -1711,6 +1742,14 @@ public function VerPDFPagos($id){
                 'salario'                       => $data["salario"],
                 'dias'                          => $data["dias"],
                 'motivo'                        => $data["motivo"],
+                'Aguinaldo'                     => $Aguinaldo,
+                'Vacaciones'                    => $Vacaciones,
+                'PrimaVacacional'               => $PrimaVacacional,
+                'PagoPTU'                       => $PagoPTU,
+                'Gratificación'                 => $Gratificación,
+                'PrimaAntigüedad'               => $PrimaAntigüedad,
+                'Otras'                         => $Otras,
+                'Especifique'                   => $Especifique,
                 'monto'                         => $data["monto"],
                 'tipo_pago'                     => $data["tipo_pago"],
                 'delegacion'                    => $data["delegacion"],
