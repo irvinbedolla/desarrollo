@@ -56,7 +56,7 @@
                                                         @elseif($solicitud->estatus == "Confirmado")
                                                             <a class="btn btn-success" href="{{ route('PDFratifi', $solicitud->id) }}"  target="_blank">Acuse</a>
                                                         @elseif($solicitud->estatus == "Incumplimiento")
-                                                            <a class="btn btn-success" href="{{ route('PDFratifi', $solicitud->id) }}"  target="_blank">Incumplimiento</a>
+                                                            <a class="btn btn-success" href="{{ route('PDFincumplimiento', $solicitud->id) }}"  target="_blank">Incumplimiento</a>
                                                         @endif
                                                         
                                                     </td>

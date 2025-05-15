@@ -42,9 +42,9 @@
                                                     </td>
                                                     <td>
                                                         @if($pago->estatus == "Pagado")
-                                                            <a class="btn btn-info" href="{{ route('PDFcumplimiento', $pago->id) }}" target="_blank">PDF</a>
+                                                            <a class="btn btn-info" href="{{ route('PDFpagos', $pago->id) }}" target="_blank">PDF</a>
                                                         @elseif($pago->estatus == "No pagado")
-                                                            <a class="btn btn-info" href="{{ route('VerPDFIncumplimiento', $pago->id) }}" target="_blank">PDF</a>
+                                                            <a class="btn btn-info" href="{{ route('PDFincumplimiento', $pago->id) }}" target="_blank">PDF</a>
                                                         @endif
                                                     </td>
                                                 </tr>

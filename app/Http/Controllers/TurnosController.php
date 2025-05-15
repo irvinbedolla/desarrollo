@@ -1474,15 +1474,15 @@ public function VerPDFIncumplimiento($id){
 }
 
 //PDF Constancia de Pago Parcial
+//PDF Constancia de Pago Parcial
 public function VerPDFPagos($id){
-    $solicitud = Turnos::find($id);
-    $pagos = Pagos::where('id_solicitud', $id)->first();
-
+    $pagos = Pagos::find($id);
+    $solicitud = Turnos::find($pagos["id_solicitud"]);
+   
     $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
-    $conciliador = $conciliador->where("turnos.id", "=", $id)
+    $conciliador = $conciliador->where("turnos.id_conciliador", "=", $solicitud["id_conciliador"])
     ->select('users.name')
     ->first();
-
     $html = view('PDF/pagosParciales', compact('id','solicitud','conciliador','pagos'))->render();
 
     $pdf = \PDF::loadHTML($html)
@@ -1493,7 +1493,6 @@ public function VerPDFPagos($id){
     $nombreArchivo = 'constancia_de_pago_'  .'.pdf';
     return $pdf->stream($nombreArchivo);                  
 }
-
     public function index_empresa(){
         $id = auth()->user()->id;
         $user = User::find($id);
