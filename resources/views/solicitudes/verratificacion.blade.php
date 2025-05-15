@@ -155,30 +155,30 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-4">
+                                    <div class="col-xs-12 col-sm-6 col-md-12">
                                         <div class="form-group">
-                                            <label for="email">INE</label>
+                                            <label for="email">*INE</label><br>
                                             <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_ratificacion/{{$folio->ine}}">Existente</a>
                                             <input type="file" name="documentoIne" class="form-control-file" accept=".pdf">        
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-4">
+                                    <div class="col-xs-12 col-sm-6 col-md-12">
                                         <div class="form-group">
                                             <label>*Documento que acredite la representación</label><br>
                                             <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_ratificacion/{{$folio->representacion}}">Existente</a>
                                             <input type="file" name="documentoRepresentacion" class="form-control-file" accept=".pdf">
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-4">
+                                    <div class="col-xs-12 col-sm-6 col-md-12">
                                         <div class="form-group">
-                                            <label for="email"> Documento curp</label>
+                                            <label for="email">*Documento curp</label><br>
                                             <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_ratificacion/{{$folio->documentoCurp}}">Existente</a>
                                             <input type="file" name="documentoCurp" class="form-control-file" accept=".pdf">        
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-4">
+                                    <div class="col-xs-12 col-sm-6 col-md-12">
                                         <div class="form-group">
-                                            <label for="email">Documento identificación</label>
+                                            <label for="email">*Documento identificación</label><br>
                                             <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_ratificacion/{{$folio->documentoidentificacion}}">Existente</a>
                                             <input type="file" name="documentoidentificacion" class="form-control-file" accept=".pdf">        
                                         </div>
@@ -232,7 +232,7 @@
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label for="email">Motivo de la conciliación</label>
-                                            <select class="form-control" id="motivo" name="motivo" required>
+                                            <select class="form-control" id="motivo" name="motivo">
                                                 <option value="">Seleccione</option>
                                                 <option value="Pago de prestaciones" @php if($folio->motivo === "Pago de prestaciones") echo "selected"  @endphp>Pago de prestaciones</option>
                                                 <option value="Terminación voluntaria de la relación de trabajo" @php if($folio->motivo === "Terminación voluntaria de la relación de trabajo") echo "selected"  @endphp>Terminación voluntaria de la relación de trabajo</option>
@@ -240,52 +240,59 @@
                                         </div>
                                     </div>
                                     <div id="motivo_pago" class="col-xs-12 col-sm-12 col-md-2">
-                                                <div class="form-group">
-                                                    <label for="name">* Selecciona las casillas correspondientes</label>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="Aguinaldo" @php if($folio->Aguinaldo == 1) echo "checked" @endphp >
-                                                        <label class="form-check-label" for="flexCheckDefault">
-                                                        Aguinaldo
-                                                        </label>
-                                                    </div>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="Vacaciones" @php if($folio->Vacaciones == 1) echo "checked" @endphp>
-                                                        <label class="form-check-label" for="flexCheckDefault">
-                                                        Vacaciones
-                                                        </label>
-                                                    </div>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="PrimaVacacional" @php if($folio->PrimaVacacional == 1) echo "checked" @endphp>
-                                                        <label class="form-check-label" for="flexCheckDefault">
-                                                        Prima Vacacional
-                                                        </label>
-                                                    </div>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="PagoPTU" @php if($folio->PagoPTU == 1) echo "checked" @endphp>
-                                                        <label class="form-check-label" for="flexCheckDefault">
-                                                            Pago de PTU
-                                                        </label>
-                                                    </div>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="Gratificación" @php if($folio->Gratificación == 1) echo "checked" @endphp>
-                                                        <label class="form-check-label" for="flexCheckDefault">
-                                                        Gratificación
-                                                        </label>
-                                                    </div>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="PrimaAntigüedad" @php if($folio->PrimaAntigüedad == 1) echo "checked" @endphp>
-                                                        <label class="form-check-label" for="flexCheckDefault">
-                                                        Prima de Antigüedad
-                                                        </label>
-                                                    </div>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="Otras" id="otras" @php if($folio->Otras == 1) echo "checked" @endphp>
-                                                        <label class="form-check-label" for="flexCheckDefault">
-                                                        Otras
-                                                        </label>
-                                                    </div>
+                                        <div class="form-group">
+                                            <label for="name">* Selecciona las casillas correspondientes
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="Aguinaldo" @php if($folio->Aguinaldo == 1) echo "checked" @endphp >
+                                                    <label class="form-check-label" for="flexCheckDefault">
+                                                    Aguinaldo
+                                                    </label>
                                                 </div>
-                                            </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="Vacaciones" @php if($folio->Vacaciones == 1) echo "checked" @endphp>
+                                                    <label class="form-check-label" for="flexCheckDefault">
+                                                    Vacaciones
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="PrimaVacacional" @php if($folio->PrimaVacacional == 1) echo "checked" @endphp>
+                                                    <label class="form-check-label" for="flexCheckDefault">
+                                                    Prima Vacacional
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="PagoPTU" @php if($folio->PagoPTU == 1) echo "checked" @endphp>
+                                                    <label class="form-check-label" for="flexCheckDefault">
+                                                        Pago de PTU
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="Gratificación" @php if($folio->Gratificación == 1) echo "checked" @endphp>
+                                                    <label class="form-check-label" for="flexCheckDefault">
+                                                    Gratificación
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="PrimaAntigüedad" @php if($folio->PrimaAntigüedad == 1) echo "checked" @endphp>
+                                                    <label class="form-check-label" for="flexCheckDefault">
+                                                    Prima de Antigüedad
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="Otras" id="otras" @php if($folio->Otras == 1) echo "checked" @endphp>
+                                                    <label class="form-check-label" for="flexCheckDefault">
+                                                    Otras
+                                                    </label>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div id="div_otras" class="col-xs-12 col-sm-12 col-md-3" style="display:none">
+                                        <div class="form-group">
+                                            <label for="name">Especifique
+                                                <input type="text" name="Especifique" class="form-control" > 
+                                            </label>
+                                       </div>
+                                    </div>        
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label for="email">Monto total del convenio a pagar</label>

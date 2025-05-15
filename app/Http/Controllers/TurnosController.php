@@ -1519,10 +1519,31 @@ class TurnosController extends Controller
                 'documentos_ratificacion', $request->file('documentoidentificacion'), $trabajador_identificacion
             );
         }
-        //$data_update["ine"]                       = $nombre_ine;
-        //$data_update["representacion"]            = $nombre_representación;   
-        //$data_update["documentoCurp"]             = $trabajador_curp;
-        //$data_update["documentoidentificacion"]   = $trabajador_identificacion; 
+        //Variables opcionales
+        if(isset($data["Aguinaldo"])){
+            $data_insertar["Aguinaldo"] =  1;
+        }
+        if(isset($data["Vacaciones"])){
+            $data_insertar["Vacaciones"] =  1;
+        }
+        if(isset($data["PrimaVacacional"])){
+            $data_insertar["PrimaVacacional"] = 1;
+        }
+        if(isset($data["PagoPTU"])){
+            $data_insertar["PagoPTU"] =  1;
+        }
+        if(isset($data["Gratificación"])){
+            $data_insertar["Gratificación"] =  1;
+        }
+        if(isset($data["PrimaAntigüedad"])){
+            $data_insertar["PrimaAntigüedad"] =  1;
+        }
+        if(isset($data["Otras"])){
+            $data_insertar["Otras"] =  1;
+        }
+        if(isset($data["Especifique"])){
+            $data_insertar["Especifique"] =  $data["Especifique"];
+        }
         
         //Agregar todos los campos de la tabla turnos
         $data_update = Turnos::find($data["id"])
@@ -1549,13 +1570,6 @@ class TurnosController extends Controller
             'salario'                       => $data["salario"],
             'dias'                          => $data["dias"],
             'motivo'                        => $data["motivo"],
-            'Aguinaldo'                     => $data["Aguinaldo"],      
-            'Vacaciones'                    => $data["Vacaciones"],
-            'PrimaVacacional'               => $data["PrimaVacacional"],
-            'PagoPTU'                       => $data["PagoPTU"],
-            'Gratificación'                 => $data["Gratificación"],
-            'PrimaAntigüedad'               => $data["PrimaAntigüedad"],
-            'Otras'                         => $data["Otras"],
             'monto'                         => $data["monto"],
             'tipo_pago'                     => $data["tipo_pago"],
             'delegacion'                    => $data["delegacion"],
