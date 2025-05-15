@@ -87,34 +87,38 @@
                             </tr>
                     </table>
                 </div><br><br><br><br><br>
+                <p><center><b>CONSTANCIA DE PAGO PARCIAL DE CONVENIO</b></center></p><br>
                 <p><b>
                     Trabajador(a): {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
                     Empresa/Patrón: {{ $solicitud->empresa }}<br>
+                    Funcionario Conciliador Responsable: {{$conciliador->name}}<br>
                     Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
-                    Fecha que se emite la constancia de incumplimiento: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}<br>
-                    Pena Convencional: Si <br>
-                    Días de pena convencional: 3 tres días hábiles
+                    Asistencia de los interesados: Si<br>
+                    Convenio conciliatorio: Si
                 </b></p>  
 
-                <p><center><b>CONSTANCIA DE INCUMPLIMIENTO DE CONVENIO</b></center></p><br>
-
                 <p>
-                    De conformidad con el artículo 123 fracción XX de la Constitución Política de los Estados Unidos Mexicanos y artículos 33, 590-E, 590-F, 684-C y 684-E, 
-                    987 y 990 de la Ley Federal del Trabajo; así como los artículos 17 y 20 del Reglamento Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<br><br>
+                    <b>Fundamentación:</b> Artículos 33 párrafo segundo, 590-E, 590-F, 684-C y 684-E fracciones XIII y XIV, 684-F fracción VII de la Ley Federal del Trabajo, articulo 8 fracción I, II y III 
+                    de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo y artículo 20 del Reglamento Interior del Centro de Conciliación Laboral del Estado de 
+                    Michoacán de Ocampo.<br><br>
 
-                    Ante la falta de pago pactado en las cláusulas <b>QUINTA</b> y <b>SEXTA</b> del <b>CONVENIO DE CONCILIACIÓN</b> relacionada con el expediente <b>{{ $solicitud->NUE }}</b> 
-                    y el Convenio ratificado ante esta autoridad conciliadora en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, por tanto,  
-                    se emite el siguiente:<br><br>
-                                
-                    <p><center><b>ACUERDO:</b></center></p><br>
-                                
-                    En atención a los principios de legalidad, imparcialidad, confiabilidad, eficacia, objetividad, profesionalismo, transparencia y se emite <b>CONSTANCIA DE INCUMPLIMIENTO DE CONVENIO</b> 
-                    a favor de la parte <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b>; dejando a salvo sus derechos para ejercer las 
-                    acciones pertinentes ante el Tribunal Laboral que corresponda. Se ordena el archivo del presente <b>asunto como concluido. Doy Fe.</b>
+                    <b>Motivación:</b> Conforme a la determinación de dar por terminado el conflicto laboral, la parte <b>TRABAJADORA</b> y la parte <b>EMPLEADORA</b>, celebraron el Convenio de Conciliación 
+                    de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> ante esta Autoridad Conciliadora como resultado de la audiencia de conciliación 
+                    celebrada <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> de 
+                    <b>{{$solicitud->hora}}</b> a <b>{{$solicitud->hora_fin}}</b>.<br><br>
+
+                    Las <b>PARTES</b> acordaron <b>PAGOS DIFERIDOS</b> en el convenio referido, en este sentido, el <b>EMPLEADOR</b> da cumplimiento ante esta Autoridad Conciliadora al siguiente concepto:<br>
+
+                    {{ $pagos->observaciones}}
+
+                    Quien suscribe da fe del cumplimiento del concepto anteriormente descrito por parte del <b>EMPLEADOR. Doy fe.</b><br><br>
+
+                    <b>Con fecha {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }} se emite la presente Constancia de Pago Parcial del Convenio de Conciliación, con 
+                    fundamento en la fracción XIV del articulo 684-E y fracción VIII del articulo 684-F de la Ley Federal del Trabajo.</b>
                 </p>
 
                 <br><br><br><br>       
-                <center><br><br> <p><b>___________________________________<br>{{ $conciliador->name}} <br> FUNCIONARIA CONCILIADORA/<br> FUNCIONARIO CONCILIADOR</b></p></center>           
+                <center><br><br> <p><b>___________________________________<br>{{$conciliador->name}} <br> FUNCIONARIA CONCILIADORA/<br> FUNCIONARIO CONCILIADOR</b></p></center>           
             </div>
         </main>
     </body>

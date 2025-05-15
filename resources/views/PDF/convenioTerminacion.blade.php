@@ -181,9 +181,9 @@
                         <br>
                             <!-- (CONDICIONAL, SOLO CUANDO SEA EN PAGOS DIFERIDOS)  -->
                                 
-                    <p><b>SEXTA</b>. La <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará en <b>[CANTIDAD DE PAGOS]</b> 
+                    <p><b>SEXTA</b>. La <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará en <b>{{ $pagosDif->C_pagos}}</b> 
                         exhibiciones, hasta culminar la cantidad de 
-                        <b>${{ number_format($solicitud->monto, 2, '.', ',') }} {{ ucfirst($solicitud->montoTexto) }} M.N</b>, tal como se muestra:<br>
+                        <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }} M.N</b>, tal como se muestra:<br>
 
                         <div class="table-responsive">
                             <table id="pagos" class="table-striped" style="width:60%;">
@@ -236,8 +236,8 @@
                         <b>DÉCIMA PRIMERA</b>. En caso de que no se cumplan los términos de lo convenido en el presente instrumento, las <b>PARTES</b> deberán acudir a los juzgados Laborales del fuero común a 
                         efecto de que se realice el procedimiento de ejecución que la Ley Federal del Trabajo contempla. <br>
                         <br>Enteradas las <b>PARTES</b> del alcance legal del presente convenio que se eleva a cosa juzgada, conforme al artículo 684-E fracción XIII, mismo que se firma en SEDE de Michoacán de 
-                        Ocampo a los <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, ante la fe de <b>[ CONCILIADOR]</b>, funcionario conciliador, quien lo sanciona 
-                        en este mismo acto. <b>Doy fe</b>.
+                        Ocampo a los <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, ante la fe de <b>{{ $conciliador->name }}</b>, funcionario conciliador, quien 
+                        lo sanciona en este mismo acto. <b>Doy fe</b>.
                     </p>
                                     
                     <br><br><br><br><br><br>
@@ -248,12 +248,12 @@
                             </div>
                                     
                             <div style="display: inline-block;">
-                                <p><center><b>___________________________________<br> {{ $solicitud->empresa }}<br>LA PARTE EMPLEADORA<br></b></center></p>
+                                <p><center><b>___________________________________<br> {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}<br>LA PARTE EMPLEADORA<br></b></center></p>
                             </div>
                         </div>
                     </div>
                     <br><br><br><br>
-                    <p><center><b>___________________________________<br> [CONCILIADOR_NOMBRE_COMPLETO] <br> FUNCIONARIA CONCILIADORA/<br> FUNCIONARIO CONCILIADOR</b></center> </p>     
+                    <p><center><b>___________________________________<br> {{ $conciliador->name }} <br> FUNCIONARIA CONCILIADORA/<br> FUNCIONARIO CONCILIADOR</b></center> </p>     
             </div>
         </main>    
     </body>

@@ -79,15 +79,14 @@
                     En el <b>Centro de Conciliación Laboral del Estado de Michoacán de Ocampo con sede en {{ $solicitud->delegacion }}</b>, siendo las <b>{{ $solicitud->hora }} horas del
                     {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> , hora y día señalados para la celebración de la Audiencia de Conciliación 
                     Prejudicial vía remota, relativa al número de expediente electrónico con Número de Identificación Único <b>{{ $solicitud->NUE }}</b>, misma que se celebra ante  
-                    <b>[NOMBRE DEL FUNCIONARIO CONCILIADOR]</b>, Funcionaria Conciliadora/Funcionario Conciliador adscrito al Centro de Conciliación 
+                    <b>{{ $conciliador->name }}</b>, Funcionaria Conciliadora/Funcionario Conciliador adscrito al Centro de Conciliación 
                     Laboral del Estado de Michoacán de Ocampo,  con fundamento en los artículos 33, 590-E, 590-F, 684-A, 684-B, 684-C, 684-D, 684-E, fracción V, 684-F, 684-G y 684-I, de la 
                     Ley Federal del Trabajo, articulo 27 de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, y artículo 20 del Reglamento Interior del 
                     Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, <b>declara abierta</b> la Audiencia de Conciliación Prejudicial en la que comparecen: <br><br>
 
                     La parte solicitante <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> y, por la parte citada 
-                    <b>{{ $solicitud->empresa }} [MANIFESTACIÓN DE QUIEN COMPARECE EN REPRESANTACIÓN DE LA PARTE 
-                    CITADA Y DOCUMENTO CON QUE SE IDENTIFICA]</b>, identificaciones que concuerdan fisionómicamente con las partes y, que, en este acto, se agrega copia cotejada al expediente 
-                    electrónico para que conste como corresponda; documentos que les son devueltos por ser innecesaria su retención. <br><br>
+                    <b>{{ $solicitud->empresa }} {{$solicitud->observaciones}}</b>, identificaciones que concuerdan fisionómicamente con las partes y, que, en este acto, se agrega copia cotejada al 
+                    expediente electrónico para que conste como corresponda; documentos que les son devueltos por ser innecesaria su retención. <br><br>
 
                     Por tanto, esta Autoridad Conciliadora se encuentra en condiciones para desahogar la <b>Audiencia de Conciliación Prejudicial.</b><br><br>
 
@@ -146,7 +145,7 @@
 
                     Asimismo, se informa que sus datos no podrán ser difundidos sin el consentimiento expreso, salvo las excepciones previstas en ley.<br><br>
 
-                    Así lo proveyó, <b>[NOMBRE DEL CONCILIADOR O CONCILIADORA]</b>, Funcionario Conciliador adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
+                    Así lo proveyó, <b>{{ $conciliador->name }}</b>, Funcionario Conciliador adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
                 </p>
 
                 <br><br><br><br><br><br>
@@ -157,12 +156,12 @@
                             </div>
                                     
                             <div style="display: inline-block;">
-                                <p><center><b>___________________________________<br> {{ $solicitud->empresa }}<br>LA PARTE EMPLEADORA<br></b></center></p>
+                                <p><center><b>___________________________________<br> {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}<br>LA PARTE EMPLEADORA<br></b></center></p>
                             </div>
                         </div>
                     </div>
                     <br><br><br><br>
-                    <p><center><b>___________________________________<br> [CONCILIADOR_NOMBRE_COMPLETO] <br> FUNCIONARIA CONCILIADORA/<br> FUNCIONARIO CONCILIADOR</b></center> </p>            
+                    <p><center><b>___________________________________<br> {{ $conciliador->name }} <br> FUNCIONARIA CONCILIADORA/<br> FUNCIONARIO CONCILIADOR</b></center> </p>            
             </div>
         </main>
     </body>
