@@ -1631,49 +1631,49 @@ public function VerPDFPagos($id){
             );
         }
         //Variables opcionales
-        if(isset($data["Aguinaldo"])){
+        if(isset($data["Aguinaldo"]) && $data["motivo"] == "Pago de prestaciones"){
             $Aguinaldo =  1;
         }
         else{
             $Aguinaldo =  0;
         }
-        if(isset($data["Vacaciones"])){
+        if(isset($data["Vacaciones"]) && $data["motivo"] == "Pago de prestaciones"){
             $Vacaciones =  1;
         }
         else{
             $Vacaciones =  0;
         }
-        if(isset($data["PrimaVacacional"])){
+        if(isset($data["PrimaVacacional"]) && $data["motivo"] == "Pago de prestaciones"){
             $PrimaVacacional = 1;
         }
         else{
             $PrimaVacacional = 0;
         }
-        if(isset($data["PagoPTU"])){
+        if(isset($data["PagoPTU"]) && $data["motivo"] == "Pago de prestaciones"){
             $PagoPTU =  1;
         }
         else{
             $PagoPTU = 0;
         }
-        if(isset($data["Gratificación"])){
+        if(isset($data["Gratificación"]) && $data["motivo"] == "Pago de prestaciones"){
             $Gratificación =  1;
         }
         else{
             $Gratificación = 0;
         }
-        if(isset($data["PrimaAntigüedad"])){
+        if(isset($data["PrimaAntigüedad"]) && $data["motivo"] == "Pago de prestaciones"){
             $PrimaAntigüedad =  1;
         }
         else{
             $PrimaAntigüedad = 0;
         }
-        if(isset($data["Otras"])){
+        if(isset($data["Otras"]) && $data["motivo"] == "Pago de prestaciones"){
             $Otras =  1;
         }
         else{
             $Otras =  0;
         }
-        if(isset($data["Especifique"])){
+        if(isset($data["Especifique"]) && $data["motivo"] == "Pago de prestaciones"){
             $Especifique =  $data["Especifique"];
         }
         else{
