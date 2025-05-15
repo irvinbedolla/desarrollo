@@ -42,12 +42,10 @@
                                                     </td>
                                                     <td>
                                                         @if($pago->estatus == "Pagado")
-                                                            <a class="btn btn-info" href="{{ route('PDFcumplimiento', $pago->id) }}" onclick=consultar_estadistica();>PDF</a>
+                                                            <a class="btn btn-info" href="{{ route('PDFcumplimiento', $pago->id) }}" target="_blank">PDF</a>
                                                         @elseif($pago->estatus == "No pagado")
-                                                            <a class="btn btn-info" href="{{ route('VerPDFIncumplimiento', $pago->id) }}" onclick=consultar_estadistica();>PDF</a>
+                                                            <a class="btn btn-info" href="{{ route('VerPDFIncumplimiento', $pago->id) }}" target="_blank">PDF</a>
                                                         @endif
-
-                                                        VerPDFIncumplimiento
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -103,5 +101,5 @@
             document.getElementById('modal-id').value = id;
         });
     </script>
-    <script src="../public/assets/js/poderes/general.js"></script>
+    <script src="../../public/assets/js/poderes/general.js"></script>
 @endsection

@@ -1502,38 +1502,55 @@ class TurnosController extends Controller
 
         $solicitudes = Turnos::where('tipo','Ratificación')
         ->where('auxiliar',$user["id"])
-        //->where('estatus','Confirmado')
+        ->where('estatus','Confirmado')
+        ->orwhere('estatus','Conluida')
+        ->orwhere('estatus','Concluida Pagos')
+        ->orwhere('estatus','Incumplimiento')
         ->get();
         return view('/solicitudes/indexauxiliar',compact('solicitudes'));
     }
 
     public function concluir_ratificaciones($id){
-        return view('/solicitudes/concluir',compact('id'));
-    }
+        $id_usuario = auth()->user()->id;
+        $user = User::find($id_usuario);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+        $relacionEloquent = 'roles';
 
+        $conciliadores = User::whereHas($relacionEloquent, function ($query) {
+            return $query->where('name', '=', 'Conciliador');
+        })
+        ->where('delegacion', $user["delegacion"])
+        ->get();
+
+        return view('/solicitudes/concluir',compact('id','conciliadores'));
+    }
     public function consultar_ratificaciones($id){
         $folio = Turnos::find($id);
         //Validar si existe el abogado
-        //dd($folio);
+        $id_usuario = auth()->user()->id;
+        $user = User::find($id_usuario);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
 
         $valida = Poder::where('curp',$folio["curp_solicitante"])->get();
         //dd($valida);
         if(count($valida) != 0){
-            $ruta_abogado = "../../storage/app/documentos_abogados/";
+            $ruta_abogado = 'documentos_abogados';
         }
         else{
-            $ruta_abogado = "../../storage/app/documentos_ratificacion/";
+            $ruta_abogado = 'documentos_ratificacion';
         }
-        
-        return view('/solicitudes/verratificacion',compact('folio','ruta_abogado'));
+        //dd($ruta_abogado);
+        return view('/solicitudes/verratificacion',compact('folio','ruta_abogado','userRole'));
     }
 
-   public function editar_ratificaciones(Request $request){
+    public function editar_ratificaciones(Request $request){
         $data = $request->all();
-        //dd($data);
-    
-
-        //Validar para cada documento
+        $id_usuario = auth()->user()->id;
+        $user = User::find($id_usuario);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
         
         //Validar si existe el documnento nuevo
         if(isset($data["documentoIne"])){
@@ -1545,7 +1562,7 @@ class TurnosController extends Controller
         if(isset($data["documentoRepresentacion"])){
             $nombre_representación = $data["nombre_empresa"]."".$data["primero_empresa"]."".$data["segundo_empresa"]."-".$data["empresa"]."_PODER.pdf";
             $path = Storage::putFileAs(
-                'documentos_ratificacion', $request->file('documentoPoder'), $nombre_representación
+                'documentos_ratificacion', $request->file('documentoRepresentacion'), $nombre_representación
             );
         }
         if(isset($data["documentoCurp"])){
@@ -1587,40 +1604,76 @@ class TurnosController extends Controller
         }
         
         //Agregar todos los campos de la tabla turnos
-        $data_update = Turnos::find($data["id"])
-        ->update([
-            'empresa'                       => $data["empresa"],
-            'primero_empresa'               => $data["primero_empresa"],
-            'segundo_empresa'               => $data["segundo_empresa"],
-            'nombre_empresa'                => $data["nombre_empresa"],
-            'curp_solicitante'              => $data["curp_solicitante"],
-            'telefono'                      => $data["telefono"],
-            'trabajador'                    => $data["nombre_trabajador"],
-            'primero_trabajador'            => $data["primer_apellidot"],
-            'segundo_trabajador'            => $data["segundo_apellidot"],
-            'edad'                          => $data["edad"],
-            'sexo'                          => $data["sexo"],
-            'trabajador_curp'               => $data["trabajador_curp"],
-            'email'                         => $data["email"],
-            'telefono'                      => $data["telefono"],
-            'tipo_identificacion'           => $data["tipo_identificacion"],
-            'fecha_inicio'                  => $data["fecha_inicio"],
-            'fecha_termino'                 => $data["fecha_termino"],
-            'categoria'                     => $data["categoria"],
-            'frecuencia'                    => $data["frecuencia"],
-            'salario'                       => $data["salario"],
-            'dias'                          => $data["dias"],
-            'motivo'                        => $data["motivo"],
-            'monto'                         => $data["monto"],
-            'tipo_pago'                     => $data["tipo_pago"],
-            'delegacion'                    => $data["delegacion"],
-            'fecha'                         => $data["fecha_pago"],
-            'hora'                          => $data["hora_pago"],
-            'observaciones'                 => $data["observaciones"],
-        ]);
+        if($userRole[0] == "Solicitante"){
+            $data_update = Turnos::find($data["id"])
+            ->update([
+                'empresa'                       => $data["empresa"],
+                'primero_empresa'               => $data["primero_empresa"],
+                'segundo_empresa'               => $data["segundo_empresa"],
+                'nombre_empresa'                => $data["nombre_empresa"],
+                'curp_solicitante'              => $data["curp_solicitante"],
+                'telefono'                      => $data["telefono"],
+                'trabajador'                    => $data["nombre_trabajador"],
+                'primero_trabajador'            => $data["primer_apellidot"],
+                'segundo_trabajador'            => $data["segundo_apellidot"],
+                'edad'                          => $data["edad"],
+                'sexo'                          => $data["sexo"],
+                'trabajador_curp'               => $data["trabajador_curp"],
+                'email'                         => $data["email"],
+                'telefono'                      => $data["telefono"],
+                'tipo_identificacion'           => $data["tipo_identificacion"],
+                'fecha_inicio'                  => $data["fecha_inicio"],
+                'fecha_termino'                 => $data["fecha_termino"],
+                'categoria'                     => $data["categoria"],
+                'frecuencia'                    => $data["frecuencia"],
+                'salario'                       => $data["salario"],
+                'dias'                          => $data["dias"],
+                'motivo'                        => $data["motivo"],
+                'monto'                         => $data["monto"],
+                'tipo_pago'                     => $data["tipo_pago"],
+            ]);
+        }
+        else{
+            $data_update = Turnos::find($data["id"])
+            ->update([
+                'empresa'                       => $data["empresa"],
+                'primero_empresa'               => $data["primero_empresa"],
+                'segundo_empresa'               => $data["segundo_empresa"],
+                'nombre_empresa'                => $data["nombre_empresa"],
+                'curp_solicitante'              => $data["curp_solicitante"],
+                'telefono'                      => $data["telefono"],
+                'trabajador'                    => $data["nombre_trabajador"],
+                'primero_trabajador'            => $data["primer_apellidot"],
+                'segundo_trabajador'            => $data["segundo_apellidot"],
+                'edad'                          => $data["edad"],
+                'sexo'                          => $data["sexo"],
+                'trabajador_curp'               => $data["trabajador_curp"],
+                'email'                         => $data["email"],
+                'telefono'                      => $data["telefono"],
+                'tipo_identificacion'           => $data["tipo_identificacion"],
+                'fecha_inicio'                  => $data["fecha_inicio"],
+                'fecha_termino'                 => $data["fecha_termino"],
+                'categoria'                     => $data["categoria"],
+                'frecuencia'                    => $data["frecuencia"],
+                'salario'                       => $data["salario"],
+                'dias'                          => $data["dias"],
+                'motivo'                        => $data["motivo"],
+                'monto'                         => $data["monto"],
+                'tipo_pago'                     => $data["tipo_pago"],
+                'delegacion'                    => $data["delegacion"],
+                'fecha'                         => $data["fecha_pago"],
+                'hora'                          => $data["hora_pago"],
+                'observaciones'                 => $data["observaciones"],
+            ]);
+        }
 
 
-        return redirect()->route('Ratificacion');
+        if($userRole[0] == "Auxiliar")
+            return redirect()->route('atender_ratificacion');
+        else if($userRole[0] == "Solicitante")
+            return redirect()->route('ratificacion');
+        else if($userRole[0] == "Administrador Solicitante")
+            return redirect()->route('Ratificacion');
     }
     
     public function guardar_manifestacion(Request $request){
@@ -1699,17 +1752,21 @@ class TurnosController extends Controller
     public function pagoA_ratificacion(Request $request){
         $data = $request->all();
 
-        $pagos = Pagos::where('id_solicitud',$data["id"])->get();
-        $rechazar = Pagos::find($id)
+        Pagos::find($data["id"])
         ->update(['estatus'  => "Pagado", 'observaciones' => $data["observaciones"]]);
 
         return redirect()->route('atender_ratificacion');
     }
 
     public function pagoR_ratificacion($id){
-        $pagos = Pagos::where('id_solicitud',$id)->get();
-        $rechazar = Pagos::find($id)
+        $pagos = Pagos::find($id);
+        
+        $id_solicitud = $pagos["id_solicitud"];
+        Pagos::find($id)
         ->update(['estatus'  => "No pagado"]);
+
+        Turnos::find($id_solicitud)
+        ->update(['estatus' => "Incumplimiento"]);
 
         return redirect()->route('atender_ratificacion');
     }
@@ -1730,7 +1787,7 @@ class TurnosController extends Controller
         $consecutivo = $id["id"]+1;
         //contar el numero de ceros
         $numeroConCeros = str_pad($consecutivo, 5, "0", STR_PAD_LEFT);
-        $folio = "RAT/".$del."/".$año_actual."/".$numeroConCeros;
+        $folio = $del."/RAT"."/".$año_actual."/".$numeroConCeros;
     
         return $folio;
     }

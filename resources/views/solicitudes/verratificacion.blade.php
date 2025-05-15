@@ -158,14 +158,14 @@
                                     <div class="col-xs-12 col-sm-6 col-md-12">
                                         <div class="form-group">
                                             <label for="email">*INE</label><br>
-                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_ratificacion/{{$folio->ine}}">Existente</a>
+                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/{{$ruta_abogado}}/{{$folio->ine}}">Existente</a>
                                             <input type="file" name="documentoIne" class="form-control-file" accept=".pdf">        
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-12">
                                         <div class="form-group">
                                             <label>*Documento que acredite la representación</label><br>
-                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_ratificacion/{{$folio->representacion}}">Existente</a>
+                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/{{$ruta_abogado}}/{{$folio->representacion}}">Existente</a>
                                             <input type="file" name="documentoRepresentacion" class="form-control-file" accept=".pdf">
                                         </div>
                                     </div>
@@ -305,29 +305,31 @@
                                             <input type="text" class="form-control" name="tipo_pago" value="<?=$folio["tipo_pago"];?>">
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-12">
-                                        <div class="form-group">
-                                            <h4 class="text-center">Datos de la fecha</h4>
+                                    @if($userRole[0] == "Auxiliar" || $userRole[0] == "Administrador Solicitante")
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <div class="form-group">
+                                                <h4 class="text-center">Datos de la fecha</h4>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-4">
-                                        <div class="form-group">
-                                            <label for="email">Sede</label>
-                                            <input type="text" class="form-control" name="delegacion" value="<?=$folio["delegacion"];?>">
+                                        <div class="col-xs-12 col-sm-6 col-md-4">
+                                            <div class="form-group">
+                                                <label for="email">Sede</label>
+                                                <input type="text" class="form-control" name="delegacion" value="<?=$folio["delegacion"];?>">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-4">
-                                        <div class="form-group">
-                                            <label for="email">Fecha</label>
-                                            <input type="text" class="form-control" name="fecha_pago" value="<?=$folio["fecha"];?>">
-                                    </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-4">
-                                        <div class="form-group">
-                                            <label for="email">Hora inicio</label>
-                                            <input type="text" class="form-control" name="hora_pago" value="<?=$folio["hora"];?>">
+                                        <div class="col-xs-12 col-sm-6 col-md-4">
+                                            <div class="form-group">
+                                                <label for="email">Fecha</label>
+                                                <input type="text" class="form-control" name="fecha_pago" value="<?=$folio["fecha"];?>">
                                         </div>
-                                    </div> 
+                                        </div>
+                                        <div class="col-xs-12 col-sm-6 col-md-4">
+                                            <div class="form-group">
+                                                <label for="email">Hora inicio</label>
+                                                <input type="text" class="form-control" name="hora_pago" value="<?=$folio["hora"];?>">
+                                            </div>
+                                        </div> 
+                                    @endif
                                     <div class="col-xs-12 col-sm-6 col-md-12">
                                         <div class="form-group">
                                             <label for="email">Observaciones</label>
@@ -335,7 +337,13 @@
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
+                                        @if($userRole[0] == "Auxiliar")
+                                            <a class="btn btn-primary" href="{{ route('atender_ratificacion') }}">Regresar</a>
+                                        @elseif($userRole[0] == "Solicitante")
+                                            <a class="btn btn-primary" href="{{ route('ratificacion') }}">Regresar</a>
+                                        @elseif($userRole[0] == "Administrador Solicitante")
                                         <a class="btn btn-primary" href="{{ route('Ratificacion') }}">Regresar</a>
+                                        @endif
                                         <button type="submit" class="btn btn-primary">Guardar</button>
                                     </div>    
                                 </div>

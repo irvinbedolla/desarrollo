@@ -36,13 +36,13 @@
                                                     <td>{{$solicitud->email}}</td>
                                                     <td>{{$solicitud->trabajador}}</td>
                                                     <td>{{$solicitud->estatus}}</td>
-                                                    <td><a class="btn btn-primary" href="{{ route('consultar_ratificacion', $solicitud->id) }}"  target="_blank" >Consultar</a></td>
+                                                    <td><a class="btn btn-primary" href="{{ route('consultar_ratificacion', $solicitud->id) }}">Consultar</a></td>
                                                     <td>
                                                         @if($solicitud->estatus == "Confirmado")
-                                                            <a class="btn btn-info" href="{{ route('ratificacion_concluir', $solicitud->id) }}" target="_blank">Concluir</a>
+                                                            <a class="btn btn-info" href="{{ route('ratificacion_concluir', $solicitud->id) }}">Concluir</a>
                                                         @endif
                                                         @if($solicitud->estatus == "Concluida Pagos")
-                                                            <a class="btn btn-info" href="{{ route('ratificacion_pagar', $solicitud->id) }}" target="_blank">Pagar</a>
+                                                            <a class="btn btn-info" href="{{ route('ratificacion_pagar', $solicitud->id) }}">Pagar</a>
                                                         @endif
                                                     </td>
                                                     <td>
@@ -55,7 +55,10 @@
                                                             <a class="btn btn-success" href="{{ route('PDFaudiencia', $solicitud->id) }}"  target="_blank">Acta de audiencia</a>
                                                         @elseif($solicitud->estatus == "Confirmado")
                                                             <a class="btn btn-success" href="{{ route('PDFratifi', $solicitud->id) }}"  target="_blank">Acuse</a>
+                                                        @elseif($solicitud->estatus == "Incumplimiento")
+                                                            <a class="btn btn-success" href="{{ route('PDFratifi', $solicitud->id) }}"  target="_blank">Incumplimiento</a>
                                                         @endif
+                                                        
                                                     </td>
                                                 </tr>
                                             @endforeach

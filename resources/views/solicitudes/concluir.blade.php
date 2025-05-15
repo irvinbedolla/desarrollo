@@ -115,7 +115,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Domicilio de la empresa</label>
                                             <input type="text" name="domicilio" class="form-control" required> 
@@ -124,21 +124,21 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!--
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-6 col-md-6">
                                         <div class="form-group">
-                                            <label for="name">Pagos diferidos</label>
-                                            <select id="pagos" name="pagos" class="form-control">
+                                            <label for="password">Conciliador</label>
+                                            <select class="form-control" name="conciliador_id" required>
                                                 <option value="">Seleccione</option>
-                                                <option value="Si">Si</option>
-                                                <option value="No">No</option>
-                                                </select>
+                                                @foreach($conciliadores as $con)
+                                                    <option value="{{$con['id']}}">{{$con['name']}}</option>
+                                                @endforeach
+                                            </select>
                                             <div class="invalid-feedback">
-                                                El campo es obligatorio.
+                                                El conciliador es obligatorio.
                                             </div>
                                         </div>
-                                    </div>
-                                    -->
+                                            </div>
+
                                     <div class="col-xs-12 col-sm-12 col-md-12"></div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div id="div_pagos_diferidos1">
