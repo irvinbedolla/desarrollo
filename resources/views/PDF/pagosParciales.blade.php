@@ -72,7 +72,7 @@
         <main>
             <div class="content">
                 <div class="table-responsive">
-                    <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
+                    <table id="tabla_pago" class="table-striped" style="width:60%; float: right;">
                             <tr>    
                                 <td><b>Número de identificación único: </b></td>
                                 <td>{{ $solicitud->NUE }} </td>

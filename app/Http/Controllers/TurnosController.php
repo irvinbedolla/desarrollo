@@ -1483,7 +1483,7 @@ public function VerPDFPagos($id){
     ->select('users.name')
     ->first();
 
-    $html = view('PDF/pagosParciales', compact('id', 'solicitud','conciliador','pagos'))->render();
+    $html = view('PDF/pagosParciales', compact('id','solicitud','conciliador','pagos'))->render();
 
     $pdf = \PDF::loadHTML($html)
         ->setPaper('a4', 'portrait')
