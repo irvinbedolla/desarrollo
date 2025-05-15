@@ -105,7 +105,7 @@
                     </p>
                     <p class="sangria">                
                         b) Que por el desempeño de sus labores contaba con las siguientes prestaciones:<br>
-                            - Salario mensual: <b> SALARIO MENSUAL (SALARIO EN LETRA M.N)</b>. <br>
+                            - Salario mensual: <b>${{ number_format($salario_mensual, 2) }} {{ $mensualTexto }} M.N</b>. <br>
                             - Días de descanso: <b>{{ $dias_descanso }}</b><br>
                             - Vacaciones: <b>{{ $solicitud->vacaciones_dias }}</b> días al año.<br>
                             - Aguinaldo: <b>{{ $solicitud->aguinaldo_dias }}</b> días al año.<br>
@@ -165,16 +165,16 @@
                             prestaciones ordinarias y extraordinarias y en especie que conforme a derecho le corresponden, así mismo como cualquier riesgo o accidente de trabajo que haya sufrido. Por lo anterior, 
                             la parte <b>EMPLEADORA</b> no adeuda pago de concepto alguno.<br><br>
 
-                        <b>QUINTA</b>. La <b>TRABAJADORA</b> recibirá por parte de la <b>EMPLEADORA</b> la cantidad de <b>${{ number_format($solicitud->monto, 2, '.', ',') }} {{ ucfirst($solicitud->montoTexto) }} M.N</b>, 
+                        <b>QUINTA</b>. La <b>TRABAJADORA</b> recibirá por parte de la <b>EMPLEADORA</b> la cantidad de <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }} M.N</b>, 
                             conforme a los siguientes conceptos:</p>
                             <p class="sangria">
-                                - Vacaciones: <b>${{ number_format($solicitud->Vacaciones, 2, '.', ',') }} {{ ucfirst($solicitud->vacacionesTexto) }} M.N</b>.<br>
-                                - Prima vacacional: <b>${{ number_format($solicitud->PrimaVacacional, 2, '.', ',') }} {{ ucfirst($solicitud->primaTexto) }} M.N</b>.<br>
-                                - Aguinaldo:  <b>${{ number_format($solicitud->Aguinaldo, 2, '.', ',') }} {{ ucfirst($solicitud->aguinaldoTexto) }} M.N</b>.<br>
-                                - Utilidades: <b>${{ number_format($solicitud->PagoPTU, 2, '.', ',') }} {{ ucfirst($solicitud->utilidadesTexto) }} M.N</b>.<br>
-                                - Prima de antigüedad: <b>${{ number_format($solicitud->PrimaAntigüedad, 2, '.', ',') }} {{ ucfirst($solicitud->antiguedadTexto) }} M.N</b>.<br>
-                                - Gratificación: <b>${{ number_format($solicitud->Gratificación, 2, '.', ',') }} {{ ucfirst($solicitud->gratificacionTexto) }} M.N</b>.<br>
-                                - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>${{ number_format($solicitud->Otras, 2, '.', ',') }} {{ ucfirst($solicitud->otrasTexto) }} M.N</b>.
+                                &nbsp;- Vacaciones: <b>${{ number_format($solicitud->Vacaciones, 2) }} {{ $vacacionesTexto }} M.N</b>.<br>
+                                - Prima vacacional: <b>${{ number_format($solicitud->PrimaVacacional, 2) }} {{ $primaTexto }} M.N</b>.<br>
+                                - Aguinaldo:  <b>${{ number_format($solicitud->Aguinaldo, 2) }} {{ $aguinaldoTexto }} M.N</b>.<br>
+                                - Utilidades: <b>${{ number_format($solicitud->Utilidades, 2) }} {{ $utilidadesTexto }} M.N</b>.<br>
+                                - Prima de antigüedad: <b>${{ number_format($solicitud->PrimaAntigüedad, 2) }} {{ $antiguedadTexto }} M.N</b>.<br>
+                                - Gratificación: <b>${{ number_format($solicitud->Gratificación, 2) }} {{ $gratificacionTexto }} M.N</b>.<br>
+                                - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>${{ number_format($solicitud->Otras, 2) }} {{ $otrasTexto }} M.N</b>.
                             </p>
                             <p>{{ $solicitud->Especifique }} </p>
                             <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
@@ -186,13 +186,13 @@
                         <b>${{ number_format($solicitud->monto, 2, '.', ',') }} {{ ucfirst($solicitud->montoTexto) }} M.N</b>, tal como se muestra:<br>
 
                         <div class="table-responsive">
-                            <table id="pagos" class="table table-striped mt-1">
-                                <thead style="background-color: #4A001F;">
+                            <table id="pagos" class="table-striped" style="width:60%;">
+                                <thead>
                                     <th style="display: none;">ID</th>
-                                    <th style="color: #fff;">Fecha</th>
-                                    <th style="color: #fff;">Hora</th>
-                                    <th style="color: #fff;">Monto</th>
-                                    <th style="color: #fff;">Descripción</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Monto</th>
+                                    <th>Descripción</th>
                                 </thead>
                                 <tbody>
                                     @foreach($pagos as $pago)
@@ -213,7 +213,8 @@
 
                     <p>En caso de que la parte <b>EMPLEADORA</b> no cubra el pago de la cantidad estipulada y dentro del plazo determinado en esta cláusula, deberá pagar a la parte <b>TRABAJADORA</b> 
                         el equivalente a un día de salario diario, el cual se fijará en razón del salario que percibía dicha parte antes de finalizar la relación de trabajo correspondiente a la cantidad de 
-                        <b>$[salario diario]</b>. Esa cantidad se sumará a la previamente pactada, por cada día que transcurra, sin que se dé cabal cumplimiento al convenio, con 
+                        <b>${{ number_format($salario_diario, 2) }} {{ $diarioTexto }} M.N</b>. Esa cantidad se sumará a la previamente pactada, por cada día que 
+                        transcurra, sin que se dé cabal cumplimiento al convenio, con 
                         fundamento en el artículo 684-E, fracción XIV, último párrafo, de la Ley Federal del Trabajo.</p><br>
                                
                     <p>Asimismo, manifiestan estar de acuerdo que de no pagarse el primero de los pagos convenidos en la fecha de su vencimiento, quedará a salvo el derecho de cualquiera de las partes para 

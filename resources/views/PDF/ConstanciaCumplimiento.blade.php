@@ -93,12 +93,12 @@
                 </div><br><br><br><br><br><br>
                
                 <p><b>
-                    Solicitante: {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
-                    Citado(a): {{ $solicitud->empresa }} [RESOLUCION_CITADOS_CONVENIO] <br>
+                    Trabajador(a): {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
+                    Empresa/patrón: {{ $solicitud->empresa }}<br>
                     Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
                     Asistencia de los interesados: Si. <br>
-                    Fecha del conflicto: [SOLICITUD_FECHA_CONFLICTO]  <br>
-                    Posible prescripción de derechos: [SOLICITUD_PRESCRIPCION] <br> 
+                    <!--Fecha del conflicto: [SOLICITUD_FECHA_CONFLICTO]  <br>
+                    Posible prescripción de derechos: [SOLICITUD_PRESCRIPCION] <br> -->
                     Convenio conciliatorio: Si.
                 </b></p> 
 
@@ -116,14 +116,36 @@
                     de conciliación celebrada <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> de 
                     <b>{{ $solicitud->hora }}</b> a <b>{{ $solicitud->hora_fin }}</b>.<br><br>
                                 
-                    De acuerdo con lo establecido en el convenio referido el <b>EMPLEADOR</b> se obligó al pago de los siguientes conceptos: <br><br>
-                                
-                    <b>[RESOLUCION_RESUMEN_PAGOS]</b>
+                    De acuerdo con lo establecido en el convenio referido el <b>EMPLEADOR</b> se obligó al pago de los siguientes conceptos: <br>
+              
+                    <div class="table-responsive">
+                        <table id="pagos" class="table-striped" style="width:60%;">
+                            <thead>
+                                <th style="display: none;">ID</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Monto</th>
+                                <th>Descripción</th>
+                            </thead>
+                            <tbody>
+                                @foreach($pagos as $pago)
+                                    <tr>
+                                        <td style="display: none;">{{$pago->id_solicitud}}</td>
+                                        <td>{{$pago->fecha}}</td> 
+                                        <td>{{$pago->hora}}</td>
+                                        <td>{{$pago->monto}}</td>
+                                        <td>{{$pago->descripcion}}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>      
+                    </div><br>
                                 
                     En este sentido, el <b>EMPLEADOR</b> ha dado cumplimiento a la <b>totalidad</b> de los conceptos contenidos en el Convenio de Conciliación 
                     celebrado entre las <b>PARTES.  Doy fe.</b><br><br>
                                 
-                    <b> Con fecha [FECHA_ACTUAL] se emite la presente Constancia de Cumplimiento del Convenio de Conciliación, con fundamento en la fracción XIV del 
+                    <b> Con fecha {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}
+                    se emite la presente Constancia de Cumplimiento del Convenio de Conciliación, con fundamento en la fracción XIV del 
                     artículo 684-E, fracción VIII del artículo 684-F de la Ley Federal del Trabajo, y artículo 20 del Reglamento Interior del Centro de Conciliación 
                     Laboral del Estado de Michoacán de Ocampo.</b>
                 </p>

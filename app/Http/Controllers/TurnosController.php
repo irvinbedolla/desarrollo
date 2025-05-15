@@ -32,7 +32,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-
+use NumberToWords\NumberToWords; // para convertir números(cantidades) a letras
 
 class TurnosController extends Controller 
 {
@@ -1314,16 +1314,57 @@ class TurnosController extends Controller
         $solicitud = Turnos::find($id);
         $pagos = Pagos::where('id_solicitud', $id)->get();
         $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
-        $salario_diario= $solicitud->salario !== null ? $solicitud->salario /30 : null;
 
-        $html = view('PDF/convenioTerminacion', compact('id', 'solicitud', 'dias_descanso', 'salario_diario','pagos'))->render();
+        $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
+        $salario_mensual = $salario_diario * 30;
+        $diarioTexto = $this->convertirNumerosALetras($salario_diario);
+        $mensualTexto = $this->convertirNumerosALetras($salario_mensual);
+        $montoTexto = $this->convertirNumerosALetras($solicitud->monto);
+        $vacacionesTexto = $this->convertirNumerosALetras($solicitud->acaciones);
+        $primaTexto = $this->convertirNumerosALetras($solicitud->PrimaVacacional);
+        $aguinaldoTexto = $this->convertirNumerosALetras($solicitud->Aguinaldo);
+        $utilidadesTexto = $this->convertirNumerosALetras($solicitud->PagoPTU);
+        $antiguedadTexto = $this->convertirNumerosALetras($solicitud->PrimaAntigüedad);
+        $gratificacionTexto = $this->convertirNumerosALetras($solicitud->Gratificación);
+        $otrasTexto = $this->convertirNumerosALetras($solicitud->Otras);
 
+        $html = view('PDF/convenioTerminacion', 
+            compact('id', 'solicitud', 'dias_descanso', 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','vacacionesTexto',
+            'primaTexto','aguinaldoTexto','utilidadesTexto','antiguedadTexto','gratificacionTexto','otrasTexto'))
+            ->render();
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true);
 
         return $pdf->stream('Convenio_terminacion.pdf');                   
+    }
+
+    public function calcularSalarioDiario($salario, $frecuencia) {
+        switch ($frecuencia) {
+            case 'Diario':
+                return $salario;
+            case 'Semanal':
+                return $salario / 7; 
+            case 'Quincenal':
+                return $salario / 15; 
+            case 'Mensual':
+                return $salario / 30;
+            default:
+                return 0;
+        }
+    }
+
+    private function convertirNumerosALetras($valor) {
+        $numberToWords = new NumberToWords();
+        $numberTransformer = $numberToWords->getNumberTransformer('es'); 
+
+        $parteEntera = floor($valor);
+        $letras = strtoupper($numberTransformer->toWords($parteEntera)); 
+
+        $parteDecimal = round(($valor - $parteEntera) * 100);
+        $centavos = str_pad($parteDecimal, 2, '0', STR_PAD_LEFT); 
+        return "{$letras} PESOS {$centavos}/100";
     }
 
 //PDF Acta de multa

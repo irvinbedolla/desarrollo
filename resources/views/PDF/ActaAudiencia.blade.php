@@ -89,14 +89,6 @@
                     CITADA Y DOCUMENTO CON QUE SE IDENTIFICA]</b>, identificaciones que concuerdan fisionómicamente con las partes y, que, en este acto, se agrega copia cotejada al expediente 
                     electrónico para que conste como corresponda; documentos que les son devueltos por ser innecesaria su retención. <br><br>
 
-                    La parte solicitante manifiesta que presentó solicitud el <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> para iniciar el 
-                    Procedimiento de Conciliación Prejudicial ante el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, por concepto o motivo de <b>{{ $solicitud->motivo }}</b>.<br><br>
-                    <!-- Colocar condicional -->
-                    [SI_SOLICITANTE_NOTIFICA] 
-                    La parte citada <b>{{ $solicitud->empresa }}</b> fue notificada por el solicitante con el citatorio emitido el 
-                    <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, 
-                    con fundamento en el segundo párrafo del artículo 684-E de la ley de la Ley Federal del Trabajo.<br><br>
-
                     Por tanto, esta Autoridad Conciliadora se encuentra en condiciones para desahogar la <b>Audiencia de Conciliación Prejudicial.</b><br><br>
 
                     Se hace del conocimiento del trabajador(a) que podrá comparecer asistido por abogado(a) o persona de su confianza, pero no se reconocerá a ésta como apoderado, por tratarse 
@@ -114,7 +106,7 @@
 
                     A continuación, se cede el uso de la voz de manera ordenada y respetuosa a los presentes en esta audiencia, para manifestar en relación al proceso de conciliación: <br>
                     
-                    [RESOLUCION_PRIMERA_MANIFESTACION]
+                    <!--[RESOLUCION_PRIMERA_MANIFESTACION]-->
                     {{ $solicitud->resolucion_primera }}<br><br>
 
                     Así, resulta procedente exponer a los presentes la propuesta de un acuerdo conciliatorio justo y equitativo que beneficie a ambas partes del conflicto; haciendo de su conocimiento 
@@ -123,10 +115,10 @@
 
                     La propuesta referida, se encuentra formulada en los términos siguientes:<br>
                     
-                    [RESOLUCION_PROPUESTAS_TRABAJADORES] 
+                    <!--[RESOLUCION_PROPUESTAS_TRABAJADORES] -->
                     {{ $solicitud->resolucion_trabajadores }}<br><br>
 
-                    [RESOLUCION_JUSTIFICACION_PROPUESTA]
+                    <!--[RESOLUCION_JUSTIFICACION_PROPUESTA]-->
                     {{ $solicitud->resolucion_justificacion }}<br><br>
 
                     A efecto de conocer la opinión de las partes, se cede el uso de la voz de manera ordenada y respetuosa a los presentes en esta audiencia, con la finalidad de escuchar lo que 
@@ -134,7 +126,7 @@
                     Federal del Trabajo</b>, y respetando los adquiridos; de no estar de acuerdo se podrá solicitar una nueva audiencia que tendrá verificativo dentro de los cinco días siguientes al 
                     cierre de esta diligencia.<br><br>
 
-                    [RESOLUCION_SEGUNDA_MANIFESTACION]
+                    <!--[RESOLUCION_SEGUNDA_MANIFESTACION]-->
                     {{ $solicitud->resolucion_segunda }}
 
                     Por tanto, en caso de que las partes hayan expresado estar conformes con la propuesta sugerida, se procede a la celebración del convenio respectivo, el cual tendrá valor de cosa juzgada 
