@@ -1525,6 +1525,7 @@ class TurnosController extends Controller
 
         return view('/solicitudes/concluir',compact('id','conciliadores'));
     }
+
     public function consultar_ratificaciones($id){
         $folio = Turnos::find($id);
         //Validar si existe el abogado
@@ -1737,6 +1738,7 @@ class TurnosController extends Controller
         'comida'                        => $data["comida"],
         'domicilio'                     => $data["domicilio"],
         'NUE'                           => $expediente,
+        'id_conciliador'                => $data["id_conciliador"],
         'estatus'                       => $estatus]);
         
         return redirect()->route('atender_ratificacion');
