@@ -1416,13 +1416,13 @@ public function VerPDFInteres($id){
 //PDF Constancia de cumplimiento
 public function VerPDFCumplimiento($id){
     $solicitud = Turnos::find($id);
-
+    $pagos = Pagos::where('id_solicitud', $id)->get();
     $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
     $conciliador = $conciliador->where("turnos.id", "=", $id)
     ->select('users.name')
     ->first();
 
-    $html = view('PDF/ConstanciaCumplimiento', compact('id', 'solicitud','conciliador'))->render();
+    $html = view('PDF/ConstanciaCumplimiento', compact('id', 'solicitud','conciliador','pagos'))->render();
 
     $pdf = \PDF::loadHTML($html)
         ->setPaper('a4', 'portrait')
