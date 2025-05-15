@@ -1298,8 +1298,8 @@ class TurnosController extends Controller
 //PDF Acuse de Ratificación
 public function VerPDF($id){
     $solicitud = Turnos::find($id);
-    
-    $pdf = \PDF::loadView('PDF/ratificacion', compact('id','solicitud'))
+    $montoTexto = $this->convertirNumerosALetras($solicitud->monto);
+    $pdf = \PDF::loadView('PDF/ratificacion', compact('id','solicitud','montoTexto'))
     ->setPaper('a4', 'portrait')
     ->setOption('isHtml5ParserEnabled', true)
     ->setOption('isPhpEnabled', true);
@@ -1475,23 +1475,23 @@ public function VerPDFIncumplimiento($id){
 
 //PDF Constancia de Pago Parcial
 public function VerPDFPagos($id){
-$solicitud = Turnos::find($id);
-$pagos = Pagos::where('id_solicitud', $id)->first();
+    $solicitud = Turnos::find($id);
+    $pagos = Pagos::where('id_solicitud', $id)->first();
 
-$conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
-$conciliador = $conciliador->where("turnos.id", "=", $id)
-->select('users.name')
-->first();
+    $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
+    $conciliador = $conciliador->where("turnos.id", "=", $id)
+    ->select('users.name')
+    ->first();
 
-$html = view('PDF/pagosParciales', compact('id', 'solicitud','conciliador','pagos'))->render();
+    $html = view('PDF/pagosParciales', compact('id', 'solicitud','conciliador','pagos'))->render();
 
-$pdf = \PDF::loadHTML($html)
-    ->setPaper('a4', 'portrait')
-    ->setOption('isHtml5ParserEnabled', true)
-    ->setOption('isPhpEnabled', true); 
+    $pdf = \PDF::loadHTML($html)
+        ->setPaper('a4', 'portrait')
+        ->setOption('isHtml5ParserEnabled', true)
+        ->setOption('isPhpEnabled', true); 
 
-$nombreArchivo = 'constancia_de_pago_'  .'.pdf';
-return $pdf->stream($nombreArchivo);                  
+    $nombreArchivo = 'constancia_de_pago_'  .'.pdf';
+    return $pdf->stream($nombreArchivo);                  
 }
 
     public function index_empresa(){
