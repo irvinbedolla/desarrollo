@@ -12,7 +12,7 @@
 		"barryvdh/laravel-dompdf": "^3.1",
 		"diglactic/laravel-breadcrumbs": "^9.0",
 		"guzzlehttp/guzzle": "^7.2",
-		"kwn/number-to-words": "^2.11",
+		"kwn/number-to-words": "*",
 		"laravel/framework": "^11.0",
 		"laravel/sanctum": "^4.0",
 		"laravel/socialite": "^5.6",

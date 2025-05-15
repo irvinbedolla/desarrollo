@@ -1790,7 +1790,8 @@ public function VerPDFPagos($id){
         'comida'                        => $data["comida"],
         'domicilio'                     => $data["domicilio"],
         'NUE'                           => $expediente,
-        'id_conciliador'                => $data["id_conciliador"],
+        'id_conciliador'                => $data["conciliador_id"],
+
         'estatus'                       => $estatus]);
         
         return redirect()->route('atender_ratificacion');
