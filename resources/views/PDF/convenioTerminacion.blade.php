@@ -15,7 +15,7 @@
                 margin: 0px 0px;
             }
             body{
-                padding-top: 85px;
+                padding-top: 95px;
             }
             main{
                 margin: 50px 50px 50px 40px; /*Para colocar el texto*/
@@ -80,7 +80,7 @@
                     NÚMERO DE IDENTIFICACIÓN ÚNICO {{ $solicitud->NUE }}<br><br>
                     SOLICITANTES:<br>
                     {{ $solicitud->empresa }}<br>
-                    {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}<br>
+                    {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}
                 </b></p>  
                 <p><center><b>CONVENIO DE CONCILIACIÓN</b></center></p><br>
                 <p>Con fundamento en los artículos 123, apartado A, fracción XXVII, inciso h) párrafo segundo, de la Constitución Política de los Estados Unidos Mexicanos; 
@@ -89,13 +89,13 @@
                     subsecuente se denominará la parte <b>“TRABAJADORA”</b> y, por otro <b>{{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}</b> 
                     a quién en lo subsecuente se le denominará la parte <b>“EMPLEADORA”</b>, 
                     a quienes en lo sucesivo de forma conjunta se les denominará las <b>“PARTES”</b>, quienes se someten y obligan en términos de las siguientes declaraciones y cláusulas:
-                </p><br>
+                </p>
 
                 <p><center><b>D E C L A R A C I O N E S:</b></center></p><br>
 
-                <p><b>PRIMERA</b>. {{ $solicitud->resolucion_primera }}.</p>  <br><br>
+                <p><b>PRIMERA</b>. {{ $solicitud->resolucion_primera }}.</p> 
 
-                <p><b>SEGUNDA</b>. {{ $solicitud->resolucion_segunda }}</p>.  <br><br>
+                <p><b>SEGUNDA</b>. {{ $solicitud->resolucion_segunda }}</p>.  
 
                 <b>TERCERA</b>. Declara la parte <b>TRABAJADORA</b>:
                     <p class="sangria">
@@ -148,7 +148,7 @@
                     
                     <center><b>C L Á U S U L A S:</b></center>
                     
-                    <p><br><br>
+                    <p><br>
                         <b>PRIMERA</b>. Las <b>PARTES</b> han determinado que por así convenir a sus intereses dan por concluida la relación laboral por mutuo acuerdo, conforme a lo estipulado por el artículo 53, 
                             fracción I, de la Ley Federal del Trabajo.<br> <br>
 
@@ -178,13 +178,13 @@
                             </p>
                             <p>{{ $solicitud->Especifique }} </p>
                             <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
-                        <br>
+
                             <!-- (CONDICIONAL, SOLO CUANDO SEA EN PAGOS DIFERIDOS)  -->
                                 
                     <p><b>SEXTA</b>. La <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará en <b>{{ $pagosDif->C_pagos}}</b> 
                         exhibiciones, hasta culminar la cantidad de 
-                        <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }} M.N</b>, tal como se muestra:<br>
-
+                        <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }} M.N</b>, tal como se muestra:
+                    </p>
                         <div class="table-responsive">
                             <table id="pagos" class="table-striped" style="width:60%;">
                                 <thead>
@@ -198,9 +198,9 @@
                                     @foreach($pagos as $pago)
                                         <tr>
                                             <td style="display: none;">{{$pago->id_solicitud}}</td>
-                                            <td>{{$pago->fecha}}</td> 
+                                            <td>{{ \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d/m/y') }}</td> 
                                             <td>{{$pago->hora}}</td>
-                                            <td>{{$pago->monto}}</td>
+                                            <td>${{ number_format($pago->monto, 2) }}</td>
                                             <td>{{$pago->descripcion}}</td>
                                         </tr>
                                     @endforeach
@@ -209,13 +209,12 @@
                         </div>
                         <!-- CONDICIONAL EN BASE A LO LLENADO EN FORMULARIO SE AGREGA PAGOS-->
                         <p>{{ $pago->observaciones }}</p>           
-                    </p>
 
                     <p>En caso de que la parte <b>EMPLEADORA</b> no cubra el pago de la cantidad estipulada y dentro del plazo determinado en esta cláusula, deberá pagar a la parte <b>TRABAJADORA</b> 
                         el equivalente a un día de salario diario, el cual se fijará en razón del salario que percibía dicha parte antes de finalizar la relación de trabajo correspondiente a la cantidad de 
                         <b>${{ number_format($salario_diario, 2) }} {{ $diarioTexto }} M.N</b>. Esa cantidad se sumará a la previamente pactada, por cada día que 
                         transcurra, sin que se dé cabal cumplimiento al convenio, con 
-                        fundamento en el artículo 684-E, fracción XIV, último párrafo, de la Ley Federal del Trabajo.</p><br>
+                        fundamento en el artículo 684-E, fracción XIV, último párrafo, de la Ley Federal del Trabajo.</p>
                                
                     <p>Asimismo, manifiestan estar de acuerdo que de no pagarse el primero de los pagos convenidos en la fecha de su vencimiento, quedará a salvo el derecho de cualquiera de las partes para 
                         exigir el cumplimiento del pago total de la cantidad pactada ante la autoridad competente, a parte de los días que transcurran de pena convencional. <br><br>
@@ -240,7 +239,7 @@
                         lo sanciona en este mismo acto. <b>Doy fe</b>.
                     </p>
                                     
-                    <br><br><br><br><br><br>
+                    <br><br>
                     <div class="row">
                         <div class="col-12 text-center">
                             <div style="display: inline-block; margin-right: 50px;">
@@ -252,7 +251,7 @@
                             </div>
                         </div>
                     </div>
-                    <br><br><br><br>
+                    <br><br><br>
                     <p><center><b>___________________________________<br> {{ $conciliador->name }} <br> FUNCIONARIA CONCILIADORA/<br> FUNCIONARIO CONCILIADOR</b></center> </p>     
             </div>
         </main>    

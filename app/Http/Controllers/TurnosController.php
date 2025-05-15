@@ -1456,13 +1456,13 @@ public function VerPDFAudiencia($id){
 //PDF Constancia de Incumplimiento
 public function VerPDFIncumplimiento($id){
     $solicitud = Turnos::find($id);
-    
     $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
     $conciliador = $conciliador->where("turnos.id", "=", $id)
     ->select('users.name')
     ->first();
+    $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
 
-    $html = view('PDF/Incumplimiento', compact('id', 'solicitud','conciliador'))->render();
+    $html = view('PDF/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario'))->render();
 
     $pdf = \PDF::loadHTML($html)
         ->setPaper('a4', 'portrait')

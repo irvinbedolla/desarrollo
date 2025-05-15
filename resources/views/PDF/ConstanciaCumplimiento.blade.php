@@ -85,10 +85,6 @@
                                 <td><b>Centro de conciliación: </b></td>
                                 <td>{{ $solicitud->delegacion }} </td>
                             </tr>
-                            <tr>
-                                <td><b>Sala de conciliación: </b></td>
-                                <td>SALA VIRTUAL </td>
-                            </tr>
                     </table>
                 </div><br><br><br><br><br><br>
                
@@ -131,9 +127,9 @@
                                 @foreach($pagos as $pago)
                                     <tr>
                                         <td style="display: none;">{{$pago->id_solicitud}}</td>
-                                        <td>{{$pago->fecha}}</td> 
+                                        <td>{{ \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d/m/y') }}</td> 
                                         <td>{{$pago->hora}}</td>
-                                        <td>{{$pago->monto}}</td>
+                                        <td>${{ number_format($pago->monto, 2) }}</td>
                                         <td>{{$pago->descripcion}}</td>
                                     </tr>
                                 @endforeach

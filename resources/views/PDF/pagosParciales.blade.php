@@ -81,10 +81,6 @@
                                 <td><b>Centro de conciliación: </b></td>
                                 <td>{{ $solicitud->delegacion }} </td>
                             </tr>
-                            <tr>
-                                <td><b>Sala de conciliación: </b></td>
-                                <td>SALA VIRTUAL </td>
-                            </tr>
                     </table>
                 </div><br><br><br><br><br>
                 <p><center><b>CONSTANCIA DE PAGO PARCIAL DE CONVENIO</b></center></p><br>
@@ -109,7 +105,7 @@
 
                     Las <b>PARTES</b> acordaron <b>PAGOS DIFERIDOS</b> en el convenio referido, en este sentido, el <b>EMPLEADOR</b> da cumplimiento ante esta Autoridad Conciliadora al siguiente concepto:<br>
 
-                    {{ $pagos->observaciones}}
+                    <p><b>{{ $pagos->observaciones}}</b></p>
 
                     Quien suscribe da fe del cumplimiento del concepto anteriormente descrito por parte del <b>EMPLEADOR. Doy fe.</b><br><br>
 
