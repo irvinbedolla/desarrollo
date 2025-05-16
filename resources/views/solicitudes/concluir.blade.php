@@ -186,18 +186,17 @@
 
 
     <script>
-        document.getElementById("div_pagos_diferidos").style.display = "none";
-        $( document ).ready(function() {
+       document.getElementById("div_pagos_diferidos").style.display = "none";
+       $( document ).ready(function() {
+            // Agregar registro
+            $("#addRow").click(function () {
+                var html = '';
+                html += '<div id="inputFormRow1" class="col-xs-12 col-sm-6 col-md-12">';
 
-        // agregar registro
-        $("#addRow").click(function () {
-            var html = '';
-            html += '<div id="  " class="col-xs-12 col-sm-6 col-md-12">';
-
-                //TIPO DE PAGO
+                // Tipo de pago
                 html +='<div class="col-xs-12 col-sm-12 col-md-12">';
                     html +='<div class="form-group">';
-                    html +='<label for="confirm-password">Prestación</label>';
+                    html +='<label for="confirm-password"><br>Prestación</label>';
                     html +='<select class="form-control" name="tipo_pago[]" required>';
                     html +='<option value="">Seleccione</option>';
                     html +='<option value="Fisica">Dias de aguinaldo</option>';
@@ -211,100 +210,87 @@
                     html +='<option value="Moral">Graficicaión F (Reconocimiento de derechos)</option>';
                     html +='<option value="Moral">Otros concepto de pago</option>';
                     html +='<option value="Moral">Prima vacacional</option>';
-
                     html +='</select>';
-                    html +='<div class="invalid-feedback">';
-                    html +='El tipo de pago es obligatorio.';
-                    html += '</div> </div> </div>'                              
-                    
-                    //DIRECCION
-                    html += '<div class="col-xs-12 col-sm-12 col-md-12">';
-                    html += '<div class="form-group">';
-                    html += '<label for="password">Monto a pagar</label>';
-                    html +='<input type="number" class="form-control" name="monto_pago[]"  oninput="this.value = this.value.toUpperCase()" required>';
-                    html += '<div class="invalid-feedback">';
-                    html += 'La Dirección es obligatoria.';
-                    html += '</div> </div> </div>';
-                    
-                ;                                    
-                    
+                    html +='<div class="invalid-feedback">El tipo de pago es obligatorio.</div>';
+                    html += '</div> </div>';
+
+                // Monto a pagar
+                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                html += '<div class="form-group">';
+                html += '<label for="password">Monto a pagar</label>';
+                html +='<input type="number" class="form-control" name="monto_pago[]"  oninput="this.value = this.value.toUpperCase()" required>';
+                html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>';
+                html += '</div> </div>';
+
                 html += '<div class="input-group-append">';
-                html += '<button id="removeRow1" type="button" class="btn btn-danger">Borrar</button>';
+                html += '<button class="removeRow btn btn-danger" type="button">Borrar</button>';
                 html += '</div>';
-            html += '</div>';
+                html += '</div>';
 
-            $('#newRow').append(html);
-        });
-        
-        $("#addPago").click(function () {
-            var html = '';
-            html += '<div id="inputFormRow2" class="col-xs-12 col-sm-6 col-md-12">';
+                $('#newRow').append(html);
+            });
 
+            // Borrar concepto
+            $(document).on('click', '.removeRow', function () {
+                $(this).closest('.col-xs-12').remove();
+            });
+
+            // Agregar pago
+            $("#addPago").click(function () {
+                var html = '';
+                html += '<div id="inputFormRow2" class="col-xs-12 col-sm-6 col-md-12">';
+                
                 //TIPO DE PAGO
                 html +='<div class="col-xs-12 col-sm-12 col-md-12">';
-                    html +='<div class="form-group">';
+                html +='<div class="form-group">';
 
-                    //NOMBRE CITADO
-                    html +='<div class="col-xs-12 col-sm-12 col-md-12">';
-                    html +='<div class="form-group">';
-                    html +='<label for="confirm-password">Dias de pago</label>';
-                    html +='<input type="date" class="form-control" name="dias_pagos[]" required>';
-                    html +='</div> </div>';                                
-                    
-                     //DIRECCION
-                     html += '<div class="col-xs-12 col-sm-12 col-md-12">';
-                    html += '<div class="form-group">';
-                    html += '<label for="password">Hora</label>';
-                    html +='<input type="text" class="form-control" name="hora_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
-                    html += '<div class="invalid-feedback">';
-                    html += 'La Dirección es obligatoria.';
-                    html += '</div> </div> </div>';
+                //DÍA A PAGAR
+                html +='<div class="col-xs-12 col-sm-12 col-md-12">';
+                html +='<div class="form-group">';
+                html +='<label for="confirm-password"><br>Dias de pago</label>';
+                html +='<input type="date" class="form-control" name="dias_pagos[]" required>';
+                html +='</div> </div>';                                
+                
+                //HORARIO A PAGAR
+                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                html += '<div class="form-group">';
+                html += '<label for="password">Hora</label>';
+                html +='<input type="text" class="form-control" name="hora_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
+                html += '<div class="invalid-feedback">';
+                html += 'La Dirección es obligatoria.';
+                html += '</div> </div> </div>';
 
-                    //DIRECCION
-                    html += '<div class="col-xs-12 col-sm-12 col-md-12">';
-                    html += '<div class="form-group">';
-                    html += '<label for="password">Monto a pagar</label>';
-                    html +='<input type="number" class="form-control" name="monto_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
-                    html += '<div class="invalid-feedback">';
-                    html += 'La Dirección es obligatoria.';
-                    html += '</div> </div> </div>';
+                //MONTO A PAGAR
+                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                html += '<div class="form-group">';
+                html += '<label for="password">Monto a pagar</label>';
+                html +='<input type="number" class="form-control" name="monto_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
+                html += '<div class="invalid-feedback">';
+                html += 'La Dirección es obligatoria.';
+                html += '</div> </div> </div>';
 
-                    //DIRECCION
-                    html += '<div class="col-xs-12 col-sm-12 col-md-12">';
-                    html += '<div class="form-group">';
-                    html += '<label for="password">Descripcion</label>';
-                    html +='<input type="text" class="form-control" name="descripcion_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
-                    html += '<div class="invalid-feedback">';
-                    html += 'La Dirección es obligatoria.';
-                    html += '</div> </div> </div>';
-                    
-                ;                                    
-                    
+                //DESCRIPCIÓN DE PAGO
+                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                html += '<div class="form-group">';
+                html += '<label for="password">Descripcion</label>';
+                html +='<input type="text" class="form-control" name="descripcion_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
+                html += '<div class="invalid-feedback">';
+                html += 'La Dirección es obligatoria.';
+                html += '</div> </div> </div>';
+
                 html += '<div class="input-group-append">';
-                html += '<button id="removeRow2" type="button" class="btn btn-danger">Borrar</button>';
+                html += '<button class="removeRow2 btn btn-danger" type="button">Borrar</button>';
                 html += '</div>';
-            html += '</div>';
+                html += '</div>';
 
-            $('#newRowaPago').append(html);
+                $('#newRowaPago').append(html);
+            });
+
+            // Borrar pago
+            $(document).on('click', '.removeRow2', function () {
+                $(this).closest('.col-xs-12').remove();
+            });
         });
 
-        const tipo_iden = document.getElementById('pagos');
-        tipo_iden.addEventListener('change', function() {
-            const valorSeleccionado = this.value;
-            // Realiza la validación o acciones necesarias
-            if (valorSeleccionado === 'Si') {
-                document.getElementById('div_pagos_diferidos').style.display = "block";
-            } else {
-                document.getElementById('div_pagos_diferidos').style.display = "none";
-            }
-        });
-
-        // borrar registro
-        $(document).on('click', '#removeRow1', function () {
-            $(this).closest('#inputFormRow1').remove();
-        });
-
-        
-    });
     </script>
 @endsection
