@@ -1313,6 +1313,7 @@ public function VerPDF($id){
 public function VerPDFConvenio($id){
     $solicitud = Turnos::find($id);
     $pagos = Pagos::where('id_solicitud', $id)->get();
+    $prestaciones = Concepto::where('id_solicitud', $id)->first();
     $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
 
     $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
@@ -1341,7 +1342,7 @@ public function VerPDFConvenio($id){
     //dd($conciliador);
     $html = view('PDF/convenioTerminacion', 
         compact('id', 'solicitud', 'dias_descanso', 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','vacacionesTexto',
-        'primaTexto','aguinaldoTexto','utilidadesTexto','antiguedadTexto','gratificacionTexto','otrasTexto','pagosDif','conciliador'))
+        'primaTexto','aguinaldoTexto','utilidadesTexto','antiguedadTexto','gratificacionTexto','otrasTexto','pagosDif','conciliador','prestaciones'))
         ->render();
     $pdf = \PDF::loadHTML($html)
         ->setPaper('a4', 'portrait')
@@ -1456,13 +1457,16 @@ public function VerPDFAudiencia($id){
 //PDF Constancia de Incumplimiento
 public function VerPDFIncumplimiento($id){
     $solicitud = Turnos::find($id);
+    $pagos = Pagos::find($id);
+    //$solicitud = Turnos::find($pagos["id_solicitud"]);
+    //dd($solicitud);
     $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
     $conciliador = $conciliador->where("turnos.id", "=", $id)
     ->select('users.name')
     ->first();
     $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
 
-    $html = view('PDF/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario'))->render();
+    $html = view('PDF/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
 
     $pdf = \PDF::loadHTML($html)
         ->setPaper('a4', 'portrait')
@@ -1473,7 +1477,29 @@ public function VerPDFIncumplimiento($id){
     return $pdf->stream($nombreArchivo);                  
 }
 
-//PDF Constancia de Pago Parcial
+//PDF Constancia de Incumplimiento Parcial
+public function VerPDFInParcial($id){
+    $pagos = Pagos::find($id);
+    $solicitud = Turnos::find($pagos["id_solicitud"]);
+    //dd($solicitud);
+    $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
+
+    $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
+    $conciliador = $conciliador->where("turnos.id_conciliador", "=", $solicitud["id_conciliador"])
+    ->select('users.name')
+    ->first();
+    
+    $html = view('PDF/incumplimientoParcial', compact('id', 'solicitud','conciliador','pagos','salario_diario'))->render();
+
+    $pdf = \PDF::loadHTML($html)
+        ->setPaper('a4', 'portrait')
+        ->setOption('isHtml5ParserEnabled', true)
+        ->setOption('isPhpEnabled', true); 
+
+    $nombreArchivo = 'constancia_de_incumplimiento_parcial'  .'.pdf';
+    return $pdf->stream($nombreArchivo);                  
+}
+
 //PDF Constancia de Pago Parcial
 public function VerPDFPagos($id){
     $pagos = Pagos::find($id);

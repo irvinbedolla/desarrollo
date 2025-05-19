@@ -36,7 +36,7 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
-                                            <label for="name">RESOLUCION PRIMERA MANIFESTACION</label>
+                                            <label for="name">RESOLUCIÓN PRIMERA MANIFESTACIÓN</label>
                                             <textarea name="primera" class="form-control" required></textarea>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
@@ -45,7 +45,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
-                                            <label for="name">RESOLUCION PROPUESTAS TRABAJADORES</label>
+                                            <label for="name">RESOLUCIÓN PROPUESTAS TRABAJADORES</label>
                                             <textarea name="trabajadores" class="form-control" required></textarea>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
@@ -54,7 +54,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
-                                            <label for="name">RESOLUCION JUSTIFICACION PROPUESTA</label>
+                                            <label for="name">RESOLUCIÓN JUSTIFICACIÓN PROPUESTA</label>
                                             <textarea name="justificacion" class="form-control" required></textarea>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
@@ -63,7 +63,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
-                                            <label for="name">RESOLUCION SEGUNDA MANIFESTACION</label>
+                                            <label for="name">RESOLUCIÓN SEGUNDA MANIFESTACIÓN</label>
                                             <textarea name="segunda" class="form-control" required></textarea>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
@@ -72,7 +72,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-2">
                                         <div class="form-group">
-                                            <label for="name">Dias de vacaciones</label>
+                                            <label for="name">Días de vacaciones</label>
                                             <input type="number" name="vacaciones" class="form-control" required> 
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
@@ -81,7 +81,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-2">
                                         <div class="form-group">
-                                            <label for="name">Dias de Aguinaldo</label>
+                                            <label for="name">Días de Aguinaldo</label>
                                             <input type="number" name="aguinaldo" class="form-control" required> 
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
@@ -99,7 +99,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
-                                            <label for="name">Horarios</label>
+                                            <label for="name">Horario laboral</label>
                                             <input type="text" name="horario" class="form-control" required> 
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
@@ -199,15 +199,15 @@
                     html +='<label for="confirm-password"><br>Prestación</label>';
                     html +='<select class="form-control" name="tipo_pago[]" required>';
                     html +='<option value="">Seleccione</option>';
-                    html +='<option value="Fisica">Dias de aguinaldo</option>';
-                    html +='<option value="Moral">Dias de sueldo</option>';
-                    html +='<option value="Moral">Dias de vacaciones</option>';
-                    html +='<option value="Moral">Graficicaión A (Con base al salario integrado)</option>';
-                    html +='<option value="Moral">Graficicaión B (20 Días por año cumplido)</option>';
-                    html +='<option value="Moral">Graficicaión C (Prima de antiguedad topada)</option>';
-                    html +='<option value="Moral">Graficicaión D (Incluye cualquier otra prestación)</option>';
-                    html +='<option value="Moral">Graficicaión E (Prestaciones en especie)</option>';
-                    html +='<option value="Moral">Graficicaión F (Reconocimiento de derechos)</option>';
+                    html +='<option value="Fisica">Días de aguinaldo</option>';
+                    html +='<option value="Moral">Días de sueldo</option>';
+                    html +='<option value="Moral">Días de vacaciones</option>';
+                    html +='<option value="Moral">Graficación A (Con base al salario integrado)</option>';
+                    html +='<option value="Moral">Graficación B (20 Días por año cumplido)</option>';
+                    html +='<option value="Moral">Graficación C (Prima de antigüedad topada)</option>';
+                    html +='<option value="Moral">Graficación D (Incluye cualquier otra prestación)</option>';
+                    html +='<option value="Moral">Graficación E (Prestaciones en especie)</option>';
+                    html +='<option value="Moral">Graficación F (Reconocimiento de derechos)</option>';
                     html +='<option value="Moral">Otros concepto de pago</option>';
                     html +='<option value="Moral">Prima vacacional</option>';
                     html +='</select>';
@@ -247,14 +247,14 @@
                 //DÍA A PAGAR
                 html +='<div class="col-xs-12 col-sm-12 col-md-12">';
                 html +='<div class="form-group">';
-                html +='<label for="confirm-password"><br>Dias de pago</label>';
+                html +='<label for="confirm-password"><br>Días de pago</label>';
                 html +='<input type="date" class="form-control" name="dias_pagos[]" required>';
                 html +='</div> </div>';                                
                 
                 //HORARIO A PAGAR
                 html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                 html += '<div class="form-group">';
-                html += '<label for="password">Hora</label>';
+                html += '<label for="password">Hora de pago</label>';
                 html +='<input type="text" class="form-control" name="hora_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
                 html += '<div class="invalid-feedback">';
                 html += 'La Dirección es obligatoria.';
@@ -272,7 +272,7 @@
                 //DESCRIPCIÓN DE PAGO
                 html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                 html += '<div class="form-group">';
-                html += '<label for="password">Descripcion</label>';
+                html += '<label for="password">Descripción</label>';
                 html +='<input type="text" class="form-control" name="descripcion_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
                 html += '<div class="invalid-feedback">';
                 html += 'La Dirección es obligatoria.';

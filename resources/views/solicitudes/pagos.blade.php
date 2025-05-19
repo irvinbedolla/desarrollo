@@ -44,7 +44,7 @@
                                                         @if($pago->estatus == "Pagado")
                                                             <a class="btn btn-info" href="{{ route('PDFpagos', $pago->id) }}" target="_blank">PDF</a>
                                                         @elseif($pago->estatus == "No pagado")
-                                                            <a class="btn btn-info" href="{{ route('PDFincumplimiento', $pago->id) }}" target="_blank">PDF</a>
+                                                            <a class="btn btn-info" href="{{ route('PDFincumplimientoParcial', $pago->id) }}" target="_blank">PDF</a>
                                                         @endif
                                                     </td>
                                                 </tr>
