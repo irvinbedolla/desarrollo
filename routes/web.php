@@ -247,6 +247,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/Verpdfinteres/{id}',     [TurnosController::class, 'VerPDFInteres'])->name('PDFinteres');
         Route::get('/Verpdfcump/{id}',        [TurnosController::class, 'VerPDFCumplimiento'])->name('PDFcumplimiento');
         Route::get('/VerpdfIncump/{id}',      [TurnosController::class, 'VerPDFIncumplimiento'])->name('PDFincumplimiento');
+        Route::get('/VerpdfInParcial/{id}',   [TurnosController::class, 'VerPDFInParcial'])->name('PDFincumplimientoParcial');
         Route::get('/VerpdfPago/{id}',        [TurnosController::class, 'VerPDFPagos'])->name('PDFpagos');
         Route::get('/Verpdfaudiencia/{id}',   [TurnosController::class, 'VerPDFAudiencia'])->name('PDFaudiencia');
         Route::get('turnos/index2',           [TurnosController::class, 'index_empresa'])->name('ratificacion');

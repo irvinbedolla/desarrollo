@@ -168,15 +168,15 @@
                         <b>QUINTA</b>. La <b>TRABAJADORA</b> recibirá por parte de la <b>EMPLEADORA</b> la cantidad de <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }} M.N</b>, 
                             conforme a los siguientes conceptos:</p>
                             <p class="sangria">
-                                &nbsp;- Vacaciones: <b>${{ number_format($solicitud->Vacaciones, 2) }} {{ $vacacionesTexto }} M.N</b>.<br>
-                                - Prima vacacional: <b>${{ number_format($solicitud->PrimaVacacional, 2) }} {{ $primaTexto }} M.N</b>.<br>
-                                - Aguinaldo:  <b>${{ number_format($solicitud->Aguinaldo, 2) }} {{ $aguinaldoTexto }} M.N</b>.<br>
-                                - Utilidades: <b>${{ number_format($solicitud->Utilidades, 2) }} {{ $utilidadesTexto }} M.N</b>.<br>
-                                - Prima de antigüedad: <b>${{ number_format($solicitud->PrimaAntigüedad, 2) }} {{ $antiguedadTexto }} M.N</b>.<br>
-                                - Gratificación: <b>${{ number_format($solicitud->Gratificación, 2) }} {{ $gratificacionTexto }} M.N</b>.<br>
-                                - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>${{ number_format($solicitud->Otras, 2) }} {{ $otrasTexto }} M.N</b>.
+                                &nbsp;- Vacaciones: <b>${{ number_format($prestaciones->Vacaciones, 2) }} {{ $vacacionesTexto }} M.N</b>.<br>
+                                - Prima vacacional: <b>${{ number_format($prestaciones->PrimaVacacional, 2) }} {{ $primaTexto }} M.N</b>.<br>
+                                - Aguinaldo:  <b>${{ number_format($prestaciones->Aguinaldo, 2) }} {{ $aguinaldoTexto }} M.N</b>.<br>
+                                - Utilidades: <b>${{ number_format($prestaciones->PagoPTU, 2) }} {{ $utilidadesTexto }} M.N</b>.<br>
+                                - Prima de antigüedad: <b>${{ number_format($prestaciones->PrimaAntigüedad, 2) }} {{ $antiguedadTexto }} M.N</b>.<br>
+                                - Gratificación: <b>${{ number_format($prestaciones->Gratificación, 2) }} {{ $gratificacionTexto }} M.N</b>.<br>
+                                - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>${{ number_format($prestaciones->Otras, 2) }} {{ $otrasTexto }} M.N</b>.
                             </p>
-                            <p>{{ $solicitud->Especifique }} </p>
+                            <p><b>{{ $solicitud->Especifique }} </b></p>
                             <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
 
                             <!-- (CONDICIONAL, SOLO CUANDO SEA EN PAGOS DIFERIDOS)  -->

@@ -10,7 +10,7 @@
         <link href="../public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    
+            
         <style>
            @page {
                 margin: 0px 0px;
@@ -83,7 +83,7 @@
                             </tr>
                             <tr>
                                 <td><b>Salario diario: </b></td>
-                                <td>${{ number_format($salario_diario, 2) }} M.N</td>
+                                <td>${{ $salario_diario }} M.N</td>
                             </tr>
                     </table>
                 </div><br><br><br><br><br>
@@ -95,15 +95,32 @@
                     Pena Convencional: Si <br>
                 </b></p>  
 
-                <p><center><b>CONSTANCIA DE INCUMPLIMIENTO DE CONVENIO</b></center></p><br>
+                <p><center><b>CONSTANCIA DE INCUMPLIMIENTO PARCIAL DE CONVENIO</b></center></p><br>
 
                 <p>
                     De conformidad con el artículo 123 fracción XX de la Constitución Política de los Estados Unidos Mexicanos y artículos 33, 590-E, 590-F, 684-C y 684-E, 
                     987 y 990 de la Ley Federal del Trabajo; así como los artículos 17 y 20 del Reglamento Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<br><br>
 
                     Ante la falta de pago pactado en las cláusulas <b>QUINTA</b> y <b>SEXTA</b> del <b>CONVENIO DE CONCILIACIÓN</b> relacionada con el expediente <b>{{ $solicitud->NUE }}</b> 
-                    y el Convenio ratificado ante esta autoridad conciliadora en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, por tanto,  
-                    se emite el siguiente:<br><br>
+                    y el Convenio ratificado ante esta autoridad conciliadora en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, al pago
+                    correspondiente <br>
+                <div class="table-responsive">
+                    <table id="tabla_solicitud" class="table-striped" style="width:60%;">
+                            <tr>    
+                                <td><b>Fecha: </b></td>
+                                <td><b>Hora: </b></td>
+                                <td><b>Monto: </b></td>
+                                <td><b>Descripción: </b></td>
+                            </tr> 
+                            <tr>   
+                                <td>{{ $pagos->fecha }} </td>
+                                <td>{{ $pagos->hora }} </td>
+                                <td>${{ $pagos->monto }} M.N</td>
+                                <td>{{ $pagos->descripcion }}</td>
+                            </tr>
+                    </table>
+                </div><br>
+                    por tanto, se emite el siguiente:<br><br>
                                 
                     <p><center><b>ACUERDO:</b></center></p><br>
                                 
@@ -117,3 +134,4 @@
             </div>
         </main>
     </body>
+</html>    

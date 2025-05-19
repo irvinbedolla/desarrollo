@@ -16,7 +16,7 @@
                 margin: 0px 0px;
             }
             body{
-                padding-top: 85px;
+                padding-top: 95px;
             }
             main{
                 margin: 50px 50px 50px 40px; /*Para colocar el texto*/
@@ -78,7 +78,7 @@
                 <p>
                     En el <b>Centro de Conciliación Laboral del Estado de Michoacán de Ocampo con sede en {{ $solicitud->delegacion }}</b>, siendo las <b>{{ $solicitud->hora }} horas del
                     {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> , hora y día señalados para la celebración de la Audiencia de Conciliación 
-                    Prejudicial vía remota, relativa al número de expediente electrónico con Número de Identificación Único <b>{{ $solicitud->NUE }}</b>, misma que se celebra ante  
+                    Prejudicial, relativa al número de expediente electrónico con Número de Identificación Único <b>{{ $solicitud->NUE }}</b>, misma que se celebra ante  
                     <b>{{ $conciliador->name }}</b>, Funcionaria Conciliadora/Funcionario Conciliador adscrito al Centro de Conciliación 
                     Laboral del Estado de Michoacán de Ocampo,  con fundamento en los artículos 33, 590-E, 590-F, 684-A, 684-B, 684-C, 684-D, 684-E, fracción V, 684-F, 684-G y 684-I, de la 
                     Ley Federal del Trabajo, articulo 27 de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, y artículo 20 del Reglamento Interior del 

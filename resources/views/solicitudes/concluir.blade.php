@@ -218,7 +218,7 @@
                 html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                 html += '<div class="form-group">';
                 html += '<label for="password">Monto a pagar</label>';
-                html +='<input type="number" class="form-control" name="monto_pago[]"  oninput="this.value = this.value.toUpperCase()" required>';
+                html +='<input type="text" class="form-control" name="monto_pago[]"  oninput="this.value = this.value.toUpperCase()" required>';
                 html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>';
                 html += '</div> </div>';
 
@@ -264,7 +264,7 @@
                 html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                 html += '<div class="form-group">';
                 html += '<label for="password">Monto a pagar</label>';
-                html +='<input type="number" class="form-control" name="monto_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
+                html +='<input type="text" class="form-control" name="monto_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
                 html += '<div class="invalid-feedback">';
                 html += 'La Dirección es obligatoria.';
                 html += '</div> </div> </div>';
