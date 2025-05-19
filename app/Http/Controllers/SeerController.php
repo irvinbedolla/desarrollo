@@ -2017,10 +2017,20 @@ class SeerController extends Controller
         $path = Storage::putFileAs(
             'documentosSolicitud', $request->file('documentoCurp'), $identificacion
         );
-        //Identificación
+        //Identificación frente
         $ine_frente = $data["curp"]."_Identificacionf.pdf";
         $path = Storage::putFileAs(
             'documentosSolicitud', $request->file('documentoINEFrente'), $ine_frente
+        );
+        //Identificación atras
+        $ine_atras = $data["curp"]."_Identificaciona.pdf";
+        $path = Storage::putFileAs(
+            'documentosSolicitud', $request->file('documentoINEAtras'), $ine_atras
+        );
+        //Acta de nacimiento
+        $acta_nacimiento = $data["curp"]."_Acta.pdf";
+        $path = Storage::putFileAs(
+            'documentosSolicitud', $request->file('documentoActa'), $acta_nacimiento
         );
 
         
