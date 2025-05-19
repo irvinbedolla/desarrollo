@@ -1099,11 +1099,11 @@ Acude a la Oficina Estatal del Centro Federal de Conciliación y Registro Labora
             $('#modal-competencia').modal('show');
             return;
         }else{
-            window.location.href = "{{ route('PreRegistro') }}";
+            window.location.href = "{{ route('solicitud_trabajador', ['tipo_solicitud']) }}";
         }
     }
     function sendIndustria() {
-        window.location.href = "{{ route('PreRegistro') }}";
+        window.location.href = "{{ route('solicitud_trabajador', ['tipo_solicitud']) }}";
     }
 </script>
 </body></html>
