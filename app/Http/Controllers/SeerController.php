@@ -1818,7 +1818,7 @@ class SeerController extends Controller
     //Pre registro para solicitudes
     public function RTemportal(){
         // dd($tipo_solicitud);
-        return view('solicitudes.PreRegistro');
+        return view('solicitudes.solicitud_trabajador');
     }
 
     public function GuardarRTemportal(Request $request){
@@ -1836,12 +1836,14 @@ class SeerController extends Controller
         );
        
         PreRegistro::create($data_insert); 
-        return redirect()->away('https://michoacan.cencolab.mx/solicitudes/create?solicitud=2');
+        
+        //return redirect()->away('https://michoacan.cencolab.mx/solicitudes/create?solicitud=2');
     }
     //Fin registro para solicitudes
     
     //Solicitud en línea trabajador
     public function trabajador($tipo_solicitud){  
+        //dd($tipo_solicitud);
         if ($tipo_solicitud == "1") {
             $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '1') ->get();
         }
@@ -1904,7 +1906,7 @@ class SeerController extends Controller
     
     public function solicitud_parte2(Request $request){
         $data = $request->all();
-        //dd($data['telefono2']);
+        //dd($data);
         $id = $data['id'];
 
         //validando información
@@ -1930,11 +1932,12 @@ class SeerController extends Controller
             'calle1'                => 'required',
             'calle2'                => 'required',
             'puesto'                => 'required', 
-            'frecuencia_pago'       => 'required',
+            'periodo_pago'          => 'required',
             'pago'                  => 'required',
             'horas'                 => 'required',
             'fecha_ingreso'         => 'required',
             'jornada'               => 'required',
+            'identificacion'        => 'required',
             'documentoCurp'         => 'required',
         ]);
         
@@ -1962,10 +1965,11 @@ class SeerController extends Controller
             'calle3'               => $data["calle2"],
             'puesto'               => $data["puesto"],
             'pago'                 => $data["pago"],
-            'periodo_pago'         => $data["frecuencia_pago"],
+            'periodo_pago'         => $data["periodo_pago"],
             'horas_semana'         => $data["horas"],
             'fecha_ingreso'        => $data["fecha_ingreso"],
             'jornada'              => $data["jornada"],
+            'identificacion'       => $data["identificacion"],
         ); 
 
         if(isset($data["rfc"])){
@@ -1997,6 +2001,7 @@ class SeerController extends Controller
         if(isset($data["seguro"])){
             $data_insert["nss"] =  $data["seguro"];
         }
+        
 
 
 
@@ -2012,20 +2017,20 @@ class SeerController extends Controller
         $path = Storage::putFileAs(
             'documentosSolicitud', $request->file('documentoCurp'), $identificacion
         );
-        //Documento
-        $nombre_acta = $data["curp"]."_Identificacion.pdf";
+        //Identificación
+        $ine_frente = $data["curp"]."_Identificacionf.pdf";
         $path = Storage::putFileAs(
-            'documentosSolicitud', $request->file('documentoINEFrente'), $nombre_acta
+            'documentosSolicitud', $request->file('documentoINEFrente'), $ine_frente
         );
 
         
         
-        $data_update= array(
+        /*$data_update= array(
             'documento'     => $data["documentoINEFrente"],
             'documentocurp' => $data["documentoCurp"]
-        );
+        );*/
 
-        $solicitud->update($data_update);
+        //$solicitud->update($data_update);
         
 
         //return view('solicitudes.aviso',compact('folio'));

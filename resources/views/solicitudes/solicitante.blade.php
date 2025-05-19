@@ -378,14 +378,13 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                           
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Frecuencia de Pago (*)</label>
-                                                    <select name="frecuencia_pago" class="form-control" required>
+                                                    <select name="periodo_pago" class="form-control" required>
                                                         <option value="">SELECCIONE</option>
                                                         <option value="Diario">DIARIO</option>
-                                                        <option value="Semanal">SEMANAL</option>
+                                                        <option value="Semana">SEMANAL</option>
                                                         <option value="Quincenal">QUINCENAL</option>
                                                         <option value="Mensual">MENSUAL</option>
                                                     </select>
@@ -453,39 +452,72 @@
                                             <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
                                                 <h3 class="text-center" style="color:black">Documentos</h3>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Tipo de identificación (*)</label>
+                                                    <select name="identificacion" class="form-control" required>
+                                                        <option value="">SELECCIONE</option>
+                                                        <option value="ine">INE</option>
+                                                        <option value="pasaporte">PASAPORTE</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo jornada laboral es obligatoria.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <!--<div class="col-xs-12 col-sm-12 col-md-6">-->
                                                     <div class="form-group">
-                                                        <label>CURP</label>
+                                                        <label>CURP (*)</label>
                                                         <input type="file" name="documentoCurp" class="form-control" accept=".pdf, .jpg, .png, .jpeg ">
                                                         <div class="invalid-feedback">
                                                             El campo curp es obligatorio.
                                                         </div>
                                                     </div>
+                                                <!--</div>-->
+                                            </div>
+                                           
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <h4 class="text-center">En caso de ser mayor de edad</h4>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-6" id="documentacionAdulto" style="display:none;">
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label>Identificación oficial (*) </label>
-                                                        <input type="file" name="documentoINEFrente" class="form-control" accept=".pdf , .jpg, .png, .jpeg ">
-                                                        <div class="invalid-feedback">
-                                                            El campo identificación es obligatoria.
-                                                        </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label>Identificación oficial de frente</label>
+                                                    <input type="file" name="documentoINEFrente" class="form-control" accept=".pdf , .jpg, .png, .jpeg ">
+                                                    <div class="invalid-feedback">
+                                                        La Identificación es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-6" id="documentacionMenor" style="display:none;">
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label>Acta de nacimiento</label>
-                                                        <input type="file" name="documentoINEFrente" class="form-control" accept=".pdf, .jpg, .png, .jpeg ">
-                                                        <div class="invalid-feedback">
-                                                            La Identificación es obligatoria.
-                                                        </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label>Identificación oficial de atras</label>
+                                                    <input type="file" name="documentoINEAtras" class="form-control" accept=".pdf , .jpg, .png, .jpeg " required>
+                                                    <div class="invalid-feedback">
+                                                        La Identificación es obligatoria.
                                                     </div>
                                                 </div>
-                                            </div>     
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <h4 class="text-center">En caso de ser menor de edad ingresar el Acta de Nacimiento</h4>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label>Acta de nacimiento</label>
+                                                    <input type="file" name="documentoActa" class="form-control" accept=".pdf, .jpg, .png, .jpeg ">
+                                                    <div class="invalid-feedback">
+                                                        La Identificación es obligatoria.
+                                                    </div>
+                                                </div>
+                                            </div>
+   
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div align="center">
