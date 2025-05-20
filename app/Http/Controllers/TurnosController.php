@@ -1313,7 +1313,57 @@ public function VerPDF($id){
 public function VerPDFConvenio($id){
     $solicitud = Turnos::find($id);
     $pagos = Pagos::where('id_solicitud', $id)->get();
-    $prestaciones = Concepto::where('id_solicitud', $id)->first();
+    //$prestacionesLab = Concepto::where('id_solicitud', $id)->first();
+    //dd($prestaciones);
+    $prestaciones = Concepto::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
+    // Inicializa las variables de texto
+    $vacacionesTexto = '';
+    $primaTexto = '';
+    $aguinaldoTexto = '';
+    $DSueldoTexto = '';
+    $antiguedadTexto = '';
+    $gratificacionATexto = ''; $gratificacionBTexto = ''; $gratificacionCTexto = ''; $gratificacionDTexto = ''; $gratificacionETexto = ''; $gratificacionFTexto = '';
+    $otrasTexto = '';
+    foreach ($prestaciones as $concepto) {
+        switch ($concepto->descripcion) {
+            case 'Vacaciones':
+                $vacacionesTexto = $this->convertirNumerosALetras($concepto->monto);
+                break;
+            case 'PrimaVacacional':
+                $primaTexto = $this->convertirNumerosALetras($concepto->monto);
+                break;
+            case 'Aguinaldo':
+                $aguinaldoTexto = $this->convertirNumerosALetras($concepto->monto);
+                break;
+            case 'DSueldo':
+                $DSueldoTexto = $this->convertirNumerosALetras($concepto->monto);
+                break;
+            case 'GratificaciónA':
+                $gratificacionATexto = $this->convertirNumerosALetras($concepto->monto);
+                break;
+            case 'GratificaciónB':
+                $gratificacionBTexto = $this->convertirNumerosALetras($concepto->monto);
+                break;
+            case 'GratificaciónC':
+                $gratificacionCTexto = $this->convertirNumerosALetras($concepto->monto);
+                break;
+            case 'GratificaciónD':
+                $gratificacionDTexto = $this->convertirNumerosALetras($concepto->monto);
+                break;
+            case 'GratificaciónE':
+                $gratificacionETexto = $this->convertirNumerosALetras($concepto->monto);
+                break;
+            case 'GratificaciónF':
+                $gratificacionFTexto = $this->convertirNumerosALetras($concepto->monto);
+                break;
+            case 'Otras':
+                $otrasTexto = $this->convertirNumerosALetras($concepto->monto);
+                break;
+            default:
+                break;
+        }
+    }
+    //
     $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
 
     $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
@@ -1321,14 +1371,7 @@ public function VerPDFConvenio($id){
     $diarioTexto = $this->convertirNumerosALetras($salario_diario);
     $mensualTexto = $this->convertirNumerosALetras($salario_mensual);
     $montoTexto = $this->convertirNumerosALetras($solicitud->monto);
-    $vacacionesTexto = $this->convertirNumerosALetras($solicitud->acaciones);
-    $primaTexto = $this->convertirNumerosALetras($solicitud->PrimaVacacional);
-    $aguinaldoTexto = $this->convertirNumerosALetras($solicitud->Aguinaldo);
-    $utilidadesTexto = $this->convertirNumerosALetras($solicitud->PagoPTU);
-    $antiguedadTexto = $this->convertirNumerosALetras($solicitud->PrimaAntigüedad);
-    $gratificacionTexto = $this->convertirNumerosALetras($solicitud->Gratificación);
-    $otrasTexto = $this->convertirNumerosALetras($solicitud->Otras);
-
+    
     $pagosDif  = Pagos::join("turnos","turnos.id","=","pago_solicitud.id_solicitud");
     $pagosDif = $pagosDif->where("pago_solicitud.id_solicitud", "=", $id)
     ->select(DB::raw('count(pago_solicitud.id_solicitud) as C_pagos'))
@@ -1342,7 +1385,8 @@ public function VerPDFConvenio($id){
     //dd($conciliador);
     $html = view('PDF/convenioTerminacion', 
         compact('id', 'solicitud', 'dias_descanso', 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','vacacionesTexto',
-        'primaTexto','aguinaldoTexto','utilidadesTexto','antiguedadTexto','gratificacionTexto','otrasTexto','pagosDif','conciliador','prestaciones'))
+        'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
+        'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones'))
         ->render();
     $pdf = \PDF::loadHTML($html)
         ->setPaper('a4', 'portrait')
@@ -1815,7 +1859,7 @@ public function VerPDFPagos($id){
             return back()->withErrors('Debes agregar por lo menos una fecha de pago.');
         }
         if(isset($data["tipo_pago"])){
-            $cont = count($data["dias_pagos"]);
+            $cont = count($data["monto_pago"]);
             for($i = 0; $i < $cont; $i++) {
                 $data_citado = [
                     'id_solicitud'  => $data["id"], 

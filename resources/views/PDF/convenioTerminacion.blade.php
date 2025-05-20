@@ -56,7 +56,7 @@
             .sangria {
                 margin-left: 20px;
                 text-indent: -15px; 
-                padding-left: 15px; 
+                padding-left: 15px;
             }
         </style>
         
@@ -168,18 +168,47 @@
                         <b>QUINTA</b>. La <b>TRABAJADORA</b> recibirá por parte de la <b>EMPLEADORA</b> la cantidad de <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }} M.N</b>, 
                             conforme a los siguientes conceptos:</p>
                             <p class="sangria">
-                                &nbsp;- Vacaciones: <b>${{ number_format($prestaciones->Vacaciones, 2) }} {{ $vacacionesTexto }} M.N</b>.<br>
-                                - Prima vacacional: <b>${{ number_format($prestaciones->PrimaVacacional, 2) }} {{ $primaTexto }} M.N</b>.<br>
-                                - Aguinaldo:  <b>${{ number_format($prestaciones->Aguinaldo, 2) }} {{ $aguinaldoTexto }} M.N</b>.<br>
-                                - Utilidades: <b>${{ number_format($prestaciones->PagoPTU, 2) }} {{ $utilidadesTexto }} M.N</b>.<br>
-                                - Prima de antigüedad: <b>${{ number_format($prestaciones->PrimaAntigüedad, 2) }} {{ $antiguedadTexto }} M.N</b>.<br>
-                                - Gratificación: <b>${{ number_format($prestaciones->Gratificación, 2) }} {{ $gratificacionTexto }} M.N</b>.<br>
-                                - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>${{ number_format($prestaciones->Otras, 2) }} {{ $otrasTexto }} M.N</b>.
+                                @foreach($prestaciones as $concepto)
+                                    @switch($concepto->descripcion)                                   
+                                        @case('Vacaciones')
+                                            - Vacaciones: <b>${{ number_format($concepto->monto, 2) }} {{ $vacacionesTexto }} M.N</b>.<br>
+                                            @break
+                                        @case('PrimaVacacional')
+                                            - Prima vacacional: <b>${{ number_format($concepto->monto, 2) }} {{ $primaTexto }} M.N</b>.<br>
+                                            @break
+                                        @case('Aguinaldo')
+                                            - Aguinaldo: <b>${{ number_format($concepto->monto, 2) }} {{ $aguinaldoTexto }} M.N</b>.<br>
+                                            @break
+                                        @case('DSueldo')
+                                            - Días de sueldo: <b>${{ number_format($concepto->monto, 2) }} {{ $DSueldoTexto }} M.N</b>.<br>
+                                            @break
+                                        @case('GraficaciónA')
+                                            - Graficación A (Con base al salario integrado): <b>${{ number_format($concepto->monto, 2) }} {{ $gratificacionATexto }} M.N</b>.<br>
+                                            @break
+                                        @case('GraficaciónB')
+                                            - Graficación B (20 Días por año cumplido): <b>${{ number_format($concepto->monto, 2) }} {{ $gratificacionBTexto }} M.N</b>.<br>
+                                            @break
+                                        @case('GratificaciónC')
+                                            - Graficación C (Prima de antigüedad topada): <b>${{ number_format($concepto->monto, 2) }} {{ $gratificacionCTexto }} M.N</b>.<br>
+                                            @break
+                                        @case('GratificaciónD')
+                                            - Graficación D (Incluye cualquier otra prestación): <b>${{ number_format($concepto->monto, 2) }} {{ $gratificacionDTexto }} M.N</b>.<br>
+                                            @break
+                                        @case('GratificaciónE')
+                                            - Graficación E (Prestaciones en especie): <b>${{ number_format($concepto->monto, 2) }} {{ $gratificacionETexto }} M.N</b>.<br>
+                                            @break
+                                        @case('GratificaciónF')
+                                            - Graficación F (Reconocimiento de derechos): <b>${{ number_format($concepto->monto, 2) }} {{ $gratificacionFTexto }} M.N</b>.<br>
+                                            @break 
+                                        @case('Otras')
+                                            - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>${{ number_format($concepto->monto, 2) }} {{ $otrasTexto }} M.N</b>. {{ $solicitud->Especifique }}<br>
+                                            @break
+                                        @default    
+                                    @endswitch
+                                @endforeach
                             </p>
-                            <p><b>{{ $solicitud->Especifique }} </b></p>
-                            <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
 
-                            <!-- (CONDICIONAL, SOLO CUANDO SEA EN PAGOS DIFERIDOS)  -->
+                            <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
                                 
                     <p><b>SEXTA</b>. La <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará en <b>{{ $pagosDif->C_pagos}}</b> 
                         exhibiciones, hasta culminar la cantidad de 
@@ -251,7 +280,7 @@
                             </div>
                         </div>
                     </div>
-                    <br><br><br>
+                    <br><br>
                     <p><center><b>___________________________________<br> {{ $conciliador->name }} <br> FUNCIONARIA CONCILIADORA/<br> FUNCIONARIO CONCILIADOR</b></center> </p>     
             </div>
         </main>    
