@@ -1906,7 +1906,7 @@ class SeerController extends Controller
     
     public function solicitud_parte2(Request $request){
         $data = $request->all();
-        dd($data);
+        //dd($data);
         $id = $data['id'];
 
         //validando información
