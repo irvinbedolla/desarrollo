@@ -37,7 +37,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="">
-        <img src="public/assets/images/Logos 2.png" class="img" style="" width="250" height="90"></a>&nbsp;&nbsp;
+        <mg src="public/assets/images/Logos 2.png" class="img" style="" width="250" height="90"></a>&nbsp;&nbsp;
     </div> 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -67,8 +67,9 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <input type="hidden" name="id" value="{{ $id }}">
                                     <strong>¡Registro completo!</strong><br>
-                                    <label>Tu solicitud fue capturada correctamente, tu número de folio es: {{$folio}}, en un periodo máximo de 3 dias hábiles, recibirás un correo electrónico de confirmación con la fecha y hora de tu audiencia.<br><br>
+                                    <label>Tu solicitud fue capturada correctamente, tu número de folio es: "{{$id}}", en un periodo máximo de 3 dias hábiles, recibirás un correo electrónico de confirmación con la fecha y hora de tu audiencia.<br><br>
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NOTA: En caso de detectar algún error en los datos proporcionados, el personal del centro se pondrá en contacto contigo.<br><br>
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Para dudas y/o aclaraciones comunícate al número telefónico (000) 0000 000 o acude a tu Delegación u Oficina de Apoyo del Centro de Conciliación Laboral más cercana.
                                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">

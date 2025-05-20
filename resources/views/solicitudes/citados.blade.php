@@ -303,7 +303,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div align="center">
                                                 <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar</button>
-                                                <a href="{{ route('seer.documentos',$id); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Finalizar</a>    
+                                                <a href="{{ route('seer.finaliza',$id); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Finalizar</a>    
                                                 </div>
                                         </div>    
                                     </form>

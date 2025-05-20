@@ -2146,8 +2146,8 @@ class SeerController extends Controller
         return view('solicitudes.documentos',compact('id'));
     }*/
 
-    public function guardar_documentos($id){
-        
+    public function guardar_solicitud($id){
+        //dd($id);
         return view('solicitudes.aviso',compact('id'));
     }
 

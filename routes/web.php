@@ -87,7 +87,7 @@ use App\Http\Controllers\Controller;
     Route::get('/agrega_citado/{id}',       [SeerController::class, 'vista_citado'])->name('agregar_citado');
     Route::post('/agrega_citado',           [SeerController::class, 'guardar_citado'])->name('seer.citados');
     Route::get('/agrega_documento/{id}',    [SeerController::class, 'vista_documentos'])->name('agregar_documentos');
-    Route::get('/agrega_documentos/{id}',   [SeerController::class, 'guardar_documentos'])->name('seer.documentos');
+    Route::get('/finaliza/{id}',            [SeerController::class, 'guardar_solicitud'])->name('seer.finaliza');
     
 Route::middleware(['auth', 'verified'])->group(function () {
 
