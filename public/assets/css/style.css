@@ -4206,7 +4206,7 @@ body:not(.sidebar-mini) .sidebar-style-2 .sidebar-menu li.active ul.dropdown-men
 /* Alineación del texto */
 .fc-event-title {
     font-weight: bold;
-    align-items: right;
+    align-items: left;
     margin-bottom: 2px;
 }
 

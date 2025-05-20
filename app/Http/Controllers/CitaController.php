@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cita;
+use App\Models\Pagos;
+use App\Models\Turnos;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -53,9 +55,43 @@ class CitaController extends Controller
         return response()->json($eventos);
     }
 
+    public function pagos() {
+        $pagos = Pagos::all();
+        $turnos = Turnos::all();
+
+        $eventos = [];
+        foreach ($pagos as $pago) {
+
+            if ($pago->estatus === 'Pendiente') {
+                $color = '#EAE300';
+            } elseif ($pago->estatus === 'Pagado') {
+                $color = '#00CE1C';
+            } else {
+                $color = '#CCCCCC';
+            }
+
+            $eventos[] = [
+                'id' => $pago->id_solicitud,
+                'title' => $pago->descripcion,
+                'start' => $pago->fecha->format('Y-m-d') . 'T' . $pago->hora->format('H:i:s'),
+                'extendedProps' => [
+                    'hora' => $pago->hora->format('h:i A'),
+                    'color' => $color,
+                    'fecha' => $pago->fecha->format('d/m/Y'),
+                    'estatus' => $pago->estatus,
+                    'monto' => $pago->monto,
+                    'observaciones' => $pago->observaciones
+                ]
+            ];
+        }
+
+        return response()->json($eventos);
+    }
+
     public function exportarExcel()
     {
-        return Excel::download(new CitasExport, 'citas.xlsx');
+        //return Excel::download(new CitasExport, 'citas.xlsx');
+        return Excel::download(new CitasExport, 'pagos.xlsx');
     }
 
 }

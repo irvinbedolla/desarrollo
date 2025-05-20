@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Cita;
+use App\Models\Pagos;
 use Maatwebsite\Excel\Concerns\FromCollection;
 
 class CitasExport implements FromCollection
@@ -12,6 +13,7 @@ class CitasExport implements FromCollection
     */
     public function collection()
     {
-        return Cita::all();
+        //return Cita::all();
+        return Pagos::all();
     }
 }

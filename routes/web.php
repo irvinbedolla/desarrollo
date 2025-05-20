@@ -54,6 +54,7 @@ use App\Http\Controllers\CalendarController;
     //Ruta calendario
     Route::get('/calendario', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendario.index');
     Route::get('/citas/eventos', [App\Http\Controllers\CitaController::class, 'eventos'])->name('citas.eventos');
+    Route::get('/pagos/eventos', [App\Http\Controllers\CitaController::class, 'pagos'])->name('pagos.eventos');
     Route::get('citas/exportar-excel', [CitaController::class, 'exportarExcel']);
 
     //Rutas fuera del login

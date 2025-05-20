@@ -133,7 +133,7 @@
                                             </li>
                                         </ul>
                                         <div class="container">
-                                            <h1>Calendario de citas</h1>
+                                            <h1>Calendario de Pagos</h1>
                                             <div id="calendar">
                                             </div>
                                             <div class="mt-3 mb-3 text-center">
