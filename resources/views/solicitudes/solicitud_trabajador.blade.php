@@ -6,12 +6,12 @@
         <meta name="description" content="">
         <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
         <meta name="generator" content="Ing. ISBM">
-        <link href="public/assets/css/carousel.css" rel="stylesheet">
+        <link href="../public/assets/css/carousel.css" rel="stylesheet">
         <title>Si Concilio</title>
         <!-- Bootstrap core CSS -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         
-        <link rel="icon" href="public/assets/images/logo-ccl.png" type="image/x-icon">
+        <link rel="icon" href="../public/assets/images/logo-ccl.png" type="image/x-icon">
     
     <!-- Agregados para los Select del Formulario Personas-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -27,7 +27,7 @@
             width: 100%;
             height: 100%;
             z-index: 9999;
-            background: url('public/assets/images/pageLoader.gif') 50% 50% no-repeat rgb(249,249,249);
+            background: url('../public/assets/images/pageLoader.gif') 50% 50% no-repeat rgb(249,249,249);
            /* background-color: #6A0F49;/*<p style="color: #CEA845*/
             opacity: .8;
         }
@@ -37,7 +37,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="">
-        <img src="public/assets/images/Logos 2.png" class="img" style="" width="250" height="90"></a>&nbsp;&nbsp;
+        <img src="../public/assets/images/Logos 2.png" class="img" style="" width="250" height="90"></a>&nbsp;&nbsp;
     </div> 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -87,7 +87,7 @@
                                     @endif
                                     <div>
                                     <br></div>
-                                    <h3 class="text-center" style="color:#CEA845;">Solicitud de trabajador (a)</h3>
+                                    <h3 class="text-center" style="color:#CEA845;">Solicitud</h3>
                                     <div style="background-color:#D2D3D5; width:100%; height:40px;">
                                         <h3 class="text-center" style="color:black;">Datos generales de la solicitud</h3>
                                     </div>   
@@ -96,10 +96,11 @@
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                                     <form class="needs-validation novalidate" method="POST" action="{{route('parte1')}}">
                                         @csrf
+                                        <input type="hidden" name="tipo_solicitud" value="{{ $tipo_solicitud }}">
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Municipio de la fuente de empleo(*)</label>
+                                                    <label for="name">Municipio de la Fuente de Empleo(*)</label>
                                                     <select id="dSolicitud" class="form-control" name="dSolicitud">
                                                         <option value="">Seleccione</option>
                                                         @foreach($municipios as $municipio)
@@ -128,16 +129,16 @@
                                             <div id="div1"  class="col-xs-12 col-sm-12 col-md-12"><br>
                                                 <table id="tabla" name="motivo_solicitud[]" class="table table-striped mt-1" style="margin: 0 center; text-align:center;">
                                                     <thead style="background-color: #D2D3D5;">
-                                                        <th style="color: black;">Objeto de la solicitud</th>
+                                                        <th style="color: black;">Objeto de la Solicitud</th>
                                                         <th style="color: black;">Acción</th>
                                                     </thead>
                                                     <tbody></tbody>
                                                 </table>
                                             </div>
                                             <div id="div1"  class="col-xs-12 col-sm-12 col-md-6">
-                                                <p>Rama industrial del negocio</p>
+                                                <p>Rama Industrial del Negocio</p>
                                                 <div class="form-group">
-                                                    <label for="name">Paso 1. Rama industrial (*)</label>
+                                                    <label for="name">Paso 1. Rama Industrial (*)</label>
                                                     <select id="ramaIndustrial" class="form-control" name="ramaIndustrial" required>
                                                         <option value="">Seleccione</option>
                                                         @foreach($ramas as $rama)
@@ -152,7 +153,7 @@
                                             <div id="div2"  class="col-xs-12 col-sm-12 col-md-6">
                                                 <p style="color: white">.</p>
                                                 <div class="form-group">  
-                                                    <label for="name">Paso 2: Actividad económica del patrón/empresa (*)   <em>Ejemplos: comercio de productos al por menor, construcción, servicios médicos...</em></label>
+                                                    <label for="name">Paso 2: Actividad Económica del Patrón(a)/Empresa (*)   <em>Ejemplos: comercio de productos al por menor, construcción, servicios médicos...</em></label>
                                                     <input type="text" name="actividad_economica" id="actividad_economica" oninput="this.value = this.value.toUpperCase()" class="form-control" required> 
                                                 <!--<select id="actividad_economica" name="actividad_economica" class="form-control" disabled>
                                                         <option value=""> --Primero selecciona una rama industrial --</option>  
@@ -178,7 +179,7 @@
         </section>
     </div>
 
-    <script src="./public/assets/js/estadistica/estadistica.js"></script>
+    <script src="../public/assets/js/estadistica/estadistica.js"></script>
     <script src="https://cdn.datatables.net/2.1.5/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.1.5/js/dataTables.bootstrap4.js"></script>
        

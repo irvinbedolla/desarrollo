@@ -23,18 +23,21 @@ use App\Models\User;
 use App\Models\Turnos;
 use App\Models\TurnoDisponible;
 use App\Models\Poder; 
+use App\Models\Pagos; 
+use App\Models\Concepto; 
 
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Storage;
+use NumberToWords\NumberToWords; // para convertir números(cantidades) a letras
 
 class TurnosController extends Controller 
 {
     
-    public function index()
+    public function index_turnos()
     {
         $fecha_actual = date('Y-m-d');
         $relacionEloquent = 'roles';
@@ -967,13 +970,22 @@ class TurnosController extends Controller
     public function store_publico(Request $request)
     {
         $data = $request->all();
-
+        //dd($data);
         if(isset($data["folio"])){
             request()->validate([
                 'folio'             => 'required',
+                'primero_trabajador'=> 'required',
+                'segundo_trabajador'=> 'required',
                 'trabajador'        => 'required',
                 'trabajador_edad'   => 'required',
                 'trabajador_sexo'   => 'required',
+                'trabajador_curp'   => 'required',
+                'documentoCurp'     => 'required',
+                'tipo_identificacion'=> 'required',
+                'documentoidentificacion'=> 'required',
+                'fecha_inicio'      => 'required',
+                'fecha_termino'     => 'required',
+                'categoria'         => 'required',
                 'monto'             => 'required',
                 'frecuencia'        => 'required',
                 'tipo_pago'         => 'required',
@@ -982,20 +994,33 @@ class TurnosController extends Controller
                 'fecha'             => 'required',
                 'hora'              => 'required',
                 'JLCA'              => 'required',
-                'motivo'            => 'required'
+                'motivo'            => 'required',
+                'salario'           => 'required'
             ], $data);
         }
         else{
             request()->validate([
                 'empresa'           => 'required',
-                'nombre'            => 'required',
+                'primero_empresa'   => 'required',
+                'segundo_empresa'   => 'required',
+                'nombre_empresa'    => 'required',
+                'curp'              => 'required',
                 'email'             => 'required',
                 'telefono'          => 'required',
                 'documentoIne'      => 'required',
                 'documentoPoder'    => 'required',
+                'primero_trabajador'=> 'required',
+                'segundo_trabajador'=> 'required',
                 'trabajador'        => 'required',
                 'trabajador_edad'   => 'required',
                 'trabajador_sexo'   => 'required',
+                'trabajador_curp'   => 'required',
+                'documentoCurp'     => 'required',
+                'tipo_identificacion'=> 'required',
+                'documentoidentificacion'=> 'required',
+                'fecha_inicio'      => 'required',
+                'fecha_termino'     => 'required',
+                'categoria'         => 'required',
                 'monto'             => 'required',
                 'frecuencia'        => 'required',
                 'tipo_pago'         => 'required',
@@ -1003,9 +1028,11 @@ class TurnosController extends Controller
                 'dias'              => 'required',
                 'hora'              => 'required',
                 'JLCA'              => 'required',
-                'motivo'            => 'required'
+                'motivo'            => 'required',
+                'salario'           => 'required'
             ], $data);
         }
+
 
         //Vamos a buscar la proxima fecha disponible de la sede
         $numero_consecutivo = 0;
@@ -1023,14 +1050,29 @@ class TurnosController extends Controller
 
         if(isset($data["folio"])){
             $representante  = Poder::find($data["folio"]);
-
+            if(!isset($representante)){
+                return back()->with('error', 'El representante legal no existe');
+            }
+           
             $data_insertar= array(
                 'consecutivo'       => $numero_consecutivo,    
                 'empresa'           => $representante["empresa"],
-                'solicitante'       => $representante["nombres"]." ".$representante["primer_apellido"]." ".$representante["segundo_apellido"],
+                'primero_empresa'   => $representante["primer_apellido"],
+                'segundo_empresa'   => $representante["segundo_apellido"],
+                'nombre_empresa'    => $representante["nombres"],
+                'primero_trabajador'=> $data["primero_trabajador"],
+                'segundo_trabajador'=> $data["segundo_trabajador"],
                 'trabajador'        => $data["trabajador"],
                 'edad'              => $data["trabajador_edad"],
                 'sexo'              => $data["trabajador_sexo"],
+                'trabajador_curp'   => $data["trabajador_curp"],
+                'documentoCurp'     => $data["documentoCurp"],
+                'tipo_identificacion'=> $data["tipo_identificacion"],
+                'documentoidentificacion'=> $data["documentoidentificacion"],
+                'fecha_inicio'      => $data["fecha_inicio"],
+                'fecha_termino'     => $data["fecha_termino"],
+                'categoria'         => $data["categoria"],
+                'tipo_pago'         => $data["tipo_pago"],
                 'monto'             => $data["monto"],
                 'frecuencia'        => $data["frecuencia"],
                 'dias'              => $data["dias"],
@@ -1040,48 +1082,147 @@ class TurnosController extends Controller
                 'auxiliar'          => 0,
                 'lugar_auxiliar'    => "Recepción",
                 'delegacion'        => $data["sede"],
-                'estatus'           => 'no atendido',
+                'estatus'           => 'Pendiente',
                 'exepcion'          => 'No',
                 'ine'               => $representante["ine"],
                 'representacion'    => $representante["representacion"],
                 'email'             => $representante["email"],
                 'telefono'          => $representante["telefono"],
                 'JLCA'              => $data["JLCA"],
-                'motivo'            => $data["motivo"]
+                'motivo'            => $data["motivo"],
+                'curp_solicitante'  => $representante["curp"],
+                'salario'           => $data["salario"]
             ); 
             $nombre = $data["trabajador"];
             $email  = $representante["email"];
+            $curp   = $representante["curp"];
         }
         else{
             $data_insertar= array(
-                'consecutivo'       => $numero_consecutivo,    
-                'empresa'           => $data["empresa"],
-                'solicitante'       => $data["nombre"],
-                'trabajador'        => $data["trabajador"],
-                'edad'              => $data["trabajador_edad"],
-                'sexo'              => $data["trabajador_sexo"],
-                'monto'             => $data["monto"],
-                'frecuencia'        => $data["frecuencia"],
-                'dias'              => $data["dias"],
-                'fecha'             => $data["fecha"],
-                'hora'              => $data["hora"],
-                'hora_fin'          => $data["hora"],
-                'auxiliar'          => 0,
-                'lugar_auxiliar'    => "Recepción",
-                'delegacion'        => $data["sede"],
-                'estatus'           => 'no atendido',
-                'exepcion'          => 'No',
-                'ine'               => $data["documentoIne"],
-                'representacion'    => $data["documentoPoder"],
-                'email'             => $data["email"],
-                'telefono'          => $data["telefono"],
-                'JLCA'              => $data["JLCA"],
-                'motivo'            => $data["motivo"]
+                'consecutivo'               => $numero_consecutivo,    
+                'empresa'                   => $data["empresa"],
+                'primero_empresa'           => $data["primero_empresa"],
+                'segundo_empresa'           => $data["segundo_empresa"],
+                'nombre_empresa'            => $data["nombre_empresa"],
+                'email'                     => $data["email"],
+                'telefono'                  => $data["telefono"],
+                'documentoIne'              => $data["documentoIne"],
+                'documentoPoder'            => $data["documentoPoder"],
+                'primero_trabajador'        => $data["primero_trabajador"],
+                'segundo_trabajador'        => $data["segundo_trabajador"],
+                'trabajador'                => $data["trabajador"],
+                'edad'                      => $data["trabajador_edad"],
+                'sexo'                      => $data["trabajador_sexo"],
+                'trabajador_curp'           => $data["trabajador_curp"],
+                'documentoCurp'             => $data["documentoCurp"],
+                'tipo_identificacion'       => $data["tipo_identificacion"],
+                'documentoidentificacion'   => $data["documentoidentificacion"],
+                'fecha_inicio'              => $data["fecha_inicio"],
+                'fecha_termino'             => $data["fecha_termino"],
+                'categoria'                 => $data["categoria"],
+                'tipo_pago'                 => $data["tipo_pago"],
+                'monto'                     => $data["monto"],
+                'frecuencia'                => $data["frecuencia"],
+                'dias'                      => $data["dias"],
+                'fecha'                     => $data["fecha"],
+                'hora'                      => $data["hora"],
+                'hora_fin'                  => $data["hora"],
+                'auxiliar'                  => 0,
+                'lugar_auxiliar'            => "Recepción",
+                'delegacion'                => $data["sede"],
+                'estatus'                   => 'Pendiente',
+                'exepcion'                  => 'No',
+                'ine'                       => $data["documentoIne"],
+                'representacion'            => $data["documentoPoder"],
+                'email'                     => $data["email"],
+                'telefono'                  => $data["telefono"],
+                'JLCA'                      => $data["JLCA"],
+                'motivo'                    => $data["motivo"],
+                'curp_solicitante'          => $data["curp"],
+                'salario'                   => $data["salario"]
             ); 
             $nombre = $data["trabajador"];
             $email  = $data["email"];
+            $curp   = $data["curp"];
         }
 
+        //Variables opcionales
+        if(isset($data["Aguinaldo"])){
+            $data_insertar["Aguinaldo"] =  1;
+        }
+        if(isset($data["Vacaciones"])){
+            $data_insertar["Vacaciones"] =  1;
+        }
+        if(isset($data["PrimaVacacional"])){
+            $data_insertar["PrimaVacacional"] = 1;
+        }
+        if(isset($data["PagoPTU"])){
+            $data_insertar["PagoPTU"] =  1;
+        }
+        if(isset($data["Gratificación"])){
+            $data_insertar["Gratificación"] =  1;
+        }
+        if(isset($data["PrimaAntigüedad"])){
+            $data_insertar["PrimaAntigüedad"] =  1;
+        }
+        if(isset($data["Otras"])){
+            $data_insertar["Otras"] =  1;
+        }
+        if(isset($data["Especifique"])){
+            $data_insertar["Especifique"] =  $data["Especifique"];
+        }
+        if(isset($data["cuantificacion"])){
+            $data_insertar["cuantificacion"] =  $data["cuantificacion"];
+        }
+        if(isset($data["tipo_otros"])){
+            $data_insertar["tipo_otros"] =  $data["tipo_otros"];
+        }
+        //dd($data_insertar);
+
+        //Documentos si cargaron el folio
+        if(isset($data["folio"])){
+            $nombre_ine             = $representante["nombres"]."".$representante["primer_apellido"]."".$representante["segundo_apellido"]."-".$representante["empresa"]."_IDENTIFICACION.pdf";
+            $nombre_representación  = $representante["nombres"]."".$representante["primer_apellido"]."".$representante["segundo_apellido"]."-".$representante["empresa"]."_REPRESENTACION.pdf";
+        }
+        else{
+            //Se carga el INE del abogado
+            $nombre_ine = $data["nombre_empresa"]."".$data["primero_empresa"]."".$data["segundo_empresa"]."-".$data["empresa"]."_IDENTIFICACION.pdf";
+            $path = Storage::putFileAs(
+                'documentos_ratificacion', $request->file('documentoIne'), $nombre_ine
+            );
+            
+            //Se carga el Poder del abogado
+            $nombre_representación = $data["nombre_empresa"]."".$data["primero_empresa"]."".$data["segundo_empresa"]."-".$data["empresa"]."_PODER.pdf";
+            $path = Storage::putFileAs(
+                'documentos_ratificacion', $request->file('documentoPoder'), $nombre_representación
+            );
+        }
+        
+        $trabajador_curp = $data["trabajador_curp"].".pdf";
+        $path = Storage::putFileAs(
+            'documentos_ratificacion', $request->file('documentoCurp'), $trabajador_curp
+        );
+
+        $trabajador_identificacion  = $data["trabajador_curp"]."_IDENTIFICACION.pdf";
+        $path = Storage::putFileAs(
+            'documentos_ratificacion', $request->file('documentoidentificacion'), $trabajador_identificacion
+        );
+
+        $data_insertar["ine"]                       = $nombre_ine;
+        $data_insertar["representacion"]            = $nombre_representación;   
+        $data_insertar["documentoCurp"]             = $trabajador_curp;
+        $data_insertar["documentoidentificacion"]   = $trabajador_identificacion;  
+
+
+        if(isset($data["cuantificacion"])){
+            $cuantificacion  = $data["trabajador_curp"]."_CUANTIFICACION.pdf";
+            $path = Storage::putFileAs(
+                'documentos_ratificacion', $request->file('cuantificacion'), $cuantificacion
+            );
+            $data_insertar["documentoCuanti"] = $cuantificacion;
+        }
+
+        //Se van insetar todos los datos
         Turnos::create($data_insertar);
 
        
@@ -1089,18 +1230,24 @@ class TurnosController extends Controller
         $usuario = User::where('email',$email)->first();
         if(!isset($usuario)){
             $data_insertar_user= array(
-                'name'      => $nombre,
-                'email'     => $email,
-                'delegacion'=> $data["sede"],
-                'type'      => "Seer"
+                'name'              => $nombre,
+                'email'             => $email,
+                'delegacion'        => $data["sede"],
+                'type'              => "Seer",
+                'remember_token'    => $curp,
+                'profile_photo_path'=> $curp
             ); 
             
             //Hacemos un hash del campo que tiene el password
             $data_insertar_user['password'] = Hash::make("CCLMICHOACAN");
             $usuario = User::create($data_insertar_user);
             $usuario->assignRole(('Solicitante'));
+            $mensaje = " el correo:".$usuario["email"]." y la contraseña:CCLMICHOACAN para continuar tú trámite.";
         }
-        $mensaje = " el correo:".$usuario["email"]." y la contraseña:CCLMICHOACAN para continuar tú trámite.";
+        else{
+            $mensaje = " el correo:".$usuario["email"]." para continuar tú trámite.";
+        }
+        
         
 
         return back()->with('success', 'Debes ingresar a '. 
@@ -1148,28 +1295,619 @@ class TurnosController extends Controller
         //return Municipios::where('estado', $id)->get();
     }
 
-    public function VerPDF($id){
+//PDF Acuse de Ratificación
+public function VerPDF($id){
+    $solicitud = Turnos::find($id);
+    $montoTexto = $this->convertirNumerosALetras($solicitud->monto);
+    $pdf = \PDF::loadView('PDF/ratificacion', compact('id','solicitud','montoTexto'))
+    ->setPaper('a4', 'portrait')
+    ->setOption('isHtml5ParserEnabled', true)
+    ->setOption('isPhpEnabled', true);
+
+    $nombreArchivo = 'ratificaion_' . $solicitud->empresa .'.pdf';
+
+    return $pdf->stream($nombreArchivo);               
+}
+
+//PDF Convenio Ratificación 
+public function VerPDFConvenio($id){
+    $solicitud = Turnos::find($id);
+    $pagos = Pagos::where('id_solicitud', $id)->get();
+    $prestaciones = Concepto::where('id_solicitud', $id)->first();
+    $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
+
+    $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
+    $salario_mensual = $salario_diario * 30;
+    $diarioTexto = $this->convertirNumerosALetras($salario_diario);
+    $mensualTexto = $this->convertirNumerosALetras($salario_mensual);
+    $montoTexto = $this->convertirNumerosALetras($solicitud->monto);
+    $vacacionesTexto = $this->convertirNumerosALetras($solicitud->acaciones);
+    $primaTexto = $this->convertirNumerosALetras($solicitud->PrimaVacacional);
+    $aguinaldoTexto = $this->convertirNumerosALetras($solicitud->Aguinaldo);
+    $utilidadesTexto = $this->convertirNumerosALetras($solicitud->PagoPTU);
+    $antiguedadTexto = $this->convertirNumerosALetras($solicitud->PrimaAntigüedad);
+    $gratificacionTexto = $this->convertirNumerosALetras($solicitud->Gratificación);
+    $otrasTexto = $this->convertirNumerosALetras($solicitud->Otras);
+
+    $pagosDif  = Pagos::join("turnos","turnos.id","=","pago_solicitud.id_solicitud");
+    $pagosDif = $pagosDif->where("pago_solicitud.id_solicitud", "=", $id)
+    ->select(DB::raw('count(pago_solicitud.id_solicitud) as C_pagos'))
+    ->first();
+
+    $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
+    $conciliador = $conciliador->where("turnos.id", "=", $id)
+    ->select('users.name')
+    ->first();
+
+    //dd($conciliador);
+    $html = view('PDF/convenioTerminacion', 
+        compact('id', 'solicitud', 'dias_descanso', 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','vacacionesTexto',
+        'primaTexto','aguinaldoTexto','utilidadesTexto','antiguedadTexto','gratificacionTexto','otrasTexto','pagosDif','conciliador','prestaciones'))
+        ->render();
+    $pdf = \PDF::loadHTML($html)
+        ->setPaper('a4', 'portrait')
+        ->setOption('isHtml5ParserEnabled', true)
+        ->setOption('isPhpEnabled', true);
+
+    return $pdf->stream('Convenio_terminacion.pdf');                   
+}
+
+public function calcularSalarioDiario($salario, $frecuencia) {
+    switch ($frecuencia) {
+        case 'Diario':
+            return $salario;
+        case 'Semanal':
+            return $salario / 7; 
+        case 'Quincenal':
+            return $salario / 15; 
+        case 'Mensual':
+            return $salario / 30;
+        default:
+            return 0;
+    }
+}
+
+private function convertirNumerosALetras($valor) {
+    $numberToWords = new NumberToWords();
+    $numberTransformer = $numberToWords->getNumberTransformer('es'); 
+
+    $parteEntera = floor($valor);
+    $letras = strtoupper($numberTransformer->toWords($parteEntera)); 
+
+    $parteDecimal = round(($valor - $parteEntera) * 100);
+    $centavos = str_pad($parteDecimal, 2, '0', STR_PAD_LEFT); 
+    return "{$letras} PESOS {$centavos}/100";
+}
+
+//PDF Acta de multa
+public function VerPDFMulta($id){
+    $solicitud = Turnos::find($id);
+
+    $html = view('PDF/ActaMulta', compact('id', 'solicitud'))->render();
+
+    $pdf = \PDF::loadHTML($html)
+        ->setPaper('a4', 'portrait')
+        ->setOption('isHtml5ParserEnabled', true)
+        ->setOption('isPhpEnabled', true); 
+
+    $nombreArchivo = 'multa_' . $solicitud->empresa .'.pdf';
+    return $pdf->stream($nombreArchivo);                  
+}
+
+//PDF Acta por falta de interés
+public function VerPDFInteres($id){
+    $solicitud = Turnos::find($id);
+
+    $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
+    $conciliador = $conciliador->where("turnos.id", "=", $id)
+    ->select('users.name')
+    ->first();
+
+    $html = view('PDF/ActaFaltaInteres', compact('id', 'solicitud','conciliador'))->render();
+
+    $pdf = \PDF::loadHTML($html)
+        ->setPaper('a4', 'portrait')
+        ->setOption('isHtml5ParserEnabled', true)
+        ->setOption('isPhpEnabled', true); 
+
+    $nombreArchivo = 'falta_de_interes_' . $solicitud->trabajador .'.pdf';
+    return $pdf->stream($nombreArchivo);                  
+}
+
+//PDF Constancia de cumplimiento
+public function VerPDFCumplimiento($id){
+    $solicitud = Turnos::find($id);
+    $pagos = Pagos::where('id_solicitud', $id)->get();
+    $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
+    $conciliador = $conciliador->where("turnos.id", "=", $id)
+    ->select('users.name')
+    ->first();
+
+    $html = view('PDF/ConstanciaCumplimiento', compact('id', 'solicitud','conciliador','pagos'))->render();
+
+    $pdf = \PDF::loadHTML($html)
+        ->setPaper('a4', 'portrait')
+        ->setOption('isHtml5ParserEnabled', true)
+        ->setOption('isPhpEnabled', true); 
+
+    $nombreArchivo = 'constancia_de_cumplimiento_' . $solicitud->trabajador .'.pdf';
+    return $pdf->stream($nombreArchivo);                  
+}
+
+//PDF Acta de Audiencia
+public function VerPDFAudiencia($id){
+    $solicitud = Turnos::find($id);
+
+    $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
+    $conciliador = $conciliador->where("turnos.id", "=", $id)
+    ->select('users.name')
+    ->first();
+
+    $html = view('PDF/ActaAudiencia', compact('id', 'solicitud','conciliador'))->render();
+
+    $pdf = \PDF::loadHTML($html)
+        ->setPaper('a4', 'portrait')
+        ->setOption('isHtml5ParserEnabled', true)
+        ->setOption('isPhpEnabled', true); 
+
+    $nombreArchivo = 'acta_de_audiencia_' . $solicitud->trabajador .'.pdf';
+    return $pdf->stream($nombreArchivo);                  
+}
+
+//PDF Constancia de Incumplimiento
+public function VerPDFIncumplimiento($id){
+    $solicitud = Turnos::find($id);
+    $pagos = Pagos::find($id);
+    //$solicitud = Turnos::find($pagos["id_solicitud"]);
+    //dd($solicitud);
+    $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
+    $conciliador = $conciliador->where("turnos.id", "=", $id)
+    ->select('users.name')
+    ->first();
+    $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
+
+    $html = view('PDF/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
+
+    $pdf = \PDF::loadHTML($html)
+        ->setPaper('a4', 'portrait')
+        ->setOption('isHtml5ParserEnabled', true)
+        ->setOption('isPhpEnabled', true); 
+
+    $nombreArchivo = 'constancia_de_incumplimiento_'  .'.pdf';
+    return $pdf->stream($nombreArchivo);                  
+}
+
+//PDF Constancia de Incumplimiento Parcial
+public function VerPDFInParcial($id){
+    $pagos = Pagos::find($id);
+    $solicitud = Turnos::find($pagos["id_solicitud"]);
+    //dd($solicitud);
+    $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
+
+    $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
+    $conciliador = $conciliador->where("turnos.id_conciliador", "=", $solicitud["id_conciliador"])
+    ->select('users.name')
+    ->first();
+    
+    $html = view('PDF/incumplimientoParcial', compact('id', 'solicitud','conciliador','pagos','salario_diario'))->render();
+
+    $pdf = \PDF::loadHTML($html)
+        ->setPaper('a4', 'portrait')
+        ->setOption('isHtml5ParserEnabled', true)
+        ->setOption('isPhpEnabled', true); 
+
+    $nombreArchivo = 'constancia_de_incumplimiento_parcial'  .'.pdf';
+    return $pdf->stream($nombreArchivo);                  
+}
+
+//PDF Constancia de Pago Parcial
+public function VerPDFPagos($id){
+    $pagos = Pagos::find($id);
+    $solicitud = Turnos::find($pagos["id_solicitud"]);
+   
+    $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
+    $conciliador = $conciliador->where("turnos.id_conciliador", "=", $solicitud["id_conciliador"])
+    ->select('users.name')
+    ->first();
+    $html = view('PDF/pagosParciales', compact('id','solicitud','conciliador','pagos'))->render();
+
+    $pdf = \PDF::loadHTML($html)
+        ->setPaper('a4', 'portrait')
+        ->setOption('isHtml5ParserEnabled', true)
+        ->setOption('isPhpEnabled', true); 
+
+    $nombreArchivo = 'constancia_de_pago_'  .'.pdf';
+    return $pdf->stream($nombreArchivo);                  
+}
+    public function index_empresa(){
+        $id = auth()->user()->id;
+        $user = User::find($id);
+
+        $solicitudes = Turnos::where('tipo','Ratificación')
+        ->join('users','turnos.curp_solicitante','=','users.profile_photo_path')
+        ->where('curp_solicitante',$user["profile_photo_path"])
+        ->select('turnos.id','turnos.fecha','turnos.empresa','turnos.trabajador','turnos.telefono','turnos.email','turnos.estatus')
+        ->get();
+        return view('/solicitudes/misratificaciones',compact('solicitudes'));
+    }
+
+    public function indexr(){
+        $solicitudes = Turnos::where('tipo','Ratificación')
+        ->where('estatus','Pendiente')
+        ->get();
+        return view('/solicitudes/indexr',compact('solicitudes'));
+    }
+
+    public function aceptacion($id){
+        $turno = Turnos::find($id);
+
+        $listado_auxiliares = array();
+        $relacionEloquent = 'roles';
+        $usuariosauxiliares = User::whereHas($relacionEloquent, function ($query) {
+            return $query->where('name', '=', 'Auxiliar');
+        })
+        ->where('delegacion', $turno["delegacion"])
+        ->get();
         
-        $solicitud = Turnos::find($id);
-        //dd($solicitud);
+        foreach($usuariosauxiliares as $token ){
+            //Validar que solo sea morelia
+            array_push($listado_auxiliares, $token["id"]);
+        }
+        //validar si hay disponibles
+        $random = array_rand($listado_auxiliares);
+        $conciliador = $listado_auxiliares[$random];        
+        $user = User::find($conciliador);
 
+        $aceptar = Turnos::find($id)
+        ->update(['auxiliar' => $user["id"],'lugar_auxiliar' => $user["name"],'estatus' => 'Confirmado']);
+
+        return redirect()->route('Ratificacion');
+    }
+
+    public function guardar_rechazo(Request $request){
+        $data = $request->all();
         
-        //$pdf = new Dompdf(); 
+        $rechazar = Turnos::find($data["id"])
+        ->update(['estatus' => 'Rechazado', 'observaciones' => $data["observaciones"]]);
 
+        return redirect()->route('Ratificacion');
+    }
 
-        $pdf = \PDF::loadView('PDF/ratificacion', compact('id','solicitud'))
-        ->setPaper('letter', 'portrait');
-        //->setSourceFile("demo.pdf"); 
-        return $pdf->stream('archivo.pdf');
+    public function revisar_ratificaciones(){
+        $id = auth()->user()->id;
+        $user = User::find($id);
 
+        $solicitudes = Turnos::where('tipo','Ratificación')
+        ->where('auxiliar',$user["id"])
+        ->where('estatus','Confirmado')
+        ->orwhere('estatus','Conluida')
+        ->orwhere('estatus','Concluida Pagos')
+        ->orwhere('estatus','Incumplimiento')
+        ->get();
+        return view('/solicitudes/indexauxiliar',compact('solicitudes'));
+    }
+
+    public function concluir_ratificaciones($id){
+        $id_usuario = auth()->user()->id;
+        $user = User::find($id_usuario);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+        $relacionEloquent = 'roles';
+
+        $conciliadores = User::whereHas($relacionEloquent, function ($query) {
+            return $query->where('name', '=', 'Conciliador');
+        })
+        ->where('delegacion', $user["delegacion"])
+        ->get();
+
+        return view('/solicitudes/concluir',compact('id','conciliadores'));
+    }
+
+    public function consultar_ratificaciones($id){
+        $folio = Turnos::find($id);
+        //Validar si existe el abogado
+        $id_usuario = auth()->user()->id;
+        $user = User::find($id_usuario);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+
+        $valida = Poder::where('curp',$folio["curp_solicitante"])->get();
+        //dd($valida);
+        if(count($valida) != 0){
+            $ruta_abogado = 'documentos_abogados';
+        }
+        else{
+            $ruta_abogado = 'documentos_ratificacion';
+        }
+        //dd($ruta_abogado);
+        return view('/solicitudes/verratificacion',compact('folio','ruta_abogado','userRole'));
+    }
+
+    public function editar_ratificaciones(Request $request){
+        $data = $request->all();
+        $id_usuario = auth()->user()->id;
+        $user = User::find($id_usuario);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
         
-        //return $pdf->stream('archivo.pdf');
-        //return view('PDF.ratificacion');
-        //return PDF::loadView('PDF.ratificacion', $data)->stream('archivo.pdf');
+        //Validar si existe el documnento nuevo
+        if(isset($data["documentoIne"])){
+            $nombre_ine = $data["nombres"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresa"]."_IDENTIFICACION.pdf";
+            $path = Storage::putFileAs(
+                'documentos_ratificacion', $request->file('documentoIne'), $nombre_ine
+            );
+        }
+        if(isset($data["documentoRepresentacion"])){
+            $nombre_representación = $data["nombre_empresa"]."".$data["primero_empresa"]."".$data["segundo_empresa"]."-".$data["empresa"]."_PODER.pdf";
+            $path = Storage::putFileAs(
+                'documentos_ratificacion', $request->file('documentoRepresentacion'), $nombre_representación
+            );
+        }
+        if(isset($data["documentoCurp"])){
+            $trabajador_curp = $data["trabajador_curp"].".pdf";
+            $path = Storage::putFileAs(
+                'documentos_ratificacion', $request->file('documentoCurp'), $trabajador_curp
+            );
+        }
+        if(isset($data["documentoidentificacion"])){
+            $trabajador_identificacion = $data["trabajador_curp"]."_IDENTIFICACION.pdf";
+            $path = Storage::putFileAs(
+                'documentos_ratificacion', $request->file('documentoidentificacion'), $trabajador_identificacion
+            );
+        }
+        //Variables opcionales
+        if(isset($data["Aguinaldo"]) && $data["motivo"] == "Pago de prestaciones"){
+            $Aguinaldo =  1;
+        }
+        else{
+            $Aguinaldo =  0;
+        }
+        if(isset($data["Vacaciones"]) && $data["motivo"] == "Pago de prestaciones"){
+            $Vacaciones =  1;
+        }
+        else{
+            $Vacaciones =  0;
+        }
+        if(isset($data["PrimaVacacional"]) && $data["motivo"] == "Pago de prestaciones"){
+            $PrimaVacacional = 1;
+        }
+        else{
+            $PrimaVacacional = 0;
+        }
+        if(isset($data["PagoPTU"]) && $data["motivo"] == "Pago de prestaciones"){
+            $PagoPTU =  1;
+        }
+        else{
+            $PagoPTU = 0;
+        }
+        if(isset($data["Gratificación"]) && $data["motivo"] == "Pago de prestaciones"){
+            $Gratificación =  1;
+        }
+        else{
+            $Gratificación = 0;
+        }
+        if(isset($data["PrimaAntigüedad"]) && $data["motivo"] == "Pago de prestaciones"){
+            $PrimaAntigüedad =  1;
+        }
+        else{
+            $PrimaAntigüedad = 0;
+        }
+        if(isset($data["Otras"]) && $data["motivo"] == "Pago de prestaciones"){
+            $Otras =  1;
+        }
+        else{
+            $Otras =  0;
+        }
+        if(isset($data["Especifique"]) && $data["motivo"] == "Pago de prestaciones"){
+            $Especifique =  $data["Especifique"];
+        }
+        else{
+            $Especifique = 0;
+        }
+        //Agregar todos los campos de la tabla turnos
+        if($userRole[0] == "Solicitante"){
+            $data_update = Turnos::find($data["id"])
+            ->update([
+                'empresa'                       => $data["empresa"],
+                'primero_empresa'               => $data["primero_empresa"],
+                'segundo_empresa'               => $data["segundo_empresa"],
+                'nombre_empresa'                => $data["nombre_empresa"],
+                'curp_solicitante'              => $data["curp_solicitante"],
+                'telefono'                      => $data["telefono"],
+                'trabajador'                    => $data["nombre_trabajador"],
+                'primero_trabajador'            => $data["primer_apellidot"],
+                'segundo_trabajador'            => $data["segundo_apellidot"],
+                'edad'                          => $data["edad"],
+                'sexo'                          => $data["sexo"],
+                'trabajador_curp'               => $data["trabajador_curp"],
+                'email'                         => $data["email"],
+                'telefono'                      => $data["telefono"],
+                'tipo_identificacion'           => $data["tipo_identificacion"],
+                'fecha_inicio'                  => $data["fecha_inicio"],
+                'fecha_termino'                 => $data["fecha_termino"],
+                'categoria'                     => $data["categoria"],
+                'frecuencia'                    => $data["frecuencia"],
+                'salario'                       => $data["salario"],
+                'dias'                          => $data["dias"],
+                'motivo'                        => $data["motivo"],
+                'Aguinaldo'                     => $Aguinaldo,
+                'Vacaciones'                    => $Vacaciones,
+                'PrimaVacacional'               => $PrimaVacacional,
+                'PagoPTU'                       => $PagoPTU,
+                'Gratificación'                 => $Gratificación,
+                'PrimaAntigüedad'               => $PrimaAntigüedad,
+                'Otras'                         => $Otras,
+                'Especifique'                   => $Especifique,
+                'monto'                         => $data["monto"],
+                'tipo_pago'                     => $data["tipo_pago"],
+            ]);
+        }
+        else{
+            $data_update = Turnos::find($data["id"])
+            ->update([
+                'empresa'                       => $data["empresa"],
+                'primero_empresa'               => $data["primero_empresa"],
+                'segundo_empresa'               => $data["segundo_empresa"],
+                'nombre_empresa'                => $data["nombre_empresa"],
+                'curp_solicitante'              => $data["curp_solicitante"],
+                'telefono'                      => $data["telefono"],
+                'trabajador'                    => $data["nombre_trabajador"],
+                'primero_trabajador'            => $data["primer_apellidot"],
+                'segundo_trabajador'            => $data["segundo_apellidot"],
+                'edad'                          => $data["edad"],
+                'sexo'                          => $data["sexo"],
+                'trabajador_curp'               => $data["trabajador_curp"],
+                'email'                         => $data["email"],
+                'telefono'                      => $data["telefono"],
+                'tipo_identificacion'           => $data["tipo_identificacion"],
+                'fecha_inicio'                  => $data["fecha_inicio"],
+                'fecha_termino'                 => $data["fecha_termino"],
+                'categoria'                     => $data["categoria"],
+                'frecuencia'                    => $data["frecuencia"],
+                'salario'                       => $data["salario"],
+                'dias'                          => $data["dias"],
+                'motivo'                        => $data["motivo"],
+                'Aguinaldo'                     => $Aguinaldo,
+                'Vacaciones'                    => $Vacaciones,
+                'PrimaVacacional'               => $PrimaVacacional,
+                'PagoPTU'                       => $PagoPTU,
+                'Gratificación'                 => $Gratificación,
+                'PrimaAntigüedad'               => $PrimaAntigüedad,
+                'Otras'                         => $Otras,
+                'Especifique'                   => $Especifique,
+                'monto'                         => $data["monto"],
+                'tipo_pago'                     => $data["tipo_pago"],
+                'delegacion'                    => $data["delegacion"],
+                'fecha'                         => $data["fecha_pago"],
+                'hora'                          => $data["hora_pago"],
+                'observaciones'                 => $data["observaciones"],
+            ]);
+        }
+
+
+        if($userRole[0] == "Auxiliar")
+            return redirect()->route('atender_ratificacion');
+        else if($userRole[0] == "Solicitante")
+            return redirect()->route('ratificacion');
+        else if($userRole[0] == "Administrador Solicitante")
+            return redirect()->route('Ratificacion');
     }
     
-    public function indexr(){
-        return view('indexr');
+    public function guardar_manifestacion(Request $request){
+        $data = $request->all();
+        //Revisar si existe
+        if(isset($data["dias_pagos"])){
+            $conteo = count($data["dias_pagos"]);
+            for($i = 0; $i < $conteo; $i++) {
+                $data_citado = [
+                    'id_solicitud'  => $data["id"],
+                    'fecha'         => $data["dias_pagos"][$i],
+                    'hora'          => $data["hora_pagos"][$i], 
+                    'monto'         => $data["monto_pagos"][$i], 
+                    'descripcion'   => $data["descripcion_pagos"][$i],
+                    'estatus'       => "Pendiente", 
+                ];
+                Pagos::create($data_citado);
+            }
+        }
+        //Regresar error
+        else{
+            return back()->withErrors('Debes agregar por lo menos una fecha de pago.');
+        }
+        if(isset($data["tipo_pago"])){
+            $cont = count($data["dias_pagos"]);
+            for($i = 0; $i < $cont; $i++) {
+                $data_citado = [
+                    'id_solicitud'  => $data["id"], 
+                    'monto'         => $data["monto_pago"][$i], 
+                    'descripcion'   => $data["tipo_pago"][$i],
+                ];
+                Concepto::create($data_citado);
+            }
+        }
+        //Regresar error
+        else{
+            return back()->withErrors('Debes agregar por lo menos un concepto de pago.');
+        }
+
+        if($conteo >= 2){
+            $estatus = "Concluida Pagos";
+        }
+        else{
+            $estatus = "Conluida";
+        }
+
+        //Generar numero de expediente
+        $delegacion = Turnos::find($data["id"]);
+        //dd($delegacion);
+        $expediente = $this->GeneraExpediente($delegacion["delegacion"]);
+
+        $rechazar = Turnos::find($data["id"])
+        ->update(['resolucion_primera'  => $data["primera"],
+        'resolucion_trabajadores'       => $data["trabajadores"],
+        'resolucion_justificacion'      => $data["justificacion"],
+        'resolucion_segunda'            => $data["segunda"],
+        'vacaciones_dias'               => $data["vacaciones"],
+        'aguinaldo_dias'                => $data["aguinaldo"],
+        'otros_dias'                    => $data["otros"],
+        'horario'                       => $data["horario"],
+        'comida'                        => $data["comida"],
+        'domicilio'                     => $data["domicilio"],
+        'NUE'                           => $expediente,
+        'id_conciliador'                => $data["conciliador_id"],
+
+        'estatus'                       => $estatus]);
+        
+        return redirect()->route('atender_ratificacion');
     }
 
+    public function pagar_ratificacion($id){
+        //Revisar todos los pagos
+        $pagos = Pagos::where('id_solicitud',$id)->get();
+
+        return view('/solicitudes/pagos',compact('id','pagos'));
+    }
+
+    public function pagoA_ratificacion(Request $request){
+        $data = $request->all();
+
+        Pagos::find($data["id"])
+        ->update(['estatus'  => "Pagado", 'observaciones' => $data["observaciones"]]);
+
+        return redirect()->route('atender_ratificacion');
+    }
+
+    public function pagoR_ratificacion($id){
+        $pagos = Pagos::find($id);
+        
+        $id_solicitud = $pagos["id_solicitud"];
+        Pagos::find($id)
+        ->update(['estatus'  => "No pagado"]);
+
+        Turnos::find($id_solicitud)
+        ->update(['estatus' => "Incumplimiento"]);
+
+        return redirect()->route('atender_ratificacion');
+    }
+
+    public function GeneraExpediente($delegacion){
+        $año_actual = date('Y');
+        $id = Turnos::select('id')->orderBy('id', 'desc')->first();
+    
+        if($delegacion == "Morelia"){
+            $del = "MOR";
+        }
+        else if($delegacion == "Uruapan"){
+            $del = "URU";
+        }
+        else if($delegacion == "Zamora"){
+            $del = "ZAM";
+        }
+        $consecutivo = $id["id"]+1;
+        //contar el numero de ceros
+        $numeroConCeros = str_pad($consecutivo, 5, "0", STR_PAD_LEFT);
+        $folio = $del."/RAT"."/".$año_actual."/".$numeroConCeros;
+    
+        return $folio;
+    }
 }

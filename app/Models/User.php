@@ -27,6 +27,7 @@ class User extends Authenticatable
         'last_login_ip',
         'profile_photo_path',
         'type',
+        'remember_token',
         'delegacion',
     ];
 

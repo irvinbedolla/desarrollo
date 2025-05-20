@@ -95,7 +95,7 @@
                                         </div>
                                     @endif
                                     <div style="background-color:#D2D3D5; width:100%; height:40px;">
-                                        <h3 class="text-center" style="color:black">Datos de identificación</h3>
+                                        <h3 class="text-center" style="color:black">Datos del Solicitante</h3>
                                     </div>    
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                                     <form class="needs-validation novalidate" method="POST" action="{{route('parte2')}}" enctype='multipart/form-data'>
@@ -103,61 +103,62 @@
                                         <input type="hidden" name="id" value="{{$id}}">
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-4">
-                                                <label for="name">Tipo persona</label>
+                                                <label for="name">Tipo de Persona</label>
                                                 <select name="tipo" class="form-control" required>
+                                                    <option value="">SELECCIONE</option>
                                                     <option value="Fisica">FÍSICA</option>
                                                     <option value="Moral">MORAL</option>
                                                 </select>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Curp del solicitante (*)</label>
+                                                    <label for="name">CURP del Solicitante (*)</label>
                                                     <input type="text" name="curp" id="curp_input" oninput="validarInput(this)"class="form-control" required> 
                                                     <pre id="resultado"></pre>
                                                     <div class="invalid-feedback">
-                                                        El curp es obligatorio.
+                                                        El campo curp es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Nombre(s) y apellidos del solicitante (*) </label>
+                                                    <label for="name">Nombre(s) y Apellidos del Solicitante (*) </label>
                                                     <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
-                                                        El nombre es obligatorio.
+                                                        El campo nombre es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
                                             <div id="div1" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Fecha de nacimiento (*)</label>
+                                                    <label for="name">Fecha de Nacimiento (*)</label>
                                                     <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" onchange="validarfechaNacimiento(this)" class="form-control" required> 
                                                     <div class="invalid-feedback">
-                                                        La fecha de nacimiento es obligatoria.
+                                                        El campo fecha de nacimiento es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>
                                             <div id="div1" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Edad del solicitante (*)</label>
+                                                    <label for="name">Edad del Solicitante (*)</label>
                                                     <input type="number" name="edad" class="form-control" id="años_edad" required> 
                                                     <div class="invalid-feedback">
-                                                        La edad es obligatoria.
+                                                        El campo edad es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">RFC del solicitante</label>
+                                                    <label for="name">RFC del Solicitante (*)</label>
                                                     <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
-                                                        El RFC es obligatorio.
+                                                        El campo RFC es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Genero (*)</label>
+                                                    <label for="name">Sexo (*)</label>
                                                     <select name="genero" class="form-control" required>
                                                         <option value="">SELECCIONE</option>
                                                         <option value="H">HOMBRE</option>
@@ -165,7 +166,7 @@
                                                         <option value="NC">PREFIERO NO CONTESTAR</option>
                                                     </select>
                                                     <div class="invalid-feedback">
-                                                        El genero es obligatorio.
+                                                        El campo es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
@@ -178,20 +179,20 @@
                                                         <option value="Otra">OTRA</option>
                                                     </select>
                                                     <div class="invalid-feedback">
-                                                        La nacionalidad es obligatoria.
+                                                        El campo nacionalidad es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Estado de nacimiento (*)</label>
+                                                    <label for="name">Entidad Federativa de Nacimiento (*)</label>
                                                     <select id="estado_nacimiento" name="estado_nacimiento" class="form-control" required>
                                                         @foreach($estados as $est)
                                                             <option value="{{$est['id']}}">{{$est['nombre']}}</option>
                                                         @endforeach
                                                     </select>
                                                     <div class="invalid-feedback">
-                                                        El estado es obligatoria.
+                                                        El campo estado es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>
@@ -220,28 +221,25 @@
                                             </div>  
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Teléfono celular (*)</label>
+                                                    <label for="name">Teléfono Celular (*)</label>
                                                     <input type="text" name="telefono1" minlength="10" maxlength="10" class="form-control" required> 
                                                     <div class="invalid-feedback">
-                                                        El teléfono  es obligatorio.
+                                                        El campo teléfono es obligatorio.
                                                     </div>
                                                 </div>   
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Teléfono casa ()</label>
+                                                    <label for="name">Teléfono Fijo</label>
                                                     <input type="text" name="telefono2" minlength="10" maxlength="10" class="form-control"> 
-                                                    <div class="invalid-feedback">
-                                                        El teléfono  es obligatorio.
-                                                    </div>
                                                 </div>   
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Email (*)</label>
+                                                    <label for="name">Correo Electrónico (*)</label>
                                                     <input type="mail" name="correo" class="form-control" required> 
                                                     <div class="invalid-feedback">
-                                                        El Email es obligatorio.
+                                                        El campo email es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
@@ -250,7 +248,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="password">Estado del solicitante (*)</label>
+                                                    <label for="password">Entidad Federativa del Solicitante (*)</label>
                                                     <select id="estado_solicitante" class="form-control" name="estado_solicitante" required>
                                                         <option value="">Seleccione</option>
                                                         @foreach($estados as $est)
@@ -264,7 +262,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Tipo de vialidad (*)</label>
+                                                    <label for="name">Tipo de Vialidad (*)</label>
                                                     <select name="vialidad" class="form-control" required>
                                                         <option value="">SELECCIONE</option>
                                                         <option value="Calle">CALLE</option>
@@ -279,7 +277,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Nombre de la vialidad o calle (*)</label>
+                                                    <label for="name">Nombre de la Vialidad(*)</label>
                                                     <input type="text" name="vialidad_calle" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo vialidad o calle es obligatorio.
@@ -288,7 +286,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Número exterior (*)</label>
+                                                    <label for="name">Número Exterior (*)</label>
                                                     <input type="number" name="numExt" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo número es obligatorio.
@@ -297,7 +295,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Número interior</label>
+                                                    <label for="name">Número Interior</label>
                                                     <input type="number" name="numInt" class="form-control"> 
                                                 </div>
                                             </div>
@@ -312,7 +310,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Nombre del municipio o alcaldía (*)</label>
+                                                    <label for="name">Nombre del Municipio o Alcaldía (*)</label>
                                                     <select id="municipio_solicitante" class="form-control" name="municipio_solicitante" required>
                                                         <option value="">Seleccione</option>
                                                         @foreach($municipios as $mun)
@@ -326,8 +324,8 @@
                                             </div>
                                             <div id="div1"  class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Código postal (*)</label>
-                                                    <input type="number" name="codigo_solicitante" class="form-control" required> 
+                                                    <label for="name">Código Postal (*)</label>
+                                                    <input type="text" name="cp" class="form-control" minlength="5" maxlength="5" required> 
                                                     <div class="invalid-feedback">
                                                         El campo código postal es obligatorio.
                                                     </div>
@@ -336,7 +334,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Referencias (*)</label>
-                                                    <input type="text" name="referencias" class="form-control" oninput="this.value = this.value.toUpperCase()"required> 
+                                                    <input type="text" name="referencias" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo referencia es obligatorio.
                                                     </div>
@@ -346,12 +344,18 @@
                                                 <div class="form-group">
                                                     <label for="name">Entre calle (*)</label>
                                                     <input type="text" name="calle1" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo calle es obligatoria.
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">y calle (*)</label>
-                                                    <input type="text" name="calle2" class="form-control" oninput="this.value = this.value.toUpperCase()" required>                                     
+                                                    <input type="text" name="calle2" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo calle es obligatoria.
+                                                    </div>                                    
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
@@ -359,7 +363,7 @@
                                             </div>  
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Número de seguro social ()</label>
+                                                    <label for="name">Número de Seguro Social</label>
                                                     <input type="text" name="seguro" minlength="11" maxlength="12" class="form-control"> 
                                                     <div class="invalid-feedback">
                                                     </div>
@@ -370,21 +374,23 @@
                                                     <label for="name">Puesto (*)</label>
                                                     <input type="text" name="puesto" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
-                                                        El puesto es obligatorio.
+                                                        El campo puesto es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
-                                           
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">¿Cada cuándo te pagan?</label>
-                                                    <select name="tiempo_pago" class="form-control" required>
+                                                    <label for="name">Frecuencia de Pago (*)</label>
+                                                    <select name="periodo_pago" class="form-control" required>
                                                         <option value="">SELECCIONE</option>
+                                                        <option value="Diario">DIARIO</option>
                                                         <option value="Semana">SEMANAL</option>
                                                         <option value="Quincenal">QUINCENAL</option>
                                                         <option value="Mensual">MENSUAL</option>
-                                                        <option value="Diario">DIARIO</option>
                                                     </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo frecuencia de pagos es obligatorio.
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
@@ -392,74 +398,132 @@
                                                     <label for="name">Salario (*)</label>
                                                     <input type="number" name="pago" class="form-control" required> 
                                                     <div class="invalid-feedback">
-                                                        Es obligatorio.
+                                                        El campo salario es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Cantidad de horas trabajadas por semana (*)</label>
+                                                    <label for="name">Cantidad total de horas trabajadas por semana (*)</label>
                                                     <input type="number" name="horas" class="form-control" required> 
                                                     <div class="invalid-feedback">
-                                                        Es obligatorio.
+                                                        El campo cantidad de horas trabajadas es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
-                                                    <label for="btncheck1">¿Labora actualmente?</label><br>
+                                                    <label for="btncheck1">¿Laboras actualmente?</label><br>
                                                     <input name="labora" type="checkbox" class="btn-check" id="check_fecha" autocomplete="off"/>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Fecha de ingreso</label>
+                                                    <label for="name">Fecha de Ingreso (*)</label>
                                                     <input type="date" name="fecha_ingreso" class="form-control" required> 
                                                     <div class="invalid-feedback">
-                                                        La fecha de ingreso es obligatoria.
+                                                        El campo fecha de ingreso es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Jornada</label>
+                                                    <label for="name">Jornada (*)</label>
                                                     <select name="jornada" class="form-control" required>
                                                         <option value="">SELECCIONE</option>
                                                         <option value="Diurna">DIURNA</option>
                                                         <option value="Nocturna">NOCTURNA</option>
                                                         <option value="Mixta">MIXTA</option>
                                                     </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo jornada laboral es obligatoria.
+                                                    </div>
                                                 </div>
                                             </div>
-                                            
                                             <div class="col-xs-12 col-sm-12 col-md-4" id="fecha_fin">
                                                 <div class="form-group">
-                                                    <label for="name">Fecha de salida</label>
+                                                    <label for="name">Fecha de Salida</label>
                                                     <input type="date" name="fecha_salida" class="form-control"> 
                                                     <div class="invalid-feedback">
-                                                        La fecha de salida es obligatoria.
+                                                        El campo fecha de salida es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
                                                 <h3 class="text-center" style="color:black">Documentos</h3>
                                             </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Tipo de identificación (*)</label>
+                                                    <select name="identificacion" class="form-control" required>
+                                                        <option value="">SELECCIONE</option>
+                                                        <option value="ine">INE</option>
+                                                        <option value="pasaporte">PASAPORTE</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo jornada laboral es obligatoria.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <!--<div class="col-xs-12 col-sm-12 col-md-6">-->
+                                                    <div class="form-group">
+                                                        <label>CURP (*)</label>
+                                                        <input type="file" name="documentoCurp" class="form-control" accept=".pdf, .jpg, .png, .jpeg ">
+                                                        <div class="invalid-feedback">
+                                                            El campo curp es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                <!--</div>-->
+                                            </div>
+                                           
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <h4 class="text-center">En caso de ser mayor de edad</h4>
+                                                </div>
+                                            </div>
+
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label>Identificación oficial (INE, ACTA DE NACIMIENTO, CURP)</label>
-                                                    <input type="file" name="documento" class="form-control" accept=".pdf, .jpg, .png, .jpeg " required>
+                                                    <label>Identificación oficial de frente</label>
+                                                    <input type="file" name="documentoINEFrente" class="form-control" accept=".pdf , .jpg, .png, .jpeg ">
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <div align="center">
-                                                    <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar</button>
-                                                    <a href="{{ route('solicitud_trabajador'); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Regresar</a> 
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label>Identificación oficial de atras</label>
+                                                    <input type="file" name="documentoINEAtras" class="form-control" accept=".pdf , .jpg, .png, .jpeg " required>
+                                                    <div class="invalid-feedback">
+                                                        La Identificación es obligatoria.
+                                                    </div>
                                                 </div>
-                                            </div>     
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <h4 class="text-center">En caso de ser menor de edad ingresar el Acta de Nacimiento</h4>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label>Acta de nacimiento</label>
+                                                    <input type="file" name="documentoActa" class="form-control" accept=".pdf, .jpg, .png, .jpeg ">
+                                                    <div class="invalid-feedback">
+                                                        La Identificación es obligatoria.
+                                                    </div>
+                                                </div>
+                                            </div>
+   
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <div align="center">
+                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar</button>   
+                                            </div>
+                                        </div>     
                                     </form>
                                 </div>
                             </div>
@@ -527,5 +591,4 @@
 
 @section('scripts')
     <script src="public/js/poderes/general.js"></script>
-    
 @endsection

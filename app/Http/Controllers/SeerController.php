@@ -20,6 +20,8 @@ use App\Models\SolicitudRama;
 use App\Models\SolicitudEconomica;
 use App\Models\SeerMotivoSolicitud;
 use App\Models\SeerSolicitante;
+use App\Models\PreRegistro;
+
 
 //Para sacar el Id del usuario
 use Illuminate\Support\Facades\Auth;
@@ -1807,29 +1809,61 @@ class SeerController extends Controller
     public function solicitudesLinea(){
         return view('solicitud');
     }
+
+    public function Industrias($tipo_solicitud){
+       // dd($tipo_solicitud);
+        return view('solicitudes.tipoIndustria', compact('tipo_solicitud'));
+    } 
+    
+    //Pre registro para solicitudes
+    public function RTemportal(){
+        // dd($tipo_solicitud);
+        return view('solicitudes.solicitud_trabajador');
+    }
+
+    public function GuardarRTemportal(Request $request){
+        $data = $request->all();
+        $request->validate([
+            'nombre'      => 'required',
+            'rfc'         => 'required', 
+            'telefono'    => 'required'
+        ]);
+        
+        $data_insert=array(
+            'nombre'         =>  $data["nombre"],
+            'rfc'            =>  $data["rfc"],
+            'telefono'       =>  $data["telefono"]
+        );
+       
+        PreRegistro::create($data_insert); 
+        
+        //return redirect()->away('https://michoacan.cencolab.mx/solicitudes/create?solicitud=2');
+    }
+    //Fin registro para solicitudes
     
     //Solicitud en línea trabajador
-    public function trabajador(){  
-        
-        $mostrarMotivos=SolicitudMotivo::whereIn('tipo_solicitud', [1, 2, 3])->exists();
-        $bandera = $mostrarMotivos ? ['1'] : ['0'];
-
-        if ($bandera[0] == "1") {
-            $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '1')
-            ->select('catalogo_motivos.motivo','catalogo_motivos.tipo_solicitud')
-            ->get();
+    public function trabajador($tipo_solicitud){  
+        //dd($tipo_solicitud);
+        if ($tipo_solicitud == "1") {
+            $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '1') ->get();
+        }
+        elseif ($tipo_solicitud == "2") {
+            $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '2') ->get();
+        }
+        elseif ($tipo_solicitud == "3") {
+            $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '3') ->get();
         }
         $ramas = SolicitudRama::all();
        // $actividad=SolicitudEconomica::all();
         $del=Sedes::all();
         $municipios=Municipios::where('estado',16)->get();
-       /* if($bandera[0] == "1"){
+       /* if($tipo_solicitud[0] == "1"){
             //$personas = null;
             $motivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '1')
             ->select('catalogo_motivos.motivo','seer_general.NUE','seer_general.solicitante','seer_citados.nombre','seer_citados.direccion','seer_citados.estatus')
             ->get();
         }*/
-        return view('solicitudes.solicitud_trabajador', compact('ramas','del','municipios','bandera','mostrarMotivos'));
+        return view('solicitudes.solicitud_trabajador', compact('ramas','del','municipios','tipo_solicitud','mostrarMotivos'));
     }
    
     /* public function obtenerActEconomica($id){
@@ -1850,6 +1884,7 @@ class SeerController extends Controller
             'id_rama'         =>  $data["ramaIndustrial"],
             'actividad'       =>  $data["actividad_economica"],
             'delegacion'      =>  $data["dSolicitud"],
+            'tipo_solicitud'  =>  $data["tipo_solicitud"],
         );
        
         SeerPerGeneral::create($data_insert); 
@@ -1858,8 +1893,9 @@ class SeerController extends Controller
         if (!empty($data["motivo_solicitud"])) {
             foreach ($data["motivo_solicitud"] as $motivoId) {
                 SeerMotivo::create([
-                    'id_solicitud' => $id_general["id"],
-                    'id_motivo'    => $motivoId
+                    'id_solicitud'    => $id_general["id"],
+                    'id_motivo'       => $motivoId,
+                    
                 ]);
             }
         }
@@ -1870,7 +1906,7 @@ class SeerController extends Controller
     
     public function solicitud_parte2(Request $request){
         $data = $request->all();
-        //dd($data['telefono2']);
+        //dd($data);
         $id = $data['id'];
 
         //validando información
@@ -1891,19 +1927,18 @@ class SeerController extends Controller
             'numExt'                => 'required',
             'colonia_solicitante'   => 'required',
             'municipio_solicitante' => 'required',
-            'codigo_solicitante'    => 'required|numeric',
+            'cp'                    => 'required|numeric',
             'referencias'           => 'required|string|max:300',
             'calle1'                => 'required',
             'calle2'                => 'required',
-            'seguro'                => 'required',
             'puesto'                => 'required', 
-            'tiempo_pago'           => 'required',
+            'periodo_pago'          => 'required',
             'pago'                  => 'required',
             'horas'                 => 'required',
             'fecha_ingreso'         => 'required',
             'jornada'               => 'required',
-            
-            
+            'identificacion'        => 'required',
+            'documentoCurp'         => 'required',
         ]);
         
         $data_insert=array(
@@ -1924,18 +1959,19 @@ class SeerController extends Controller
             'num_ext'              => $data["numExt"],
             'colonia'              => $data["colonia_solicitante"],
             'municipio_domicilio'  => $data["municipio_solicitante"],
-            'codigo_postal'        => $data["codigo_solicitante"],
+            'codigo_postal'        => $data["cp"],
             'referencia'           => $data["referencias"],
             'calle2'               => $data["calle1"],
             'calle3'               => $data["calle2"],
             'puesto'               => $data["puesto"],
             'pago'                 => $data["pago"],
-            'periodo_pago'         => $data["tiempo_pago"],
+            'periodo_pago'         => $data["periodo_pago"],
             'horas_semana'         => $data["horas"],
             'fecha_ingreso'        => $data["fecha_ingreso"],
             'jornada'              => $data["jornada"],
-        );
-        
+            'identificacion'       => $data["identificacion"],
+        ); 
+
         if(isset($data["rfc"])){
             $data_insert["rfc"] =  $data["rfc"];
         }
@@ -1965,26 +2001,51 @@ class SeerController extends Controller
         if(isset($data["seguro"])){
             $data_insert["nss"] =  $data["seguro"];
         }
-       
+        
+
+
+
+        //Voy a insertar en la tabla de solicitante
         SeerSolicitante::create($data_insert);
         
-        // se agregan los documentos
-
-       
+        // Voy a realizar una busqueda de la tabla general
         $solicitud = SeerPerGeneral::find($data["id"]);
        
-        $identificacion = $data["curp"].".pdf";
+
+        //CURP
+        $identificacion = $data["curp"]."_CURP.pdf";
         $path = Storage::putFileAs(
-            'documentosSolicitud', $request->file('documento'), $identificacion
+            'documentosSolicitud', $request->file('documentoCurp'), $identificacion
+        );
+        //Identificación frente
+        $ine_frente = $data["curp"]."_Identificacionf.pdf";
+        $path = Storage::putFileAs(
+            'documentosSolicitud', $request->file('documentoINEFrente'), $ine_frente
+        );
+        //Identificación atras
+        $ine_atras = $data["curp"]."_Identificaciona.pdf";
+        $path = Storage::putFileAs(
+            'documentosSolicitud', $request->file('documentoINEAtras'), $ine_atras
+        );
+        //Acta de nacimiento
+        $acta_nacimiento = $data["curp"]."_Acta.pdf";
+        $path = Storage::putFileAs(
+            'documentosSolicitud', $request->file('documentoActa'), $acta_nacimiento
         );
 
-        $data_update= array(
-            'documento'         => $identificacion
-        );
+        
+        
+        /*$data_update= array(
+            'documento'     => $data["documentoINEFrente"],
+            'documentocurp' => $data["documentoCurp"]
+        );*/
+
+        //$solicitud->update($data_update);
+        
+
+        //return view('solicitudes.aviso',compact('folio'));
     
-        $solicitud->update($data_update);
-
-        $estados=Estados::all();
+        //$estados=Estados::all();
         return redirect()->route('agregar_citado', ['id' => $id] ); 
     }
 
@@ -2074,60 +2135,20 @@ class SeerController extends Controller
         return view('solicitudes.citados',compact('estados','id'));
     }
 
-    public function vista_solicitante($id){
+    /*public function vista_solicitante($id){
         $estados = Estados::all();
         $municipios = Municipios::all();
 
         return view('solicitudes.solicitante_nuevo', compact('estados','municipios','id'))->with('success', 'Solicitante agregado correctamente, puedes agregar otro o continuar.');
-    }
+    }*/
 
-    public function vista_documentos($id){
+    /*public function vista_documentos($id){
         return view('solicitudes.documentos',compact('id'));
-    }
+    }*/
 
-    public function guardar_documentos(Request $request){
-        $data = $request->all();
-        //validando información
-        $request->validate([
-            'id'                    => 'required',
-            'curp'                  => 'required',
-            'documentoINEFrente'    => 'required',
-            'documentoINEAtras'     => 'required',
-            'documentoCurp'         => 'required',
-            'documentoActa'         => 'required',
-        ]);
-
-        $folio = $data["id"];
-        $solicitud = SeerPerGeneral::find($data["id"]);
-        $nombre_ineF = $data["curp"]."_IDENTIFICACION_FENTE.pdf";
-            $path = Storage::putFileAs(
-                'documentosSolicitud', $request->file('documentoINEFrente'), $nombre_ineF
-            );
-        $nombre_ineA = $data["curp"]."_IDENTIFICACION_ATRAS.pdf";
-        $path = Storage::putFileAs(
-            'documentosSolicitud', $request->file('documentoINEAtras'), $nombre_ineA
-        );
-        $nombre_curp = $data["curp"]."_CURP.pdf";
-        $path = Storage::putFileAs(
-            'documentosSolicitud', $request->file('documentoCurp'), $nombre_curp
-        );
-        $nombre_acta = $data["curp"]."_ACTA.pdf";
-        $path = Storage::putFileAs(
-            'documentosSolicitud', $request->file('documentoActa'), $nombre_acta
-        );
-
-
-        $data_update= array(
-            'curp'                  => $data["curp"],
-            'documentoINEFrente'    => $nombre_ineF, 
-            'documentoINEAtras'     => $nombre_ineA, 
-            'documentoCurp'         => $nombre_curp, 
-            'documentoActa'         => $nombre_acta
-        );
-    
-        $solicitud->update($data_update);
-
-        return view('solicitudes.aviso',compact('folio'));
+    public function guardar_documentos($id){
+        
+        return view('solicitudes.aviso',compact('id'));
     }
 
     public function solicitudes_pendientes(){
@@ -2156,7 +2177,5 @@ class SeerController extends Controller
         //Se van asignar fecha de audiencia y hora de manera aleatoria
         //Se manda la notificacion por correo o Whats
     }
-    public function Industrias(){
-        return view('solicitudes.tipoIndustria');
-    } 
+    
 }
