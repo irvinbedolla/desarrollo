@@ -1,9 +1,15 @@
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        locale: 'es',
+        initialView: 'dayGridWeek',
+        locale: 'esLocale',
         events: 'citas/eventos',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,dayGridWeek'
+            //, 'timeGridWeek'
+        },
         eventTimeFormat: {
             hour: '2-digit',
             minute: '2-digit',
