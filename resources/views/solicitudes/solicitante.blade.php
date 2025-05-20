@@ -469,7 +469,7 @@
                                                 <!--<div class="col-xs-12 col-sm-12 col-md-6">-->
                                                     <div class="form-group">
                                                         <label>CURP (*)</label>
-                                                        <input type="file" name="documentoCurp" class="form-control" accept=".pdf, .jpg, .png, .jpeg ">
+                                                        <input type="file" name="documentoCurp" class="form-control" accept=".pdf, .jpg, .png, .jpeg " required>
                                                         <div class="invalid-feedback">
                                                             El campo curp es obligatorio.
                                                         </div>
@@ -486,7 +486,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label>Identificación oficial de frente</label>
-                                                    <input type="file" name="documentoINEFrente" class="form-control" accept=".pdf , .jpg, .png, .jpeg ">
+                                                    <input type="file" name="documentoINEFrente" class="form-control" accept=".pdf , .jpg, .png, .jpeg " required>
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
                                                     </div>
@@ -508,7 +508,7 @@
                                                     <h4 class="text-center">En caso de ser menor de edad ingresar el Acta de Nacimiento</h4>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div id="documentacionMenor" class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label>Acta de nacimiento</label>
                                                     <input type="file" name="documentoActa" class="form-control" accept=".pdf, .jpg, .png, .jpeg ">
@@ -543,8 +543,6 @@
 @section('scripts')
     <script src="public/assets/js/poderes/general.js"></script>
 @endsection
-
-
 
     <script src="public/assets/js/jquery.min.js"></script>
     <script src="public/assets/js/popper.min.js"></script>

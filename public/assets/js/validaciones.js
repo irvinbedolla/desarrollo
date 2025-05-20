@@ -138,8 +138,8 @@ function validarfechaNacimiento(){
 
     años = moment(actual).diff(moment(fechaNacimiento), 'year');
     
-    document.getElementById("documentacionAdulto").style.display = "none";
-    document.getElementById("documentacionMenor").style.display = "none";
+    //document.getElementById("documentacionAdulto").style.display = "none";
+    //document.getElementById("documentacionMenor").style.display = "none";
    
     //document.getElementById("años_edad").value = edad;
     //Si la fecha de nacimiento es menos a 15 años
@@ -148,10 +148,10 @@ function validarfechaNacimiento(){
     }
     if(años > 15 && años < 18){
       alert("Debes presentarte con tu tutor.");
-      document.getElementById("documentacionMenor").style.display = "block";
+      //document.getElementById("documentacionMenor").style.display = "block";
     }
     else{
-      document.getElementById("documentacionAdulto").style.display = "block";
+      //document.getElementById("documentacionAdulto").style.display = "block";
     }
     $('#años_edad').val(años);
     
@@ -208,6 +208,6 @@ function validarcheckfecha(){
 }
 
 //Inicializacion variables
-//document.getElementById("lenguaje_señas").style.display = "none";
-//document.getElementById("discapacidad").style.display = "none";
-//fecha_nacimiento.max = new Date().toISOString().split("T")[0];
+document.getElementById("lenguaje_señas").style.display = "none";
+document.getElementById("discapacidad").style.display = "none";
+fecha_nacimiento.max = new Date().toISOString().split("T")[0];

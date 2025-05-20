@@ -1906,7 +1906,7 @@ class SeerController extends Controller
     
     public function solicitud_parte2(Request $request){
         $data = $request->all();
-        //dd($data);
+        dd($data);
         $id = $data['id'];
 
         //validando información
@@ -1939,6 +1939,10 @@ class SeerController extends Controller
             'jornada'               => 'required',
             'identificacion'        => 'required',
             'documentoCurp'         => 'required',
+            'documentoINEFrente'    => 'nullable', 
+            'documentoINEAtras'     => 'nullable', 
+            'documentoActa'         => 'nullable', 
+
         ]);
         
         $data_insert=array(
@@ -2018,22 +2022,43 @@ class SeerController extends Controller
             'documentosSolicitud', $request->file('documentoCurp'), $identificacion
         );
         //Identificación frente
-        $ine_frente = $data["curp"]."_Identificacionf.pdf";
-        $path = Storage::putFileAs(
-            'documentosSolicitud', $request->file('documentoINEFrente'), $ine_frente
-        );
+        if(!isset($data["documentoINEFrente"])){
+            $ine_frente = "Sin identificación";
+        }
+        else{
+            $ine_frente = $data["curp"]."_Identificacionf.pdf";
+            $path = Storage::putFileAs(
+                'documentosSolicitud', $request->file('documentoINEFrente'), $ine_frente
+            );
+        }
         //Identificación atras
-        $ine_atras = $data["curp"]."_Identificaciona.pdf";
-        $path = Storage::putFileAs(
-            'documentosSolicitud', $request->file('documentoINEAtras'), $ine_atras
-        );
+        if(!isset($data["documentoINEAtras"])){
+            $ine_atras = "Sin identificación";
+        }
+        else{
+            $ine_atras = $data["curp"]."_Identificaciona.pdf";
+            $path = Storage::putFileAs(
+                'documentosSolicitud', $request->file('documentoINEAtras'), $ine_atras
+            );
+        }
+        //$ine_atras = $data["curp"]."_Identificaciona.pdf";
+        //$path = Storage::putFileAs(
+        //    'documentosSolicitud', $request->file('documentoINEAtras'), $ine_atras
+        //);
         //Acta de nacimiento
-        $acta_nacimiento = $data["curp"]."_Acta.pdf";
-        $path = Storage::putFileAs(
-            'documentosSolicitud', $request->file('documentoActa'), $acta_nacimiento
-        );
+        if(!isset($data["documentoActa"])){
+            $acta_nacimiento = "Sin identificación";
+        }
+        else{
+            $acta_nacimiento = $data["curp"]."_Acta.pdf";
+            $path = Storage::putFileAs(
+                'documentosSolicitud', $request->file('documentoActa'), $acta_nacimiento
+            );
+        }
 
-        
+        $data_insert["ifrente"] = $ine_frente;
+        $data_insert["iatras"] = $ine_atras;
+        $data_insert["acta"] = $acta_nacimiento;
         
         /*$data_update= array(
             'documento'     => $data["documentoINEFrente"],

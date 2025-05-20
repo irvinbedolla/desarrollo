@@ -45,14 +45,8 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent" >
         <ul class="navbar-nav ml-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#" style="color: black;">INICIO<span class="sr-only"></span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#servicios" style="color: black;">SERVICIOS</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#contacto"style="color: black;">CONTACTO</a>
-            </li>
+                <a class="nav-link" href="{{ route('publico') }}" style="color: black;">INICIO<span class="sr-only"></span></a>
+             </li>
         </ul>
     </div>
 </nav>
