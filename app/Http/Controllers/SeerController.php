@@ -1853,6 +1853,9 @@ class SeerController extends Controller
         elseif ($tipo_solicitud == "3") {
             $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '3') ->get();
         }
+        elseif ($tipo_solicitud == "4") {
+            $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '4') ->get();
+        }
         $ramas = SolicitudRama::all();
        // $actividad=SolicitudEconomica::all();
         $del=Sedes::all();
@@ -1940,7 +1943,7 @@ class SeerController extends Controller
             'identificacion'        => 'required',
             'documentoCurp'         => 'required',
             'documentoINEFrente'    => 'nullable', 
-            'documentoINEAtras'     => 'nullable', 
+           /* 'documentoINEAtras'     => 'nullable', */
             'documentoActa'         => 'nullable', 
 
         ]);
@@ -2032,7 +2035,7 @@ class SeerController extends Controller
             );
         }
         //Identificación atras
-        if(!isset($data["documentoINEAtras"])){
+       /* if(!isset($data["documentoINEAtras"])){
             $ine_atras = "Sin identificación";
         }
         else{
@@ -2040,7 +2043,7 @@ class SeerController extends Controller
             $path = Storage::putFileAs(
                 'documentosSolicitud', $request->file('documentoINEAtras'), $ine_atras
             );
-        }
+        }*/
         //$ine_atras = $data["curp"]."_Identificaciona.pdf";
         //$path = Storage::putFileAs(
         //    'documentosSolicitud', $request->file('documentoINEAtras'), $ine_atras
@@ -2057,7 +2060,7 @@ class SeerController extends Controller
         }
 
         $data_insert["ifrente"] = $ine_frente;
-        $data_insert["iatras"] = $ine_atras;
+        //$data_insert["iatras"] = $ine_atras;
         $data_insert["acta"] = $acta_nacimiento;
         
         /*$data_update= array(

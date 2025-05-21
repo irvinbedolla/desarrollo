@@ -396,7 +396,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Salario (*)</label>
-                                                    <input type="number" name="pago" class="form-control" required> 
+                                                    <input type="text" name="pago" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo salario es obligatorio.
                                                     </div>
@@ -452,19 +452,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
                                                 <h3 class="text-center" style="color:black">Documentos</h3>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="name">Tipo de identificación (*)</label>
-                                                    <select name="identificacion" class="form-control" required>
-                                                        <option value="">SELECCIONE</option>
-                                                        <option value="ine">INE</option>
-                                                        <option value="pasaporte">PASAPORTE</option>
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        El campo jornada laboral es obligatoria.
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <!--<div class="col-xs-12 col-sm-12 col-md-6">-->
                                                     <div class="form-group">
@@ -482,10 +470,22 @@
                                                     <h4 class="text-center">En caso de ser mayor de edad</h4>
                                                 </div>
                                             </div>
-
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label>Identificación oficial de frente</label>
+                                                    <label for="name">Tipo de identificación (*)</label>
+                                                    <select name="identificacion" class="form-control" required>
+                                                        <option value="">SELECCIONE</option>
+                                                        <option value="ine">INE</option>
+                                                        <option value="pasaporte">PASAPORTE</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo jornada laboral es obligatoria.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label>Identificación oficial</label>
                                                     <input type="file" name="documentoINEFrente" class="form-control" accept=".pdf , .jpg, .png, .jpeg " required>
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
@@ -493,7 +493,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <!--<div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label>Identificación oficial de atras</label>
                                                     <input type="file" name="documentoINEAtras" class="form-control" accept=".pdf , .jpg, .png, .jpeg " required>
@@ -501,7 +501,7 @@
                                                         La Identificación es obligatoria.
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div>-->
 
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">

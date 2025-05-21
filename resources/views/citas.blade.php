@@ -454,7 +454,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
                                                     <label for="name">Monto total del convenio a pagar</label>
-                                                    <input type="number" name="monto" class="form-control" required> 
+                                                    <input type="text" name="monto" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatorio.
                                                     </div>
