@@ -262,6 +262,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //Solicitudes
         Route::get('/solicitudes/index',        [SeerController::class, 'solicitudes_pendientes'])->name('solicitudes_pendientes');
+        Route::get('/solicitud/index',          [SeerController::class, 'mis_solicitudes'])->name('mis_solicitudes');
         Route::get('/solicitudes/{id}',         [SeerController::class, 'solicitudes_pendientes_revisar'])->name('solicitud_revisar');
         Route::post('/confirmar_solicitudes',   [SeerController::class, 'solicitud_confirmar'])->name('confirmar_solicitud');
         Route::get('/rechazar_solicitudes',     [SeerController::class, 'rechazar_solicitud'])->name('rechazar_solicitud');

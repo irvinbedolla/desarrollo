@@ -258,6 +258,9 @@
     @endauth
     @auth
         @role('Solicitante')
+            <a class="nav-link" href="{{ route('mis_solicitudes') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Mis Pendientes</span>
+            </a>
             <a class="nav-link" href="{{ route('ratificacion') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Mis ratificaciones</span>
             </a>
@@ -265,6 +268,9 @@
     @endauth
     @auth
         @role('Administrador Solicitante')
+            <a class="nav-link" href="{{ route('solicitudes_pendientes') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Solicitudes Pendientes</span>
+            </a>
             <a class="nav-link" href="{{ route('Ratificacion') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Ratificaciones</span>
             </a>
