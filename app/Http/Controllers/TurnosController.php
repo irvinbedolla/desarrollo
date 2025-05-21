@@ -1784,6 +1784,7 @@ public function VerPDFPagos($id){
                 'Especifique'                   => $Especifique,
                 'monto'                         => $data["monto"],
                 'tipo_pago'                     => $data["tipo_pago"],
+                'estatus'                       => 'Pendiente',
             ]);
         }
         else{
@@ -1825,6 +1826,7 @@ public function VerPDFPagos($id){
                 'fecha'                         => $data["fecha_pago"],
                 'hora'                          => $data["hora_pago"],
                 'observaciones'                 => $data["observaciones"],
+                'estatus'                       => 'Pendiente',
             ]);
         }
 
