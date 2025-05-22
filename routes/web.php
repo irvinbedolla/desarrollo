@@ -254,6 +254,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('turnos/indexr',           [TurnosController::class, 'indexr'])->name('Ratificacion');
         Route::get('turnos/aceptar/{id}',     [TurnosController::class, 'aceptacion'])->name('turno.aceptar');
         Route::post('/turnos/guardar',        [TurnosController::class, 'guardar_rechazo'])->name('rechazar_turnos');
+        Route::post('/turnos/archivar',       [TurnosController::class, 'archivar_ratificacion'])->name('archivar_ratificacion');
     //Fin de  turnos
 
         Route::get('/pdf/estadistica',       [PDFController::class, 'pdfEstadistica'])->name('PDFestaditica');

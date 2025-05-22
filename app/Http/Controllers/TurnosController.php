@@ -1627,6 +1627,7 @@ public function VerPDFPagos($id){
         ->orwhere('estatus','Conluida')
         ->orwhere('estatus','Concluida Pagos')
         ->orwhere('estatus','Incumplimiento')
+        ->orwhere('estatus','Archivada')
         ->get();
         return view('/solicitudes/indexauxiliar',compact('solicitudes'));
     }
@@ -1920,6 +1921,15 @@ public function VerPDFPagos($id){
         Pagos::find($data["id"])
         ->update(['estatus'  => "Pagado", 'observaciones' => $data["observaciones"]]);
 
+        $pagos = Pagos::find($data["id"]);
+        $id_solicitud = $pagos["id_solicitud"];
+        $faltantes =  Pagos::where('id_solicitud',$id_solicitud)->where('estatus',"Pendiente")->get();
+
+        if(count($faltantes) == 0){
+            Turnos::find($id_solicitud)
+            ->update(['estatus' => "Conluida"]);
+        }
+
         return redirect()->route('atender_ratificacion');
     }
 
@@ -1955,5 +1965,15 @@ public function VerPDFPagos($id){
         $folio = $del."/RAT"."/".$año_actual."/".$numeroConCeros;
     
         return $folio;
+    }
+
+    public function archivar_ratificacion(Request $request){
+        $data = $request->all();
+
+        Turnos::find($data["id"])
+        ->update(['estatus'  => "Archivada", 'observaciones' => $data["observaciones"]]);
+
+        return redirect()->route('atender_ratificacion');
+    
     }
 }
