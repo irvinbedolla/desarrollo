@@ -33,6 +33,14 @@
            /* background-color: #6A0F49;/*<p style="color: #CEA845*/
             opacity: .8;
         }
+        #resultado {
+            background-color: red;
+            color: white;
+            font-weight: bold;
+        }
+        #resultado.ok {
+            background-color: green;
+        }
     </style>
     @livewireStyles
 
@@ -81,7 +89,7 @@
                                         <h3 class="text-center" style="color:black">Genera tu cita para ratificación</h3>
                                     </div>    
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                    <form class="needs-validation novalidate" method="POST" action="{{route('turnos.publico')}}" enctype="multipart/form-data">
+                                    <form class="needs-validation novalidate" method="POST" action="{{route('turnos.publico')}}" enctype="multipart/form-data" onsubmit="return validacionCamposInput()">
                                         @csrf
                                         <br><br>
                                         <div class="row">
@@ -97,7 +105,7 @@
                                             <div id="folio" class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">*Folio Interno de Registro de Representación Legal Patronal</label>
-                                                    <input type="text" name="folio" class="form-control"> 
+                                                    <input type="number" name="folio" class="form-control soloNumeros"> 
                                                     <div class="invalid-feedback">
                                                         El folio es obligatorio.
                                                     </div>
@@ -116,7 +124,7 @@
                                             <div id="primero" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Primer apellido</label>
-                                                    <input type="text" name="primero_empresa" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                    <input type="text" name="primero_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
@@ -125,7 +133,7 @@
                                             <div id="segundo" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Segundo apellido</label>
-                                                    <input type="text" name="segundo_empresa" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                    <input type="text" name="segundo_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
@@ -134,7 +142,7 @@
                                             <div  id="nombre" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Nombre(s)</label>
-                                                    <input type="text" name="nombre_empresa" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                    <input type="text" name="nombre_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
                                                     </div>
@@ -144,7 +152,7 @@
                                             <div id="edad" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Email</label>
-                                                    <input type="email" name="email" class="form-control"> 
+                                                    <input type="email" name="email" class="form-control correoElectronico"> 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
@@ -153,25 +161,25 @@
                                             <div id="sexo" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                 <label for="name">Télefono</label>
-                                                <input type="text" name="telefono" class="form-control" maxlength="10" minlength="10" > 
+                                                <input type="text" name="telefono" class="form-control numeroTelefonico" maxlength="10" minlength="10"> 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="curp" class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">CURP</label>
-                                                    <input type="text" name="curp" class="form-control" maxlength="18" minlength="18"  id="curp_input" oninput="validarInput(this)" 
-                                                    oninput="this.value = this.value.toUpperCase()" > 
+                                                    <label for="name">CURP (*)</label>
+                                                    <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <pre id="resultado"></pre>
                                                     <div class="invalid-feedback">
-                                                        El campo es obligatorio.
+                                                        El campo curp es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
                                             <div id="ine" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label>*Identificación oficial(PDF)</label><br>
+                                                    <label>*Identificación oficial (PDF)</label><br>
                                                     <input type="file" name="documentoIne" class="form-control" accept=".pdf">
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
@@ -197,7 +205,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Primer apellido</label>
-                                                    <input type="text" name="primero_trabajador" class="form-control" oninput="this.value = this.value.toUpperCase()"  required> 
+                                                    <input type="text" name="primero_trabajador" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
@@ -206,7 +214,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Segundo apellido</label>
-                                                    <input type="text" name="segundo_trabajador" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <input type="text" name="segundo_trabajador" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
@@ -215,22 +223,22 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Nombre(s)</label>
-                                                    <input type="text" name="trabajador" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <input type="text" name="trabajador" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div  class="col-xs-12 col-sm-12 col-md-2">
+                                            <div  class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Edad</label>
-                                                    <input type="number" name="trabajador_edad" class="form-control" required> 
+                                                    <input type="number" name="trabajador_edad" class="form-control soloNumeros" required> 
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div   class="col-xs-12 col-sm-12 col-md-2">
+                                            <div   class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                 <label for="name">Sexo</label>
                                                     <select name="trabajador_sexo" class="form-control" required>
@@ -243,16 +251,17 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div i class="col-xs-12 col-sm-12 col-md-2">
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">CURP</label>
-                                                    <input type="text" name="trabajador_curp" class="form-control" maxlength="18" minlength="18" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <label for="name">CURP del Solicitante (*)</label>
+                                                    <input type="text" name="trabajador_curp" id="curp_input" oninput="validarInput(this)"  oninput="this.value = this.value.toUpperCase()" class="form-control" required> 
+                                                    <pre id="resultado"></pre>
                                                     <div class="invalid-feedback">
-                                                        El campo edad es obligatorio.
+                                                        El campo curp es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div  class="col-xs-12 col-sm-12 col-md-3">
+                                            <div  class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Documento de la CURP</label>
                                                     <input type="file" name="documentoCurp" class="form-control" accept=".pdf" required> 
@@ -261,7 +270,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Identificación Oficial</label>
                                                     <select id="tipo_identificacion" name="tipo_identificacion" class="form-control"  required>
@@ -277,21 +286,21 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="espesificar_tipo_identificacion" class="col-xs-12 col-sm-12 col-md-3" style="display:none">
+                                            <div id="espesificar_tipo_identificacion" class="col-xs-12 col-sm-12 col-md-4" style="display:none">
                                                 <div class="form-group">
                                                     <label for="name">Especificar</label>
                                                     <input type="text" name="tipo_otros" class="form-control" > 
                                                     <div class="invalid-feedback">
-                                                        El campo edad es obligatorio.
+                                                        El campo es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div  class="col-xs-12 col-sm-12 col-md-3">
+                                            <div  class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Subir Identificación Ofícial</label>
                                                     <input type="file" name="documentoidentificacion" class="form-control" accept=".pdf" required> 
                                                     <div class="invalid-feedback">
-                                                        El campo edad es obligatorio.
+                                                        El campo es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
@@ -301,9 +310,22 @@
                                                     <h4 class="text-center">Datos de la Relación Laboral</h4>
                                                 </div>
                                             </div>
-
                                             
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                            <div  class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">¿Existe procedimiento previo en la junta local de conciliación y arbitraje?</label>
+                                                    <select name="JLCA" class="form-control"  required>
+                                                        <option value="">Seleccione</option>
+                                                        <option value="Si">Si</option>
+                                                        <option value="No">No</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
                                                     <label for="name">Fecha de inicio de la relación laboral</label>
                                                     <input type="date" name="fecha_inicio" class="form-control" required> 
@@ -330,6 +352,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Frecuencia de pago</label>
@@ -345,36 +368,23 @@
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Salario</label>
-                                                    <input type="text" name="salario" class="form-control"  placeholder="$" 
-                                                    class="myInput" required> 
+                                                    <label for="name">Salario</label><br>
+                                                    <input type="text" name="salario" placeholder="$" class="form-control soloMontos" class="myInput" required> 
                                                     <div class="invalid-feedback">
                                                         Este campo es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Dias a la semana trabajados</label>
-                                                    <input type="number" name="dias" class="form-control" required> 
+                                                    <input type="number" name="dias" class="form-control soloNumeros" required> 
                                                     <div class="invalid-feedback">
                                                         Este campo es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <div  class="col-xs-12 col-sm-12 col-md-3">
-                                                <div class="form-group">
-                                                    <label for="name">¿Existe procedimiento previo en la JLCA?</label>
-                                                    <select name="JLCA" class="form-control"  required>
-                                                        <option value="">Seleccione</option>
-                                                        <option value="Si">Si</option>
-                                                        <option value="No">No</option>
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        El campo es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
@@ -451,20 +461,20 @@
                                                 </div>
                                             </div>
                                             
-                                            <div class="col-xs-12 col-sm-12 col-md-2">
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Monto total del convenio a pagar</label>
-                                                    <input type="text" name="monto" class="form-control" required> 
+                                                    <input type="text" name="monto" class="form-control soloMontos" required> 
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
-
+                                           
                                             <div class="col-xs-12 col-sm-6 col-md-2">
                                                 <div class="form-group">
-                                                    <label for="name">
-                                                    <a href="https://cclmichoacan.gob.mx/Calculadora.html" target="_blank">* Calcula el monto aproximado del convenio.</a>
+                                                    <label for="name"><br>
+                                                    <center><a href="https://cclmichoacan.gob.mx/Calculadora.html" target="_blank">* Calcula el monto aproximado del convenio.</a></center>
                                                     </label>
                                                 </div>
                                             </div>
@@ -486,7 +496,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Sube tu cuantificación(Opcional)</label>
                                                     <input type="file" name="cuantificacion" class="form-control" accept=".pdf"> 
@@ -562,8 +572,8 @@
     </div>
 
 @section('scripts')
-    <script src="public/assets/js/poderes/general.js"></script>
-    <script src="public/assets/js/validaciones.js"></script> 
+    
+    <script src="public/assets/js/validaciones-ratificacion.js"></script> 
     <script src="public/assets/js/poderes/general.js"></script>
 @endsection
 
