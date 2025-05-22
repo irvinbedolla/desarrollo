@@ -52,10 +52,12 @@ document.addEventListener('DOMContentLoaded', function() {
         eventClick: function(info){
             const props = info.event.extendedProps;
             $('.modal-body').html(`
-                <strong>Descripción:</strong> ${info.event.title}<br>
+                <strong>Descripción:</strong> ${props.descripcion}<br>
                 <strong>ID:</strong> ${info.event.id}<br>
                 <strong>Fecha:</strong> ${props.fecha}<br>
                 <strong>Hora:</strong> ${props.hora}<br>
+                <strong>Empresa:</strong> ${props.empresa}<br>
+                <strong>Trabajador:</strong> ${props.trabajador}<br>
                 <strong>Estatus:</strong> ${props.estatus}<br>
                 <strong>Monto:</strong> ${props.monto}<br>
                 <strong>Observaciones:</strong> ${props.observaciones}<br>

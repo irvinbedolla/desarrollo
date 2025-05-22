@@ -56,11 +56,16 @@ class CitaController extends Controller
     }
 
     public function pagos() {
-        $pagos = Pagos::all();
-        $turnos = Turnos::all();
+        $pagos = Pagos::with('turno')->get();
 
         $eventos = [];
         foreach ($pagos as $pago) {
+            $turno = $pago->turno;
+            $empresa_turno = $turno ? $turno->empresa : null;
+            $nombre_turno = $turno ? $turno->trabajador : null;
+            $primer_apellido_turno = $turno ? $turno->primero_trabajador : null;
+            $segundo_apellido_turno = $turno ? $turno->segundo_trabajador : null;
+
 
             if ($pago->estatus === 'Pendiente') {
                 $color = '#EAE300';
@@ -72,12 +77,16 @@ class CitaController extends Controller
 
             $eventos[] = [
                 'id' => $pago->id_solicitud,
-                'title' => $pago->descripcion,
+                //'title' => $pago->descripcion,
+                'title' => $nombre_turno . ' ' . $primer_apellido_turno,
                 'start' => $pago->fecha->format('Y-m-d') . 'T' . $pago->hora->format('H:i:s'),
                 'extendedProps' => [
+                    'descripcion' => $pago->descripcion,
                     'hora' => $pago->hora->format('h:i A'),
                     'color' => $color,
                     'fecha' => $pago->fecha->format('d/m/Y'),
+                    'empresa' => $empresa_turno,
+                    'trabajador' => $nombre_turno . ' ' . $primer_apellido_turno . ' ' . $segundo_apellido_turno,
                     'estatus' => $pago->estatus,
                     'monto' => $pago->monto,
                     'observaciones' => $pago->observaciones

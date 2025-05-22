@@ -15,5 +15,10 @@ class Pagos extends Model
         'fecha' => 'date',
         'hora' => 'datetime:H:i'
     ];
+
+    public function turno()
+    {
+        return $this->hasOne(Turnos::class, 'id', 'id_solicitud');
+    }
     
 }
