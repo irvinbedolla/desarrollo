@@ -115,7 +115,7 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Tipo de Vialidad (*)</label>
+                                                    <label for="name">Tipo de Vialidad del citado *</label>
                                                     <select name="vialidad" class="form-control" required>
                                                         <option value="">SELECCIONE</option>
                                                         <option value="Calle">CALLE</option>
@@ -129,19 +129,19 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
-                                                    <label for="name">Calle</label>
+                                                    <label for="name">Calle del citado *</label>
                                                     <input type="text" name="calle" class="form-control" required> 
                                                     <div class="invalid-feedback">
-                                                        El campo colonia es obligatorio.
+                                                        El campo calle es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Colonia</label>
+                                                    <label for="name">Colonia del citado *</label>
                                                     <input type="text" name="colonia" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo colonia es obligatorio.
@@ -151,7 +151,7 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Código Postal</label>
+                                                    <label for="name">Código Postal del citado *</label>
                                                     <input type="text" name="cp" class="form-control" minlength="5" maxlength="5" required> 
                                                     <div class="invalid-feedback">
                                                         El campo Código Postal es obligatorio.
@@ -161,7 +161,7 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Entre calle</label>
+                                                    <label for="name">Entre calle del domicilio del citado</label>
                                                     <input type="text" name="calle1" class="form-control"> 
                                                     <div class="invalid-feedback">
                                                         El campo calle es obligatorio.
@@ -171,7 +171,7 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">y calle</label>
+                                                    <label for="name">y calle del domicilio del citado</label>
                                                     <input type="text" name="calle2" class="form-control"> 
                                                     <div class="invalid-feedback">
                                                         El campo calle es obligatorio.
@@ -181,7 +181,7 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Num ext.</label>
+                                                    <label for="name">Num ext. del citado</label>
                                                     <input type="text" name="exterior" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo calle es obligatorio.
@@ -192,7 +192,7 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Num int.</label>
+                                                    <label for="name">Num int. del citado</label>
                                                     <input type="text" name="interior" class="form-control" > 
                                                     <div class="invalid-feedback">
                                                         El campo calle es obligatorio.
@@ -202,22 +202,22 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
-                                                <label for="floatingTextarea">Referencia</label>
+                                                <label for="floatingTextarea">Referencias del domicilio del citado</label>
                                                     <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencia"></textarea>
                                                     <div class="invalid-feedback">
-                                                        El campo calle es obligatorio.
+                                                        El campo referencias es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <spam for="btncheck1">Datos adicionales del Patron/Empresa</spam>
-                                                <input type="checkbox" class="btn-check" id="check_datos" autocomplete="off">
-                                            </div>
+                                            <spam for="btncheck1">Datos adicionales del Patron/Empresa</spam>
+                                            <input type="checkbox" class="btn-check" id="check_datos" autocomplete="off">
+                                        </div>
                                             
                                         <div class="row" id="div_datos_citado" style="display:none">
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Tipo de personas</label>
                                                     <select name="tipo" class="form-control">

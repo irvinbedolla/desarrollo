@@ -110,22 +110,22 @@
                                                     <option value="Moral">MORAL</option>
                                                 </select>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-8">
+                                                <div class="form-group">
+                                                    <label for="name">Nombre(s) y Apellidos del Solicitante (*) </label>
+                                                    <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo nombre es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">CURP del Solicitante (*)</label>
                                                     <input type="text" name="curp" id="curp_input" oninput="validarInput(this)"class="form-control" required> 
                                                     <pre id="resultado"></pre>
                                                     <div class="invalid-feedback">
                                                         El campo curp es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="name">Nombre(s) y Apellidos del Solicitante (*) </label>
-                                                    <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
-                                                    <div class="invalid-feedback">
-                                                        El campo nombre es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
@@ -219,7 +219,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
                                                 <h3 class="text-center" style="color:black">Contacto</h3>
                                             </div>  
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Teléfono Celular (*)</label>
                                                     <input type="text" name="telefono1" minlength="10" maxlength="10" class="form-control" required> 
@@ -228,7 +228,7 @@
                                                     </div>
                                                 </div>   
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Teléfono Fijo</label>
                                                     <input type="text" name="telefono2" minlength="10" maxlength="10" class="form-control"> 
@@ -322,7 +322,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-3">
+                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Código Postal (*)</label>
                                                     <input type="text" name="cp" class="form-control" minlength="5" maxlength="5" required> 
@@ -331,16 +331,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="name">Referencias (*)</label>
-                                                    <input type="text" name="referencias" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
-                                                    <div class="invalid-feedback">
-                                                        El campo referencia es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Entre calle (*)</label>
                                                     <input type="text" name="calle1" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
@@ -349,13 +340,22 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">y calle (*)</label>
                                                     <input type="text" name="calle2" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo calle es obligatoria.
                                                     </div>                                    
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <label for="name">Referencias (*)</label>
+                                                    <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencias"></textarea>
+                                                    <div class="invalid-feedback">
+                                                        El campo referencia es obligatorio.
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
@@ -454,20 +454,17 @@
                                             </div>
                                             
                                             <div class="col-xs-12 col-sm-12 col-md-4">
-                                                <!--<div class="col-xs-12 col-sm-12 col-md-6">-->
-                                                    <div class="form-group">
-                                                        <label>CURP (*)</label>
-                                                        <input type="file" name="documentoCurp" class="form-control" accept=".pdf, .jpg, .png, .jpeg " required>
-                                                        <div class="invalid-feedback">
-                                                            El campo curp es obligatorio.
-                                                        </div>
+                                                <div class="form-group">
+                                                    <label>CURP (*)</label>
+                                                    <input type="file" name="documentoCurp" class="form-control" accept=".pdf" required>
+                                                    <div class="invalid-feedback">
+                                                        El campo curp es obligatorio.
                                                     </div>
-                                                <!--</div>-->
+                                                </div>
                                             </div>
-                                           
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
-                                                    <h4 class="text-center">En caso de ser mayor de edad</h4>
+                                                    <h4 class="text-center">En caso de ser mayor de edad subir su identificación y en caso de ser menor su identificaión es su Acta de Nacimiento</h4>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
@@ -477,47 +474,38 @@
                                                         <option value="">SELECCIONE</option>
                                                         <option value="ine">INE</option>
                                                         <option value="pasaporte">PASAPORTE</option>
+                                                        <option value="cedula">CÉDULA PROFESIONAL</option>
+                                                        <option value="licencia">LICENCIA PARA CONDUCIR</option>
+                                                        <option value="otros">OTROS</option>
                                                     </select>
                                                     <div class="invalid-feedback">
-                                                        El campo jornada laboral es obligatoria.
+                                                        El tipo de identificaión es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label>Identificación oficial</label>
-                                                    <input type="file" name="documentoINEFrente" class="form-control" accept=".pdf , .jpg, .png, .jpeg " required>
+                                                    <input type="file" name="documentoIdentificacion" class="form-control" accept=".pdf" required>
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            <!--<div class="col-xs-12 col-sm-12 col-md-6">
+                                            <!--<div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
-                                                    <label>Identificación oficial de atras</label>
-                                                    <input type="file" name="documentoINEAtras" class="form-control" accept=".pdf , .jpg, .png, .jpeg " required>
-                                                    <div class="invalid-feedback">
-                                                        La Identificación es obligatoria.
-                                                    </div>
-                                                </div>
-                                            </div>-->
-
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <div class="form-group">
-                                                    <h4 class="text-center">En caso de ser menor de edad ingresar el Acta de Nacimiento</h4>
+                                                    <h4 class="text-center">En caso de ser menor de edad Acta de nacimiento</h4>
                                                 </div>
                                             </div>
                                             <div id="documentacionMenor" class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label>Acta de nacimiento</label>
-                                                    <input type="file" name="documentoActa" class="form-control" accept=".pdf, .jpg, .png, .jpeg ">
+                                                    <input type="file" name="documentoActa" class="form-control" accept=".pdf">
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
                                                     </div>
                                                 </div>
-                                            </div>
-   
+                                            </div>-->
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div align="center">

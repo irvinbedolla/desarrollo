@@ -1914,38 +1914,35 @@ class SeerController extends Controller
 
         //validando información
        $request->validate([
-            'tipo'                  => 'required|in:Fisica,Moral',
-            'curp'                  => 'required|min:18|max:18',
-            'nombre'                => 'required',
-            'fecha_nacimiento'      => 'required|date',
-            'edad'                  => 'required|numeric',
-            'genero'                => 'required|in:H,M,NC',
-            'nacionalidad'          => 'required|in:Mexicana,Otra',
-            'estado_nacimiento'     => 'required',
-            'telefono1'             => 'required|min:10|max:10',
-            'correo'                => 'required',
-            'estado_solicitante'    => 'required',
-            'vialidad'              => 'required',
-            'vialidad_calle'        => 'required',
-            'numExt'                => 'required',
-            'colonia_solicitante'   => 'required',
-            'municipio_solicitante' => 'required',
-            'cp'                    => 'required|numeric',
-            'referencias'           => 'required|string|max:300',
-            'calle1'                => 'required',
-            'calle2'                => 'required',
-            'puesto'                => 'required', 
-            'periodo_pago'          => 'required',
-            'pago'                  => 'required',
-            'horas'                 => 'required',
-            'fecha_ingreso'         => 'required',
-            'jornada'               => 'required',
-            'identificacion'        => 'required',
-            'documentoCurp'         => 'required',
-            'documentoINEFrente'    => 'nullable', 
-           /* 'documentoINEAtras'     => 'nullable', */
-            'documentoActa'         => 'nullable', 
-
+            'tipo'                      => 'required|in:Fisica,Moral',
+            'curp'                      => 'required|min:18|max:18',
+            'nombre'                    => 'required',
+            'fecha_nacimiento'          => 'required|date',
+            'edad'                      => 'required|numeric',
+            'genero'                    => 'required|in:H,M,NC',
+            'nacionalidad'              => 'required|in:Mexicana,Otra',
+            'estado_nacimiento'         => 'required',
+            'telefono1'                 => 'required|min:10|max:10',
+            'correo'                    => 'required',
+            'estado_solicitante'        => 'required',
+            'vialidad'                  => 'required',
+            'vialidad_calle'            => 'required',
+            'numExt'                    => 'required',
+            'colonia_solicitante'       => 'required',
+            'municipio_solicitante'     => 'required',
+            'cp'                        => 'required|numeric',
+            'referencias'               => 'required|string|max:300',
+            'calle1'                    => 'required',
+            'calle2'                    => 'required',
+            'puesto'                    => 'required', 
+            'periodo_pago'              => 'required',
+            'pago'                      => 'required',
+            'horas'                     => 'required',
+            'fecha_ingreso'             => 'required',
+            'jornada'                   => 'required',
+            'identificacion'            => 'required',
+            'documentoCurp'             => 'required',
+            'documentoIdentificacion'   => 'required',
         ]);
         
         $data_insert=array(
@@ -2010,67 +2007,38 @@ class SeerController extends Controller
         }
         
 
-
-
         //Voy a insertar en la tabla de solicitante
-        SeerSolicitante::create($data_insert);
+       
         
         // Voy a realizar una busqueda de la tabla general
-        $solicitud = SeerPerGeneral::find($data["id"]);
+       // $solicitud = SeerPerGeneral::find($data["id"]);
        
 
         //CURP
-        $identificacion = $data["curp"]."_CURP.pdf";
+        $documento = $data["curp"]."_CURP.pdf";
+        //dd($documento);
         $path = Storage::putFileAs(
-            'documentosSolicitud', $request->file('documentoCurp'), $identificacion
+            'documentosSolicitud', $request->file('documentoCurp'), $documento
         );
-        //Identificación frente
-        if(!isset($data["documentoINEFrente"])){
-            $ine_frente = "Sin identificación";
-        }
-        else{
-            $ine_frente = $data["curp"]."_Identificacionf.pdf";
-            $path = Storage::putFileAs(
-                'documentosSolicitud', $request->file('documentoINEFrente'), $ine_frente
-            );
-        }
-        //Identificación atras
-       /* if(!isset($data["documentoINEAtras"])){
-            $ine_atras = "Sin identificación";
-        }
-        else{
-            $ine_atras = $data["curp"]."_Identificaciona.pdf";
-            $path = Storage::putFileAs(
-                'documentosSolicitud', $request->file('documentoINEAtras'), $ine_atras
-            );
-        }*/
-        //$ine_atras = $data["curp"]."_Identificaciona.pdf";
-        //$path = Storage::putFileAs(
-        //    'documentosSolicitud', $request->file('documentoINEAtras'), $ine_atras
-        //);
+        
         //Acta de nacimiento
-        if(!isset($data["documentoActa"])){
-            $acta_nacimiento = "Sin identificación";
+        if(isset($data["documentoIdentificacion"])){
+            $documentoidentificacion = $data["curp"]."_Identificacion.pdf";
+            $path = Storage::putFileAs(
+                'documentosSolicitud', $request->file('documentoIdentificacion'), $documentoidentificacion
+        );
         }
         else{
-            $acta_nacimiento = $data["curp"]."_Acta.pdf";
+            $documentoidentificacion = $data["curp"]."_Acta.pdf";
             $path = Storage::putFileAs(
-                'documentosSolicitud', $request->file('documentoActa'), $acta_nacimiento
+                'documentosSolicitud', $request->file('documentoActa'), $documentoidentificacion
             );
         }
 
-        $data_insert["ifrente"] = $ine_frente;
-        //$data_insert["iatras"] = $ine_atras;
-        $data_insert["acta"] = $acta_nacimiento;
-        
-        /*$data_update= array(
-            'documento'     => $data["documentoINEFrente"],
-            'documentocurp' => $data["documentoCurp"]
-        );*/
-
-        //$solicitud->update($data_update);
-        
-
+        $data_insert["documentoCurp"] = $documento;
+        $data_insert["documentoIdentificacion"] = $documentoidentificacion;
+       
+        SeerSolicitante::create($data_insert);
         //return view('solicitudes.aviso',compact('folio'));
     
         //$estados=Estados::all();
