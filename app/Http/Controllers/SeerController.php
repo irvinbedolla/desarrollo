@@ -2150,7 +2150,8 @@ class SeerController extends Controller
     public function solicitudes_pendientes(){
         $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
         ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
-        ->select('seer_general.id','seer_general.fecha','seer_general.fecha_conflicto','seer_general.curp','seer_general.delegacion','seer_general.actividad','catalogo_rama.rama_industrial')
+        ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+        ->select('seer_general.id','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad','catalogo_rama.rama_industrial','seer_general.tipo_solicitud')
         ->orderBy('seer_general.fecha')
         ->get();
 
@@ -2158,13 +2159,21 @@ class SeerController extends Controller
     }
 
     public function solicitudes_pendientes_revisar($id){
+        $id             = $id;
         $general        = SeerPerGeneral::find($id);
-        $rama           = SolicitudRama::find($general["id_rama"]);
+        $ramas          = SolicitudRama::all();
+        //$rama           = SolicitudRama::find($general["id_rama"]);
         $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
         $citados        = SeerCitados::where("id_solicitud",$id)->get();
         $estados        = Estados::all();
+        //Catalogo de motivos
+        $mostrarMotivos = SolicitudMotivo::all();
+        //Motivos capturados
+        $motivos        = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
+        ->where('id_solicitud',$id)
+        ->select('catalogo_motivos.motivo','seer_motivos.id')->get();
 
-        return view('solicitudes.revisar_solicitud', compact('general','solicitantes','citados','rama','estados'));
+        return view('solicitudes.revisar_solicitud', compact('id','general','solicitantes','citados','ramas','estados','mostrarMotivos','motivos'));
     }
 
     public function solicitud_confirmar(Request $request){
@@ -2174,4 +2183,23 @@ class SeerController extends Controller
         //Se manda la notificacion por correo o Whats
     }
     
+    public function eliminar_motivo($id,$id_motivo){
+        
+        SeerMotivo::find($id_motivo)->delete();
+        
+        $general        = SeerPerGeneral::find($id);
+        $ramas          = SolicitudRama::all();
+        //$rama           = SolicitudRama::find($general["id_rama"]);
+        $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
+        $citados        = SeerCitados::where("id_solicitud",$id)->get();
+        $estados        = Estados::all();
+        //Catalogo de motivos
+        $mostrarMotivos = SolicitudMotivo::all();
+        //Motivos capturados
+        $motivos        = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
+        ->where('id_solicitud',$id)
+        ->select('catalogo_motivos.motivo','seer_motivos.id')->get();
+
+        return view('solicitudes.revisar_solicitud', compact('id','general','solicitantes','citados','ramas','estados','mostrarMotivos','motivos'));
+    }
 }

@@ -262,11 +262,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/pdf/ratificacion',      [PDFController::class, 'pdfRatificacion'])->name('PDFratificacion');
 
     //Solicitudes
-        Route::get('/solicitudes/index',        [SeerController::class, 'solicitudes_pendientes'])->name('solicitudes_pendientes');
-        Route::get('/solicitud/index',          [SeerController::class, 'mis_solicitudes'])->name('mis_solicitudes');
-        Route::get('/solicitudes/{id}',         [SeerController::class, 'solicitudes_pendientes_revisar'])->name('solicitud_revisar');
-        Route::post('/confirmar_solicitudes',   [SeerController::class, 'solicitud_confirmar'])->name('confirmar_solicitud');
-        Route::get('/rechazar_solicitudes',     [SeerController::class, 'rechazar_solicitud'])->name('rechazar_solicitud');
+        Route::get('/solicitudes/index',                    [SeerController::class, 'solicitudes_pendientes'])->name('solicitudes_pendientes');
+        Route::get('/solicitud/index',                      [SeerController::class, 'mis_solicitudes'])->name('mis_solicitudes');
+        Route::get('/solicitudes/{id}',                     [SeerController::class, 'solicitudes_pendientes_revisar'])->name('solicitud_revisar');
+        Route::post('/confirmar_solicitudes',               [SeerController::class, 'solicitud_confirmar'])->name('confirmar_solicitud');
+        Route::get('/rechazar_solicitudes',                 [SeerController::class, 'rechazar_solicitud'])->name('rechazar_solicitud');
+        Route::get('/eliminar_motivo/{id}/{id_motivo}',     [SeerController::class, 'eliminar_motivo'])->name('eliminar_motivo');
+        
 
     //Ratificaciones
         Route::get('/ratificaciones/index',         [TurnosController::class, 'revisar_ratificaciones'])->name('atender_ratificacion');

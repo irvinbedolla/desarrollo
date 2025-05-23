@@ -15,11 +15,10 @@
                                     <thead style="background-color: #4A001F;">
                                         <th style="color: #fff;">Folio</th>
                                         <th style="color: #fff;">Fecha Captura</th>
-                                        <th style="color: #fff;">Fecha Conflicto</th>
                                         <th style="color: #fff;">Solicitante</th>
                                         <th style="color: #fff;">Rama IndustriaL</th>
                                         <th style="color: #fff;">Actividad Economica</th>
-                                        <th style="color: #fff;">Delegacion</th>
+                                        <th style="color: #fff;">Tipo Solicitud</th>
                                         <th style="color: #fff;">Acciones</th>
                                     </thead>
                                     <tbody class="contenidobusqueda">
@@ -27,11 +26,18 @@
                                                 <tr>
                                                     <td>{{$solicitud->id}}</td>
                                                     <td>{{$solicitud->fecha}}</td>
-                                                    <td>{{$solicitud->fecha_conflicto}}</td>
-                                                    <td>{{$solicitud->curp}}</td>
+                                                    <td>{{$solicitud->nombre}}</td>
                                                     <td>{{$solicitud->rama_industrial}}</td>
                                                     <td>{{$solicitud->actividad}}</td>
-                                                    <td>{{$solicitud->delegacion}}</td>
+                                                    @if($solicitud->tipo_solicitud == 1)
+                                                        <td>Trabajador</td>
+                                                    @elseif($solicitud->tipo_solicitud == 2)
+                                                        <td>Patronal</td>
+                                                    @elseif($solicitud->tipo_solicitud == 3)
+                                                        <td>Patronal Colectiva</td>
+                                                    @elseif($solicitud->tipo_solicitud == 4)
+                                                        <td>Sindical</td>
+                                                    @endif
                                                     <td>
                                                         <a class="btn btn-info" href="{{ route('solicitud_revisar', $solicitud->id)}}" onclick=editar_usuario();>Revisar</a>
                                                     </td>
