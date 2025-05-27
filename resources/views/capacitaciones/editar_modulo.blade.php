@@ -31,7 +31,8 @@
                             @endif
 
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                            {!! Form::open(array('route'=>'capacitaciones.editar_modulo_guardar', 'method'=>'POST', 'files' => true, 'class' => 'needs-validation','novalidate')) !!}
+                            <form class="needs-validation novalidate" method="POST" action="{{route('capacitaciones.editar_modulo_guardar')}}">
+                                @csrf
                                 <input type="hidden" name="cap" value="<?=$modulo->id_cap?>">
                                 <input type="hidden" name="id" value="<?=$modulo->id?>">
                                 <div class="row">
@@ -57,7 +58,7 @@
 
                                 <button type="submit" class="btn btn-primary">Guardar</button>
                                 <td><a class="btn btn-info" href="{{ route('capacitaciones.modulos', $modulo->id_cap)}}">Regresar</a></td>
-                            {!! Form::close() !!}
+                            </form>
                         </div>
                     </div>
                 </div>

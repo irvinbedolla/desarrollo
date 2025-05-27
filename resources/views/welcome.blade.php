@@ -256,7 +256,7 @@
               </div>
             </div>
           </div>
-          <p><a class="boton" href="#" target="_blank">Ver más</a></p> 
+          <p><a class="boton" href="{{ route('login') }}" target="_blank">Ver más</a></p> 
         </div> 
       </div><!-- Inicio  cursos y capacitaciones -->
     </div>

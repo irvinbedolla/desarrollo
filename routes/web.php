@@ -142,7 +142,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/capacitaciones/index',                         [CapacitacionController::class, 'index'])->name('capacitaciones');
         Route::get('/capacitaciones/create',                        [CapacitacionController::class, 'create'])->name('capacitaciones.create');
         Route::get('/capacitaciones/edit/{id}',                     [CapacitacionController::class, 'edit'])->name('capacitaciones.edit');
-        Route::post('/capacitaciones/store',                        [CapacitacionController::class, 'store'])->name('capacitaciones.store');
+        Route::post('/capacitaciones/guardar_capacitacion',         [CapacitacionController::class, 'crear_capacitacion'])->name('crear_capacitacion');
         Route::patch('/capacitaciones/update/{post}',               [CapacitacionController::class, 'update'])->name('capacitaciones.update');
         Route::delete('/capacitaciones/destroy/{id}',               [CapacitacionController::class, 'destroy'])->name('capacitaciones.destroy');
 

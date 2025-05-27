@@ -20,14 +20,6 @@ use Illuminate\Support\Facades\Storage;
 
 class CapacitacionController extends Controller
 {
-    function __contruct()
-    {
-        $this->middleware('permission:ver-persona | crear-persona | editar-persona | borrar-persona', ['only'=>['index']]);
-        $this->middleware('permission:crear-persona', ['only'=>['create','store']]);
-        $this->middleware('permission:editar-persona',['only'=>['edit','update']]);
-        $this->middleware('permission:borrar-persona',['only'=>['destroy']]);
-    }
-
     public function index()
     {
         //Paginar las personas
@@ -41,7 +33,7 @@ class CapacitacionController extends Controller
         return view('capacitaciones.crear', compact('id_usuario'));
     }
 
-    public function store(Request $request)
+    public function crear_capacitacion(Request $request)
     {
         $this->validate($request, [
             'nombre'  => 'required',
