@@ -62,6 +62,13 @@ return [
             //'url' => env('APP_URL').'/fotos-de-usuarios',
             'visibility' => 'public',
         ],
+
+        'Solicitud' => [
+            'driver' => 'local',
+            'root' => storage_path('app/documentos_solicitud'),
+            //'url' => env('APP_URL').'/fotos-de-usuarios',
+            'visibility' => 'public',
+        ],
     ],
 
     /*
@@ -76,7 +83,7 @@ return [
     */
 
     'links' => [
-        //public_path('storage')              => storage_path('app/public'),
+        //public_path('storage')                  => storage_path('app/public'),
         public_path('publico')                  => storage_path('app/public'),
         public_path('documentos')               => storage_path('app/documentos_abogados'),
         public_path('documentosPersonal')       => storage_path('app/documentos_personal'),

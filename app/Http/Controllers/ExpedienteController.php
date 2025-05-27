@@ -57,14 +57,7 @@ class ExpedienteController extends Controller
         $data = $request->all();
         $data_doc = [];
 
-        //Validar documentacion
-        request()->validate([
-            'nombre'                    => 'required',
-            'email'                     => 'required',
-            'cargo'                     => 'required',
-            'area_adcripcion'           => 'required',
-            'telefono'                  => 'required|digits:10',
-        ], $data);
+        
         
         $data['id_usuario'] = $id;
         

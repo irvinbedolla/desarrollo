@@ -2162,10 +2162,10 @@ class SeerController extends Controller
         $id             = $id;
         $general        = SeerPerGeneral::find($id);
         $ramas          = SolicitudRama::all();
-        //$rama           = SolicitudRama::find($general["id_rama"]);
         $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
         $citados        = SeerCitados::where("id_solicitud",$id)->get();
         $estados        = Estados::all();
+        $municipios     = Municipios::all();
         //Catalogo de motivos
         $mostrarMotivos = SolicitudMotivo::all();
         //Motivos capturados
@@ -2173,26 +2173,22 @@ class SeerController extends Controller
         ->where('id_solicitud',$id)
         ->select('catalogo_motivos.motivo','seer_motivos.id')->get();
 
-        return view('solicitudes.revisar_solicitud', compact('id','general','solicitantes','citados','ramas','estados','mostrarMotivos','motivos'));
-    }
-
-    public function solicitud_confirmar(Request $request){
-        dd("confirmada");
-        //Se van a generar los citatortios
-        //Se van asignar fecha de audiencia y hora de manera aleatoria
-        //Se manda la notificacion por correo o Whats
+        return view('solicitudes.revisar_solicitud', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos'));
     }
     
     public function eliminar_motivo($id,$id_motivo){
         
         SeerMotivo::find($id_motivo)->delete();
-        
+        return redirect()->route('regresa_eliminar', ['id' => $id] ); 
+    }
+
+    public function regresa_eliminar($id){
         $general        = SeerPerGeneral::find($id);
         $ramas          = SolicitudRama::all();
-        //$rama           = SolicitudRama::find($general["id_rama"]);
         $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
         $citados        = SeerCitados::where("id_solicitud",$id)->get();
         $estados        = Estados::all();
+        $municipios     = Municipios::all();
         //Catalogo de motivos
         $mostrarMotivos = SolicitudMotivo::all();
         //Motivos capturados
@@ -2200,6 +2196,248 @@ class SeerController extends Controller
         ->where('id_solicitud',$id)
         ->select('catalogo_motivos.motivo','seer_motivos.id')->get();
 
-        return view('solicitudes.revisar_solicitud', compact('id','general','solicitantes','citados','ramas','estados','mostrarMotivos','motivos'));
+        return view('solicitudes.revisar_solicitud', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos'));
+    }
+
+    public function solicitud_confirmar(Request $request){
+        $data = $request->all();
+        //dd($data);
+        //Actualizar SEER GENERAL
+        $delegacion = SeerPerGeneral::find($data["id"]);
+        $NUE = $this->GeneraExpediente($delegacion["delegacion"]);
+
+        SeerPerGeneral::where('id', $data["id"])
+        ->update(['NUE' => $NUE, 'actividad' => $data["actividad_economica"],'id_rama' => $data["ramaIndustrial"] ]);
+
+        if (!empty($data["motivo_solicitud"])) {
+            foreach ($data["motivo_solicitud"] as $motivoId) {
+                SeerMotivo::create([
+                    'id_solicitud'    => $data["id"],
+                    'id_motivo'       => $motivoId,
+                    
+                ]);
+            }
+        }
+
+        //Actualizar SEER SOLICTUD
+        SeerSolicitante::where('id_solicitud', $data["id"])
+        ->update(['tipo_persona' => $data["tipo_persona_solicitante"], 
+            'curp'                  => $data["curp_solicitante"],
+            'rfc'                   => $data["rfc_solicitante"],
+            'nombre'                => $data["nombre_solicitante"],
+            'sexo'                  => $data["sexo_solicitante"],
+            'nacionalidad'          => $data["nacionalidad_solicitante"],
+            //'estado'                => $data["estado_solicitante"],
+            'email'                 => $data["email_solicitante"],
+            'fecha_nacimiento'      => $data["fecha_nacimiento_solicitante"],
+            'edad'                  => $data["edad_solicitante"],
+            'telefono1'             => $data["telefono1_solicitante"],
+            'traductor'             => $data["traductor_solicitante"],
+            'lenguaje'              => $data["lenguaje_solicitante"],
+            'discapacidad'          => $data["discapacidad_solicitante"],
+            'tipo_discapacidad'     => $data["disc_solicitante"],
+            'tipo_vialidad'         => $data["tipo_vialidad"],
+            'calle'                 => $data["calle_solicitante"],
+            'num_ext'               => $data["num_ext_solicitante"],
+            'codigo_postal'         => $data["codigo_postal_solicitante"],
+            'referencia'            => $data["referencia_solicitante"],
+            'colonia'               => $data["colonia_solicitante"],
+            'calle2'                => $data["calle2_solicitante"],
+            'calle3'                => $data["calle3_solicitante"],
+            'municipio_domicilio'   => $data["municipio_solicitante"],
+            'puesto'                => $data["puesto"],
+            'pago'                  => $data["pago"],
+            'periodo_pago'          => $data["periodo_pago"],
+            'fecha_ingreso'         => $data["fecha_ingreso"],
+            'fecha_salida'          => $data["fecha_salida"],
+            'jornada'               => $data["jornada"],
+            'estado_domicilio'      => $data["estado_solicitante"],
+            'horas_semana'          => $data["horas_semana"],
+        ]);
+
+        //Opcionales
+        if(isset($data["telefono2"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['telefono2' => $data["telefono2_solicitante"] ]);
+        }
+        if(isset($data["num_int"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['num_int' => $data["num_int_solicitante"] ]);
+        }
+        if(isset($data["nss"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['nss' => $data["nss"] ]);
+        }
+
+
+        //Citados
+        SeerCitados::where('id_solicitud',$data["id"])->delete();
+        $cont = count($data["colonia_citado"]);
+        for($i = 0; $i < $cont; $i++) {
+            $data_insert=array(
+                'id_solicitud'      => $data["id"],
+                'colonia'           => $data["colonia_citado"][$i],
+                'cp'                => $data["cp_citado"][$i],
+                'n_ext'             => $data["n_ext_citado"][$i],
+                'calle'             => $data["calle_citado"][$i],
+                'tipo_vialidad'     => $data["vialidad_citado"][$i],
+                'referencia'        => $data["referencia_citado"][$i],
+            );
+            
+            
+
+            if(isset($data["rfc"])){
+                $data_insert["rfc"] =  $data["rfc_citado"][$i];
+            }
+                if(isset($data["curp"])){
+                    $data_insert["curp"] =  $data["curp_citado"][$i];
+                }
+                if(isset($data["interior"])){
+                    $data_insert["n_int"] =  $data["n_int_citado"][$i];
+                }
+                if(isset($data["calle1"])){
+                    $data_insert["calle1"] =  $data["calle1_citado"][$i];
+                }
+                if(isset($data["calle2"])){
+                    $data_insert["calle2"] =  $data["calle2_citado"][$i];
+                }
+                if(isset($data["tipo"])){
+                    $data_insert["tipo_persona"] =  $data["tipo_persona_citado"][$i];
+                }
+                if(isset($data["curp"])){
+                    $data_insert["curp"] =  $data["curp_citado"][$i];
+                }
+                if(isset($data["nombre"])){
+                    $data_insert["nombre"] =  $data["nombre_citado"][$i];
+                }
+                if(isset($data["primer_apellido"])){
+                    $data_insert["primer_apellido"] =  $data["primer_apellido"][$i];
+                }
+                if(isset($data["segundo_apellido"])){
+                    $data_insert["segundo_apellido"] =  $data["segundo_apellido"][$i];
+                }
+                if(isset($data["rfc"])){
+                    $data_insert["rfc"] =  $data["rfc"][$i];
+                }
+                if(isset($data["estado_solicitante"])){
+                    $data_insert["estado_solicitante"] =  $data["estado_solicitante"][$i];
+                }
+            //dd($data_insert);
+            SeerCitados::create($data_insert);
+        }
+        
+
+        //Documentos
+        if(isset($data["curp"])){
+            $documento = $data["curp"]."_CURP.pdf";
+            $path = Storage::putFileAs('documentosSolicitud', $request->file('curp'), $documento);
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoCurp' => $documento ]);
+        }
+        
+        //Acta de nacimiento
+        if(isset($data["indetificacion"])){
+            $documentoidentificacion = $data["curp"]."_Identificacion.pdf";
+            $path = Storage::putFileAs('documentosSolicitud', $request->file('indetificacion'), $documentoidentificacion);
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoIdentificacion' => $documentoidentificacion ]);
+        }
+
+        //Actualizar el estatus
+        SeerPerGeneral::find($data["id"])->update(['estatus' => "Revisado" ]);
+        return redirect()->route('solicitudes_pendientes'); 
+    }
+
+    public function GeneraExpediente($delegacion){
+        $año_actual = date('Y');
+        $id = SeerPerGeneral::select('id')->orderBy('id', 'desc')->first();
+    
+        if($delegacion == "Morelia"){
+            $del = "MOR";
+        }
+        else if($delegacion == "Uruapan"){
+            $del = "URU";
+        }
+        else if($delegacion == "Zamora"){
+            $del = "ZAM";
+        }
+        $consecutivo = $id["id"]+1;
+        //contar el numero de ceros
+        $numeroConCeros = str_pad($consecutivo, 5, "0", STR_PAD_LEFT);
+        $folio = $del."/SOL"."/".$año_actual."/".$numeroConCeros;
+    
+        return $folio;
+    }
+
+    public function agregar_citado_edicion(Request $request){
+        $data = $request->all();
+
+        $data_insert=array(
+            'id_solicitud'      => $data["id"],
+            'colonia'           => $data["colonia"],
+            'cp'                => $data["cp"],
+            'n_ext'             => $data["exterior"],
+            'calle'             => $data["calle"],
+            'tipo_vialidad'     => $data["vialidad"],
+            'referencia'        => $data["referencia"],
+        );
+
+        if(isset($data["rfc"])){
+            $data_insert["rfc"] =  $data["rfc"];
+        }
+        if(isset($data["curp"])){
+            $data_insert["curp"] =  $data["curp"];
+        }
+        if(isset($data["traductor"])){
+            $data_insert["traductor"] =  1;
+            $data_insert["lenguaje"]  =  $data["lenguaje"];
+        }
+        if(isset($data["interior"])){
+            $data_insert["n_int"] =  $data["interior"];
+        }
+        if(isset($data["calle1"])){
+            $data_insert["calle1"] =  $data["calle1"];
+        }
+        if(isset($data["calle2"])){
+            $data_insert["calle2"] =  $data["calle2"];
+        }
+        if(isset($data["nombre"])){
+            $data_insert["nombre"] =  $data["nombre"];
+        }
+        if(isset($data["tipo"])){
+            $data_insert["tipo_persona"] =  $data["tipo"];
+        }
+        if(isset($data["curp"])){
+            $data_insert["curp"] =  $data["curp"];
+        }
+        if(isset($data["nombre"])){
+            $data_insert["nombre"] =  $data["nombre"];
+        }
+        if(isset($data["primer_apellido"])){
+            $data_insert["primer_apellido"] =  $data["primer_apellido"];
+        }
+        if(isset($data["segundo_apellido"])){
+            $data_insert["segundo_apellido"] =  $data["segundo_apellido"];
+        }
+        if(isset($data["rfc"])){
+            $data_insert["rfc"] =  $data["rfc"];
+        }
+        if(isset($data["estado_solicitante"])){
+            $data_insert["estado_solicitante"] =  $data["estado_solicitante"];
+        }
+        
+        //Se van a generar el citatorio
+        SeerCitados::create($data_insert); 
+        if($data["lenguaje"] == "Si"){
+            $data_insert["nombre"] =  "REPRESENTANTE LEGAL  DE: QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O
+            USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN ".$data["calle1"].", NÚMERO ".$data["exterior"].
+            " COLONIA ".$data["colonia"].", MORELIA, MICHOACÁN.";
+            SeerCitados::create($data_insert);
+        }
+ 
+
+        return back()->with('success', 'Citado agregado correctamente.');
+    }
+
+    public function borrar_citado_edicion(Request $request){
+        $data = $request->all();
+        SeerCitados::find($data["borrar"])->delete();
+
+        return back()->with('success', 'Citado borrado correctamente.');
     }
 }
