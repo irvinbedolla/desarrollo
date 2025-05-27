@@ -1,7 +1,9 @@
+var calendar;
+
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'timeGridWeek',
+    calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridWeek',
         locale: 'es',
         //events: 'citas/eventos',
         events: 'pagos/eventos',
@@ -69,8 +71,18 @@ document.addEventListener('DOMContentLoaded', function() {
             const titleElement = info.el.querySelector('.fc-event-title');
             if (titleElement) {
                 titleElement.style.whiteSpace = 'normal';
+                titleElement.style.textAlign = 'left';
             }
         }
     });
     calendar.render();
-});   
+
+    document.getElementById('btn-actualizar').addEventListener('click'), function() {
+        updateCalendar();
+    }
+});
+
+function updateCalendar() {
+    calendar.render();
+    calendar.refetchEvents();
+}
