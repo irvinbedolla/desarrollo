@@ -1887,7 +1887,7 @@ public function VerPDFPagos($id){
         //Generar numero de expediente
         $delegacion = Turnos::find($data["id"]);
         //dd($delegacion);
-        $expediente = $this->GeneraExpediente($delegacion["delegacion"]);
+        $expediente = $this->GeneraExpediente($id,$delegacion["delegacion"]);
 
         $rechazar = Turnos::find($data["id"])
         ->update(['resolucion_primera'  => $data["primera"],
@@ -1946,9 +1946,8 @@ public function VerPDFPagos($id){
         return redirect()->route('atender_ratificacion');
     }
 
-    public function GeneraExpediente($delegacion){
+    public function GeneraExpediente($id,$delegacion){
         $año_actual = date('Y');
-        $id = Turnos::select('id')->orderBy('id', 'desc')->first();
     
         if($delegacion == "Morelia"){
             $del = "MOR";
@@ -1959,9 +1958,8 @@ public function VerPDFPagos($id){
         else if($delegacion == "Zamora"){
             $del = "ZAM";
         }
-        $consecutivo = $id["id"]+1;
         //contar el numero de ceros
-        $numeroConCeros = str_pad($consecutivo, 5, "0", STR_PAD_LEFT);
+        $numeroConCeros = str_pad($id, 5, "0", STR_PAD_LEFT);
         $folio = $del."/RAT"."/".$año_actual."/".$numeroConCeros;
     
         return $folio;

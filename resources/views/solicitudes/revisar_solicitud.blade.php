@@ -624,18 +624,18 @@ body {font-family: Arial;}
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <label for="password">CURP</label><br>
-                                                <a target='_blank' href='../storage/app/documentosSolicitud/{{$general->documentoIdentificacion}}'>PDF</a>
-                                                <input type="file" name="curp" accept=".pdf">
+                                                <a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoIdentificacion}}">PDF</a>
+                                                <input type="file" name="documentoCurp" accept=".pdf">
                                             </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <label for="password">Identificacíon Oficial</label><br>
-                                                <a target='_blank' href='../storage/app/documentosSolicitud/{{$general->documentoCurp}}'>PDF</a>
-                                                <input type="file" name="indetificacion" accept=".pdf">
+                                                <a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoCurp}}">PDF</a>
+                                                <input type="file" name="documentoIdentificacion" accept=".pdf">
                                             </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardaro</button>
+                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
                                                 <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Rechazar</button>
                                             </div>
                                         </div>

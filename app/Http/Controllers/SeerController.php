@@ -2151,7 +2151,9 @@ class SeerController extends Controller
         $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
         ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
         ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
-        ->select('seer_general.id','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad','catalogo_rama.rama_industrial','seer_general.tipo_solicitud')
+        ->select('seer_general.id','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
+        'catalogo_rama.rama_industrial','seer_general.tipo_solicitud')
+        ->where('seer_general.estatus','Pendiente')
         ->orderBy('seer_general.fecha')
         ->get();
 
@@ -2204,7 +2206,7 @@ class SeerController extends Controller
         //dd($data);
         //Actualizar SEER GENERAL
         $delegacion = SeerPerGeneral::find($data["id"]);
-        $NUE = $this->GeneraExpediente($delegacion["delegacion"]);
+        $NUE = $this->GeneraExpediente($data["id"],$delegacion["delegacion"]);
 
         SeerPerGeneral::where('id', $data["id"])
         ->update(['NUE' => $NUE, 'actividad' => $data["actividad_economica"],'id_rama' => $data["ramaIndustrial"] ]);
@@ -2323,11 +2325,10 @@ class SeerController extends Controller
             SeerCitados::create($data_insert);
         }
         
-
         //Documentos
         if(isset($data["curp"])){
             $documento = $data["curp"]."_CURP.pdf";
-            $path = Storage::putFileAs('documentosSolicitud', $request->file('curp'), $documento);
+            $path = Storage::putFileAs('documentosSolicitud', $request->file('documentoCurp'), $documento);
             SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoCurp' => $documento ]);
         }
         
@@ -2339,13 +2340,36 @@ class SeerController extends Controller
         }
 
         //Actualizar el estatus
-        SeerPerGeneral::find($data["id"])->update(['estatus' => "Revisado" ]);
+        SeerPerGeneral::find($data["id"])->update(['estatus' => "Confirmado" ]);
+
+        //Se va asignar el conciliador y la sala
+        $id_user = auth()->user()->id;
+        $user = User::find($id_user);
+        $listado_auxiliares = array();
+        $relacionEloquent = 'roles';
+
+        $usuariosauxiliares = User::whereHas($relacionEloquent, function ($query) {
+            return $query->where('name', '=', 'Conciliador');
+        })
+        ->where('delegacion', $user["delegacion"])
+        ->get();
+
+        foreach($usuariosauxiliares as $token ){
+            array_push($listado_auxiliares, $token["id"]);
+        }
+
+        //Se asigna a un conciliador
+        $random = array_rand($listado_auxiliares);
+        SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $listado_auxiliares[$random] ]);
+        //Generar las notificaciones
+        SeerPerGeneral::where('id_solicitud',$data["id"])->update(['tipo_notificacion' => 'Pendiente' ]);
+        
         return redirect()->route('solicitudes_pendientes'); 
     }
 
-    public function GeneraExpediente($delegacion){
+    public function GeneraExpediente($id,$delegacion){
         $año_actual = date('Y');
-        $id = SeerPerGeneral::select('id')->orderBy('id', 'desc')->first();
+        //$id = SeerPerGeneral::select('id')->orderBy('id', 'desc')->first();
     
         if($delegacion == "Morelia"){
             $del = "MOR";
@@ -2356,9 +2380,8 @@ class SeerController extends Controller
         else if($delegacion == "Zamora"){
             $del = "ZAM";
         }
-        $consecutivo = $id["id"]+1;
         //contar el numero de ceros
-        $numeroConCeros = str_pad($consecutivo, 5, "0", STR_PAD_LEFT);
+        $numeroConCeros = str_pad($id, 5, "0", STR_PAD_LEFT);
         $folio = $del."/SOL"."/".$año_actual."/".$numeroConCeros;
     
         return $folio;
