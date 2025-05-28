@@ -100,6 +100,23 @@
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
+                                                    <label for="name">Delegación</label>
+                                                    <select class="form-control" name="delegacion">
+                                                        <option value="">Seleccione</option>
+                                                        <option value="Morelia">Morelia</option>
+                                                        <option value="Uruapan">Uruapan</option>
+                                                        <option value="Zamora">Zamora</option>
+                                                        <option value="Lázaro Cárdenas">Lázaro Cárdenas</option>
+                                                        <option value="Zitácuaro">Zitácuaro</option>
+                                                        <option value="Sahuayo ">Sahuayo </option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        La delegación es obligatoria.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
                                                     <label for="name">Municipio de la Fuente de Empleo(*)</label>
                                                     <select id="dSolicitud" class="form-control" name="dSolicitud">
                                                         <option value="">Seleccione</option>
@@ -108,7 +125,7 @@
                                                         @endforeach
                                                     </select>
                                                     <div class="invalid-feedback">
-                                                        La delegación es obligatoria.
+                                                        El municipio es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>

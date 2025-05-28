@@ -33,17 +33,17 @@
                                                 <td>{{$audiencia->estatus}}</td>
                                                 <td>
                                                     @if($audiencia->estatus == "Pendiente")
-                                                        <a class="btn btn-info" href="{{ route('inicioAudiencia', $audiencia->id, 'Confirmado') }}">Iniciar</a>
-                                                        <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $audiencia->id }}">
+                                                        <a style="width: 50%" class="btn btn-info" href="{{ route('inicioAudiencia', $audiencia->id, 'Confirmado') }}">Iniciar</a>
+                                                        <button style="width: 50%" type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $audiencia->id }}">
                                                             Archivar
                                                         </button>
-                                                        <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $audiencia->id }}">
+                                                        <button style="width: 50%" type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $audiencia->id }}">
                                                             Incompetencia
                                                         </button>
-                                                        <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $audiencia->id }}">
+                                                        <button style="width: 50%" type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $audiencia->id }}">
                                                             Incomparecencia
                                                         </button>
-                                                        <a class="btn btn-primary">Reagendar</a>
+                                                        <a style="width: 50%" class="btn btn-primary">Reagendar</a>
                                                     @endif
                                                 </td>
                                                 <td>

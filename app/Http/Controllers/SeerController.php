@@ -48,7 +48,7 @@ class SeerController extends Controller
             $estadisticas = SeerPerGeneral::where('seer_citados.id_notificador', $id)
             ->join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
             ->where('seer_citados.estatus', 'Pendiente')
-            ->select('seer_citados.id','seer_general.NUE','seer_general.solicitante','seer_citados.nombre','seer_citados.direccion','seer_citados.estatus')
+            ->select('seer_citados.id','seer_general.NUE','seer_citados.nombre','seer_citados.colonia','seer_citados.estatus')
             ->get();
         }
         //Si es otro usuario le va mostrar unicamente las del ese usuario
@@ -1653,11 +1653,10 @@ class SeerController extends Controller
 
     public function store_enlace(Request $request){
         $data = $request->all();
-        
         SeerCitados::where('id', $data["id"])
         ->update(['id_notificador' => $data["notificador"]]);
 
-        return redirect()->route('seer');
+        return redirect()->route('notificaciones');
     }
 
     public function create_asesoria(){
@@ -1876,6 +1875,15 @@ class SeerController extends Controller
     public function solicitud_parte1(Request $request){
         $data = $request->all();
 
+        if($data["delegacion"] == "Lázaro Cárdenas"){
+            $data["delegacion"] = "Uruapan";
+        }
+        if($data["delegacion"] == "Zitácuaro"){
+            $data["delegacion"] = "Morelia";
+        }
+        if($data["delegacion"] == "Sahuayo"){
+            $data["delegacion"] = "Zamora";
+        }
         //validando información
         $request->validate([
             'ramaIndustrial'      => 'required',
@@ -1886,7 +1894,7 @@ class SeerController extends Controller
         $data_insert=array(
             'id_rama'         =>  $data["ramaIndustrial"],
             'actividad'       =>  $data["actividad_economica"],
-            'delegacion'      =>  $data["dSolicitud"],
+            'delegacion'      =>  $data["delegacion"],
             'tipo_solicitud'  =>  $data["tipo_solicitud"],
         );
        
@@ -2317,10 +2325,10 @@ class SeerController extends Controller
                 }
                 if(isset($data["rfc"])){
                     $data_insert["rfc"] =  $data["rfc"][$i];
-                }
+                }/*
                 if(isset($data["estado_solicitante"])){
                     $data_insert["estado_solicitante"] =  $data["estado_solicitante"][$i];
-                }
+                }*/
             //dd($data_insert);
             SeerCitados::create($data_insert);
         }
@@ -2361,9 +2369,9 @@ class SeerController extends Controller
         //Se asigna a un conciliador
         $random = array_rand($listado_auxiliares);
         SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $listado_auxiliares[$random] ]);
-        //Generar las notificaciones
-        SeerPerGeneral::where('id_solicitud',$data["id"])->update(['tipo_notificacion' => 'Pendiente' ]);
-        
+        //Generar las notificaciones Pendiente
+        SeerCitados::where('id_solicitud',$data["id"])->update(['estatus' => 'Pendiente' ]);
+
         return redirect()->route('solicitudes_pendientes'); 
     }
 
@@ -2465,7 +2473,28 @@ class SeerController extends Controller
     }
 
     public function notificaciones(){
-        return view('notificaciones.index');
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+        //$fecha_actual = date('y-m-d');
+        $personas = User::whereHas('roles', function ($query) {
+            return $query->where('name', '=', 'Notificador');
+        })
+        ->where('delegacion', $user["delegacion"])
+        ->get();
+
+        $notificaciones = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+        ->select('seer_general.id as id_solicitud','seer_citados.id as id_citado','seer_general.NUE',
+            'seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido',
+            'seer_citados.colonia','seer_citados.calle','seer_citados.n_ext','seer_citados.n_int','seer_citados.estatus')
+        ->where('seer_general.delegacion', $user["delegacion"])
+        ->where('seer_citados.id_notificador', 0)
+        ->where('seer_citados.notificacion',"!=", "Trabajador")
+        ->get();
+
+
+        return view('notificaciones.index',compact('personas','notificaciones','userRole'));
     }
 
     //Conciliadores en solicitudes audiencias
@@ -2476,7 +2505,7 @@ class SeerController extends Controller
         $audiencias = SeerPerGeneral::where('conciliador_id', $user->id)
             ->where(function ($query) {
                 $query->where('estatus', 'Confirmado')
-                    ->orWhere('estatus', 'Conluida')
+                    ->orWhere('estatus', 'Concluida')
                     ->orWhere('estatus', 'Pendiente')
                     ->orWhere('estatus', 'Reagendada');
             })
