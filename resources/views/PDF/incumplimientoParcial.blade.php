@@ -130,7 +130,7 @@
                 </p>
 
                 <br><br><br><br>       
-                <center><br><br> <p><b>___________________________________<br>{{ $conciliador->name}} <br> FUNCIONARIA CONCILIADORA/<br> FUNCIONARIO CONCILIADOR</b></p></center>           
+                <center><br><br> <p><b>___________________________________<br>{{ $conciliador->name}} <br>FUNCIONARIO/A CONCILIADOR/A</b></p></center>           
             </div>
         </main>
     </body>

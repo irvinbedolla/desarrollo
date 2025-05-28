@@ -131,6 +131,9 @@
             <a class="nav-link" href="{{ route('persona.historial') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
             </a>
+            <a class="nav-link" href="{{ route('audiencias.conciliador') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" >Mis audiencias</span>
+            </a>
         @endrole
     @endauth
 

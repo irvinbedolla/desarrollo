@@ -77,43 +77,49 @@
                                 <td><b>Número de identificación único: </b></td>
                                 <td>{{ $solicitud->NUE }} </td>
                             </tr> 
+                            <tr>    
+                                <td><b>Buzón electrónico: </b></td>
+                                <td>{{ $solicitud->email }}   </td>
+                            </tr>
                             <tr>   
                                 <td><b>Centro de conciliación: </b></td>
                                 <td>{{ $solicitud->delegacion }} </td>
                             </tr>
-                            <tr>
-                                <td><b>Salario diario: </b></td>
-                                <td>${{ number_format($salario_diario, 2) }} M.N</td>
-                            </tr>
                     </table>
                 </div><br><br><br><br><br>
+                <p><center><b>CONSTANCIA DE INCOMPETENCIA</b></center></p><br>
                 <p><b>
-                    Trabajador(a): {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
-                    Empresa/Patrón: {{ $solicitud->empresa }}<br>
-                    Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
-                    Fecha que se emite la constancia de incumplimiento: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}<br>
-                    Pena Convencional: Si <br>
+                    Solicitante: {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
+                    Citado: {{ $solicitud->empresa }}<br><br>
+
+                    Objeto de la conciliación: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
+                    Fecha de conflicto: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}<br>
+                    Posible prescripción de derechos: No <br>
                 </b></p>  
-
-                <p><center><b>CONSTANCIA DE INCUMPLIMIENTO DE CONVENIO</b></center></p><br>
-
                 <p>
-                    De conformidad con el artículo 123 fracción XX de la Constitución Política de los Estados Unidos Mexicanos y artículos 33, 590-E, 590-F, 684-C y 684-E, 
-                    987 y 990 de la Ley Federal del Trabajo; así como los artículos 17 y 20 del Reglamento Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<br><br>
+                    <b>Fundamentación: </b>Artículos 123 fracción XXXI de la Constitución Política de los Estados Unidos mexicanos, 527, 684-E, fracción V de la Ley Federal del Trabajo 5 y 8, 
+                    fracción I de la Ley Orgánica del centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<br><br>
 
-                    Ante la falta de pago pactado en las cláusulas <b>QUINTA</b> y <b>SEXTA</b> del <b>CONVENIO DE CONCILIACIÓN</b> relacionada con el expediente <b>{{ $solicitud->NUE }}</b> 
-                    y el Convenio ratificado ante esta autoridad conciliadora en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, por tanto,  
-                    se emite el siguiente:<br><br>
-                                
-                    <p><center><b>ACUERDO:</b></center></p><br>
-                                
-                    En atención a los principios de legalidad, imparcialidad, confiabilidad, eficacia, objetividad, profesionalismo, y transparencia se emite <b>CONSTANCIA DE INCUMPLIMIENTO DE CONVENIO</b> 
-                    a favor de la parte <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b>; dejando a salvo sus derechos para ejercer las 
-                    acciones pertinentes ante el Tribunal Laboral que corresponda. Se ordena el archivo del presente <b>asunto como concluido. Doy Fe.</b>
+                    <b>Motivación: </b>Con fecha <b>[fecha actual]</b>, <b>[Solicitante]</b> presentó ante la Oficina Regional del Centro de Conciliación Laboral del Estado de Michoacán Delegación <b>[sede]</b> la solicitud <b>[NUE]</b>.<br><br>
+
+                    La Oficina Regional del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, de conformidad con la información aportada y derivado del análisis de la solicitud mencionada, esta Autoridad 
+                    Conciliadora se declara incompetente por declinatoria, toda vez que la rama industrial o de servicio materia de la soliciotud presentada es de cáracter federal local de conformidad con la fraccipon XXXI 
+                    del apartado A del artículo 123 Constitucional, así como del artículo 527 de la Ley Federal del Trabajo.<br><br>
+
+                    <!-- LLenado de los conciliadores -->
+                    [ CAMPO A LLENAR POR LOS CONCILIADORES]
+
+                    En este sentido y de conformidad con los principios constitucionales de legalidad, imparcialidad, confiabilidad, eficacia, confidencialidad, objetividad, profesionalismo, transparencia y publicidad, se notifica al Solicitante 
+                    de la imcompetencia por declinatoria y se remite copia certificada de la presente constancia al Centro de Conciliación Laboral competente.<br><br>
+
+                    Se emite la presente constancia con fecha <b>[fecha actual]</b> dejando a salvo los derechos del solicitante para continuar con el procedimiento de conciliación ante la Autoridad Conciliadora competente.<br><br>
+
+                    Finalmemnte, se dejan a salvo los derechos de los interesados para continuar con el procedimiento de conciliación ante el Centro de Conciliación Laboral competente, en términos de los artículos 527 y 684-E fracción 
+                    V párrafosegundo de la Ley Federal del Trabajo. <b>Doy Fe.</b>
                 </p>
 
                 <br><br><br><br>       
-                <center><br><br> <p><b>___________________________________<br>{{ $conciliador->name}} <br>FUNCIONARIO/A CONCILIADOR/A</b></p></center>           
+                <center><br><br> <p><b>___________________________________<br>[ MTRO. ADOLFO CECILIO CAMPOS MARCIAL] <br>NOMBRE Y FIRMA DEL DIRECTOR/A DEL CENTRO</b></p></center>           
             </div>
         </main>
     </body>

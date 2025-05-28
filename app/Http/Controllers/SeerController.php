@@ -2468,4 +2468,76 @@ class SeerController extends Controller
         return view('notificaciones.index');
     }
 
+    //Conciliadores en solicitudes audiencias
+    public function indexA(){
+        $id = auth()->user()->id;
+        $user = User::find($id);
+
+        $audiencias = SeerPerGeneral::where('conciliador_id', $user->id)
+            ->where(function ($query) {
+                $query->where('estatus', 'Confirmado')
+                    ->orWhere('estatus', 'Conluida')
+                    ->orWhere('estatus', 'Pendiente')
+                    ->orWhere('estatus', 'Reagendada');
+            })
+            ->get();
+
+        foreach ($audiencias as $audiencia) {
+            $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id)->first();
+            $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+        }
+
+        return view('/solicitudes/indexConciliador',compact('audiencias'));
+    }
+
+    public function iniciar_audiencia($id){
+        $id_usuario = auth()->user()->id;
+        $user = User::find($id_usuario);
+       
+        $solicitudes = SeerPerGeneral::where('conciliador_id', $user->id)
+            ->where(function ($query) {
+                $query->where('estatus', 'Conciliacion')
+                    ->orWhere('estatus', 'No conciliacion')
+                    ->orWhere('estatus', 'Archivado por incomparecencia')
+                    ->orWhere('estatus', 'Reagendada')
+                    ->orWhere('estatus', 'Incompetencia')
+                    ->orWhere('estatus', 'Confirmado');
+            })
+            ->get();
+        
+        $solicitud = SeerPerGeneral::find($id);
+        $conciliador = User::select('name')->where('id', $solicitud->conciliador_id)->first();
+        $citados = SeerCitados::where('id_solicitud', $id)->get();
+        $solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
+
+        SeerPerGeneral::find($id)
+            ->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
+
+        return view('/solicitudes/audiencias',compact('id','solicitudes','citados','solicitante','conciliador'));
+    }
+
+    public function guardar_audiencia_archivo(Request $request){
+        $data = $request->all();
+        $user = auth()->user();
+    
+        $solicitud = SeerPerGeneral::find($data["id"]);
+    
+        $solicitud->update([
+            'estatus' => 'Concluida',
+            'observaciones' => $data["observaciones"],
+            'conciliador_id' => $user->id,
+        ]);
+    
+        return redirect()->route('audiencias.conciliador');
+    }
+
+    public function editar_solicitud_con(Request $request){
+        $data = $request->all();
+        $id_usuario = auth()->user()->id;
+        $user = User::find($id_usuario);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+        
+    }  
+
 }

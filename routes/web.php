@@ -272,6 +272,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/solicitude/{id}',                      [SeerController::class, 'regresa_eliminar'])->name('regresa_eliminar');
         Route::post('/agregar_citado_edicion',              [SeerController::class, 'agregar_citado_edicion'])->name('agregar_citado_edicion');
         Route::delete('/borrar_citado_edicion',             [SeerController::class, 'borrar_citado_edicion'])->name('borrar_citado_edicion');
+        Route::get('/solicitud/indexA',                 [SeerController::class, 'indexA'])->name('audiencias.conciliador'); 
+        Route::post('/solicitud/archivar_audiencia',    [SeerController::class, 'guardar_audiencia_archivo'])->name('archivar_audiencia');
+        Route::get('/solicitud/iniciar/{id}',           [SeerController::class, 'iniciar_audiencia'])->name('inicioAudiencia');
+        Route::post('/solicitud/editar',                [SeerController::class, 'editar_solicitud_con'])->name('editar_solicitud');
 
     //Ratificaciones
         Route::get('/ratificaciones/index',         [TurnosController::class, 'revisar_ratificaciones'])->name('atender_ratificacion');

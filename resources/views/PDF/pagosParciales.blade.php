@@ -83,7 +83,6 @@
                             </tr>
                     </table>
                 </div><br><br><br><br><br>
-                <p><center><b>CONSTANCIA DE PAGO PARCIAL DE CONVENIO</b></center></p><br>
                 <p><b>
                     Trabajador(a): {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
                     Empresa/Patrón: {{ $solicitud->empresa }}<br>
@@ -92,7 +91,7 @@
                     Asistencia de los interesados: Si<br>
                     Convenio conciliatorio: Si
                 </b></p>  
-
+                <p><center><b>CONSTANCIA DE PAGO PARCIAL DE CONVENIO</b></center></p><br>
                 <p>
                     <b>Fundamentación:</b> Artículos 33 párrafo segundo, 590-E, 590-F, 684-C y 684-E fracciones XIII y XIV, 684-F fracción VII de la Ley Federal del Trabajo, articulo 8 fracción I, II y III 
                     de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo y artículo 20 del Reglamento Interior del Centro de Conciliación Laboral del Estado de 
@@ -114,7 +113,7 @@
                 </p>
 
                 <br><br><br><br>       
-                <center><br><br> <p><b>___________________________________<br>{{$conciliador->name}} <br> FUNCIONARIA CONCILIADORA/<br> FUNCIONARIO CONCILIADOR</b></p></center>           
+                <center><br><br> <p><b>___________________________________<br>{{$conciliador->name}} <br>FUNCIONARIO/A CONCILIADOR/A</b></p></center>           
             </div>
         </main>
     </body>

@@ -75,6 +75,18 @@
         </footer>
         <main>
             <div class="content">
+                <div class="table-responsive">
+                    <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
+                            <tr>    
+                                <td><b>Número de identificación único: </b></td>
+                                <td>{{ $solicitud->NUE }} </td>
+                            </tr> 
+                            <tr>   
+                                <td><b>Centro de conciliación: </b></td>
+                                <td>{{ $solicitud->delegacion }} </td>
+                            </tr>
+                    </table>
+                </div><br><br><br><br><br>
                 <p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br>
                     SOLICITUD RATIFICACIÓN DE CONVENIO TERMINACIÓN VOLUNTARIA <br>
                     NÚMERO DE IDENTIFICACIÓN ÚNICO {{ $solicitud->NUE }}<br><br>
@@ -281,7 +293,7 @@
                         </div>
                     </div>
                     <br><br>
-                    <p><center><b>___________________________________<br> {{ $conciliador->name }} <br> FUNCIONARIA CONCILIADORA/<br> FUNCIONARIO CONCILIADOR</b></center> </p>     
+                    <p><center><b>___________________________________<br> {{ $conciliador->name }} <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>     
             </div>
         </main>    
     </body>

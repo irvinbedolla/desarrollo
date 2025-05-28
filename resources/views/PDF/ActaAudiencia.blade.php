@@ -70,11 +70,22 @@
         </footer>
         <main>
             <div class="content">
+                <div class="table-responsive">
+                    <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
+                            <tr>    
+                                <td><b>Número de identificación único: </b></td>
+                                <td>{{ $solicitud->NUE }} </td>
+                            </tr> 
+                            <tr>   
+                                <td><b>Centro de conciliación: </b></td>
+                                <td>{{ $solicitud->delegacion }} </td>
+                            </tr>
+                    </table>
+                </div><br><br><br><br><br>
+                <p><center><b>ACTA DE AUDIENCIA DE CONCILIACIÓN</b></center></p><br>
                 <p><b>
-                    CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACAN DE OCAMPO  <br>
-                    NÚMERO IDENTIFICACIÓN ÚNICO: {{ $solicitud->NUE }}                   
+                    CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACAN DE OCAMPO            
                 </b></p>  
-
                 <p>
                     En el <b>Centro de Conciliación Laboral del Estado de Michoacán de Ocampo con sede en {{ $solicitud->delegacion }}</b>, siendo las <b>{{ $solicitud->hora }} horas del
                     {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> , hora y día señalados para la celebración de la Audiencia de Conciliación 
@@ -106,7 +117,7 @@
                     A continuación, se cede el uso de la voz de manera ordenada y respetuosa a los presentes en esta audiencia, para manifestar en relación al proceso de conciliación: <br>
                     
                     <!--[RESOLUCION_PRIMERA_MANIFESTACION]-->
-                    {{ $solicitud->resolucion_primera }}<br><br>
+                    <b>{{ $solicitud->resolucion_primera }}</b><br><br>
 
                     Así, resulta procedente exponer a los presentes la propuesta de un acuerdo conciliatorio justo y equitativo que beneficie a ambas partes del conflicto; haciendo de su conocimiento 
                     que, en el caso de estar conformes con dicho acuerdo, se procederá a realizar el convenio por escrito, mismo que deberá ratificarse en el presente acto y, posteriormente, se les 
@@ -115,10 +126,10 @@
                     La propuesta referida, se encuentra formulada en los términos siguientes:<br>
                     
                     <!--[RESOLUCION_PROPUESTAS_TRABAJADORES] -->
-                    {{ $solicitud->resolucion_trabajadores }}<br><br>
+                    <b>{{ $solicitud->resolucion_trabajadores }}</b><br><br>
 
                     <!--[RESOLUCION_JUSTIFICACION_PROPUESTA]-->
-                    {{ $solicitud->resolucion_justificacion }}<br><br>
+                    <b>{{ $solicitud->resolucion_justificacion }}</b><br><br>
 
                     A efecto de conocer la opinión de las partes, se cede el uso de la voz de manera ordenada y respetuosa a los presentes en esta audiencia, con la finalidad de escuchar lo que 
                     tengan que expresar en torno a la propuesta y sus alcances, <b>haciendo de su conocimiento que no se podrán negociar derechos y prestaciones irrenunciables en términos de la Ley 
@@ -126,7 +137,7 @@
                     cierre de esta diligencia.<br><br>
 
                     <!--[RESOLUCION_SEGUNDA_MANIFESTACION]-->
-                    {{ $solicitud->resolucion_segunda }}
+                    <b>{{ $solicitud->resolucion_segunda }}</b><br><br>
 
                     Por tanto, en caso de que las partes hayan expresado estar conformes con la propuesta sugerida, se procede a la celebración del convenio respectivo, el cual tendrá valor de cosa juzgada 
                     y, tendrá la calidad de un título para iniciar acciones ejecutivas sin necesidad de ratificación lo anterior con fundamento en el artículo 684-E fracción XIII de la Ley Federal del Trabajo.<br><br>
@@ -148,7 +159,7 @@
                     Así lo proveyó, <b>{{ $conciliador->name }}</b>, Funcionario Conciliador adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
                 </p>
 
-                <br><br><br><br><br><br>
+                <br><br>
                     <div class="row">
                         <div class="col-12 text-center">
                             <div style="display: inline-block; margin-right: 50px;">
@@ -160,8 +171,8 @@
                             </div>
                         </div>
                     </div>
-                    <br><br><br><br>
-                    <p><center><b>___________________________________<br> {{ $conciliador->name }} <br> FUNCIONARIA CONCILIADORA/<br> FUNCIONARIO CONCILIADOR</b></center> </p>            
+                    <br><br><br>
+                    <p><center><b>___________________________________<br> {{ $conciliador->name }} <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>            
             </div>
         </main>
     </body>

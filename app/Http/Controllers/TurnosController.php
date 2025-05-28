@@ -1507,7 +1507,7 @@ public function VerPDFIncumplimiento($id){
     $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
     $conciliador = $conciliador->where("turnos.id", "=", $id)
     ->select('users.name')
-    ->first();
+    ->get();
     $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
 
     $html = view('PDF/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
@@ -1887,7 +1887,7 @@ public function VerPDFPagos($id){
         //Generar numero de expediente
         $delegacion = Turnos::find($data["id"]);
         //dd($delegacion);
-        $expediente = $this->GeneraExpediente($id,$delegacion["delegacion"]);
+        $expediente = $this->GeneraExpediente($delegacion["delegacion"]);
 
         $rechazar = Turnos::find($data["id"])
         ->update(['resolucion_primera'  => $data["primera"],

@@ -92,10 +92,21 @@
         </footer>
         <main>
             <div class="content">
+                <div class="table-responsive">
+                    <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
+                            <tr>    
+                                <td><b>Número de identificación único: </b></td>
+                                <td>{{ $solicitud->NUE }} </td>
+                            </tr> 
+                            <tr>   
+                                <td><b>Centro de conciliación: </b></td>
+                                <td>{{ $solicitud->delegacion }} </td>
+                            </tr>
+                    </table>
+                </div><br><br><br><br><br>
                 <p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br>
                         Asunto: Archivo de asunto por falta de interés<br>
                         Solicitante: {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
-                        Número de identificación único: {{ $solicitud->NUE }} <br>
                 </b></p>  
                 <p>En <b>{{ $direccion_sede }} a [FECHA_ACTUAL],</b></p>
                 <p>
@@ -106,12 +117,11 @@
                     <center><b>RESULTANDOS</b></center>
                 </p><br>
                 <p>
-                    <b>Primero.</b> El <b>[SOLICITUD_FECHA_RECEPCION]</b>, <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> solicitó ante este Centro, iniciar con el Procedimiento 
-                    de Conciliación Prejudicial con el(los) citados <b>[SOLICITUD_NOMBRES_CITADOS]</b> por objeto de <b>{{ $solicitud->motivo }}</b>.<br><br>
+                    <b>Primero.</b> El <b>[SOLICITUD_FECHA_RECEPCION]</b>, <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> solicitó ante este Centro, 
+                    iniciar con el Procedimiento de Conciliación Prejudicial con el(los) citados <b>[SOLICITUD_NOMBRES_CITADOS]</b> por objeto de <b>{{ $solicitud->motivo }}</b>.<br><br>
 
                     <b>Segundo.</b> El <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, el Centro de Conciliación <b>{{ $solicitud->delegacion }}</b> admitió la 
-                    solicitud de Conciliación,
-                    señalando que la celebración de la Audiencia de Conciliación se realizaría el <b>[AUDIENCIA_FECHA_AUDIENCIA]</b> a las <b>[AUDIENCIA_HORA_INICIO]</b> 
+                    solicitud de Conciliación, señalando que la celebración de la Audiencia de Conciliación se realizaría el <b>[AUDIENCIA_FECHA_AUDIENCIA]</b> a las <b>[AUDIENCIA_HORA_INICIO]</b> 
                     horas en la sala de audiencia <b>SALA VIRTUAL</b>, en las instalaciones de este Centro.<br><br>
 
                     <b>Tercero.</b> El <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, se concluyó la notificación personal de él(los) citado(s).<br><br>
@@ -155,7 +165,7 @@
                 </p>
 
                 <br><br><br><br>  
-                <center><br><br> <p><b>___________________________________<br>[CONCILIADOR_NOMBRE_COMPLETO]</b></p></center>     
+                <center><br><br> <p><b>___________________________________<br>{{ $conciliador->name }} <br> FUNCIONARIO/A CONCILIADOR/A</b></p></center>     
             </div>
         </main>
     </body>
