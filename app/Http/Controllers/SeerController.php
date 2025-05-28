@@ -2505,9 +2505,10 @@ class SeerController extends Controller
         $audiencias = SeerPerGeneral::where('conciliador_id', $user->id)
             ->where(function ($query) {
                 $query->where('estatus', 'Confirmado')
-                    ->orWhere('estatus', 'Concluida')
-                    ->orWhere('estatus', 'Pendiente')
-                    ->orWhere('estatus', 'Reagendada');
+                    ->orWhere('estatus', 'Archivada')
+                    ->orWhere('estatus', 'Reagendada')
+                    ->orWhere('estatus', 'Incompetencia')
+                    ->orWhere('estatus', 'Incomparecencia');
             })
             ->get();
 
@@ -2522,7 +2523,7 @@ class SeerController extends Controller
     public function iniciar_audiencia($id){
         $id_usuario = auth()->user()->id;
         $user = User::find($id_usuario);
-       
+
         $solicitudes = SeerPerGeneral::where('conciliador_id', $user->id)
             ->where(function ($query) {
                 $query->where('estatus', 'Conciliacion')
@@ -2542,7 +2543,7 @@ class SeerController extends Controller
         SeerPerGeneral::find($id)
             ->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
 
-        return view('/solicitudes/audiencias',compact('id','solicitudes','citados','solicitante','conciliador'));
+        return view('/solicitudes/audiencias',compact('id','solicitudes','citados','solicitante','conciliador','solicitud'));
     }
 
     public function guardar_audiencia_archivo(Request $request){
@@ -2552,7 +2553,7 @@ class SeerController extends Controller
         $solicitud = SeerPerGeneral::find($data["id"]);
     
         $solicitud->update([
-            'estatus' => 'Concluida',
+            'estatus' => 'Archivada', 'estatus' => 'Incompetencia', 'estatus' => 'Incomparecencia',
             'observaciones' => $data["observaciones"],
             'conciliador_id' => $user->id,
         ]);

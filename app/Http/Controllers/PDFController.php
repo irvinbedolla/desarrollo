@@ -55,7 +55,7 @@ class PDFController extends Controller
                     'citado',
                     'motivos',
                 ))->setPaper('letter');
-                $nombreArchivo = 'citatorio_' . $solicitud->id . '_' . $solicitante->nombre . '_' . $citado->nombre . '.pdf';
+                $nombreArchivo = 'citatorio_' . $citado->nombre . '_' . $citado->primer_apellido . '_' . $citado->segundo_apellido . '.pdf';
                 Storage::put("documentosCitatorios/{$nombreArchivo}", $pdf->output());
                 $SolicitudPDFs[] = $nombreArchivo; 
             }

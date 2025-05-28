@@ -32,27 +32,29 @@
                                                 <td>{{$audiencia->nombre}}</td>
                                                 <td>{{$audiencia->estatus}}</td>
                                                 <td>
-                                                    @if($audiencia->estatus == "Pendiente")
-                                                        <a style="width: 50%" class="btn btn-info" href="{{ route('inicioAudiencia', $audiencia->id, 'Confirmado') }}">Iniciar</a>
-                                                        <button style="width: 50%" type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $audiencia->id }}">
+                                                    @if($audiencia->estatus == "Confirmado")
+                                                        <a class="btn btn-info" href="{{ route('inicioAudiencia', $audiencia->id, 'Confirmado') }}">Iniciar</a>
+                                                        <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $audiencia->id }}">
                                                             Archivar
                                                         </button>
-                                                        <button style="width: 50%" type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $audiencia->id }}">
+                                                        <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $audiencia->id }}">
                                                             Incompetencia
                                                         </button>
-                                                        <button style="width: 50%" type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $audiencia->id }}">
+                                                        <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $audiencia->id }}">
                                                             Incomparecencia
                                                         </button>
-                                                        <a style="width: 50%" class="btn btn-primary">Reagendar</a>
+                                                        <a class="btn btn-primary">Reagendar</a>
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    @if($audiencia->estatus == "Concluida")
+                                                    @if($audiencia->estatus == "Archivada")
+                                                        <a class="btn btn-success" href="{{ route('PDFinteres', $audiencia->id) }}"  target="_blank">Acta de Archivo</a>
+                                                    @elseif($audiencia->estatus == "Incompetencia")
                                                         <a class="btn btn-success" href="{{ route('PDFincumplimiento', $audiencia->id) }}"  target="_blank">Incompetencia</a>
-                                                        <a class="btn btn-success" href="{{ route('PDFincumplimiento', $audiencia->id) }}"  target="_blank">Acta de Archivo</a>
+                                                    @elseif($audiencia->estatus == "Incomparecencia")
                                                         <a class="btn btn-success" href="{{ route('PDFincumplimiento', $audiencia->id) }}"  target="_blank">Acta de Incomparecencia</a>
                                                     @elseif($audiencia->estatus == "Reagendada")
-                                                        <a class="btn btn-success" href="{{ route('PDFincumplimiento', $audiencia->id) }}"  target="_blank">Citatorios</a>
+                                                        <a class="btn btn-success" href="{{ route('PDFcitatorio', $audiencia->id) }}"  target="_blank">Citatorios</a>
                                                     @endif 
                                                 </td>
                                             </tr>
@@ -69,7 +71,6 @@
         </div>
     </section>
 @endsection
-
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -108,3 +109,4 @@
     </script>
     <script src="../public/assets/js/poderes/general.js"></script>
 @endsection
+
