@@ -251,6 +251,9 @@
             <a class="nav-link" href="{{ route('seer.estadistica') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadisticas</span>
             </a>
+            <a class="nav-link" href="{{ route('notificaciones') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Notificaciones</span>
+            </a>
             <a class="nav-link" href="{{ route('persona.historial') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
             </a>

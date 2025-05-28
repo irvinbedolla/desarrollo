@@ -2463,4 +2463,9 @@ class SeerController extends Controller
 
         return back()->with('success', 'Citado borrado correctamente.');
     }
+
+    public function notificaciones(){
+        return view('notificaciones.index');
+    }
+
 }

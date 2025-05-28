@@ -105,6 +105,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/turnos/index',             [TurnosController::class, 'index_turnos'])->name('turnos');
         Route::get('/turnos/misturnos',         [TurnosController::class, 'misturnos'])->name('misturnos');
         Route::get('/turnos/estadistica',       [TurnosController::class, 'estadistica'])->name('turno_estadistica');
+        Route::get('/notificaciones/index',     [SeerController::class, 'notificaciones'])->name('notificaciones');
     //Fin de ruta de los menus
 
     //Usuarios
