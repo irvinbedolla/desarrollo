@@ -25,6 +25,7 @@ use App\Models\PreRegistro;
 
 //Para sacar el Id del usuario
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Sedes;
 use App\Models\Usuarios;
@@ -2151,8 +2152,33 @@ class SeerController extends Controller
     }*/
 
     public function guardar_solicitud($id){
-        //dd($id);
-        return view('solicitudes.aviso',compact('id'));
+        //Revisar si ya existe el correo
+        $solicitante = SeerSolicitante::where('id_solicitud',$id)->first();
+        $nombre = $solicitante["nombre"]." ".$solicitante["primer_apellido"]." ".$solicitante["segundo_apellido"];
+        $delegacion = SeerPerGeneral::find($id);
+        $usuario = User::where('email',$solicitante["email"])->first();
+
+        if(!isset($usuario)){
+            $data_insertar_user= array(
+                'name'              => $nombre,
+                'email'             => $solicitante["email"],
+                'delegacion'        => $delegacion["delegacion"],
+                'type'              => "Seer",
+                'remember_token'    => $solicitante["curp"],
+                'profile_photo_path'=> $solicitante["curp"]
+            ); 
+            
+            //Hacemos un hash del campo que tiene el password
+            $data_insertar_user['password'] = Hash::make("CCLMICHOACAN");
+            $usuario = User::create($data_insertar_user);
+            $usuario->assignRole(('Solicitante'));
+            $mensaje = " el correo:".$usuario["email"]." y la contraseña:CCLMICHOACAN para continuar tú trámite.";
+        }
+        else{
+            $mensaje = " el correo:".$usuario["email"]." para continuar tú trámite.";
+        }
+
+        return view('solicitudes.aviso',compact('id','mensaje'));
     }
 
     public function solicitudes_pendientes(){

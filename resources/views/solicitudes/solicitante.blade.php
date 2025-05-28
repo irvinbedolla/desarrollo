@@ -352,7 +352,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
                                                     <label for="name">Referencias (*)</label>
-                                                    <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencias"></textarea>
+                                                    <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencias" required></textarea>
                                                     <div class="invalid-feedback">
                                                         El campo referencia es obligatorio.
                                                     </div>
