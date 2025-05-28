@@ -64,6 +64,8 @@
     outline: none;
 }
 
+
+
 a {
     color: #6777ef;
     font-weight: 500;
@@ -4230,3 +4232,16 @@ body:not(.sidebar-mini) .sidebar-style-2 .sidebar-menu li.active ul.dropdown-men
 .fc-daygrid-event-harness {
     white-space: normal !important;
 }
+
+/* ...código existente... */
+
+.btn-custom-morado {
+    background-color: #6A0F49 !important;
+    color: #fff !important;
+    border: none;
+}
+.btn-custom-morado:hover, .btn-custom-morado:focus {
+    background-color: #530c3a !important;
+    color: #fff !important;
+}
+

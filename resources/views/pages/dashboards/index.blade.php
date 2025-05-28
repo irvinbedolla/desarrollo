@@ -135,9 +135,9 @@
                                         <div class="container">
                                             <h1>Calendario de Pagos</h1>
                                             <div class="mt-3 mb-3 text-left">
-                                                    <button id="btn-actualizar" class="btn btn-lg btn-primary" onclick="">Actualizar</button>
-                                                    <button id="btn-audiencias" class="btn btn-lg btn-primary">Calendario de audiencias</button>
-                                                    <button id="btn-pagos" class="btn btn-lg btn-primary">Calendario de pagos</button>
+                                                    <button id="btn-actualizar" class="btn btn-lg btn-custom-morado" onclick="">Actualizar</button>
+                                                    <button id="btn-audiencias" class="btn btn-lg btn-custom-morado float-right">Calendario de audiencias</button>
+                                                    <button id="btn-pagos" class="btn btn-lg btn-custom-morado mr-2 float-right">Calendario de pagos</button>
                                             </div>
                                             <div id="calendar">
                                             </div>
