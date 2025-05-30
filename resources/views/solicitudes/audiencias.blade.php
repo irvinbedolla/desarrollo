@@ -18,14 +18,17 @@
                                             <tr>
                                                 <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                                     Reagendar
+                                                </button>&nbsp;&nbsp;
+                                                <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $solicitud->id }}">
+                                                    Incompetencia
                                                 </button>
                                             </tr>
                                             <tr> 
-                                                <th>Tipo parte</th>
-                                                <th>Nombre de la parte</th>
-                                                <th>Conciliador</th>
-                                                <th>Sala</th>
-                                                <th>Acciones</th>
+                                                <th style="color: #ffff;">Tipo parte</th>
+                                                <th style="color: #ffff;">Nombre de la parte</th>
+                                                <th style="color: #ffff;">Conciliador</th>
+                                                <th style="color: #ffff;">Sala</th>
+                                                <th style="color: #ffff;">Acciones</th>
                                             </tr>
                                             <tr>
                                                 <tr>
@@ -33,7 +36,9 @@
                                                     <td>{{ $solicitante->nombre }}</td>
                                                     <td>{{ $conciliador->name }}</td>
                                                     <td style="color: #000000;"><b>Sala</b></td>
-                                                    <td><button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#editarSolicitante" data-id="{{ $solicitud->id }}">Editar</button></td>
+                                                    <td><a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
+                                                        data-bs-target="#exampleModal1" data-id="{{ $id }}">Editar</a>
+                                                    </td>
                                                 </tr>
                                                 @foreach($citados as $citado)
                                                 <tr>
@@ -41,27 +46,33 @@
                                                     <td>{{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</td>
                                                     <td>{{ $conciliador->name }}</td>
                                                     <td style="color: #000000;"><b>Sala</b></td>
-                                                    <td><button type="button" class="btn btn-primary">Editar</button></td>
+                                                    <td>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control buscar-poder" placeholder="Buscar en poderes (nombre o CURP)" data-citado-id="{{ $citado->id }}" />
+                                                            <button class="btn btn-outline-secondary btn-buscar" type="button" data-citado-id="{{ $citado->id }}">Buscar</button>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-primary btn-modal-poder" data-citado-id="{{ $citado->id }}" data-bs-toggle="modal" data-bs-target="#modalCitados">Editar</button>
+                                                    </td>
+                                                    
                                                 </tr>
                                                 @endforeach  
                                             </tr> 
                                             <tr>
-                                                <td style="color: #000000;"><b>Documentos</b></td>
-                                                <td>
-                                                    <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $solicitud->id }}">
-                                                        Incompetencia
-                                                    </button>
-                                                </td> 
+                                                <td style="color: #000000;"><b>Documentos</b></td> 
                                                 @foreach($solicitudes as $solicitud)   
                                                 <td>
                                                     @if($solicitud->estatus == "Conciliacion")   
-                                                        <a class="btn btn-info" href="{{ route('inicioAudiencia', $solicitud->id) }}">Acta de audiencia</a>
-                                                        <a class="btn btn-info" href="{{ route('inicioAudiencia', $solicitud->id) }}">Convenio de terminación</a>
+                                                        <a class="btn btn-info" href="{{ route('PDFaudiencia', $solicitud->id) }}">Acta de audiencia</a>
+                                                        <a class="btn btn-info" href="{{ route('PDFconvenio', $solicitud->id) }}">Convenio de terminación</a>
                                                     @elseif($solicitud->estatus == "No conciliacion")
-                                                        <a class="btn btn-info" href="{{ route('inicioAudiencia', $solicitud->id) }}">Acta de no conciliación</a>
+                                                        <a class="btn btn-info" href="{{ route('PDFno_conciliacion', $solicitud->id) }}">Acta de no conciliación</a>
                                                     @elseif($solicitud->estatus == "Reagendada")
-                                                        <a class="btn btn-info" href="{{ route('inicioAudiencia', $solicitud->id) }}">Notificación al solicitante</a>
-                                                        <a class="btn btn-info" href="{{ route('inicioAudiencia', $solicitud->id) }}">Citatorios</a>
+                                                        <a class="btn btn-info" href="{{ route('PDFratificacion', $solicitud->id) }}">Notificación al solicitante</a>
+                                                        <a class="btn btn-info" href="{{ route('PDFcitatorio', $solicitud->id) }}">Citatorios</a>
+                                                    @elseif($solicitud->estatus == "Incompetencia")
+                                                        <a class="btn btn-info" href="{{ route('PDFincompetencia', $solicitud->id) }}">Incompetencia</a>
                                                     @endif
                                                 </td>
                                                 @endforeach
@@ -101,164 +112,341 @@
         </div>
     </form>
 </div>
-
-<!-- Modal Edición solicitante-->
-<div class="modal fade" id="editarSolicitante" tabindex="-1" aria-labelledby="editarSolicitanteLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <form method="POST" action="{{ route('editar_solicitud') }}" enctype="multipart/form-data" class="needs-validation novalidate">
-            @csrf
-            <!--<input type="hidden" name="id" id="modal-id" value="">-->
-            <input type="hidden" name="id" value="{{ $solicitante->id }}">
+<!-- Modal Solicitantes -->
+<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <form class='needs-validation novalidate'  method='POST' action="{{route('editar_solicitud')}}">
+        @csrf
+        <input type="hidden" name="id" value="{{$id}}">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editarSolicitanteLabel">Editar solicitante</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    <h5 class="modal-title" id="exampleModalLabel">Editar Solicitante</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                     <!--Se realiza la validación de campos para ver si dejó alguno vacío-->
-                    @if ($errors->any())
-                        <div class="alert alert-dark alert-dismissible fade show" role="alert">
-                            <strong>¡Revise los campos!</strong>
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                    <!--<span class="badge badge-danger">{{ $error }}</span>-->
-                                @endforeach
-                            </ul>
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    @endif
-                    <input type="hidden" name="id" value="{{$id}}">
-                    <div class="col-xs-12 col-sm-12 col-md-8">
-                        <div class="form-group">
-                            <label for="name"><b>Nombre(s) y Apellidos del Solicitante (*) </b></label>
-                            <input type="text" name="nombre" value="{{ old('nombre', $solicitante->nombre) }}" class="form-control" oninput="this.value = this.value.toUpperCase()" required><br>
-                            <div class="invalid-feedback">
-                                El campo nombre es obligatorio.
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-8">
+                            <div class="form-group">
+                                <label for="name">Nombre(s) y Apellidos del Solicitante (*) </label>
+                                <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" value="<?=$solicitante["nombre"];?>" required> 
+                                <div class="invalid-feedback">
+                                    El campo nombre es obligatorio.
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-12 col-md-4">
-                        <div class="form-group">
-                            <label for="name"><b>CURP del Solicitante (*)</b></label>
-                            <input type="text" name="curp" id="curp_input" value="{{ old('curp', $solicitante->curp) }}" oninput="validarInput(this)"class="form-control" required>
-                            <pre id="resultado"></pre>
-                            <div class="invalid-feedback">
-                                El campo curp es obligatorio.
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label for="name">CURP del Solicitante (*)</label>
+                                <input type="text" name="curp" id="curp_input" oninput="validarInput(this)"class="form-control" value="<?=$solicitante["curp"];?>" required> 
+                                <pre id="resultado"></pre>
+                                <div class="invalid-feedback">
+                                    El campo curp es obligatorio.
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-12 col-md-4">
-                        <div class="form-group">
-                            <label for="name"><b>RFC del Solicitante (*)</b></label>
-                            <input type="text" name="rfc" class="form-control" value="{{ old('rfc', $solicitante->rfc) }}" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()" required><br>
-                            <div class="invalid-feedback">
-                                El campo RFC es obligatorio.
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label for="name">RFC del Solicitante (*)</label>
+                                <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()" value="<?=$solicitante["rfc"];?>" required> 
+                                <div class="invalid-feedback">
+                                    El campo RFC es obligatorio.
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-12 col-md-4">
-                        <div class="form-group">
-                            <label for="name"><b>Número de Seguro Social</b></label>
-                            <input type="text" name="seguro" value="{{ old('seguro', $solicitante->seguro) }}" minlength="11" maxlength="12" class="form-control"><br> 
-                            <div class="invalid-feedback">
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label for="name">Número de Seguro Social</label>
+                                <input type="text" name="seguro" minlength="11" maxlength="12" class="form-control" value="<?=$solicitante["nss"];?>"> 
+                                <div class="invalid-feedback">
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-12 col-md-4">
-                        <div class="form-group">
-                            <label for="name"><b>Puesto (*)</b></label>
-                            <input type="text" name="puesto" value="{{ old('puesto', $solicitante->puesto) }}" class="form-control" oninput="this.value = this.value.toUpperCase()" required><br>
-                            <div class="invalid-feedback">
-                                El campo puesto es obligatorio.
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label for="name">Puesto (*)</label>
+                                <input type="text" class="form-control" name="puesto" value="<?=$solicitante["puesto"];?>" oninput="this.value = this.value.toUpperCase()" required> 
+                                <div class="invalid-feedback">
+                                    El campo puesto es obligatorio.
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-12 col-md-4">
-                        <div class="form-group">
-                            <label for="name"><b>Frecuencia de Pago (*)</b></label>
-                            <select name="periodo_pago" value="{{ old('puesto', $solicitante->periodo_pago) }}" class="form-control" required>
-                                <option value="">SELECCIONE</option>
-                                <option value="Diario">DIARIO</option>
-                                <option value="Semana">SEMANAL</option>
-                                <option value="Quincenal">QUINCENAL</option>
-                                <option value="Mensual">MENSUAL</option>
-                            </select><br>
-                            <div class="invalid-feedback">
-                                El campo frecuencia de pagos es obligatorio.
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label for="name">Frecuencia de Pago (*)</label>
+                                <select name="periodo_pago" class="form-control" value="<?=$solicitante["periodo_pago"];?>" required>
+                                    <option value="">SELECCIONE</option>
+                                    <option value="Diario" {{ $solicitante['periodo_pago'] == 'Diario' ? "selected" : '' }}>DIARIO</option>
+                                    <option value="Semana" {{ $solicitante['periodo_pago'] == 'Semana' ? "selected" : '' }}>SEMANAL</option>
+                                    <option value="Quincenal" {{ $solicitante['periodo_pago'] == 'Quincenal' ? "selected" : '' }}>QUINCENAL</option>
+                                    <option value="Mensual" {{ $solicitante['periodo_pago'] == 'Mensual' ? "selected" : '' }}>MENSUAL</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    El campo frecuencia de pagos es obligatorio.
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-12 col-md-4">
-                        <div class="form-group">
-                            <label for="name"><b>Salario (*)</b></label>
-                            <input type="text" name="pago" value="{{ old('pago', $solicitante->pago) }}" class="form-control" required><br> 
-                            <div class="invalid-feedback">
-                                El campo salario es obligatorio.
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label for="name">Salario (*)</label>
+                                <input type="text" name="pago" class="form-control" value="<?=$solicitante["pago"];?>" required> 
+                                <div class="invalid-feedback">
+                                    El campo salario es obligatorio.
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-12 col-md-4">
-                        <div class="form-group">
-                            <label for="name"><b>Cantidad total de horas trabajadas por semana (*)</b></label>
-                            <input type="number" name="horas" value="{{ old('horas', $solicitante->horas) }}" class="form-control" required><br> 
-                            <div class="invalid-feedback">
-                                El campo cantidad de horas trabajadas es obligatorio.
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label for="name">Cantidad total de horas trabajadas por semana (*)</label>
+                                <input type="number" name="horas" class="form-control" value="<?=$solicitante["horas_semana"];?>" required> 
+                                <div class="invalid-feedback">
+                                    El campo cantidad de horas trabajadas es obligatorio.
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-12 col-md-12">
-                        <div class="form-group">
-                            <label for="btncheck1"><b>¿Laboras actualmente?</b></label><br>
-                            <input name="labora" type="checkbox" class="btn-check" id="check_fecha" autocomplete="off"/><br><br>
-                        </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-12 col-md-4">
-                        <div class="form-group">
-                            <label for="name"><b>Fecha de Ingreso (*)</b></label>
-                            <input type="date" name="fecha_ingreso" value="{{ old('fecha_ingreso', $solicitante->fecha_ingreso) }}" class="form-control" required><br> 
-                            <div class="invalid-feedback">
-                                El campo fecha de ingreso es obligatoria.
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label for="check_fecha">¿Laboras actualmente?</label>
+                                <input type="checkbox" id="check_fecha" name="labora" {{ $solicitante['labora'] == 'Si' ? 'checked' : '' }} />
+                            </div>  
+                        </div>    
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label for="name">Fecha de Ingreso (*)</label>
+                                <input type="date" name="fecha_ingreso" class="form-control" value="<?=$solicitante["fecha_ingreso"];?>" required> 
+                                <div class="invalid-feedback">
+                                    El campo fecha de ingreso es obligatoria.
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-12 col-md-4">
-                        <div class="form-group">
-                            <label for="name"><b>Jornada (*)</b></label>
-                            <select name="jornada" value="{{ old('fecha_salida', $solicitante->jornada) }}" class="form-control" required>
-                                <option value="">SELECCIONE</option>
-                                <option value="Diurna">DIURNA</option>
-                                <option value="Nocturna">NOCTURNA</option>
-                                <option value="Mixta">MIXTA</option>
-                            </select><br>
-                            <div class="invalid-feedback">
-                                El campo jornada laboral es obligatoria.
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label for="name">Jornada (*)</label>
+                                <select name="jornada" class="form-control" value="<?=$solicitante["jornada"];?>" required>
+                                    <option value="">SELECCIONE</option>
+                                    <option value="Diurna" {{ $solicitante['jornada'] == 'Diurna' ? "selected" : '' }}>DIURNA</option>
+                                    <option value="Nocturna" {{ $solicitante['jornada'] == 'Nocturna' ? "selected" : '' }}>NOCTURNA</option>
+                                    <option value="Mixta" {{ $solicitante['jornada'] == 'Mixta' ? "selected" : '' }}>MIXTA</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    El campo jornada laboral es obligatoria.
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-12 col-md-4" id="fecha_fin">
-                        <div class="form-group">
-                            <label for="name"><b>Fecha de Salida</b></label>
-                            <input type="date" name="fecha_salida" value="{{ old('fecha_salida', $solicitante->fecha_salida) }}" class="form-control"><br> 
-                            <div class="invalid-feedback">
-                                El campo fecha de salida es obligatoria.
+                        <div class="col-xs-12 col-sm-12 col-md-4" id="fecha_fin">
+                            <div class="form-group">
+                                <label for="name">Fecha de Salida</label>
+                                <input type="date" name="fecha_salida" class="form-control" value="<?=$solicitante["fecha_salida"];?>"> 
+                                <div class="invalid-feedback">
+                                    El campo fecha de salida es obligatoria.
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </div> 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
                 </div>
             </div>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
+<!-- Modal Citados -->
+<div class="modal fade" id="modalCitados" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <form class='needs-validation novalidate'  method='POST' action="{{route('insertar_citado')}}">
+        @csrf
+        <input type="hidden" name="citado_id" id="citado_id">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Editar Citado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="name">Nombres</label>
+                                <input type="text" class="form-control" placeholder="*Nombre(s)" name="nombresAbogadoAlta" oninput="this.value = this.value.toUpperCase()" required>
+                                <div class="invalid-feedback">
+                                    El nombre es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="">Primer Apellido</label>
+                                <input type="text" class="form-control" placeholder="*Apellidos" name="primer_apellido" id="apellidosAbogadoAlta" oninput="this.value = this.value.toUpperCase()" required>
+                                <div class="invalid-feedback">
+                                    El primer apellido es obligatorio.
+                                </div>
+                            </div>
+                        </div>
 
-<!-- Fin Modal Solicitante -->
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="">Segundo Apellido</label>
+                                <input type="text" class="form-control" placeholder="*Apellidos" name="segundo_apellido" oninput="this.value = this.value.toUpperCase()" required>
+                                <div class="invalid-feedback">
+                                    El segundo apellido es obligatorio.
+                                </div>
+                            </div>
+                        </div>
 
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="">Teléfono</label>
+                                <input type="text" class="form-control" placeholder="*Telefono"  name="telefonoAbogadoAlta" maxlength="10" pattern="[0-9]+" required>
+                                <div class="invalid-feedback">
+                                    El telefono es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="">Correo</label>
+                                <input type="email" class="form-control" placeholder="*Correo" name="correoAbogadoAlta" id="correoAbogadoAlta" required>
+                                <div class="invalid-feedback">
+                                    El correo es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="">Empresa</label>
+                                <input type="text" class="form-control" placeholder="*Empresa representación" name="empresaAbogadoAlta" oninput="this.value = this.value.toUpperCase()" required>
+                                <div class="invalid-feedback">
+                                    La empresa es obligatoria.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="">CURP</label>
+                                <input type="text" class="form-control" placeholder="*CURP" aria-label="CURP" name="curpAbogadoAlta" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" required>
+                                <div class="invalid-feedback">
+                                    La CURP es obligatoria.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="">Domicilio</label>
+                                <input type="text" class="form-control" placeholder="*Domicilio" name="domicilioAbogadoAlta" id="domicilioAbogadoAlta" oninput="this.value = this.value.toUpperCase()" required>
+                                <div class="invalid-feedback">
+                                    El domicilio es obligatoria.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="">RFC</label>
+                                <input type="text" class="form-control" placeholder="RFC Empresa" name="RFCAbogadoAlta" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()">
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="">Fecha vigencia</label>
+                                <input type="date" class="form-control" aria-describedby="basic-addon1" name="fechaVigenciaAlta" id="fechaVigenciaAlta" min="<?= date("Y-m-d") ?>" required>
+                                <div class="invalid-feedback">
+                                    La fecha es obligatoria.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="">Industria</label>
+                                <input type="text" class="form-control" placeholder="Giro Comercial" name="industriaAlta" required>
+                                <div class="invalid-feedback">
+                                    La industria es obligatoria.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-3">
+                            <div class="form-group">
+                                <span class="" id="basic-addon1">*Seleccione la region(nes).</i></i></span>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="moreliaSucursal" value="Si">
+                                    <label class="form-check-label" for="flexCheckDefault">Morelia</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="uruapanSucursal" value="Si" >
+                                    <label class="form-check-label" for="flexCheckChecked">Uruapan</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="zamoraSucursal" value="Si">
+                                    <label class="form-check-label" for="flexCheckDefault">Zamora</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label for="">Descripción del poder</label>
+                                <textarea class="form-control" aria-describedby="basic-addon1" name="descripcionpoderAlta" required></textarea>
+                                <div class="invalid-feedback">
+                                    La descripción es obligatoria.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label>*Identificación oficial</label><br>
+                                <input type="file" name="documentoIne" class="form-control" accept=".pdf">
+                                <div class="invalid-feedback">
+                                    La Identificación es obligatoria.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label>*Documento que acredite la representación</label><br>
+                                <input type="file" name="documentoRepresentacion" class="form-control" accept=".pdf">
+                                <div class="invalid-feedback">
+                                    El documento de representación es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label>Anexos</label><br>
+                                <input type="file" name="documentoAnexo" class="form-control" accept=".pdf">
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label>Anexos 2</label><br>
+                                <input type="file" name="documentoPoder" class="form-control" accept=".pdf">
+                            </div>
+                        </div>
+
+                        <div>
+                            <input type="hidden" name="id_usuario_registro" value="{{ Auth::id() }}">
+                        </div>
+                        
+                    </div>                                     
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 <div id="nuevo_poder" style ="display: none;">
     <div>.</div>
     <div class="loader"></div>
@@ -267,34 +455,33 @@
 @section('scripts')
     <script>
         $('.open-modal').click(function() {
-            const id = $(this).data('id'); // Obtiene el valor de data-id
+            const id = $(this).data('id');
             document.getElementById('modal-id').value = id;
         });
     </script>
 
     <script>
-        var editarModal = document.getElementById('editarSolicitante');
-        editarModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget;
-            var pago = button.getAttribute('data-pago');
-            var id = button.getAttribute('data-id');
+        document.querySelectorAll('.btn-buscar').forEach(btn => {
+            btn.addEventListener('click', function() {
+                let idAbogado = this.dataset.citadoId;
+                let inputBuscar = document.querySelector(`input.buscar-poder[data-citado-id="${idAbogado}"]`);
+                let valor = inputBuscar.value.trim();
 
-            editarModal.querySelector('#modal-pago').value = pago || '';
-            editarModal.querySelector('#modal-id').value = id || '';
-            editarModal.querySelector('#modal-nombre').value = nombre || '';
-            editarModal.querySelector('#modal-curp').value = curp || '';
-            editarModal.querySelector('#modal-fecha_ingreso').value = fecha_ingreso || '';
-            editarModal.querySelector('#modal-fecha_salida').value = fecha_salida || '';
-            editarModal.querySelector('#modal-jornada').value = jornada || '';
-            editarModal.querySelector('#modal-labora').value = labora || '';
-            editarModal.querySelector('#modal-horas').value = horas || '';
-            editarModal.querySelector('#modal-periodo_pago').value = periodo_pago || '';
-            editarModal.querySelector('#modal-puesto').value = puesto || '';
-            editarModal.querySelector('#modal-seguro').value = seguro || '';
-            editarModal.querySelector('#modal-rfc').value = rfc || '';
+                fetch(`/solicitud/consultarC?term=${encodeURIComponent(valor)}&citado_id=${idAbogado}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        inputBuscar.dataset.resultado = JSON.stringify(data);
+                        alert(data.existe ? 'Citado encontrado.' : 'Citado no encontrado, puedes agregarlo.');
+                    })
+                    .catch(err => {
+                        console.error('Error en búsqueda:', err);
+                        alert('Error al buscar, intenta de nuevo.');
+                    });
+            });
         });
 
-        
     </script>
-    <script src="../public/assets/js/poderes/general.js"></script>
+   
+    <script src="../../public/assets/js/validaciones.js"></script> 
+    <script src="../../public/assets/js/poderes/general.js"></script>
 @endsection

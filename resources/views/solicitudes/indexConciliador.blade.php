@@ -33,28 +33,29 @@
                                                 <td>{{$audiencia->estatus}}</td>
                                                 <td>
                                                     @if($audiencia->estatus == "Confirmado")
-                                                        <a class="btn btn-info" href="{{ route('inicioAudiencia', $audiencia->id, 'Confirmado') }}">Iniciar</a>
+                                                        <a class="btn btn-info" href="{{ route('inicioAudiencia', $audiencia->id, 'Confirmado') }}">Iniciar</a><br>
                                                         <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $audiencia->id }}">
                                                             Archivar
-                                                        </button>
+                                                        </button><br>
                                                         <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $audiencia->id }}">
                                                             Incompetencia
-                                                        </button>
+                                                        </button><br>
                                                         <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $audiencia->id }}">
                                                             Incomparecencia
-                                                        </button>
+                                                        </button><br>
                                                         <a class="btn btn-primary">Reagendar</a>
                                                     @endif
                                                 </td>
                                                 <td>
                                                     @if($audiencia->estatus == "Archivada")
-                                                        <a class="btn btn-success" href="{{ route('PDFinteres', $audiencia->id) }}"  target="_blank">Acta de Archivo</a>
+                                                        <a class="btn btn-success" href="{{ route('PDFinteres', $audiencia->id) }}"  target="_blank">Acta de Archivo</a><br>
                                                     @elseif($audiencia->estatus == "Incompetencia")
-                                                        <a class="btn btn-success" href="{{ route('PDFincumplimiento', $audiencia->id) }}"  target="_blank">Incompetencia</a>
+                                                        <a class="btn btn-success" href="{{ route('PDFincompetencia', $audiencia->id) }}"  target="_blank">Incompetencia</a><br>
                                                     @elseif($audiencia->estatus == "Incomparecencia")
-                                                        <a class="btn btn-success" href="{{ route('PDFincumplimiento', $audiencia->id) }}"  target="_blank">Acta de Incomparecencia</a>
+                                                        <a class="btn btn-success" href="{{ route('PDFincomparecencia', $audiencia->id) }}"  target="_blank">Acta de Incomparecencia</a><br>
                                                     @elseif($audiencia->estatus == "Reagendada")
-                                                        <a class="btn btn-success" href="{{ route('PDFcitatorio', $audiencia->id) }}"  target="_blank">Citatorios</a>
+                                                        <a class="btn btn-info" href="{{ route('PDFratificacion', $audiencia->id) }}">Notificación al solicitante</a><br>
+                                                        <a class="btn btn-success" href="{{ route('PDFcitatorio', $audiencia->id) }}"  target="_blank">Citatorios</a><br>
                                                     @endif 
                                                 </td>
                                             </tr>

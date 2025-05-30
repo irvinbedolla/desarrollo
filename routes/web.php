@@ -227,35 +227,38 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     //Turnos
-        Route::get('/turnos/index1',           [TurnosController::class, 'index'])->name('turnos.index');
-        //Route::get('/turnos/index',           [TurnosController::class, 'index'])->name('turnos');
-        Route::get('/turnos/create',          [TurnosController::class, 'create'])->name('turnos.create');
-        Route::get('/turnos/activo/{id}',     [TurnosController::class, 'activo'])->name('turnos.activo');
-        Route::get('/turnos/noactivo/{id}',   [TurnosController::class, 'noactivo'])->name('turnos.noactivo');
-        Route::post('/turnos/store',          [TurnosController::class, 'store_turnos'])->name('turnos.store');
-        Route::get('/turnos/misturnos',       [TurnosController::class, 'misturnos'])->name('misturnos');
-        Route::get('/turnos/terminado/{id}',  [TurnosController::class, 'terminado'])->name('turnos.terminado');
-        Route::get('/turnos/turnos',          [TurnosController::class, 'turnos'])->name('turnos.listado');
-        Route::get('/turnos/estadistica',     [TurnosController::class, 'estadistica'])->name('turno_estadistica');
-        Route::post('/turnos/mostrar',        [TurnosController::class, 'mostrar'])->name('turnos_mostrar');
-        Route::get('/turnos/cambiar/{id}',    [TurnosController::class, 'cambiar'])->name('cambiar');
-        Route::get('/turnos/terminadoR/{id}', [TurnosController::class, 'terminado_confirmar'])->name('turnos.terminado_revisar');
-        Route::post('/turnos/edit',           [TurnosController::class, 'edit'])->name('turnos.edit');
-        Route::get('/turnos/cambio/{id}',     [TurnosController::class, 'cambio'])->name('turnos.cambioexcepcion');
-        Route::get('/Verpdf/{id}',            [TurnosController::class, 'VerPDF'])->name('PDFratifi');
-        Route::get('/Verpdfc/{id}',           [TurnosController::class, 'VerPDFConvenio'])->name('PDFconvenio');
-        Route::get('/Verpdfmulta/{id}',       [TurnosController::class, 'VerPDFMulta'])->name('PDFmultas');
-        Route::get('/Verpdfinteres/{id}',     [TurnosController::class, 'VerPDFInteres'])->name('PDFinteres');
-        Route::get('/Verpdfcump/{id}',        [TurnosController::class, 'VerPDFCumplimiento'])->name('PDFcumplimiento');
-        Route::get('/VerpdfIncump/{id}',      [TurnosController::class, 'VerPDFIncumplimiento'])->name('PDFincumplimiento');
-        Route::get('/VerpdfInParcial/{id}',   [TurnosController::class, 'VerPDFInParcial'])->name('PDFincumplimientoParcial');
-        Route::get('/VerpdfPago/{id}',        [TurnosController::class, 'VerPDFPagos'])->name('PDFpagos');
-        Route::get('/Verpdfaudiencia/{id}',   [TurnosController::class, 'VerPDFAudiencia'])->name('PDFaudiencia');
-        Route::get('turnos/index2',           [TurnosController::class, 'index_empresa'])->name('ratificacion');
-        Route::get('turnos/indexr',           [TurnosController::class, 'indexr'])->name('Ratificacion');
-        Route::get('turnos/aceptar/{id}',     [TurnosController::class, 'aceptacion'])->name('turno.aceptar');
-        Route::post('/turnos/guardar',        [TurnosController::class, 'guardar_rechazo'])->name('rechazar_turnos');
-        Route::post('/turnos/archivar',       [TurnosController::class, 'archivar_ratificacion'])->name('archivar_ratificacion');
+        Route::get('/turnos/index1',             [TurnosController::class, 'index'])->name('turnos.index');
+        //Route::get('/turnos/index',            [TurnosController::class, 'index'])->name('turnos');
+        Route::get('/turnos/create',             [TurnosController::class, 'create'])->name('turnos.create');
+        Route::get('/turnos/activo/{id}',        [TurnosController::class, 'activo'])->name('turnos.activo');
+        Route::get('/turnos/noactivo/{id}',      [TurnosController::class, 'noactivo'])->name('turnos.noactivo');
+        Route::post('/turnos/store',             [TurnosController::class, 'store_turnos'])->name('turnos.store');
+        Route::get('/turnos/misturnos',          [TurnosController::class, 'misturnos'])->name('misturnos');
+        Route::get('/turnos/terminado/{id}',     [TurnosController::class, 'terminado'])->name('turnos.terminado');
+        Route::get('/turnos/turnos',             [TurnosController::class, 'turnos'])->name('turnos.listado');
+        Route::get('/turnos/estadistica',        [TurnosController::class, 'estadistica'])->name('turno_estadistica');
+        Route::post('/turnos/mostrar',           [TurnosController::class, 'mostrar'])->name('turnos_mostrar');
+        Route::get('/turnos/cambiar/{id}',       [TurnosController::class, 'cambiar'])->name('cambiar');
+        Route::get('/turnos/terminadoR/{id}',    [TurnosController::class, 'terminado_confirmar'])->name('turnos.terminado_revisar');
+        Route::post('/turnos/edit',              [TurnosController::class, 'edit'])->name('turnos.edit');
+        Route::get('/turnos/cambio/{id}',        [TurnosController::class, 'cambio'])->name('turnos.cambioexcepcion');
+        Route::get('/Verpdf/{id}',               [TurnosController::class, 'VerPDF'])->name('PDFratifi');
+        Route::get('/Verpdfc/{id}',              [TurnosController::class, 'VerPDFConvenio'])->name('PDFconvenio');
+        Route::get('/Verpdfmulta/{id}',          [TurnosController::class, 'VerPDFMulta'])->name('PDFmultas');
+        Route::get('/Verpdfinteres/{id}',        [TurnosController::class, 'VerPDFInteres'])->name('PDFinteres');
+        Route::get('/Verpdfcump/{id}',           [TurnosController::class, 'VerPDFCumplimiento'])->name('PDFcumplimiento');
+        Route::get('/VerpdfIncump/{id}',         [TurnosController::class, 'VerPDFIncumplimiento'])->name('PDFincumplimiento');
+        Route::get('/VerpdfInParcial/{id}',      [TurnosController::class, 'VerPDFInParcial'])->name('PDFincumplimientoParcial');
+        Route::get('/VerpdfPago/{id}',           [TurnosController::class, 'VerPDFPagos'])->name('PDFpagos');
+        Route::get('/Verpdfaudiencia/{id}',      [TurnosController::class, 'VerPDFAudiencia'])->name('PDFaudiencia');
+        Route::get('/Verpdfincompetencia/{id}',  [TurnosController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');
+        Route::get('/Verpdfnoconciliacion/{id}', [TurnosController::class, 'VerPDFNoConciliacion'])->name('PDFno_conciliacion');
+        Route::get('/Verpdfincomparecencia/{id}',[TurnosController::class, 'VerPDFIncomparecencia'])->name('PDFincomparecencia');
+        Route::get('turnos/index2',              [TurnosController::class, 'index_empresa'])->name('ratificacion');
+        Route::get('turnos/indexr',              [TurnosController::class, 'indexr'])->name('Ratificacion');
+        Route::get('turnos/aceptar/{id}',        [TurnosController::class, 'aceptacion'])->name('turno.aceptar');
+        Route::post('/turnos/guardar',           [TurnosController::class, 'guardar_rechazo'])->name('rechazar_turnos');
+        Route::post('/turnos/archivar',          [TurnosController::class, 'archivar_ratificacion'])->name('archivar_ratificacion');
     //Fin de  turnos
 
         Route::get('/pdf/estadistica',       [PDFController::class, 'pdfEstadistica'])->name('PDFestaditica');
@@ -276,6 +279,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/solicitud/archivar_audiencia',        [SeerController::class, 'guardar_audiencia_archivo'])->name('archivar_audiencia');
         Route::get('/solicitud/iniciar/{id}',               [SeerController::class, 'iniciar_audiencia'])->name('inicioAudiencia');
         Route::post('/solicitud/editar',                    [SeerController::class, 'editar_solicitud_con'])->name('editar_solicitud');
+        Route::get('/solicitud/consultarC',                 [SeerController::class, 'consultar_citados_con'])->name('consultar_citados');
+        //Route::post('/solicitud/guardar_citadoC',           [SeerController::class, 'insertar_citados_con'])->name('insertar_citado');
 
     //Ratificaciones
         Route::get('/ratificaciones/index',         [TurnosController::class, 'revisar_ratificaciones'])->name('atender_ratificacion');

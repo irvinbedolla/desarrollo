@@ -2587,13 +2587,85 @@ class SeerController extends Controller
         return redirect()->route('audiencias.conciliador');
     }
 
-    public function editar_solicitud_con(Request $request){
+    public function editar_solicitud_con(Request $request) {
         $data = $request->all();
         $id_usuario = auth()->user()->id;
         $user = User::find($id_usuario);
-        $roles = Role::pluck('name','name')->all();
+        $roles = Role::pluck('name', 'name')->all();
         $userRole = $user->roles->pluck('name')->all();
-        
-    }  
 
+        $solicitante = SeerSolicitante::where('id_solicitud', $data['id'])->first();
+        //dd($solicitante);
+
+        //Actualizar SEER SOLICTUD
+        SeerSolicitante::where('id_solicitud', $data["id"])
+        ->update([
+            'curp'                  => $data["curp"],
+            'rfc'                   => $data["rfc"],
+            'nombre'                => $data["nombre"],
+            'puesto'                => $data["puesto"],
+            'pago'                  => $data["pago"],
+            'periodo_pago'          => $data["periodo_pago"],
+            'fecha_ingreso'         => $data["fecha_ingreso"],
+            'fecha_salida'          => $data["fecha_salida"],
+            'jornada'               => $data["jornada"],
+            'horas_semana'          => $data["horas"],
+        ]);
+
+        if(isset($data["seguro"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['nss' => $data["seguro"] ]);
+        }
+            
+        return redirect()->route('inicioAudiencia', ['id' => $data['id']]);
+      
+    }
+
+    public function consultar_citados_con(Request $request) {
+        $citado_id = $request->input('citado_id');
+        $term = $request->input('term');
+    
+        $citado = SeerCitados::find($citado_id);
+    
+        $poder = Poder::where('curp', $citado->curp)
+            ->orWhere(function($query) use ($term) {
+                $query->whereRaw("CONCAT(nombres, ' ', primer_apellido, ' ', segundo_apellido) LIKE ?", ["%$term%"]);
+            })
+            ->first();
+    
+        if ($poder) {
+            return response()->json([
+                'existe' => true,
+                'datos' => $poder,
+            ]);
+        } else {
+            return response()->json([
+                'existe' => false,
+                'mensaje' => 'No se encontró un abogado.',
+            ]);
+        }
+      
+    }
+    /*public function insertar_citados_con(Request $request) {
+        $data = $request->all();
+        $id_usuario = auth()->user()->id;
+        $user = User::find($id_usuario);
+        $roles = Role::pluck('name', 'name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+
+        $citado2 = SeerCitados::where('id_solicitud', $data['id'])->first();
+
+        //dd($citado);
+        SeerCitados::where('id_solicitud', $data["id"])
+        ->update([
+            'curp'                  => $data["curp"],
+            'rfc'                   => $data["rfc"],
+            'nombre'                => $data["nombre"],
+            'primer_apellido'       => $data["primer_apellido"],
+            'segundo_apellido'      => $data["segundo_apellido"],
+            'tipo_persona'          => $data["tipo"],
+        ]);
+
+        return redirect()->route('inicioAudiencia', ['id' => $data['id']]);
+      
+    }*/
 }
