@@ -12,17 +12,15 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                                <div class="table-responsive">
-                                    <table id="example" class="table table-striped mt-1">
-                                        <thead style="background-color: #4A001F;">
-                                            <tr>
                                                 <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                                     Reagendar
                                                 </button>&nbsp;&nbsp;
                                                 <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $solicitud->id }}">
                                                     Incompetencia
                                                 </button>
-                                            </tr>
+                                <div class="table-responsive">
+                                    <table class="table table-striped mt-1">
+                                        <thead style="background-color: #4A001F;">
                                             <tr> 
                                                 <th style="color: #ffff;">Tipo parte</th>
                                                 <th style="color: #ffff;">Nombre de la parte</th>
@@ -30,7 +28,8 @@
                                                 <th style="color: #ffff;">Sala</th>
                                                 <th style="color: #ffff;">Acciones</th>
                                             </tr>
-                                            <tr>
+                                        </thead>
+                                        <tbody>
                                                 <tr>
                                                     <td style="color: #000000;"><b>Solicitante</b></td>
                                                     <td>{{ $solicitante->nombre }}</td>
@@ -41,47 +40,20 @@
                                                     </td>
                                                 </tr>
                                                 @foreach($citados as $citado)
-                                                <tr>
-                                                    <td style="color: #000000;"><b>Citado</b></td>
-                                                    <td>{{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</td>
-                                                    <td>{{ $conciliador->name }}</td>
-                                                    <td style="color: #000000;"><b>Sala</b></td>
-                                                    <td>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control buscar-poder" placeholder="Buscar en poderes (nombre o CURP)" data-citado-id="{{ $citado->id }}" />
-                                                            <button class="btn btn-outline-secondary btn-buscar" type="button" data-citado-id="{{ $citado->id }}">Buscar</button>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <button type="button" class="btn btn-primary btn-modal-poder" data-citado-id="{{ $citado->id }}" data-bs-toggle="modal" data-bs-target="#modalCitados">Editar</button>
-                                                    </td>
-                                                    
-                                                </tr>
+                                                    <tr>
+                                                        <td style="color: #000000;"><b>Citado</b></td>
+                                                        <td>{{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</td>
+                                                        <td>{{ $conciliador->name }}</td>
+                                                        <td style="color: #000000;"><b>Sala</b></td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-primary btn-modal-poder" data-citado-id="{{ $citado->id }}" data-bs-toggle="modal" data-bs-target="#modalCitados">Citado</button>
+                                                        </td>
+                                                    </tr>
                                                 @endforeach  
-                                            </tr> 
-                                            <tr>
-                                                <td style="color: #000000;"><b>Documentos</b></td> 
-                                                @foreach($solicitudes as $solicitud)   
-                                                <td>
-                                                    @if($solicitud->estatus == "Conciliacion")   
-                                                        <a class="btn btn-info" href="{{ route('PDFaudiencia', $solicitud->id) }}">Acta de audiencia</a>
-                                                        <a class="btn btn-info" href="{{ route('PDFconvenio', $solicitud->id) }}">Convenio de terminación</a>
-                                                    @elseif($solicitud->estatus == "No conciliacion")
-                                                        <a class="btn btn-info" href="{{ route('PDFno_conciliacion', $solicitud->id) }}">Acta de no conciliación</a>
-                                                    @elseif($solicitud->estatus == "Reagendada")
-                                                        <a class="btn btn-info" href="{{ route('PDFratificacion', $solicitud->id) }}">Notificación al solicitante</a>
-                                                        <a class="btn btn-info" href="{{ route('PDFcitatorio', $solicitud->id) }}">Citatorios</a>
-                                                    @elseif($solicitud->estatus == "Incompetencia")
-                                                        <a class="btn btn-info" href="{{ route('PDFincompetencia', $solicitud->id) }}">Incompetencia</a>
-                                                    @endif
-                                                </td>
-                                                @endforeach
-                                            </tr>
-                                        </thead>
+                                                
+                                        </tbody> 
                                     </table>
                                 </div>
-                            <!-- Centramos la paginación a la derecha-->
-                            <div class="pagination justify-content-end"></div>
                         </div>
                     </div>
                 </div>
@@ -253,6 +225,47 @@
 </div>
 <!-- Modal Citados -->
 <div class="modal fade" id="modalCitados" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Citados</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <button type="button" class="btn btn-primary btn-modal-poder" data-citado-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarCitados">Agregar</button>
+
+                <div class="table-responsive">
+                                    <table id="tabla1" class="table-striped" style="width:100%">
+                                        <thead style="background-color: #4A001F;">
+                                            <th style="display: none;">ID</th>
+                                            <th style="color: #fff;">Nombre</th>
+                                            <th style="color: #fff;">RFC</th>
+                                            <th style="color: #fff;">Empresa</th>
+                                            <th style="color: #fff;">Acciones</th>
+                                        </thead>
+                                        <tbody class="contenidobusqueda">
+                                            @foreach($citados as $citado)
+                                                <tr>
+                                                    <td style="display: none;">{{$citado->id}}</td>
+                                                    <td>{{$citado->nombre}}</td>
+                                                    <td>{{$citado->rfc}}</td>
+                                                    <td>{{$citado->empresa}}</td>
+                                                    <td>
+                                                        <a class="btn btn-info" href="{{ route('usuarios.edit', $citado->id)}}" onclick=editar_usuario();>Seleccionar </a>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalAgregarCitados" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <form class='needs-validation novalidate'  method='POST' action="{{route('insertar_citado')}}">
         @csrf
         <input type="hidden" name="citado_id" id="citado_id">
@@ -453,34 +466,7 @@
 </div>
 
 @section('scripts')
-    <script>
-        $('.open-modal').click(function() {
-            const id = $(this).data('id');
-            document.getElementById('modal-id').value = id;
-        });
-    </script>
 
-    <script>
-        document.querySelectorAll('.btn-buscar').forEach(btn => {
-            btn.addEventListener('click', function() {
-                let idAbogado = this.dataset.citadoId;
-                let inputBuscar = document.querySelector(`input.buscar-poder[data-citado-id="${idAbogado}"]`);
-                let valor = inputBuscar.value.trim();
-
-                fetch(`/solicitud/consultarC?term=${encodeURIComponent(valor)}&citado_id=${idAbogado}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        inputBuscar.dataset.resultado = JSON.stringify(data);
-                        alert(data.existe ? 'Citado encontrado.' : 'Citado no encontrado, puedes agregarlo.');
-                    })
-                    .catch(err => {
-                        console.error('Error en búsqueda:', err);
-                        alert('Error al buscar, intenta de nuevo.');
-                    });
-            });
-        });
-
-    </script>
    
     <script src="../../public/assets/js/validaciones.js"></script> 
     <script src="../../public/assets/js/poderes/general.js"></script>

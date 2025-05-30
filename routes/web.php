@@ -280,7 +280,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/solicitud/iniciar/{id}',               [SeerController::class, 'iniciar_audiencia'])->name('inicioAudiencia');
         Route::post('/solicitud/editar',                    [SeerController::class, 'editar_solicitud_con'])->name('editar_solicitud');
         Route::get('/solicitud/consultarC',                 [SeerController::class, 'consultar_citados_con'])->name('consultar_citados');
-        //Route::post('/solicitud/guardar_citadoC',           [SeerController::class, 'insertar_citados_con'])->name('insertar_citado');
+        Route::post('/solicitud/guardar_citadoC',           [SeerController::class, 'insertar_citados_con'])->name('insertar_citado');
 
     //Ratificaciones
         Route::get('/ratificaciones/index',         [TurnosController::class, 'revisar_ratificaciones'])->name('atender_ratificacion');

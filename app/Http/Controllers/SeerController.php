@@ -2645,7 +2645,7 @@ class SeerController extends Controller
         }
       
     }
-    /*public function insertar_citados_con(Request $request) {
+    public function insertar_citados_con(Request $request) {
         $data = $request->all();
         $id_usuario = auth()->user()->id;
         $user = User::find($id_usuario);
@@ -2667,5 +2667,5 @@ class SeerController extends Controller
 
         return redirect()->route('inicioAudiencia', ['id' => $data['id']]);
       
-    }*/
+    }
 }
