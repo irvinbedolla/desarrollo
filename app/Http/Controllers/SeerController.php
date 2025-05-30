@@ -2668,4 +2668,35 @@ class SeerController extends Controller
         return redirect()->route('inicioAudiencia', ['id' => $data['id']]);
       
     }
+
+    public function editar_citados(Request $request){
+        $data = $request->all();
+        $id_usuario = auth()->user()->id;
+        //dd($data["id"]);
+        $user = User::find($id_usuario);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+
+        $data_update = SeerCitados::find($data["id"])
+        ->update([
+            'tipo_persona'                  => $data["tipo"],
+            'curp'                          => $data["curp"],
+            'rfc'                           => $data["rfc"],
+            'nombre'                        => $data["nombre"],
+            'primer_apellido'               => $data["primer_apellido"],
+            'segundo_apellido'              => $data["segundo_apellido"],
+            'colonia'                       => $data["colonia"],
+            'cp'                            => $data["cp"],
+            'calle1'                        => $data["calle1"],
+            'calle2'                        => $data["calle2"],
+            'n_ext'                         => $data["exterior"],
+            'n_int'                         => $data["interior"],
+            'rfc'                           => $data["rfc"],
+            'tipo_vialidad'                 => $data["vialidad"],
+            'calle'                         => $data["calle"],
+            'referencia'                    => $data["referencia"],
+        ]);
+
+        return redirect()->route('notificaciones');
+    }
 }
