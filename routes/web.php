@@ -286,6 +286,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/incompentencia_audiencia',            [SeerController::class, 'incopentencia_audiencia'])->name('incopentencia_audiencia');
         Route::post('/reagendar_audiencia',                 [SeerController::class, 'reagendar_audiencia'])->name('reagendar_audiencia');
         Route::get('/Verpdfincompetencias/{id}',            [SeerController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');
+        Route::get('/auciencia/concluir/{id}',              [SeerController::class, 'audiencia_parte2'])->name('audiencia_parte2');
+        
         
     //Ratificaciones
         Route::get('/ratificaciones/index',         [TurnosController::class, 'revisar_ratificaciones'])->name('atender_ratificacion');
