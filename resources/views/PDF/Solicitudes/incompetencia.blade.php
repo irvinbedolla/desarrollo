@@ -77,10 +77,6 @@
                                 <td><b>Número de identificación único: </b></td>
                                 <td>{{ $solicitud->NUE }} </td>
                             </tr> 
-                            <tr>    
-                                <td><b>Buzón electrónico: </b></td>
-                                <td>{{ $solicitud->email }}   </td>
-                            </tr>
                             <tr>   
                                 <td><b>Centro de conciliación: </b></td>
                                 <td>{{ $solicitud->delegacion }} </td>
@@ -89,18 +85,20 @@
                 </div><br><br><br><br><br>
                 <p><center><b>CONSTANCIA DE INCOMPETENCIA</b></center></p><br>
                 <p><b>
-                    Solicitante: {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
-                    Citado: {{ $solicitud->empresa }}<br><br>
+                    Solicitante: {{ $solicitante->nombre }} <br> 
+                    Citado(s): 
+                    @foreach($citados as $citado)    
+                        {{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}},&nbsp;
+                    @endforeach<br><br>
 
-                    Objeto de la conciliación: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
-                    Fecha de conflicto: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}<br>
+                    Fecha de conflicto: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} <br>
                     Posible prescripción de derechos: No <br>
                 </b></p>  
                 <p>
                     <b>Fundamentación: </b>Artículos 123 fracción XXXI de la Constitución Política de los Estados Unidos mexicanos, 527, 684-E, fracción V de la Ley Federal del Trabajo 5 y 8, 
                     fracción I de la Ley Orgánica del centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<br><br>
 
-                    <b>Motivación: </b>Con fecha <b>[fecha actual]</b>, <b>[Solicitante]</b> presentó ante la Oficina Regional del Centro de Conciliación Laboral del Estado de Michoacán Delegación <b>[sede]</b> la solicitud <b>[NUE]</b>.<br><br>
+                    <b>Motivación: </b>Con fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, <b>{{ $solicitante->nombre }}</b> presentó ante la Oficina Regional del Centro de Conciliación Laboral del Estado de Michoacán Delegación <b>{{ $solicitud->delegacion }}</b> la solicitud <b>{{ $solicitante->NUE }}</b>.<br><br>
 
                     La Oficina Regional del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, de conformidad con la información aportada y derivado del análisis de la solicitud mencionada, esta Autoridad 
                     Conciliadora se declara incompetente por declinatoria, toda vez que la rama industrial o de servicio materia de la soliciotud presentada es de cáracter federal local de conformidad con la fraccipon XXXI 
@@ -112,7 +110,7 @@
                     En este sentido y de conformidad con los principios constitucionales de legalidad, imparcialidad, confiabilidad, eficacia, confidencialidad, objetividad, profesionalismo, transparencia y publicidad, se notifica al Solicitante 
                     de la imcompetencia por declinatoria y se remite copia certificada de la presente constancia al Centro de Conciliación Laboral competente.<br><br>
 
-                    Se emite la presente constancia con fecha <b>[fecha actual]</b> dejando a salvo los derechos del solicitante para continuar con el procedimiento de conciliación ante la Autoridad Conciliadora competente.<br><br>
+                    Se emite la presente constancia con fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> dejando a salvo los derechos del solicitante para continuar con el procedimiento de conciliación ante la Autoridad Conciliadora competente.<br><br>
 
                     Finalmemnte, se dejan a salvo los derechos de los interesados para continuar con el procedimiento de conciliación ante el Centro de Conciliación Laboral competente, en términos de los artículos 527 y 684-E fracción 
                     V párrafosegundo de la Ley Federal del Trabajo. <b>Doy Fe.</b>

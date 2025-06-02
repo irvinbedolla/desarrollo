@@ -12,10 +12,13 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#ModalArchivar" data-id="{{ $solicitud->id }}">
+                                Archivar
+                            </button>
+                            <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#ModalReagendar" data-id="{{ $solicitud->id }}">
                                 Reagendar
-                            </button>&nbsp;&nbsp;
-                            <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $solicitud->id }}">
+                            </button>
+                            <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#ModalIncopentencia" data-id="{{ $solicitud->id }}">
                                 Incompetencia
                             </button>
                             <div class="table-responsive">
@@ -73,7 +76,6 @@
 @endsection
 <!-- Modal Citados -->
 <div class="modal fade" id="modalCitados" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-   
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -316,6 +318,70 @@
         </div>
     </form>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="ModalArchivar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <form class='needs-validation novalidate'  method='POST' action="{{route('archivar_audiencia')}}">
+        @csrf
+        <input type="hidden" id="modal-id-archivar" name="id" value="">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Motivo del archivo de audiencia</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea name="observaciones" style="width:100%"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal fade" id="ModalReagendar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <form class='needs-validation novalidate'  method='POST' action="{{route('reagendar_audiencia')}}">
+        @csrf
+        <input type="hidden" id="modal-id-reagendar" name="id" value="">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Fecha de la reagenda</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="date" class="form-control" name="fecha" value="fecha">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal fade" id="ModalIncopentencia" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <form class='needs-validation novalidate'  method='POST' action="{{route('incopentencia_audiencia')}}">
+        @csrf
+        <input type="hidden" id="modal-id-incopentencia" name="id" value="">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Motivo de Incompetencia</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea name="observaciones" style="width:100%"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 
 <div id="nuevo_poder" style ="display: none;">
     <div>.</div>
@@ -331,6 +397,9 @@
             document.getElementById('modal-id-reagendar').value = id;
             document.getElementById('modal-id-incopentencia').value = id;
             document.getElementById('id_citado').value =id;
+            document.getElementById('modal-id-archivar').value = id;
+            document.getElementById('modal-id-reagendar').value = id;
+            document.getElementById('modal-id-incopentencia').value = id;
         });
     </script>
     <script src="../../public/assets/js/validaciones.js"></script> 

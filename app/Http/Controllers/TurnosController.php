@@ -1441,7 +1441,6 @@ public function VerPDFMulta($id){
 //PDF Acta por falta de interés
 public function VerPDFInteres($id){
     $solicitud = Turnos::find($id);
-
     $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
     $conciliador = $conciliador->where("turnos.id", "=", $id)
     ->select('users.name')

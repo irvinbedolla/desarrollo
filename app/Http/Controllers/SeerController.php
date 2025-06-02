@@ -2578,13 +2578,36 @@ class SeerController extends Controller
     public function guardar_audiencia_archivo(Request $request){
         $data = $request->all();
         $user = auth()->user();
-    
-        $solicitud = SeerPerGeneral::find($data["id"]);
-    
-        $solicitud->update([
-            'estatus' => 'Archivada', 'estatus' => 'Incompetencia', 'estatus' => 'Comparecencia',
-            'observaciones' => $data["observaciones"],
-            'conciliador_id' => $user->id,
+        $fecha_actual = date('y-m-d');
+
+        //Guardar registro en SeerConciliador
+        $numero_audiencias = SeerPerConciliador::find($data["id"]);
+        if(!isset($numero_audiencias)){
+            $num_audi = 0;
+        }
+        else{
+            $num_audi = $numero_audiencias;
+        }
+        $num_audi = $num_audi+1;
+
+        $numero_audiencia = $this->GeneraAudiencia($data["id"]);
+        $data_conciliador = [
+            'id_solicitud'          => $data["id"],
+            'numero_audiencia'      => $numero_audiencia[0],
+            'numero_audiencias'     => $num_audi,
+            'validado'              => 'Validado',
+            'fecha_conclucion'      =>  $fecha_actual,
+            'consecutivo'           =>  $numero_audiencia[1]
+        ];
+        
+        SeerPerConciliador::create($data_conciliador);  
+
+        $solicitud = SeerPerGeneral::find($data["id"])
+        ->update([
+            'fecha_terminacion' => $fecha_actual, 
+            'estatus'           => 'Archivada',
+            'observaciones'     => $data["observaciones"], 
+            'conciliador_id'    => $user->id
         ]);
     
         return redirect()->route('audiencias.conciliador');
@@ -2792,5 +2815,154 @@ class SeerController extends Controller
         $folio = SeerCitados::find($id);
         //dd($folio);
         return view('/notificaciones/mostrar_citado',compact('folio'));
+    }
+
+    //PDF Acta por falta de interés
+    public function VerPDFInteres($id){
+        $solicitud = SeerPerGeneral::find($id);
+        $solicitante = SeerSolicitante::where('id_solicitud',$solicitud["id"])->first();
+       
+        $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
+        $conciliador = $conciliador->where("seer_general.id", "=", $id)
+        ->select('users.name')
+        ->first();
+        $citados = SeerCitados::where("id_solicitud",$id)
+        ->select('nombre','primer_apellido','segundo_apellido')
+        ->get();
+        $motivos = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
+        ->where('id_solicitud',$id)
+        ->select('catalogo_motivos.motivo')->get();
+        $audiencia = SeerPerConciliador::where("id_solicitud",$solicitud["id"])->first();
+
+        $html = view('PDF/Solicitudes/ActaFaltaInteres', compact('id', 'solicitud','conciliador','solicitante','citados','motivos','audiencia'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'falta_de_interes_' . $solicitud->trabajador .'.pdf';
+        return $pdf->stream($nombreArchivo);  
+    }
+
+    public function incopentencia_audiencia(Request $request){
+        $data = $request->all();
+        $user = auth()->user();
+        $fecha_actual = date('y-m-d');
+
+        //Guardar registro en SeerConciliador
+        $numero_audiencias = SeerPerConciliador::find($data["id"]);
+        if(!isset($numero_audiencias)){
+            $num_audi = 0;
+        }
+        else{
+            $num_audi = $numero_audiencias;
+        }
+        $num_audi = $num_audi+1;
+
+        $numero_audiencia = $this->GeneraAudiencia($data["id"]);
+        $data_conciliador = [
+            'id_solicitud'          => $data["id"],
+            'numero_audiencia'      => $numero_audiencia[0],
+            'numero_audiencias'     => $num_audi,
+            'validado'              => 'Validado',
+            'fecha_conclucion'      =>  $fecha_actual,
+            'consecutivo'           =>  $numero_audiencia[1],
+            'estatus_conciliacion'  => 'Incompetencia'
+        ];
+        
+        SeerPerConciliador::create($data_conciliador);  
+
+        $solicitud = SeerPerGeneral::find($data["id"])
+        ->update([
+            'fecha_terminacion'     => $fecha_actual, 
+            'observaciones'         => $data["observaciones"], 
+            'conciliador_id'        => $user->id,
+            'estatus'               => 'Incompetencia'
+        ]);
+
+        return redirect()->route('audiencias.conciliador');
+    }
+    
+    public function GeneraAudiencia($id){
+        $año_actual = date('Y');
+        $id_adiencia = SeerPerConciliador::select('consecutivo')->orderBy('consecutivo', 'desc')->first();
+        
+        if(!isset($id_adiencia)){
+            $num_adiencia = 0;
+        }
+        else{
+            $num_adiencia = $id_adiencia;
+        }
+
+        $num_adiencia = $id_adiencia["consecutivo"] + 1;
+        $numeroConCeros = str_pad($num_adiencia, 4, "0", STR_PAD_LEFT);
+        $folio = $numeroConCeros."/".$año_actual;
+    
+        return array($folio,$num_adiencia);
+    }
+
+    public function reagendar_audiencia(Request $request){
+        $data = $request->all();
+        $user = auth()->user();
+        $fecha_actual = date('y-m-d');
+
+        //Guardar registro en SeerConciliador
+        $numero_audiencias = SeerPerConciliador::find($data["id"]);
+        if(!isset($numero_audiencias)){
+            $num_audi = 0;
+        }
+        else{
+            $num_audi = $numero_audiencias;
+        }
+        $num_audi = $num_audi+1;
+
+        $numero_audiencia = $this->GeneraAudiencia($data["id"]);
+        $data_conciliador = [
+            'id_solicitud'          => $data["id"],
+            'numero_audiencia'      => $numero_audiencia[0],
+            'numero_audiencias'     => $num_audi,
+            'validado'              => 'Validado',
+            'fecha_conclucion'      =>  $fecha_actual,
+            'consecutivo'           =>  $numero_audiencia[1],
+            'estatus_conciliacion'  => 'Regenerada'
+        ];
+        
+        SeerPerConciliador::create($data_conciliador);  
+
+        $solicitud = SeerPerGeneral::find($data["id"])
+        ->update([
+            'estatus'           => 'Confirmado',
+            'conciliador_id'    => $user->id
+        ]);
+    
+        return redirect()->route('audiencias.conciliador');
+    }
+
+    //PDF Acta por falta de interés
+    public function VerPDFIncompetencia($id){
+        $solicitud = SeerPerGeneral::find($id);
+        $solicitante = SeerSolicitante::where('id_solicitud',$solicitud["id"])->first();
+        $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
+        $conciliador = $conciliador->where("seer_general.id", "=", $id)
+        ->select('users.name')
+        ->first();
+        $citados = SeerCitados::where("id_solicitud",$id)
+        ->select('nombre','primer_apellido','segundo_apellido')
+        ->get();
+        $motivos = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
+        ->where('id_solicitud',$id)
+        ->select('catalogo_motivos.motivo')->get();
+        $audiencia = SeerPerConciliador::where("id_solicitud",$solicitud["id"])->first();
+
+        $html = view('PDF/Solicitudes/incompetencia', compact('id', 'solicitud','conciliador','solicitante','citados','motivos','audiencia'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'falta_de_interes_' . $solicitud->trabajador .'.pdf';
+        return $pdf->stream($nombreArchivo);  
     }
 }
