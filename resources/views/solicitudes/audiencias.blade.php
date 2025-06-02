@@ -12,48 +12,58 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                                                <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                    Reagendar
-                                                </button>&nbsp;&nbsp;
-                                                <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $solicitud->id }}">
-                                                    Incompetencia
-                                                </button>
-                                <div class="table-responsive">
-                                    <table class="table table-striped mt-1">
-                                        <thead style="background-color: #4A001F;">
-                                            <tr> 
-                                                <th style="color: #ffff;">Tipo parte</th>
-                                                <th style="color: #ffff;">Nombre de la parte</th>
-                                                <th style="color: #ffff;">Conciliador</th>
-                                                <th style="color: #ffff;">Sala</th>
-                                                <th style="color: #ffff;">Acciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                                <tr>
-                                                    <td style="color: #000000;"><b>Solicitante</b></td>
-                                                    <td>{{ $solicitante->nombre }}</td>
-                                                    <td>{{ $conciliador->name }}</td>
-                                                    <td style="color: #000000;"><b>Sala</b></td>
-                                                    <td><a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
-                                                        data-bs-target="#exampleModal1" data-id="{{ $id }}">Editar</a>
-                                                    </td>
-                                                </tr>
-                                                @foreach($citados as $citado)
-                                                    <tr>
-                                                        <td style="color: #000000;"><b>Citado</b></td>
-                                                        <td>{{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</td>
-                                                        <td>{{ $conciliador->name }}</td>
-                                                        <td style="color: #000000;"><b>Sala</b></td>
-                                                        <td>
-                                                            <button type="button" class="btn btn-primary btn-modal-poder" data-citado-id="{{ $citado->id }}" data-bs-toggle="modal" data-bs-target="#modalCitados">Citado</button>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach  
+                            <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                Reagendar
+                            </button>&nbsp;&nbsp;
+                            <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $solicitud->id }}">
+                                Incompetencia
+                            </button>
+                            <div class="table-responsive">
+                                <table class="table table-striped mt-1">
+                                    <thead style="background-color: #4A001F;">
+                                        <tr> 
+                                            <th style="display:none">ID</th>
+                                            <th style="color: #ffff;">Tipo parte</th>
+                                            <th style="color: #ffff;">Nombre de la parte</th>
+                                            <th style="color: #ffff;">Conciliador</th>
+                                            <th style="color: #ffff;">Representante legal</th>
+                                            <th style="color: #ffff;">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="display:none">{{$solicitante->id}}</td>
+                                            <td style="color: #000000;"><b>Solicitante</b></td>
+                                            <td>{{ $solicitante->nombre }}</td>
+                                            <td>{{ $conciliador->name }}</td>
+                                            <td>
                                                 
-                                        </tbody> 
-                                    </table>
-                                </div>
+                                            </td>
+                                            <td>
+                                                <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal1" data-id="{{ $id }}">Editar</a>
+                                            </td>
+                                        </tr>
+                                        @foreach($citados as $citado)
+                                            <tr>
+                                                <td  style="display:none">{{$citado->id}}</td>
+                                                <td style="color: #000000;"><b>Citado</b></td>
+                                                <td>{{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</td>
+                                                <td>{{ $conciliador->name }}</td>
+                                                <td>
+                                                    @if($citado->id_abogado == null)
+                                                        Por asignar
+                                                    @else
+                                                        {{ $citado->id_abogado }}
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-primary open-modal" data-id="{{ $citado->id }}" data-bs-toggle="modal" data-bs-target="#modalCitados"> Citado </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach       
+                                    </tbody> 
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -61,170 +71,9 @@
         </div>
     </section>
 @endsection
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <form class='needs-validation novalidate'  method='POST' action="{{route('archivar_audiencia')}}">
-        @csrf
-        <input type="hidden" id="modal-id" name="id" value="">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Observaciones</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <textarea name="observaciones" style="width:100%"></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Enviar</button>
-                </div>
-            </div>
-        </div>
-    </form>
-</div>
-<!-- Modal Solicitantes -->
-<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <form class='needs-validation novalidate'  method='POST' action="{{route('editar_solicitud')}}">
-        @csrf
-        <input type="hidden" name="id" value="{{$id}}">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Editar Solicitante</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-8">
-                            <div class="form-group">
-                                <label for="name">Nombre(s) y Apellidos del Solicitante (*) </label>
-                                <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" value="<?=$solicitante["nombre"];?>" required> 
-                                <div class="invalid-feedback">
-                                    El campo nombre es obligatorio.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-4">
-                            <div class="form-group">
-                                <label for="name">CURP del Solicitante (*)</label>
-                                <input type="text" name="curp" id="curp_input" oninput="validarInput(this)"class="form-control" value="<?=$solicitante["curp"];?>" required> 
-                                <pre id="resultado"></pre>
-                                <div class="invalid-feedback">
-                                    El campo curp es obligatorio.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-4">
-                            <div class="form-group">
-                                <label for="name">RFC del Solicitante (*)</label>
-                                <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()" value="<?=$solicitante["rfc"];?>" required> 
-                                <div class="invalid-feedback">
-                                    El campo RFC es obligatorio.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-4">
-                            <div class="form-group">
-                                <label for="name">Número de Seguro Social</label>
-                                <input type="text" name="seguro" minlength="11" maxlength="12" class="form-control" value="<?=$solicitante["nss"];?>"> 
-                                <div class="invalid-feedback">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-4">
-                            <div class="form-group">
-                                <label for="name">Puesto (*)</label>
-                                <input type="text" class="form-control" name="puesto" value="<?=$solicitante["puesto"];?>" oninput="this.value = this.value.toUpperCase()" required> 
-                                <div class="invalid-feedback">
-                                    El campo puesto es obligatorio.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-4">
-                            <div class="form-group">
-                                <label for="name">Frecuencia de Pago (*)</label>
-                                <select name="periodo_pago" class="form-control" value="<?=$solicitante["periodo_pago"];?>" required>
-                                    <option value="">SELECCIONE</option>
-                                    <option value="Diario" {{ $solicitante['periodo_pago'] == 'Diario' ? "selected" : '' }}>DIARIO</option>
-                                    <option value="Semana" {{ $solicitante['periodo_pago'] == 'Semana' ? "selected" : '' }}>SEMANAL</option>
-                                    <option value="Quincenal" {{ $solicitante['periodo_pago'] == 'Quincenal' ? "selected" : '' }}>QUINCENAL</option>
-                                    <option value="Mensual" {{ $solicitante['periodo_pago'] == 'Mensual' ? "selected" : '' }}>MENSUAL</option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    El campo frecuencia de pagos es obligatorio.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-4">
-                            <div class="form-group">
-                                <label for="name">Salario (*)</label>
-                                <input type="text" name="pago" class="form-control" value="<?=$solicitante["pago"];?>" required> 
-                                <div class="invalid-feedback">
-                                    El campo salario es obligatorio.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-4">
-                            <div class="form-group">
-                                <label for="name">Cantidad total de horas trabajadas por semana (*)</label>
-                                <input type="number" name="horas" class="form-control" value="<?=$solicitante["horas_semana"];?>" required> 
-                                <div class="invalid-feedback">
-                                    El campo cantidad de horas trabajadas es obligatorio.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12">
-                            <div class="form-group">
-                                <label for="check_fecha">¿Laboras actualmente?</label>
-                                <input type="checkbox" id="check_fecha" name="labora" {{ $solicitante['labora'] == 'Si' ? 'checked' : '' }} />
-                            </div>  
-                        </div>    
-                        <div class="col-xs-12 col-sm-12 col-md-4">
-                            <div class="form-group">
-                                <label for="name">Fecha de Ingreso (*)</label>
-                                <input type="date" name="fecha_ingreso" class="form-control" value="<?=$solicitante["fecha_ingreso"];?>" required> 
-                                <div class="invalid-feedback">
-                                    El campo fecha de ingreso es obligatoria.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-4">
-                            <div class="form-group">
-                                <label for="name">Jornada (*)</label>
-                                <select name="jornada" class="form-control" value="<?=$solicitante["jornada"];?>" required>
-                                    <option value="">SELECCIONE</option>
-                                    <option value="Diurna" {{ $solicitante['jornada'] == 'Diurna' ? "selected" : '' }}>DIURNA</option>
-                                    <option value="Nocturna" {{ $solicitante['jornada'] == 'Nocturna' ? "selected" : '' }}>NOCTURNA</option>
-                                    <option value="Mixta" {{ $solicitante['jornada'] == 'Mixta' ? "selected" : '' }}>MIXTA</option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    El campo jornada laboral es obligatoria.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-12 col-md-4" id="fecha_fin">
-                            <div class="form-group">
-                                <label for="name">Fecha de Salida</label>
-                                <input type="date" name="fecha_salida" class="form-control" value="<?=$solicitante["fecha_salida"];?>"> 
-                                <div class="invalid-feedback">
-                                    El campo fecha de salida es obligatoria.
-                                </div>
-                            </div>
-                        </div>
-                    </div> 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                </div>
-            </div>
-        </div>
-    </form>
-</div>
 <!-- Modal Citados -->
 <div class="modal fade" id="modalCitados" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+   
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -232,43 +81,50 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-            <button type="button" class="btn btn-primary btn-modal-poder" data-citado-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarCitados">Agregar</button>
-
                 <div class="table-responsive">
-                                    <table id="tabla1" class="table-striped" style="width:100%">
-                                        <thead style="background-color: #4A001F;">
-                                            <th style="display: none;">ID</th>
-                                            <th style="color: #fff;">Nombre</th>
-                                            <th style="color: #fff;">RFC</th>
-                                            <th style="color: #fff;">Empresa</th>
-                                            <th style="color: #fff;">Acciones</th>
-                                        </thead>
-                                        <tbody class="contenidobusqueda">
-                                            @foreach($citados as $citado)
-                                                <tr>
-                                                    <td style="display: none;">{{$citado->id}}</td>
-                                                    <td>{{$citado->nombre}}</td>
-                                                    <td>{{$citado->rfc}}</td>
-                                                    <td>{{$citado->empresa}}</td>
-                                                    <td>
-                                                        <a class="btn btn-info" href="{{ route('usuarios.edit', $citado->id)}}" onclick=editar_usuario();>Seleccionar </a>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
+                <form method="POST" action="{{ route('seleccionar_abogado') }} ">
+                    @csrf
+                    <input type="hidden" id="modal-id" name="id3" value="">
+                    <input type="hidden" name="id2" value="{{$solicitud->id}}">
+                    <table id="tabla1" class="table-striped" style="width:100%">
+                        <thead style="background-color: #4A001F;">   
+                            <!--<th style="display: none;">ID</th>-->
+                            <th style="color: #fff;">Folio</th>
+                            <th style="color: #fff;">Nombre</th>
+                            <th style="color: #fff;">RFC</th>
+                            <th style="color: #fff;">Empresa</th>
+                            <th style="color: #fff;">Acciones</th>
+                        </thead>
+                        <tbody class="contenidobusqueda">
+                            @foreach($abogados as $abogado)
+                                <tr>
+                                    <td>{{$abogado->idAbogado}}</td>
+                                    <td>{{$abogado->nombres}} {{$abogado->primer_apellido}} {{$abogado->segundo_apellido}}</td>
+                                    <td>{{$abogado->rfc}}</td>
+                                    <td>{{$abogado->empresa}}</td>
+                                    <td>
+                                            <input type="text" name="id" value="{{$abogado->idAbogado}}">
+                                            <button class="btn btn-info" onclick=editar_rol(); type="submit">Seleccionar</button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </form>
+                </div>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-citado-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarCitados">Agregar</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
 </div>
+<!-- Modal Agregar Citados -->
 <div class="modal fade" id="modalAgregarCitados" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <form class='needs-validation novalidate'  method='POST' action="{{route('insertar_citado')}}">
+    <form class='needs-validation novalidate'  method='POST' name="AgregarRepresentante" id="AgregarRepresentante" action="{{route('insertar_citado')}}">
         @csrf
-        <input type="hidden" name="citado_id" id="citado_id">
+        <input type="hidden" name="id_citado_2" id="id_citado_2" value="">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -290,7 +146,7 @@
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
                                 <label for="">Primer Apellido</label>
-                                <input type="text" class="form-control" placeholder="*Apellidos" name="primer_apellido" id="apellidosAbogadoAlta" oninput="this.value = this.value.toUpperCase()" required>
+                                <input type="text" class="form-control" placeholder="*Apellidos" name="primer_apellido" id="primer_apellido" oninput="this.value = this.value.toUpperCase()" required>
                                 <div class="invalid-feedback">
                                     El primer apellido es obligatorio.
                                 </div>
@@ -300,7 +156,7 @@
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
                                 <label for="">Segundo Apellido</label>
-                                <input type="text" class="form-control" placeholder="*Apellidos" name="segundo_apellido" oninput="this.value = this.value.toUpperCase()" required>
+                                <input type="text" class="form-control" placeholder="*Apellidos" name="segundo_apellido" id="segundo_apellido" oninput="this.value = this.value.toUpperCase()" required>
                                 <div class="invalid-feedback">
                                     El segundo apellido es obligatorio.
                                 </div>
@@ -460,14 +316,23 @@
         </div>
     </form>
 </div>
+
 <div id="nuevo_poder" style ="display: none;">
     <div>.</div>
     <div class="loader"></div>
 </div>
 
 @section('scripts')
+    <script>
+         $('.open-modal').click(function() {
+            const id = $(this).data('id'); // Obtiene el valor de data-id
 
-   
+            document.getElementById('modal-id').value = id;
+            document.getElementById('modal-id-reagendar').value = id;
+            document.getElementById('modal-id-incopentencia').value = id;
+            document.getElementById('id_citado').value =id;
+        });
+    </script>
     <script src="../../public/assets/js/validaciones.js"></script> 
     <script src="../../public/assets/js/poderes/general.js"></script>
 @endsection

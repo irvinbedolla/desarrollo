@@ -281,7 +281,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/solicitud/editar',                    [SeerController::class, 'editar_solicitud_con'])->name('editar_solicitud');
         Route::get('/solicitud/consultarC',                 [SeerController::class, 'consultar_citados_con'])->name('consultar_citados');
         Route::post('/solicitud/guardar_citadoC',           [SeerController::class, 'insertar_citados_con'])->name('insertar_citado');
-
+        Route::post('/seleccionar_abogado',                 [SeerController::class, 'seleccionar_abogado'])->name('seleccionar_abogado');
+        
     //Ratificaciones
         Route::get('/ratificaciones/index',         [TurnosController::class, 'revisar_ratificaciones'])->name('atender_ratificacion');
         Route::get('/ratificaciones/concluir/{id}', [TurnosController::class, 'concluir_ratificaciones'])->name('ratificacion_concluir');
