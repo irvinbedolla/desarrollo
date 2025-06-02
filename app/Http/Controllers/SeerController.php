@@ -1655,7 +1655,10 @@ class SeerController extends Controller
     public function store_enlace(Request $request){
         $data = $request->all();
         SeerCitados::where('id', $data["id"])
-        ->update(['id_notificador' => $data["notificador"]]);
+        ->update(['id_notificador' => $data["notificador"]
+        'referencia'                    => $data["referencia"],
+    ]);
+    
 
         return redirect()->route('notificaciones');
     }
@@ -2668,6 +2671,12 @@ class SeerController extends Controller
         return redirect()->route('inicioAudiencia', ['id' => $data['id']]);
       
     }
+    
+    public function mostrar_citados($id){
+        $folio = SeerCitados::find($id);
+        //dd($folio);
+        return view('/notificaciones/ver_citado',compact('folio'));
+    }
 
     public function editar_citados(Request $request){
         $data = $request->all();
@@ -2698,5 +2707,11 @@ class SeerController extends Controller
         ]);
 
         return redirect()->route('notificaciones');
+    }
+
+    public function mostrar_citadoC($id){
+        $folio = SeerCitados::find($id);
+        //dd($folio);
+        return view('/notificaciones/mostrar_citado',compact('folio'));
     }
 }
