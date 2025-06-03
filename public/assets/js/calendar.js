@@ -1,17 +1,15 @@
 var calendar;
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var calendarEl = document.getElementById('calendar');
     calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridWeek',
         locale: 'es',
-        //events: 'citas/eventos',
         events: 'pagos/eventos',
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
             right: 'dayGridMonth,dayGridWeek'
-            //, 'timeGridWeek'
         },
         buttonText: {
             today: 'Hoy',
@@ -23,8 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
             minute: '2-digit',
             hour12: true
         },
-
-        eventContent: function(info) {
+        eventContent: function (info) {
             return {
                 html: `
                     <div class="fc-event-content">
@@ -37,21 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 `
             };
         },
-
-        /*eventClick: function(info) {
-            const props = info.event.extendedProps;
-            $('.modal-body').html(`
-                <strong>Motivo:</strong> ${info.event.title}<br>
-                <strong>Fecha:</strong> ${props.fecha}<br>
-                <strong>Hora:</strong> ${props.hora}<br>
-                <strong>Estatus:</strong> ${props.estatus}<br>
-                <strong>Tipo:</strong> ${props.tipo}<br>
-                <strong>Usuario:</strong> ${props.usuario}
-            `);
-            $('#evento').modal('show');
-        },*/
-
-        eventClick: function(info){
+        eventClick: function (info) {
             const props = info.event.extendedProps;
             $('.modal-body').html(`
                 <strong>Descripción:</strong> ${props.descripcion}<br>
@@ -66,8 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
             `);
             $('#evento').modal('show');
         },
-
-        eventDidMount: function(info) {
+        eventDidMount: function (info) {
             const titleElement = info.el.querySelector('.fc-event-title');
             if (titleElement) {
                 titleElement.style.whiteSpace = 'normal';
@@ -75,14 +57,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+
     calendar.render();
 
-    document.getElementById('btn-actualizar').addEventListener('click'), function() {
-        updateCalendar();
+    const btn = document.getElementById('btn-actualizar');
+    if (btn) {
+        btn.addEventListener('click', function () {
+            
+            updateCalendar();
+        });
     }
 });
 
 function updateCalendar() {
-    calendar.render();
+    //calendar.render();
     calendar.refetchEvents();
 }
