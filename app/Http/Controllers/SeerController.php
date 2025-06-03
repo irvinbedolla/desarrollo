@@ -2547,7 +2547,8 @@ class SeerController extends Controller
                     ->orWhere('estatus', 'Archivada')
                     ->orWhere('estatus', 'Reagendada')
                     ->orWhere('estatus', 'Incompetencia')
-                    ->orWhere('estatus', 'Comparecencia');
+                    ->orWhere('estatus', 'Comparecencia')
+                    ->orWhere('estatus', 'No conciliacion');
             })
             ->get();
 
@@ -2576,11 +2577,15 @@ class SeerController extends Controller
         
         $solicitud = SeerPerGeneral::find($id);
         $conciliador = User::select('name')->where('id', $solicitud->conciliador_id)->first();
-        $citados = SeerCitados::where('id_solicitud', $id)->get();
+        $citados = SeerCitados::leftjoin('abogados', 'abogados.idAbogado', '=', 'seer_citados.id_abogado')
+        ->where('id_solicitud', $id)
+        ->select('seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido','seer_citados.rfc',
+        'abogados.nombres as nombre_abogado','abogados.primer_apellido as primero_abogado',
+        'abogados.segundo_apellido as segundo_abogado','seer_citados.id_abogado','seer_citados.id','seer_citados.notificacion')
+        ->get();
         $solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
         $abogados = Poder::all();
-        SeerPerGeneral::find($id)
-            ->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
+        SeerPerGeneral::find($id)->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
 
         return view('/solicitudes/audiencias',compact('id','solicitudes','citados','solicitante','conciliador','solicitud','abogados'));
     }
@@ -2657,7 +2662,6 @@ class SeerController extends Controller
 
     public function insertar_citados_con(Request $request) {
         $data = $request->all();
-        //dd($request->all());
         $id_usuario = auth()->user()->id;
         $user = User::find($id_usuario);
         $roles = Role::pluck('name', 'name')->all();
@@ -2732,14 +2736,14 @@ class SeerController extends Controller
 
 
             $nombre_ine = $data["nombresAbogadoAlta"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresaAbogadoAlta"]."_IDENTIFICACION.pdf";
-            //$path = Storage::putFileAs(
-              //  'documentos_abogados', $request->file('documentoIne'), $nombre_ine
-            //);
+            $path = Storage::putFileAs(
+                'documentos_abogados', $request->file('documentoIne'), $nombre_ine
+            );
 
             $nombre_representación = $data["nombresAbogadoAlta"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresaAbogadoAlta"]."_REPRESENTACION.pdf";
-            /*$path = Storage::putFileAs(
+            $path = Storage::putFileAs(
                 'documentos_abogados', $request->file('documentoRepresentacion'), $nombre_representación
-            );*/
+            );
 
             //Si no existe
             if(!isset($data["documentoAnexo"])){
@@ -2747,9 +2751,9 @@ class SeerController extends Controller
             }
             else{
                 $nombre_anexo = $data["nombresAbogadoAlta"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresaAbogadoAlta"]."_ANEXO.pdf";
-               /* $path = Storage::putFileAs(
+               $path = Storage::putFileAs(
                     'documentos_abogados', $request->file('documentoAnexo'), $nombre_anexo
-                );*/
+                );
             }
 
             if(!isset($data["documentoPoder"])){
@@ -2757,9 +2761,9 @@ class SeerController extends Controller
             }
             else{
                 $nombre_poder = $data["nombresAbogadoAlta"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresaAbogadoAlta"]."_PODER.pdf";
-                /*$path = Storage::putFileAs(
+                $path = Storage::putFileAs(
                     'documentos_abogados', $request->file('documentoPoder'), $nombre_poder
-                );*/
+                );
             }
 
             $data_insertar["ine"] = $nombre_ine;
@@ -2770,10 +2774,8 @@ class SeerController extends Controller
             $nuevoAbogado = Poder::create($data_insertar);
         }    
          
-        $A_citado=SeerCitados::find($data['id']) ->update(['id_abogado' => $nuevoAbogado->idAbogado]);
+        $A_citado=SeerCitados::find($data['id_citado_2'])->update(['id_abogado' => $nuevoAbogado->idAbogado]);
         return back()->with('success', 'Representante legal registrado y asignado correctamente al citado.');
-
-      
     }
 
     public function editar_citados(Request $request){
@@ -2974,5 +2976,91 @@ class SeerController extends Controller
 
         $nombreArchivo = 'falta_de_interes_' . $solicitud->trabajador .'.pdf';
         return $pdf->stream($nombreArchivo);  
+    }
+
+
+    public function audiencia_parte2($id){
+        //Revisar si los citattorios son por el centro o por le trabajador
+        $citados = SeerCitados::where('id_solicitud',$id)->select('notificacion')->orderBy('id', 'desc')->first();
+        $user = auth()->user();
+
+        if($citados->notificacion == "Trabajador"){
+            //Voy a insertar nuevos citadorios pero como multa
+            $citados = SeerCitados::where("id_solicitud",$id)->get();
+            $cont = count($citados);
+            for($i = 0; $i < $cont; $i++) {
+               
+                $data_insert=array(
+                    'id_solicitud'      => $id,
+                    'colonia'           => $citados[$i]["colonia"],
+                    'cp'                => $citados[$i]["cp"],
+                    'n_ext'             => $citados[$i]["n_ext"],
+                    'calle'             => $citados[$i]["calle"],
+                    'tipo_vialidad'     => $citados[$i]["tipo_vialidad"],
+                    'referencia'        => $citados[$i]["referencia"],
+                    'notificacion'      => "Centro",
+                    'tipo_notificacion' => "Citatorio",
+                );
+
+                if(isset($citados[$i]["rfc"])){
+                    $data_insert["rfc"] =  $citados[$i]["rfc"];
+                }
+                if(isset($citados[$i]["curp"])){
+                    $data_insert["curp"] =  $citados[$i]["curp"];
+                }
+                if(isset($citados[$i]["traductor"])){
+                    $data_insert["traductor"] =  1;
+                    $data_insert["lenguaje"]  =  $citados[$i]["lenguaje"];
+                }
+                if(isset($citados[$i]["n_int"])){
+                    $data_insert["n_int"] =  $citados[$i]["n_int"];
+                }
+                if(isset($citados[$i]["calle1"])){
+                    $data_insert["calle1"] =  $citados[$i]["calle1"];
+                }
+                if(isset($citados[$i]["calle2"])){
+                    $data_insert["calle2"] =  $citados[$i]["calle2"];
+                }
+                if(isset($citados[$i]["tipo"])){
+                    $data_insert["tipo_persona"] = $citados[$i]["tipo_persona"];
+                }
+                if(isset($citados[$i]["nombre"])){
+                    $data_insert["nombre"] = $citados[$i]["nombre"];
+                }
+                if(isset($citados[$i]["primer_apellido"])){
+                    $data_insert["primer_apellido"] = $citados[$i]["primer_apellido"];
+                }
+                if(isset($citados[$i]["segundo_apellido"])){
+                    $data_insert["segundo_apellido"] = $citados[$i]["segundo_apellido"];
+                }
+                if(isset($citados[$i]["estado_solicitante"])){
+                    $data_insert["estado_solicitante"] = $citados[$i]["estado_solicitante"];
+                }
+                
+                SeerCitados::create($data_insert);
+            }
+        }
+        else if($citados->notificacion == "Centro"){
+            //Si va por el centro se van a generar las multas
+            $citados = SeerCitados::where("id_solicitud",$id)->where('notificacion',"Centro")->get();
+            $cont = count($citados);
+
+            for($i = 0; $i < $cont; $i++) {
+                $update = SeerCitados::find($citados[$i]["id"])->update([
+                    'tipo_notificacion' => 'Multa',
+                    'conciliador_id'    => $user->id
+                ]);
+            }
+            
+            //Se va poner como no conciliacion
+            $update = SeerPerGeneral::find($id)->update([
+                'estatus' => 'No conciliacion'
+            ]);
+            $update = SeerPerConciliador::where('id_solicitud',$id)->orderBy('id', 'desc')->first()
+            ->update(['estatus_conciliacion' => 'No conciliacion']);
+        }
+
+        //Se da nueva fecja de audiencia
+         return redirect()->route('audiencias.conciliador');
     }
 }
