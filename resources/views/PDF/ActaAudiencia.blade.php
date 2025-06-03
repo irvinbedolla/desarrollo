@@ -92,7 +92,7 @@
                     Prejudicial, relativa al número de expediente electrónico con Número de Identificación Único <b>{{ $solicitud->NUE }}</b>, misma que se celebra ante  
                     <b>{{ $conciliador->name }}</b>, Funcionaria Conciliadora/Funcionario Conciliador adscrito al Centro de Conciliación 
                     Laboral del Estado de Michoacán de Ocampo,  con fundamento en los artículos 33, 590-E, 590-F, 684-A, 684-B, 684-C, 684-D, 684-E, fracción V, 684-F, 684-G y 684-I, de la 
-                    Ley Federal del Trabajo, articulo 27 de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, y artículo 20 del Reglamento Interior del 
+                    Ley Federal del Trabajo, artículo 27 de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, y artículo 20 del Reglamento Interior del 
                     Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, <b>declara abierta</b> la Audiencia de Conciliación Prejudicial en la que comparecen: <br><br>
 
                     La parte solicitante <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> y, por la parte citada 

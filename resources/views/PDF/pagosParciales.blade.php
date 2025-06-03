@@ -100,7 +100,7 @@
                     <b>Motivación:</b> Conforme a la determinación de dar por terminado el conflicto laboral, la parte <b>TRABAJADORA</b> y la parte <b>EMPLEADORA</b>, celebraron el Convenio de Conciliación 
                     de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> ante esta Autoridad Conciliadora como resultado de la audiencia de conciliación 
                     celebrada <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> de 
-                    <b>{{$solicitud->hora}}</b> a <b>{{$solicitud->hora_fin}}</b>.<br><br>
+                    <b>{{$solicitud->hora}}</b> a <b>{{$solicitud->hora_fin}}</b> hrs.<br><br>
 
                     Las <b>PARTES</b> acordaron <b>PAGOS DIFERIDOS</b> en el convenio referido, en este sentido, el <b>EMPLEADOR</b> da cumplimiento ante esta Autoridad Conciliadora al siguiente concepto:<br>
 

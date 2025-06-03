@@ -298,7 +298,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/ratificaciones/pagoR/{id}',    [TurnosController::class, 'pagoR_ratificacion'])->name('ratificacion_pagoR');
         Route::get('ratificaciones/consultar/{id}', [TurnosController::class, 'consultar_ratificaciones'])->name('consultar_ratificacion');
         Route::post('ratificaciones/editar',        [TurnosController::class, 'editar_ratificaciones'])->name('editar_ratificacion');
-
+        Route::get('/PDF/falta_interes/{id}',       [TurnosController::class, 'VerPDFInteres'])->name('PDFfallta_interes');
      //Enlace
         Route::get('/notificaciones/consultar/{id}',        [SeerController::class, 'mostrar_citados'])->name('editar_citado');
         Route::post('/notificaciones/editar',               [SeerController::class, 'editar_citados'])->name('editar_citado_enlace');   
