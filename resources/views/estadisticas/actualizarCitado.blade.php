@@ -39,11 +39,11 @@
                                             <label for="email">Tipo de notificación</label>
                                             <select name="estatus" class="form-control" required>
                                                 <option value="">Selecciona</option>
-                                                <option value="Persona">Finalizado exitosamente (persona)</option>
-                                                <option value="Puerta">Exitoso por instructivo (fijado en puerta)</option>
-                                                <option value="Constituye">No existe se constituye</option>
-                                                <option value="Amparo">No existe no se constituye (amparo)</option>
-                                                <option value="Notificado">Notificado</option>
+                                                <option value="Notificada">Finalizado exitosamente (persona)</option>
+                                                <option value="No notificada">Exitoso por instructivo (fijado en puerta)</option>
+                                                <option value="Pendiente">No existe se constituye</option>
+                                                <option value="Exhorto">No existe no se constituye (amparo)</option>
+                                                <option value="Juez">Notificado</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
@@ -54,6 +54,13 @@
                                         <div class="form-group">
                                             <label for="name">observaciones</label>
                                             <input type="text" class="form-control" name="observaciones">
+                                        </div>
+                                    </div>
+
+                                     <div class="col-xs-12 col-sm-6 col-md-8">
+                                        <div class="form-group">
+                                            <label for="name">Foto</label>
+                                            <input type="file" class="form-control" name="foto" accept="image/*">
                                         </div>
                                     </div>
 

@@ -1648,18 +1648,27 @@ class SeerController extends Controller
         $data = $request->all();
 
         SeerCitados::where('id', $data["id"])
-        ->update(['estatus' => $data["estatus"]],['obervaciones' => $data["observaciones"]]);
+        ->update(['estatus' => $data["estatus"]],['obervaciones' => $data["observaciones"]],['documento' => $data["foto"]]);
 
+        //Foto
+        /*$documento = $data["foto"];
+        
+        $path = Storage::putFileAs(
+            'documentosSolicitud', $request->file('foto'), $documento
+        );
+
+        $data_insert["documento"] = $documento;
+       
+        SeerCitados::create($data_insert);*/
         return redirect()->route('seer'); 
     }
 
     public function store_enlace(Request $request){
         $data = $request->all();
         SeerCitados::where('id', $data["id"])
-        ->update(['id_notificador' => $data["notificador"],
-            'referencia'=> $data["referencia"]
+        ->update(['id_notificador' => $data["notificador"]], ['estatus' => ["Pendiente"]
     ]);
-    
+
         return redirect()->route('notificaciones');
     }
 
