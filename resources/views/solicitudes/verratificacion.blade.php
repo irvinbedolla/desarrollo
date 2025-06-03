@@ -353,7 +353,7 @@
                                             @if($folio->estatus == "Rechazada")
                                                 <button type="submit" class="btn btn-primary">Guardar</button>
                                             @endif
-                                        @elseif
+                                        @endif
                                     </div>    
                                 </div>
                             </form>

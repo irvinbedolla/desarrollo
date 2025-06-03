@@ -3063,4 +3063,17 @@ class SeerController extends Controller
         //Se da nueva fecja de audiencia
          return redirect()->route('audiencias.conciliador');
     }
+
+    public function mis_solicitudes(){
+        $id = auth()->user()->id;
+        $user = User::find($id);
+
+        $solicitudes = SeerPerGeneral::join('seer_solicitante','seer_solicitante.id_solicitud','=','seer_general.id')
+        ->join('users','seer_solicitante.curp','=','users.profile_photo_path')
+        ->where('seer_solicitante.curp',$user["profile_photo_path"])
+        ->select('seer_general.id','seer_general.fecha','seer_solicitante.nombre','seer_general.estatus')
+        ->get();
+        
+        return view('/solicitudes/missolicitudes',compact('solicitudes'));
+    }
 }

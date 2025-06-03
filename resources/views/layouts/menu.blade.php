@@ -46,7 +46,7 @@
 
     @auth
         @role('Administrador')
-        <a class="nav-link" href="{{ route('usuarios') }}">
+            <a class="nav-link" href="{{ route('usuarios') }}">
                 <i class="bi bi-people-fill"></i><span class="text-dark" onclick="usuarios()">Usuarios</span>
             </a>
             <a class="nav-link" href="{{ route('roles') }}">
@@ -265,10 +265,10 @@
     @auth
         @role('Solicitante')
             <a class="nav-link" href="{{ route('mis_solicitudes') }}">
-                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Mis Pendientes</span>
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Mis Solicitudes</span>
             </a>
             <a class="nav-link" href="{{ route('ratificacion') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Mis ratificaciones</span>
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Mis Ratificaciones</span>
             </a>
         @endrole
     @endauth

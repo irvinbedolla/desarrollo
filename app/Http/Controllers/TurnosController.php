@@ -1295,273 +1295,274 @@ class TurnosController extends Controller
         //return Municipios::where('estado', $id)->get();
     }
 
-//PDF Acuse de Ratificación
-public function VerPDF($id){
-    $solicitud = Turnos::find($id);
-    $montoTexto = $this->convertirNumerosALetras($solicitud->monto);
-    $pdf = \PDF::loadView('PDF/ratificacion', compact('id','solicitud','montoTexto'))
-    ->setPaper('a4', 'portrait')
-    ->setOption('isHtml5ParserEnabled', true)
-    ->setOption('isPhpEnabled', true);
-
-    $nombreArchivo = 'ratificaion_' . $solicitud->empresa .'.pdf';
-
-    return $pdf->stream($nombreArchivo);               
-}
-
-//PDF Convenio Ratificación 
-public function VerPDFConvenio($id){
-    $solicitud = Turnos::find($id);
-    $pagos = Pagos::where('id_solicitud', $id)->get();
-    //$prestacionesLab = Concepto::where('id_solicitud', $id)->first();
-    //dd($prestaciones);
-    $prestaciones = Concepto::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
-    // Inicializa las variables de texto
-    $vacacionesTexto = '';
-    $primaTexto = '';
-    $aguinaldoTexto = '';
-    $DSueldoTexto = '';
-    $antiguedadTexto = '';
-    $gratificacionATexto = ''; $gratificacionBTexto = ''; $gratificacionCTexto = ''; $gratificacionDTexto = ''; $gratificacionETexto = ''; $gratificacionFTexto = '';
-    $otrasTexto = '';
-    foreach ($prestaciones as $concepto) {
-        switch ($concepto->descripcion) {
-            case 'Vacaciones':
-                $vacacionesTexto = $this->convertirNumerosALetras($concepto->monto);
-                break;
-            case 'PrimaVacacional':
-                $primaTexto = $this->convertirNumerosALetras($concepto->monto);
-                break;
-            case 'Aguinaldo':
-                $aguinaldoTexto = $this->convertirNumerosALetras($concepto->monto);
-                break;
-            case 'DSueldo':
-                $DSueldoTexto = $this->convertirNumerosALetras($concepto->monto);
-                break;
-            case 'GratificaciónA':
-                $gratificacionATexto = $this->convertirNumerosALetras($concepto->monto);
-                break;
-            case 'GratificaciónB':
-                $gratificacionBTexto = $this->convertirNumerosALetras($concepto->monto);
-                break;
-            case 'GratificaciónC':
-                $gratificacionCTexto = $this->convertirNumerosALetras($concepto->monto);
-                break;
-            case 'GratificaciónD':
-                $gratificacionDTexto = $this->convertirNumerosALetras($concepto->monto);
-                break;
-            case 'GratificaciónE':
-                $gratificacionETexto = $this->convertirNumerosALetras($concepto->monto);
-                break;
-            case 'GratificaciónF':
-                $gratificacionFTexto = $this->convertirNumerosALetras($concepto->monto);
-                break;
-            case 'Otras':
-                $otrasTexto = $this->convertirNumerosALetras($concepto->monto);
-                break;
-            default:
-                break;
-        }
-    }
-    //
-    $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
-
-    $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
-    $salario_mensual = $salario_diario * 30;
-    $diarioTexto = $this->convertirNumerosALetras($salario_diario);
-    $mensualTexto = $this->convertirNumerosALetras($salario_mensual);
-    $montoTexto = $this->convertirNumerosALetras($solicitud->monto);
-    
-    $pagosDif  = Pagos::join("turnos","turnos.id","=","pago_solicitud.id_solicitud");
-    $pagosDif = $pagosDif->where("pago_solicitud.id_solicitud", "=", $id)
-    ->select(DB::raw('count(pago_solicitud.id_solicitud) as C_pagos'))
-    ->first();
-
-    $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
-    $conciliador = $conciliador->where("turnos.id", "=", $id)
-    ->select('users.name')
-    ->first();
-
-    //dd($conciliador);
-    $html = view('PDF/convenioTerminacion', 
-        compact('id', 'solicitud', 'dias_descanso', 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','vacacionesTexto',
-        'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
-        'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones'))
-        ->render();
-    $pdf = \PDF::loadHTML($html)
+    //PDF Acuse de Ratificación
+    public function VerPDF($id){
+        $solicitud = Turnos::find($id);
+        $montoTexto = $this->convertirNumerosALetras($solicitud->monto);
+        $pdf = \PDF::loadView('PDF/ratificacion', compact('id','solicitud','montoTexto'))
         ->setPaper('a4', 'portrait')
         ->setOption('isHtml5ParserEnabled', true)
         ->setOption('isPhpEnabled', true);
 
-    return $pdf->stream('Convenio_terminacion.pdf');                   
-}
+        $nombreArchivo = 'ratificaion_' . $solicitud->empresa .'.pdf';
 
-public function calcularSalarioDiario($salario, $frecuencia) {
-    switch ($frecuencia) {
-        case 'Diario':
-            return $salario;
-        case 'Semanal':
-            return $salario / 7; 
-        case 'Quincenal':
-            return $salario / 15; 
-        case 'Mensual':
-            return $salario / 30;
-        default:
-            return 0;
+        return $pdf->stream($nombreArchivo);               
     }
-}
 
-private function convertirNumerosALetras($valor) {
-    $numberToWords = new NumberToWords();
-    $numberTransformer = $numberToWords->getNumberTransformer('es'); 
+    //PDF Convenio Ratificación 
+    public function VerPDFConvenio($id){
+        $solicitud = Turnos::find($id);
+        $pagos = Pagos::where('id_solicitud', $id)->get();
+        //$prestacionesLab = Concepto::where('id_solicitud', $id)->first();
+        //dd($prestaciones);
+        $prestaciones = Concepto::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
+        // Inicializa las variables de texto
+        $vacacionesTexto = '';
+        $primaTexto = '';
+        $aguinaldoTexto = '';
+        $DSueldoTexto = '';
+        $antiguedadTexto = '';
+        $gratificacionATexto = ''; $gratificacionBTexto = ''; $gratificacionCTexto = ''; $gratificacionDTexto = ''; $gratificacionETexto = ''; $gratificacionFTexto = '';
+        $otrasTexto = '';
+        foreach ($prestaciones as $concepto) {
+            switch ($concepto->descripcion) {
+                case 'Vacaciones':
+                    $vacacionesTexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                case 'PrimaVacacional':
+                    $primaTexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                case 'Aguinaldo':
+                    $aguinaldoTexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                case 'DSueldo':
+                    $DSueldoTexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                case 'GratificaciónA':
+                    $gratificacionATexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                case 'GratificaciónB':
+                    $gratificacionBTexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                case 'GratificaciónC':
+                    $gratificacionCTexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                case 'GratificaciónD':
+                    $gratificacionDTexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                case 'GratificaciónE':
+                    $gratificacionETexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                case 'GratificaciónF':
+                    $gratificacionFTexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                case 'Otras':
+                    $otrasTexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                default:
+                    break;
+            }
+        }
+        //
+        $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
 
-    $parteEntera = floor($valor);
-    $letras = strtoupper($numberTransformer->toWords($parteEntera)); 
+        $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
+        $salario_mensual = $salario_diario * 30;
+        $diarioTexto = $this->convertirNumerosALetras($salario_diario);
+        $mensualTexto = $this->convertirNumerosALetras($salario_mensual);
+        $montoTexto = $this->convertirNumerosALetras($solicitud->monto);
+        
+        $pagosDif  = Pagos::join("turnos","turnos.id","=","pago_solicitud.id_solicitud");
+        $pagosDif = $pagosDif->where("pago_solicitud.id_solicitud", "=", $id)
+        ->select(DB::raw('count(pago_solicitud.id_solicitud) as C_pagos'))
+        ->first();
 
-    $parteDecimal = round(($valor - $parteEntera) * 100);
-    $centavos = str_pad($parteDecimal, 2, '0', STR_PAD_LEFT); 
-    return "{$letras} PESOS {$centavos}/100";
-}
+        $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
+        $conciliador = $conciliador->where("turnos.id", "=", $id)
+        ->select('users.name')
+        ->first();
 
-//PDF Acta de multa
-public function VerPDFMulta($id){
-    $solicitud = Turnos::find($id);
+        //dd($conciliador);
+        $html = view('PDF/convenioTerminacion', 
+            compact('id', 'solicitud', 'dias_descanso', 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','vacacionesTexto',
+            'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
+            'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones'))
+            ->render();
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true);
 
-    $html = view('PDF/ActaMulta', compact('id', 'solicitud'))->render();
+        return $pdf->stream('Convenio_terminacion.pdf');                   
+    }
 
-    $pdf = \PDF::loadHTML($html)
-        ->setPaper('a4', 'portrait')
-        ->setOption('isHtml5ParserEnabled', true)
-        ->setOption('isPhpEnabled', true); 
+    public function calcularSalarioDiario($salario, $frecuencia) {
+        switch ($frecuencia) {
+            case 'Diario':
+                return $salario;
+            case 'Semanal':
+                return $salario / 7; 
+            case 'Quincenal':
+                return $salario / 15; 
+            case 'Mensual':
+                return $salario / 30;
+            default:
+                return 0;
+        }
+    }
 
-    $nombreArchivo = 'multa_' . $solicitud->empresa .'.pdf';
-    return $pdf->stream($nombreArchivo);                  
-}
+    private function convertirNumerosALetras($valor) {
+        $numberToWords = new NumberToWords();
+        $numberTransformer = $numberToWords->getNumberTransformer('es'); 
 
-//PDF Acta por falta de interés
-public function VerPDFInteres($id){
-    $solicitud = Turnos::find($id);
-    $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
-    $conciliador = $conciliador->where("turnos.id", "=", $id)
-    ->select('users.name')
-    ->first();
+        $parteEntera = floor($valor);
+        $letras = strtoupper($numberTransformer->toWords($parteEntera)); 
 
-    $html = view('PDF/ActaFaltaInteres', compact('id', 'solicitud','conciliador'))->render();
+        $parteDecimal = round(($valor - $parteEntera) * 100);
+        $centavos = str_pad($parteDecimal, 2, '0', STR_PAD_LEFT); 
+        return "{$letras} PESOS {$centavos}/100";
+    }
 
-    $pdf = \PDF::loadHTML($html)
-        ->setPaper('a4', 'portrait')
-        ->setOption('isHtml5ParserEnabled', true)
-        ->setOption('isPhpEnabled', true); 
+    //PDF Acta de multa
+    public function VerPDFMulta($id){
+        $solicitud = Turnos::find($id);
 
-    $nombreArchivo = 'falta_de_interes_' . $solicitud->trabajador .'.pdf';
-    return $pdf->stream($nombreArchivo);                  
-}
+        $html = view('PDF/ActaMulta', compact('id', 'solicitud'))->render();
 
-//PDF Constancia de cumplimiento
-public function VerPDFCumplimiento($id){
-    $solicitud = Turnos::find($id);
-    $pagos = Pagos::where('id_solicitud', $id)->get();
-    $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
-    $conciliador = $conciliador->where("turnos.id", "=", $id)
-    ->select('users.name')
-    ->first();
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
 
-    $html = view('PDF/ConstanciaCumplimiento', compact('id', 'solicitud','conciliador','pagos'))->render();
+        $nombreArchivo = 'multa_' . $solicitud->empresa .'.pdf';
+        return $pdf->stream($nombreArchivo);                  
+    }
 
-    $pdf = \PDF::loadHTML($html)
-        ->setPaper('a4', 'portrait')
-        ->setOption('isHtml5ParserEnabled', true)
-        ->setOption('isPhpEnabled', true); 
+    //PDF Acta por falta de interés
+    public function VerPDFInteres($id){
+        $solicitud = Turnos::find($id);
+        $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
+        $conciliador = $conciliador->where("turnos.id", "=", $id)
+        ->select('users.name')
+        ->first();
 
-    $nombreArchivo = 'constancia_de_cumplimiento_' . $solicitud->trabajador .'.pdf';
-    return $pdf->stream($nombreArchivo);                  
-}
+        $html = view('PDF/ActaFaltaInteres', compact('id', 'solicitud','conciliador'))->render();
 
-//PDF Acta de Audiencia
-public function VerPDFAudiencia($id){
-    $solicitud = Turnos::find($id);
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
 
-    $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
-    $conciliador = $conciliador->where("turnos.id", "=", $id)
-    ->select('users.name')
-    ->first();
+        $nombreArchivo = 'falta_de_interes_' . $solicitud->trabajador .'.pdf';
+        return $pdf->stream($nombreArchivo);                  
+    }
 
-    $html = view('PDF/ActaAudiencia', compact('id', 'solicitud','conciliador'))->render();
+    //PDF Constancia de cumplimiento
+    public function VerPDFCumplimiento($id){
+        $solicitud = Turnos::find($id);
+        $pagos = Pagos::where('id_solicitud', $id)->get();
+        $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
+        $conciliador = $conciliador->where("turnos.id", "=", $id)
+        ->select('users.name')
+        ->first();
 
-    $pdf = \PDF::loadHTML($html)
-        ->setPaper('a4', 'portrait')
-        ->setOption('isHtml5ParserEnabled', true)
-        ->setOption('isPhpEnabled', true); 
+        $html = view('PDF/ConstanciaCumplimiento', compact('id', 'solicitud','conciliador','pagos'))->render();
 
-    $nombreArchivo = 'acta_de_audiencia_' . $solicitud->trabajador .'.pdf';
-    return $pdf->stream($nombreArchivo);                  
-}
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
 
-//PDF Constancia de Incumplimiento
-public function VerPDFIncumplimiento($id){
-    $solicitud = Turnos::find($id);
-    $pagos = Pagos::find($id);
-    //$solicitud = Turnos::find($pagos["id_solicitud"]);
-    //dd($solicitud);
-    $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
-    $conciliador = $conciliador->where("turnos.id", "=", $id)
-    ->select('users.name')
-    ->get();
-    $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
+        $nombreArchivo = 'constancia_de_cumplimiento_' . $solicitud->trabajador .'.pdf';
+        return $pdf->stream($nombreArchivo);                  
+    }
 
-    $html = view('PDF/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
+    //PDF Acta de Audiencia
+    public function VerPDFAudiencia($id){
+        $solicitud = Turnos::find($id);
 
-    $pdf = \PDF::loadHTML($html)
-        ->setPaper('a4', 'portrait')
-        ->setOption('isHtml5ParserEnabled', true)
-        ->setOption('isPhpEnabled', true); 
+        $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
+        $conciliador = $conciliador->where("turnos.id", "=", $id)
+        ->select('users.name')
+        ->first();
 
-    $nombreArchivo = 'constancia_de_incumplimiento_'  .'.pdf';
-    return $pdf->stream($nombreArchivo);                  
-}
+        $html = view('PDF/ActaAudiencia', compact('id', 'solicitud','conciliador'))->render();
 
-//PDF Constancia de Incumplimiento Parcial
-public function VerPDFInParcial($id){
-    $pagos = Pagos::find($id);
-    $solicitud = Turnos::find($pagos["id_solicitud"]);
-    //dd($solicitud);
-    $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
 
-    $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
-    $conciliador = $conciliador->where("turnos.id_conciliador", "=", $solicitud["id_conciliador"])
-    ->select('users.name')
-    ->first();
+        $nombreArchivo = 'acta_de_audiencia_' . $solicitud->trabajador .'.pdf';
+        return $pdf->stream($nombreArchivo);                  
+    }
+
+    //PDF Constancia de Incumplimiento
+    public function VerPDFIncumplimiento($id){
+        $solicitud = Turnos::find($id);
+        $pagos = Pagos::find($id);
+        //$solicitud = Turnos::find($pagos["id_solicitud"]);
+        //dd($solicitud);
+        $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
+        $conciliador = $conciliador->where("turnos.id", "=", $id)
+        ->select('users.name')
+        ->get();
+        $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
+
+        $html = view('PDF/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'constancia_de_incumplimiento_'  .'.pdf';
+        return $pdf->stream($nombreArchivo);                  
+    }
+
+    //PDF Constancia de Incumplimiento Parcial
+    public function VerPDFInParcial($id){
+        $pagos = Pagos::find($id);
+        $solicitud = Turnos::find($pagos["id_solicitud"]);
+        //dd($solicitud);
+        $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
+
+        $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
+        $conciliador = $conciliador->where("turnos.id_conciliador", "=", $solicitud["id_conciliador"])
+        ->select('users.name')
+        ->first();
+        
+        $html = view('PDF/incumplimientoParcial', compact('id', 'solicitud','conciliador','pagos','salario_diario'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'constancia_de_incumplimiento_parcial'  .'.pdf';
+        return $pdf->stream($nombreArchivo);                  
+    }
+
+    //PDF Constancia de Pago Parcial
+    public function VerPDFPagos($id){
+        $pagos = Pagos::find($id);
+        $solicitud = Turnos::find($pagos["id_solicitud"]);
     
-    $html = view('PDF/incumplimientoParcial', compact('id', 'solicitud','conciliador','pagos','salario_diario'))->render();
+        $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
+        $conciliador = $conciliador->where("turnos.id_conciliador", "=", $solicitud["id_conciliador"])
+        ->select('users.name')
+        ->first();
+        $html = view('PDF/pagosParciales', compact('id','solicitud','conciliador','pagos'))->render();
 
-    $pdf = \PDF::loadHTML($html)
-        ->setPaper('a4', 'portrait')
-        ->setOption('isHtml5ParserEnabled', true)
-        ->setOption('isPhpEnabled', true); 
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
 
-    $nombreArchivo = 'constancia_de_incumplimiento_parcial'  .'.pdf';
-    return $pdf->stream($nombreArchivo);                  
-}
-
-//PDF Constancia de Pago Parcial
-public function VerPDFPagos($id){
-    $pagos = Pagos::find($id);
-    $solicitud = Turnos::find($pagos["id_solicitud"]);
-   
-    $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
-    $conciliador = $conciliador->where("turnos.id_conciliador", "=", $solicitud["id_conciliador"])
-    ->select('users.name')
-    ->first();
-    $html = view('PDF/pagosParciales', compact('id','solicitud','conciliador','pagos'))->render();
-
-    $pdf = \PDF::loadHTML($html)
-        ->setPaper('a4', 'portrait')
-        ->setOption('isHtml5ParserEnabled', true)
-        ->setOption('isPhpEnabled', true); 
-
-    $nombreArchivo = 'constancia_de_pago_'  .'.pdf';
-    return $pdf->stream($nombreArchivo);                  
-}
+        $nombreArchivo = 'constancia_de_pago_'  .'.pdf';
+        return $pdf->stream($nombreArchivo);                  
+    }
+    
     public function index_empresa(){
         $id = auth()->user()->id;
         $user = User::find($id);
