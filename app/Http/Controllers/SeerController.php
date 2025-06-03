@@ -1646,20 +1646,21 @@ class SeerController extends Controller
 
     public function update_notificador(Request $request){
         $data = $request->all();
-
+        //dd($data);
         SeerCitados::where('id', $data["id"])
-        ->update(['estatus' => $data["estatus"]],['obervaciones' => $data["observaciones"]],['documento' => $data["foto"]]);
-
+        ->update(['estatus' => $data["estatus"]],['observaciones' => $data["observaciones"]],['documento' => $data["foto"]]);
         //Foto
-        /*$documento = $data["foto"];
-        
+        $documento = $data["id"].".jpg";
+        //dd($documento);
         $path = Storage::putFileAs(
-            'documentosSolicitud', $request->file('foto'), $documento
+            'documentos_notificacion', $request->file('foto'), $documento
         );
 
-        $data_insert["documento"] = $documento;
-       
+        /*$data_insert["documento"] = $documento;
+        $data_insert["observaciones"] = $data["observaciones"];
+
         SeerCitados::create($data_insert);*/
+
         return redirect()->route('seer'); 
     }
 
@@ -2822,7 +2823,7 @@ class SeerController extends Controller
 
     public function mostrar_citadoC($id){
         $folio = SeerCitados::find($id);
-        //dd($folio);
+        dd($folio);
         return view('/notificaciones/mostrar_citado',compact('folio'));
     }
 

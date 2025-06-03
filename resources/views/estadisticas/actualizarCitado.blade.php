@@ -30,7 +30,7 @@
                             @endif
 
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                            <form method="POST" action="{{ route('seer.cambioEstatus') }}" class="needs-validation novalidate">
+                            <form method="POST" action="{{ route('seer.cambioEstatus') }}" class="needs-validation novalidate" enctype='multipart/form-data'>
                                 @csrf
                                 <input type="hidden" name="id" value="{{$id}}">
                                 <div class="row">

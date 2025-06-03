@@ -91,7 +91,8 @@ return [
         public_path('images')                   => storage_path('app/images'),
         public_path('documentosSolicitud')      => storage_path('app/documentos_solicitud'),
         public_path('documentosCitatorios')     => storage_path('app/documentos_citatorios'),
-        public_path('documentos_ratificacion')  => storage_path('app/documentos_ratificacion')
+        public_path('documentos_ratificacion')  => storage_path('app/documentos_ratificacion'),
+        public_path('documentos_notificacion')  => storage_path('app/documentos_notificacion')
     ],
 
 ];
