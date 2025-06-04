@@ -22,7 +22,7 @@ use App\Models\SeerMotivoSolicitud;
 use App\Models\SeerSolicitante;
 use App\Models\PreRegistro;
 use App\Models\Poder;
-
+use App\Models\Audiencias;
 
 //Para sacar el Id del usuario
 use Illuminate\Support\Facades\Auth;
@@ -49,8 +49,9 @@ class SeerController extends Controller
             $personas = null;
             $estadisticas = SeerPerGeneral::where('seer_citados.id_notificador', $id)
             ->join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+            ->join('seer_solicitante','seer_solicitante.id_solicitud','=','seer_general.id')
             ->where('seer_citados.estatus', 'Pendiente')
-            ->select('seer_citados.id','seer_general.NUE','seer_citados.nombre','seer_citados.colonia','seer_citados.estatus')
+            ->select('seer_citados.id','seer_general.NUE','seer_solicitante.nombre as nombre_solicitado','seer_citados.nombre','seer_citados.colonia','seer_citados.estatus')
             ->get();
         }
         //Si es otro usuario le va mostrar unicamente las del ese usuario
@@ -1646,20 +1647,39 @@ class SeerController extends Controller
 
     public function update_notificador(Request $request){
         $data = $request->all();
-        //dd($data);
-        SeerCitados::where('id', $data["id"])
-        ->update(['estatus' => $data["estatus"]],['observaciones' => $data["observaciones"]],['documento' => $data["foto"]]);
-        //Foto
-        $documento = $data["id"].".jpg";
-        //dd($documento);
-        $path = Storage::putFileAs(
-            'documentos_notificacion', $request->file('foto'), $documento
-        );
+        $documento = "Sin documento";
+        $documento1 = "Sin documento";
+        $documento2 = "Sin documento";
+        $fecha_actual = date('y-m-d');
 
-        /*$data_insert["documento"] = $documento;
-        $data_insert["observaciones"] = $data["observaciones"];
+        if(!isset($foto)){
+            $documento = $data["id"]."-foto1.jpg";
+            $path = Storage::putFileAs(
+                'documentos_notificacion', $request->file('foto'), $documento
+            );
+        }
+        if(!isset($foto1)){
+            $documento = $data["id"]."-foto2.jpg";
+            $path = Storage::putFileAs(
+                'documentos_notificacion', $request->file('foto'), $documento
+            );
+        }
+        if(!isset($foto1)){
+            $documento = $data["id"]."-foto3.jpg";
+            $path = Storage::putFileAs(
+                'documentos_notificacion', $request->file('foto'), $documento
+            );
+        }
 
-        SeerCitados::create($data_insert);*/
+        SeerCitados::find($data["id"])
+        ->update([
+            'estatus'       => $data["estatus"],
+            'observaciones' => $data["observaciones"],
+            'documento'     => $documento,
+            'documento1'    => $documento1,
+            'documento2'    => $documento2,
+            'fecha'         => $fecha_actual
+        ]);
 
         return redirect()->route('seer'); 
     }
@@ -1784,7 +1804,12 @@ class SeerController extends Controller
     }
 
     public function ver_historial(){
-        return view('estadisticas.generaHistorial');
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+
+        return view('estadisticas.generaHistorial',compact('userRole'));
     }
 
     public function historial(Request $request){
@@ -2250,11 +2275,16 @@ class SeerController extends Controller
 
     public function solicitud_confirmar(Request $request){
         $data = $request->all();
-        //dd($data);
+        //Se va asignar el conciliador y la sala
+        $id_user = auth()->user()->id;
+        $user = User::find($id_user);
+        $listado_auxiliares = array();
+        $relacionEloquent = 'roles';
+
         //Actualizar SEER GENERAL
         $delegacion = SeerPerGeneral::find($data["id"]);
         $NUE = $this->GeneraExpediente($data["id"],$delegacion["delegacion"]);
-
+/*
         SeerPerGeneral::where('id', $data["id"])
         ->update(['NUE' => $NUE, 'actividad' => $data["actividad_economica"],'id_rama' => $data["ramaIndustrial"] ]);
 
@@ -2364,11 +2394,7 @@ class SeerController extends Controller
                 }
                 if(isset($data["rfc"])){
                     $data_insert["rfc"] =  $data["rfc"][$i];
-                }/*
-                if(isset($data["estado_solicitante"])){
-                    $data_insert["estado_solicitante"] =  $data["estado_solicitante"][$i];
-                }*/
-            //dd($data_insert);
+                }
             SeerCitados::create($data_insert);
         }
         
@@ -2389,12 +2415,6 @@ class SeerController extends Controller
         //Actualizar el estatus
         SeerPerGeneral::find($data["id"])->update(['estatus' => "Confirmado" ]);
 
-        //Se va asignar el conciliador y la sala
-        $id_user = auth()->user()->id;
-        $user = User::find($id_user);
-        $listado_auxiliares = array();
-        $relacionEloquent = 'roles';
-
         $usuariosauxiliares = User::whereHas($relacionEloquent, function ($query) {
             return $query->where('name', '=', 'Conciliador');
         })
@@ -2410,6 +2430,29 @@ class SeerController extends Controller
         SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $listado_auxiliares[$random] ]);
         //Generar las notificaciones Pendiente
         SeerCitados::where('id_solicitud',$data["id"])->update(['estatus' => 'Pendiente' ]);
+
+        $numero_audiencia = $this->GeneraAudiencia($data["id"]);
+*/
+        $numero_audiencias = SeerPerConciliador::find($data["id"]);
+        if(!isset($numero_audiencias)){
+            $num_audi = 0;
+        }
+        else{
+            $num_audi = $numero_audiencias;
+        }
+        $num_audi = $num_audi+1;
+
+        $delegacion = $this->ObtenerAudiencia($user["delegacion"]);
+
+        $audiencia_insert=array(
+            'id_solicitud'      => $data["id"],
+            'numero_audiencia'  => $num_audi,
+            'folio_audiencia'   => $numero_audiencia[0],
+            'fecha'             => $data["exterior"],
+            'hora'              => $data["calle"],
+            'id_conciliador'    => $listado_auxiliares[$random]
+        );
+        Audiencia::create($audiencia_insert);
 
         return redirect()->route('solicitudes_pendientes'); 
     }
@@ -2785,38 +2828,36 @@ class SeerController extends Controller
         $roles = Role::pluck('name', 'name')->all();
         $userRole = $user->roles->pluck('name')->all();
 
-        $solicitante = SeerSolicitante::where('id_solicitud', $data['id'])->first();
-    
-        //Actualizar Solicitante
-        SeerSolicitante::where('id_solicitud', $data["id"])
+        $data_update = SeerCitados::find($data["id"])
         ->update([
-            'curp'                  => $data["curp"],
-            'rfc'                   => $data["rfc"],
-            'nombre'                => $data["nombre"],
-            'puesto'                => $data["puesto"],
-            'pago'                  => $data["pago"],
-            'periodo_pago'          => $data["periodo_pago"],
-            'fecha_ingreso'         => $data["fecha_ingreso"],
-            'fecha_salida'          => $data["fecha_salida"],
-            'jornada'               => $data["jornada"],
-            'horas_semana'          => $data["horas"],
+            'tipo_persona'             => $data["tipo"],
+            'curp'                     => $data["curp"],
+            'rfc'                      => $data["rfc"],
+            'nombre'                   => $data["nombre"],
+            'primer_apellido'          => $data["primer_apellido"],
+            'segundo_apellido'         => $data["segundo_apellido"],
+            'colonia'                  => $data["colonia"],
+            'cp'                       => $data["cp"],
+            'calle1'                   => $data["calle1"],
+            'calle2'                   => $data["calle2"],
+            'n_ext'                    => $data["exterior"],
+            'n_int'                    => $data["interior"],
+            'tipo_vialidad'            => $data["vialidad"],
+            'calle'                    => $data["calle"],
+            'referencia'               => $data["referencia"],
         ]);
 
-        if(isset($data["seguro"])){
-            SeerSolicitante::where('id_solicitud', $data["id"])->update(['nss' => $data["seguro"] ]);
-        }
-            
-        return redirect()->route('inicioAudiencia', ['id' => $data['id']]);
+       
+        return redirect()->route('notificaciones');
     }
 
     public function seleccionar_abogado(Request $request){
         $data = $request->all();
-        //dd($data);
-        $id = $data["id2"];
+        $id = $data["solicitud"];
 
-        SeerCitados::find($data["id3"])
+        SeerCitados::find($data["citado"])
         ->update([
-            'id_abogado'  => $data["id"],
+            'id_abogado'  => $data["abogado"],
         ]);
 
         return redirect()->route('inicioAudiencia',compact('id'));
@@ -2825,7 +2866,7 @@ class SeerController extends Controller
 
     public function mostrar_citadoC($id){
         $folio = SeerCitados::find($id);
-        dd($folio);
+        
         return view('/notificaciones/mostrar_citado',compact('folio'));
     }
 
@@ -2979,89 +3020,97 @@ class SeerController extends Controller
     }
 
 
-    public function audiencia_parte2($id){
+    public function audiencia_parte2(Request $request){
+        $data = $request->all();
+        $id = $data["id"];
         //Revisar si los citattorios son por el centro o por le trabajador
-        $citados = SeerCitados::where('id_solicitud',$id)->select('notificacion')->orderBy('id', 'desc')->first();
+        $citados = SeerCitados::where('id_solicitud',$data["id"])->select('notificacion')->orderBy('id', 'desc')->first();
         $user = auth()->user();
 
-        if($citados->notificacion == "Trabajador"){
-            //Voy a insertar nuevos citadorios pero como multa
-            $citados = SeerCitados::where("id_solicitud",$id)->get();
-            $cont = count($citados);
-            for($i = 0; $i < $cont; $i++) {
-               
-                $data_insert=array(
-                    'id_solicitud'      => $id,
-                    'colonia'           => $citados[$i]["colonia"],
-                    'cp'                => $citados[$i]["cp"],
-                    'n_ext'             => $citados[$i]["n_ext"],
-                    'calle'             => $citados[$i]["calle"],
-                    'tipo_vialidad'     => $citados[$i]["tipo_vialidad"],
-                    'referencia'        => $citados[$i]["referencia"],
-                    'notificacion'      => "Centro",
-                    'tipo_notificacion' => "Citatorio",
-                );
+        //Si la bandera es 0 selecciono a todos los representantes puede avanzar
+        if($data["bandera"] == 0){
+            return redirect()->route('audiencias.parte3',compact('id'));
+        }
+        //Si la bandera es 1 le fanto un representante por lo tanto va a generar nueva audiencia o va multar
+        else{
+            if($citados->notificacion == "Trabajador"){
+                //Voy a insertar nuevos citadorios pero como multa
+                $citados = SeerCitados::where("id_solicitud",$data["id"])->get();
+                $cont = count($citados);
+                for($i = 0; $i < $cont; $i++) {
+                
+                    $data_insert=array(
+                        'id_solicitud'      => $id,
+                        'colonia'           => $citados[$i]["colonia"],
+                        'cp'                => $citados[$i]["cp"],
+                        'n_ext'             => $citados[$i]["n_ext"],
+                        'calle'             => $citados[$i]["calle"],
+                        'tipo_vialidad'     => $citados[$i]["tipo_vialidad"],
+                        'referencia'        => $citados[$i]["referencia"],
+                        'notificacion'      => "Centro",
+                        'tipo_notificacion' => "Citatorio",
+                    );
 
-                if(isset($citados[$i]["rfc"])){
-                    $data_insert["rfc"] =  $citados[$i]["rfc"];
+                    if(isset($citados[$i]["rfc"])){
+                        $data_insert["rfc"] =  $citados[$i]["rfc"];
+                    }
+                    if(isset($citados[$i]["curp"])){
+                        $data_insert["curp"] =  $citados[$i]["curp"];
+                    }
+                    if(isset($citados[$i]["traductor"])){
+                        $data_insert["traductor"] =  1;
+                        $data_insert["lenguaje"]  =  $citados[$i]["lenguaje"];
+                    }
+                    if(isset($citados[$i]["n_int"])){
+                        $data_insert["n_int"] =  $citados[$i]["n_int"];
+                    }
+                    if(isset($citados[$i]["calle1"])){
+                        $data_insert["calle1"] =  $citados[$i]["calle1"];
+                    }
+                    if(isset($citados[$i]["calle2"])){
+                        $data_insert["calle2"] =  $citados[$i]["calle2"];
+                    }
+                    if(isset($citados[$i]["tipo"])){
+                        $data_insert["tipo_persona"] = $citados[$i]["tipo_persona"];
+                    }
+                    if(isset($citados[$i]["nombre"])){
+                        $data_insert["nombre"] = $citados[$i]["nombre"];
+                    }
+                    if(isset($citados[$i]["primer_apellido"])){
+                        $data_insert["primer_apellido"] = $citados[$i]["primer_apellido"];
+                    }
+                    if(isset($citados[$i]["segundo_apellido"])){
+                        $data_insert["segundo_apellido"] = $citados[$i]["segundo_apellido"];
+                    }
+                    if(isset($citados[$i]["estado_solicitante"])){
+                        $data_insert["estado_solicitante"] = $citados[$i]["estado_solicitante"];
+                    }
+                    
+                    SeerCitados::create($data_insert);
                 }
-                if(isset($citados[$i]["curp"])){
-                    $data_insert["curp"] =  $citados[$i]["curp"];
-                }
-                if(isset($citados[$i]["traductor"])){
-                    $data_insert["traductor"] =  1;
-                    $data_insert["lenguaje"]  =  $citados[$i]["lenguaje"];
-                }
-                if(isset($citados[$i]["n_int"])){
-                    $data_insert["n_int"] =  $citados[$i]["n_int"];
-                }
-                if(isset($citados[$i]["calle1"])){
-                    $data_insert["calle1"] =  $citados[$i]["calle1"];
-                }
-                if(isset($citados[$i]["calle2"])){
-                    $data_insert["calle2"] =  $citados[$i]["calle2"];
-                }
-                if(isset($citados[$i]["tipo"])){
-                    $data_insert["tipo_persona"] = $citados[$i]["tipo_persona"];
-                }
-                if(isset($citados[$i]["nombre"])){
-                    $data_insert["nombre"] = $citados[$i]["nombre"];
-                }
-                if(isset($citados[$i]["primer_apellido"])){
-                    $data_insert["primer_apellido"] = $citados[$i]["primer_apellido"];
-                }
-                if(isset($citados[$i]["segundo_apellido"])){
-                    $data_insert["segundo_apellido"] = $citados[$i]["segundo_apellido"];
-                }
-                if(isset($citados[$i]["estado_solicitante"])){
-                    $data_insert["estado_solicitante"] = $citados[$i]["estado_solicitante"];
+            }
+            else if($citados->notificacion == "Centro"){
+                //Si va por el centro se van a generar las multas
+                $citados = SeerCitados::where("id_solicitud",$data["id"])->where('notificacion',"Centro")->get();
+                $cont = count($citados);
+
+                for($i = 0; $i < $cont; $i++) {
+                    $update = SeerCitados::find($citados[$i]["id"])->update([
+                        'tipo_notificacion' => 'Multa',
+                        'conciliador_id'    => $user->id
+                    ]);
                 }
                 
-                SeerCitados::create($data_insert);
-            }
-        }
-        else if($citados->notificacion == "Centro"){
-            //Si va por el centro se van a generar las multas
-            $citados = SeerCitados::where("id_solicitud",$id)->where('notificacion',"Centro")->get();
-            $cont = count($citados);
-
-            for($i = 0; $i < $cont; $i++) {
-                $update = SeerCitados::find($citados[$i]["id"])->update([
-                    'tipo_notificacion' => 'Multa',
-                    'conciliador_id'    => $user->id
+                //Se va poner como no conciliacion
+                $update = SeerPerGeneral::find($id)->update([
+                    'estatus' => 'No conciliacion'
                 ]);
+                $update = SeerPerConciliador::where('id_solicitud',$id)->orderBy('id', 'desc')->first()
+                ->update(['estatus_conciliacion' => 'No conciliacion']);
             }
-            
-            //Se va poner como no conciliacion
-            $update = SeerPerGeneral::find($id)->update([
-                'estatus' => 'No conciliacion'
-            ]);
-            $update = SeerPerConciliador::where('id_solicitud',$id)->orderBy('id', 'desc')->first()
-            ->update(['estatus_conciliacion' => 'No conciliacion']);
+            return redirect()->route('audiencias.conciliador');
         }
-
-        //Se da nueva fecja de audiencia
-         return redirect()->route('audiencias.conciliador');
+         
     }
 
     public function mis_solicitudes(){
@@ -3075,5 +3124,304 @@ class SeerController extends Controller
         ->get();
         
         return view('/solicitudes/missolicitudes',compact('solicitudes'));
+    }
+
+    public function mostrar_citados($id){
+        $folio = SeerCitados::find($id);
+        return view('/notificaciones/ver_citado',compact('folio'));
+    }
+
+    public function audienciaParte3($id){
+        return view('/solicitudes/parte3',compact('id'));
+    }
+
+    public function historial_notificador(Request $request){
+        $data = $request->all();
+        $id = auth()->user()->id;
+        $user = User::find($id);
+
+        $notificaciones = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+        ->join('seer_solicitante','seer_solicitante.id_solicitud','=','seer_general.id')
+        ->select('seer_general.id as id_solicitud','seer_citados.id as id_citado','seer_general.NUE',
+            'seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido',
+            'seer_citados.colonia','seer_citados.calle','seer_citados.n_ext','seer_citados.n_int','seer_citados.estatus'
+            ,'seer_citados.fecha','seer_solicitante.nombre as nombre_solicitante')
+        ->where('seer_citados.id_notificador', $id)
+        ->where("seer_citados.fecha",">=",$data["fecha_inicio"])
+        ->where("seer_citados.fecha",">=",$data["fecha_final"])
+        ->get();
+                
+        return view('/historial/notificaciones',compact('notificaciones'));
+    }
+
+    public function historial_auxiliar(Request $request){
+        $data = $request->all();
+        $id = auth()->user()->id;
+        $user = User::find($id);
+
+        $notificaciones = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+        ->join('seer_solicitante','seer_solicitante.id_solicitud','=','seer_general.id')
+        ->select('seer_general.id as id_solicitud','seer_citados.id as id_citado','seer_general.NUE',
+            'seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido',
+            'seer_citados.colonia','seer_citados.calle','seer_citados.n_ext','seer_citados.n_int','seer_citados.estatus'
+            ,'seer_citados.fecha','seer_solicitante.nombre as nombre_solicitante')
+        ->where('seer_citados.id_notificador', $id)
+        ->where("seer_citados.fecha",">=",$data["fecha_inicio"])
+        ->where("seer_citados.fecha",">=",$data["fecha_final"])
+        ->get();
+                
+        return view('/historial/auxiliares',compact('notificaciones'));
+    }
+    
+    public function solicitudes_todas(){
+        dd("llego");
+        $solicitudes = SeerPerGeneral::join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
+        ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+        ->select('seer_general.id','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
+        'catalogo_rama.rama_industrial','seer_general.tipo_solicitud')
+        //->where('seer_general.estatus','Pendiente')
+        ->orderBy('seer_general.fecha')
+        ->get();
+
+        return view('solicitudes.solicitudes', compact('solicitudes'));
+    }
+    
+    public function ObtenerAudiencia($delegacion){
+        $fecha_actual = date('y-m-d');
+        $hora_actual  = date("H:i:s");
+        $array_final = array();
+        $array_horarios = array();
+        $relacionEloquent = 'roles';
+
+        //Validar la hora
+        switch($hora_actual){
+            case $hora_actual < "09:00:00" :
+                $hora_solicitud = "09:00:00";
+                break;
+            case ($hora_actual < "10:00:00" && $hora_actual > "09:00:00"):
+                $hora_solicitud = "10:00:00";
+                break;
+            case ($hora_actual < "11:00:00" && $hora_actual > "10:00:00"):
+                $hora_solicitud = "11:00:00";
+                break;
+            case ($hora_actual < "12:00:00" && $hora_actual > "11:00:00"):
+                $hora_solicitud = "12:00:00";
+                break;
+            case ($hora_actual < "13:00:00" && $hora_actual > "12:00:00"):
+                $hora_solicitud = "13:00:00";
+                break;
+            case ($hora_actual < "14:00:00" && $hora_actual > "13:00:00"):
+                $hora_solicitud = "14:00:00";
+                break;
+            default:
+                $hora_solicitud = "15:00:00";
+                break;
+        }
+
+        //Vamos a contar cuandos auxiliares existen en el CCL
+        $conciliadores = User::whereHas($relacionEloquent, function ($query) {
+            return $query->where('name', '=', 'Conciliador');
+        })
+        ->where('delegacion', $delegacion)
+        ->get();
+        $contador = count($conciliadores);
+        
+        //Ontener el la ultima audiencia 
+        $fecha = Audiencias::where('delegacion',$delegacion)->select('fecha','hora')->orderBy('id', 'desc')->first();
+        
+        for($i=0;$i < $contador;$i++){
+            if($bandera_cerrar == 1){
+                echo "cerrar";
+                break; 
+            }
+            //echo $hora_solicitud."- "; 
+            //dd($hora_solicitud."- ".$fecha_revisar);
+            //Validar si existe un horario mas
+            switch($hora_solicitud){
+                //Si los turnos de las 9 ya estan ocupados vamos a revisar a las 10
+                case ($hora_solicitud == "09:00:00") :
+                    $numero_citas = Turnos::where('fecha', $fecha_revisar)
+                    ->where('hora', $hora_solicitud)
+                    ->where('delegacion', $data["sede"])->get();
+
+                    if($numero_citas_sede > count($numero_citas)){
+                        $data_insertar= array(
+                            'consecutivo'   => $numero_consecutivo,
+                            'solicitante'   => $data["nombre"],
+                            'auxiliar'      => 0,
+                            'lugar_auxiliar'=> "Recepción",
+                            'tipo'          => $data["tipo"],
+                            'fecha'         => $fecha_revisar,
+                            'hora'          => $hora_solicitud,
+                            'hora_fin'      => $hora_actual,
+                            'delegacion'    => $data["sede"],
+                            'estatus'       => "no atendido",
+                            'exepcion'      => "No",
+                            'edad'          => $data["edad"],
+                            'sexo'          => $data["sexo"],
+                        );    
+                        Turnos::create($data_insertar);
+                        $bandera_cerrar = 1;
+                        break;
+                    }
+                    else{
+                        $hora_solicitud = "10:00:00";
+                    }
+                case ($hora_solicitud == "10:00:00"):
+                    $numero_citas = Turnos::where('fecha', $fecha_revisar)
+                    ->where('hora', $hora_solicitud)
+                    ->where('delegacion', $data["sede"])->get();
+                    if($numero_citas_sede > count($numero_citas)){
+                        $data_insertar= array(
+                            'consecutivo'   => $numero_consecutivo,
+                            'solicitante'   => $data["nombre"],
+                            'auxiliar'      => 0,
+                            'lugar_auxiliar'=> "Recepción",
+                            'tipo'          => $data["tipo"],
+                            'fecha'         => $fecha_revisar,
+                            'hora'          => $hora_solicitud,
+                            'hora_fin'      => $hora_actual,
+                            'delegacion'    => $data["sede"],
+                            'estatus'       => "no atendido",
+                            'exepcion'      => "No",
+                            'edad'          => $data["edad"],
+                            'sexo'          => $data["sexo"],
+                        );    
+                        $bandera_cerrar = 1;
+                        Turnos::create($data_insertar);
+                        break;
+                    }
+                    else{
+                        $hora_solicitud = "11:00:00";
+                    }
+                case ($hora_solicitud == "11:00:00"):
+                    $numero_citas = Turnos::where('fecha', $fecha_revisar)
+                    ->where('hora', $hora_solicitud)
+                    ->where('delegacion', $data["sede"])->get();
+                    if($numero_citas_sede > count($numero_citas)){
+                        $data_insertar= array(
+                            'consecutivo'   => $numero_consecutivo,
+                            'solicitante'   => $data["nombre"],
+                            'auxiliar'      => 0,
+                            'lugar_auxiliar'=> "Recepción",
+                            'tipo'          => $data["tipo"],
+                            'fecha'         => $fecha_revisar,
+                            'hora'          => $hora_solicitud,
+                            'hora_fin'      => $hora_actual,
+                            'delegacion'    => $data["sede"],
+                            'estatus'       => "no atendido",
+                            'exepcion'      => "No",
+                            'edad'          => $data["edad"],
+                            'sexo'          => $data["sexo"],
+                        );    
+                        $bandera_cerrar = 1;
+                        Turnos::create($data_insertar);
+                        break;
+                    }
+                    else{
+                        $hora_solicitud = "12:00:00";
+                    }
+                case ($hora_solicitud == "12:00:00"):
+                    $numero_citas = Turnos::where('fecha', $fecha_revisar)
+                    ->where('hora', $hora_solicitud)
+                    ->where('delegacion', $data["sede"])->get();
+                    if($numero_citas_sede > count($numero_citas)){
+                        $data_insertar= array(
+                            'consecutivo'   => $numero_consecutivo,
+                            'solicitante'   => $data["nombre"],
+                            'auxiliar'      => 0,
+                            'lugar_auxiliar'=> "Recepción",
+                            'tipo'          => $data["tipo"],
+                            'fecha'         => $fecha_revisar,
+                            'hora'          => $hora_solicitud,
+                            'hora_fin'      => $hora_actual,
+                            'delegacion'    => $data["sede"],
+                            'estatus'       => "no atendido",
+                            'exepcion'      => "No",
+                            'edad'          => $data["edad"],
+                            'sexo'          => $data["sexo"],
+                        );    
+                        $bandera_cerrar = 1;
+                        Turnos::create($data_insertar);
+                        break;
+                    }
+                    else{
+                        $hora_solicitud = "13:00:00";
+                    }
+                case ($hora_solicitud == "13:00:00"):
+                    $numero_citas = Turnos::where('fecha', $fecha_revisar)
+                    ->where('hora', $hora_solicitud)
+                    ->where('delegacion', $data["sede"])->get();
+                    if($numero_citas_sede > count($numero_citas)){
+                        $data_insertar = array(
+                            'consecutivo'   => $numero_consecutivo,
+                            'solicitante'   => $data["nombre"],
+                            'auxiliar'      => 0,
+                            'lugar_auxiliar'=> "Recepción",
+                            'tipo'          => $data["tipo"],
+                            'fecha'         => $fecha_revisar,
+                            'hora'          => $hora_solicitud,
+                            'hora_fin'      => $hora_actual,
+                            'delegacion'    => $data["sede"],
+                            'estatus'       => "no atendido",
+                            'exepcion'      => "No",
+                            'edad'          => $data["edad"],
+                            'sexo'          => $data["sexo"],
+                        );    
+                        $bandera_cerrar = 1;
+                        Turnos::create($data_insertar);
+                        break;
+                    }
+                    else{
+                        $hora_solicitud = "14:00:00";
+                    }
+                case ($hora_solicitud == "14:00:00"):
+                    $numero_citas = Turnos::where('fecha', $fecha_revisar)
+                    ->where('hora', $hora_solicitud)
+                    ->where('delegacion', $data["sede"])->get();
+                    //dd(count($numero_citas));
+                    if($numero_citas_sede > count($numero_citas)){
+                        $data_insertar = array(
+                            'consecutivo'   => $numero_consecutivo,
+                            'solicitante'   => $data["nombre"],
+                            'auxiliar'      => 0,
+                            'lugar_auxiliar'=> "Recepción",
+                            'tipo'          => $data["tipo"],
+                            'fecha'         => $fecha_revisar,
+                            'hora'          => $hora_solicitud,
+                            'hora_fin'      => $hora_actual,
+                            'delegacion'    => $data["sede"],
+                            'estatus'       => "no atendido",
+                            'exepcion'      => "No",
+                            'edad'          => $data["edad"],
+                            'sexo'          => $data["sexo"],
+                        );  
+                        Turnos::create($data_insertar);
+                        $bandera_cerrar = 1;
+                        break;
+                    }
+                    else{
+                        $hora_solicitud = "15:00:00";
+                    }
+                    //Si ya es el ultimo horario tengo que mandar al otro dia
+                default:
+                    //Ya son las 3 de la tarde o mas
+                    //Actualizo la fecha
+                    $fechasuma = strtotime('+1 day', strtotime($fecha_revisar)); 
+                    $fecha = date('l', strtotime($fechasuma));
+
+                    if ($fecha == 'Saturday') {
+                        $fechasuma = strtotime('+2 day', strtotime($fecha_revisar)); 
+                        $fecha_revisar = date('Y-m-d', $fechasuma);
+                        $hora_solicitud = "09:00:00";
+                    }
+                    else{
+                        $fecha_revisar = date('Y-m-d', $fechasuma);
+                        $hora_solicitud = "09:00:00";
+                    }
+            }
+        }
+
+        return $array_horarios;
     }
 }

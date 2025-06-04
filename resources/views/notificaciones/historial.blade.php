@@ -34,26 +34,7 @@
                                                         <td>{{$notificacion->colonia}}</td>
                                                         <td>{{$notificacion->estatus}}</td>
                                                         <td>
-                                                            <form method="POST" action="{{ route('seer.store_enlace') }}" class="needs-validation novalidate">
-                                                                @csrf
-                                                                <input type="hidden" name="id" value="{{$notificacion->id_citado}}">
-                                                                <select class="form-control" name="notificador">
-                                                                    <option value="">Seleccione</option>
-                                                                    @foreach($personas as $persona)
-                                                                        <option value="{{$persona->id}}">{{$persona->name}}</option>
-                                                                    @endforeach
-                                                                </select> 
-                                                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                                                    <button type="submit" class="btn btn-primary">Asignar</button>
-                                                                </div> 
-                                                            </form>
-                                                        </td>
-                                                        <td>
-                                                            <div class="col-xs-12 col-sm-12 col-md-12"> 
-                                                                @if($notificacion->estatus == "Pendiente" || $notificacion->estatus == "Por asignar")
-                                                                    <a class="btn btn-info" href="{{ route('editar_citado', $notificacion->id_citado) }}" onclick=consultar_estadistica();>Editar</a>
-                                                                @endif
-                                                            </div> 
+                                                            <a class="btn btn-info" href="{{ route('consultar_citado', $notificacion->id_citado) }}" onclick=consultar_estadistica();>Consultar</a>
                                                         </td>
                                                     </tr>
                                                 @endforeach

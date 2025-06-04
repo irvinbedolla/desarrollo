@@ -545,8 +545,13 @@
                     @endif
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>                    
-                    <a href="{{ route('audiencia_parte2', $id) }}" class="btn btn-success">Continuar</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <form class="needs-validation novalidate" method="POST" action="{{route('audiencia_parte2')}}">
+                        @csrf
+                        <input type="hidden" name="id" value="{{$id}}">
+                        <input type="hidden" name="bandera" value="{{$bandera}}">
+                        <button type="submit" class="btn btn-success">Agregar</button>
+                    </form>                    
                 </div>
             </div>
         </div>
@@ -555,8 +560,8 @@
             <div class="modal-content">
                 <div class="modal-header">
                     @if($bandera != 0)
-                        Si no seleccionas todos los representantes debes seleccionar un fecha para que proxima audiencia.<br>
-                        <span>Va notificar el centro</span>
+                        <span>Si no seleccionas todos los representantes debes seleccionar un fecha para que proxima audiencia.<br>
+                        Va notificar el centro</span>
                         <input type="date" name="fecha" class="form-control">
                     @else
                         Continuar con la audiencia.
@@ -564,7 +569,12 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <a href="{{ route('audiencia_parte2', $id) }}" class="btn btn-success">Continuar</a>
+                    <form class="needs-validation novalidate" method="POST" action="{{route('audiencia_parte2')}}">
+                        @csrf
+                        <input type="hidden" name="id" value="{{$id}}">
+                        <input type="hidden" name="bandera" value="{{$bandera}}">
+                        <button type="submit" class="btn btn-success">Agregar</button>
+                    </form> 
                 </div>
             </div>
         </div>

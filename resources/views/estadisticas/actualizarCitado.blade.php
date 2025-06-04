@@ -34,33 +34,46 @@
                                 @csrf
                                 <input type="hidden" name="id" value="{{$id}}">
                                 <div class="row">
-                                    <div class="col-xs-12 col-sm-6 col-md-4">
+                                    <div class="col-xs-12 col-sm-6 col-md-6">
                                         <div class="form-group">
                                             <label for="email">Tipo de notificación</label>
                                             <select name="estatus" class="form-control" required>
                                                 <option value="">Selecciona</option>
-                                                <option value="Notificada">Finalizado exitosamente (persona)</option>
+                                                <option value="Finalizado exitosamente">Finalizado exitosamente (persona)</option>
                                                 <option value="No notificada">Exitoso por instructivo (fijado en puerta)</option>
-                                                <option value="Pendiente">No existe se constituye</option>
-                                                <option value="Exhorto">No existe no se constituye (amparo)</option>
-                                                <option value="Juez">Notificado</option>
+                                                <option value="No exitosa se constituye">No exitosa se constituye</option>
+                                                <option value="No exitosa no se constituye">No exitosa no se constituye (amparo)</option>
+                                                <option value="Notificada">Notificado</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-8">
+                                    <div class="col-xs-12 col-sm-6 col-md-6">
                                         <div class="form-group">
-                                            <label for="name">observaciones</label>
-                                            <input type="text" class="form-control" name="observaciones">
+                                            <label for="name">Imagen</label>
+                                            <input type="file" class="form-control" name="foto" accept="image/*">
                                         </div>
                                     </div>
 
-                                     <div class="col-xs-12 col-sm-6 col-md-8">
+                                    <div class="col-xs-12 col-sm-6 col-md-6">
                                         <div class="form-group">
-                                            <label for="name">Foto</label>
-                                            <input type="file" class="form-control" name="foto" accept="image/*">
+                                            <label for="name">Imagen</label>
+                                            <input type="file" class="form-control" name="foto1" accept="image/*">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <label for="name">Imagen</label>
+                                            <input type="file" class="form-control" name="foto2" accept="image/*">
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-12">
+                                        <div class="form-group">
+                                            <label for="name">observaciones</label>
+                                            <input type="text" class="form-control" name="observaciones">
                                         </div>
                                     </div>
 

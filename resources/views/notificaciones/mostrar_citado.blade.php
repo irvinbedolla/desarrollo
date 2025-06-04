@@ -3,7 +3,7 @@
 @section('content')
     <section class="section">
         <div class="section-header">
-            <h3 class="page__heading">Ratificación</h3>
+            <h3 class="page__heading">Solicitudes</h3>
         </div>
         <div class="section-body">
             <?php $fecha_actual = date('d-m-Y');?>
@@ -11,7 +11,7 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <h3 class="text-center">Citados </h3>
+                            <h3 class="text-center">Citado</h3>
                             
                             <!--Se realiza la validación de campos para ver si dejó alguno vacío-->
                             @if ($errors->any())
@@ -33,12 +33,6 @@
                                 <input type="hidden" name="id" value="{{ $folio->id }}">
                                 
                                 <div class="row">
-                                    <div class="col-xs-12 col-sm-6 col-md-4">
-                                        <div class="form-group">
-                                            <label for="name">Folio de solicitud</label>
-                                            <input type="text" class="form-control" value="<?=$folio["id"];?>" readonly>
-                                        </div>
-                                    </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Nombre(s) del citado *</label>
@@ -201,10 +195,23 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
-                                            <label for="name">Documento</label>
-                                            <input type="text" name="documento" id="curp_input" oninput="validarInput(this)" class="form-control" value="<?=$folio["documento"];?>" readonly>
+                                            <label for="name">Imagen</label>
+                                            <img src="../../storage/app/documentos_notificacion/<?=$folio["documento"];?>" style="width: 100%;"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="name">Imagen</label>
+                                            <img src="../../storage/app/documentos_notificacion/<?=$folio["documento1"];?>" style="width: 100%;"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="name">Imagen</label>
+                                            <img src="../../storage/app/documentos_notificacion/<?=$folio["documento2"];?>" style="width: 100%;"/>
                                         </div>
                                     </div>  
+
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <a class="btn btn-info" href="{{ route('notificaciones')}}" onclick=consultar_estadistica();>Regresar</a>
                                     </div>          

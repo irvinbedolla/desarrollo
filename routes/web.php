@@ -286,8 +286,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/incompentencia_audiencia',            [SeerController::class, 'incopentencia_audiencia'])->name('incopentencia_audiencia');
         Route::post('/reagendar_audiencia',                 [SeerController::class, 'reagendar_audiencia'])->name('reagendar_audiencia');
         Route::get('/Verpdfincompetencias/{id}',            [SeerController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');
-        Route::get('/auciencia/concluir/{id}',              [SeerController::class, 'audiencia_parte2'])->name('audiencia_parte2');
-        
+        Route::post('/auciencia/concluir/',                 [SeerController::class, 'audiencia_parte2'])->name('audiencia_parte2');
+        Route::get('/solicitud/indexB/{id}',                [SeerController::class, 'audienciaParte3'])->name('audiencias.parte3'); 
+        Route::post('/solicitud/guardar',                   [SeerController::class, 'concluir_audiencia'])->name('concluir_audiencia');
+        Route::post('/historial/notificador',               [SeerController::class, 'historial_notificador'])->name('historial_notificador');
+        Route::post('/historial/auxiliar',                  [SeerController::class, 'historial_auxiliar'])->name('historial_auxiliar');
+        Route::get('/solicitudes/solicitudes',                [SeerController::class, 'solicitudes_todas'])->name('solicitudes_todas');
         
     //Ratificaciones
         Route::get('/ratificaciones/index',         [TurnosController::class, 'revisar_ratificaciones'])->name('atender_ratificacion');
@@ -302,7 +306,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
      //Enlace
         Route::get('/notificaciones/consultar/{id}',        [SeerController::class, 'mostrar_citados'])->name('editar_citado');
         Route::post('/notificaciones/editar',               [SeerController::class, 'editar_citados'])->name('editar_citado_enlace');   
-        Route::get('/notificaciones/consultar_citado/{id}', [SeerController::class, 'mostrar_citadoC'])->name('consultar_citado'); 
+        Route::get('/notificaciones/consultar_citado/{id}', [SeerController::class, 'mostrar_citadoC'])->name('consultar_citado');
+        Route::get('/notificaciones/consulta',              [SeerController::class, 'notificaciones_consultar'])->name('notificaciones_consultar'); 
+        
         
     
     Route::name('user-management.')->group(function () {
