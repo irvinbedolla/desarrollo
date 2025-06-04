@@ -135,7 +135,7 @@
                                         <div class="container">
                                             <h1>Calendario de Pagos</h1>
                                             <div class="mt-3 mb-3 text-left">
-                                                    <button id="btn-actualizar" class="btn btn-lg btn-custom-morado" onclick="">Actualizar</button>
+                                                    <button id="btn-actualizar" class="btn btn-lg btn-custom-morado">Actualizar</button>
                                                     <button id="btn-audiencias" class="btn btn-lg btn-custom-morado float-right">Calendario de audiencias</button>
                                                     <button id="btn-pagos" class="btn btn-lg btn-custom-morado mr-2 float-right">Calendario de pagos</button>
                                             </div>
@@ -166,7 +166,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Datos de la audiencia</h5>
+                <h5 class="modal-title">Datos</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
