@@ -291,7 +291,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/solicitud/guardar',                   [SeerController::class, 'concluir_audiencia'])->name('concluir_audiencia');
         Route::post('/historial/notificador',               [SeerController::class, 'historial_notificador'])->name('historial_notificador');
         Route::post('/historial/auxiliar',                  [SeerController::class, 'historial_auxiliar'])->name('historial_auxiliar');
-        Route::get('/solicitudes/solicitudes',                [SeerController::class, 'solicitudes_todas'])->name('solicitudes_todas');
+        Route::get('/solicitudes/solicitudes',              [SeerController::class, 'solicitudes_todas'])->name('solicitudes_todas');
+        Route::post('/audiencia/guardar',                   [SeerController::class, 'concluir_audiencia_conciliador'])->name('concluir_audiencia_conciliador');
         
     //Ratificaciones
         Route::get('/ratificaciones/index',         [TurnosController::class, 'revisar_ratificaciones'])->name('atender_ratificacion');

@@ -23,6 +23,8 @@ use App\Models\SeerSolicitante;
 use App\Models\PreRegistro;
 use App\Models\Poder;
 use App\Models\Audiencias;
+use App\Models\Pagos; 
+use App\Models\Concepto; 
 
 //Para sacar el Id del usuario
 use Illuminate\Support\Facades\Auth;
@@ -2233,6 +2235,8 @@ class SeerController extends Controller
     }
 
     public function solicitudes_pendientes_revisar($id){
+        $id_user = auth()->user()->id;
+        $user = User::find($id_user);
         $id             = $id;
         $general        = SeerPerGeneral::find($id);
         $ramas          = SolicitudRama::all();
@@ -2240,6 +2244,11 @@ class SeerController extends Controller
         $citados        = SeerCitados::where("id_solicitud",$id)->get();
         $estados        = Estados::all();
         $municipios     = Municipios::all();
+        $conciliadores = User::whereHas('roles', function ($query) {
+            return $query->where('name', '=', 'Conciliador');
+        })
+        ->where('delegacion', $user["delegacion"])
+        ->get();
         //Catalogo de motivos
         $mostrarMotivos = SolicitudMotivo::all();
         //Motivos capturados
@@ -2247,7 +2256,7 @@ class SeerController extends Controller
         ->where('id_solicitud',$id)
         ->select('catalogo_motivos.motivo','seer_motivos.id')->get();
 
-        return view('solicitudes.revisar_solicitud', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos'));
+        return view('solicitudes.revisar_solicitud', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores'));
     }
     
     public function eliminar_motivo($id,$id_motivo){
@@ -2263,6 +2272,7 @@ class SeerController extends Controller
         $citados        = SeerCitados::where("id_solicitud",$id)->get();
         $estados        = Estados::all();
         $municipios     = Municipios::all();
+        
         //Catalogo de motivos
         $mostrarMotivos = SolicitudMotivo::all();
         //Motivos capturados
@@ -2285,7 +2295,7 @@ class SeerController extends Controller
         //Actualizar SEER GENERAL
         $delegacion = SeerPerGeneral::find($data["id"]);
         $NUE = $this->GeneraExpediente($data["id"],$delegacion["delegacion"]);
-/*
+
         SeerPerGeneral::where('id', $data["id"])
         ->update(['NUE' => $NUE, 'actividad' => $data["actividad_economica"],'id_rama' => $data["ramaIndustrial"] ]);
 
@@ -2361,8 +2371,6 @@ class SeerController extends Controller
                 'referencia'        => $data["referencia_citado"][$i],
             );
             
-            
-
             if(isset($data["rfc"])){
                 $data_insert["rfc"] =  $data["rfc_citado"][$i];
             }
@@ -2415,8 +2423,6 @@ class SeerController extends Controller
 
         //Actualizar el estatus
         SeerPerGeneral::find($data["id"])->update(['estatus' => "Confirmado" ]);
-*/
-        
 
         $numero_audiencia = $this->GeneraAudiencia($data["id"]);
         $numero_audiencias = SeerPerConciliador::find($data["id"]);
@@ -2428,34 +2434,22 @@ class SeerController extends Controller
         }
         $num_audi = $num_audi+1;
 
-        $delegacion = $this->ObtenerAudiencia($user["delegacion"]);
-dd($delegacion);
+        //$delegacion = $this->ObtenerAudiencia($user["delegacion"]);
         $sala = 1;
 
         $audiencia_insert=array(
             'id_solicitud'      => $data["id"],
             'numero_audiencia'  => $num_audi,
             'folio_audiencia'   => $numero_audiencia[0],
-            'fecha'             => $delegacion[0],
-            'hora'              => $delegacion[1],
-            'id_conciliador'    => $delegacion[3],
+            'fecha'             => $data["fecha_audiencia"],
+            'hora'              => $data["hora_audiencia"],
+            'id_conciliador'    => $data["conciliador"],
             'sala'              => $sala,
             'delegacion'        => $user["delegacion"]
         );
         Audiencias::create($audiencia_insert);
-/*
-        $data_conciliador = [
-            'id_solicitud'          => $data["id"],            
-            'numero_audiencias'     => $num_audi,
-            'numero_audiencia'      => $numero_audiencia[0],
-            'validado'              => 'Validado',
-            'fecha_conclucion'      => $fecha_actual,
-            'consecutivo'           => $numero_audiencia[1]
-        ];
-        SeerPerConciliador::create($data_conciliador); 
-*/
-        //ACtualizar genera
-        SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $delegacion[3], 'estatus' => 'Confirmado' ]);
+        //Actualizar genera
+        SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $data["conciliador"], 'estatus' => 'Confirmado' ]);
         //Generar las notificaciones Pendiente
         //SeerCitados::where('id_solicitud',$data["id"])->update(['estatus' => 'Confirmado' ]);
 
@@ -3374,5 +3368,85 @@ dd($delegacion);
             }
         }
         return $array_horarios;
+    }
+
+    public function concluir_audiencia_conciliador(Request $request){
+        $data = $request->all();
+        $monto = 0;
+        $fecha_actual = date('y-m-d');
+        $id = auth()->user()->id;
+        $user = User::find($id);
+
+        //Revisar si existe
+        if(isset($data["dias_pagos"])){
+            $conteo = count($data["dias_pagos"]);
+            for($i = 0; $i < $conteo; $i++) {
+                $data_pagos = [
+                    'id_solicitud'  => $data["id"],
+                    'fecha'         => $data["dias_pagos"][$i],
+                    'hora'          => $data["hora_pagos"][$i], 
+                    'monto'         => $data["monto_pagos"][$i], 
+                    'descripcion'   => $data["descripcion_pagos"][$i],
+                    'estatus'       => "Pendiente", 
+                    'tipo_pago'     => "Audiencia"
+                ];
+                $monto = $monto + $data["monto_pagos"][$i];
+                Pagos::create($data_pagos);
+            }
+        }
+        //Regresar error
+        else{
+            return back()->withErrors('Debes agregar por lo menos una fecha de pago.');
+        }
+        if(isset($data["tipo_pago"])){
+            $cont = count($data["monto_pago"]);
+            for($i = 0; $i < $cont; $i++) {
+                $data_citado = [
+                    'id_solicitud'  => $data["id"], 
+                    'monto'         => $data["monto_pago"][$i], 
+                    'descripcion'   => $data["tipo_pago"][$i],
+                    'tipo_pago'     => "Audiencia"
+                ];
+                Concepto::create($data_citado);
+            }
+        }
+        //Regresar error
+        else{
+            return back()->withErrors('Debes agregar por lo menos un concepto de pago.');
+        }
+
+        if($conteo >= 2){
+            $estatus = "Concluida Pagos";
+        }
+        else{
+            $estatus = "Conluida";
+        }
+        
+        $solicitante = SeerSolicitante::where('id_solicitud',$data["id"])->first();
+        $numero_audiencia = $this->GeneraAudiencia($data["id"]);
+        //Actualizar Audiecia
+        $data_conciliador = [
+            'id_solicitud'          => $data["id"],
+            'numero_audiencia'      => $numero_audiencia["0"],
+            'numero_audiencias'     => $numero_audiencia["1"],
+            'estatus_conciliacion'  => $data["conclucion"],
+            'monto'                 => $monto,
+            'rfc'                   => $solicitante["rfc"],
+            'NSS'                   => $solicitante["nss"],
+            'multa'                 => 'No',
+            'tipo'                  => $data["tipo_audiencia"],
+            'validado'              => 'Validado',
+            'consecutivo'           =>  $numero_audiencia[1]
+        ];
+        SeerPerConciliador::create($data_conciliador);
+
+        SeerPerGeneral::find($data["id"])
+        ->update([
+            'tipo'                  => $data["tipo_audiencia"],
+            'fecha_terminacion'     => $fecha_actual, 
+            'conciliador_id'        => $user->id,
+            'estatus'               => $data["conclucion"]
+        ]);
+        return redirect()->route('audiencias.conciliador');
     }
 }

@@ -30,7 +30,7 @@
                             @endif
 
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                            <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('concluir_audiencia')}}">
+                            <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('concluir_audiencia_conciliador')}}">
                                 @csrf
                                 <input type="hidden" name="id" value="{{ $id }}">
                                 <div class="row">
@@ -136,15 +136,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-6">
-                                            <div class="form-group">
-                                                <label for="name">Domicilio de la empresa</label>
-                                                <input type="text" name="domicilio" class="form-control" required> 
-                                                <div class="invalid-feedback">
-                                                    El campo es obligatorio.
-                                                </div>
-                                            </div>
-                                        </div>
                                         
                                         <div class="col-xs-2 col-sm-2 col-md-2">
                                             <a class="btn btn-primary" onclick="mostrar_pagos()">Continuar</a>
@@ -175,18 +166,20 @@
                                         <div id="div_pagos_diferidos"></div>
 
                                         <div class="col-xs-12 col-sm-12 col-md-6">
-                                            <select class="form-control">
+                                            <label for="name">Tipo de audiencia</label>
+                                            <select name="tipo_audiencia" class="form-control">
                                                 <option>Seleccione</option>
-                                                <option>Presencial</option>
-                                                <option>Remota</option>
+                                                <option value="Presencial">Presencial</option>
+                                                <option value="Virtual">Virtual</option>
                                             </select>
                                         </div> 
 
                                         <div class="col-xs-12 col-sm-12 col-md-6">
-                                            <select class="form-control">
+                                            <label for="name">Conclucion de audencia</label>
+                                            <select name="conclucion" class="form-control">
                                                 <option>Seleccione</option>
-                                                <option>Hubo Convenio</option>
-                                                <option>No hubo Convenio</option>
+                                                <option value="Conciliacion">Hubo Convenio</option>
+                                                <option value="No conciliacion">No hubo Convenio</option>
                                             </select>
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12">

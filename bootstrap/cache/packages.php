@@ -45,13 +45,13 @@
   ),
   'laravel/socialite' => 
   array (
-    'providers' => 
-    array (
-      0 => 'Laravel\\Socialite\\SocialiteServiceProvider',
-    ),
     'aliases' => 
     array (
       'Socialite' => 'Laravel\\Socialite\\Facades\\Socialite',
+    ),
+    'providers' => 
+    array (
+      0 => 'Laravel\\Socialite\\SocialiteServiceProvider',
     ),
   ),
   'laravel/tinker' => 
@@ -63,13 +63,13 @@
   ),
   'livewire/livewire' => 
   array (
-    'providers' => 
-    array (
-      0 => 'Livewire\\LivewireServiceProvider',
-    ),
     'aliases' => 
     array (
       'Livewire' => 'Livewire\\Livewire',
+    ),
+    'providers' => 
+    array (
+      0 => 'Livewire\\LivewireServiceProvider',
     ),
   ),
   'nesbot/carbon' => 
@@ -95,13 +95,13 @@
   ),
   'spatie/laravel-ignition' => 
   array (
-    'providers' => 
-    array (
-      0 => 'Spatie\\LaravelIgnition\\IgnitionServiceProvider',
-    ),
     'aliases' => 
     array (
       'Flare' => 'Spatie\\LaravelIgnition\\Facades\\Flare',
+    ),
+    'providers' => 
+    array (
+      0 => 'Spatie\\LaravelIgnition\\IgnitionServiceProvider',
     ),
   ),
   'spatie/laravel-permission' => 
@@ -116,27 +116,6 @@
     'providers' => 
     array (
       0 => 'Yajra\\DataTables\\ButtonsServiceProvider',
-    ),
-  ),
-  'yajra/laravel-datatables-editor' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Yajra\\DataTables\\EditorServiceProvider',
-    ),
-  ),
-  'yajra/laravel-datatables-export' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Yajra\\DataTables\\ExportServiceProvider',
-    ),
-  ),
-  'yajra/laravel-datatables-fractal' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Yajra\\DataTables\\FractalServiceProvider',
     ),
   ),
   'yajra/laravel-datatables-html' => 

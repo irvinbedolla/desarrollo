@@ -1853,6 +1853,7 @@ class TurnosController extends Controller
                     'monto'         => $data["monto_pagos"][$i], 
                     'descripcion'   => $data["descripcion_pagos"][$i],
                     'estatus'       => "Pendiente", 
+                    'tipo_pago'     => "Ratificacion"
                 ];
                 Pagos::create($data_citado);
             }
@@ -1868,6 +1869,7 @@ class TurnosController extends Controller
                     'id_solicitud'  => $data["id"], 
                     'monto'         => $data["monto_pago"][$i], 
                     'descripcion'   => $data["tipo_pago"][$i],
+                    'tipo_pago'     => "Ratificacion"
                 ];
                 Concepto::create($data_citado);
             }
