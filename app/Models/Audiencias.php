@@ -10,7 +10,7 @@ class Audiencias extends Model
     //use HasFactory;
     protected $table = 'audiencias';
     protected $primaryKey = 'id';
-    protected $fillable = ['id_solicitud','numero_audiencia','numero_audiencia','fecha','hora','id_conciliador','delegacion'];
+    protected $fillable = ['id_solicitud','numero_audiencia','folio_audiencia','fecha','hora','id_conciliador','delegacion','sala'];
 
     
 }
