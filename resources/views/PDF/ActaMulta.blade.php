@@ -55,8 +55,29 @@
                 z-index: -1;
             } 
         </style>
-        
     </head>
+    @php     
+        $direccion_sede='';
+        if($solicitud->delegacion === 'Morelia'){
+            $direccion_sede='BLVD. GARCÍA DE LEÓN NO. 1575, COL. CHAPULTEPEC ORIENTE, C.P.58260 MORELIA, MICHOACÁN DE OCAMPO';
+        }    
+        if($solicitud->delegacion === 'Uruapan'){
+            $direccion_sede='NUEVO PARICUTÍN NO. 308, COL. JARDINES DE SAN RAFAEL, C.P.30136 URUAPAN, MICHOACÁN DE OCAMPO. SE ENCUENTRA DENTRO DEL RECINTÓ DONDE ESTA RENTAS DEL
+                ESTADO, POR LA CLÍNICA DEL IMSS NO.76.';
+        }
+        if($solicitud->delegacion === 'Zamora') {
+            $direccion_sede='JUSTO SIERRA PONIENTE NO. 290, COL. JARDINES DE CATEDRAL, C.P.59600 ZAMORA, MICHOACÁN DE OCAMPO';
+        }  
+        if($solicitud->delegacion === 'Zitácuaro') {
+            $direccion_sede='CUAUHTEMOC ORIENTE NO. 15, COL. CUAUHTEMOC, C.P. 61506ZITÁCUARO, MICHOACÁN DE OCAMPO';
+        } 
+        if($solicitud->delegacion === 'Lázaro Cárdenas') {
+            $direccion_sede='PARACHO NO. 26, COL. 600 CASAS, C.P.60950 LÁZARO CÁRDENAS, MICHOACÁN DE OCAMPO';
+        }  
+        if($solicitud->delegacion === 'Sahuayo') {
+            $direccion_sede='AV. UNIVERSIDAD SUR NO. 300, COL. LOMAS DE UNIVERSIDAD, C.P.59103 SAHUAYO DE MORELOS, MICHOACÁN DE OCAMPO';
+        } 
+    @endphp
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
         <footer>
@@ -72,18 +93,20 @@
         <main>
             <div class="content">
                             <p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br>
-                            NÚMERO DE IDENTIFICACIÓN ÚNICO: [  ]<br><br></b></p>  
+                            NÚMERO DE IDENTIFICACIÓN ÚNICO: {{ $solicitud->NUE }}<br><br></b></p>  
                             <center><p><b>ACTA DE MULTA</b></p></center>
-                            <p>En <b>[CENTRO_DOMICILIO_ESTADO]</b> a <b>[AUDIENCIA_FECHA_AUDIENCIA]</b>, el funcionario conciliador <b>[CONCILIADOR_NOMBRE_COMPLETO]</b>, adscrito al Centro 
-                                de Conciliación Laboral del Estado de Michoacán de Ocampo, <b>hace constar y certifica</b> que la parte citada <b>[SOLICITADO_NOMBRE_COMPLETO] [NO COMPARECIÓ/ 
-                                NO COMPARECIÓ CON DOCUMENTO QUE ACREDITARÁ LA REPRESENTACIÓN LEGAL]</b> a la Audiencia de Conciliación prevista para las <b>[AUDIENCIA_HORA_INICIO]</b> horas 
+                            <p>En <b>{{ $direccion_sede }}</b> a <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, el funcionario 
+                                conciliador <b>[CONCILIADOR_NOMBRE_COMPLETO]</b>, adscrito al Centro 
+                                de Conciliación Laboral del Estado de Michoacán de Ocampo, <b>hace constar y certifica</b> que la parte citada 
+                                <b>{{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }} [NO COMPARECIÓ/ 
+                                NO COMPARECIÓ CON DOCUMENTO QUE ACREDITARÁ LA REPRESENTACIÓN LEGAL]</b> a la Audiencia de Conciliación prevista para las <b>{{ $solicitud->hora }}</b> horas 
                                 de esta misma fecha, a pesar de encontrarse debidamente notificado(a) para tal efecto, circunstancia que se corrobora 
                                 con <b>[SI_SOLICITADO_NOTIFICACION_BUZON_COMPARECENCIA]</b> la notificación de fecha <b>[SOLICITADO_FECHA_CONFIRMACION_AUDIENCIA]
                                 [SI_SOLICITADO_NOTIFICACION_NO_BUZON_COMPARECENCIA] </b> 
                                 la razón de notificación de fecha <b>[SOLICITADO_FECHA_NOTIFICACION][FIN_SI_SOLICITADO_NOTIFICACION]. Doy fe</b>.
                             </p>
                             <p>
-                                <b>[CENTRO_DOMICILIO_ESTADO]</b>, a <b>[AUDIENCIA_FECHA_AUDIENCIA]</b>.
+                                <b>{{ $direccion_sede }}</b>, a <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>.
                             </p>
                             <p>
                                 Vista la certificación mencionada, se advierte que la parte citada <b>[SOLICITADO_NOMBRE_COMPLETO]</b>, no compareció a la audiencia de conciliación prevista 

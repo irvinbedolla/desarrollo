@@ -31,7 +31,8 @@
                             @endif
 
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                            {!! Form::open(array('route'=>'capacitaciones.guardar_encuesta_editar', 'method'=>'POST', 'class' => 'needs-validation','novalidate')) !!}
+                            <form class="needs-validation novalidate" method="POST" action="{{route('crear_capacitacion')}}">
+                                @csrf
                                 <input type="hidden" name="cot" value="<?=$modulo->id_cap?>">
                                 <input type="hidden" name="mod" value="<?=$modulo->id_modulo?>">
                                 @foreach($encuestas as $encuesta)
@@ -88,7 +89,7 @@
                                 <div id="agregar_pregunta"   class="btn btn-secondary" onclick="agregar_pregunta()">Añade Pregunta</div>
                                 <button type="submit" class="btn btn-primary">Guardar</button>
                                 <td><a class="btn btn-info" href="{{ route('capacitaciones.modulos', $modulo->id_cap)}}">Regresar</a></td>
-                            {!! Form::close() !!}
+                            </form>
                         </div>
                     </div>
                 </div>

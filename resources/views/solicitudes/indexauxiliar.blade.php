@@ -57,6 +57,8 @@
                                                             <a class="btn btn-success" href="{{ route('PDFratifi', $solicitud->id) }}"  target="_blank">Acuse</a>
                                                         @elseif($solicitud->estatus == "Incumplimiento")
                                                             <a class="btn btn-success" href="{{ route('PDFincumplimiento', $solicitud->id) }}"  target="_blank">Incumplimiento</a>
+                                                        @elseif($solicitud->estatus == "Archivada")
+                                                            <a class="btn btn-success" href="{{ route('PDFfallta_interes', $solicitud->id) }}"  target="_blank">Acta de Archivo</a>
                                                         @endif
                                                         
                                                     </td>

@@ -51,19 +51,22 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="password">*Cargo</label>
-                                            <input type="text" name="cargo" class="form-control" value="{{ $persona->cargo }}" required> 
+                                            <input type="text" name="cargo" class="form-control" 
+                                            value="{{ $persona != NULL ? $persona->cargo : '' }} " required> 
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="confirm-password">*Area de adscripción</label>
-                                            <input type="text" name="area_adcripcion" class="form-control" value="{{ $persona->area_adcripcion }}" required> 
+                                            <input type="text" name="area_adcripcion" class="form-control" 
+                                            value="{{ $persona != NULL ? $persona->area_adcripcion : '' }} "required> 
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">*Telefono</label>
-                                            <input type="text" name="telefono" class="form-control" value="{{ $persona->telefono }}" maxlength=10 required> 
+                                            <input type="text" name="telefono" class="form-control" 
+                                            value="{{ $persona != NULL ? $persona->telefono : '' }} " maxlength=10 required> 
                                         </div>
                                     </div>
                                 </div>

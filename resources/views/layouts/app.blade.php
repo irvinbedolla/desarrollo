@@ -44,11 +44,11 @@
         @livewireStyles
 
         @yield('page_css')
-        <!-- Template CSS -->
-        <link rel="icon"       href="../public/assets/images/ccl-r.png" type="image/x-icon">
-        <link rel="stylesheet" href="../public/assets/css/style.css">
-        <link rel="stylesheet" href="../public/assets/css/components.css">
-    @yield('page_css')
+            <!-- Template CSS -->
+            <link rel="icon"       href="../public/assets/images/ccl-r.png" type="image/x-icon">
+            <link rel="stylesheet" href="../public/assets/css/style.css">
+            <link rel="stylesheet" href="../public/assets/css/components.css">
+        @yield('page_css')
 
         @yield('page_css')
         <!-- Template CSS -->

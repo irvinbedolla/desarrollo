@@ -110,7 +110,7 @@
                     celebraron el Convenio de Conciliación de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> ante esta 
                     Autoridad Conciliadora como resultado de la audiencia 
                     de conciliación celebrada <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> de 
-                    <b>{{ $solicitud->hora }}</b> a <b>{{ $solicitud->hora_fin }}</b>.<br><br>
+                    <b>{{ $solicitud->hora }}</b> a <b>{{ $solicitud->hora_fin }}</b> hrs.<br><br>
                                 
                     De acuerdo con lo establecido en el convenio referido el <b>EMPLEADOR</b> se obligó al pago de los siguientes conceptos: <br>
               
@@ -147,7 +147,7 @@
                 </p>
 
                 <br><br><br><br>       
-                <center><br><br> <p><b>___________________________________<br>{{$conciliador->name}} <br> FUNCIONARIA CONCILIADORA/<br> FUNCIONARIO CONCILIADOR</b></p></center>           
+                <center><br><br> <p><b>___________________________________<br>{{$conciliador->name}} <br>FUNCIONARIO/A CONCILIADOR/A</b></p></center>           
             </div>
         </main>
     </body>

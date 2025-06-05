@@ -16,7 +16,6 @@
                                 <div class="table-responsive">
                                     <table id="example" class="table table-striped mt-2">
                                         <thead style="background-color: #4A001F;">
-                                            <th style="color: #fff;">Folio</th>
                                             <th style="color: #fff;">Fecha</th>
                                             <th style="color: #fff;">Hora</th>
                                             <th style="color: #fff;">Monto</th>
@@ -27,7 +26,6 @@
                                         <tbody>
                                             @foreach($pagos as $pago)
                                                 <tr>
-                                                    <td>{{$pago->id}}</td>
                                                     <td>{{$pago->fecha}}</td> 
                                                     <td>{{$pago->hora}}</td>
                                                     <td>${{number_format($pago->monto, 2)}}</td>

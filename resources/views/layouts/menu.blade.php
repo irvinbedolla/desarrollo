@@ -46,7 +46,7 @@
 
     @auth
         @role('Administrador')
-        <a class="nav-link" href="{{ route('usuarios') }}">
+            <a class="nav-link" href="{{ route('usuarios') }}">
                 <i class="bi bi-people-fill"></i><span class="text-dark" onclick="usuarios()">Usuarios</span>
             </a>
             <a class="nav-link" href="{{ route('roles') }}">
@@ -90,26 +90,17 @@
             <a class="nav-link" href="{{ route('poderes') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
-            <a class="nav-link" href="{{ route('seer') }}">
-                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">SEER</span>
-            </a>
-            <a class="nav-link" href="{{ route('miscapacitaciones') }}">
-                <i class="bi bi-backpack4-fill"></i><span class="text-dark" onclick="mis_capacitaciones()">Mis capacitaciones</span>
-            </a>
-            <a class="nav-link" href="{{ route('expedientes') }}">
-                <i class="bi bi-graph-down"></i><span class="text-dark" onclick="expedientes()">Mi Expediente</span>
-            </a>
             <a class="nav-link" href="{{ route('misturnos') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="turnos()">Mis turnos</span>
-            </a>
-            <a class="nav-link" href="{{ route('persona.historial') }}">
-                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
             </a>
             <a class="nav-link" href="{{ route('solicitudes_pendientes') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Solicitudes Pendientes</span>
             </a>
             <a class="nav-link" href="{{ route('atender_ratificacion') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Ratificaciones</span>
+            </a>
+            <a class="nav-link" href="{{ route('persona.historial') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
             </a>
         @endrole
     @endauth
@@ -119,14 +110,8 @@
             <a class="nav-link" href="{{ route('poderes') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
-            <<a class="nav-link" href="{{ route('seer') }}">
-                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">SEER</span>
-            </a>
-            <a class="nav-link" href="{{ route('miscapacitaciones') }}">
-                <i class="bi bi-backpack4-fill"></i><span class="text-dark" onclick="mis_capacitaciones()">Mis capacitaciones</span>
-            </a>
-            <a class="nav-link" href="{{ route('expedientes') }}">
-                <i class="bi bi-graph-down"></i><span class="text-dark" onclick="expedientes()">Mi Expediente</span>
+            <a class="nav-link" href="{{ route('audiencias.conciliador') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" >Mis audiencias</span>
             </a>
             <a class="nav-link" href="{{ route('persona.historial') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
@@ -137,16 +122,10 @@
     @auth
         @role('Notificador')
             <a class="nav-link" href="{{ route('seer') }}">
-                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">SEER</span>
-            </a>
-            <a class="nav-link" href="{{ route('miscapacitaciones') }}">
-                <i class="bi bi-backpack4-fill"></i><span class="text-dark" onclick="mis_capacitaciones()">Mis capacitaciones</span>
-            </a>
-            <a class="nav-link" href="{{ route('expedientes') }}">
-                <i class="bi bi-graph-down"></i><span class="text-dark" onclick="expedientes()">Mi Expediente</span>
+                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Por notificar</span>
             </a>
             <a class="nav-link" href="{{ route('persona.historial') }}">
-                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Mis notificaciones</span>
             </a>
         @endrole
     @endauth
@@ -236,35 +215,32 @@
 
     @auth
         @role('Enlace')
-            <a class="nav-link" href="{{ route('poderes') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
-            </a>
-            <a class="nav-link" href="{{ route('seer') }}">
-                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">SEER</span>
-            </a>
-            <a class="nav-link" href="{{ route('miscapacitaciones') }}">
-                <i class="bi bi-backpack4-fill"></i><span class="text-dark" onclick="mis_capacitaciones()">Mis capacitaciones</span>
-            </a>
-            <a class="nav-link" href="{{ route('expedientes') }}">
-                <i class="bi bi-graph-down"></i><span class="text-dark" onclick="expedientes()">Mi Expediente</span>
-            </a>
             <a class="nav-link" href="{{ route('seer.estadistica') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadisticas</span>
             </a>
-            <a class="nav-link" href="{{ route('persona.historial') }}">
+            <a class="nav-link" href="{{ route('notificaciones') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Por notificar</span>
+            </a>
+            <a class="nav-link" href="{{ route('notificaciones_consultar') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
             </a>
         @endrole
     @endauth
     @auth
         @role('Solicitante')
+            <a class="nav-link" href="{{ route('mis_solicitudes') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Mis Solicitudes</span>
+            </a>
             <a class="nav-link" href="{{ route('ratificacion') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Mis ratificaciones</span>
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Mis Ratificaciones</span>
             </a>
         @endrole
     @endauth
     @auth
         @role('Administrador Solicitante')
+            <a class="nav-link" href="{{ route('solicitudes_pendientes') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Solicitudes</span>
+            </a>
             <a class="nav-link" href="{{ route('Ratificacion') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Ratificaciones</span>
             </a>

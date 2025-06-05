@@ -12,20 +12,35 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <style>
+            .card {
+                border: none;
+                margin: 30px 30px; /* posición de los botones en la vista */
+            }
+            .card-group {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-wrap: wrap;
+                width: 600px;
+                gap: 24px; /* Define un espacio entre los botones */
+            }
             /*Estilos boton*/
             .button-link {
-                display: inline-block;
-                padding: 1px 10px;
+                display: flex;
+                justify-content: center; 
+                align-items: center; 
+                padding: 0; 
                 font-size: 16px;
                 text-align: center;
-                width: 138px;   /* Establece el ancho fijo del botón */
-                height: 50px;  
-                background-color: #CEA845; /* Color de fondo */
-                color: white; /* Color del texto */
-                text-decoration: none; /* Elimina el subrayado del enlace */
+                width: 130px;   
+                height: 65px;   
+                background-color: #CEA845; 
+                color: white; 
+                text-decoration: none; 
                 border-radius: 5px; /* Bordes redondeados */
                 cursor: pointer;
                 transition: transform 0.3s ease; /* Transición suave para el zoom */
+                line-height: 1.2;
             }
 
             /* Efecto de zoom al pasar el ratón */
@@ -43,13 +58,13 @@
                 background-color:#FFC3D0; /* Cambia el color de fondo al pasar el ratón */
                 border-radius: 5px; /* Bordes redondeados */
             } 
-            .card{
+           /* .card{
                 border:none;
             }
             .card-group{
                 width: 500px;   /* Establece el ancho fijo del botón */
-                height: 100px;
-            }
+                /*height: 100px;
+            }*/
             .responsive-img{
                 max-width: 100%;
                 height: auto;
@@ -84,13 +99,20 @@
                 <div class="card">   <!-- Inicio Seer -->
                     <div style="display: block; text-align: center;">
                         <a href="{{ route('solicitud.industria', ['tipo_solicitud' =>2]) }}" class="button-link">
-                            SOY <br>PATRÓN(A)    
+                            SOY <br>PATRONAL INDIVIDUAL   
                         </a>
                     </div>  
                 </div>   <!-- fin Seer -->
                 <div class="card">   <!-- Inicio Seer -->
                     <div style="display: block; text-align: center;">
                         <a href="{{ route('solicitud.industria', ['tipo_solicitud' =>3]) }}" class="button-link">
+                            SOY <br>PATRONAL COLECTIVA    
+                        </a>
+                    </div>  
+                </div> 
+                <div class="card">   <!-- Inicio Seer -->
+                    <div style="display: block; text-align: center;">
+                        <a href="{{ route('solicitud.industria', ['tipo_solicitud' =>4]) }}" class="button-link">
                             SOY<br> SINDICATO
                         </a>
                     </div>  

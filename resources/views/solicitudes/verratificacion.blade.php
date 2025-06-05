@@ -344,7 +344,16 @@
                                         @elseif($userRole[0] == "Administrador Solicitante")
                                         <a class="btn btn-primary" href="{{ route('Ratificacion') }}">Regresar</a>
                                         @endif
-                                        <button type="submit" class="btn btn-primary">Guardar</button>
+                                        
+                                        @if($userRole[0] == "Auxiliar")
+                                            @if($folio->estatus == "Confirmado")
+                                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                            @endif
+                                        @elseif($userRole[0] == "Solicitante")
+                                            @if($folio->estatus == "Rechazada")
+                                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                            @endif
+                                        @endif
                                     </div>    
                                 </div>
                             </form>

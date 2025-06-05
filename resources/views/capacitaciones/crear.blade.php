@@ -29,8 +29,9 @@
                             @endif
 
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                            {!! Form::open(array('route'=>'capacitaciones.store', 'method'=>'POST', 'files' => true, 'class' => 'needs-validation','novalidate')) !!}
-                                <div class="row">
+                            <form class="needs-validation novalidate" method="POST" action="{{route('crear_capacitacion')}}">
+                                @csrf
+                                <div class="row">                                                    
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Nombre</label>
@@ -57,16 +58,10 @@
                                             <label for="">Final de la capacitación</label>
                                             <input type="date" class="form-control" name="fin"  required>
                                         </div>
-                                    </div>
-                                    
-                                    
-
-                                    </div>                                    
-                                        <button type="submit" class="btn btn-primary" style="background-color: #6A0F49">Guardar</button>
-                                        {!! Form::close() !!}
+                                    </div>                             
+                                        <button type="submit" class="btn btn-primary" style="background-color: #6A0F49">Guardar</button>            
                                 </div>
-
-
+                            </form>
                         </div>
                     </div>
                 </div>

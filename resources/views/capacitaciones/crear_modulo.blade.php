@@ -31,8 +31,9 @@
                             @endif
 
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                            {!! Form::open(array('route'=>'capacitaciones.crear_modulo', 'method'=>'POST', 'files' => true, 'class' => 'needs-validation','novalidate')) !!}
-                                <input type="hidden" name="cap" value="<?=$capacitacion->id?>">
+                            <form class="needs-validation novalidate" method="POST" action="{{route('capacitaciones.crear_modulo')}}" enctype='multipart/form-data'>
+                            @csrf
+                            <input type="hidden" name="cap" value="<?=$capacitacion->id?>">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
@@ -57,31 +58,31 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label>Documento Anexo</label><br>
-                                            {!! Form::file('anexo1', ['class' => 'form-control-file', 'accept' => '.pdf']) !!}
+                                            <input type="file" name="anexo1" class="form-control" accept=".pdf" required>
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label>Documento Anexo</label><br>
-                                            {!! Form::file('anexo2', ['class' => 'form-control-file', 'accept' => '.pdf']) !!}
+                                            <input type="file" name="anexo2" class="form-control" accept=".pdf" required>
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label>Documento Anexo</label><br>
-                                            {!! Form::file('anexo3', ['class' => 'form-control-file', 'accept' => '.pdf']) !!}
+                                            <input type="file" name="anexo3" class="form-control" accept=".pdf" required>
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label>Documento Anexo</label><br>
-                                            {!! Form::file('anexo4', ['class' => 'form-control-file', 'accept' => '.mp4']) !!}
+                                            <input type="file" name="anexo4" class="form-control" accept=".pdf" required>
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label>Documento Anexo</label><br>
-                                            {!! Form::file('anexo5', ['class' => 'form-control-file', 'accept' => '.mp4']) !!}
+                                            <input type="file" name="anexo5" class="form-control" accept=".pdf" required>
                                         </div>
                                     </div>
                                 </div>      
@@ -98,7 +99,7 @@
                                     </div>
                                 </div>                              
                                     <button type="submit" class="btn btn-primary" style="background-color: #6A0F49">Guardar</button>
-                            {!! Form::close() !!}
+                            </form>        
                         </div>
                     </div>
                 </div>
