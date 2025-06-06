@@ -302,7 +302,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('solicitud/consultar/{id}',              [SeerController::class, 'consultar_solicitudes'])->name('consultar_solicitud');
         Route::get('/audiencias/historial',                 [SeerController::class, 'audiencia_fecha'])->name('audiencia_fecha');
         Route::post('/historial/conciliador',               [SeerController::class, 'historial_conciliador'])->name('historial_conciliador');
-        oute::get('/PDF/faltaInteres/{id}',               [SeerController::class, 'VerPDFInteres'])->name('PDFfalltaInteres');
+        Route::get('/PDF/faltaInteres/{id}',               [SeerController::class, 'VerPDFInteres'])->name('PDFfalltaInteres');
     //Ratificaciones
         Route::get('/ratificaciones/index',         [TurnosController::class, 'revisar_ratificaciones'])->name('atender_ratificacion');
         Route::get('/ratificaciones/concluir/{id}', [TurnosController::class, 'concluir_ratificaciones'])->name('ratificacion_concluir');
