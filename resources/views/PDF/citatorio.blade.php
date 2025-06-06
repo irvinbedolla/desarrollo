@@ -109,8 +109,8 @@
                 <p><b>ASUNTO: AUDIENCIA DE CONCILIACIÓN PREJUDICIAL<br>
                     FECHA DE EMISIÓN DEL CITATORIO:  {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}<br>
                     SOLICITANTE: {{ $solicitante->nombre }}<br>
-                    NÚMERO DE SEGURIDAD SOCIAL DEL SOLICITANTE(S): {{ $solicitante->nss ?? 'N/A'}}<br>
-                    CURP DEL SOLICITANTE(S): {{ $solicitante->curp }}<br>
+                    NÚMERO DE SEGURIDAD SOCIAL DEL SOLICITANTE: {{ $solicitante->nss ?? 'N/A'}}<br>
+                    CURP DEL SOLICITANTE: {{ $solicitante->curp }}<br>
                     CITADO: {{ $citado->nombre}} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}<br>
                 </b></p>  
                            
@@ -119,8 +119,8 @@
                     Principios Procesales contenidos en los artículos 684-E, 684-F fracción I y 685 de la Ley Federal del Trabajo, que
                     regulan el procedimiento obligatorio prejudicial conciliatorio; se notifica al <b>C. REPRESENTANTE LEGAL
                     DE: {{ $citado->nombre }} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}</b> para que asista a la <b>Audiencia de Conciliación</b> 
-                    de fecha <b> [FECHA AUDIENCIA] </b> a las
-                    <b>[HORA AUDIENCIA]</b>, en la sala <b>[URU-1]</b> de la Delegación Regional de <b>{{ $solicitud->delegacion}}</b> del Centro de Conciliación Laboral del
+                    de fecha <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las
+                    <b>{{$audiencia->hora}}</b>, en la sala <b>[URU-1]</b> de la Delegación Regional de <b>{{ $solicitud->delegacion}}</b> del Centro de Conciliación Laboral del
                     Estado de Michoacán de Ocampo, <b>{{$direccion_sede}}.</b></p>
 
                 <p>La audiencia será presidida por una conciliadora o conciliador del Centro de Conciliación Laboral del Estado de
@@ -139,7 +139,7 @@
                     </p>
                 <!--@-->    
                 <br><br>
-                <p><center><b>___________________________________<br> [CONCILIADOR] <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>
+                <p><center><b>___________________________________<br> {{$conciliador->name}} <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

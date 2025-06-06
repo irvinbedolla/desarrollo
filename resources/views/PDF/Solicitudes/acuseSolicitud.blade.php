@@ -125,7 +125,7 @@
                         Conforme al artículo 735 de la Ley Federal del Trabajo tiene tres (3) días hábiles a partir de este momento para
                         confirmar la solicitud, deberá presentar su identificación oficial para confirmar la solicitud como máximo el día <b>13 de
                         Enero de 2025</b>. En el caso de que no realice la confirmación dentro del plazo señalado, con fundamento en el artículo
-                        684- C y 735 de la Ley Federal del Trabajo, ésta se archivará por falta de presentación de la identificación oficial,
+                        684-C y 735 de la Ley Federal del Trabajo, ésta se archivará por falta de presentación de la identificación oficial,
                         dejando a salvo sus derechos para que pueda presentar una nueva solicitud.
                     </p>
                 </div>

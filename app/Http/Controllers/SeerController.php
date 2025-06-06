@@ -3431,6 +3431,7 @@ class SeerController extends Controller
         ]);
         return redirect()->route('audiencias.conciliador');
     }
+    
     // PDF Convenio para solicitudes
     public function VerPDFConvenioSol($id){
         $solicitud = SeerPerGeneral::find($id);
@@ -3579,8 +3580,11 @@ class SeerController extends Controller
         ->first();
 
         $citados = SeerCitados::where('id_solicitud', $id)->get();
-        $audiencia = SeerPerConciliador::where("id_solicitud",$solicitud["id"])->first();
-        dd($audiencia);
+       
+        $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
+        $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
+        ->first();
+        //dd($audiencia);
         $pdf = \PDF::loadView('PDF/Solicitudes/notificacionSolicitante', compact('id','solicitud','solicitante','citados','conciliador','audiencia'))
         ->setPaper('a4', 'portrait')
         ->setOption('isHtml5ParserEnabled', true)
@@ -3599,7 +3603,9 @@ class SeerController extends Controller
         ->select('users.name')
         ->first();
 
-        $audiencia = SeerPerConciliador::where("id_solicitud",$solicitud["id"])->first();
+        $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
+        $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
+        ->first();
 
         $citado = SeerCitados::where('id_solicitud', $id)->get();
         //dd($citado);
@@ -3614,6 +3620,54 @@ class SeerController extends Controller
         return $pdf->stream($nombreArchivo);                  
     }
 
+    //PDF Citatorio
+    public function pdfCitatorio($id) {
+        try {
+            $solicitud = SeerPerGeneral::findOrFail($id);
+            $solicitantes = SeerSolicitante::where('id_solicitud', $id)->get();
+            $citados = SeerCitados::where('id_solicitud', $id)->get();
+            $motivoIds = SeerMotivo::where('id_solicitud', $id)->pluck('id_motivo');
+            $motivos = SolicitudMotivo::whereIn('id', $motivoIds)->get();
+            $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id")
+                ->where("audiencias.id_solicitud", "=", $solicitud["id"])
+                ->first();
+
+            $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
+            $conciliador = $conciliador->where("seer_general.conciliador_id", "=", $solicitud["conciliador_id"])
+                ->select('users.name')
+                ->first();
+
+            $pdfs = [];
+    
+            foreach ($solicitantes as $solicitante) {
+                foreach ($citados as $citado) {
+                    $nombreArchivo = 'citatorio_' . $citado->nombre . '_' . $citado->primer_apellido . '.pdf';
+    
+                    // Genera el PDF en memoria
+                    $pdf = \PDF::loadView('PDF/citatorio', compact('solicitud','solicitante','citado','motivos','audiencia','conciliador'))
+                        ->setPaper('a4', 'portrait')
+                        ->setOption('isHtml5ParserEnabled', true)
+                        ->setOption('isPhpEnabled', true);
+    
+                    // Codifica el PDF en base64 para enviarlo
+                    $pdfBase64 = base64_encode($pdf->output());
+    
+                    $pdfs[] = [
+                        'nombre' => $nombreArchivo,
+                        'base64' => $pdfBase64,
+                    ];
+                }
+            }
+    
+            return response()->json($pdfs);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+    //Consultar solicitudes(Solicitante) conciliadores
     public function consultar_solicitudes($id){
         $solicitudes = SeerPerGeneral::find($id);
         $solicitud  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
@@ -3626,47 +3680,6 @@ class SeerController extends Controller
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
         return view('/solicitudes/verSolicitud',compact('solicitud','userRole'));
-    }
-
-    public function pdfCitatorio($id) { 
-        try {
-            $solicitud = SeerPerGeneral::findOrFail($id);
-            $solicitantes = SeerSolicitante::where('id_solicitud', $id)->get();
-            $citados = SeerCitados::where('id_solicitud', $id)->get();
-            $motivoIds = SeerMotivo::where('id_solicitud', $id)->pluck('id_motivo');
-            $motivos = SolicitudMotivo::whereIn('id', $motivoIds)->get();
-            $audiencia = SeerPerConciliador::where("id_solicitud", $solicitud["id"])->first();
-            $SolicitudPDFs = [];
-    
-            foreach ($solicitantes as $solicitante) {
-                foreach ($citados as $citado) {
-                    $nombreArchivo = 'citatorio_' . $citado->nombre . '_' . $citado->primer_apellido . '.pdf';
-                    $rutaArchivo = "{$nombreArchivo}";
-    
-                    if (!Storage::disk('public')->exists($rutaArchivo)) {
-                        $pdf = \PDF::loadView('PDF/citatorio', compact('solicitud','solicitante','citado','motivos','audiencia'))
-                        ->setPaper('a4', 'portrait')
-                        ->setOption('isHtml5ParserEnabled', true)
-                        ->setOption('isPhpEnabled', true); 
-
-                        Storage::disk('public')->put("$rutaArchivo", $pdf->output());
-                    }
-
-                    $urlArchivo = asset("storage/app/public/documentosCitatorios/{$rutaArchivo}");
-                    $SolicitudPDFs[] = [
-                        'nombre' => $nombreArchivo,
-                        'url' => $urlArchivo,
-                    ];
-                }
-            }
-            
-            return response()->json($SolicitudPDFs);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => true,
-                'message' => $e->getMessage(),
-            ], 500);
-        }
     }
 
     public function audiencia_fecha(){

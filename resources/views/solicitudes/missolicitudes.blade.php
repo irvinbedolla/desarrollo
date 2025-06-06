@@ -32,11 +32,13 @@
                                                     <td>{{$solicitud->estatus}}</td>
                                                     <td><a class="btn btn-primary" href="{{ route('consultar_solicitud', $solicitud->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
                                                     <td>
-                                                        <button type="button" class="btn btn-warning open-modal" data-id="{{ $solicitud->id }}">Citatorios</button><br><br>
-                                                        <a class="btn btn-success" href="{{ route('PDFnotificacion_solicitante', $solicitud->id) }}" onclick=consultar_estadistica(); tarjet="_black">Notificación al solicitante</a><br><br>
-                                                        <a class="btn btn-success" href="{{ route('PDFacuse_solicitud', $solicitud->id) }}" onclick=consultar_estadistica(); tarjet="_black">Acuse de solicitud</a>
+                                                        @if($solicitud->estatus !== "Pendiente")
+                                                            <button type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button><br><br>
+                                                            <a class="btn btn-success" href="{{ route('PDFnotificacion_solicitante', $solicitud->id) }}" target="_black">Notificación al solicitante</a><br><br>
+                                                            <a class="btn btn-success" href="{{ route('PDFacuse_solicitud', $solicitud->id) }}"  target="_black">Acuse de solicitud</a>
+                                                        @endif
                                                         @if($solicitud->estatus === "Concluida")
-                                                            <a class="btn btn-success" href="{{ route('PDFconveniosolicitud', $solicitud->id) }}" onclick=consultar_estadistica(); tarjet="_black">Convenio</a>
+                                                            <a class="btn btn-success" href="{{ route('PDFconveniosolicitud', $solicitud->id) }}"  target="_black">Convenio</a>
                                                         @endif
                                                     </td>
                                                 </tr>
@@ -76,9 +78,7 @@
                     <th>Acción</th>
                   </tr>
                 </thead>
-                <tbody id="pdf-list">
-    
-                </tbody>
+                <tbody id="pdf-list"></tbody>
             </table>
         </div>
         <div class="modal-footer">
@@ -87,46 +87,65 @@
       </div>
     </div>
 </div>
+
 @section('scripts')
-    <script src="../public/assets/js/poderes/general.js"></script>
-    <script>
-        const pdfsUrlBase = "{{ url('solicitud/pdfs') }}";
-    </script>
-    <script>
-        $(document).ready(function() {
-            $('.open-modal').click(function() {
-                const id = $(this).data('id');
-                $('#pdf-list').empty();
-    
-                // Mostrar modal
-                var myModal = new bootstrap.Modal(document.getElementById('documentos'));
-                myModal.show();
-    
-                $.ajax({
-                    url: `${pdfsUrlBase}/${id}`,
-                    method: 'GET',
-                    success: function(response) {
-                        if (response.length > 0) {
-                            response.forEach(pdf => {
-                                const row = `
-                                <tr>
-                                    <td style="text-align: left;">${pdf.nombre}</td>
-                                    <td>
-                                        <a href="${pdf.url}" target="_blank" class="btn btn-primary btn-sm">Ver PDF</a>
-                                    </td>
-                                </tr>`;
-                                $('#pdf-list').append(row);
-                            });
-                        } else {
-                            $('#pdf-list').append('<tr><td colspan="2">No hay documentos disponibles.</td></tr>');
+<script src="../public/assets/js/poderes/general.js"></script>
+<script>
+    const pdfsUrlBase = "{{ url('solicitud/pdfs') }}";
+</script>
+<script>
+$(document).ready(function() {
+    $('.open-modal').click(function() {
+        const id = $(this).data('id');
+        $('#pdf-list').empty();
+
+        var myModal = new bootstrap.Modal(document.getElementById('documentos'));
+        myModal.show();
+
+        $.ajax({
+            url: `${pdfsUrlBase}/${id}`,
+            method: 'GET',
+            success: function(response) {
+                if (response.length > 0) {
+                    response.forEach(pdf => {
+                        const pdfData = pdf.base64;
+                        const pdfName = pdf.nombre;
+
+                        const byteCharacters = atob(pdfData);
+                        const byteNumbers = new Array(byteCharacters.length);
+                        for (let i = 0; i < byteCharacters.length; i++) {
+                            byteNumbers[i] = byteCharacters.charCodeAt(i);
                         }
-                    },
-                    error: function() {
-                        $('#pdf-list').append('<tr><td colspan="2">Error al cargar documentos.</td></tr>');
-                    }
-                });
-            });
+                        const byteArray = new Uint8Array(byteNumbers);
+                        const blob = new Blob([byteArray], { type: 'application/pdf' });
+                        const url = URL.createObjectURL(blob);
+
+                        const row = `
+                        <tr>
+                            <td style="text-align: left;">${pdfName}</td>
+                            <td>
+                                <a href="${url}" target="_blank" class="btn btn-primary btn-sm">Ver PDF</a>
+                            </td>
+                        </tr>`;
+                        $('#pdf-list').append(row);
+                    });
+                } else {
+                    $('#pdf-list').append('<tr><td colspan="2">No hay documentos disponibles.</td></tr>');
+                }
+            },
+            error: function() {
+                $('#pdf-list').append('<tr><td colspan="2">Error al cargar documentos.</td></tr>');
+            }
         });
-    </script>
+    });
+
+    // Limpiar backdrop y modal-open cuando modal se oculta
+    $('#documentos').on('hidden.bs.modal', function () {
+        $('.modal-backdrop').remove();
+        $('body').removeClass('modal-open');
+    });
+});
+</script>
 @endsection
+
 
