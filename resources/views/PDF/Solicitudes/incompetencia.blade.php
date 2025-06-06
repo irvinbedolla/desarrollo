@@ -60,14 +60,7 @@
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
         <footer>
-            <script type="text/php">
-                if (isset($pdf)) {
-                    $font = $fontMetrics->get_font("Arial", "normal");
-                    $size = 10;
-                    $text = "Página " . $PAGE_NUM . " de " . $PAGE_COUNT;
-                    $pdf->text(500, 820, $text, $font, $size);
-                }
-            </script>
+            
         </footer>
         <main>
             <div class="content">
@@ -119,5 +112,15 @@
                 <br><br><br><br>       
                 <center><br><br> <p><b>___________________________________<br>[ MTRO. ADOLFO CECILIO CAMPOS MARCIAL] <br>NOMBRE Y FIRMA DEL DIRECTOR/A DEL CENTRO</b></p></center>           
             </div>
+            <script type="text/php">
+                if (isset($pdf)) {
+                    $font = $fontMetrics->get_font("Arial", "normal");
+                    $size = 10;
+                    $y = $pdf->get_height() - 30;
+                    $x = ($pdf->get_width() / 2) - 50;
+                    $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
+                    $pdf->page_text($x, $y, $text, $font, $size, array(0, 0, 0));
+                }
+            </script>
         </main>
     </body>

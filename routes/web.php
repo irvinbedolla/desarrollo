@@ -262,8 +262,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Fin de  turnos
 
         Route::get('/pdf/estadistica',       [PDFController::class, 'pdfEstadistica'])->name('PDFestaditica');
-        Route::get('/pdf/descarga/{id}',     [PDFController::class, 'pdfCitatorio'])->name('PDFcitatorio');
-        Route::get('/pdf/ratificacion',      [PDFController::class, 'pdfRatificacion'])->name('PDFratificacion');
+        //Route::get('/pdf/descarga/{id}',     [PDFController::class, 'pdfCitatorio'])->name('PDFcitatorio');
+        //Route::get('/pdf/ratificacion',      [PDFController::class, 'pdfRatificacion'])->name('PDFratificacion');
 
     //Solicitudes
         Route::get('/solicitudes/index',                    [SeerController::class, 'solicitudes_pendientes'])->name('solicitudes_pendientes');
@@ -282,10 +282,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/solicitud/consultarC',                 [SeerController::class, 'consultar_citados_con'])->name('consultar_citados');
         Route::post('/solicitud/guardar_citadoC',           [SeerController::class, 'insertar_citados_con'])->name('insertar_citado');
         Route::post('/seleccionar_abogado',                 [SeerController::class, 'seleccionar_abogado'])->name('seleccionar_abogado');
-        Route::get('/PDF/falta_interes/{id}',               [SeerController::class, 'VerPDFInteres'])->name('PDFfallta_interes');
+        //Route::get('/PDF/falta_interes/{id}',               [SeerController::class, 'VerPDFInteres'])->name('PDFfallta_interes');
         Route::post('/incompentencia_audiencia',            [SeerController::class, 'incopentencia_audiencia'])->name('incopentencia_audiencia');
         Route::post('/reagendar_audiencia',                 [SeerController::class, 'reagendar_audiencia'])->name('reagendar_audiencia');
-        Route::get('/Verpdfincompetencias/{id}',            [SeerController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');
+        //Route::get('/Verpdfincompetencias/{id}',            [SeerController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');
         Route::post('/auciencia/concluir/',                 [SeerController::class, 'audiencia_parte2'])->name('audiencia_parte2');
         Route::get('/solicitud/indexB/{id}',                [SeerController::class, 'audienciaParte3'])->name('audiencias.parte3'); 
         Route::post('/solicitud/guardar',                   [SeerController::class, 'concluir_audiencia'])->name('concluir_audiencia');
@@ -293,6 +293,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/historial/auxiliar',                  [SeerController::class, 'historial_auxiliar'])->name('historial_auxiliar');
         Route::get('/solicitudes/solicitudes',              [SeerController::class, 'solicitudes_todas'])->name('solicitudes_todas');
         Route::post('/audiencia/guardar',                   [SeerController::class, 'concluir_audiencia_conciliador'])->name('concluir_audiencia_conciliador');
+        //PDF Solicitudes    
+        Route::get('/Verpdfincompetencias/{id}',            [SeerController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');
+        Route::get('/PDF/falta_interes/{id}',               [SeerController::class, 'VerPDFInteres'])->name('PDFfallta_interes');
+        Route::get('/Verpdfcs/{id}',                        [SeerController::class, 'VerPDFConvenioSol'])->name('PDFconveniosolicitud');
+        Route::get('/Verpdfacuse/{id}',                     [SeerController::class, 'PDFacuseSolicitud'])->name('PDFacuse_solicitud');
+        Route::get('/Verpdfnotificacion/{id}',              [SeerController::class, 'PDFnotificacionSolicitante'])->name('PDFnotificacion_solicitante');
+        Route::get('/Verpdfmulta/{id}',                     [SeerController::class, 'VerPDFMulta'])->name('PDFmulta');
+        Route::get('solicitud/consultar/{id}',              [SeerController::class, 'consultar_solicitudes'])->name('consultar_solicitud');
         
     //Ratificaciones
         Route::get('/ratificaciones/index',         [TurnosController::class, 'revisar_ratificaciones'])->name('atender_ratificacion');

@@ -42,7 +42,7 @@
                                                             <a class="btn btn-success" href="{{ route('PDFratifi', $solicitud->id) }}" onclick=consultar_estadistica(); tarjet="_black">Acuse</a>
                                                         @endif
                                                         @if($solicitud->estatus === "Conluida")
-                                                            <a class="btn btn-success" href="{{ route('PDFconvenio', $solicitud->id) }}" onclick=consultar_estadistica(); tarjet="_black">Convenio</a>
+                                                            <a class="btn btn-success" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}" onclick=consultar_estadistica(); tarjet="_black">Convenio</a>
                                                         @endif
                                                     </td>
                                                 </tr>

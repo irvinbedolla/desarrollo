@@ -97,15 +97,14 @@
                             </tr>
                     </table>
                 </div><br><br><br><br><br>
-                <p>
-                    <center><b>ACTA DE ARCHIVO POR FALTA DE INTERÉS</b></center>
-                </p><br>
                 <p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br>
                         Asunto: Archivo de asunto por falta de interés<br>
                         Solicitante: {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
-                </b></p>  
-                
-                <p>En <b>{{ $direccion_sede }} a {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }},</b></p>
+                </b></p>
+                <p>
+                    <center><b>CONSTANCIA DE NO CONCILIACIÓN</b></center>
+                </p><br>  
+                <p>En <b>{{ $direccion_sede }} a [FECHA_ACTUAL],</b></p>
                 <p>
                     <b>VISTO</b> el estado que guarda el expediente identificado con el número <b>{{ $solicitud->NUE }}</b> relativo a la solicitud de conciliación realizada por
                     <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b>, por falta de interés se formula resolución en atención a los siguientes:
@@ -114,7 +113,7 @@
                     <center><b>RESULTANDOS</b></center>
                 </p><br>
                 <p>
-                    <b>Primero.</b> El <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> solicitó ante este Centro, 
+                    <b>Primero.</b> El <b>[SOLICITUD_FECHA_RECEPCION]</b>, <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> solicitó ante este Centro, 
                     iniciar con el Procedimiento de Conciliación Prejudicial con el(los) citados <b>[SOLICITUD_NOMBRES_CITADOS]</b> por objeto de <b>{{ $solicitud->motivo }}</b>.<br><br>
 
                     <b>Segundo.</b> El <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, el Centro de Conciliación <b>{{ $solicitud->delegacion }}</b> admitió la 
@@ -139,8 +138,7 @@
                     Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<br>
 
                     Y toda vez que la solicitud de Ratificación de Convenio presentada y admitida de conformidad con lo establecido por los artículos 33 párrafo segundo, 
-                    684-C y 684-E de la Ley Federal del Trabajo. Señalándose el <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\í\a\s \d\e F \d\e\l Y') }}
-                    </b> a las <b>{{ $solicitud->hora }}</b> hrs. para la Audiencia de Ratificación de Convenio, se notificó a la parte 
+                    684-C y 684-E de la Ley Federal del Trabajo. Señalándose <b>[FECHA Y HORA]</b> para la Audiencia de Ratificación de Convenio, se notificó a la parte 
                     solicitante <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b>, sin embargo, no acudió, no 
                     obrando una causa justificada de la incomparecencia. <br><br> 
                     Por lo anteriormente expuesto, se:

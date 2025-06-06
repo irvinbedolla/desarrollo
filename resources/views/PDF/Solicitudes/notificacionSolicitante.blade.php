@@ -7,7 +7,7 @@
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
 
         <!-- Bootstrap 5.3.3 -->
-        
+        <link href="../public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
         
@@ -104,42 +104,42 @@
                                 <td>{{ $solicitud->delegacion }} </td>
                             </tr>
                     </table>
-                </div><br><br><br><br>
-                <p><center><b>CITATORIO DE CONCILIACIÓN</b></center></p><br>
-                <p><b>ASUNTO: AUDIENCIA DE CONCILIACIÓN PREJUDICIAL<br>
-                    FECHA DE EMISIÓN DEL CITATORIO:  {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}<br>
-                    SOLICITANTE: {{ $solicitante->nombre }}<br>
-                    NÚMERO DE SEGURIDAD SOCIAL DEL SOLICITANTE(S): {{ $solicitante->nss ?? 'N/A'}}<br>
-                    CURP DEL SOLICITANTE(S): {{ $solicitante->curp }}<br>
-                    CITADO: {{ $citado->nombre}} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}<br>
-                </b></p>  
-                           
-                <p><b>P R E S E N T E</b></p>
-                <p>En cumplimiento y observancia a la fracción XX, del artículo 123 Constitucional, apartado A; así como los de los
-                    Principios Procesales contenidos en los artículos 684-E, 684-F fracción I y 685 de la Ley Federal del Trabajo, que
-                    regulan el procedimiento obligatorio prejudicial conciliatorio; se notifica al <b>C. REPRESENTANTE LEGAL
-                    DE: {{ $citado->nombre }} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}</b> para que asista a la <b>Audiencia de Conciliación</b> 
-                    de fecha <b> [FECHA AUDIENCIA] </b> a las
-                    <b>[HORA AUDIENCIA]</b>, en la sala <b>[URU-1]</b> de la Delegación Regional de <b>{{ $solicitud->delegacion}}</b> del Centro de Conciliación Laboral del
-                    Estado de Michoacán de Ocampo, <b>{{$direccion_sede}}.</b></p>
+                </div><br><br><br>
+                <div class="col-lg-12">
+                    <p><center><b>
+                        NOTIFICACIÓN AL SOLICITANTE<br>
+                        CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br>
+                    <p><b>
+                        ASUNTO: AUDIENCIA DE CONCILIACION PREJUDICIAL<br>
+                        SOLICITANTE: {{ $solicitante->nombre }}<br><br>
+                        CITADO (S): @foreach($citados as $citado)
+                                        {{ $citado->nombre }} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}} <br>
+                                    @endforeach
+                        <br>
+                        FECHA Y HORA DE EMISION DE DOCUMENTOS: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y  H:i') }} hrs.<br>
+                    </b></p>
 
-                <p>La audiencia será presidida por una conciliadora o conciliador del Centro de Conciliación Laboral del Estado de
-                    Michoacán de Ocampo, en cumplimiento al artículo 684-H, manteniendo en todo momento los principios de
-                    conciliación, imparcialidad, neutralidad, flexibilidad, legalidad, equidad, buena fe, información, honestidad, y
-                    confidencialidad.</p>
-                <!--@(notificacion==solicitante)-->
-                    <p>Este citatorio se notifica de manera personal conforme al artículo 739, 739 Ter fracción I y IV, 742 fracción XIII, 743,
-                        744 y 745 Ter de la Ley Federal del Trabajo.
+                    <p> Con fecha <b>{{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}</b> siendo las <b>{{ \Carbon\Carbon::now()->translatedFormat('H:i') }}</b> horas, ante esta 
+                        Autoridad Conciliadora, <b>{{ $solicitante->nombre }}</b>, me doy por notificado (a) personalmente de la fecha para la celebracion de la Audiencia de Conciliación de
+                        la solicitud de Conciliación con número de identificación único <b>{{ $solicitud->NUE }}</b>, misma que tendrá verificativo el día 
+                        <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{ $audiencia->hora }}</b> horas, en la sala <b>[SALA]</b> de la Delegación 
+                        Regional de Michoacán de Ocampo del Centro de Conciliación Laboral 
+                        del Estado de Michoacán de Ocampo, con domicilio en <b>{{$direccion_sede}}</b>.<br><br>
+                        Asimismo, de conformidad con la fracción X del artículo 684- E, me hago conocedor que <b>de no comparecer se archivara el presente asunto por falta de interés</b>.
                     </p>
-                 <!--@-->
-                <!--@(notificacion==centro)-->
-                    <p>Con fundamento en el artículo 684-E. fracción IV, se apercibe al citado que de no comparecer por sí o por conducto de
-                        su representante legal, o bien por medio de apoderado con facultades suficientes, se le impondrá una multa entre 50 y
-                        100 veces la Unidad de Medida y Actualización, y se le tendrá por inconforme con todo arreglo conciliatorio.
-                    </p>
-                <!--@-->    
-                <br><br>
-                <p><center><b>___________________________________<br> [CONCILIADOR] <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>
+                    <br><br><br><br><br><br><br>
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <div style="display: inline-block; margin-right: 50px;">
+                                <p><center><b>___________________________________<br> {{ $solicitante->nombre }} <br></b></center></p><br>
+                            </div>
+                                    
+                            <div style="display: inline-block; margin-right: 50px;">
+                                <p><center><b>___________________________________<br> {{ $conciliador->name }} <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <script type="text/php">
                 if (isset($pdf)) {
@@ -154,4 +154,3 @@
         </main>    
     </body>
 </html>    
-

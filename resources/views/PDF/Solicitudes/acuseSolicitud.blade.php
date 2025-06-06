@@ -7,7 +7,7 @@
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
 
         <!-- Bootstrap 5.3.3 -->
-        
+        <link href="../public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
         
@@ -89,7 +89,7 @@
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
         <footer>
-           
+    
         </footer>
         <main>
             <div class="content">
@@ -104,42 +104,31 @@
                                 <td>{{ $solicitud->delegacion }} </td>
                             </tr>
                     </table>
-                </div><br><br><br><br>
-                <p><center><b>CITATORIO DE CONCILIACIÓN</b></center></p><br>
-                <p><b>ASUNTO: AUDIENCIA DE CONCILIACIÓN PREJUDICIAL<br>
-                    FECHA DE EMISIÓN DEL CITATORIO:  {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}<br>
-                    SOLICITANTE: {{ $solicitante->nombre }}<br>
-                    NÚMERO DE SEGURIDAD SOCIAL DEL SOLICITANTE(S): {{ $solicitante->nss ?? 'N/A'}}<br>
-                    CURP DEL SOLICITANTE(S): {{ $solicitante->curp }}<br>
-                    CITADO: {{ $citado->nombre}} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}<br>
-                </b></p>  
-                           
-                <p><b>P R E S E N T E</b></p>
-                <p>En cumplimiento y observancia a la fracción XX, del artículo 123 Constitucional, apartado A; así como los de los
-                    Principios Procesales contenidos en los artículos 684-E, 684-F fracción I y 685 de la Ley Federal del Trabajo, que
-                    regulan el procedimiento obligatorio prejudicial conciliatorio; se notifica al <b>C. REPRESENTANTE LEGAL
-                    DE: {{ $citado->nombre }} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}</b> para que asista a la <b>Audiencia de Conciliación</b> 
-                    de fecha <b> [FECHA AUDIENCIA] </b> a las
-                    <b>[HORA AUDIENCIA]</b>, en la sala <b>[URU-1]</b> de la Delegación Regional de <b>{{ $solicitud->delegacion}}</b> del Centro de Conciliación Laboral del
-                    Estado de Michoacán de Ocampo, <b>{{$direccion_sede}}.</b></p>
+                </div><br><br><br><br><br>
+                <div class="col-lg-12">
+                    <p><center><b>ACUSE DE SOLICITUD DE CONCILIACIÓN<br>
+                    CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br>
+                    <p><b>FECHA DE LA SOLICITUD: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}<br>
+                          FECHA DE CONFLICTO: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}
+                    </b></p>
+                    <p><b> 
+                        SOLICITANTE: {{ $solicitante->nombre }}<br><br>
+                        CITADO (S): @foreach($citados as $citado)
+                                        {{ $citado->nombre }} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}} <br>
+                                    @endforeach
+                        <br>
+                    </b></p>
+                    
+                    <p>Usted ha guardado exitosamente la solicitud de conciliación con folio <b>{{ $solicitud->NUE }}</b>. El Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con domicilio 
+                        en <b>{{$direccion_sede}}</b>, esta facultada para consultar su solicitud.<br><br>
 
-                <p>La audiencia será presidida por una conciliadora o conciliador del Centro de Conciliación Laboral del Estado de
-                    Michoacán de Ocampo, en cumplimiento al artículo 684-H, manteniendo en todo momento los principios de
-                    conciliación, imparcialidad, neutralidad, flexibilidad, legalidad, equidad, buena fe, información, honestidad, y
-                    confidencialidad.</p>
-                <!--@(notificacion==solicitante)-->
-                    <p>Este citatorio se notifica de manera personal conforme al artículo 739, 739 Ter fracción I y IV, 742 fracción XIII, 743,
-                        744 y 745 Ter de la Ley Federal del Trabajo.
+                        Conforme al artículo 735 de la Ley Federal del Trabajo tiene tres (3) días hábiles a partir de este momento para
+                        confirmar la solicitud, deberá presentar su identificación oficial para confirmar la solicitud como máximo el día <b>13 de
+                        Enero de 2025</b>. En el caso de que no realice la confirmación dentro del plazo señalado, con fundamento en el artículo
+                        684- C y 735 de la Ley Federal del Trabajo, ésta se archivará por falta de presentación de la identificación oficial,
+                        dejando a salvo sus derechos para que pueda presentar una nueva solicitud.
                     </p>
-                 <!--@-->
-                <!--@(notificacion==centro)-->
-                    <p>Con fundamento en el artículo 684-E. fracción IV, se apercibe al citado que de no comparecer por sí o por conducto de
-                        su representante legal, o bien por medio de apoderado con facultades suficientes, se le impondrá una multa entre 50 y
-                        100 veces la Unidad de Medida y Actualización, y se le tendrá por inconforme con todo arreglo conciliatorio.
-                    </p>
-                <!--@-->    
-                <br><br>
-                <p><center><b>___________________________________<br> [CONCILIADOR] <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>
+                </div>
             </div>
             <script type="text/php">
                 if (isset($pdf)) {
@@ -154,4 +143,3 @@
         </main>    
     </body>
 </html>    
-
