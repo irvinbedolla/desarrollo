@@ -37,8 +37,9 @@
                                                     @endif
                                                 </td>
                                                 <td>
+                                                    <button type="button" class="btn btn-warning open-modal" data-id="{{ $audiencia->id }}">Citatorios</button>
                                                     @if($audiencia->estatus == "Archivada")
-                                                        <a class="btn btn-success" href="{{ route('PDFfallta_interes', $audiencia->id) }}"  target="_blank">Acta de Archivo</a><br>
+                                                        <a class="btn btn-success" href="{{ route('PDFfalltaInteres', $audiencia->id) }}"  target="_blank">Acta de Archivo</a><br>
                                                     @elseif($audiencia->estatus == "Incompetencia")
                                                         <a class="btn btn-success" href="{{ route('PDFincompetencia', $audiencia->id) }}"  target="_blank">Incompetencia</a><br>
                                                     @elseif($audiencia->estatus == "Incomparecencia")
@@ -65,28 +66,34 @@
     </section>
 @endsection
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <form class='needs-validation novalidate'  method='POST' action="{{route('archivar_audiencia')}}">
-        @csrf
-        <input type="hidden" id="modal-id" name="id" value="">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Observaciones</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <textarea name="observaciones" style="width:100%"></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Enviar</button>
-                </div>
-            </div>
+<!-- Modal Documentos -->
+<div class="modal fade" id="documentos" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalLabel">DOCUMENTOS</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
-    </form>
+        <div class="modal-body">
+            <table class="table table-striped" style="width: 100%; text-align: center;">
+                <thead style="background-color: #D2D3D5;">
+                  <tr>
+                    <th>Citatorios</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="pdf-list">
+    
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
 </div>
+
 
 <div id="nuevo_poder" style ="display: none;">
     <div>.</div>
@@ -94,12 +101,46 @@
 </div>
 
 @section('scripts')
+    <script src="../public/assets/js/poderes/general.js"></script>
     <script>
-        $('.open-modal').click(function() {
-            const id = $(this).data('id'); // Obtiene el valor de data-id
-            document.getElementById('modal-id').value = id;
+        const pdfsUrlBase = "{{ url('solicitud/pdfs') }}";
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('.open-modal').click(function() {
+                const id = $(this).data('id');
+                $('#pdf-list').empty();
+    
+                // Mostrar modal
+                var myModal = new bootstrap.Modal(document.getElementById('documentos'));
+                myModal.show();
+    
+                $.ajax({
+                    url: `${pdfsUrlBase}/${id}`,
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.length > 0) {
+                            response.forEach(pdf => {
+                                const row = `
+                                <tr>
+                                    <td style="text-align: left;">${pdf.nombre}</td>
+                                    <td>
+                                        <a href="${pdf.url}" target="_blank" class="btn btn-primary btn-sm">Ver PDF</a>
+                                    </td>
+                                </tr>`;
+                                $('#pdf-list').append(row);
+                            });
+                        } else {
+                            $('#pdf-list').append('<tr><td colspan="2">No hay documentos disponibles.</td></tr>');
+                        }
+                    },
+                    error: function() {
+                        $('#pdf-list').append('<tr><td colspan="2">Error al cargar documentos.</td></tr>');
+                    }
+                });
+            });
         });
     </script>
-    <script src="../public/assets/js/poderes/general.js"></script>
 @endsection
+
 

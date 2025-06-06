@@ -2028,21 +2028,17 @@ class SeerController extends Controller
         if(isset($data["rfc"])){
             $data_insert["rfc"] =  $data["rfc"];
         }
-        
         if(isset($data["traductor"])){
             $data_insert["traductor"] =  "Si";
             $data_insert["lenguaje"]  =  $data["lenguaje"];
         }
-        
         if(isset($data["numInt"])){
             $data_insert["num_int"] =  $data["numInt"];
         }
-        
         if(isset($data["discapacidad"])){
             $data_insert["discapacidad"] =  "Si";
             $data_insert["tipo_discapacidad"] =  $data["tipo_discapacidad"];
         }
-        
         if(isset($data["labora"])){
             $data_insert["labora"] =  "Si";
             $data_insert["fecha_salida"]  =  $data["fecha_salida"];
@@ -2050,26 +2046,18 @@ class SeerController extends Controller
         if(isset($data["telefono2"])){
             $data_insert["telefono2"] =  $data["telefono2"];
         }
-        
         if(isset($data["seguro"])){
             $data_insert["nss"] =  $data["seguro"];
         }
-        
-
-        //Voy a insertar en la tabla de solicitante
-       
-        
-        // Voy a realizar una busqueda de la tabla general
-       // $solicitud = SeerPerGeneral::find($data["id"]);
-       
-
+        if(isset($data["fecha_salida"])){
+            $data_insert["fecha_salida"] =  $data["fecha_salida"];
+        } 
         //CURP
         $documento = $data["curp"]."_CURP.pdf";
         //dd($documento);
         $path = Storage::putFileAs(
             'documentosSolicitud', $request->file('documentoCurp'), $documento
         );
-        
         //Acta de nacimiento
         if(isset($data["documentoIdentificacion"])){
             $documentoidentificacion = $data["curp"]."_Identificacion.pdf";
@@ -2582,16 +2570,10 @@ class SeerController extends Controller
     public function indexA(){
         $id = auth()->user()->id;
         $user = User::find($id);
+        $fecha_actual = date('y-m-d');
 
         $audiencias = SeerPerGeneral::where('conciliador_id', $user->id)
-            ->where(function ($query) {
-                $query->where('estatus', 'Confirmado')
-                    ->orWhere('estatus', 'Archivada')
-                    ->orWhere('estatus', 'Reagendada')
-                    ->orWhere('estatus', 'Incompetencia')
-                    ->orWhere('estatus', 'Comparecencia')
-                    ->orWhere('estatus', 'No conciliacion');
-            })
+            ->where('fecha', $fecha_actual)
             ->get();
 
         foreach ($audiencias as $audiencia) {
@@ -3196,7 +3178,7 @@ class SeerController extends Controller
         $conciliadores = User::whereHas($relacionEloquent, function ($query) {
             return $query->where('name', '=', 'Conciliador');
         })
-        ->where('delegacion', $delegacion)
+        ->where('delegacion', $user["delgacion"])
         ->get();
         //Numero de conciliadores
         $contador = count($conciliadores);
@@ -3685,5 +3667,22 @@ class SeerController extends Controller
                 'message' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function audiencia_fecha(){
+        return view('/audiencias/busqueda');
+    }
+
+    //Conciliadores en solicitudes audiencias
+    public function historial_conciliador(Request $request){
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        $data = $request->all();
+        $audiencias = SeerPerGeneral::where('conciliador_id', $user->id)
+            ->where('conciliador_id',$id)
+            ->whereBetween('seer_general.created_at', [$data["fecha_inicio"], $data["fecha_final"]])
+            ->get();
+
+        return view('/historial/conciliadores',compact('audiencias'));
     }
 }

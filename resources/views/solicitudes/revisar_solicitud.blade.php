@@ -495,7 +495,7 @@ body {font-family: Arial;}
                                                         <h4 class="text-center">Citado</h4>
                                                     </div>
                                                 </div><br>
-                                                <div class="col-xs-12 col-sm-6 col-md-12">
+                                                <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label for="password">Nombre Citado</label>
                                                         <input type="text" class="form-control" name="nombre_citado[]" value="<?=$citado["nombre"];?>">   
@@ -523,13 +523,13 @@ body {font-family: Arial;}
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label for="password">CURP</label>
                                                         <input type="text" class="form-control" name="curp_citado[]" value="<?=$citado["curp"];?>" maxlength="18">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label for="password">RFC</label>
                                                         <input type="text" class="form-control" name="rfc_citado[]" value="<?=$citado["rfc"];?>">   

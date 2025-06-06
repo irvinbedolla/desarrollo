@@ -594,7 +594,7 @@
             document.getElementById('modal-id').value = id;
             document.getElementById('modal-id-reagendar').value = id;
             document.getElementById('id_citado_2').value = id;
-            document.getElementById('modal-id-terminar').value =id;
+            //*document.getElementById('modal-id-terminar').value =id;
             document.getElementById('modal-id-archivar').value = id;
             document.getElementById('modal-id-reagendar').value = id;
             document.getElementById('modal-id-incopentencia').value = id;
