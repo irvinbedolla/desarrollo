@@ -252,7 +252,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/VerpdfPago/{id}',           [TurnosController::class, 'VerPDFPagos'])->name('PDFpagos');
         Route::get('/Verpdfaudiencia/{id}',      [TurnosController::class, 'VerPDFAudiencia'])->name('PDFaudiencia');
         //Route::get('/Verpdfincompetencia/{id}',  [TurnosController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');
-        Route::get('/Verpdfnoconciliacion/{id}', [TurnosController::class, 'VerPDFNoConciliacion'])->name('PDFno_conciliacion');
+        //Route::get('/Verpdfnoconciliacion/{id}', [TurnosController::class, 'VerPDFNoConciliacion'])->name('PDFno_conciliacion');
         Route::get('/Verpdfincomparecencia/{id}',[TurnosController::class, 'VerPDFIncomparecencia'])->name('PDFincomparecencia');
         Route::get('turnos/index2',              [TurnosController::class, 'index_empresa'])->name('ratificacion');
         Route::get('turnos/indexr',              [TurnosController::class, 'indexr'])->name('Ratificacion');
@@ -291,9 +291,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/historial/auxiliar',                  [SeerController::class, 'historial_auxiliar'])->name('historial_auxiliar');
         Route::get('/solicitudes/solicitudes',              [SeerController::class, 'solicitudes_todas'])->name('solicitudes_todas');
         Route::post('/audiencia/guardar',                   [SeerController::class, 'concluir_audiencia_conciliador'])->name('concluir_audiencia_conciliador');
+        Route::post('/solicitudes/crear/PF',                [SeerController::class, 'citado_personaF'])->name('insertar_citado_PF');
         //PDF Solicitudes    
         Route::get('/Verpdfincompetencias/{id}',            [SeerController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');
-        Route::get('/PDF/falta_interes/{id}',               [SeerController::class, 'VerPDFInteres'])->name('PDFfallta_interes');
+        //Route::get('/PDF/falta_interes/{id}',               [SeerController::class, 'VerPDFInteres'])->name('PDFfallta_interes');
         Route::get('/Verpdfcs/{id}',                        [SeerController::class, 'VerPDFConvenioSol'])->name('PDFconveniosolicitud');
         Route::get('/Verpdfacuse/{id}',                     [SeerController::class, 'PDFacuseSolicitud'])->name('PDFacuse_solicitud');
         Route::get('/Verpdfnotificacion/{id}',              [SeerController::class, 'PDFnotificacionSolicitante'])->name('PDFnotificacion_solicitante');
@@ -302,7 +303,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('solicitud/consultar/{id}',              [SeerController::class, 'consultar_solicitudes'])->name('consultar_solicitud');
         Route::get('/audiencias/historial',                 [SeerController::class, 'audiencia_fecha'])->name('audiencia_fecha');
         Route::post('/historial/conciliador',               [SeerController::class, 'historial_conciliador'])->name('historial_conciliador');
-        Route::get('/PDF/faltaInteres/{id}',               [SeerController::class, 'VerPDFInteres'])->name('PDFfalltaInteres');
+        Route::get('/PDF/faltaInteres/{id}',                [SeerController::class, 'VerPDFInteres'])->name('PDFfalltaInteres');
+        Route::get('/Verpdfnoconciliacion/{id}',            [SeerController::class, 'VerPDFNoConciliacion'])->name('PDFno_conciliacion');
+        Route::get('/Verpdfincomparecencia/{id}',           [SeerController::class, 'VerPDFincomparecencia'])->name('PDFincomparecencia');
     //Ratificaciones
         Route::get('/ratificaciones/index',         [TurnosController::class, 'revisar_ratificaciones'])->name('atender_ratificacion');
         Route::get('/ratificaciones/concluir/{id}', [TurnosController::class, 'concluir_ratificaciones'])->name('ratificacion_concluir');

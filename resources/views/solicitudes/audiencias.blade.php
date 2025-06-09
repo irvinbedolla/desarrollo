@@ -258,7 +258,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarCitados">Agregar</button>
+                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarCitados">Agregar persona moral</button>
+                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarPersonaF">Agregar persona física</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
@@ -580,6 +581,116 @@
         </div>
     @endif
 </div>
+<!-- Modal Agregar Personas Físicas (Citados)-->
+<div class="modal fade" id="modalAgregarPersonaF" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <form class='needs-validation novalidate'  method='POST' name="AgregarPersonaFisica" id="AgregarPersonaFisica" action="{{route('insertar_citado_PF')}}">
+        @csrf
+        <input type="text" name="id" value="{{$id}}">
+        <input type="text" name="id_citado_pf" id="id_citado_pf" value="">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Editar Citado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="name">Nombre(s) y apellidos</label>
+                                <input type="text" class="form-control" placeholder="*Nombre(s)" name="nombresAbogadoAlta" oninput="this.value = this.value.toUpperCase()" required>
+                                <div class="invalid-feedback">
+                                    El nombre es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="">Teléfono</label>
+                                <input type="text" class="form-control" placeholder="*Telefono"  name="telefonoAbogadoAlta" maxlength="10" pattern="[0-9]+" required>
+                                <div class="invalid-feedback">
+                                    El telefono es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="">Correo</label>
+                                <input type="email" class="form-control" placeholder="*Correo" name="correoAbogadoAlta" id="correoAbogadoAlta" required>
+                                <div class="invalid-feedback">
+                                    El correo es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="">CURP</label>
+                                <input type="text" class="form-control" placeholder="*CURP" aria-label="CURP" name="curpAbogadoAlta" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" required>
+                                <div class="invalid-feedback">
+                                    La CURP es obligatoria.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="">Domicilio</label>
+                                <input type="text" class="form-control" placeholder="*Domicilio" name="domicilioAbogadoAlta" id="domicilioAbogadoAlta" oninput="this.value = this.value.toUpperCase()" required>
+                                <div class="invalid-feedback">
+                                    El domicilio es obligatoria.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="">RFC</label>
+                                <input type="text" class="form-control" placeholder="RFC Empresa" name="RFCAbogadoAlta" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()">
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label for="name">Tipo de identificación (*)</label>
+                                <select name="identificacionAbogadoAlta" class="form-control" required>
+                                    <option value="">SELECCIONE</option>
+                                    <option value="ine">INE</option>
+                                    <option value="pasaporte">PASAPORTE</option>
+                                    <option value="cedula">CÉDULA PROFESIONAL</option>
+                                    <option value="licencia">LICENCIA PARA CONDUCIR</option>
+                                    <option value="otros">OTROS</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    El tipo de identificaión es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label>Identificación oficial</label>
+                                <input type="file" name="documentoIdentificacion" class="form-control" accept=".pdf" required>
+                                <div class="invalid-feedback">
+                                    La Identificación es obligatoria.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <input type="hidden" name="id_usuario_registro" value="{{ Auth::id() }}">
+                        </div>
+                        
+                    </div>                                     
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 
 <div id="nuevo_poder" style ="display: none;">
     <div>.</div>
@@ -594,6 +705,7 @@
             document.getElementById('modal-id').value = id;
             document.getElementById('modal-id-reagendar').value = id;
             document.getElementById('id_citado_2').value = id;
+            document.getElementById('id_citado_pf').value = id;
             //*document.getElementById('modal-id-terminar').value =id;
             document.getElementById('modal-id-archivar').value = id;
             document.getElementById('modal-id-reagendar').value = id;

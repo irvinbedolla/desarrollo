@@ -25,6 +25,7 @@ use App\Models\Poder;
 use App\Models\Audiencias;
 use App\Models\Pagos; 
 use App\Models\Concepto; 
+use App\Models\PersonaFisica;
 
 //Para sacar el Id del usuario
 use Illuminate\Support\Facades\Auth;
@@ -2875,7 +2876,7 @@ class SeerController extends Controller
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true); 
 
-        $nombreArchivo = 'falta_de_interes_' . $solicitud->trabajador .'.pdf';
+        $nombreArchivo = 'falta_de_interes_' . $solicitante->nombre .'.pdf';
         return $pdf->stream($nombreArchivo);  
     }
 
@@ -3644,7 +3645,7 @@ class SeerController extends Controller
                     $nombreArchivo = 'citatorio_' . $citado->nombre . '_' . $citado->primer_apellido . '.pdf';
     
                     // Genera el PDF en memoria
-                    $pdf = \PDF::loadView('PDF/citatorio', compact('solicitud','solicitante','citado','motivos','audiencia','conciliador'))
+                    $pdf = \PDF::loadView('PDF/Solicitudes/citatorio', compact('solicitud','solicitante','citado','motivos','audiencia','conciliador'))
                         ->setPaper('a4', 'portrait')
                         ->setOption('isHtml5ParserEnabled', true)
                         ->setOption('isPhpEnabled', true);
@@ -3697,5 +3698,73 @@ class SeerController extends Controller
             ->get();
 
         return view('/historial/conciliadores',compact('audiencias'));
+    }
+
+    //Citado persona física
+    public function citado_personaF(Request $request){
+        $data = $request->all();
+        $id_usuario = auth()->user()->id;
+        $user = User::find($id_usuario);
+        $roles = Role::pluck('name', 'name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+        //dd($request);
+        //Validar documentacion
+        request()->validate([
+            'nombresAbogadoAlta'        => 'required',
+            'correoAbogadoAlta'         => 'required',
+            'curpAbogadoAlta'           => 'required',
+            'domicilioAbogadoAlta'      => 'required',
+        ], $data);
+
+        $data_insertar= array(
+            'id_solicitud'      => $data["id"],
+            'id_citado'         => $data["id_citado_pf"],
+            'nombre_completo'   => $data["nombresAbogadoAlta"],
+            'telefono'          => $data["telefonoAbogadoAlta"], 
+            'email'             => $data["correoAbogadoAlta"],
+            'curp'              => $data["curpAbogadoAlta"],
+            'domicilio'         => $data["domicilioAbogadoAlta"],
+            'rfc'               => $data["RFCAbogadoAlta"],
+
+        );
+
+        $nuevoAbogado = PersonaFisica::create($data_insertar);   
+        //dd($nuevoAbogado);
+        $A_citado=SeerCitados::find($data['id_citado_pf'])->update(['id_abogado' => $nuevoAbogado->id]);
+        return back()->with('success', 'Representante legal registrado y asignado correctamente al citado.');
+    }
+
+    //PDF Acta No conciliación
+    public function VerPDFNoConciliacion($id){
+        $solicitud = SeerPerGeneral::find($id);
+        
+        $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
+        $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
+        ->first();
+        
+        //$citado = SeerCitados::where('id_solicitud', $id)->get();
+        $citado  = SeerPerGeneral::join("seer_citados","seer_citados.id_solicitud","=","seer_general.id");
+        $citado = $citado->where("seer_citados.id_solicitud", "=", $solicitud["id"])
+        ->first();
+
+        $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
+        $conciliador = $conciliador->where("seer_general.conciliador_id", "=", $solicitud["conciliador_id"])
+        ->select('users.name')
+        ->first();
+
+        $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
+        $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
+        ->first();
+
+        //dd($citado);
+        $html = view('PDF/Solicitudes/NoConciliacion', compact('id', 'solicitud','conciliador','citado','audiencia','solicitante'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'No_Conciliacion_' . $solicitud->empresa .'.pdf';
+        return $pdf->stream($nombreArchivo);                 
     }
 }

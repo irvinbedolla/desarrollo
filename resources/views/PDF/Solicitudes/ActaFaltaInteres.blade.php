@@ -101,16 +101,16 @@
                         Asunto: Archivo de asunto por falta de interés<br>
                         Solicitante: {{ $solicitante->nombre }} <br> 
                 </b></p>  
-                <p>En <b>{{ $direccion_sede }} a {{ \Carbon\Carbon::parse($solicitud->fecha_terminacion)->translatedFormat('d \d\e F \d\e\l Y') }},</b></p>
+                <p>En <b>{{ $direccion_sede }} a {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }},</b></p>
                 <p>
                     <b>VISTO</b> el estado que guarda el expediente identificado con el número <b>{{ $solicitud->NUE }}</b> relativo a la solicitud de conciliación realizada por
-                    <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b>, por falta de interés se formula resolución en atención a los siguientes:
+                    <b>{{ $solicitante->nombre }}</b>, por falta de interés se formula resolución en atención a los siguientes:
                 </p>
                 <p>
                     <center><b>RESULTANDOS</b></center>
                 </p><br>
                 <p>
-                    <b>Primero.</b> El <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> solicitó ante este Centro, 
+                    <b>Primero.</b> El <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, <b>{{ $solicitante->nombre }}</b> solicitó ante este Centro, 
                     iniciar con el Procedimiento de Conciliación Prejudicial con el(los) citados:
                     <b>
                         @foreach($citados as $citado)    
@@ -130,7 +130,7 @@
 
                     <b>Tercero.</b> El <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, se concluyó la notificación personal de él(los) citado(s).<br><br>
 
-                    <b>Cuarto.</b> El día de la audiencia, <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> no se presentó en ningún momento 
+                    <b>Cuarto.</b> El día de la audiencia, <b>{{ $solicitante->nombre }}</b> no se presentó en ningún momento 
                               durante el tiempo que se tenía programado para la audiencia.<br>
                                 
                     <br>En esas condiciones, este Centro expone los siguientes: 
@@ -149,8 +149,7 @@
                     684-C y 684-E de la Ley Federal del Trabajo. Señalándose 
                     <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{$audiencia->hora}}
                     </b> para la Audiencia, se notificó a la parte 
-                    solicitante <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b>, sin embargo, no acudió, no 
-                    obrando una causa justificada de la incomparecencia. <br><br> 
+                    solicitante <b>{{ $solicitante->nombre }}</b>, sin embargo, no acudió, no obrando una causa justificada de la incomparecencia. <br><br> 
                     Por lo anteriormente expuesto, se:
                 </p>       
                 <p>

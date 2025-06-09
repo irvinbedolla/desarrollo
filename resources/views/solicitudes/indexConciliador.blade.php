@@ -37,18 +37,17 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <button type="button" class="btn btn-warning open-modal" data-id="{{ $audiencia->id }}">Citatorios</button>
                                                     @if($audiencia->estatus == "Archivada")
                                                         <a class="btn btn-success" href="{{ route('PDFfalltaInteres', $audiencia->id) }}"  target="_blank">Acta de Archivo</a><br>
                                                     @elseif($audiencia->estatus == "Incompetencia")
                                                         <a class="btn btn-success" href="{{ route('PDFincompetencia', $audiencia->id) }}"  target="_blank">Incompetencia</a><br>
-                                                    @elseif($audiencia->estatus == "Incomparecencia")
-                                                        <a class="btn btn-success" href="{{ route('PDFincomparecencia', $audiencia->id) }}"  target="_blank">Acta de Incomparecencia</a><br>
+                                                    @elseif($audiencia->estatus == "Comparecencia")
+                                                        <a class="btn btn-success" href="{{ route('PDFincomparecencia', $audiencia->id) }}"  target="_blank">Acta de incomparecencia</a><br>
                                                     @elseif($audiencia->estatus == "Reagendada")
-                                                        <a class="btn btn-info" href="{{ route('PDFratificacion', $audiencia->id) }}">Notificación al solicitante</a><br>
-                                                        <a class="btn btn-success" href="{{ route('PDFcitatorio', $audiencia->id) }}"  target="_blank">Citatorios</a><br>
+                                                        <a class="btn btn-info" target="_blank" href="{{ route('PDFnotificacion_solicitante', $audiencia->id) }}">Notificación al solicitante</a><br><br>
+                                                        <button type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $audiencia->id }}">Citatorios</button>
                                                     @elseif($audiencia->estatus == "No conciliacion")
-                                                        <a class="btn btn-success" href="{{ route('PDFratificacion', $audiencia->id) }}">Constancia de no conciliación</a><br>
+                                                        <a class="btn btn-success" target="_blank" href="{{ route('PDFno_conciliacion', $audiencia->id) }}">Constancia de no conciliación</a><br>
                                                     @endif 
                                                 </td>
                                             </tr>
@@ -82,9 +81,7 @@
                     <th>Acción</th>
                   </tr>
                 </thead>
-                <tbody id="pdf-list">
-    
-                </tbody>
+                <tbody id="pdf-list"></tbody>
             </table>
         </div>
         <div class="modal-footer">
@@ -93,7 +90,6 @@
       </div>
     </div>
 </div>
-
 
 <div id="nuevo_poder" style ="display: none;">
     <div>.</div>
@@ -110,22 +106,33 @@
             $('.open-modal').click(function() {
                 const id = $(this).data('id');
                 $('#pdf-list').empty();
-    
-                // Mostrar modal
+
                 var myModal = new bootstrap.Modal(document.getElementById('documentos'));
                 myModal.show();
-    
+
                 $.ajax({
                     url: `${pdfsUrlBase}/${id}`,
                     method: 'GET',
                     success: function(response) {
                         if (response.length > 0) {
                             response.forEach(pdf => {
+                                const pdfData = pdf.base64;
+                                const pdfName = pdf.nombre;
+
+                                const byteCharacters = atob(pdfData);
+                                const byteNumbers = new Array(byteCharacters.length);
+                                for (let i = 0; i < byteCharacters.length; i++) {
+                                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                                }
+                                const byteArray = new Uint8Array(byteNumbers);
+                                const blob = new Blob([byteArray], { type: 'application/pdf' });
+                                const url = URL.createObjectURL(blob);
+
                                 const row = `
                                 <tr>
-                                    <td style="text-align: left;">${pdf.nombre}</td>
+                                    <td style="text-align: left;">${pdfName}</td>
                                     <td>
-                                        <a href="${pdf.url}" target="_blank" class="btn btn-primary btn-sm">Ver PDF</a>
+                                        <a href="${url}" target="_blank" class="btn btn-primary btn-sm">Ver PDF</a>
                                     </td>
                                 </tr>`;
                                 $('#pdf-list').append(row);
@@ -138,6 +145,12 @@
                         $('#pdf-list').append('<tr><td colspan="2">Error al cargar documentos.</td></tr>');
                     }
                 });
+            });
+
+            // Limpiar backdrop y modal-open cuando modal se oculta
+            $('#documentos').on('hidden.bs.modal', function () {
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open');
             });
         });
     </script>
