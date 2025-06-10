@@ -292,6 +292,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/solicitudes/solicitudes',              [SeerController::class, 'solicitudes_todas'])->name('solicitudes_todas');
         Route::post('/audiencia/guardar',                   [SeerController::class, 'concluir_audiencia_conciliador'])->name('concluir_audiencia_conciliador');
         Route::post('/solicitudes/crear/PF',                [SeerController::class, 'citado_personaF'])->name('insertar_citado_PF');
+        Route::get('/audieniecias/complimientos',           [SeerController::class, 'audiencias_cumplimiento'])->name('audiencias.cumplimiento');
         //PDF Solicitudes    
         Route::get('/Verpdfincompetencias/{id}',            [SeerController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');
         //Route::get('/PDF/falta_interes/{id}',               [SeerController::class, 'VerPDFInteres'])->name('PDFfallta_interes');

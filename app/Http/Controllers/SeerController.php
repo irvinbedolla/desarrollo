@@ -2280,7 +2280,8 @@ class SeerController extends Controller
         $user = User::find($id_user);
         $listado_auxiliares = array();
         $relacionEloquent = 'roles';
-
+        $fecha_actual = date('y-m-d');
+        
         //Actualizar SEER GENERAL
         $delegacion = SeerPerGeneral::find($data["id"]);
         $NUE = $this->GeneraExpediente($data["id"],$delegacion["delegacion"]);
@@ -2438,9 +2439,9 @@ class SeerController extends Controller
         );
         Audiencias::create($audiencia_insert);
         //Actualizar genera
-        SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $data["conciliador"], 'estatus' => 'Confirmado' ]);
+        SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $data["conciliador"], 'estatus' => 'Confirmado', 'estatus' => 'Confirmado'  ]);
         //Generar las notificaciones Pendiente
-        //SeerCitados::where('id_solicitud',$data["id"])->update(['estatus' => 'Confirmado' ]);
+        SeerPerConciliador::where('id_solicitud',$data["id"])->orderBy('id', 'desc')->first()->update(['fecha_conclucion' => $fecha_actual ]);
 
 
         return redirect()->route('solicitudes_pendientes'); 
@@ -3766,5 +3767,9 @@ class SeerController extends Controller
 
         $nombreArchivo = 'No_Conciliacion_' . $solicitud->empresa .'.pdf';
         return $pdf->stream($nombreArchivo);                 
+    }
+
+    public function audiencias_cumplimiento(){
+        
     }
 }
