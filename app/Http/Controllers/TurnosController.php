@@ -1383,7 +1383,7 @@ class TurnosController extends Controller
         ->first();
 
         //dd($conciliador);
-        $html = view('PDF/convenioTerminacion', 
+        $html = view('PDF/convenioRatificacion', 
             compact('id', 'solicitud', 'dias_descanso', 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','vacacionesTexto',
             'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
             'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones'))

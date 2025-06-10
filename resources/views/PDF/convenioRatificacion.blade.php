@@ -239,7 +239,7 @@
                         <!-- CONDICIONAL EN BASE A LO LLENADO EN FORMULARIO SE AGREGA PAGOS-->
                         <p>{{ $pago->observaciones }}</p> 
 
-                    @if($pagosDif>1)
+                    @if($pagosDif>'1')
                         <p>En caso de que la parte <b>EMPLEADORA</b> no cubra el pago de la cantidad estipulada y dentro del plazo determinado en esta cláusula, deberá pagar a la parte <b>TRABAJADORA</b> 
                             el equivalente a un día de salario diario, el cual se fijará en razón del salario que percibía dicha parte antes de finalizar la relación de trabajo correspondiente a la cantidad de 
                             <b>${{ number_format($salario_diario, 2) }} {{ $diarioTexto }} M.N</b>. Esa cantidad se sumará a la previamente pactada, por cada día que 

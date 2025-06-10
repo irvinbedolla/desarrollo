@@ -243,7 +243,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/turnos/edit',              [TurnosController::class, 'edit'])->name('turnos.edit');
         Route::get('/turnos/cambio/{id}',        [TurnosController::class, 'cambio'])->name('turnos.cambioexcepcion');
         Route::get('/Verpdf/{id}',               [TurnosController::class, 'VerPDF'])->name('PDFratifi');
-        Route::get('/Verpdfc/{id}',              [TurnosController::class, 'VerPDFConvenio'])->name('PDFconvenio');
+        Route::get('/Verpdfc/{id}',              [TurnosController::class, 'VerPDFConvenio'])->name('PDFconvenioratificacion');
         Route::get('/Verpdfmulta/{id}',          [TurnosController::class, 'VerPDFMulta'])->name('PDFmultas');
         Route::get('/Verpdfinteres/{id}',        [TurnosController::class, 'VerPDFInteres'])->name('PDFinteres');
         Route::get('/Verpdfcump/{id}',           [TurnosController::class, 'VerPDFCumplimiento'])->name('PDFcumplimiento');
