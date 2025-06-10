@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
     calendarAudiencias = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridWeek',
         locale: 'es',
-        events: 'citas/eventos',
+        events: 'audiencias/eventos',
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
@@ -125,6 +125,9 @@ function handleEventClick(info, calendarType) {
             <strong>Estatus:</strong> ${props.estatus}<br>
             <strong>Tipo:</strong> ${props.tipo}<br>
             <strong>Usuario:</strong> ${props.usuario}<br>
+            <strong>Conciliador:</strong> ${props.conciliador}<br>
+            <strong>Delegación:</strong> ${props.delegación}<br>
+            <strong>Sala:</strong> ${props.sala}<br>
         `;
     }
 
