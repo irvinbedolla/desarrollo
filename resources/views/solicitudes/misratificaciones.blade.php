@@ -16,7 +16,6 @@
                                 <div class="table-responsive">
                                     <table id="example" class="table table-striped mt-2">
                                         <thead style="background-color: #4A001F;">
-                                            <th style="color: #fff;">Folio</th>
                                             <th style="color: #fff;">Fecha</th>
                                             <th style="color: #fff;">Empresa/Patrón(a)</th>
                                             <th style="color: #fff;">Trabajador(a)</th>
@@ -29,7 +28,6 @@
                                         <tbody>
                                             @foreach($solicitudes as $solicitud)
                                                 <tr>
-                                                    <td>{{$solicitud->id}}</td>
                                                     <td>{{$solicitud->fecha}}</td> 
                                                     <td>{{$solicitud->empresa}}</td>
                                                     <td>{{$solicitud->trabajador}}</td>
@@ -39,11 +37,20 @@
                                                     <td><a class="btn btn-primary" href="{{ route('consultar_ratificacion', $solicitud->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
                                                     <td>
                                                         @if($solicitud->estatus === "Confirmado")
-                                                            <a class="btn btn-success" href="{{ route('PDFratifi', $solicitud->id) }}" onclick=consultar_estadistica(); tarjet="_black">Acuse</a>
+                                                            <a class="btn btn-success" href="{{ route('PDFratifi', $solicitud->id) }}"  tarjet="_black">Acuse</a>
+                                                        @elseif($solicitud->estatus === "Conluida")
+                                                            <a class="btn btn-success" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}" tarjet="_black">Convenio</a>
+                                                            <a class="btn btn-success" href="{{ route('PDFcumplimiento', $solicitud->id) }}"  target="_blank">Constancia de cumplimiento</a>
+                                                        @elseif($solicitud->estatus == "Concluida Pagos")
+                                                            <a class="btn btn-success" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}"  target="_blank">Convenio</a>
+                                                            <a class="btn btn-success" href="{{ route('PDFaudiencia', $solicitud->id) }}"  target="_blank">Acta de audiencia</a>
+                                                        @elseif($solicitud->estatus == "Incumplimiento")
+                                                            <a class="btn btn-success" href="{{ route('PDFincumplimiento', $solicitud->id) }}"  target="_blank">Incumplimiento</a>
+                                                        @elseif($solicitud->estatus == "Archivada")
+                                                            <a class="btn btn-success" href="{{ route('PDFinteres', $solicitud->id) }}"  target="_blank">Acta de Archivo</a>
                                                         @endif
-                                                        @if($solicitud->estatus === "Conluida")
-                                                            <a class="btn btn-success" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}" onclick=consultar_estadistica(); tarjet="_black">Convenio</a>
-                                                        @endif
+
+
                                                     </td>
                                                 </tr>
                                             @endforeach

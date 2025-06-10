@@ -3770,6 +3770,6 @@ class SeerController extends Controller
     }
 
     public function audiencias_cumplimiento(){
-        
+        return view('/cumplimientos/index');
     }
 }

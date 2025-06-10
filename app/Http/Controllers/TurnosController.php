@@ -1506,7 +1506,7 @@ class TurnosController extends Controller
         $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
         $conciliador = $conciliador->where("turnos.id", "=", $id)
         ->select('users.name')
-        ->get();
+        ->first();
         $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
 
         $html = view('PDF/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
@@ -1601,18 +1601,18 @@ class TurnosController extends Controller
         $random = array_rand($listado_auxiliares);
         $conciliador = $listado_auxiliares[$random];        
         $user = User::find($conciliador);
+        $expediente = $this->GeneraExpediente($turno["id"],$turno["delegacion"]);
 
-        $aceptar = Turnos::find($id)
-        ->update(['auxiliar' => $user["id"],'lugar_auxiliar' => $user["name"],'estatus' => 'Confirmado']);
-
+        Turnos::find($id)->update(['auxiliar' => $user["id"],'lugar_auxiliar' => $user["name"],'estatus' => 'Confirmado','NUE' => $expediente, 'id_conciliador' => $user["id"]]);
         return redirect()->route('Ratificacion');
     }
 
     public function guardar_rechazo(Request $request){
         $data = $request->all();
-        
-        $rechazar = Turnos::find($data["id"])
-        ->update(['estatus' => 'Rechazado', 'observaciones' => $data["observaciones"]]);
+        $turno = Turnos::find($data["id"]);
+        $expediente = $this->GeneraExpediente($turno["id"],$turno["delegacion"]);
+
+        Turnos::find($id)->update(['auxiliar' => $user["id"],'lugar_auxiliar' => $user["name"],'estatus' => 'Confirmado','NUE' => $expediente, 'id_conciliador' => $user["id"], 'observaciones' => $data["observaciones"]]);
 
         return redirect()->route('Ratificacion');
     }
@@ -1888,12 +1888,11 @@ class TurnosController extends Controller
 
         //Generar numero de expediente
         $delegacion = Turnos::find($data["id"]);
-        //dd($delegacion);
-        $expediente = $this->GeneraExpediente($delegacion["delegacion"]);
+        $expediente = $this->GeneraExpediente($data["id"],$delegacion["delegacion"]);
 
         $rechazar = Turnos::find($data["id"])
         ->update(['resolucion_primera'  => $data["primera"],
-        'resolucion_trabajadores'       => $data["trabajadores"],
+        //'resolucion_trabajadores'       => $data["trabajadores"],
         'resolucion_justificacion'      => $data["justificacion"],
         'resolucion_segunda'            => $data["segunda"],
         'vacaciones_dias'               => $data["vacaciones"],
@@ -1969,9 +1968,12 @@ class TurnosController extends Controller
 
     public function archivar_ratificacion(Request $request){
         $data = $request->all();
+        $id_usuario = auth()->user()->id;
+        $user = User::find($id_usuario);
 
-        Turnos::find($data["id"])
-        ->update(['estatus'  => "Archivada", 'observaciones' => $data["observaciones"]]);
+        $turno = Turnos::find($data["id"]);
+        $expediente = $this->GeneraExpediente($turno["id"],$turno["delegacion"]);
+        Turnos::find($turno["id"])->update(['auxiliar' => $user["id"],'lugar_auxiliar' => $user["name"],'estatus' => 'Archivada','NUE' => $expediente, 'id_conciliador' => $user["id"], 'observaciones' => $data["observaciones"]]);
 
         return redirect()->route('atender_ratificacion');
     
