@@ -3711,26 +3711,32 @@ class SeerController extends Controller
         //dd($request);
         //Validar documentacion
         request()->validate([
-            'nombresAbogadoAlta'        => 'required',
-            'correoAbogadoAlta'         => 'required',
-            'curpAbogadoAlta'           => 'required',
-            'domicilioAbogadoAlta'      => 'required',
+            'nombre'                    => 'required',
+            'correo'                    => 'required',
+            'curp'                      => 'required',
+            'domicilio'                 => 'required',
+            'documentoIdentificacion'   => 'required',
         ], $data);
 
         $data_insertar= array(
             'id_solicitud'      => $data["id"],
             'id_citado'         => $data["id_citado_pf"],
-            'nombre_completo'   => $data["nombresAbogadoAlta"],
-            'telefono'          => $data["telefonoAbogadoAlta"], 
-            'email'             => $data["correoAbogadoAlta"],
-            'curp'              => $data["curpAbogadoAlta"],
-            'domicilio'         => $data["domicilioAbogadoAlta"],
-            'rfc'               => $data["RFCAbogadoAlta"],
-
+            'nombre_completo'   => $data["nombre"],
+            'telefono'          => $data["telefono"], 
+            'email'             => $data["correo"],
+            'curp'              => $data["curp"],
+            'domicilio'         => $data["domicilio"],
+            'rfc'               => $data["RFC"],
         );
+        
+        $documentoidentificacion = $data["curp"]."_Identificacion.pdf";
+            $path = Storage::putFileAs(
+                'documentosSolicitud', $request->file('documentoIdentificacion'), $documentoidentificacion
+            );
+        
+        $data_insertar["documentoIdentificacion"] = $documentoidentificacion;
 
         $nuevoAbogado = PersonaFisica::create($data_insertar);   
-        //dd($nuevoAbogado);
         $A_citado=SeerCitados::find($data['id_citado_pf'])->update(['id_abogado' => $nuevoAbogado->id]);
         return back()->with('success', 'Representante legal registrado y asignado correctamente al citado.');
     }

@@ -58,7 +58,7 @@
                                                     @if($citado->id_abogado == null)
                                                         Por asignar
                                                     @else
-                                                        {{ $citado->nombre_abogado }} {{ $citado->primero_abogado }} {{ $citado->segundo_abogado }} 
+                                                        {{ $citado->nombre_abogado }} {{ $citado->primero_abogado }} {{ $citado->segundo_abogado }}
                                                     @endif
                                                 </td>
                                                 <td>
@@ -583,7 +583,7 @@
 </div>
 <!-- Modal Agregar Personas Físicas (Citados)-->
 <div class="modal fade" id="modalAgregarPersonaF" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <form class='needs-validation novalidate'  method='POST' name="AgregarPersonaFisica" id="AgregarPersonaFisica" action="{{route('insertar_citado_PF')}}">
+    <form class='needs-validation novalidate'  method='POST' enctype="multipart/form-data" name="AgregarPersonaFisica" id="AgregarPersonaFisica" action="{{route('insertar_citado_PF')}}">
         @csrf
         <input type="text" name="id" value="{{$id}}">
         <input type="text" name="id_citado_pf" id="id_citado_pf" value="">
@@ -598,7 +598,7 @@
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
                                 <label for="name">Nombre(s) y apellidos</label>
-                                <input type="text" class="form-control" placeholder="*Nombre(s)" name="nombresAbogadoAlta" oninput="this.value = this.value.toUpperCase()" required>
+                                <input type="text" class="form-control" placeholder="*Nombre(s)" name="nombre" oninput="this.value = this.value.toUpperCase()" required>
                                 <div class="invalid-feedback">
                                     El nombre es obligatorio.
                                 </div>
@@ -608,7 +608,7 @@
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
                                 <label for="">Teléfono</label>
-                                <input type="text" class="form-control" placeholder="*Telefono"  name="telefonoAbogadoAlta" maxlength="10" pattern="[0-9]+" required>
+                                <input type="text" class="form-control" placeholder="*Telefono"  name="telefono" maxlength="10" pattern="[0-9]+" required>
                                 <div class="invalid-feedback">
                                     El telefono es obligatorio.
                                 </div>
@@ -618,7 +618,7 @@
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
                                 <label for="">Correo</label>
-                                <input type="email" class="form-control" placeholder="*Correo" name="correoAbogadoAlta" id="correoAbogadoAlta" required>
+                                <input type="email" class="form-control" placeholder="*Correo" name="correo" id="correoAbogadoAlta" required>
                                 <div class="invalid-feedback">
                                     El correo es obligatorio.
                                 </div>
@@ -628,7 +628,7 @@
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
                                 <label for="">CURP</label>
-                                <input type="text" class="form-control" placeholder="*CURP" aria-label="CURP" name="curpAbogadoAlta" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" required>
+                                <input type="text" class="form-control" placeholder="*CURP" aria-label="CURP" name="curp" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" required>
                                 <div class="invalid-feedback">
                                     La CURP es obligatoria.
                                 </div>
@@ -638,7 +638,7 @@
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
                                 <label for="">Domicilio</label>
-                                <input type="text" class="form-control" placeholder="*Domicilio" name="domicilioAbogadoAlta" id="domicilioAbogadoAlta" oninput="this.value = this.value.toUpperCase()" required>
+                                <input type="text" class="form-control" placeholder="*Domicilio" name="domicilio" id="domicilio" oninput="this.value = this.value.toUpperCase()" required>
                                 <div class="invalid-feedback">
                                     El domicilio es obligatoria.
                                 </div>
@@ -648,13 +648,13 @@
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
                                 <label for="">RFC</label>
-                                <input type="text" class="form-control" placeholder="RFC Empresa" name="RFCAbogadoAlta" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()">
+                                <input type="text" class="form-control" placeholder="RFC Empresa" name="RFC" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()">
                             </div>
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
                                 <label for="name">Tipo de identificación (*)</label>
-                                <select name="identificacionAbogadoAlta" class="form-control" required>
+                                <select name="identificacionAlta" class="form-control" required>
                                     <option value="">SELECCIONE</option>
                                     <option value="ine">INE</option>
                                     <option value="pasaporte">PASAPORTE</option>
