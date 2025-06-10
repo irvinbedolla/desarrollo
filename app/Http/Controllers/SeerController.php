@@ -2604,11 +2604,14 @@ class SeerController extends Controller
         $solicitud = SeerPerGeneral::find($id);
         $conciliador = User::select('name')->where('id', $solicitud->conciliador_id)->first();
         $citados = SeerCitados::leftjoin('abogados', 'abogados.idAbogado', '=', 'seer_citados.id_abogado')
-        ->where('id_solicitud', $id)
+        ->leftJoin('persona_fisica', 'persona_fisica.id', '=', 'seer_citados.id_abogado')
+        ->where('seer_citados.id_solicitud', $id)
+        //->where('id_solicitud', $id)
         ->select('seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido','seer_citados.rfc',
         'abogados.nombres as nombre_abogado','abogados.primer_apellido as primero_abogado',
-        'abogados.segundo_apellido as segundo_abogado','seer_citados.id_abogado','seer_citados.id','seer_citados.notificacion')
+        'abogados.segundo_apellido as segundo_abogado','persona_fisica.nombre_completo as nombre_completo_abogado','seer_citados.id_abogado','seer_citados.id','seer_citados.notificacion')
         ->get();
+
         $solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
         $abogados = Poder::all();
         SeerPerGeneral::find($id)->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);

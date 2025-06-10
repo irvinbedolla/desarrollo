@@ -59,6 +59,7 @@
                                                         Por asignar
                                                     @else
                                                         {{ $citado->nombre_abogado }} {{ $citado->primero_abogado }} {{ $citado->segundo_abogado }}
+                                                        {{ $citado->nombre_completo_abogado }}
                                                     @endif
                                                 </td>
                                                 <td>
