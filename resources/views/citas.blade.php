@@ -93,7 +93,7 @@
                                         @csrf
                                         <br><br>
                                         <div class="row">
-                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
                                                     <label for="btncheck1">¿Cuenta con Folio Interno de Registro de Representación Legal Patronal?<br> 
                                                         Puede registrarse en la siguiente liga (Para tramites posteriores) <a href="{{ route('poder-crear'); }}">Registrar</a>
@@ -102,9 +102,9 @@
                                                 </div>
                                             </div>
 
-                                            <div id="folio" class="col-xs-12 col-sm-12 col-md-6">
+                                            <div id="folio" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">*Folio Interno de Registro de Representación Legal Patronal</label>
+                                                    <label for="name">*Folio Interno de Registro</label>
                                                     <input type="number" name="folio" class="form-control soloNumeros"> 
                                                     <div class="invalid-feedback">
                                                         El folio es obligatorio.
@@ -253,8 +253,8 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">CURP del Solicitante (*)</label>
-                                                    <input type="text" name="trabajador_curp" id="curp_input" oninput="validarInput(this)"  oninput="this.value = this.value.toUpperCase()" class="form-control" required> 
+                                                    <label for="name">CURP del trabajador (*)</label>
+                                                    <input type="text" name="trabajador_curp" oninput="validarInput(this)"  oninput="this.value = this.value.toUpperCase()" class="form-control" required> 
                                                     <pre id="resultado"></pre>
                                                     <div class="invalid-feedback">
                                                         El campo curp es obligatorio.
@@ -642,7 +642,7 @@
                 document.getElementById("sexo").style.display = "none";
                 document.getElementById("ine").style.display = "none";
                 document.getElementById("acta").style.display = "none";
-                document.getElementById("curp").style.display = "none";
+                document.getElementById("curp_input").style.display = "block";
             }
             else{
                 document.getElementById("folio").style.display = "none";
@@ -654,7 +654,7 @@
                 document.getElementById("sexo").style.display = "block";
                 document.getElementById("ine").style.display = "block";
                 document.getElementById("acta").style.display = "block";
-                document.getElementById("curp").style.display = "block";
+                document.getElementById("curp_input").style.display = "none";
             }
         }
 

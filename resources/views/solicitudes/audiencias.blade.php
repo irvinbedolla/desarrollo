@@ -259,8 +259,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarCitados">Agregar persona moral</button>
-                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarPersonaF">Agregar persona física</button>
+                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarCitados">Agregar en reprecentantación</button>
+                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarPersonaF">Agregar por propio derecho</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
@@ -275,11 +275,16 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Editar Citado</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Agregar Representante</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <h4 class="text-center">Datos del reprecentante</h4>
+                            </div>
+                        </div>  
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
                                 <label for="name">Nombres</label>
@@ -329,6 +334,13 @@
                                 </div>
                             </div>
                         </div>
+
+
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <h4 class="text-center">Datos de la empresa</h4>
+                            </div>
+                        </div>  
 
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
@@ -591,7 +603,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Editar Citado</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Agregar Persona Fisica</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

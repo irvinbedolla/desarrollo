@@ -68,7 +68,8 @@ use App\Http\Controllers\Controller;
     Route::get('/poder-crear',          [PoderController::class, 'registro'])->name('poder-crear');
     Route::get('/poder',                [App\Http\Controllers\PoderController::class, 'show'])->name('poder');
     Route::post('/poderes/publico',     [PoderController::class, 'publico'])->name('poderes.publico');
-    Route::get('publico',               [HomeController::class, 'publico'])->name('publico');
+    Route::get('/cita_turno',           [HomeController::class, 'citas'])->name('citas');
+    Route::get('/turnos_guardar',       [HomeController::class, 'turnos_publico'])->name('turnos_publico'); 
     
     //Rutas de citas
     Route::get('citas',                 [TurnosController::class, 'create_publico'])->name('create_cita');
@@ -212,7 +213,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/seer/persona/{id}',                [SeerController::class, 'ver_auxiliar'])->name('seer.estadistica_consultar');
     //Fin Seer
 
-
     //Expedientes
         Route::get('/expedientes/index',                        [ExpedienteController::class, 'index'])->name('expedientes.index');
         Route::get('/expedientes/index',                        [ExpedienteController::class, 'index'])->name('expedientes');
@@ -224,7 +224,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/expedientes/doc',                         [ExpedienteController::class, 'store_documento'])->name('subir_doc');
         Route::delete('/expedientes/destroy/{id}',              [ExpedienteController::class, 'destroy'])->name('expedientes.delete');
     //Fin de Expedientes
-
 
     //Turnos
         Route::get('/turnos/index1',             [TurnosController::class, 'index'])->name('turnos.index');
@@ -293,9 +292,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/audiencia/guardar',                   [SeerController::class, 'concluir_audiencia_conciliador'])->name('concluir_audiencia_conciliador');
         Route::post('/solicitudes/crear/PF',                [SeerController::class, 'citado_personaF'])->name('insertar_citado_PF');
         Route::get('/audieniecias/complimientos',           [SeerController::class, 'audiencias_cumplimiento'])->name('audiencias.cumplimiento');
-        //PDF Solicitudes    
+    //PDF Solicitudes    
         Route::get('/Verpdfincompetencias/{id}',            [SeerController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');
-        //Route::get('/PDF/falta_interes/{id}',               [SeerController::class, 'VerPDFInteres'])->name('PDFfallta_interes');
+    //Route::get('/PDF/falta_interes/{id}',               [SeerController::class, 'VerPDFInteres'])->name('PDFfallta_interes');
         Route::get('/Verpdfcs/{id}',                        [SeerController::class, 'VerPDFConvenioSol'])->name('PDFconveniosolicitud');
         Route::get('/Verpdfacuse/{id}',                     [SeerController::class, 'PDFacuseSolicitud'])->name('PDFacuse_solicitud');
         Route::get('/Verpdfnotificacion/{id}',              [SeerController::class, 'PDFnotificacionSolicitante'])->name('PDFnotificacion_solicitante');
