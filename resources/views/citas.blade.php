@@ -124,7 +124,7 @@
                                             <div id="primero" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Primer apellido</label>
-                                                    <input type="text" name="primero_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()"> 
+                                                    <input type="text" name="primero_empresa" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
@@ -133,7 +133,7 @@
                                             <div id="segundo" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Segundo apellido</label>
-                                                    <input type="text" name="segundo_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()"> 
+                                                    <input type="text" name="segundo_empresa" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
@@ -142,7 +142,7 @@
                                             <div  id="nombre" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Nombre(s)</label>
-                                                    <input type="text" name="nombre_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()"> 
+                                                    <input type="text" name="nombre_empresa" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
                                                     </div>
@@ -152,7 +152,7 @@
                                             <div id="edad" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Email</label>
-                                                    <input type="email" name="email" class="form-control correoElectronico"> 
+                                                    <input type="email" name="email" class="form-control"> 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
@@ -161,7 +161,7 @@
                                             <div id="sexo" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                 <label for="name">Télefono</label>
-                                                <input type="text" name="telefono" class="form-control numeroTelefonico" maxlength="10" minlength="10"> 
+                                                <input type="text" name="telefono" class="form-control" maxlength="10" minlength="10"> 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>

@@ -1,6 +1,8 @@
 function validacionCamposInput(valor, tipoValidacion, elementoMsj, msj, aplicaVacio, msjVacio){
+  //console.log(`Validando campo con valor: "${valor}", tipo: "${tipoValidacion}"`);
     if(aplicaVacio === 0 && valor.trim() === ""){
-      elementoMsj.text(msjVacio);
+      /*elementoMsj.text(msjVacio);*/
+      elementoMsj.textContent = msjVacio;
       return false;
     }
   
@@ -181,7 +183,7 @@ function validacionCamposInput(valor, tipoValidacion, elementoMsj, msj, aplicaVa
     console.log('valido?', valido);
     if(!valido) e.preventDefault();
   });
-  document.addEventListener('DOMContentLoaded', function() {
+  /*document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form.needs-validation');
     form.addEventListener('submit', function(e) {
         if (!validacionCamposInput()) {
@@ -190,7 +192,7 @@ function validacionCamposInput(valor, tipoValidacion, elementoMsj, msj, aplicaVa
         }
         form.classList.add('was-validated');
     });
-});
+});*/
   
   //Función para validar una CURP
   function curpValida(curp) {
