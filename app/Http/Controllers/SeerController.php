@@ -2196,12 +2196,14 @@ class SeerController extends Controller
                 'remember_token'    => $solicitante["curp"],
                 'profile_photo_path'=> $solicitante["curp"]
             ); 
-            
+            //Genrar un random del uno al 100 y agregarlo a la contraseña
+            $numero_aleatorio = mt_rand(1, 1000);
+
             //Hacemos un hash del campo que tiene el password
-            $data_insertar_user['password'] = Hash::make("CCLMICHOACAN");
+            $data_insertar_user['password'] = Hash::make("CCLMICHOACAN".$numero_aleatorio);
             $usuario = User::create($data_insertar_user);
             $usuario->assignRole(('Solicitante'));
-            $mensaje = " el correo:".$usuario["email"]." y la contraseña:CCLMICHOACAN para continuar tú trámite.";
+            $mensaje = " el correo:".$usuario["email"]." y la contraseña:CCLMICHOACAN".$numero_aleatorio." para continuar tú trámite.";
         }
         else{
             $mensaje = " el correo:".$usuario["email"]." para continuar tú trámite.";

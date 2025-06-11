@@ -8,6 +8,8 @@ use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Auth, Hash;
+
 
 class HomeController extends Controller
 {
@@ -77,4 +79,31 @@ class HomeController extends Controller
         
         return back()->with('success', 'Turno registrado correctamente favor de pasar a ventanilla.'); 
     }
+
+    public function password_cambiar(){
+        return view('/cambio_contraseña/reset-password');
+    }
+
+    public function contraseña_update(Request $request){
+        $request->validate([
+            'password'  => 'required',
+            'password1' => 'required'
+        ]);
+        $data = $request->all();
+        //dd($data);
+        
+        if ($data["password"] !== $data["password1"]){
+            return back()->withErrors('¡La contraseña no coincide!');
+        }
+        else{
+            $id = auth()->user()->id;
+            $user = User::find($id);
+    
+            $user->password = Hash::make($data["password"]);
+            $user->save();
+
+            return back()->with('success', 'Contraseña Actualizada correctamente.');
+        }
+    }
+    
 }

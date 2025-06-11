@@ -322,6 +322,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/notificaciones/consultar_citado/{id}', [SeerController::class, 'mostrar_citadoC'])->name('consultar_citado');
         Route::get('/notificaciones/consulta',              [SeerController::class, 'notificaciones_consultar'])->name('notificaciones_consultar'); 
         
+    //Cambiar las contraseña
+        Route::get('/cambio_contraseña/index',  [HomeController::class, 'password_cambiar'])->name('password_cambiar');
+        Route::post('/notificaciones/editar',   [HomeController::class, 'contraseña_update'])->name('contraseña_update');   
+
         
     
     Route::name('user-management.')->group(function () {

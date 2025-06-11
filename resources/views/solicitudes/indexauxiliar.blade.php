@@ -34,7 +34,7 @@
                                                     <td>{{$solicitud->empresa}}</td>
                                                     <td>{{$solicitud->telefono}}</td>
                                                     <td>{{$solicitud->email}}</td>
-                                                    <td>{{$solicitud->trabajador}}</td>
+                                                    <td>{{$solicitud->trabajador}} {{$solicitud->primero_trabajador}}  {{$solicitud->segundo_trabajador}}</td>
                                                     <td>{{$solicitud->estatus}}</td>
                                                     <td><a class="btn btn-primary" href="{{ route('consultar_ratificacion', $solicitud->id) }}">Consultar</a></td>
                                                     <td>
