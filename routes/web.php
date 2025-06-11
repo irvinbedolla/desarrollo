@@ -69,7 +69,7 @@ use App\Http\Controllers\Controller;
     Route::get('/poder',                [App\Http\Controllers\PoderController::class, 'show'])->name('poder');
     Route::post('/poderes/publico',     [PoderController::class, 'publico'])->name('poderes.publico');
     Route::get('/cita_turno',           [HomeController::class, 'citas'])->name('citas');
-    Route::get('/turnos_guardar',       [HomeController::class, 'turnos_publico'])->name('turnos_publico'); 
+    Route::post('/turnos_guardar',      [HomeController::class, 'turnos_publico'])->name('turnos_publico'); 
     
     //Rutas de citas
     Route::get('citas',                 [TurnosController::class, 'create_publico'])->name('create_cita');

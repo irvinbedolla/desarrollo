@@ -167,10 +167,10 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div id="curp_mostrar" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">CURP (*)</label>
-                                                    <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                     <pre id="resultado"></pre>
                                                     <div class="invalid-feedback">
                                                         El campo curp es obligatorio.
@@ -642,7 +642,7 @@
                 document.getElementById("sexo").style.display = "none";
                 document.getElementById("ine").style.display = "none";
                 document.getElementById("acta").style.display = "none";
-                document.getElementById("curp_input").style.display = "block";
+                document.getElementById("curp_mostrar").style.display = "none";
             }
             else{
                 document.getElementById("folio").style.display = "none";
@@ -654,7 +654,7 @@
                 document.getElementById("sexo").style.display = "block";
                 document.getElementById("ine").style.display = "block";
                 document.getElementById("acta").style.display = "block";
-                document.getElementById("curp_input").style.display = "none";
+                document.getElementById("curp_mostrar").style.display = "block";
             }
         }
 
