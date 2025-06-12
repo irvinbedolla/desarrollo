@@ -107,6 +107,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/turnos/misturnos',         [TurnosController::class, 'misturnos'])->name('misturnos');
         Route::get('/turnos/estadistica',       [TurnosController::class, 'estadistica'])->name('turno_estadistica');
         Route::get('/notificaciones/index',     [SeerController::class, 'notificaciones'])->name('notificaciones');
+        Route::get('/solicitudes/home',         [SeerController::class, 'solicitudes'])->name('solicitudes_index');
     //Fin de ruta de los menus
 
     //Usuarios
@@ -166,8 +167,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/capacitaciones/terminar/{id}',                 [CapacitacionController::class, 'terminar'])->name('capacitaciones.terminado');
     //Fin capacitaciones    
 
-
- 
     //Seer
         Route::get('/seer/index',                       [SeerController::class, 'index'])->name('seer.index');
         Route::get('/seer/index',                       [SeerController::class, 'index'])->name('seer');
@@ -265,34 +264,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
         //Route::get('/pdf/ratificacion',      [PDFController::class, 'pdfRatificacion'])->name('PDFratificacion');
 
     //Solicitudes
-        Route::get('/solicitudes/index',                    [SeerController::class, 'solicitudes_pendientes'])->name('solicitudes_pendientes');
+        Route::get('/solicitudes/pedientes',                [SeerController::class, 'solicitudes_pendientes'])->name('solicitudes_pendientes');
         Route::get('/solicitud/index',                      [SeerController::class, 'mis_solicitudes'])->name('mis_solicitudes');
-        Route::get('/solicitudes/{id}',                     [SeerController::class, 'solicitudes_pendientes_revisar'])->name('solicitud_revisar');
+        Route::get('/solicitudes_revisar/{id}',             [SeerController::class, 'solicitudes_pendientes_revisar'])->name('solicitud_revisar');
+        Route::get('/solicitudes_editar/{id}',              [SeerController::class, 'solicitudes_pendientes_editar'])->name('solicitud_editar');
         Route::post('/confirmar_solicitudes',               [SeerController::class, 'solicitud_confirmar'])->name('confirmar_solicitud');
         Route::get('/rechazar_solicitudes',                 [SeerController::class, 'rechazar_solicitud'])->name('rechazar_solicitud');
         Route::get('/eliminar_motivo/{id}/{id_motivo}',     [SeerController::class, 'eliminar_motivo'])->name('eliminar_motivo');
         Route::get('/solicitude/{id}',                      [SeerController::class, 'regresa_eliminar'])->name('regresa_eliminar');
-        Route::post('/agregar_citado_edicion',              [SeerController::class, 'agregar_citado_edicion'])->name('agregar_citado_edicion');
-        Route::delete('/borrar_citado_edicion',             [SeerController::class, 'borrar_citado_edicion'])->name('borrar_citado_edicion');
         Route::post('/solicitud/archivar_audiencia',        [SeerController::class, 'guardar_audiencia_archivo'])->name('archivar_audiencia');
         Route::post('/solicitud/editar',                    [SeerController::class, 'editar_solicitud_con'])->name('editar_solicitud');
-        Route::get('/solicitud/consultarC',                 [SeerController::class, 'consultar_citados_con'])->name('consultar_citados');
-        Route::post('/solicitud/guardar_citadoC',           [SeerController::class, 'insertar_citados_con'])->name('insertar_citado');
-        Route::post('/seleccionar_abogado',                 [SeerController::class, 'seleccionar_abogado'])->name('seleccionar_abogado');
-        Route::post('/incompentencia_audiencia',            [SeerController::class, 'incopentencia_audiencia'])->name('incopentencia_audiencia');
-        Route::post('/reagendar_audiencia',                 [SeerController::class, 'reagendar_audiencia'])->name('reagendar_audiencia');
-        Route::post('/auciencia/concluir/',                 [SeerController::class, 'audiencia_parte2'])->name('audiencia_parte2');
-        Route::get('/solicitud/indexB/{id}',                [SeerController::class, 'audienciaParte3'])->name('audiencias.parte3'); 
-        Route::post('/solicitud/guardar',                   [SeerController::class, 'concluir_audiencia'])->name('concluir_audiencia');
-        Route::post('/historial/notificador',               [SeerController::class, 'historial_notificador'])->name('historial_notificador');
         Route::post('/historial/auxiliar',                  [SeerController::class, 'historial_auxiliar'])->name('historial_auxiliar');
         Route::get('/solicitudes/solicitudes',              [SeerController::class, 'solicitudes_todas'])->name('solicitudes_todas');
         Route::post('/audiencia/guardar',                   [SeerController::class, 'concluir_audiencia_conciliador'])->name('concluir_audiencia_conciliador');
         Route::post('/solicitudes/crear/PF',                [SeerController::class, 'citado_personaF'])->name('insertar_citado_PF');
-        Route::get('/audieniecias/complimientos',           [SeerController::class, 'audiencias_cumplimiento'])->name('audiencias.cumplimiento');
     //PDF Solicitudes    
         Route::get('/Verpdfincompetencias/{id}',            [SeerController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');
-    //Route::get('/PDF/falta_interes/{id}',               [SeerController::class, 'VerPDFInteres'])->name('PDFfallta_interes');
         Route::get('/Verpdfcs/{id}',                        [SeerController::class, 'VerPDFConvenioSol'])->name('PDFconveniosolicitud');
         Route::get('/Verpdfacuse/{id}',                     [SeerController::class, 'PDFacuseSolicitud'])->name('PDFacuse_solicitud');
         Route::get('/Verpdfnotificacion/{id}',              [SeerController::class, 'PDFnotificacionSolicitante'])->name('PDFnotificacion_solicitante');
@@ -323,14 +310,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Cambiar las contraseña
         Route::get('/cambio_contraseña/index',  [HomeController::class, 'password_cambiar'])->name('password_cambiar');
         Route::post('/notificaciones/editar',   [HomeController::class, 'contraseña_update'])->name('contraseña_update');   
-
     //Audiencias
-        Route::get('/audiencias/{id}',          [SeerController::class, 'solicitud_audiencia_revisar'])->name('solicitud_audiencia');
-        Route::get('/citatorio/{id}',           [SeerController::class, 'pdfCitatorioAudiencia'])->name('pdfCitatorioAudiencia');
-        Route::get('/solicitud/indexA',         [SeerController::class, 'indexA'])->name('audiencias.conciliador'); 
-        Route::get('/solicitud/iniciar/{id}',   [SeerController::class, 'iniciar_audiencia'])->name('inicioAudiencia');
-
-
+        Route::get('/audiencias/{id}',                      [SeerController::class, 'solicitud_audiencia_revisar'])->name('solicitud_audiencia');
+        Route::get('/citatorio/{id}',                       [SeerController::class, 'pdfCitatorioAudiencia'])->name('pdfCitatorioAudiencia');
+        Route::get('/solicitud/indexA',                     [SeerController::class, 'indexA'])->name('audiencias.conciliador'); 
+        Route::get('/solicitud/iniciar/{id}',               [SeerController::class, 'iniciar_audiencia'])->name('inicioAudiencia');
+        Route::post('/reagendar_audiencia',                 [SeerController::class, 'reagendar_audiencia'])->name('reagendar_audiencia');
+        Route::post('/auciencia/concluir/',                 [SeerController::class, 'audiencia_parte2'])->name('audiencia_parte2');
+        Route::get('/solicitud/indexB/{id}',                [SeerController::class, 'audienciaParte3'])->name('audiencias.parte3'); 
+        Route::post('/solicitud/guardar',                   [SeerController::class, 'concluir_audiencia'])->name('concluir_audiencia');
+        Route::post('/seleccionar_abogado',                 [SeerController::class, 'seleccionar_abogado'])->name('seleccionar_abogado');
+        Route::post('/incompentencia_audiencia',            [SeerController::class, 'incopentencia_audiencia'])->name('incopentencia_audiencia');
+        Route::get('/audieniecias/complimientos',           [SeerController::class, 'audiencias_cumplimiento'])->name('audiencias.cumplimiento');
+        Route::post('/audiencia/guardar/solicitud',         [SeerController::class, 'solicitudes_busqueda'])->name('solicitudes_busqueda');
+    //Citados
+        Route::post('/solicitud/guardar_citadoC',           [SeerController::class, 'insertar_citados_con'])->name('insertar_citado');
+        Route::get('/solicitud/consultarC',                 [SeerController::class, 'consultar_citados_con'])->name('consultar_citados');
+        Route::post('/agregar_citado_edicion',              [SeerController::class, 'agregar_citado_edicion'])->name('agregar_citado_edicion');
+        Route::delete('/borrar_citado_edicion',             [SeerController::class, 'borrar_citado_edicion'])->name('borrar_citado_edicion');
+        Route::post('/historial/notificador',               [SeerController::class, 'historial_notificador'])->name('historial_notificador');
 
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);

@@ -2235,11 +2235,8 @@ class SeerController extends Controller
         $citados        = SeerCitados::where("id_solicitud",$id)->get();
         $estados        = Estados::all();
         $municipios     = Municipios::all();
-        $conciliadores = User::whereHas('roles', function ($query) {
-            return $query->where('name', '=', 'Conciliador');
-        })
-        ->where('delegacion', $user["delegacion"])
-        ->get();
+        $conciliadores  = User::find($general["conciliador_id"]);
+        $audiencia      = SeerPerConciliador::where("id_solicitud",$id)->first();
         //Catalogo de motivos
         $mostrarMotivos = SolicitudMotivo::all();
         //Motivos capturados
@@ -2247,7 +2244,7 @@ class SeerController extends Controller
         ->where('id_solicitud',$id)
         ->select('catalogo_motivos.motivo','seer_motivos.id')->get();
 
-        return view('solicitudes.revisar_solicitud', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores'));
+        return view('solicitudes.revisar_solicitud', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores','audiencia'));
     }
     
     public function eliminar_motivo($id,$id_motivo){
@@ -3797,7 +3794,6 @@ class SeerController extends Controller
     }
 
     public function pdfCitatorioAudiencia($id) {
-
         $citado = SeerCitados::find($id);
         $solicitud = SeerPerGeneral::where('id',$citado["id_solicitud"])->first();   
         $solicitante = SeerSolicitante::where('id_solicitud', $citado["id_solicitud"])->first();
@@ -3816,5 +3812,171 @@ class SeerController extends Controller
         $nombreArchivo = 'citatorio_' . $citado->nombre . '_' . $citado->primer_apellido . '.pdf';
 
         return $pdf->stream($nombreArchivo);
+    }
+
+    public function solicitudes(){
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        //$roles = Role::pluck('name','name')->all();
+        //$userRole = $user->roles->pluck('name')->all();
+
+        $auxiliares = User::whereHas('roles', function ($query) {
+            return $query->where('name', '=', 'Auxiliar');
+        })
+        ->where('delegacion', $user["delegacion"])
+        ->get();
+        $notificadores = User::whereHas('roles', function ($query) {
+            return $query->where('name', '=', 'Notificador');
+        })
+        ->where('delegacion', $user["delegacion"])
+        ->get();
+        $conciliadores = User::whereHas('roles', function ($query) {
+            return $query->where('name', '=', 'Conciliador');
+        })
+        ->where('delegacion', $user["delegacion"])
+        ->get();
+
+        return view('solicitudes/index',compact('auxiliares','conciliadores'));
+    }
+
+    public function solicitudes_busqueda(Request $request){
+        $data = $request->all();
+        $bandera_fechas         = 0;
+        $bandera_nue            = 0;
+        $bandera_curp           = 0;
+        $bandera_solicitante    = 0;
+        $bandera_citado         = 0;
+        $bandera_folio          = 0;
+        $bandera_año            = 0;
+        $bandera_estatus        = 0;
+        $bandera_tipo           = 0;
+        $bandera_auxiliar       = 0;
+        $bandera_conciliador    = 0;
+
+        //Si existe la fecha de inicio
+        if(isset($data["inicio"]) ){
+            if(isset($data["final"]) ){
+                if($data["inicio"] > $data["final"]){
+                    return back()->withErrors('Si seleccionas una fecha de inicio, no debe ser mayor a la fecha final.');
+                }
+                //Agregar fecha inicio y final
+                $bandera_fechas = 1;
+            }
+            else{
+                return back()->withErrors('Si selecciones una fecha de inicio, debes seleccionar fecha final.');
+            }
+        }else if(isset($data["final"])){
+            if(isset($data["inicio"]) ){
+                if($data["inicio"] > $data["final"]){
+                    return back()->withErrors('Si seleccionas una fecha de inicio, no debe ser mayor a la fecha final.');
+                }
+                //Agregar fecha inicio y final
+                $bandera_fechas = 1;
+            }
+            else{
+                return back()->withErrors('Si selecciones una fecha final, debes seleccionar fecha de inicio.');
+            }
+        }
+        else if(isset($data["nue"])){
+            //se va agregar el nue a la busqueda
+            $bandera_nue = 1;
+        }
+        else if(isset($data["curp"])){
+            //se va agregar el nue a la busqueda
+            $bandera_curp = 1;
+        }
+        else if(isset($data["solicitante"])){
+            //se va agregar el nue a la busqueda
+            $bandera_solicitante = 1;
+        }
+        else if(isset($data["citado"])){
+            //se va agregar el nue a la busqueda
+            $bandera_citado = 1;
+        }
+        else if(isset($data["folio"])){
+            //se va agregar el nue a la busqueda
+            $bandera_folio = 1;
+        }
+        else if(isset($data["estatus"])){
+            //se va agregar el nue a la busqueda
+            $bandera_estatus = 1;
+        }
+        else if(isset($data["tipo"])){
+            //se va agregar el nue a la busqueda
+            $bandera_tipo = 1;
+        }
+        else if(isset($data["auxiliar"])){
+            //se va agregar el nue a la busqueda
+            $bandera_auxiliar = 1;
+        }
+        else if(isset($data["conciliador"])){
+            //se va agregar el nue a la busqueda
+            $bandera_conciliador = 1;
+        }
+
+        $solicitudes  = SeerPerGeneral::select("seer_general.id","seer_general.fecha","seer_general.fecha","seer_general.NUE","seer_general.tipo_solicitud","seer_general.estatus","seer_general.actividad","seer_solicitante.nombre");
+        $solicitudes = $solicitudes->join("seer_solicitante","seer_solicitante.id_solicitud","seer_general.id");
+        if($bandera_fechas == 1){
+            $solicitudes = $solicitudes->where("seer_general.fecha",">=",$data["inicio"]);
+            $solicitudes = $solicitudes->where("seer_general.fecha","<=",$data["final"]);
+        }
+        if($bandera_nue == 1){
+            $solicitudes = $solicitudes->where("seer_general.NUE",$data["nue"]);
+        }
+        if($bandera_curp == 1){
+            $solicitudes = $solicitudes->where("seer_solicitante.curp",$data["curp"]);
+        }
+        if($bandera_solicitante == 1){
+            $solicitudes = $solicitudes->where("seer_solicitante.nombre",'like',$data["solicitante"]);
+        }
+        if($bandera_citado == 1){
+            $solicitudes = $solicitudes->join("seer_citados","seer_citados.id_solicitud","seer_general.id");
+            $solicitudes = $solicitudes->where("seer_citados.nombre",'like',$data["citado"]);
+        }
+        if($bandera_folio == 1){
+            $solicitudes = $solicitudes->where("seer_general.id","=",$data["folio"]);
+        }
+        if($bandera_estatus == 1){
+            $solicitudes = $solicitudes->where("seer_general.estatus","=",$data["estatus"]);
+        }
+        if($bandera_tipo == 1){
+            $solicitudes = $solicitudes->where("seer_general.tipo_solicitud","=",$data["tipo"]);
+        }
+        if($bandera_auxiliar == 1){
+            $solicitudes = $solicitudes->where("seer_general.user_id","=",$data["auxiliar"]);
+        }
+        if($bandera_conciliador == 1){
+            $solicitudes = $solicitudes->where("seer_general.conciliador_id","=",$data["conciliador"]);
+        }
+        $solicitudes = $solicitudes->get();
+
+
+        return view('solicitudes/busqueda',compact('solicitudes'));
+
+    }
+
+    public function solicitudes_pendientes_editar($id){
+        $id_user = auth()->user()->id;
+        $user = User::find($id_user);
+        $id             = $id;
+        $general        = SeerPerGeneral::find($id);
+        $ramas          = SolicitudRama::all();
+        $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
+        $citados        = SeerCitados::where("id_solicitud",$id)->get();
+        $estados        = Estados::all();
+        $municipios     = Municipios::all();
+        $conciliadores = User::whereHas('roles', function ($query) {
+            return $query->where('name', '=', 'Conciliador');
+        })
+        ->where('delegacion', $user["delegacion"])
+        ->get();
+        //Catalogo de motivos
+        $mostrarMotivos = SolicitudMotivo::all();
+        //Motivos capturados
+        $motivos        = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
+        ->where('id_solicitud',$id)
+        ->select('catalogo_motivos.motivo','seer_motivos.id')->get();
+
+        return view('solicitudes.editar_solicitud', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores'));
     }
 }

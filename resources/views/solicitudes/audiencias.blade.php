@@ -665,12 +665,9 @@
             document.getElementById('modal-id-reagendar').value = id;
             document.getElementById('id_citado_2').value = id;
             document.getElementById('id_citado_pf').value = id;
-            //*document.getElementById('modal-id-terminar').value =id;
             document.getElementById('modal-id-archivar').value = id;
             document.getElementById('modal-id-reagendar').value = id;
             document.getElementById('modal-id-incopentencia').value = id;
-
-            console.log(id);
         });
     </script>
     <script src="../../public/assets/js/validaciones.js"></script> 
