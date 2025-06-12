@@ -74,10 +74,10 @@
                                 <td>{{ $solicitud->delegacion }} </td>
                             </tr>
                     </table>
-                </div><br><br><br><br><br>
+                </div><br><br><br><br>
                 <p><center><b>ACTA DE AUDIENCIA DE CONCILIACIÓN</b></center></p><br>
                 <p><b>
-                    CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACAN DE OCAMPO            
+                    CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO            
                 </b></p>  
                 <p>
                     En el <b>Centro de Conciliación Laboral del Estado de Michoacán de Ocampo con sede en {{ $solicitud->delegacion }}</b>, siendo las <b>{{ $solicitud->hora }} horas del
@@ -107,7 +107,7 @@
                     jurisdiccional, máxime que en el procedimiento ni el patrón ni el trabajador puede estar seguro de ganar el juicio, mientras que en la conciliación se llega a un acuerdo en el que 
                     se benefician ambas partes.<br><br>
 
-                    A continuación, se cede el uso de la voz de manera ordenada y respetuosa a los presentes en esta audiencia, para manifestar en relación al proceso de conciliación: <br>
+                    A continuación, se cede el uso de la voz de manera ordenada y respetuosa a los presentes en esta audiencia, para manifestar en relación al proceso de conciliación: <br><br>
                     
                     <!--[RESOLUCION_PRIMERA_MANIFESTACION]-->
                     <b>{{ $solicitud->resolucion_primera }}</b><br><br>
@@ -116,10 +116,10 @@
                     que, en el caso de estar conformes con dicho acuerdo, se procederá a realizar el convenio por escrito, mismo que deberá ratificarse en el presente acto y, posteriormente, se les 
                     entregará copia certificada del mismo en el que conste su cumplimiento en términos de los artículos 684-E fracción XIV y 684-I, de la ley Federal del Trabajo.<br><br>
 
-                    La propuesta referida, se encuentra formulada en los términos siguientes:<br>
+                    La propuesta referida, se encuentra formulada en los términos siguientes:
                     
                     <!--[RESOLUCION_PROPUESTAS_TRABAJADORES] -->
-                    <b>{{ $solicitud->resolucion_trabajadores }}</b><br><br>
+                    <b>{{ $solicitud->resolucion_trabajadores }}<br><br></b>
 
                     <!--[RESOLUCION_JUSTIFICACION_PROPUESTA]-->
                     <b>{{ $solicitud->resolucion_justificacion }}</b><br><br>

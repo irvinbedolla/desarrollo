@@ -33,12 +33,12 @@
            /* background-color: #6A0F49;/*<p style="color: #CEA845*/
             opacity: .8;
         }
-        #resultado {
+        .resultado {
             background-color: red;
             color: white;
             font-weight: bold;
         }
-        #resultado.ok {
+        .resultado.ok {
             background-color: green;
         }
     </style>
@@ -105,7 +105,7 @@
                                             <div id="folio" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">*Folio Interno de Registro</label>
-                                                    <input type="number" name="folio" class="form-control soloNumeros"> 
+                                                    <input type="number" name="folio" class="form-control"> 
                                                     <div class="invalid-feedback">
                                                         El folio es obligatorio.
                                                     </div>
@@ -115,7 +115,7 @@
                                             <div id="empresa" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">*Nombre de la Empresa o Patrón</label>
-                                                    <input type="text" name="empresa" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                    <input type="text" name="empresa" id="empresa" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
                                                     </div>
@@ -124,7 +124,7 @@
                                             <div id="primero" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Primer apellido</label>
-                                                    <input type="text" name="primero_empresa" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                    <input type="text" name="primero_empresa" id="primero_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
@@ -133,7 +133,7 @@
                                             <div id="segundo" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Segundo apellido</label>
-                                                    <input type="text" name="segundo_empresa" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                    <input type="text" name="segundo_empresa" id="segundo_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
@@ -142,7 +142,7 @@
                                             <div  id="nombre" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Nombre(s)</label>
-                                                    <input type="text" name="nombre_empresa" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                    <input type="text" name="nombre_empresa" id="nombre_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El nombre es obligatorio.
                                                     </div>
@@ -152,7 +152,7 @@
                                             <div id="edad" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Email</label>
-                                                    <input type="email" name="email" class="form-control"> 
+                                                    <input type="email" name="email" id="email" class="form-control correoElectronico"> 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
@@ -161,17 +161,17 @@
                                             <div id="sexo" class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                 <label for="name">Télefono</label>
-                                                <input type="text" name="telefono" class="form-control" maxlength="10" minlength="10"> 
+                                                <input type="text" name="telefono" id="telefono" class="form-control numeroTelefonico" maxlength="10" minlength="10"> 
                                                     <div class="invalid-feedback">
                                                         El campo es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="curp_mostrar" class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">CURP (*)</label>
-                                                    <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
-                                                    <pre id="resultado"></pre>
+                                                    <input type="text" name="curp" id="curp_input" id="curp_empresa" oninput="validarInput(this, 'resultado_curp_empresa')" class="form-control"> 
+                                                    <pre id="resultado_curp_empresa" class="resultado"></pre>
                                                     <div class="invalid-feedback">
                                                         El campo curp es obligatorio.
                                                     </div>
@@ -254,8 +254,8 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">CURP del trabajador (*)</label>
-                                                    <input type="text" name="trabajador_curp" oninput="validarInput(this)"  oninput="this.value = this.value.toUpperCase()" class="form-control" required> 
-                                                    <pre id="resultado"></pre>
+                                                    <input type="text" name="trabajador_curp"  oninput="validarInput(this, 'resultado_curp_trabajador')" class="form-control" required> 
+                                                    <pre id="resultado_curp_trabajador" class="resultado"></pre>
                                                     <div class="invalid-feedback">
                                                         El campo curp es obligatorio.
                                                     </div>
@@ -327,16 +327,17 @@
                                             
                                             <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
-                                                    <label for="name">Fecha de inicio de la relación laboral</label>
+                                                    <label for="fecha_inicio">Fecha de inicio de la relación laboral</label>
                                                     <input type="date" name="fecha_inicio" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Fecha de término de la relación laboral</label>
+                                                    <label for="fecha_termino">Fecha de término de la relación laboral</label>
                                                     <input type="date" name="fecha_termino" class="form-control" > 
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatorio.
@@ -642,7 +643,17 @@
                 document.getElementById("sexo").style.display = "none";
                 document.getElementById("ine").style.display = "none";
                 document.getElementById("acta").style.display = "none";
-                document.getElementById("curp_mostrar").style.display = "none";
+                
+
+                
+                document.getElementById("primero_empresa").removeAttribute("required");
+                document.getElementById("segundo_empresa").removeAttribute("required");
+                document.getElementById("nombre_empresa").removeAttribute("required");
+                document.getElementById("email").removeAttribute("required");
+                document.getElementById("telefono").removeAttribute("required");
+                document.getElementById("curp_empresa").removeAttribute("required");
+
+                //document.getElementById("folio").setAttribute('required', ''); // Agrega el atributo 'required'
             }
             else{
                 document.getElementById("folio").style.display = "none";
@@ -654,7 +665,16 @@
                 document.getElementById("sexo").style.display = "block";
                 document.getElementById("ine").style.display = "block";
                 document.getElementById("acta").style.display = "block";
-                document.getElementById("curp_mostrar").style.display = "block";
+               
+
+                
+                document.getElementById("primero_empresa").setAttribute("required", "");
+                document.getElementById("segundo_empresa").setAttribute("required", "");
+                document.getElementById("nombre_empresa").setAttribute("required", "");
+                document.getElementById("email").setAttribute("required", "");
+                document.getElementById("telefono").setAttribute("required", "");
+                document.getElementById("curp_empresa").setAttribute("required", "");
+                
             }
         }
 
@@ -686,6 +706,54 @@
                 document.getElementById('div_otras').style.display = "block";
         });
         
+
+        //Fechas inicio y fin
+        document.addEventListener("DOMContentLoaded", function () {
+            const inicio = document.querySelector('input[name="fecha_inicio"]');
+            const termino = document.querySelector('input[name="fecha_termino"]');
+
+            // Función para obtener hoy en formato 'YYYY-MM-DD'
+            function obtenerFechaHoyFormato() {
+                const hoy = new Date();
+                const año = hoy.getFullYear();
+                const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+                const dia = String(hoy.getDate()).padStart(2, '0');
+                return `${año}-${mes}-${dia}`;
+            }
+
+            function validarFechas() {
+                const fechaHoyStr = obtenerFechaHoyFormato();
+
+                // Validar que fecha inicio no sea la fecha de hoy
+                if (inicio.value === fechaHoyStr) {
+                    alert("La fecha de inicio no puede ser la fecha actual.");
+                    inicio.value = "";
+                    return;
+                }
+
+                // Validar que fecha inicio no sea mayor a hoy
+                if (inicio.value && new Date(inicio.value) > new Date(fechaHoyStr)) {
+                    alert("La fecha de inicio no puede ser mayor a la fecha actual.");
+                    inicio.value = "";
+                    return;
+                }
+
+                if (termino.value && new Date(termino.value) > new Date(fechaHoyStr)) {
+                    alert("La fecha de término no puede ser mayor a la fecha actual.");
+                    termino.value = "";
+                    return;
+                }
+
+                // Validar que fecha inicio no sea mayor que fecha término
+                if (inicio.value && termino.value && new Date(inicio.value) > new Date(termino.value)) {
+                    alert("La fecha de inicio no puede ser mayor que la fecha de término.");
+                    termino.value = "";
+                    return;
+                }
+            }
+            inicio.addEventListener("change", validarFechas);
+            termino.addEventListener("change", validarFechas);
+        });
     </script>
 
     <div id="crear_poder" style ="display: none;">
