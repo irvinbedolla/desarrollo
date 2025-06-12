@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Support\Facades\Auth;
 
 use App\Models\Cita;
 use App\Models\Pagos;
@@ -10,27 +9,70 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CitasExport;
+use App\Http\Controllers\SeerController;
 use App\Models\Audiencias;
+use Illuminate\Support\Facades\Auth;
 
 class AudienciasController extends Controller
 {
 
     public function audiencias() {
+        $seerController = new SeerController();
+        $reponse = $seerController->index();
 
-        $userID = Auth::user()->id;
-        $userRole = Auth::user()->roles->pluck('name')->all();
+        $userRole = $reponse->getData()['userRole'];
+        $userID = $reponse->getData()['user'];
 
-        //dd($userID, $userRole);
-        //echo "id: " . $userID;
-        //echo "rol: " . implode(', ', $userRole);
-
-        if ($userRole[0] == "Super Usuario") {
+        if ($userRole[0] == "SuperUsuario") {
             $audiencias = Audiencias::all();
 
             $eventos = [];
             foreach ($audiencias as $audiencia) {
 
-                if ($audiencia->estatus === 'Incompetencia') {
+                if ($audiencias->estatus === 'Incompetencia') {
+                    $color = '#DA0909';
+                } elseif ($audiencia->estatus === 'Archivada') {
+                    $color = '#EAE300';
+                } elseif ($audiencia->estatus === 'Conciliación') {
+                    $color = '#00CE1C';
+                } elseif ($audiencia->estatus === 'No Conciliación') {
+                    $color = '#00CE1C';
+                }
+                 else {
+                    $color = '#CCCCCC';
+                }
+
+                $eventos[] = [
+                    'id' => $audiencia->id,
+                    'id_solicitud' => $audiencia->id_solicitud,
+                    'title' => $audiencia->tipo,
+                    'start' => $audiencia->fecha->format('Y-m-d') . 'T' . $audiencia->hora->format('H:i:s'),
+                    'extendedProps' => [
+                        'hora' => $audiencia->hora->format('h:i A'),
+                        'color' => $color,
+                        'numero_audiencia' => $audiencia->numero_audiencia,
+                        'folio_audiencia' => $audiencia->folio_audiencia,
+                        'fecha' => $audiencia->fecha->format('d/m/Y'),
+                        'estatus' => $audiencia->estatus,
+                        'tipo' => $audiencia->tipo,
+                        'conciliador' => $audiencia->id_conciliador,
+                        'delegacion' => $audiencia->delegacion,
+                        'sala' => $audiencia->sala,
+                        'usuario' => $userID,
+                    ]
+                ];
+            }
+
+            return response()->json($eventos);
+        }
+        else if ($userRole[0] == "Delegado") {
+            $delegacion = Auth::user()->delegacion;
+            $audiencias = Audiencias::where('delegacion', $delegacion)->get();
+
+            $eventos = [];
+            foreach ($audiencias as $audiencia) {
+
+                if ($audiencias->estatus === 'Incompetencia') {
                     $color = '#DA0909';
                 } elseif ($audiencia->estatus === 'Archivada') {
                     $color = '#EAE300';
