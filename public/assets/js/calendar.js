@@ -132,7 +132,7 @@ function handleEventClick(info, calendarType) {
             <strong>Tipo:</strong> ${props.tipo}<br>
             <strong>Usuario:</strong> ${props.usuario}<br>
             <strong>Conciliador:</strong> ${props.conciliador}<br>
-            <strong>Delegación:</strong> ${props.delegación}<br>
+            <strong>Delegación:</strong> ${props.delegacion}<br>
             <strong>Sala:</strong> ${props.sala}<br>
         `;
     }
