@@ -1,6 +1,8 @@
 function validacionCamposInput(valor, tipoValidacion, elementoMsj, msj, aplicaVacio, msjVacio){
+  console.log(`Validando campo con valor: "${valor}", tipo: "${tipoValidacion}"`);
     if(aplicaVacio === 0 && valor.trim() === ""){
-      elementoMsj.text(msjVacio);
+      /*elementoMsj.text(msjVacio);*/
+      elementoMsj.textContent = msjVacio;
       return false;
     }
   
@@ -181,7 +183,7 @@ function validacionCamposInput(valor, tipoValidacion, elementoMsj, msj, aplicaVa
     console.log('valido?', valido);
     if(!valido) e.preventDefault();
   });
-  document.addEventListener('DOMContentLoaded', function() {
+  /*document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form.needs-validation');
     form.addEventListener('submit', function(e) {
         if (!validacionCamposInput()) {
@@ -190,7 +192,7 @@ function validacionCamposInput(valor, tipoValidacion, elementoMsj, msj, aplicaVa
         }
         form.classList.add('was-validated');
     });
-});
+});*/
   
   //Función para validar una CURP
   function curpValida(curp) {
@@ -221,12 +223,14 @@ function validacionCamposInput(valor, tipoValidacion, elementoMsj, msj, aplicaVa
   
   //Handler para el evento cuando cambia el input
   //Lleva la CURP a mayúsculas para validarlo
-  function validarInput(input) {
+  function validarInput(input, idResultado) {
       var curp = input.value.toUpperCase(),
-      resultado = document.getElementById("resultado"),
+      resultado = document.getElementById(idResultado),
       valido = "No válido";
       console.log("llego");
-        
+      
+      input.value = curp;
+
       if (curpValida(curp)) { // Acá se comprueba
           valido = "Válido";
           resultado.classList.add("ok");
@@ -235,4 +239,4 @@ function validacionCamposInput(valor, tipoValidacion, elementoMsj, msj, aplicaVa
       }  
     resultado.innerText = "CURP: " + curp + "\nFormato: " + valido;
   }
-  
+

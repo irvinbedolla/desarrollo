@@ -89,7 +89,7 @@
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
         <footer>
-            
+           
         </footer>
         <main>
             <div class="content">
@@ -104,35 +104,41 @@
                                 <td>{{ $solicitud->delegacion }} </td>
                             </tr>
                     </table>
-                </div><br><br><br><br><br>
+                </div><br><br><br>
                 <div class="col-lg-12">
-                    <p><center><b>ACUSE DE RATIFICACIÓN DE CONVENIO<br>
-                    CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br>
-                    <p><b>FECHA DE LA SOLICITUD: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}</b></p>
-                    <p><b> 
-                        EMPRESA/PATRÓN: {{ $solicitud->empresa }}<br>
-                        PERSONA QUE ACUDE EN REPRESENTACIÓN PATRONAL: {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}<br>
-                        NOMBRE DEL TRABAJADOR/A: {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br>
-                        OBJETO DE LA SOLICITUD:  {{ $solicitud->motivo }} <br>
-                        DELEGACIÓN REGIONAL/OFICINA DE APOYO: {{ $solicitud->delegacion }}<br><br>
+                    <p><center><b>
+                        NOTIFICACIÓN AL SOLICITANTE<br>
+                        CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br>
+                    <p><b>
+                        ASUNTO: AUDIENCIA DE CONCILIACION PREJUDICIAL<br>
+                        SOLICITANTE: {{ $solicitante->nombre }}<br><br>
+                        CITADO (S): @foreach($citados as $citado)
+                                        {{ $citado->nombre }} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}} <br>
+                                    @endforeach
+                        <br>
+                        FECHA Y HORA DE EMISIÓN DE DOCUMENTOS: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y \a \l\a\s H:i') }} hrs.<br>
                     </b></p>
-                    
-                    <p> Por este conducto se notifica a la parte solicitante que se ha generado exitosamente su cita para la <b>Ratificación de Convenio</b>, misma que tendrá lugar 
-                        el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>  a las <b>{{ $solicitud->hora }}</b> horas, en la Delegación Regional/Oficina de Apoyo de 
-                        <b>{{ $solicitud->delegacion }}</b> del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con domicilio en <b>{{$direccion_sede}}</b>, apercibiéndolo que de no presentarse 
-                        cualquiera de las partes en la fecha y hora señalada, su solicitud quedará <b>ARCHIVADA</b>, dejando a salvo el derecho de cualquiera de las partes para iniciar su solicitud. 
-                    </p><br>
-                    <p>
-                        Agradecemos presentarse a la dirección proporcionada con diez minutos de anticipación de la hora citada, acompañado de sus documentos originales para cotejo. (En caso de no contar con Folio 
-                        Interno de Registro de Representación Patronal deberá presentar las identificaciones, Poder Notarial/Carta Poder originales el día y hora señalados). <br><br>
 
-                        <span style="color: red;"><b>NOTA:</b></span> La cantidad total a pagar estará sujeta a la revisión del Personal del Centro de Conciliación, para verificar que no exista Renuncia de Derechos, así como 
-                        a la aceptación voluntaria de la persona trabajadora para proceder en la fecha y hora señalada a la firma de la Ratificación de su Convenio.<br><br>
-
-                        Lo anterior, con fundamento en los artículos 123 fracción XX de la Constitución Política de los Estados Unidos Mexicanos, artículos 33, 590-E, 684-C, 684-E, 684-F de la Ley Federal del Trabajo, articulo 
-                        17 y 20 del Reglamento Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, función 1.3.1.1 De los Auxiliares de Conciliadores del Manual de Organización del Centro de Conciliación 
-                        Laboral del Estado de Michoacán de Ocampo y demás normativa aplicable.
+                    <p> Con fecha <b>{{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}</b> siendo las <b>{{ \Carbon\Carbon::now()->translatedFormat('H:i') }}</b> horas, ante esta 
+                        Autoridad Conciliadora, <b>{{ $solicitante->nombre }}</b>, me doy por notificado (a) personalmente de la fecha para la celebraciónn de la Audiencia de Conciliación de
+                        la solicitud de Conciliación con número de identificación único <b>{{ $solicitud->NUE }}</b>, misma que tendrá verificativo el día 
+                        <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{ $audiencia->hora }}</b> horas, en la sala <b>[SALA]</b> de la Delegación 
+                        Regional de Michoacán de Ocampo del Centro de Conciliación Laboral 
+                        del Estado de Michoacán de Ocampo, con domicilio en <b>{{$direccion_sede}}</b>.<br><br>
+                        Asimismo, de conformidad con la fracción X del artículo 684-E, me hago conocedor que <b>de no comparecer se archivara el presente asunto por falta de interés</b>.
                     </p>
+                    <br><br><br><br><br><br><br>
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <div style="display: inline-block; margin-right: 50px;">
+                                <p><center><b>___________________________________<br> {{ $solicitante->nombre }} <br></b></center></p><br>
+                            </div>
+                                    
+                            <div style="display: inline-block; margin-right: 50px;">
+                                <p><center><b>___________________________________<br> {{ $conciliador->name }} <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <script type="text/php">

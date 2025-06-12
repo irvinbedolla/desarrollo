@@ -81,14 +81,7 @@
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
         <footer>
-            <script type="text/php">
-                if (isset($pdf)) {
-                    $font = $fontMetrics->get_font("Arial", "normal");
-                    $size = 10;
-                    $text = "Página " . $PAGE_NUM . " de " . $PAGE_COUNT;
-                    $pdf->text(500, 820, $text, $font, $size);
-                }
-            </script>
+            
         </footer>
         <main>
             <div class="content">
@@ -109,24 +102,25 @@
                 </p><br>
                 <p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br>
                         Asunto: Archivo de asunto por falta de interés<br>
-                        Solicitante: {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
+                        Solicitante: {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }} <br> 
                 </b></p>  
                 
                 <p>En <b>{{ $direccion_sede }} a {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }},</b></p>
                 <p>
                     <b>VISTO</b> el estado que guarda el expediente identificado con el número <b>{{ $solicitud->NUE }}</b> relativo a la solicitud de conciliación realizada por
-                    <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b>, por falta de interés se formula resolución en atención a los siguientes:
+                    <b>{{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}</b>, por falta de interés se formula resolución en atención a los siguientes:
                 </p>
                 <p>
                     <center><b>RESULTANDOS</b></center>
                 </p><br>
                 <p>
-                    <b>Primero.</b> El <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> solicitó ante este Centro, 
-                    iniciar con el Procedimiento de Conciliación Prejudicial con el(los) citados <b>[SOLICITUD_NOMBRES_CITADOS]</b> por objeto de <b>{{ $solicitud->motivo }}</b>.<br><br>
+                    <b>Primero.</b> El <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, <b>{{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}</b> 
+                    solicitó ante este Centro, 
+                    iniciar con el Procedimiento de Conciliación Prejudicial con el(los) citados:
+                    <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> por objeto de <b>{{ $solicitud->motivo }}</b>.<br><br>
 
                     <b>Segundo.</b> El <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, el Centro de Conciliación <b>{{ $solicitud->delegacion }}</b> admitió la 
-                    solicitud de Conciliación, señalando que la celebración de la Audiencia de Conciliación se realizaría el <b>[AUDIENCIA_FECHA_AUDIENCIA]</b> a las <b>[AUDIENCIA_HORA_INICIO]</b> 
-                    horas en la sala de audiencia <b>SALA VIRTUAL</b>, en las instalaciones de este Centro.<br><br>
+                    solicitud de Conciliación, señalando que la celebración de la Audiencia de Conciliación no se realizó.<br><br>
 
                     <b>Tercero.</b> El <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, se concluyó la notificación personal de él(los) citado(s).<br><br>
 
@@ -172,6 +166,16 @@
                 <br><br><br><br>  
                 <center><br><br> <p><b>___________________________________<br>{{ $conciliador->name }} <br> FUNCIONARIO/A CONCILIADOR/A</b></p></center>     
             </div>
+            <script type="text/php">
+                if (isset($pdf)) {
+                    $font = $fontMetrics->get_font("Arial", "normal");
+                    $size = 10;
+                    $y = $pdf->get_height() - 30;
+                    $x = ($pdf->get_width() / 2) - 50;
+                    $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
+                    $pdf->page_text($x, $y, $text, $font, $size, array(0, 0, 0));
+                }
+            </script>
         </main>
     </body>
 </html>    

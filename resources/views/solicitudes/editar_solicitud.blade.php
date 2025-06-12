@@ -76,10 +76,6 @@ body {font-family: Arial;}
   border: 1px solid #ccc;
   border-top: none;
 }
-.span {
-    width: 100%;
-    height: 50px;
-}
 </style>
     
 </style>
@@ -95,7 +91,7 @@ body {font-family: Arial;}
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <h3 class="text-center">Solicitud</h3>
+                            <h3 class="text-center">Editar Solicitud</h3>
                             @if(session()->has('success'))
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                                     <strong>¡Registro correcto!</strong>
@@ -122,7 +118,7 @@ body {font-family: Arial;}
                                 </div>
                             @endif
 
-                             <form class="needs-validation novalidate" method="POST" enctype='multipart/form-data'>
+                             <form class="needs-validation novalidate" method="POST" action="{{route('confirmar_solicitud')}}" enctype='multipart/form-data'>
                                     @csrf
                                     <input type="hidden" name="id" value="{{$id}}">
                                     <div class="tab">
@@ -163,16 +159,45 @@ body {font-family: Arial;}
                                                 <table  class="table table-striped mt-1" style="margin: 0 center; text-align:center;">
                                                     <thead style="background-color: #D2D3D5;">
                                                         <th style="color: black;">Motivo capturado</th>
+                                                        <th style="color: black;">Acción</th>
                                                     </thead>
                                                     <tbody>
                                                          @foreach($motivos as $motivo)
                                                             <tr>
                                                                 <td>
                                                                     <option value="{{$motivo['id']}}">{{$motivo['motivo']}}</option>
+                                                                </td>  
+                                                                <td>
+                                                                   <a href="{{ route('eliminar_motivo', ['id' => $id, 'id_motivo' => $motivo->id] ) }}" class="eliminar btn btn-danger btn-sm">Eliminar</button>
                                                                 </td>   
                                                             </tr>
                                                         @endforeach
                                                     </tbody>
+                                                </table>
+                                            </div>
+                                       
+                                            <div class="col-xs-6 col-sm-6 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">Agregar Otro Motivo a la Solicitud</label>
+                                                    <select  class="form-control" id="motivo_solicitud">
+                                                        <option value="">Seleccione</option>
+                                                        @foreach($mostrarMotivos as $motivo)
+                                                            <option value="{{$motivo['id']}}">{{$motivo['motivo']}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El objeto de solicitud es obligatoria.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-12"><br>
+                                                <table id="tabla" name="motivo_solicitud[]" class="table table-striped mt-1" style="margin: 0 center; text-align:center;">
+                                                    <thead style="background-color: #D2D3D5;">
+                                                        <th style="color: black;">Objeto de la Solicitud</th>
+                                                        <th style="color: black;">Acción</th>
+                                                    </thead>
+                                                    <tbody></tbody>
                                                 </table>
                                             </div>
                                         </div>
@@ -473,19 +498,19 @@ body {font-family: Arial;}
                                                 <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label for="password">Nombre Citado</label>
-                                                        <span class="badge badge-pill badge-secondary">{{ $citado["nombre"] == 'NULL' ? "" : $citado["nombre"] }}</span>
+                                                        <input type="text" class="form-control" name="nombre_citado[]" value="<?=$citado["nombre"];?>">   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label for="password">Primer apellido</label>
-                                                        <span class="badge badge-pill badge-secondary">{{ $citado["primer_apellido"] == 'NULL' ? "" : $citado["primer_apellido"] }}</span>
+                                                        <input type="text" class="form-control" name="primer_apellido[]" value="<?=$citado["primer_apellido"];?>">   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label for="password">Segundo apellido</label>
-                                                        <span class="badge badge-pill badge-secondary">{{ $citado["segundo_apellido"] == 'NULL' ? "" : $citado["segundo_apellido"] }}</span>
+                                                        <input type="text" class="form-control" name="segundo_apellido[]" value="<?=$citado["segundo_apellido"];?>">   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
@@ -501,13 +526,13 @@ body {font-family: Arial;}
                                                 <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label for="password">CURP</label>
-                                                        <span class="badge badge-pill badge-secondary">{{ $citado["curp"] == 'NULL' ? "" : $citado["curp"] }}</span>
+                                                        <input type="text" class="form-control" name="curp_citado[]" value="<?=$citado["curp"];?>" maxlength="18">   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label for="password">RFC</label>
-                                                        <span class="badge badge-pill badge-secondary">{{ $citado["rfc"] == 'NULL' ? "" : $citado["rfc"] }}</span>
+                                                        <input type="text" class="form-control" name="rfc_citado[]" value="<?=$citado["rfc"];?>">   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
@@ -518,7 +543,7 @@ body {font-family: Arial;}
                                                 <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label for="password">Colonia del citado</label>
-                                                        <span class="badge badge-pill badge-secondary">{{ $citado["colonia"] == 'NULL' ? "" : $citado["colonia"] }}</span>
+                                                        <input type="text" class="form-control" name="colonia_citado[]" value="<?=$citado["colonia"];?>" required>   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
@@ -531,53 +556,64 @@ body {font-family: Arial;}
                                                             <option value="Calzada"   {{ $citado['tipo_vialidad'] == 'Calzada' ? "selected" : '' }} >Calzada</option>
                                                             <option value="Boulevard" {{ $citado['tipo_vialidad'] == 'Boulevard' ? "selected" : '' }}>Boulevard</option>
                                                         </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo vialidad es obligatorio.
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label for="password">Calle del citado</label>
-                                                        <span class="badge badge-pill badge-secondary">{{ $citado["calle"] == 'NULL' ? "" : $citado["calle"] }}</span>
+                                                        <input type="text" class="form-control" name="calle_citado[]" value="<?=$citado["calle"];?>" required>   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label for="password">Entre Calle</label>
-                                                        <span class="badge badge-pill badge-secondary">{{ $citado["calle1"] == 'NULL' ? "" : $citado["calle1"] }}</span>
+                                                        <input type="text" class="form-control" name="calle1_citado[]" value="<?=$citado["calle1"];?>">   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label for="password">Entre Calle</label>
-                                                        <span class="badge badge-pill badge-secondary">{{ $citado["calle2"] == 'NULL' ? "" : $citado["calle2"] }}</span>
+                                                        <input type="text" class="form-control" name="calle2_citado[]" value="<?=$citado["calle2"];?>">   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="password">N° Ext.</label>
-                                                        <span class="badge badge-pill badge-secondary">{{ $citado["n_ext"] == 'NULL' ? "" : $citado["n_ext"] }}</span>
+                                                        <input type="text" class="form-control" name="n_ext_citado[]" value="<?=$citado["n_ext"];?>" required>   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="password">N° Int.</label>
-                                                        <span class="badge badge-pill badge-secondary">{{ $citado["n_int"] == 'NULL' ? "" : $citado["n_int"] }}</span>
+                                                        <input type="text" class="form-control" name="n_int_citado[]" value="<?=$citado["n_int"];?>">   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-12">
                                                     <div class="form-group">
                                                         <label for="password">Referencia</label>
-                                                        <span class="badge badge-pill badge-secondary">{{ $citado["referencia"] == 'NULL' ? "" : $citado["referencia"] }}</span>
+                                                        <input type="text" class="form-control" name="referencia_citado[]" value="<?=$citado["referencia"];?>" required>   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">Código Postal</label>
-                                                        <span class="badge badge-pill badge-secondary">{{ $citado["cp"] == 'NULL' ? "" : $citado["cp"] }}</span>
+                                                        <input type="text" class="form-control" name="cp_citado[]" value="<?=$citado["cp"];?>" required>   
                                                     </div>
                                                 </div>
+                                                
                                             @endforeach
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
+                                                data-bs-target="#exampleModal1" data-id="{{ $id }}">Agregar Citado</a>
+                                                <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
+                                                data-bs-target="#exampleModal2" data-id="{{ $id }}">Borrar Citado</a>
+                                            </div>
                                         </div>
                                     </div>
+
                                     <div id="citados" class="tabcontent">
                                         <div id="tabla_citados" class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-12">
@@ -585,17 +621,18 @@ body {font-family: Arial;}
                                                     <h4 class="text-center">Documentos</h4>
                                                 </div>
                                             </div><br>
-                                            @foreach($solicitantes as $solicitante)
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <label for="password">CURP</label><br>
-                                                    <a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoIdentificacion}}">PDF</a><br>
-                                                </div>
 
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <label for="password">Identificacíon Oficial</label><br>
-                                                    <a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoCurp}}">PDF</a><br>
-                                                </div>
-                                            @endforeach
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <label for="password">CURP</label><br>
+                                                <a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoIdentificacion}}">PDF</a><br>
+                                                <input type="file" name="documentoCurp" accept=".pdf" class="form-control">
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <label for="password">Identificacíon Oficial</label><br>
+                                                <a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoCurp}}">PDF</a><br>
+                                                <input type="file" name="documentoIdentificacion" accept=".pdf" class="form-control">
+                                            </div>
                                             <br>
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
@@ -604,22 +641,31 @@ body {font-family: Arial;}
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <label for="password">Fecha de audiencia</label><br>
-                                                <span class="badge badge-pill badge-secondary">{{ $audiencia == 'NULL' ? "Sin seleccionar" : $audiencia["fecha"] }}</span>
+                                                <input type="date" name="fecha_audiencia" class="form-control">
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <label for="password">Hora de audiencia</label><br>+
-                                                <span class="badge badge-pill badge-secondary">{{ $audiencia == 'NULL' ? "Sin seleccionar" : $audiencia["hora"] }}</span>
+                                                <label for="password">Hora de audiencia</label><br>
+                                                <input type="time" name="hora_audiencia" class="form-control">
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <label for="password">Conciliador</label><br>
-                                                <span class="badge badge-secondary">{{ $conciliadores["name"] == 'NULL' ? "Sin seleccionar" : $conciliadores["name"] }}</span>
+                                                <select name="conciliador" class="form-control">
+                                                    <option value="">Seleccione</option>
+                                                        @foreach($conciliadores as $conciliador)
+                                                            <option value="{{$conciliador['id']}}">{{$conciliador['name']}}</option>
+                                                        @endforeach
+                                                </select>
                                             </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Regresar</button>
+                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
+                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Rechazar</button>
                                             </div>
                                         </div>
                                     </div>
+
+
+                                   
                                 </div>
                             </form>
                 
@@ -633,228 +679,230 @@ body {font-family: Arial;}
 
 
 <!-- Modal -->
-    <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <form class='needs-validation novalidate'  method='POST' action="{{route('agregar_citado_edicion')}}">
-            @csrf
-            <input type="hidden" name="id" value="{{$id}}">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Agregar Citado</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                <div class="form-group">
-                                    <h4 class="text-center">Dirección del citado</h4>
-                                </div>
-                            </div>                                        
+<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <form class='needs-validation novalidate'  method='POST' action="{{route('agregar_citado_edicion')}}">
+        @csrf
+        <input type="hidden" name="id" value="{{$id}}">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Agregar Citado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <h4 class="text-center">Dirección del citado</h4>
+                            </div>
+                        </div>                                        
 
-                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                <div class="form-group">
-                                    <label for="name">Agregar "Quien resulte responsable"</label>
-                                    <select name="responsable" class="form-control" required>
-                                        <option value="">SELECCIONE</option>
-                                        <option value="Si">Si</option>
-                                        <option value="No">No</option>
-                                    </select>
-                                    <div class="invalid-feedback">
-                                        El campo es obligatorio.
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                <div class="form-group">
-                                    <label for="name">Tipo de Vialidad del citado *</label>
-                                    <select name="vialidad" class="form-control" required>
-                                        <option value="">SELECCIONE</option>
-                                        <option value="Calle">CALLE</option>
-                                        <option value="Avenida">AVENIDA</option>
-                                        <option value="Calzada">CALZADA</option>
-                                        <option value="Boulevard">BOULEVARD</option>
-                                    </select>
-                                    <div class="invalid-feedback">
-                                        El campo vialidad es obligatorio.
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                <div class="form-group">
-                                    <label for="name">Calle del citado *</label>
-                                    <input type="text" name="calle" class="form-control" required> 
-                                    <div class="invalid-feedback">
-                                        El campo calle es obligatorio.
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                <div class="form-group">
-                                    <label for="name">Colonia del citado *</label>
-                                    <input type="text" name="colonia" class="form-control" required> 
-                                    <div class="invalid-feedback">
-                                        El campo colonia es obligatorio.
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                <div class="form-group">
-                                    <label for="name">Código Postal del citado *</label>
-                                    <input type="text" name="cp" class="form-control" minlength="5" maxlength="5" required> 
-                                    <div class="invalid-feedback">
-                                        El campo Código Postal es obligatorio.
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                <div class="form-group">
-                                    <label for="name">Entre calle del domicilio del citado</label>
-                                    <input type="text" name="calle1" class="form-control"> 
-                                    <div class="invalid-feedback">
-                                        El campo calle es obligatorio.
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                <div class="form-group">
-                                    <label for="name">y calle del domicilio del citado</label>
-                                    <input type="text" name="calle2" class="form-control"> 
-                                    <div class="invalid-feedback">
-                                        El campo calle es obligatorio.
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                <div class="form-group">
-                                    <label for="name">Num ext. del citado</label>
-                                    <input type="text" name="exterior" class="form-control" required> 
-                                    <div class="invalid-feedback">
-                                        El campo c
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                <div class="form-group">
-                                    <label for="name">Num int. del citado</label>
-                                    <input type="text" name="interior" class="form-control" > 
-                                    <div class="invalid-feedback">
-                                        El campo calle es obligatorio.
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                <div class="form-group">
-                                <label for="floatingTextarea">Referencias del domicilio del citado</label>
-                                    <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencia"></textarea>
-                                    <div class="invalid-feedback">
-                                        El campo referencias es obligatorio.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                <div class="form-group">
-                                    <label for="name">Tipo de personas</label>
-                                    <select name="tipo" class="form-control">
-                                        <option value="">Seleccione</option>
-                                        <option value="Fisica">Fisica</option>
-                                        <option value="Moral">Moral</option>
-                                    </select>
-                                    <div class="invalid-feedback">
-                                        El tipo de persona es obligatorio.
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                <div class="form-group">
-                                    <label for="name">CURP</label>
-                                    <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control"> 
-                                    <pre id="resultado"></pre>
-                                    <div class="invalid-feedback">
-                                        El nombre es obligatorio.
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                <div class="form-group">
-                                    <label for="name">Nombre(s) *</label>
-                                    <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
-                                    <div class="invalid-feedback">
-                                        El nombre es obligatorio.
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                <div class="form-group">
-                                    <label for="name">Primer apellido *</label>
-                                    <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
-                                    <div class="invalid-feedback">
-                                        El nombre es obligatorio.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                <div class="form-group">
-                                    <label for="name">Segundo apellido *</label>
-                                    <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
-                                    <div class="invalid-feedback">
-                                        El nombre es obligatorio.
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                <div class="form-group">
-                                    <label for="name">RFC</label>
-                                    <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" > 
-                                    <div class="invalid-feedback">
-                                        El campo conflicto es obligatorio.
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                <label for="name">Requiere algun lenguaje</label>
-                                <select name="lenguaje" class="form-control" required>
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="name">Agregar "Quien resulte responsable"</label>
+                                <select name="responsable" class="form-control" required>
                                     <option value="">SELECCIONE</option>
-                                    <option value=" ">Si</option>
+                                    <option value="Si">Si</option>
                                     <option value="No">No</option>
                                 </select>
+                                <div class="invalid-feedback">
+                                    El campo es obligatorio.
+                                </div>
                             </div>
+                        </div>
 
-                            <div class="col-xs-12 col-sm-12 col-md-6" id="lenguaje_señas">
-                                <div class="form-group">
-                                    <label for="name">Que tipo de lenguaje require</label>
-                                    <input type="text" name="lenguaje" class="form-control">
-                                    <div class="invalid-feedback">
-                                        La nacionalidad es obligatoria.
-                                    </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="name">Tipo de Vialidad del citado *</label>
+                                <select name="vialidad" class="form-control" required>
+                                    <option value="">SELECCIONE</option>
+                                    <option value="Calle">CALLE</option>
+                                    <option value="Avenida">AVENIDA</option>
+                                    <option value="Calzada">CALZADA</option>
+                                    <option value="Boulevard">BOULEVARD</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    El campo vialidad es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="name">Calle del citado *</label>
+                                <input type="text" name="calle" class="form-control" required> 
+                                <div class="invalid-feedback">
+                                    El campo calle es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="name">Colonia del citado *</label>
+                                <input type="text" name="colonia" class="form-control" required> 
+                                <div class="invalid-feedback">
+                                    El campo colonia es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="name">Código Postal del citado *</label>
+                                <input type="text" name="cp" class="form-control" minlength="5" maxlength="5" required> 
+                                <div class="invalid-feedback">
+                                    El campo Código Postal es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="name">Entre calle del domicilio del citado</label>
+                                <input type="text" name="calle1" class="form-control"> 
+                                <div class="invalid-feedback">
+                                    El campo calle es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="name">y calle del domicilio del citado</label>
+                                <input type="text" name="calle2" class="form-control"> 
+                                <div class="invalid-feedback">
+                                    El campo calle es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="name">Num ext. del citado</label>
+                                <input type="text" name="exterior" class="form-control" required> 
+                                <div class="invalid-feedback">
+                                    El campo c
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="name">Num int. del citado</label>
+                                <input type="text" name="interior" class="form-control" > 
+                                <div class="invalid-feedback">
+                                    El campo calle es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                            <div class="form-group">
+                            <label for="floatingTextarea">Referencias del domicilio del citado</label>
+                                <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencia"></textarea>
+                                <div class="invalid-feedback">
+                                    El campo referencias es obligatorio.
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary">Guardar</button>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="name">Tipo de personas</label>
+                                <select name="tipo" class="form-control">
+                                    <option value="">Seleccione</option>
+                                    <option value="Fisica">Fisica</option>
+                                    <option value="Moral">Moral</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    El tipo de persona es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="name">CURP</label>
+                                <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control"> 
+                                <pre id="resultado"></pre>
+                                <div class="invalid-feedback">
+                                    El nombre es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="name">Nombre(s) *</label>
+                                <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                <div class="invalid-feedback">
+                                    El nombre es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="name">Primer apellido *</label>
+                                <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                <div class="invalid-feedback">
+                                    El nombre es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="name">Segundo apellido *</label>
+                                <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                <div class="invalid-feedback">
+                                    El nombre es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="name">RFC</label>
+                                <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" > 
+                                <div class="invalid-feedback">
+                                     El campo conflicto es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <label for="name">Requiere algun lenguaje</label>
+                            <select name="lenguaje" class="form-control" required>
+                                <option value="">SELECCIONE</option>
+                                <option value=" ">Si</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6" id="lenguaje_señas">
+                            <div class="form-group">
+                                <label for="name">Que tipo de lenguaje require</label>
+                                <input type="text" name="lenguaje" class="form-control">
+                                <div class="invalid-feedback">
+                                    La nacionalidad es obligatoria.
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
             </div>
-        </form>
-    </div>
+        </div>
+    </form>
+</div>
+
+
 <!-- Modal -->
     <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         @csrf

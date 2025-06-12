@@ -89,7 +89,7 @@
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
         <footer>
-            
+    
         </footer>
         <main>
             <div class="content">
@@ -106,32 +106,27 @@
                     </table>
                 </div><br><br><br><br><br>
                 <div class="col-lg-12">
-                    <p><center><b>ACUSE DE RATIFICACIÓN DE CONVENIO<br>
+                    <p><center><b>ACUSE DE SOLICITUD DE CONCILIACIÓN<br>
                     CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br>
-                    <p><b>FECHA DE LA SOLICITUD: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}</b></p>
+                    <p><b>FECHA DE LA SOLICITUD: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}<br>
+                          FECHA DE CONFLICTO: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}
+                    </b></p>
                     <p><b> 
-                        EMPRESA/PATRÓN: {{ $solicitud->empresa }}<br>
-                        PERSONA QUE ACUDE EN REPRESENTACIÓN PATRONAL: {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}<br>
-                        NOMBRE DEL TRABAJADOR/A: {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br>
-                        OBJETO DE LA SOLICITUD:  {{ $solicitud->motivo }} <br>
-                        DELEGACIÓN REGIONAL/OFICINA DE APOYO: {{ $solicitud->delegacion }}<br><br>
+                        SOLICITANTE: {{ $solicitante->nombre }}<br><br>
+                        CITADO (S): @foreach($citados as $citado)
+                                        {{ $citado->nombre }} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}} <br>
+                                    @endforeach
+                        <br>
                     </b></p>
                     
-                    <p> Por este conducto se notifica a la parte solicitante que se ha generado exitosamente su cita para la <b>Ratificación de Convenio</b>, misma que tendrá lugar 
-                        el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>  a las <b>{{ $solicitud->hora }}</b> horas, en la Delegación Regional/Oficina de Apoyo de 
-                        <b>{{ $solicitud->delegacion }}</b> del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con domicilio en <b>{{$direccion_sede}}</b>, apercibiéndolo que de no presentarse 
-                        cualquiera de las partes en la fecha y hora señalada, su solicitud quedará <b>ARCHIVADA</b>, dejando a salvo el derecho de cualquiera de las partes para iniciar su solicitud. 
-                    </p><br>
-                    <p>
-                        Agradecemos presentarse a la dirección proporcionada con diez minutos de anticipación de la hora citada, acompañado de sus documentos originales para cotejo. (En caso de no contar con Folio 
-                        Interno de Registro de Representación Patronal deberá presentar las identificaciones, Poder Notarial/Carta Poder originales el día y hora señalados). <br><br>
+                    <p>Usted ha guardado exitosamente la solicitud de conciliación con folio <b>{{ $solicitud->NUE }}</b>. El Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con domicilio 
+                        en <b>{{$direccion_sede}}</b>, esta facultada para consultar su solicitud.<br><br>
 
-                        <span style="color: red;"><b>NOTA:</b></span> La cantidad total a pagar estará sujeta a la revisión del Personal del Centro de Conciliación, para verificar que no exista Renuncia de Derechos, así como 
-                        a la aceptación voluntaria de la persona trabajadora para proceder en la fecha y hora señalada a la firma de la Ratificación de su Convenio.<br><br>
-
-                        Lo anterior, con fundamento en los artículos 123 fracción XX de la Constitución Política de los Estados Unidos Mexicanos, artículos 33, 590-E, 684-C, 684-E, 684-F de la Ley Federal del Trabajo, articulo 
-                        17 y 20 del Reglamento Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, función 1.3.1.1 De los Auxiliares de Conciliadores del Manual de Organización del Centro de Conciliación 
-                        Laboral del Estado de Michoacán de Ocampo y demás normativa aplicable.
+                        Conforme al artículo 735 de la Ley Federal del Trabajo tiene tres (3) días hábiles a partir de este momento para
+                        confirmar la solicitud, deberá presentar su identificación oficial para confirmar la solicitud como máximo el día <b>13 de
+                        Enero de 2025</b>. En el caso de que no realice la confirmación dentro del plazo señalado, con fundamento en el artículo
+                        684-C y 735 de la Ley Federal del Trabajo, ésta se archivará por falta de presentación de la identificación oficial,
+                        dejando a salvo sus derechos para que pueda presentar una nueva solicitud.
                     </p>
                 </div>
             </div>
