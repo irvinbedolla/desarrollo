@@ -7,7 +7,7 @@
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
 
         <!-- Bootstrap 5.3.3 -->
-        <link href="../public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
         
@@ -89,7 +89,7 @@
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
         <footer>
-            
+           
         </footer>
         <main>
             <div class="content">
@@ -104,36 +104,42 @@
                                 <td>{{ $solicitud->delegacion }} </td>
                             </tr>
                     </table>
-                </div><br><br><br><br><br>
-                <div class="col-lg-12">
-                    <p><center><b>ACUSE DE RATIFICACIÓN DE CONVENIO<br>
-                    CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br>
-                    <p><b>FECHA DE LA SOLICITUD: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}</b></p>
-                    <p><b> 
-                        EMPRESA/PATRÓN: {{ $solicitud->empresa }}<br>
-                        PERSONA QUE ACUDE EN REPRESENTACIÓN PATRONAL: {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}<br>
-                        NOMBRE DEL TRABAJADOR/A: {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br>
-                        OBJETO DE LA SOLICITUD:  {{ $solicitud->motivo }} <br>
-                        DELEGACIÓN REGIONAL/OFICINA DE APOYO: {{ $solicitud->delegacion }}<br><br>
-                    </b></p>
-                    
-                    <p> Por este conducto se notifica a la parte solicitante que se ha generado exitosamente su cita para la <b>Ratificación de Convenio</b>, misma que tendrá lugar 
-                        el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>  a las <b>{{ $solicitud->hora }}</b> horas, en la Delegación Regional/Oficina de Apoyo de 
-                        <b>{{ $solicitud->delegacion }}</b> del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con domicilio en <b>{{$direccion_sede}}</b>, apercibiéndolo que de no presentarse 
-                        cualquiera de las partes en la fecha y hora señalada, su solicitud quedará <b>ARCHIVADA</b>, dejando a salvo el derecho de cualquiera de las partes para iniciar su solicitud. 
-                    </p><br>
-                    <p>
-                        Agradecemos presentarse a la dirección proporcionada con diez minutos de anticipación de la hora citada, acompañado de sus documentos originales para cotejo. (En caso de no contar con Folio 
-                        Interno de Registro de Representación Patronal deberá presentar las identificaciones, Poder Notarial/Carta Poder originales el día y hora señalados). <br><br>
+                </div><br><br><br><br>
+                <p><center><b>CITATORIO DE CONCILIACIÓN</b></center></p><br>
+                <p><b>ASUNTO: AUDIENCIA DE CONCILIACIÓN PREJUDICIAL<br>
+                    FECHA DE EMISIÓN DEL CITATORIO:  {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}<br>
+                    SOLICITANTE: {{ $solicitante->nombre }}<br>
+                    NÚMERO DE SEGURIDAD SOCIAL DEL SOLICITANTE: {{ $solicitante->nss ?? 'N/A'}}<br>
+                    CURP DEL SOLICITANTE: {{ $solicitante->curp }}<br>
+                    CITADO: {{ $citado->nombre}} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}<br>
+                </b></p>  
+                           
+                <p><b>P R E S E N T E</b></p>
+                <p>En cumplimiento y observancia a la fracción XX, del artículo 123 Constitucional, apartado A; así como los de los
+                    Principios Procesales contenidos en los artículos 684-E, 684-F fracción I y 685 de la Ley Federal del Trabajo, que
+                    regulan el procedimiento obligatorio prejudicial conciliatorio; se notifica al <b>C. REPRESENTANTE LEGAL
+                    DE: {{ $citado->nombre }} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}</b> para que asista a la <b>Audiencia de Conciliación</b> 
+                    de fecha <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las
+                    <b>{{$audiencia->hora}}</b>, en la sala <b>[URU-1]</b> de la Delegación Regional de <b>{{ $solicitud->delegacion}}</b> del Centro de Conciliación Laboral del
+                    Estado de Michoacán de Ocampo, <b>{{$direccion_sede}}.</b></p>
 
-                        <span style="color: red;"><b>NOTA:</b></span> La cantidad total a pagar estará sujeta a la revisión del Personal del Centro de Conciliación, para verificar que no exista Renuncia de Derechos, así como 
-                        a la aceptación voluntaria de la persona trabajadora para proceder en la fecha y hora señalada a la firma de la Ratificación de su Convenio.<br><br>
-
-                        Lo anterior, con fundamento en los artículos 123 fracción XX de la Constitución Política de los Estados Unidos Mexicanos, artículos 33, 590-E, 684-C, 684-E, 684-F de la Ley Federal del Trabajo, articulo 
-                        17 y 20 del Reglamento Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, función 1.3.1.1 De los Auxiliares de Conciliadores del Manual de Organización del Centro de Conciliación 
-                        Laboral del Estado de Michoacán de Ocampo y demás normativa aplicable.
+                <p>La audiencia será presidida por una conciliadora o conciliador del Centro de Conciliación Laboral del Estado de
+                    Michoacán de Ocampo, en cumplimiento al artículo 684-H, manteniendo en todo momento los principios de
+                    conciliación, imparcialidad, neutralidad, flexibilidad, legalidad, equidad, buena fe, información, honestidad, y
+                    confidencialidad.</p>
+                <!--@(notificacion==solicitante)-->
+                    <p>Este citatorio se notifica de manera personal conforme al artículo 739, 739 Ter fracción I y IV, 742 fracción XIII, 743,
+                        744 y 745 Ter de la Ley Federal del Trabajo.
                     </p>
-                </div>
+                 <!--@-->
+                <!--@(notificacion==centro)-->
+                    <p>Con fundamento en el artículo 684-E. fracción IV, se apercibe al citado que de no comparecer por sí o por conducto de
+                        su representante legal, o bien por medio de apoderado con facultades suficientes, se le impondrá una multa entre 50 y
+                        100 veces la Unidad de Medida y Actualización, y se le tendrá por inconforme con todo arreglo conciliatorio.
+                    </p>
+                <!--@-->    
+                <br><br>
+                <p><center><b>___________________________________<br> {{$conciliador->name}} <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>
             </div>
             <script type="text/php">
                 if (isset($pdf)) {
@@ -148,3 +154,4 @@
         </main>    
     </body>
 </html>    
+

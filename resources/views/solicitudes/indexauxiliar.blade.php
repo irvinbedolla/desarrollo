@@ -34,7 +34,7 @@
                                                     <td>{{$solicitud->empresa}}</td>
                                                     <td>{{$solicitud->telefono}}</td>
                                                     <td>{{$solicitud->email}}</td>
-                                                    <td>{{$solicitud->trabajador}}</td>
+                                                    <td>{{$solicitud->trabajador}} {{$solicitud->primero_trabajador}}  {{$solicitud->segundo_trabajador}}</td>
                                                     <td>{{$solicitud->estatus}}</td>
                                                     <td><a class="btn btn-primary" href="{{ route('consultar_ratificacion', $solicitud->id) }}">Consultar</a></td>
                                                     <td>
@@ -47,18 +47,18 @@
                                                     </td>
                                                     <td>
                                                         @if($solicitud->estatus == "Conluida")
-                                                            <a class="btn btn-success" href="{{ route('PDFconvenio', $solicitud->id) }}"  target="_blank">Convenio</a>
+                                                            <a class="btn btn-success" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}"  target="_blank">Convenio</a>
                                                             <a class="btn btn-success" href="{{ route('PDFaudiencia', $solicitud->id) }}"  target="_blank">Acta de audiencia</a>
                                                             <a class="btn btn-success" href="{{ route('PDFcumplimiento', $solicitud->id) }}"  target="_blank">Constancia de cumplimiento</a>
                                                         @elseif($solicitud->estatus == "Concluida Pagos")
-                                                            <a class="btn btn-success" href="{{ route('PDFconvenio', $solicitud->id) }}"  target="_blank">Convenio</a>
+                                                            <a class="btn btn-success" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}"  target="_blank">Convenio</a>
                                                             <a class="btn btn-success" href="{{ route('PDFaudiencia', $solicitud->id) }}"  target="_blank">Acta de audiencia</a>
                                                         @elseif($solicitud->estatus == "Confirmado")
                                                             <a class="btn btn-success" href="{{ route('PDFratifi', $solicitud->id) }}"  target="_blank">Acuse</a>
                                                         @elseif($solicitud->estatus == "Incumplimiento")
                                                             <a class="btn btn-success" href="{{ route('PDFincumplimiento', $solicitud->id) }}"  target="_blank">Incumplimiento</a>
                                                         @elseif($solicitud->estatus == "Archivada")
-                                                            <a class="btn btn-success" href="{{ route('PDFfallta_interes', $solicitud->id) }}"  target="_blank">Acta de Archivo</a>
+                                                            <a class="btn btn-success" href="{{ route('PDFinteres', $solicitud->id) }}"  target="_blank">Acta de Archivo</a>
                                                         @endif
                                                         
                                                     </td>

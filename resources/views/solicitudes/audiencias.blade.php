@@ -30,6 +30,7 @@
                                             <th style="color: #ffff;">Tipo parte</th>
                                             <th style="color: #ffff;">Nombre de la parte</th>
                                             <th style="color: #ffff;">Notificación</th>
+                                            <th style="color: #ffff;">Estatus Notificación</th>
                                             <th style="color: #ffff;">Representante legal</th>
                                             <th style="color: #ffff;">Acciones</th>
                                         </tr>
@@ -40,29 +41,33 @@
                                             <td style="color: #000000;"><b>Solicitante</b></td>
                                             <td>{{ $solicitante->nombre }}</td>
                                             <td></td>
-                                            <td>
-                                                
-                                            </td>
+                                            <td></td>
+                                            <td></td>
                                             <td>
                                                 <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal1" data-id="{{ $id }}">Editar</a>
                                             </td>
                                         </tr>
                                        
-                                        @foreach($citados as $citado)
+                                        @foreach($representantes as $representante)
                                             <tr>
-                                                <td  style="display:none">{{$citado->id}}</td>
+                                                <td  style="display:none">{{$representante->id}}</td>
                                                 <td style="color: #000000;"><b>Citado</b></td>
-                                                <td>{{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</td>
-                                                <td>{{ $citado->notificacion }}</td>
+                                                <td>{{$representante->nombre}} {{$representante->primer_apellido}} {{$representante->segundo_apellido}}</td>
+                                                <td>{{ $representante->notificacion }}</td>
+                                                <td>{{ $representante->estatus }}</td>
                                                 <td>
-                                                    @if($citado->id_abogado == null)
+                                                    @if($representante->id_abogado == null && $representante->id_fisica == null)
                                                         Por asignar
                                                     @else
-                                                        {{ $citado->nombre_abogado }} {{ $citado->primero_abogado }} {{ $citado->segundo_abogado }} 
+                                                        @if($representante->id_abogado != null && $representante->id_fisica == null)
+                                                            {{ $representante->nombre_abogado }} {{ $representante->primero_abogado }} {{ $representante->segundo_abogado }}
+                                                        @else
+                                                            {{ $representante->nombre_fisica }} {{ $representante->primer_fisica }} {{ $representante->segundo_fisica }}
+                                                        @endif
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <button type="button" class="btn btn-primary open-modal" data-id="{{ $citado->id }}" data-bs-toggle="modal" data-bs-target="#modalCitados"> Citado </button>
+                                                    <button type="button" class="btn btn-primary open-modal" data-id="{{ $representante->id }}" data-bs-toggle="modal" data-bs-target="#modalCitados"> Citado </button>
                                                 </td>
                                             </tr>
                                             @php $contador++; @endphp
@@ -222,7 +227,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Citados</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Representantes Legales</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -258,7 +263,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarCitados">Agregar</button>
+                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarCitados">Agregar en reprecentantación</button>
+                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarDerecho">Agregar por propio derecho</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
@@ -273,11 +279,16 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Editar Citado</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Agregar Representante</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <h4 class="text-center">Datos del reprecentante</h4>
+                            </div>
+                        </div>  
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
                                 <label for="name">Nombres</label>
@@ -327,6 +338,13 @@
                                 </div>
                             </div>
                         </div>
+
+
+                        <div class="col-xs-12 col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <h4 class="text-center">Datos de la empresa</h4>
+                            </div>
+                        </div>  
 
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
@@ -461,7 +479,6 @@
         </div>
     </form>
 </div>
-<!-- Modal -->
 <div class="modal fade" id="ModalArchivar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <form class='needs-validation novalidate'  method='POST' action="{{route('archivar_audiencia')}}">
         @csrf
@@ -527,14 +544,14 @@
 </div>
 <div class="modal fade" id="ModalTerminar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     {{ $bandera = 0; }}
-    @foreach($citados as $citado)
-        @if($citado->id_abogado == null)
+    @foreach($representantes as $representante)
+        @if($representante->id_abogado == null && $representante->id_fisica == null)
             {{ $bandera = 1; }}
         @endif        
     @endforeach
     {{$bandera;}}
 
-    @if($citados[$contador-1]->notificacion == "Centro")
+    @if($representantes[$contador-1]->notificacion == "Centro")
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -550,7 +567,7 @@
                         @csrf
                         <input type="hidden" name="id" value="{{$id}}">
                         <input type="hidden" name="bandera" value="{{$bandera}}">
-                        <button type="submit" class="btn btn-success">Agregar</button>
+                        <button type="submit" class="btn btn-success">Continuar</button>
                     </form>                    
                 </div>
             </div>
@@ -573,12 +590,65 @@
                         @csrf
                         <input type="hidden" name="id" value="{{$id}}">
                         <input type="hidden" name="bandera" value="{{$bandera}}">
-                        <button type="submit" class="btn btn-success">Agregar</button>
+                        <button type="submit" class="btn btn-success">Continuar</button>
                     </form> 
                 </div>
             </div>
         </div>
     @endif
+</div>
+<div class="modal fade" id="modalAgregarDerecho" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <form class='needs-validation novalidate'  method='POST' enctype="multipart/form-data" name="AgregarPersonaFisica" id="AgregarPersonaFisica" action="{{route('insertar_citado_PF')}}">
+        @csrf
+        <input type="text" name="id" value="{{$id}}">
+        <input type="text" name="id_citado_pf" id="id_citado_pf" value="">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Agregar Persona Fisica</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label for="name">Tipo de identificación (*)</label>
+                                <select name="identificacionAlta" class="form-control" required>
+                                    <option value="">SELECCIONE</option>
+                                    <option value="ine">INE</option>
+                                    <option value="pasaporte">PASAPORTE</option>
+                                    <option value="cedula">CÉDULA PROFESIONAL</option>
+                                    <option value="licencia">LICENCIA PARA CONDUCIR</option>
+                                    <option value="otros">OTROS</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    El tipo de identificaión es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label>Identificación oficial</label>
+                                <input type="file" name="documentoIdentificacion" class="form-control" accept=".pdf" required>
+                                <div class="invalid-feedback">
+                                    La Identificación es obligatoria.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <input type="hidden" name="id_usuario_registro" value="{{ Auth::id() }}">
+                        </div>
+                        
+                    </div>                                     
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 
 <div id="nuevo_poder" style ="display: none;">
@@ -594,12 +664,10 @@
             document.getElementById('modal-id').value = id;
             document.getElementById('modal-id-reagendar').value = id;
             document.getElementById('id_citado_2').value = id;
-            document.getElementById('modal-id-terminar').value =id;
+            document.getElementById('id_citado_pf').value = id;
             document.getElementById('modal-id-archivar').value = id;
             document.getElementById('modal-id-reagendar').value = id;
             document.getElementById('modal-id-incopentencia').value = id;
-
-            console.log(id);
         });
     </script>
     <script src="../../public/assets/js/validaciones.js"></script> 

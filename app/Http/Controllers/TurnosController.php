@@ -1237,12 +1237,14 @@ class TurnosController extends Controller
                 'remember_token'    => $curp,
                 'profile_photo_path'=> $curp
             ); 
-            
+            //Genrar un random del uno al 100 y agregarlo a la contraseña
+            $numero_aleatorio = mt_rand(1, 1000);
+
             //Hacemos un hash del campo que tiene el password
-            $data_insertar_user['password'] = Hash::make("CCLMICHOACAN");
+            $data_insertar_user['password'] = Hash::make("CCLMICHOACAN".$numero_aleatorio);
             $usuario = User::create($data_insertar_user);
             $usuario->assignRole(('Solicitante'));
-            $mensaje = " el correo:".$usuario["email"]." y la contraseña:CCLMICHOACAN para continuar tú trámite.";
+            $mensaje = " el correo:".$usuario["email"]." y la contraseña:CCLMICHOACAN".$numero_aleatorio." para continuar tú trámite.";
         }
         else{
             $mensaje = " el correo:".$usuario["email"]." para continuar tú trámite.";
@@ -1383,7 +1385,7 @@ class TurnosController extends Controller
         ->first();
 
         //dd($conciliador);
-        $html = view('PDF/convenioTerminacion', 
+        $html = view('PDF/convenioRatificacion', 
             compact('id', 'solicitud', 'dias_descanso', 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','vacacionesTexto',
             'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
             'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones'))
@@ -1506,7 +1508,7 @@ class TurnosController extends Controller
         $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
         $conciliador = $conciliador->where("turnos.id", "=", $id)
         ->select('users.name')
-        ->get();
+        ->first();
         $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
 
         $html = view('PDF/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
@@ -1601,18 +1603,15 @@ class TurnosController extends Controller
         $random = array_rand($listado_auxiliares);
         $conciliador = $listado_auxiliares[$random];        
         $user = User::find($conciliador);
+        $expediente = $this->GeneraExpediente($turno["id"],$turno["delegacion"]);
 
-        $aceptar = Turnos::find($id)
-        ->update(['auxiliar' => $user["id"],'lugar_auxiliar' => $user["name"],'estatus' => 'Confirmado']);
-
+        Turnos::find($id)->update(['auxiliar' => $user["id"],'lugar_auxiliar' => $user["name"],'estatus' => 'Confirmado','NUE' => $expediente, 'id_conciliador' => $user["id"]]);
         return redirect()->route('Ratificacion');
     }
 
     public function guardar_rechazo(Request $request){
         $data = $request->all();
-        
-        $rechazar = Turnos::find($data["id"])
-        ->update(['estatus' => 'Rechazado', 'observaciones' => $data["observaciones"]]);
+        Turnos::find($data["id"])->update(['estatus' => 'Rechazado','observaciones' => $data["observaciones"]]);
 
         return redirect()->route('Ratificacion');
     }
@@ -1888,12 +1887,11 @@ class TurnosController extends Controller
 
         //Generar numero de expediente
         $delegacion = Turnos::find($data["id"]);
-        //dd($delegacion);
-        $expediente = $this->GeneraExpediente($delegacion["delegacion"]);
+        $expediente = $this->GeneraExpediente($data["id"],$delegacion["delegacion"]);
 
         $rechazar = Turnos::find($data["id"])
         ->update(['resolucion_primera'  => $data["primera"],
-        'resolucion_trabajadores'       => $data["trabajadores"],
+        //'resolucion_trabajadores'       => $data["trabajadores"],
         'resolucion_justificacion'      => $data["justificacion"],
         'resolucion_segunda'            => $data["segunda"],
         'vacaciones_dias'               => $data["vacaciones"],
@@ -1969,9 +1967,12 @@ class TurnosController extends Controller
 
     public function archivar_ratificacion(Request $request){
         $data = $request->all();
+        $id_usuario = auth()->user()->id;
+        $user = User::find($id_usuario);
 
-        Turnos::find($data["id"])
-        ->update(['estatus'  => "Archivada", 'observaciones' => $data["observaciones"]]);
+        $turno = Turnos::find($data["id"]);
+        $expediente = $this->GeneraExpediente($turno["id"],$turno["delegacion"]);
+        Turnos::find($turno["id"])->update(['auxiliar' => $user["id"],'lugar_auxiliar' => $user["name"],'estatus' => 'Archivada','NUE' => $expediente, 'id_conciliador' => $user["id"], 'observaciones' => $data["observaciones"]]);
 
         return redirect()->route('atender_ratificacion');
     
