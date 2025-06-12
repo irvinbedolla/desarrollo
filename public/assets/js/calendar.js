@@ -43,7 +43,11 @@ document.addEventListener('DOMContentLoaded', function () {
     calendarAudiencias = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridWeek',
         locale: 'es',
-        events: '/audiencias/eventos',
+        events: 'audiencias/eventos',
+        /*eventSourceSuccess: function (events) {
+            console.log(events); // Verifica los datos que se están cargando
+            return events;
+        },*/
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
@@ -75,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
     });
 
-    currentCalendar = calendarPagos;
+    currentCalendar = calendarAudiencias;
     currentCalendar.render();
 
     document.getElementById('btn-pagos').addEventListener('click', function () {
