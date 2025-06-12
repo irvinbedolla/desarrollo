@@ -55,7 +55,7 @@ use App\Http\Controllers\CalendarController;
     Route::get('/calendario', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendario.index');
     Route::get('/citas/eventos', [App\Http\Controllers\CitaController::class, 'eventos'])->name('citas.eventos');
     Route::get('/pagos/eventos', [App\Http\Controllers\CitaController::class, 'pagos'])->name('pagos.eventos');
-    Route::get('/audiencias/eventos', [App\Http\Controllers\AudienciasController::class, 'audiencias'])->name('audiencias.audiencias');
+    Route::get('/audiencias/eventos', [App\Http\Controllers\AudienciasController::class, 'audiencias'])->name('audiencias.eventos');
     Route::get('citas/exportar-excel', [CitaController::class, 'exportarExcel']);
 
     //Rutas fuera del login

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\Cita;
 use App\Models\Pagos;
@@ -9,26 +10,27 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CitasExport;
-use App\Http\Controllers\SeerController;
 use App\Models\Audiencias;
 
 class AudienciasController extends Controller
 {
 
     public function audiencias() {
-        $seerController = new SeerController();
-        $reponse = $seerController->index();
 
-        $userRole = $reponse->getData()['userRole'];
-        $userID = $reponse->getData()['user'];
+        $userID = Auth::user()->id;
+        $userRole = Auth::user()->roles->pluck('name')->all();
 
-        if ($userRole[0] == "SuperUsuario") {
+        //dd($userID, $userRole);
+        //echo "id: " . $userID;
+        //echo "rol: " . implode(', ', $userRole);
+
+        if ($userRole[0] == "Super Usuario") {
             $audiencias = Audiencias::all();
 
             $eventos = [];
             foreach ($audiencias as $audiencia) {
 
-                if ($audiencias->estatus === 'Incompetencia') {
+                if ($audiencia->estatus === 'Incompetencia') {
                     $color = '#DA0909';
                 } elseif ($audiencia->estatus === 'Archivada') {
                     $color = '#EAE300';
