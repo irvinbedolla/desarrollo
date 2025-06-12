@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
     });
 
-    currentCalendar = calendarAudiencias;
+    currentCalendar = calendarPagos;
     currentCalendar.render();
 
     document.getElementById('btn-pagos').addEventListener('click', function () {

@@ -17,19 +17,16 @@ class AudienciasController extends Controller
 {
 
     public function audiencias() {
-        $seerController = new SeerController();
-        $reponse = $seerController->index();
-
-        $userRole = $reponse->getData()['userRole'];
-        $userID = $reponse->getData()['user'];
-
-        if ($userRole[0] == "SuperUsuario") {
+        $userID = Auth::user()->id;
+        $userRole = Auth::user()->roles->pluck('name')->all();
+        
+        if ($userRole[0] == "Super Usuario") {
             $audiencias = Audiencias::all();
 
             $eventos = [];
             foreach ($audiencias as $audiencia) {
 
-                if ($audiencias->estatus === 'Incompetencia') {
+                if ($audiencia->estatus === 'Incompetencia') {
                     $color = '#DA0909';
                 } elseif ($audiencia->estatus === 'Archivada') {
                     $color = '#EAE300';
