@@ -10,7 +10,7 @@ class PersonaFisica extends Model
     //use HasFactory;
     protected $table = 'persona_fisica';
     protected $primaryKey = 'id';
-    protected $fillable = ['id_solicitud','id_citado','nombre_completo','curp','rfc','email','telefono','domicilio','identificacion', 'documentoIdentificacion',];
+    protected $fillable = ['id_solicitud','id_citado','nombre','primer_apellido','segundo_apellido','identificacion', 'documentoIdentificacion',];
 
     
 }

@@ -2605,20 +2605,21 @@ class SeerController extends Controller
         
         $solicitud = SeerPerGeneral::find($id);
         $conciliador = User::select('name')->where('id', $solicitud->conciliador_id)->first();
-        $citados = SeerCitados::leftjoin('abogados', 'abogados.idAbogado', '=', 'seer_citados.id_abogado')
-        ->leftJoin('persona_fisica', 'persona_fisica.id', '=', 'seer_citados.id_abogado')
-        ->where('seer_citados.id_solicitud', $id)
-        //->where('id_solicitud', $id)
-        ->select('seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido','seer_citados.rfc',
-        'abogados.nombres as nombre_abogado','abogados.primer_apellido as primero_abogado',
-        'abogados.segundo_apellido as segundo_abogado','persona_fisica.nombre_completo as nombre_completo_abogado','seer_citados.id_abogado','seer_citados.id','seer_citados.notificacion')
-        ->get();
 
+        $representantes = SeerCitados::
+        leftjoin('abogados', 'abogados.idAbogado', '=', 'seer_citados.id_abogado')
+        ->leftJoin('persona_fisica', 'persona_fisica.id', '=', 'seer_citados.id_fisica')
+        ->where('seer_citados.id_solicitud', $id)
+        ->select('seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido','seer_citados.rfc',
+        'abogados.nombres as nombre_abogado','abogados.primer_apellido as primero_abogado','abogados.segundo_apellido as segundo_abogado',
+        'persona_fisica.nombre as nombre_fisica','persona_fisica.primer_apellido as primer_fisica','persona_fisica.segundo_apellido as segundo_fisica',
+        'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus')
+        ->get();
         $solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
         $abogados = Poder::all();
         SeerPerGeneral::find($id)->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
 
-        return view('/solicitudes/audiencias',compact('id','solicitudes','citados','solicitante','conciliador','solicitud','abogados'));
+        return view('/solicitudes/audiencias',compact('id','solicitudes','representantes','solicitante','conciliador','solicitud','abogados'));
     }
 
     public function guardar_audiencia_archivo(Request $request){
@@ -3709,40 +3710,26 @@ class SeerController extends Controller
     //Citado persona física
     public function citado_personaF(Request $request){
         $data = $request->all();
-        $id_usuario = auth()->user()->id;
-        $user = User::find($id_usuario);
-        $roles = Role::pluck('name', 'name')->all();
-        $userRole = $user->roles->pluck('name')->all();
-        //dd($request);
-        //Validar documentacion
-        request()->validate([
-            'nombre'                    => 'required',
-            'correo'                    => 'required',
-            'curp'                      => 'required',
-            'domicilio'                 => 'required',
-            'documentoIdentificacion'   => 'required',
-        ], $data);
-
+        $citados = SeerCitados::find($data["id_citado_pf"]);
+       
         $data_insertar= array(
-            'id_solicitud'      => $data["id"],
-            'id_citado'         => $data["id_citado_pf"],
-            'nombre_completo'   => $data["nombre"],
-            'telefono'          => $data["telefono"], 
-            'email'             => $data["correo"],
-            'curp'              => $data["curp"],
-            'domicilio'         => $data["domicilio"],
-            'rfc'               => $data["RFC"],
+            'id_solicitud'              => $data["id"],
+            'id_citado'                 => $data["id_citado_pf"],
+            'nombre'                    => $citados["nombre"],
+            'primer_apellido'           => $citados["primer_apellido"], 
+            'segundo_apellido'          => $citados["segundo_apellido"],
+            'identificacion'            => $data["identificacionAlta"],
         );
         
-        $documentoidentificacion = $data["curp"]."_Identificacion.pdf";
-            $path = Storage::putFileAs(
-                'documentosSolicitud', $request->file('documentoIdentificacion'), $documentoidentificacion
-            );
-        
-        $data_insertar["documentoIdentificacion"] = $documentoidentificacion;
+        $documento = $citados["nombre"]."-".$citados["primer_apellido"]."-".$citados["segundo_apellido"]."_Identificacion.pdf";
+        $path = Storage::putFileAs(
+            'documentosSolicitud', $request->file('documentoIdentificacion'), $documento
+        );
+        $data_insertar["documentoIdentificacion"] = $documento;
 
-        $nuevoAbogado = PersonaFisica::create($data_insertar);   
-        $A_citado=SeerCitados::find($data['id_citado_pf'])->update(['id_abogado' => $nuevoAbogado->id]);
+        PersonaFisica::create($data_insertar);   
+        $id_adiencia = PersonaFisica::select('id')->orderBy('id', 'desc')->first();
+        SeerCitados::find($data['id_citado_pf'])->update(['id_fisica' => $id_adiencia["id"]]);
         return back()->with('success', 'Representante legal registrado y asignado correctamente al citado.');
     }
 
@@ -3782,5 +3769,52 @@ class SeerController extends Controller
 
     public function audiencias_cumplimiento(){
         return view('/cumplimientos/index');
+    }
+
+    public function solicitud_audiencia_revisar($id){
+        $id_user = auth()->user()->id;
+        $user = User::find($id_user);
+        $id             = $id;
+        $general        = SeerPerGeneral::find($id);
+        $ramas          = SolicitudRama::all();
+        $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
+        $citados        = SeerCitados::where("id_solicitud",$id)->get();
+        $estados        = Estados::all();
+        $municipios     = Municipios::all();
+        $conciliadores = User::whereHas('roles', function ($query) {
+            return $query->where('name', '=', 'Conciliador');
+        })
+        ->where('delegacion', $user["delegacion"])
+        ->get();
+        //Catalogo de motivos
+        $mostrarMotivos = SolicitudMotivo::all();
+        //Motivos capturados
+        $motivos        = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
+        ->where('id_solicitud',$id)
+        ->select('catalogo_motivos.motivo','seer_motivos.id')->get();
+
+        return view('audiencias.revisar_audiencia', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores'));
+    }
+
+    public function pdfCitatorioAudiencia($id) {
+
+        $citado = SeerCitados::find($id);
+        $solicitud = SeerPerGeneral::where('id',$citado["id_solicitud"])->first();   
+        $solicitante = SeerSolicitante::where('id_solicitud', $citado["id_solicitud"])->first();
+        $motivoIds = SeerMotivo::where('id_solicitud', $citado["id_solicitud"])->pluck('id_motivo');
+        $motivos = SolicitudMotivo::whereIn('id', $motivoIds)->get();
+        $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id")
+        ->where("audiencias.id_solicitud", "=", $solicitud["id"])->first();
+        $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
+        $conciliador = $conciliador->where("seer_general.conciliador_id", "=", $solicitud["conciliador_id"])->select('users.name')->first();
+     
+        $html = view('PDF/Solicitudes/citatorio', compact('solicitud','solicitante','citado','motivos','audiencia','conciliador'))->render();
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+        $nombreArchivo = 'citatorio_' . $citado->nombre . '_' . $citado->primer_apellido . '.pdf';
+
+        return $pdf->stream($nombreArchivo);
     }
 }

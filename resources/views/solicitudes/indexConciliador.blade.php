@@ -20,6 +20,7 @@
                                             <th style="color: #fff;">Hora</th>
                                             <th style="color: #fff;">Solicitante</th>
                                             <th style="color: #fff;">Estatus</th>
+                                            <th style="color: #fff;">Detalles</th>
                                             <th style="color: #fff;">Acciones</th>
                                             <th style="color: #fff;">Documentos</th>
                                         </thead>
@@ -31,9 +32,10 @@
                                                 <td>{{$audiencia->hora}}</td>
                                                 <td>{{$audiencia->nombre}}</td>
                                                 <td>{{$audiencia->estatus}}</td>
+                                                <td><a class="btn btn-info" href="{{ route('solicitud_audiencia', $audiencia->id)}}" onclick=editar_usuario();>Revisar</a></td>
                                                 <td>
                                                     @if($audiencia->estatus == "Confirmado")
-                                                        <a class="btn btn-info" href="{{ route('inicioAudiencia', $audiencia->id, 'Confirmado') }}">Iniciar</a><br>
+                                                        <a class="btn btn-success" href="{{ route('inicioAudiencia', $audiencia->id, 'Confirmado') }}">Iniciar</a><br>
                                                     @endif
                                                 </td>
                                                 <td>
