@@ -78,5 +78,5 @@
 </div>
 
 @section('scripts')
-    <script src="./public/assets/js/poderes/general.js"></script>
+    <script src="../public/assets/js/poderes/general.js"></script>
 @endsection

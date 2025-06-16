@@ -280,7 +280,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/PDF/faltaInteres/{id}',                [SeerController::class, 'VerPDFInteres'])->name('PDFfalltaInteres');
         Route::get('/Verpdfnoconciliacion/{id}',            [SeerController::class, 'VerPDFNoConciliacion'])->name('PDFno_conciliacion');
         Route::get('/Verpdfincomparecencia/{id}',           [SeerController::class, 'VerPDFincomparecencia'])->name('PDFincomparecencia');
-        Route::get('/pdf/estadistica',       [PDFController::class, 'pdfEstadistica'])->name('PDFestaditica');
+        Route::get('/pdf/estadistica',                      [PDFController::class, 'pdfEstadistica'])->name('PDFestaditica');
+        Route::get('/VerpdfRnotificacion/{id}',             [SeerController::class, 'VerPDFRNotificacion'])->name('PDFRazonNoticacion');
     //Fin de PDF
     //Ratificaciones
         Route::get('/ratificaciones/index',         [TurnosController::class, 'revisar_ratificaciones'])->name('atender_ratificacion');

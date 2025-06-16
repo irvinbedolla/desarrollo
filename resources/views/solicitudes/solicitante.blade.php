@@ -187,6 +187,7 @@
                                                 <div class="form-group">
                                                     <label for="name">Entidad Federativa de Nacimiento (*)</label>
                                                     <select id="estado_nacimiento" name="estado_nacimiento" class="form-control" required>
+                                                        <option value="">Seleccione</option>
                                                         @foreach($estados as $est)
                                                             <option value="{{$est['id']}}">{{$est['nombre']}}</option>
                                                         @endforeach
@@ -222,7 +223,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Teléfono Celular (*)</label>
-                                                    <input type="text" name="telefono1" minlength="10" maxlength="10" class="form-control" required> 
+                                                    <input type="text" name="telefono1" minlength="10" maxlength="10" class="form-control numeroTelefonico" required> 
                                                     <div class="invalid-feedback">
                                                         El campo teléfono es obligatorio.
                                                     </div>
@@ -231,13 +232,13 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Teléfono Fijo</label>
-                                                    <input type="text" name="telefono2" minlength="10" maxlength="10" class="form-control"> 
+                                                    <input type="text" name="telefono2" minlength="10" maxlength="10" class="form-control numeroTelefonico"> 
                                                 </div>   
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Correo Electrónico (*)</label>
-                                                    <input type="mail" name="correo" class="form-control" required> 
+                                                    <input type="mail" name="correo" class="form-control correoElectronico" required> 
                                                     <div class="invalid-feedback">
                                                         El campo email es obligatorio.
                                                     </div>
@@ -277,7 +278,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Nombre de la Vialidad(*)</label>
+                                                    <label for="name">Nombre de la Vialidad (*)</label>
                                                     <input type="text" name="vialidad_calle" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo vialidad o calle es obligatorio.
@@ -296,7 +297,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Número Interior</label>
-                                                    <input type="number" name="numInt" class="form-control"> 
+                                                    <input type="text" name="numInt" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
@@ -325,7 +326,7 @@
                                             <div id="div1"  class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Código Postal (*)</label>
-                                                    <input type="text" name="cp" class="form-control" minlength="5" maxlength="5" required> 
+                                                    <input type="text" name="cp" class="form-control soloNumeros" minlength="5" maxlength="5" required> 
                                                     <div class="invalid-feedback">
                                                         El campo código postal es obligatorio.
                                                     </div>
@@ -364,7 +365,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Número de Seguro Social</label>
-                                                    <input type="text" name="seguro" minlength="11" maxlength="12" class="form-control"> 
+                                                    <input type="text" name="seguro" minlength="11" maxlength="12" class="form-control soloNumeros"> 
                                                     <div class="invalid-feedback">
                                                     </div>
                                                 </div>
@@ -396,7 +397,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Salario (*)</label>
-                                                    <input type="text" name="pago" class="form-control" required> 
+                                                    <input type="text" name="pago" class="form-control soloMontos" required> 
                                                     <div class="invalid-feedback">
                                                         El campo salario es obligatorio.
                                                     </div>
@@ -485,7 +486,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label>Identificación oficial</label>
+                                                    <label>Identificación oficial (*)</label>
                                                     <input type="file" name="documentoIdentificacion" class="form-control" accept=".pdf" required>
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
@@ -528,9 +529,9 @@
         <div class="loader"></div>
     </div>
 
-@section('scripts')
-    <script src="public/assets/js/poderes/general.js"></script>
-@endsection
+    @section('scripts')
+        <script src="public/assets/js/poderes/general.js"></script>
+    @endsection
 
     <script src="public/assets/js/jquery.min.js"></script>
     <script src="public/assets/js/popper.min.js"></script>
@@ -569,12 +570,51 @@
 
             });
         }
-    </script>
-<div id="crear_poder" style ="display: none;">
-    <div>.</div>
-    <div class="loader"></div>
-</div>
+        //Fechas inicio y fin
+        document.addEventListener("DOMContentLoaded", function () {
+            const inicio = document.querySelector('input[name="fecha_ingreso"]');
+            const termino = document.querySelector('input[name="fecha_salida"]');
 
-@section('scripts')
-    <script src="public/js/poderes/general.js"></script>
-@endsection
+            // Función para obtener hoy en formato 'YYYY-MM-DD'
+            function obtenerFechaHoyFormato() {
+                const hoy = new Date();
+                const año = hoy.getFullYear();
+                const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+                const dia = String(hoy.getDate()).padStart(2, '0');
+                return `${año}-${mes}-${dia}`;
+            }
+
+            function validarFechas() {
+                const fechaHoyStr = obtenerFechaHoyFormato();
+
+                // Validar que fecha inicio no sea la fecha de hoy
+                if (inicio.value === fechaHoyStr) {
+                    alert("La fecha de ingreso no puede ser la fecha actual.");
+                    inicio.value = "";
+                    return;
+                }
+
+                // Validar que fecha inicio no sea mayor a hoy
+                if (inicio.value && new Date(inicio.value) > new Date(fechaHoyStr)) {
+                    alert("La fecha de ingreso no puede ser mayor a la fecha actual.");
+                    inicio.value = "";
+                    return;
+                }
+
+                if (termino.value && new Date(termino.value) > new Date(fechaHoyStr)) {
+                    alert("La fecha de término no puede ser mayor a la fecha actual.");
+                    termino.value = "";
+                    return;
+                }
+
+                // Validar que fecha inicio no sea mayor que fecha término
+                if (inicio.value && termino.value && new Date(inicio.value) > new Date(termino.value)) {
+                    alert("La fecha de ingreso no puede ser mayor que la fecha de término.");
+                    termino.value = "";
+                    return;
+                }
+            }
+            inicio.addEventListener("change", validarFechas);
+            termino.addEventListener("change", validarFechas);
+        });
+    </script>

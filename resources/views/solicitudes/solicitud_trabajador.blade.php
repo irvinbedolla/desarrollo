@@ -100,7 +100,7 @@
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Delegación</label>
+                                                    <label for="name">Delegación (*)</label>
                                                     <select class="form-control" name="delegacion">
                                                         <option value="">Seleccione</option>
                                                         <option value="Morelia">Morelia</option>

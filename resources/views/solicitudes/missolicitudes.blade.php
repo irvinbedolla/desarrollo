@@ -33,9 +33,7 @@
                                                     <td><a class="btn btn-primary" href="{{ route('consultar_solicitud', $solicitud->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
                                                     <td>
                                                         @if($solicitud->estatus !== "Pendiente")
-                                                            <button type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button><br><br>
-                                                            <a class="btn btn-success" href="{{ route('PDFnotificacion_solicitante', $solicitud->id) }}" target="_black">Notificación al solicitante</a><br><br>
-                                                            <a class="btn btn-success" href="{{ route('PDFacuse_solicitud', $solicitud->id) }}"  target="_black">Acuse de solicitud</a>
+                                                            <button type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Ver PDF</button><br><br>
                                                         @endif
                                                         @if($solicitud->estatus === "Concluida")
                                                             <a class="btn btn-success" href="{{ route('PDFconveniosolicitud', $solicitud->id) }}"  target="_black">Convenio</a>
@@ -79,6 +77,18 @@
                   </tr>
                 </thead>
                 <tbody id="pdf-list"></tbody>
+            </table>
+            <table class="table table-striped" style="width: 100%; text-align: center;">
+                <thead style="background-color: #D2D3D5;">
+                  <tr>
+                    <th>Notificación al solicitante</th>
+                    <th><a class="btn btn-success" href="{{ route('PDFnotificacion_solicitante', $solicitud->id) }}" target="_black">Ver PDF</a></th>
+                  </tr>
+                  <tr>
+                    <th>Acuse de solicitud</th>
+                    <th><a class="btn btn-success" href="{{ route('PDFacuse_solicitud', $solicitud->id) }}"  target="_black">Ver PDF</a></th>
+                  </tr>
+                </thead>
             </table>
         </div>
         <div class="modal-footer">

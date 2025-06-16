@@ -220,7 +220,7 @@ body {font-family: Arial;}
                                                     <div class="form-group">
                                                         <label for="confirm-password">Tipo de Persona</label>
                                                         <select name="tipo_persona_solicitante" class="form-control">
-                                                            <option value="Fisica" {{ $solicitante["tipo_persona"] == 'Fisica' ? "selected" : '' }}>Fisica</option>
+                                                            <option value="Fisica" {{ $solicitante["tipo_persona"] == 'Fisica' ? "selected" : '' }}>Física</option>
                                                             <option value="Moral"  {{ $solicitante['tipo_persona'] == 'Moral' ? "selected" : '' }}>Moral</option>
                                                         </select>
                                                     </div>
@@ -365,13 +365,13 @@ body {font-family: Arial;}
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Num Ext.</label>
+                                                        <label for="password">Núm Ext.</label>
                                                         <input type="text" class="form-control" name="num_ext_solicitante" value="<?=$solicitante["num_ext"];?>">   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Num Int.</label>
+                                                        <label for="password">Núm Int.</label>
                                                         <input type="text" class="form-control" name="num_int_solicitante" value="<?=$solicitante["num_int"];?>">   
                                                     </div>
                                                 </div>
@@ -387,19 +387,19 @@ body {font-family: Arial;}
                                                         <input type="text" class="form-control" name="referencia_solicitante" value="<?=$solicitante["referencia"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-2">
                                                     <div class="form-group">
                                                         <label for="password">Colonia</label>
                                                         <input type="text" class="form-control" name="colonia_solicitante" value="<?=$solicitante["colonia"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-5">
                                                     <div class="form-group">
                                                         <label for="password">Entre calle</label>
                                                         <input type="text" class="form-control" name="calle2_solicitante" value="<?=$solicitante["calle2"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-5">
                                                     <div class="form-group">
                                                         <label for="password">Y entre calle</label>
                                                         <input type="text" class="form-control" name="calle3_solicitante" value="<?=$solicitante["calle3"];?>">   
@@ -443,19 +443,19 @@ body {font-family: Arial;}
                                                         <input type="text" class="form-control" name="pago" value="<?=$solicitante["pago"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                <div class="col-xs-12 col-sm-6 col-md-2">
                                                     <div class="form-group">
                                                         <label for="password">Fecha de Ingreso</label>
                                                         <input type="date" class="form-control" name="fecha_ingreso" value="<?=$solicitante["fecha_ingreso"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                <div class="col-xs-12 col-sm-6 col-md-2">
                                                     <div class="form-group">
                                                         <label for="password">Fecha de Salida</label>
                                                         <input type="date" class="form-control" name="fecha_salida" value="<?=$solicitante["fecha_salida"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="name">Jornada</label>
                                                         <select name="jornada" class="form-control">
@@ -472,7 +472,7 @@ body {font-family: Arial;}
                                                         <input type="text" class="form-control" name="horas_semana" value="<?=$solicitante["horas_semana"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                <div class="col-xs-12 col-sm-6 col-md-2">
                                                     <div class="form-group">
                                                         <label for="password">Labora Actualmente</label>
                                                         <input type="text" class="form-control" name="labora" value="<?=$solicitante["labora"];?>">   
@@ -518,7 +518,7 @@ body {font-family: Arial;}
                                                         <label for="name">Tipo de persona</label>
                                                         <select name="tipo_persona_citado[]" class="form-control">
                                                             <option value="">SELECCIONE</option>
-                                                            <option value="Fisica" {{ $citado['tipo_persona'] == 'Fisica' ? "selected" : '' }}>Fisica</option>
+                                                            <option value="Fisica" {{ $citado['tipo_persona'] == 'Fisica' ? "selected" : '' }}>Física</option>
                                                             <option value="Moral"  {{ $citado['tipo_persona'] == 'Moral' ? "selected" : '' }}>Moral</option>
                                                         </select>
                                                     </div>
@@ -579,16 +579,22 @@ body {font-family: Arial;}
                                                         <input type="text" class="form-control" name="calle2_citado[]" value="<?=$citado["calle2"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                <div class="col-xs-12 col-sm-6 col-md-2">
                                                     <div class="form-group">
                                                         <label for="password">N° Ext.</label>
                                                         <input type="text" class="form-control" name="n_ext_citado[]" value="<?=$citado["n_ext"];?>" required>   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                <div class="col-xs-12 col-sm-6 col-md-2">
                                                     <div class="form-group">
                                                         <label for="password">N° Int.</label>
                                                         <input type="text" class="form-control" name="n_int_citado[]" value="<?=$citado["n_int"];?>">   
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-2">
+                                                    <div class="form-group">
+                                                        <label for="password">Código Postal</label>
+                                                        <input type="text" class="form-control" name="cp_citado[]" value="<?=$citado["cp"];?>" required>   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-12">
@@ -597,15 +603,10 @@ body {font-family: Arial;}
                                                         <input type="text" class="form-control" name="referencia_citado[]" value="<?=$citado["referencia"];?>" required>   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="password">Código Postal</label>
-                                                        <input type="text" class="form-control" name="cp_citado[]" value="<?=$citado["cp"];?>" required>   
-                                                    </div>
-                                                </div>
+                                                
                                                 
                                             @endforeach
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <div class="col-xs-12 col-sm-12 col-md-12"><br>
                                                 <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
                                                 data-bs-target="#exampleModal1" data-id="{{ $id }}">Agregar Citado</a>
                                                 <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
@@ -677,7 +678,7 @@ body {font-family: Arial;}
     <form class='needs-validation novalidate'  method='POST' action="{{route('agregar_citado_edicion')}}">
         @csrf
         <input type="hidden" name="id" value="{{$id}}">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Agregar Citado</h5>
@@ -771,9 +772,9 @@ body {font-family: Arial;}
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-3">
                             <div class="form-group">
-                                <label for="name">Num ext. del citado</label>
+                                <label for="name">Núm ext. del citado</label>
                                 <input type="text" name="exterior" class="form-control" required> 
                                 <div class="invalid-feedback">
                                     El campo c
@@ -781,9 +782,9 @@ body {font-family: Arial;}
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-3">
                             <div class="form-group">
-                                <label for="name">Num int. del citado</label>
+                                <label for="name">Núm int. del citado</label>
                                 <input type="text" name="interior" class="form-control" > 
                                 <div class="invalid-feedback">
                                     El campo calle es obligatorio.
@@ -902,7 +903,7 @@ body {font-family: Arial;}
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Motivo de rechazo</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Borrar citado</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

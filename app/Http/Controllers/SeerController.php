@@ -4000,4 +4000,29 @@ class SeerController extends Controller
 
         return view('cumplimientos/actuales',compact('complimientos_ratificacion','complimientos_audiencias'));
     }
+
+    //PDF NOTIFICADORES Razón de notificación
+    public function VerPDFRNotificacion($id){
+        $solicitud = SeerPerGeneral::find($id);
+        
+        $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
+        $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
+        ->first();
+        
+        //$citado = SeerCitados::where('id_solicitud', $id)->get();
+        $citado  = SeerPerGeneral::join("seer_citados","seer_citados.id_solicitud","=","seer_general.id");
+        $citado = $citado->where("seer_citados.id_solicitud", "=", $solicitud["id"])
+        ->first();
+
+        //dd($citado);
+        $html = view('PDF/Solicitudes/razonNotificacion', compact('id', 'solicitud','citado','solicitante'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'Razón_Notificación' . $solicitud->empresa .'.pdf';
+        return $pdf->stream($nombreArchivo);                 
+    }
 }

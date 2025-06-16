@@ -152,7 +152,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Código Postal del citado *</label>
-                                                    <input type="text" name="cp" class="form-control" minlength="5" maxlength="5" required> 
+                                                    <input type="text" name="cp" class="form-control soloNumeros" minlength="5" maxlength="5" required> 
                                                     <div class="invalid-feedback">
                                                         El campo Código Postal es obligatorio.
                                                     </div>
@@ -181,10 +181,10 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Num ext. del citado</label>
-                                                    <input type="text" name="exterior" class="form-control" required> 
+                                                    <label for="name">Núm ext. del citado *</label>
+                                                    <input type="number" name="exterior" class="form-control" required> 
                                                     <div class="invalid-feedback">
-                                                        El campo calle es obligatorio.
+                                                        El núm. exterior es obligatorio.
 
                                                     </div>
                                                 </div>
@@ -192,10 +192,10 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Num int. del citado</label>
+                                                    <label for="name">Núm int. del citado</label>
                                                     <input type="text" name="interior" class="form-control" > 
                                                     <div class="invalid-feedback">
-                                                        El campo calle es obligatorio.
+                                                        El campo núm. interior es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
@@ -222,7 +222,7 @@
                                                     <label for="name">Tipo de personas</label>
                                                     <select name="tipo" class="form-control">
                                                         <option value="">Seleccione</option>
-                                                        <option value="Fisica">Fisica</option>
+                                                        <option value="Fisica">Física</option>
                                                         <option value="Moral">Moral</option>
                                                     </select>
                                                     <div class="invalid-feedback">
@@ -236,9 +236,6 @@
                                                     <label for="name">CURP</label>
                                                     <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control"> 
                                                     <pre id="resultado"></pre>
-                                                    <div class="invalid-feedback">
-                                                        El nombre es obligatorio.
-                                                    </div>
                                                 </div>
                                             </div>
 
@@ -257,7 +254,7 @@
                                                     <label for="name">Primer apellido *</label>
                                                     <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                     <div class="invalid-feedback">
-                                                        El nombre es obligatorio.
+                                                        El primer apellido es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
@@ -267,7 +264,7 @@
                                                     <label for="name">Segundo apellido *</label>
                                                     <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                     <div class="invalid-feedback">
-                                                        El nombre es obligatorio.
+                                                        El segundo apellido es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
@@ -275,10 +272,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">RFC</label>
-                                                    <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" > 
-                                                    <div class="invalid-feedback">
-                                                        El campo conflicto es obligatorio.
-                                                    </div>
+                                                    <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()">   
                                                 </div>
                                             </div>
 
@@ -291,9 +285,6 @@
                                                 <div class="form-group">
                                                     <label for="name">Que tipo de lenguaje require</label>
                                                     <input type="text" name="lenguaje" class="form-control">
-                                                    <div class="invalid-feedback">
-                                                        La nacionalidad es obligatoria.
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

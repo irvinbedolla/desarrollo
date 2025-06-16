@@ -387,19 +387,19 @@ body {font-family: Arial;}
                                                         <input type="text" class="form-control" name="referencia_solicitante" value="<?=$solicitante["referencia"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">Colonia</label>
                                                         <input type="text" class="form-control" name="colonia_solicitante" value="<?=$solicitante["colonia"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">Entre calle</label>
                                                         <input type="text" class="form-control" name="calle2_solicitante" value="<?=$solicitante["calle2"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">Y entre calle</label>
                                                         <input type="text" class="form-control" name="calle3_solicitante" value="<?=$solicitante["calle3"];?>">   
@@ -443,19 +443,19 @@ body {font-family: Arial;}
                                                         <input type="text" class="form-control" name="pago" value="<?=$solicitante["pago"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                <div class="col-xs-12 col-sm-6 col-md-2">
                                                     <div class="form-group">
                                                         <label for="password">Fecha de Ingreso</label>
                                                         <input type="date" class="form-control" name="fecha_ingreso" value="<?=$solicitante["fecha_ingreso"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                <div class="col-xs-12 col-sm-6 col-md-2">
                                                     <div class="form-group">
                                                         <label for="password">Fecha de Salida</label>
                                                         <input type="date" class="form-control" name="fecha_salida" value="<?=$solicitante["fecha_salida"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="name">Jornada</label>
                                                         <select name="jornada" class="form-control">
@@ -472,7 +472,7 @@ body {font-family: Arial;}
                                                         <input type="text" class="form-control" name="horas_semana" value="<?=$solicitante["horas_semana"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                <div class="col-xs-12 col-sm-6 col-md-2">
                                                     <div class="form-group">
                                                         <label for="password">Labora Actualmente</label>
                                                         <input type="text" class="form-control" name="labora" value="<?=$solicitante["labora"];?>">   
@@ -495,19 +495,19 @@ body {font-family: Arial;}
                                                         <h4 class="text-center">Citado</h4>
                                                     </div>
                                                 </div><br>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">Nombre Citado</label>
                                                         <input type="text" class="form-control" name="nombre_citado[]" value="<?=$citado["nombre"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">Primer apellido</label>
                                                         <input type="text" class="form-control" name="primer_apellido[]" value="<?=$citado["primer_apellido"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">Segundo apellido</label>
                                                         <input type="text" class="form-control" name="segundo_apellido[]" value="<?=$citado["segundo_apellido"];?>">   
@@ -523,13 +523,13 @@ body {font-family: Arial;}
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">CURP</label>
                                                         <input type="text" class="form-control" name="curp_citado[]" value="<?=$citado["curp"];?>" maxlength="18">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">RFC</label>
                                                         <input type="text" class="form-control" name="rfc_citado[]" value="<?=$citado["rfc"];?>">   
@@ -540,7 +540,7 @@ body {font-family: Arial;}
                                                         <h4 class="text-center">Dirección</h4>
                                                     </div>
                                                 </div><br>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">Colonia del citado</label>
                                                         <input type="text" class="form-control" name="colonia_citado[]" value="<?=$citado["colonia"];?>" required>   
@@ -559,6 +559,12 @@ body {font-family: Arial;}
                                                         <div class="invalid-feedback">
                                                             El campo vialidad es obligatorio.
                                                         </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="password">Código Postal</label>
+                                                        <input type="text" class="form-control" name="cp_citado[]" value="<?=$citado["cp"];?>" required>   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-6">
@@ -597,12 +603,7 @@ body {font-family: Arial;}
                                                         <input type="text" class="form-control" name="referencia_citado[]" value="<?=$citado["referencia"];?>" required>   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="password">Código Postal</label>
-                                                        <input type="text" class="form-control" name="cp_citado[]" value="<?=$citado["cp"];?>" required>   
-                                                    </div>
-                                                </div>
+                                               
                                                 
                                             @endforeach
                                             <div class="col-xs-12 col-sm-12 col-md-12">
@@ -639,15 +640,15 @@ body {font-family: Arial;}
                                                     <h4 class="text-center">Fecha de audiencia</h4>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <label for="password">Fecha de audiencia</label><br>
                                                 <input type="date" name="fecha_audiencia" class="form-control">
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <label for="password">Hora de audiencia</label><br>
                                                 <input type="time" name="hora_audiencia" class="form-control">
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-5">
                                                 <label for="password">Conciliador</label><br>
                                                 <select name="conciliador" class="form-control">
                                                     <option value="">Seleccione</option>
@@ -657,7 +658,7 @@ body {font-family: Arial;}
                                                 </select>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <div class="col-xs-12 col-sm-12 col-md-12"><br>
                                                 <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
                                                 <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Rechazar</button>
                                             </div>
@@ -683,7 +684,7 @@ body {font-family: Arial;}
     <form class='needs-validation novalidate'  method='POST' action="{{route('agregar_citado_edicion')}}">
         @csrf
         <input type="hidden" name="id" value="{{$id}}">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Agregar Citado</h5>
@@ -777,7 +778,7 @@ body {font-family: Arial;}
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-3">
                             <div class="form-group">
                                 <label for="name">Num ext. del citado</label>
                                 <input type="text" name="exterior" class="form-control" required> 
@@ -787,7 +788,7 @@ body {font-family: Arial;}
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-3">
                             <div class="form-group">
                                 <label for="name">Num int. del citado</label>
                                 <input type="text" name="interior" class="form-control" > 

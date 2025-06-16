@@ -44,14 +44,14 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-2 col-sm-2 col-md-2">
+                                    <div class="col-xs-2 col-sm-2 col-md-2"><br>
                                         <a class="btn btn-primary" onclick="mostrar_resolicion()">Continuar</a>
                                     </div>
                                     
-                                    <div class="col-xs-2 col-sm-2 col-md-2">
+                                    <div class="col-xs-2 col-sm-2 col-md-2"><br>
                                         <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $id }}">
                                             Archivar
-                                        </button>
+                                        </button><br><br>
                                     </div>
                                     <br>
                                     <!--
@@ -76,11 +76,11 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-xs-2 col-sm-2 col-md-2">
+                                        <div class="col-xs-2 col-sm-2 col-md-2"><br>
                                             <a class="btn btn-primary" onclick="mostrar_segunda()">Continuar</a>
-                                        </div>
+                                        </div><br>
                                     </div>
-                                    <br>
+                                
                                     <div id="segunda" style="display:none">
                                         <div class="col-xs-12 col-sm-12 col-md-12" style="border:1px solid black;">
                                             <div class="form-group">
@@ -91,13 +91,13 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-2 col-sm-2 col-md-2">
+                                        <div class="col-xs-2 col-sm-2 col-md-2"><br>
                                             <a class="btn btn-primary" onclick="mostrar_vacaciones()">Continuar</a>
                                         </div>
                                     </div>
 
                                     <div id="dias" class="row home-shape">
-                                        <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="col-xs-12 col-sm-12 col-md-4"><br>
                                             <div class="form-group">
                                                 <label for="name">Días de vacaciones</label>
                                                 <input type="number" name="vacaciones" class="form-control" required> 
@@ -107,7 +107,7 @@
                                             </div>
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-2">
-                                            <div class="form-group">
+                                            <div class="form-group"><br>
                                                 <label for="name">Días de Aguinaldo</label>
                                                 <input type="number" name="aguinaldo" class="form-control" required> 
                                                 <div class="invalid-feedback">
@@ -116,7 +116,7 @@
                                             </div>
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-2">
-                                            <div class="form-group">
+                                            <div class="form-group"><br>
                                                 <label for="name">Otros</label>
                                                 <input type="text" name="otros" class="form-control" required> 
                                                 <div class="invalid-feedback">
@@ -125,7 +125,7 @@
                                             </div>
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-3">
-                                            <div class="form-group">
+                                            <div class="form-group"><br>
                                                 <label for="name">Horario laboral</label>
                                                 <input type="text" name="horario" class="form-control" required> 
                                                 <div class="invalid-feedback">
@@ -133,7 +133,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-3">
+                                        <div class="col-xs-12 col-sm-12 col-md-2">
                                             <div class="form-group">
                                                 <label for="name">Horario de comida</label>
                                                 <input type="text" name="comida" class="form-control" required> 
@@ -151,7 +151,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-6 col-md-6">
+                                        <div class="col-xs-12 col-sm-6 col-md-4">
                                             <div class="form-group">
                                                 <label for="password">Conciliador</label>
                                                 <select class="form-control" name="conciliador_id" required>
@@ -185,7 +185,7 @@
                                         <div id="newRow"></div>
 
                                         <div class="col-xs-12 col-sm-12 col-md-6">
-                                            <div id="div_pagos_diferidos1">
+                                            <div id="div_pagos_diferidos1"><br><br>
                                                 <button id="addPago" type="button" class="btn btn-info">Agregar Pago</button>
                                                 <div id="newRowaPago"></div>
                                             </div>
@@ -198,7 +198,6 @@
                                             <br><button type="submit" class="btn btn-primary">Guardar</button>
                                         </div>
                                     </div>
-                                    
                                 </div>
                             </forms>
                         </div>

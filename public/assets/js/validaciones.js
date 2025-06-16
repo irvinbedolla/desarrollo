@@ -120,7 +120,7 @@ function validarInput(input) {
     resultado = document.getElementById("resultado"),
     valido = "No válido";
     console.log("llego");
-      
+    input.value = curp;
     if (curpValida(curp)) { // Acá se comprueba
         valido = "Válido";
         resultado.classList.add("ok");
@@ -206,6 +206,83 @@ function validarcheckfecha(){
     document.getElementById("fecha_fin").style.display = "none";
   }
 }
+
+//Valida que solo se ingresen números
+document.querySelectorAll('.soloNumeros').forEach(input => {
+  input.addEventListener('input', () => {
+      input.value = input.value.replace(/[^0-9]/g, '');
+  });
+});
+
+//Valida los números teléfonicos
+document.querySelectorAll('.numeroTelefonico').forEach(input => {
+  // Permitir solo números mientras escribes
+  input.addEventListener('input', () => {
+    input.value = input.value.replace(/[^0-9]/g, '');
+  });
+
+  // Validar al perder foco
+  input.addEventListener('blur', () => {
+    let mensajeError = input.nextElementSibling; // asumiendo que el .invalid-feedback está justo después
+    if (input.value.length !== 10) {
+      mensajeError.textContent = 'El número debe contener 10 dígitos';
+      mensajeError.style.display = 'block';
+      input.classList.add('is-invalid');
+      input.classList.remove('is-valid');
+    } else {
+      mensajeError.textContent = '';
+      mensajeError.style.display = 'none';
+      input.classList.remove('is-invalid');
+      input.classList.add('is-valid');
+    }
+  });
+});
+
+//Validación en tiempo real de correo electronico
+document.querySelectorAll('.correoElectronico').forEach(input => {
+  input.addEventListener('input', () => {
+    // Permitir solo caracteres válidos en un correo (letras, números, @, puntos, guiones, guion bajo)
+    input.value = input.value.replace(/[^a-zA-Z0-9@._\-]/g, '');
+
+    // Validar formato básico de correo
+    const valor = input.value;
+    const mensajeError = input.nextElementSibling; // Asumiendo que el div .invalid-feedback está justo después
+
+    // Regex básico para formato de correo
+    const correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (valor === '') {
+      mensajeError.style.display = 'none'; // No mostrar error si está vacío
+      input.classList.remove('is-invalid');
+      input.classList.remove('is-valid');
+    } else if (!correoValido.test(valor)) {
+      mensajeError.style.display = 'block'; // Mostrar error
+      mensajeError.textContent = 'Debe ingresar un correo válido';
+      input.classList.add('is-invalid');
+      input.classList.remove('is-valid');
+    } else {
+      mensajeError.style.display = 'none'; // Ocultar error si es válido
+      input.classList.remove('is-invalid');
+      input.classList.add('is-valid');
+    }
+  });
+});      
+
+//Validación para los montos
+document.querySelectorAll('.soloMontos').forEach(input => {
+input.addEventListener('input', () => {
+  // Reemplaza todo lo que no sea dígito ni punto por vacío
+  input.value = input.value.replace(/[^0-9.]/g, '');
+
+  // Permite solo un punto decimal (el primer punto que encuentre)
+  let parts = input.value.split('.');
+  if(parts.length > 2) {
+  // Si hay más de un punto, elimina todos los demás
+  input.value = parts[0] + '.' + parts.slice(1).join('');
+  }
+});
+});
+
 
 //Inicializacion variables
 document.getElementById("lenguaje_señas").style.display = "none";
