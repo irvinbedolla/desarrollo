@@ -10,6 +10,6 @@ class DiasInhabiles extends Model
     //use HasFactory;
     protected $table = 'dias_inhabiles';
     protected $primaryKey = 'id';
-    protected $fillable = ['fecha_inical','fecha_final', 'delegacion'];
+    protected $fillable = ['fecha_inicio','fecha_final','horario_inicio','horario_final','centro','user_id'];
 
 }

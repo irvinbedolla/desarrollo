@@ -15,17 +15,17 @@
                             <div class="row">
                                 <div class="col-xs-4 col-sm-4 col-md-4">
                                     <div align="center">
-                                        <a href="" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Cumplimiento hoy</a>
+                                        <a href="{{ route('cumplimiento_actual') }}" class="btn btn-primary">Cumplimiento hoy</a>
                                     </div>
                                 </div>
                                 <div class="col-xs-4 col-sm-4 col-md-4">
                                     <div align="center">
-                                        <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Buscar Cumplimientos</button>
+                                        <button type="submit" class="btn btn-primary">Buscar Cumplimientos</button>
                                     </div>
                                 </div>
                                 <div class="col-xs-4 col-sm-4 col-md-4">
                                     <div align="center">
-                                        <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agenda</button>
+                                        <button type="submit" class="btn btn-primary">Agenda</button>
                                     </div>
                                 </div> 
                             </div>

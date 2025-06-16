@@ -96,6 +96,9 @@
             <a class="nav-link" href="{{ route('solicitudes_index') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Solicitudes</span>
             </a>
+            <a class="nav-link" href="{{ route('audiencias.cumplimiento') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" >Complimientos</span>
+            </a>
             <a class="nav-link" href="{{ route('atender_ratificacion') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Ratificaciones</span>
             </a>
@@ -109,6 +112,9 @@
             </a>
             <a class="nav-link" href="{{ route('audiencias.conciliador') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" >Audiencias hoy</span>
+            </a>
+             <a class="nav-link" href="{{ route('solicitudes_index') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Solicitudes</span>
             </a>
             <a class="nav-link" href="{{ route('audiencias.cumplimiento') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" >Complimientos</span>

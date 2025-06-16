@@ -109,7 +109,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/notificaciones/index',     [SeerController::class, 'notificaciones'])->name('notificaciones');
         Route::get('/solicitudes/home',         [SeerController::class, 'solicitudes'])->name('solicitudes_index');
     //Fin de ruta de los menus
-
     //Usuarios
         Route::get('/usuarios/index',           [UsuarioController::class, 'index'])->name('usuarios.index');
         Route::get('/usuarios/index',           [UsuarioController::class, 'index'])->name('usuarios');
@@ -119,7 +118,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/usuarios/update/{post}', [UsuarioController::class, 'update'])->name('usuarios.update');
         Route::delete('/usuarios/destroy/{id}', [UsuarioController::class, 'destroy'])->name('usuarios.destroy');
     //Fin de usuarios
-
     //Roles
         Route::get('/roles/index',           [RolController::class, 'index'])->name('roles.index');
         Route::get('/roles/index',           [RolController::class, 'index'])->name('roles');
@@ -129,7 +127,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/roles/update/{post}', [RolController::class, 'update'])->name('roles.update');
         Route::delete('/roles/destroy/{id}', [RolController::class, 'destroy'])->name('roles.destroy');
     //Fin roles
-
     //Poder
         Route::get('/poderes/index',           [PoderController::class, 'index'])->name('poderes.index');
         Route::get('/poderes/index',           [PoderController::class, 'index'])->name('poderes');
@@ -139,7 +136,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/poderes/update/{post}', [PoderController::class, 'update'])->name('poderes.update');
         Route::delete('/poderes/destroy/{id}', [PoderController::class, 'destroy'])->name('poderes.destroy');
     //Fin Poder
-
     //Capacitaciones
         Route::get('/capacitaciones/index',                         [CapacitacionController::class, 'index'])->name('capacitaciones.index');
         Route::get('/capacitaciones/index',                         [CapacitacionController::class, 'index'])->name('capacitaciones');
@@ -166,7 +162,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/capacitaciones/terminar/{id}',                 [CapacitacionController::class, 'terminar'])->name('capacitaciones.terminado');
         Route::get('/capacitaciones/terminar/{id}',                 [CapacitacionController::class, 'terminar'])->name('capacitaciones.terminado');
     //Fin capacitaciones    
-
     //Seer
         Route::get('/seer/index',                       [SeerController::class, 'index'])->name('seer.index');
         Route::get('/seer/index',                       [SeerController::class, 'index'])->name('seer');
@@ -211,7 +206,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/seer/persona',                    [SeerController::class, 'auxiliar_persona'])->name('seer.auxiliar_persona');
         Route::get('/seer/persona/{id}',                [SeerController::class, 'ver_auxiliar'])->name('seer.estadistica_consultar');
     //Fin Seer
-
     //Expedientes
         Route::get('/expedientes/index',                        [ExpedienteController::class, 'index'])->name('expedientes.index');
         Route::get('/expedientes/index',                        [ExpedienteController::class, 'index'])->name('expedientes');
@@ -223,7 +217,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/expedientes/doc',                         [ExpedienteController::class, 'store_documento'])->name('subir_doc');
         Route::delete('/expedientes/destroy/{id}',              [ExpedienteController::class, 'destroy'])->name('expedientes.delete');
     //Fin de Expedientes
-
     //Turnos
         Route::get('/turnos/index1',             [TurnosController::class, 'index'])->name('turnos.index');
         //Route::get('/turnos/index',            [TurnosController::class, 'index'])->name('turnos');
@@ -258,11 +251,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/turnos/guardar',           [TurnosController::class, 'guardar_rechazo'])->name('rechazar_turnos');
         Route::post('/turnos/archivar',          [TurnosController::class, 'archivar_ratificacion'])->name('archivar_ratificacion');
     //Fin de  turnos
-
-        Route::get('/pdf/estadistica',       [PDFController::class, 'pdfEstadistica'])->name('PDFestaditica');
-        //Route::get('/pdf/descarga/{id}',     [PDFController::class, 'pdfCitatorio'])->name('PDFcitatorio');
-        //Route::get('/pdf/ratificacion',      [PDFController::class, 'pdfRatificacion'])->name('PDFratificacion');
-
     //Solicitudes
         Route::get('/solicitudes/pedientes',                [SeerController::class, 'solicitudes_pendientes'])->name('solicitudes_pendientes');
         Route::get('/solicitud/index',                      [SeerController::class, 'mis_solicitudes'])->name('mis_solicitudes');
@@ -278,6 +266,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/solicitudes/solicitudes',              [SeerController::class, 'solicitudes_todas'])->name('solicitudes_todas');
         Route::post('/audiencia/guardar',                   [SeerController::class, 'concluir_audiencia_conciliador'])->name('concluir_audiencia_conciliador');
         Route::post('/solicitudes/crear/PF',                [SeerController::class, 'citado_personaF'])->name('insertar_citado_PF');
+    //Fin de Solicitudes
     //PDF Solicitudes    
         Route::get('/Verpdfincompetencias/{id}',            [SeerController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');
         Route::get('/Verpdfcs/{id}',                        [SeerController::class, 'VerPDFConvenioSol'])->name('PDFconveniosolicitud');
@@ -291,6 +280,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/PDF/faltaInteres/{id}',                [SeerController::class, 'VerPDFInteres'])->name('PDFfalltaInteres');
         Route::get('/Verpdfnoconciliacion/{id}',            [SeerController::class, 'VerPDFNoConciliacion'])->name('PDFno_conciliacion');
         Route::get('/Verpdfincomparecencia/{id}',           [SeerController::class, 'VerPDFincomparecencia'])->name('PDFincomparecencia');
+        Route::get('/pdf/estadistica',       [PDFController::class, 'pdfEstadistica'])->name('PDFestaditica');
+    //Fin de PDF
     //Ratificaciones
         Route::get('/ratificaciones/index',         [TurnosController::class, 'revisar_ratificaciones'])->name('atender_ratificacion');
         Route::get('/ratificaciones/concluir/{id}', [TurnosController::class, 'concluir_ratificaciones'])->name('ratificacion_concluir');
@@ -301,12 +292,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('ratificaciones/consultar/{id}', [TurnosController::class, 'consultar_ratificaciones'])->name('consultar_ratificacion');
         Route::post('ratificaciones/editar',        [TurnosController::class, 'editar_ratificaciones'])->name('editar_ratificacion');
         Route::get('/PDF/falta_interes/{id}',       [TurnosController::class, 'VerPDFInteres'])->name('PDFfallta_interes');
+    //Fin de RAtificaciones
      //Enlace
         Route::get('/notificaciones/consultar/{id}',        [SeerController::class, 'mostrar_citados'])->name('editar_citado');
         Route::post('/notificaciones/editar',               [SeerController::class, 'editar_citados'])->name('editar_citado_enlace');   
         Route::get('/notificaciones/consultar_citado/{id}', [SeerController::class, 'mostrar_citadoC'])->name('consultar_citado');
         Route::get('/notificaciones/consulta',              [SeerController::class, 'notificaciones_consultar'])->name('notificaciones_consultar'); 
-        
+    //Fin de enlace
     //Cambiar las contraseña
         Route::get('/cambio_contraseña/index',  [HomeController::class, 'password_cambiar'])->name('password_cambiar');
         Route::post('/notificaciones/editar',   [HomeController::class, 'contraseña_update'])->name('contraseña_update');   
@@ -323,12 +315,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/incompentencia_audiencia',            [SeerController::class, 'incopentencia_audiencia'])->name('incopentencia_audiencia');
         Route::get('/audieniecias/complimientos',           [SeerController::class, 'audiencias_cumplimiento'])->name('audiencias.cumplimiento');
         Route::post('/audiencia/guardar/solicitud',         [SeerController::class, 'solicitudes_busqueda'])->name('solicitudes_busqueda');
+    //Fin de Audiencias
     //Citados
         Route::post('/solicitud/guardar_citadoC',           [SeerController::class, 'insertar_citados_con'])->name('insertar_citado');
         Route::get('/solicitud/consultarC',                 [SeerController::class, 'consultar_citados_con'])->name('consultar_citados');
         Route::post('/agregar_citado_edicion',              [SeerController::class, 'agregar_citado_edicion'])->name('agregar_citado_edicion');
         Route::delete('/borrar_citado_edicion',             [SeerController::class, 'borrar_citado_edicion'])->name('borrar_citado_edicion');
         Route::post('/historial/notificador',               [SeerController::class, 'historial_notificador'])->name('historial_notificador');
+    //Fin de Citados
+    //Cumplimientos
+        Route::get('/cumplimietos/actual',           [SeerController::class, 'cumplimiento_actual'])->name('cumplimiento_actual');
+    //Fin de cumplimientos
 
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);

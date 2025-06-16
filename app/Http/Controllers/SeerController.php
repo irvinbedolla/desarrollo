@@ -2438,10 +2438,7 @@ class SeerController extends Controller
         );
         Audiencias::create($audiencia_insert);
         //Actualizar genera
-        SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $data["conciliador"], 'estatus' => 'Confirmado', 'estatus' => 'Confirmado'  ]);
-        //Generar las notificaciones Pendiente
-        SeerPerConciliador::where('id_solicitud',$data["id"])->orderBy('id', 'desc')->first()->update(['fecha_conclucion' => $fecha_actual ]);
-
+        SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $data["conciliador"], 'estatus' => 'Confirmado' ]);
 
         return redirect()->route('solicitudes_pendientes'); 
     }
@@ -3978,5 +3975,29 @@ class SeerController extends Controller
         ->select('catalogo_motivos.motivo','seer_motivos.id')->get();
 
         return view('solicitudes.editar_solicitud', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores'));
+    }
+
+    public function cumplimiento_actual(){
+        $fecha_actual = date('y-m-d');
+
+        $complimientos_ratificacion = Pagos::where("pago_solicitud.fecha",$fecha_actual)
+        ->where("pago_solicitud.tipo_pago","Ratificacion")
+        ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
+        ->select("pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
+        "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE",
+        DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
+        DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
+        ->get();
+
+        $complimientos_audiencias = Pagos::where("pago_solicitud.fecha",$fecha_actual)
+        ->where("pago_solicitud.tipo_pago","Audiencia")
+        ->join("seer_general","seer_general.id","pago_solicitud.id_solicitud")
+        ->join("seer_solicitante","seer_general.id","seer_solicitante.id_solicitud")
+        ->select("pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
+        "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE",
+        DB::raw('seer_solicitante.nombre AS trabajador'))
+        ->get();
+
+        return view('cumplimientos/actuales',compact('complimientos_ratificacion','complimientos_audiencias'));
     }
 }
