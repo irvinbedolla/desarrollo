@@ -1503,8 +1503,7 @@ class TurnosController extends Controller
     public function VerPDFIncumplimiento($id){
         $solicitud = Turnos::find($id);
         $pagos = Pagos::find($id);
-        //$solicitud = Turnos::find($pagos["id_solicitud"]);
-        //dd($solicitud);
+       
         $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
         $conciliador = $conciliador->where("turnos.id", "=", $id)
         ->select('users.name')
@@ -1526,7 +1525,6 @@ class TurnosController extends Controller
     public function VerPDFInParcial($id){
         $pagos = Pagos::find($id);
         $solicitud = Turnos::find($pagos["id_solicitud"]);
-        //dd($solicitud);
         $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
 
         $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");

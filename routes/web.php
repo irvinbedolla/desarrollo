@@ -325,7 +325,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/historial/notificador',               [SeerController::class, 'historial_notificador'])->name('historial_notificador');
     //Fin de Citados
     //Cumplimientos
-        Route::get('/cumplimietos/actual',           [SeerController::class, 'cumplimiento_actual'])->name('cumplimiento_actual');
+        //Ligas de busqueda
+        Route::get('/cumplimiento/consulta',                [SeerController::class, 'cumplimiento_buscar'])->name('cumplimiento_buscar');
+        Route::post('/cumplimiento/busqueda',               [SeerController::class, 'cumplimientos_busqueda'])->name('cumplimientos_busqueda');
+        Route::get('/cumplimietos/actual',                  [SeerController::class, 'cumplimiento_actual'])->name('cumplimiento_actual');
+        Route::get('/cumplimiento/consulta/{id}/{tipo}',    [SeerController::class, 'consulta_cumplimiento'])->name('consulta_cumplimiento');
+        //Ratificaciones diarias
+        Route::post('/cumplimiento/consulta',               [SeerController::class, 'cumplimiento_pagar_rati'])->name('cumplimiento_pagar');
+        Route::get('/cumplimiento/rechazar/{id}',           [SeerController::class, 'cumplimiento_rechazar_rati'])->name('cumplimiento_rechazar');
+        //Audiencias diarias
+        Route::post('/cumplimiento/consulta',               [SeerController::class, 'cumplimiento_pagar_audiencia'])->name('cumplimiento_pagar_audiencia');
+        Route::get('/cumplimiento/rechazara/{id}',          [SeerController::class, 'cumplimiento_rechazar_audiencia'])->name('cumplimiento_rechazar_audiencia');
+        //Ratificaciones busqueda
+        Route::post('/cumplimiento/consulta',               [SeerController::class, 'cumplimiento_pagar_busqueda_rati'])->name('cumplimiento_pagar_busqueda');
+        Route::get('/cumplimiento/rechazar/{id}',           [SeerController::class, 'cumplimiento_rechazar_busqueda_rati'])->name('cumplimiento_rechazar_busqueda');
+
+        Route::get('/cumplimiento/PDFIncumplimiento/{id}',  [SeerController::class, 'PDFincumplimientoAudiencia'])->name('PDFincumplimientoAudiencia');
     //Fin de cumplimientos
 
     Route::name('user-management.')->group(function () {

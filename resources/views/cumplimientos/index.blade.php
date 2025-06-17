@@ -20,7 +20,7 @@
                                 </div>
                                 <div class="col-xs-4 col-sm-4 col-md-4">
                                     <div align="center">
-                                        <button type="submit" class="btn btn-primary">Buscar Cumplimientos</button>
+                                        <a href="{{ route('cumplimiento_buscar') }}" class="btn btn-primary">Buscar Cumplimientos</a>
                                     </div>
                                 </div>
                                 <div class="col-xs-4 col-sm-4 col-md-4">
