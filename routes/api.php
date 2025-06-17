@@ -31,6 +31,9 @@ Route::get('/citados/{id}',         [SeerController::class, 'obtenerCitados']);
 //Ruta  de citas para ver el numero de citas por dia
 Route::get('/obtenerHorario/{id}/{sede}',  [TurnosController::class, 'obtenerHorario']);
 
+//Ruta para obtener eventos para el calendario de creación de citas
+Route::get('/obtenerEventos', [TurnosController::class, 'obtenerEventos']);
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });

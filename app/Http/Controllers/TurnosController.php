@@ -33,6 +33,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use NumberToWords\NumberToWords; // para convertir números(cantidades) a letras
+use DateTime;
 
 class TurnosController extends Controller 
 {
@@ -1295,6 +1296,61 @@ class TurnosController extends Controller
         //->where('hora', $hora_solicitud)
         //->where('delegacion', $data["sede"])->get();
         //return Municipios::where('estado', $id)->get();
+    }
+
+    public function obtenerEventos(Request $request)
+    {
+        $fecha_inicio = now()->subDays(20)->format('Y-m-d');
+        $fecha_fin = now()->addDays(20)->format('Y-m-d');
+        $sede = $request->input('sede'); // Obtener sede de la solicitud
+
+        // 1. Obtener turnos ocupados filtrando por sede
+        $ocupados = Turnos::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
+            ->where('delegacion', $sede) // FILTRO POR SEDE
+            ->get()
+            ->map(function ($turno) {
+                return [
+                    'title' => 'Ocupado',
+                    'start' => $turno->fecha . 'T' . $turno->hora,
+                    'color' => '#DA0909',
+                    'extendedProps' => ['estado' => 'ocupado']
+                ];
+            });
+
+        // 2. Crear slots disponibles
+        $todosLosEventos = [];
+        $fecha = new \DateTime($fecha_inicio);
+        $fin = new \DateTime($fecha_fin);
+
+        while ($fecha <= $fin) {
+            if ($fecha->format('N') < 6) { // Saltar fines de semana
+                for ($hora = 9; $hora <= 15; $hora++) {
+                    $slotStart = $fecha->format('Y-m-d') . 'T' . str_pad($hora, 2, '0', STR_PAD_LEFT) . ':00:00';
+                    
+                    // Verificar si el slot está ocupado
+                    $ocupado = collect($ocupados)->contains('start', $slotStart);
+                    
+                    if ($ocupado) {
+                        $todosLosEventos[] = [
+                            'title' => 'Ocupado',
+                            'start' => $slotStart,
+                            'color' => '#DA0909',
+                            'extendedProps' => ['estado' => 'ocupado']
+                        ];
+                    } else {
+                        $todosLosEventos[] = [
+                            'title' => 'Disponible',
+                            'start' => $slotStart,
+                            'color' => '#00CE1C',
+                            'extendedProps' => ['estado' => 'disponible']
+                        ];
+                    }
+                }
+            }
+            $fecha->modify('+1 day');
+        }
+
+        return response()->json($todosLosEventos);
     }
 
     //PDF Acuse de Ratificación
