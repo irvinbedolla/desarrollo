@@ -29,15 +29,17 @@
                                                     <td>{{$solicitud->nombre}}</td>
                                                     <td>{{$solicitud->rama_industrial}}</td>
                                                     <td>{{$solicitud->actividad}}</td>
-                                                    @if($solicitud->tipo_solicitud == 1)
-                                                        <td>Trabajador</td>
-                                                    @elseif($solicitud->tipo_solicitud == 2)
-                                                        <td>Patronal</td>
-                                                    @elseif($solicitud->tipo_solicitud == 3)
-                                                        <td>Patronal Colectiva</td>
-                                                    @elseif($solicitud->tipo_solicitud == 4)
-                                                        <td>Sindical</td>
-                                                    @endif
+                                                    <td>
+                                                        @if($solicitud->tipo_solicitud == 1)
+                                                            <td>Trabajador</td>
+                                                        @elseif($solicitud->tipo_solicitud == 2)
+                                                            <td>Patronal</td>
+                                                        @elseif($solicitud->tipo_solicitud == 3)
+                                                            <td>Patronal Colectiva</td>
+                                                        @elseif($solicitud->tipo_solicitud == 4)
+                                                            <td>Sindical</td>
+                                                        @endif
+                                                    </td>
                                                     <td>
                                                         <a class="btn btn-info" href="{{ route('solicitud_editar', $solicitud->id)}}" onclick=editar_usuario();>Revisar</a>
                                                     </td>

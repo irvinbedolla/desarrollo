@@ -19,12 +19,13 @@
                                             <th style="color: #fff;">Folio</th>
                                             <th style="color: #fff;">Fecha</th>
                                             <th style="color: #fff;">Empresa</th>
-                                            <th style="color: #fff;">Telefono</th>
+                                            <th style="color: #fff;">Teléfono</th>
                                             <th style="color: #fff;">Correo</th>
                                             <th style="color: #fff;">Trabajador</th>
                                             <th style="color: #fff;">Estatus</th>
                                             <th style="color: #fff;">Detalles</th>
                                             <th style="color: #fff;">Acciones</th>
+                                            <th style="color: #fff;"></th>
                                         </thead>
                                         <tbody>
                                             @foreach($solicitudes as $solicitud)
@@ -39,6 +40,8 @@
                                                     <td><a class="btn btn-primary" href="{{ route('consultar_ratificacion', $solicitud->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
                                                     <td>
                                                         <a class="btn btn-success" href="{{ route('turno.aceptar', $solicitud->id) }}" onclick=consultar_estadistica();>Aceptar</a>
+                                                    </td>
+                                                    <td>
                                                         <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $solicitud->id }}">
                                                             Rechazar
                                                         </button>

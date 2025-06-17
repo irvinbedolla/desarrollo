@@ -17,7 +17,7 @@
                                         <thead style="background-color: #4A001F;">
                                             <th style="display: none;">ID</th>
                                             <th style="color: #fff;">Fecha de notificación</th>
-                                            <th style="color: #fff;">Número unico de identificación</th>
+                                            <th style="color: #fff;">Número único de identificación</th>
                                             <th style="color: #fff;">Solicitante</th>
                                             <th style="color: #fff;">Empresa</th>
                                             <th style="color: #fff;">Estatus</th>
