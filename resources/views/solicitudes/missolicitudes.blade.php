@@ -30,9 +30,9 @@
                                                     <td>{{$solicitud->fecha}}</td> 
                                                     <td>{{$solicitud->nombre}}</td>
                                                     <td>{{$solicitud->estatus}}</td>
-                                                    <td><a class="btn btn-primary" href="{{ route('consultar_solicitud', $solicitud->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
+                                                    <td><a class="btn btn-primary" href="{{ route('consulta_solicitante', $solicitud->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
                                                     <td>
-                                                        @if($solicitud->estatus !== "Pendiente")
+                                                        @if(($solicitud->estatus !== "Pendiente") && ($solicitud->estatus !== "Rechazado"))
                                                             <button type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Ver PDF</button><br><br>
                                                         @endif
                                                         @if($solicitud->estatus === "Concluida")

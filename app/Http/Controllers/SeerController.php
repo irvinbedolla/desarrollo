@@ -4219,4 +4219,182 @@ class SeerController extends Controller
     public function audiencia_index(){
         return view('/audiencias/index');
     }
+//Rechazo de solicitud
+    public function guardar_rechazo(Request $request){
+        $data = $request->all();
+       // dd($data);
+        SeerPerGeneral::find($data["id"])->update(['estatus' => 'Rechazado','observaciones' => $data["observaciones"]]);
+        
+        return redirect()->route('solicitudes_pendientes');
+    }
+//Consultar solicitud por parte del solicitante
+    public function solicitud_consultarSolicitante($id){
+        $id_user = auth()->user()->id;
+        $user = User::find($id_user);
+        $id             = $id;
+        $general        = SeerPerGeneral::find($id);
+        $ramas          = SolicitudRama::all();
+        $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
+        $citados        = SeerCitados::where("id_solicitud",$id)->get();
+        $estados        = Estados::all();
+        $municipios     = Municipios::all();
+        $conciliadores = User::whereHas('roles', function ($query) {
+            return $query->where('name', '=', 'Conciliador');
+        })
+        ->where('delegacion', $user["delegacion"])
+        ->get();
+        //Catalogo de motivos
+        $mostrarMotivos = SolicitudMotivo::all();
+        //Motivos capturados
+        $motivos        = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
+        ->where('id_solicitud',$id)
+        ->select('catalogo_motivos.motivo','seer_motivos.id')->get();
+
+        return view('solicitudes.correccion_solicitantes', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores'));
+    }
+//Guardar cambios realizados por el solicitante en su solicitud una vez que fue rechazada
+    public function correccion_solicitante(Request $request){
+        $data = $request->all();
+
+        //Se va asignar el conciliador y la sala
+        $id_user = auth()->user()->id;
+        $user = User::find($id_user);
+        $listado_auxiliares = array();
+        $relacionEloquent = 'roles';
+        $fecha_actual = date('y-m-d');
+        
+        //Actualizar SEER GENERAL
+        $delegacion = SeerPerGeneral::find($data["id"]);
+        $NUE = $this->GeneraExpediente($data["id"],$delegacion["delegacion"]);
+
+        SeerPerGeneral::where('id', $data["id"])
+        ->update(['NUE' => $NUE, 'actividad' => $data["actividad_economica"],'id_rama' => $data["ramaIndustrial"] ]);
+
+        if (!empty($data["motivo_solicitud"])) {
+            foreach ($data["motivo_solicitud"] as $motivoId) {
+                SeerMotivo::create([
+                    'id_solicitud'    => $data["id"],
+                    'id_motivo'       => $motivoId,
+                    
+                ]);
+            }
+        }
+
+        //Actualizar SEER SOLICTUD
+        SeerSolicitante::where('id_solicitud', $data["id"])
+        ->update(['tipo_persona' => $data["tipo_persona_solicitante"], 
+            'curp'                  => $data["curp_solicitante"],
+            'rfc'                   => $data["rfc_solicitante"],
+            'nombre'                => $data["nombre_solicitante"],
+            'sexo'                  => $data["sexo_solicitante"],
+            'nacionalidad'          => $data["nacionalidad_solicitante"],
+            //'estado'                => $data["estado_solicitante"],
+            'email'                 => $data["email_solicitante"],
+            'fecha_nacimiento'      => $data["fecha_nacimiento_solicitante"],
+            'edad'                  => $data["edad_solicitante"],
+            'telefono1'             => $data["telefono1_solicitante"],
+            'traductor'             => $data["traductor_solicitante"],
+            'lenguaje'              => $data["lenguaje_solicitante"],
+            'discapacidad'          => $data["discapacidad_solicitante"],
+            'tipo_discapacidad'     => $data["disc_solicitante"],
+            'tipo_vialidad'         => $data["tipo_vialidad"],
+            'calle'                 => $data["calle_solicitante"],
+            'num_ext'               => $data["num_ext_solicitante"],
+            'codigo_postal'         => $data["codigo_postal_solicitante"],
+            'referencia'            => $data["referencia_solicitante"],
+            'colonia'               => $data["colonia_solicitante"],
+            'calle2'                => $data["calle2_solicitante"],
+            'calle3'                => $data["calle3_solicitante"],
+            'municipio_domicilio'   => $data["municipio_solicitante"],
+            'puesto'                => $data["puesto"],
+            'pago'                  => $data["pago"],
+            'periodo_pago'          => $data["periodo_pago"],
+            'fecha_ingreso'         => $data["fecha_ingreso"],
+            'fecha_salida'          => $data["fecha_salida"],
+            'jornada'               => $data["jornada"],
+            'estado_domicilio'      => $data["estado_solicitante"],
+            'horas_semana'          => $data["horas_semana"],
+        ]);
+
+        //Opcionales
+        if(isset($data["telefono2"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['telefono2' => $data["telefono2_solicitante"] ]);
+        }
+        if(isset($data["num_int"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['num_int' => $data["num_int_solicitante"] ]);
+        }
+        if(isset($data["nss"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['nss' => $data["nss"] ]);
+        }
+
+
+        //Citados
+        SeerCitados::where('id_solicitud',$data["id"])->delete();
+        $cont = count($data["colonia_citado"]);
+        for($i = 0; $i < $cont; $i++) {
+            $data_insert=array(
+                'id_solicitud'      => $data["id"],
+                'colonia'           => $data["colonia_citado"][$i],
+                'cp'                => $data["cp_citado"][$i],
+                'n_ext'             => $data["n_ext_citado"][$i],
+                'calle'             => $data["calle_citado"][$i],
+                'tipo_vialidad'     => $data["vialidad_citado"][$i],
+                'referencia'        => $data["referencia_citado"][$i],
+            );
+            
+            if(isset($data["rfc"])){
+                $data_insert["rfc"] =  $data["rfc_citado"][$i];
+            }
+                if(isset($data["curp"])){
+                    $data_insert["curp"] =  $data["curp_citado"][$i];
+                }
+                if(isset($data["interior"])){
+                    $data_insert["n_int"] =  $data["n_int_citado"][$i];
+                }
+                if(isset($data["calle1"])){
+                    $data_insert["calle1"] =  $data["calle1_citado"][$i];
+                }
+                if(isset($data["calle2"])){
+                    $data_insert["calle2"] =  $data["calle2_citado"][$i];
+                }
+                if(isset($data["tipo"])){
+                    $data_insert["tipo_persona"] =  $data["tipo_persona_citado"][$i];
+                }
+                if(isset($data["curp"])){
+                    $data_insert["curp"] =  $data["curp_citado"][$i];
+                }
+                if(isset($data["nombre"])){
+                    $data_insert["nombre"] =  $data["nombre_citado"][$i];
+                }
+                if(isset($data["primer_apellido"])){
+                    $data_insert["primer_apellido"] =  $data["primer_apellido"][$i];
+                }
+                if(isset($data["segundo_apellido"])){
+                    $data_insert["segundo_apellido"] =  $data["segundo_apellido"][$i];
+                }
+                if(isset($data["rfc"])){
+                    $data_insert["rfc"] =  $data["rfc"][$i];
+                }
+            SeerCitados::create($data_insert);
+        }
+        
+        //Documentos
+        if(isset($data["curp"])){
+            $documento = $data["curp"]."_CURP.pdf";
+            $path = Storage::putFileAs('documentosSolicitud', $request->file('documentoCurp'), $documento);
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoCurp' => $documento ]);
+        }
+        
+        //Acta de nacimiento
+        if(isset($data["indetificacion"])){
+            $documentoidentificacion = $data["curp"]."_Identificacion.pdf";
+            $path = Storage::putFileAs('documentosSolicitud', $request->file('indetificacion'), $documentoidentificacion);
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoIdentificacion' => $documentoidentificacion ]);
+        }
+
+        //Actualizar el estatus
+        SeerPerGeneral::find($data["id"])->update(['estatus' => "Pendiente" ]);
+
+        return redirect()->route('mis_solicitudes'); 
+    }
 }
