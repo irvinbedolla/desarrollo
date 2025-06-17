@@ -15,12 +15,12 @@
                             <div class="row">
                                 <div class="col-xs-4 col-sm-4 col-md-4">
                                     <div align="center">
-                                        <a href="{{ route('atender_ratificacion') }}" class="btn btn-primary">Ratificaciones hoy</a>
+                                        <a href="{{ route('ratificacion_atender') }}" class="btn btn-primary">Ratificaciones hoy</a>
                                     </div>
                                 </div>
                                 <div class="col-xs-4 col-sm-4 col-md-4">
                                     <div align="center">
-                                        <a href="{{ route('cumplimiento_buscar') }}" class="btn btn-primary">Buscar Ratificaciones</a>
+                                        <a href="{{ route('ratificacion_buscar') }}" class="btn btn-primary">Buscar Ratificaciones</a>
                                     </div>
                                 </div>
                             </div>

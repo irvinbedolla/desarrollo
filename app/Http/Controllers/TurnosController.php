@@ -1614,17 +1614,19 @@ class TurnosController extends Controller
         return redirect()->route('Ratificacion');
     }
 
-    public function revisar_ratificaciones(){
+    public function revisar_ratificaciones_hoy(){
         $id = auth()->user()->id;
         $user = User::find($id);
+        $fecha_actual = date('Y-m-d');
 
         $solicitudes = Turnos::where('tipo','Ratificación')
         ->where('auxiliar',$user["id"])
-        ->where('estatus','Confirmado')
+        /*->where('estatus','Confirmado')
         ->orwhere('estatus','Conluida')
         ->orwhere('estatus','Concluida Pagos')
         ->orwhere('estatus','Incumplimiento')
-        ->orwhere('estatus','Archivada')
+        ->orwhere('estatus','Archivada')*/
+        ->where('fecha',$fecha_actual)
         ->get();
         return view('/solicitudes/indexauxiliar',compact('solicitudes'));
     }
@@ -1978,5 +1980,21 @@ class TurnosController extends Controller
 
     public function index_ratificacion(){
         return view('/ratificaciones/index');
+    }
+
+    public function buscar_ratificacion(){
+        return view('/ratificaciones/buscar');
+    }
+
+    public function busqueda_ratificaciones(Request $request){
+        $data = $request->all();
+        $id = auth()->user()->id;
+        $user = User::find($id);
+
+        $solicitudes = Turnos::where('tipo','Ratificación')
+        ->where('auxiliar',$user["id"])
+        ->whereBetween('turnos.fecha', [$data["fecha_inicio"], $data["fecha_final"]])
+        ->get();
+        return view('/ratificaciones/busqueda',compact('solicitudes'));
     }
 }
