@@ -4038,7 +4038,7 @@ class SeerController extends Controller
             ->where('pago_solicitud.id',$id)
             ->select('pago_solicitud.id','seer_general.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus')
             ->get();
-            return view('/cumplimientos/pagar',compact('solicitudes'));
+            return view('/cumplimientos/pagarAuciencia',compact('solicitudes'));
         }
         else if($tipo == 3){
             $solicitudes = Pagos::join('turnos','turnos.id',"=",'pago_solicitud.id_solicitud')
@@ -4099,7 +4099,6 @@ class SeerController extends Controller
 
     public function cumplimiento_rechazar_audiencia($id){
         $pagos = Pagos::find($id);
-        
         $id_solicitud = $pagos["id_solicitud"];
         Pagos::find($id)->update(['estatus'  => "No pagado"]);
 
@@ -4119,7 +4118,7 @@ class SeerController extends Controller
         ->where("pago_solicitud.tipo_pago","Ratificacion")
         ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
         ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
-        "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE",
+        "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
         DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
         DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
         ->get();
@@ -4129,7 +4128,7 @@ class SeerController extends Controller
         ->join("seer_general","seer_general.id","pago_solicitud.id_solicitud")
         ->join("seer_solicitante","seer_general.id","seer_solicitante.id_solicitud")
         ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
-        "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE",
+        "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE","seer_general.id as id_solicitud",
         DB::raw('seer_solicitante.nombre AS trabajador'))
         ->get();
         return view('cumplimientos/busqueda_resultado',compact('complimientos_ratificacion','complimientos_audiencias'));
@@ -4197,5 +4196,25 @@ class SeerController extends Controller
         }
 
         return redirect()->route('cumplimiento_buscar');
+    }
+
+    public function VerPDFAudiencia($id){
+        $pagos = Pagos::find($id);
+        $solicitud = SeerPerGeneral::find($pagos["id_solicitud"]);
+    
+        $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id")
+        ->select('users.name')
+        ->first();
+        $html = view('PDF/pagosParciales', compact('id','solicitud','conciliador','pagos'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'constancia_de_pago_'  .'.pdf';
+        return $pdf->stream($nombreArchivo);         
+
+
     }
 }

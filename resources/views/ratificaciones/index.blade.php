@@ -5,7 +5,7 @@
 @section('content')
     <section class="section">
         <div class="section-header">
-            <h3 class="page__heading">Cumplimientos</h3>
+            <h3 class="page__heading">Ratificaciones</h3>
         </div>
         <div class="section-body">
             <div class="row">
@@ -15,19 +15,14 @@
                             <div class="row">
                                 <div class="col-xs-4 col-sm-4 col-md-4">
                                     <div align="center">
-                                        <a href="{{ route('cumplimiento_actual') }}" class="btn btn-primary">Cumplimiento hoy</a>
+                                        <a href="{{ route('atender_ratificacion') }}" class="btn btn-primary">Ratificaciones hoy</a>
                                     </div>
                                 </div>
                                 <div class="col-xs-4 col-sm-4 col-md-4">
                                     <div align="center">
-                                        <a href="{{ route('cumplimiento_buscar') }}" class="btn btn-primary">Buscar Cumplimientos</a>
+                                        <a href="{{ route('cumplimiento_buscar') }}" class="btn btn-primary">Buscar Ratificaciones</a>
                                     </div>
                                 </div>
-                                <div class="col-xs-4 col-sm-4 col-md-4">
-                                    <div align="center">
-                                        <button type="submit" class="btn btn-primary">Agenda de complimientos</button>
-                                    </div>
-                                </div> 
                             </div>
                         </div>
                     </div>

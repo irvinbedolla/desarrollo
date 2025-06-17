@@ -175,7 +175,7 @@
                                                         <td><a class="btn btn-primary" href="{{ route('consulta_cumplimiento', ['id' => $audiencia->id, 'tipo' => 2] ) }}">Consultar</a></td>
                                                         <td>
                                                             @if($audiencia->estatus == "Pagado")
-                                                                <a class="btn btn-success" href="{{ route('PDFpagos', $audiencia->id) }}" target="_blank">PDF</a>
+                                                                <a class="btn btn-success" href="{{ route('VerPDFAudiencia', $audiencia->id) }}" target="_blank">PDF</a>
                                                             @elseif($audiencia->estatus == "No pagado")
                                                                 <a class="btn btn-info" href="{{ route('PDFincumplimientoAudiencia', $audiencia->id_solicitud) }}" target="_blank">PDF</a>
                                                             @endif

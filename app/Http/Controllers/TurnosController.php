@@ -1975,4 +1975,8 @@ class TurnosController extends Controller
         return redirect()->route('atender_ratificacion');
     
     }
+
+    public function index_ratificacion(){
+        return view('/ratificaciones/index');
+    }
 }
