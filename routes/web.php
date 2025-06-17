@@ -305,6 +305,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/cambio_contraseña/index',  [HomeController::class, 'password_cambiar'])->name('password_cambiar');
         Route::post('/notificaciones/editar',   [HomeController::class, 'contraseña_update'])->name('contraseña_update');   
     //Audiencias
+        Route::get('/audiencias/index',                     [SeerController::class, 'audiencia_index'])->name('audiencia_index');
         Route::get('/audiencias/{id}',                      [SeerController::class, 'solicitud_audiencia_revisar'])->name('solicitud_audiencia');
         Route::get('/citatorio/{id}',                       [SeerController::class, 'pdfCitatorioAudiencia'])->name('pdfCitatorioAudiencia');
         Route::get('/solicitud/indexA',                     [SeerController::class, 'indexA'])->name('audiencias.conciliador'); 

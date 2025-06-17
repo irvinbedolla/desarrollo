@@ -110,17 +110,14 @@
             <a class="nav-link" href="{{ route('poderes') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
-            <a class="nav-link" href="{{ route('audiencias.conciliador') }}">
-                <i class="bi bi-file-person"></i><span class="text-dark" >Audiencias hoy</span>
+            <a class="nav-link" href="{{ route('audiencia_index') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" >Audiencias</span>
             </a>
              <a class="nav-link" href="{{ route('solicitudes_index') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Solicitudes</span>
             </a>
             <a class="nav-link" href="{{ route('audiencias.cumplimiento') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" >Complimientos</span>
-            </a>
-            <a class="nav-link" href="{{ route('audiencia_fecha') }}">
-                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Audiencias</span>
             </a>
         @endrole
     @endauth

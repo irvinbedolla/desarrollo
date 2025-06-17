@@ -36,7 +36,7 @@
                                                     <td>{{$solicitud->email}}</td>
                                                     <td>{{$solicitud->trabajador}} {{$solicitud->primero_trabajador}}  {{$solicitud->segundo_trabajador}}</td>
                                                     <td>{{$solicitud->estatus}}</td>
-                                                    <td><a class="btn btn-primary" href="{{ route('consultar_ratificacion', $solicitud->id) }}">Consultar</a></td>
+                                                    <td>Pendiente</td>
                                                     <td>
                                                         @if($solicitud->estatus == "Confirmado")
                                                             <a class="btn btn-info" href="{{ route('ratificacion_concluir', $solicitud->id) }}">Concluir</a>

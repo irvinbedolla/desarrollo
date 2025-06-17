@@ -3114,7 +3114,7 @@ class SeerController extends Controller
     }
 
     public function audienciaParte3($id){
-        return view('/solicitudes/parte3',compact('id'));
+        return view('/audiencias/parte3',compact('id'));
     }
 
     public function historial_notificador(Request $request){
@@ -4214,7 +4214,9 @@ class SeerController extends Controller
 
         $nombreArchivo = 'constancia_de_pago_'  .'.pdf';
         return $pdf->stream($nombreArchivo);         
+    }
 
-
+    public function audiencia_index(){
+        return view('/audiencias/index');
     }
 }

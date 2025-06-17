@@ -50,6 +50,9 @@
                                                         <button type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $audiencia->id }}">Citatorios</button>
                                                     @elseif($audiencia->estatus == "No conciliacion")
                                                         <a class="btn btn-success" target="_blank" href="{{ route('PDFno_conciliacion', $audiencia->id) }}">Constancia de no conciliación</a><br>
+                                                    @elseif($audiencia->estatus == "Conciliacion")
+                                                        <a class="btn btn-success" href="{{ route('PDFconvenioratificacion', $audiencia->id) }}" tarjet="_blank">Convenio</a>
+                                                        <a class="btn btn-success" href="{{ route('PDFcumplimiento', $audiencia->id) }}"  target="_blank">Constancia de cumplimiento</a>
                                                     @endif 
                                                 </td>
                                             </tr>
