@@ -1820,7 +1820,6 @@ class SeerController extends Controller
             'fecha_inicio' => 'required|date',
             'fecha_final' => 'required|date|after_or_equal:fecha_inicio',
         ]);
-
         $fechaInicio = $request->input('fecha_inicio');
         $fechaFin = $request->input('fecha_final');
         $personas = SeerPerGeneral::join('seer_auxiliares', 'seer_auxiliares.id_solicitud', '=', 'seer_general.id')
@@ -1840,9 +1839,8 @@ class SeerController extends Controller
                 'seer_citados.direccion',
                 'seer_conciliadores.id',
             )
-            ->whereBetween('seer_general.created_at', [$fechaInicio, $fechaFin])
+            ->whereBetween('seer_general.fecha', [$fechaInicio, $fechaFin])
             ->get();
-        
         return view('estadisticas.verHistorial', compact('personas'));    
 
     } 
@@ -2042,7 +2040,7 @@ class SeerController extends Controller
         }
         if(isset($data["labora"])){
             $data_insert["labora"] =  "Si";
-            $data_insert["fecha_salida"]  =  $data["fecha_salida"];
+            //$data_insert["fecha_salida"]  =  $data["fecha_salida"];
         }
         if(isset($data["telefono2"])){
             $data_insert["telefono2"] =  $data["telefono2"];
@@ -3695,9 +3693,8 @@ class SeerController extends Controller
         $data = $request->all();
         $audiencias = SeerPerGeneral::where('conciliador_id', $user->id)
             ->where('conciliador_id',$id)
-            ->whereBetween('seer_general.created_at', [$data["fecha_inicio"], $data["fecha_final"]])
+            ->whereBetween('seer_general.fecha', [$data["fecha_inicio"], $data["fecha_final"]])
             ->get();
-
         return view('/historial/conciliadores',compact('audiencias'));
     }
 

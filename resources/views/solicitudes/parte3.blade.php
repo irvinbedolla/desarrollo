@@ -44,7 +44,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-2 col-sm-2 col-md-2">
+                                    <div class="col-xs-2 col-sm-2 col-md-2"><br>
                                         <a class="btn btn-primary" onclick="mostrar_resolicion()">Continuar</a>
                                     </div>
                                     <br>
@@ -59,7 +59,7 @@
                                         </div>
                                     </div>
                                     -->
-                                    <div id="justificacion" style="display:none">
+                                    <div id="justificacion" style="display:none"><br>
                                         <div class="col-xs-12 col-sm-12 col-md-12" style="border:1px solid black;">
                                             <div class="form-group">
                                                 <label for="name">RESOLUCIÓN JUSTIFICACIÓN PROPUESTA</label>
@@ -70,12 +70,12 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-xs-2 col-sm-2 col-md-2">
+                                        <div class="col-xs-2 col-sm-2 col-md-2"><br>
                                             <a class="btn btn-primary" onclick="mostrar_segunda()">Continuar</a>
                                         </div>
-                                    </div>
-                                    <br>
-                                    <div id="segunda" style="display:none">
+                                    </div><br>
+                                    
+                                    <div id="segunda" style="display:none"><br>
                                         <div class="col-xs-12 col-sm-12 col-md-12" style="border:1px solid black;">
                                             <div class="form-group">
                                                 <label for="name">RESOLUCIÓN SEGUNDA MANIFESTACIÓN</label>
@@ -85,13 +85,13 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-2 col-sm-2 col-md-2">
+                                        <div class="col-xs-2 col-sm-2 col-md-2"><br>
                                             <a class="btn btn-primary" onclick="mostrar_vacaciones()">Continuar</a>
                                         </div>
                                     </div>
 
                                     <div id="dias" class="row home-shape">
-                                        <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="col-xs-12 col-sm-12 col-md-2"><br>
                                             <div class="form-group">
                                                 <label for="name">Días de vacaciones</label>
                                                 <input type="number" name="vacaciones" class="form-control" required> 
@@ -100,7 +100,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-2">
+                                        <div class="col-xs-12 col-sm-12 col-md-2"><br>
                                             <div class="form-group">
                                                 <label for="name">Días de Aguinaldo</label>
                                                 <input type="number" name="aguinaldo" class="form-control" required> 
@@ -109,7 +109,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-2">
+                                        <div class="col-xs-12 col-sm-12 col-md-2"><br>
                                             <div class="form-group">
                                                 <label for="name">Otros</label>
                                                 <input type="text" name="otros" class="form-control" required> 
@@ -118,7 +118,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-3">
+                                        <div class="col-xs-12 col-sm-12 col-md-3"><br>
                                             <div class="form-group">
                                                 <label for="name">Horario laboral</label>
                                                 <input type="text" name="horario" class="form-control" required> 
@@ -127,7 +127,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-3">
+                                        <div class="col-xs-12 col-sm-12 col-md-3"><br>
                                             <div class="form-group">
                                                 <label for="name">Horario de comida</label>
                                                 <input type="text" name="comida" class="form-control" required> 
@@ -150,43 +150,44 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-xs-12 col-sm-6 col-md-12"><br>
+                                        <div class="col-xs-12 col-sm-6 col-md-12">
                                             <button id="addRow" type="button" class="btn btn-info">Agregar Concepto de Pago</button>
                                         </div>
                                         
                                         <div id="newRow"></div>
 
                                         <div class="col-xs-12 col-sm-12 col-md-6">
-                                            <div id="div_pagos_diferidos1">
+                                            <div id="div_pagos_diferidos1"><br>
                                                 <button id="addPago" type="button" class="btn btn-info">Agregar Pago</button>
                                                 <div id="newRowaPago"></div>
                                             </div>
                                         </div>
 
                                         <div id="div_pagos_diferidos"></div>
+                                        <div class="row">
+                                            <div class="col-xs-12 col-sm-12 col-md-6"><br>
+                                                <label for="name">Tipo de audiencia</label>
+                                                <select name="tipo_audiencia" class="form-control">
+                                                    <option>Seleccione</option>
+                                                    <option value="Presencial">Presencial</option>
+                                                    <option value="Virtual">Virtual</option>
+                                                </select>
+                                            </div> 
 
-                                        <div class="col-xs-12 col-sm-12 col-md-6">
-                                            <label for="name">Tipo de audiencia</label>
-                                            <select name="tipo_audiencia" class="form-control">
-                                                <option>Seleccione</option>
-                                                <option value="Presencial">Presencial</option>
-                                                <option value="Virtual">Virtual</option>
-                                            </select>
-                                        </div> 
-
-                                        <div class="col-xs-12 col-sm-12 col-md-6">
-                                            <label for="name">Conclucion de audencia</label>
-                                            <select name="conclucion" class="form-control">
-                                                <option>Seleccione</option>
-                                                <option value="Conciliacion">Hubo Convenio</option>
-                                                <option value="No conciliacion">No hubo Convenio</option>
-                                            </select>
+                                            <div class="col-xs-12 col-sm-12 col-md-6"><br>
+                                                <label for="name">Conclución de audencia</label>
+                                                <select name="conclucion" class="form-control">
+                                                    <option>Seleccione</option>
+                                                    <option value="Conciliacion">Hubo Convenio</option>
+                                                    <option value="No conciliacion">No hubo Convenio</option>
+                                                </select>
+                                            </div>
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <br><button type="submit" class="btn btn-primary">Guardar</button>
                                         </div>
                                     </div>
-                                    
+                    
                                 </div>
                             </forms>
                         </div>
