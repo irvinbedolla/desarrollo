@@ -54,7 +54,7 @@
                                             <label for="name">RESOLUCIÓN PROPUESTAS TRABAJADORES</label>
                                             <textarea name="trabajadores" class="form-control" required></textarea>
                                             <div class="invalid-feedback">
-                                                El campo es obligatorio.
+                                                El campo es obligatorio. 
                                             </div>
                                         </div>
                                     </div>
@@ -85,8 +85,13 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-2 col-sm-2 col-md-2"><br>
-                                            <a class="btn btn-primary" onclick="mostrar_vacaciones()">Continuar</a>
+                                        <div class="col-xs-12 col-sm-12 col-md-6"><br>
+                                            <label for="name">Conclución de audencia</label>
+                                            <select id="conclucion" name="conclucion" class="form-control">
+                                                <option>Seleccione</option>
+                                                <option value="Conciliacion">Hubo Convenio</option>
+                                                <option value="No conciliacion">No hubo Convenio</option>
+                                            </select>
                                         </div>
                                     </div>
 
@@ -136,13 +141,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
-                                        <div class="col-xs-2 col-sm-2 col-md-2">
-                                            <a class="btn btn-primary" onclick="mostrar_pagos()">Continuar</a>
-                                        </div>
                                     </div>
 
-                                    <div id="pagos" style="display:none">
+                                    <div id="pagos" class="row home-shape">
                                         <div class="col-xs-12 col-sm-12 col-md-12"></div>
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div class="form-group">
@@ -174,20 +175,18 @@
                                                 </select>
                                             </div> 
 
-                                            <div class="col-xs-12 col-sm-12 col-md-6"><br>
-                                                <label for="name">Conclución de audencia</label>
-                                                <select name="conclucion" class="form-control">
-                                                    <option>Seleccione</option>
-                                                    <option value="Conciliacion">Hubo Convenio</option>
-                                                    <option value="No conciliacion">No hubo Convenio</option>
-                                                </select>
-                                            </div>
+                                            
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <br><button type="submit" class="btn btn-primary">Guardar</button>
                                         </div>
                                     </div>
                     
+                                    <div id="no_conciliacion" class="row home-shape">
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <br><button type="submit" class="btn btn-primary">Guardar</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </forms>
                         </div>
@@ -232,8 +231,9 @@
 
 
     <script>
-       document.getElementById("div_pagos_diferidos").style.display = "none";
+       document.getElementById("no_conciliacion").style.display = "none";
        document.getElementById("dias").style.display = "none";
+       document.getElementById("pagos").style.display = "none";
        
         $( document ).ready(function() {
             // Agregar registro
@@ -346,12 +346,21 @@
         function mostrar_segunda() {
             document.getElementById("segunda").style.display = "block";
         }
-        function mostrar_vacaciones(){
-            document.getElementById('dias').removeAttribute("style");
-        }
-        function mostrar_pagos(){
-            document.getElementById("pagos").style.display = "block";
-        }
+
+        const tipo_iden = document.getElementById('conclucion');
+        tipo_iden.addEventListener('change', function() {
+            const valorSeleccionado = this.value;
+            // Realiza la validación o acciones necesarias
+            if (valorSeleccionado === 'Conciliacion') {
+                document.getElementById('no_conciliacion').style.display = "none";
+                document.getElementById("pagos").style.display = "block";
+                document.getElementById('dias').style.display = "block";
+            } else {
+                document.getElementById('no_conciliacion').style.display = "block";
+                document.getElementById("pagos").style.display = "none";
+                document.getElementById('dias').style.display = "none";
+            }
+        });
 
          $('.open-modal').click(function() {
             const id = $(this).data('id'); // Obtiene el valor de data-id
