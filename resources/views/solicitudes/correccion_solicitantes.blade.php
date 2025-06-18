@@ -118,7 +118,7 @@ body {font-family: Arial;}
                                 </div>
                             @endif
 
-                             <form class="needs-validation novalidate" method="POST" action="{{route('confirmar_solicitud')}}" enctype='multipart/form-data'>
+                            <form class="needs-validation novalidate" method="POST" action="{{route('correccion_solicitante')}}" enctype='multipart/form-data'>
                                     @csrf
                                     <input type="hidden" name="id" value="{{$id}}">
                                     <div class="tab">
@@ -634,36 +634,12 @@ body {font-family: Arial;}
                                                 <a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoCurp}}">PDF</a><br>
                                                 <input type="file" name="documentoIdentificacion" accept=".pdf" class="form-control">
                                             </div>
-                                            <br>
-                                       
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <div class="form-group">
-                                                    <h4 class="text-center">Fecha de audiencia</h4>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
-                                                <label for="password">Fecha de audiencia</label><br>
-                                                <input type="date" name="fecha_audiencia" class="form-control">
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
-                                                <label for="password">Hora de audiencia</label><br>
-                                                <input type="time" name="hora_audiencia" class="form-control">
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-5">
-                                                <label for="password">Conciliador</label><br>
-                                                <select name="conciliador" class="form-control">
-                                                    <option value="">Seleccione</option>
-                                                        @foreach($conciliadores as $conciliador)
-                                                            <option value="{{$conciliador['id']}}">{{$conciliador['name']}}</option>
-                                                        @endforeach
-                                                </select>
-                                            </div>
-
+          
                                             <div class="col-xs-12 col-sm-12 col-md-12"><br>
-                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
-                                                <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $general->id }}"> Rechazar </button>
-                                           
-                                               
+                                                @if($general['estatus']=='Rechazado')
+                                                    <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
+                                                @endif
+                                                <a class="btn btn-primary" href="{{ url()->previous() }}">Regresar</a>
                                             </div>
                                         </div>
                                     </div>
@@ -676,7 +652,6 @@ body {font-family: Arial;}
         </div>
     </section>
 @endsection
-
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -954,30 +929,6 @@ body {font-family: Arial;}
     <div>.</div>
     <div class="loader"></div>
 </div>
-
-<!-- Modal Rechazo de solicitud-->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <form class='needs-validation novalidate'  method='POST' action="{{route('rechazar_solicitud')}}">
-        @csrf
-        <input type="hidden" id="modal-id" name="id" value="">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Motivo de rechazo</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <textarea name="observaciones" style="width:100%"></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Enviar</button>
-                </div>
-            </div>
-        </div>
-    </form>
-</div>
-
 @section('scripts')
     <script src="../public/assets/js/estadistica/estadistica.js"></script>
         <script>
@@ -1029,19 +980,9 @@ body {font-family: Arial;}
             });
         
             $('#tabla_detalles').show();
-            //$('#tabla_solicitante').sow();
+            $('#tabla_solicitante').show();
             $('#tabla_citados').show();
             $('#tabla_documentos').show();
-
-       
-        $('.open-modal').click(function() {
-            //console.log("hola");
-            const id = $(this).data('id'); // Obtiene el valor de data-id
-            //console.log(id);
-            document.getElementById('modal-id').value = id;
-        });
     </script>
     <script src="../public/assets/js/poderes/general.js"></script>
 @endsection
-
-

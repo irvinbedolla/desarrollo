@@ -264,6 +264,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/solicitudes/solicitudes',              [SeerController::class, 'solicitudes_todas'])->name('solicitudes_todas');
         Route::post('/audiencia/guardar',                   [SeerController::class, 'concluir_audiencia_conciliador'])->name('concluir_audiencia_conciliador');
         Route::post('/solicitudes/crear/PF',                [SeerController::class, 'citado_personaF'])->name('insertar_citado_PF');
+        Route::post('/solicitudes/guardar',                 [SeerController::class, 'guardar_rechazo'])->name('rechazar_solicitud');
+        Route::get('/correcion_solicitudes/{id}',           [SeerController::class, 'solicitud_consultarSolicitante'])->name('consulta_solicitante');
+        Route::post('/correcion_solicitudes',               [SeerController::class, 'correccion_solicitante'])->name('correccion_solicitante');
     //Fin de Solicitudes
     //PDF Solicitudes    
         Route::get('/Verpdfincompetencias/{id}',            [SeerController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');
