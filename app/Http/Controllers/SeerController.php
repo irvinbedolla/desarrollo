@@ -3360,77 +3360,107 @@ class SeerController extends Controller
         $id = auth()->user()->id;
         $user = User::find($id);
 
-        //Revisar si existe
-        if(isset($data["dias_pagos"])){
-            $conteo = count($data["dias_pagos"]);
-            for($i = 0; $i < $conteo; $i++) {
-                $data_pagos = [
-                    'id_solicitud'  => $data["id"],
-                    'fecha'         => $data["dias_pagos"][$i],
-                    'hora'          => $data["hora_pagos"][$i], 
-                    'monto'         => $data["monto_pagos"][$i], 
-                    'descripcion'   => $data["descripcion_pagos"][$i],
-                    'estatus'       => "Pendiente", 
-                    'tipo_pago'     => "Audiencia"
-                ];
-                $monto = $monto + $data["monto_pagos"][$i];
-                Pagos::create($data_pagos);
+        if($data["conclucion"] == "Conciliacion"){
+            //Revisar si existe
+            if(isset($data["dias_pagos"])){
+                $conteo = count($data["dias_pagos"]);
+                for($i = 0; $i < $conteo; $i++) {
+                    $data_pagos = [
+                        'id_solicitud'  => $data["id"],
+                        'fecha'         => $data["dias_pagos"][$i],
+                        'hora'          => $data["hora_pagos"][$i], 
+                        'monto'         => $data["monto_pagos"][$i], 
+                        'descripcion'   => $data["descripcion_pagos"][$i],
+                        'estatus'       => "Pendiente", 
+                        'tipo_pago'     => "Audiencia"
+                    ];
+                    $monto = $monto + $data["monto_pagos"][$i];
+                    Pagos::create($data_pagos);
+                }
             }
-        }
-        //Regresar error
-        else{
-            return back()->withErrors('Debes agregar por lo menos una fecha de pago.');
-        }
-        if(isset($data["tipo_pago"])){
-            $cont = count($data["monto_pago"]);
-            for($i = 0; $i < $cont; $i++) {
-                $data_citado = [
-                    'id_solicitud'  => $data["id"], 
-                    'monto'         => $data["monto_pago"][$i], 
-                    'descripcion'   => $data["tipo_pago"][$i],
-                    'tipo_pago'     => "Audiencia"
-                ];
-                Concepto::create($data_citado);
+            //Regresar error
+            else{
+                return back()->withErrors('Debes agregar por lo menos una fecha de pago.');
             }
-        }
-        //Regresar error
-        else{
-            return back()->withErrors('Debes agregar por lo menos un concepto de pago.');
-        }
+            if(isset($data["tipo_pago"])){
+                $cont = count($data["monto_pago"]);
+                for($i = 0; $i < $cont; $i++) {
+                    $data_citado = [
+                        'id_solicitud'  => $data["id"], 
+                        'monto'         => $data["monto_pago"][$i], 
+                        'descripcion'   => $data["tipo_pago"][$i],
+                        'tipo_pago'     => "Audiencia"
+                    ];
+                    Concepto::create($data_citado);
+                }
+            }
+            //Regresar error
+            else{
+                return back()->withErrors('Debes agregar por lo menos un concepto de pago.');
+            }
 
-        if($conteo >= 2){
-            $estatus = "Concluida Pagos";
+            if($conteo >= 2){
+                $estatus = "Concluida Pagos";
+            }
+            else{
+                $estatus = "Conluida";
+            }
+            
+            $solicitante = SeerSolicitante::where('id_solicitud',$data["id"])->first();
+            $numero_audiencia = $this->GeneraAudiencia($data["id"]);
+            //Actualizar Audiecia
+            $data_conciliador = [
+                'id_solicitud'          => $data["id"],
+                'numero_audiencia'      => $numero_audiencia["0"],
+                'numero_audiencias'     => $numero_audiencia["1"],
+                'estatus_conciliacion'  => $data["conclucion"],
+                'monto'                 => $monto,
+                'rfc'                   => $solicitante["rfc"],
+                'NSS'                   => $solicitante["nss"],
+                'multa'                 => 'No',
+                'tipo'                  => $data["tipo_audiencia"],
+                'validado'              => 'Validado',
+                'consecutivo'           =>  $numero_audiencia[1]
+            ];
+            SeerPerConciliador::create($data_conciliador);
+
+            SeerPerGeneral::find($data["id"])
+            ->update([
+                'tipo'                  => $data["tipo_audiencia"],
+                'fecha_terminacion'     => $fecha_actual, 
+                'conciliador_id'        => $user->id,
+                'estatus'               => $data["conclucion"]
+            ]);
         }
         else{
-            $estatus = "Conluida";
-        }
-        
-        $solicitante = SeerSolicitante::where('id_solicitud',$data["id"])->first();
-        $numero_audiencia = $this->GeneraAudiencia($data["id"]);
-        //Actualizar Audiecia
-        $data_conciliador = [
-            'id_solicitud'          => $data["id"],
-            'numero_audiencia'      => $numero_audiencia["0"],
-            'numero_audiencias'     => $numero_audiencia["1"],
-            'estatus_conciliacion'  => $data["conclucion"],
-            'monto'                 => $monto,
-            'rfc'                   => $solicitante["rfc"],
-            'NSS'                   => $solicitante["nss"],
-            'multa'                 => 'No',
-            'tipo'                  => $data["tipo_audiencia"],
-            'validado'              => 'Validado',
-            'consecutivo'           =>  $numero_audiencia[1]
-        ];
-        SeerPerConciliador::create($data_conciliador);
+            $solicitante = SeerSolicitante::where('id_solicitud',$data["id"])->first();
+            $numero_audiencia = $this->GeneraAudiencia($data["id"]);
+            //Actualizar Audiecia
+            $data_conciliador = [
+                'id_solicitud'          => $data["id"],
+                'numero_audiencia'      => $numero_audiencia["0"],
+                'numero_audiencias'     => $numero_audiencia["1"],
+                'estatus_conciliacion'  => $data["conclucion"],
+                'monto'                 => 0,
+                'rfc'                   => $solicitante["rfc"],
+                'NSS'                   => $solicitante["nss"],
+                'multa'                 => 'No',
+                'tipo'                  => "Presencial",
+                'validado'              => 'Validado',
+                'consecutivo'           =>  $numero_audiencia[1]
+            ];
+            SeerPerConciliador::create($data_conciliador);
 
-        SeerPerGeneral::find($data["id"])
-        ->update([
-            'tipo'                  => $data["tipo_audiencia"],
-            'fecha_terminacion'     => $fecha_actual, 
-            'conciliador_id'        => $user->id,
-            'estatus'               => $data["conclucion"]
-        ]);
+            SeerPerGeneral::find($data["id"])
+            ->update([
+                'tipo'                  => "Presencial",
+                'fecha_terminacion'     => $fecha_actual, 
+                'conciliador_id'        => $user->id,
+                'estatus'               => $data["conclucion"]
+            ]);
+        }
         return redirect()->route('audiencias.conciliador');
+        
     }
     
     // PDF Convenio para solicitudes

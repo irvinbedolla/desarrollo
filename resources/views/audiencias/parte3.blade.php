@@ -99,7 +99,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-2"><br>
                                             <div class="form-group">
                                                 <label for="name">Días de vacaciones</label>
-                                                <input type="number" name="vacaciones" class="form-control" required> 
+                                                <input type="number" name="vacaciones" class="form-control" > 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -108,7 +108,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-2"><br>
                                             <div class="form-group">
                                                 <label for="name">Días de Aguinaldo</label>
-                                                <input type="number" name="aguinaldo" class="form-control" required> 
+                                                <input type="number" name="aguinaldo" class="form-control" > 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -117,7 +117,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-2"><br>
                                             <div class="form-group">
                                                 <label for="name">Otros</label>
-                                                <input type="text" name="otros" class="form-control" required> 
+                                                <input type="text" name="otros" class="form-control" > 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -126,7 +126,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-3"><br>
                                             <div class="form-group">
                                                 <label for="name">Horario laboral</label>
-                                                <input type="text" name="horario" class="form-control" required> 
+                                                <input type="text" name="horario" class="form-control" > 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -135,7 +135,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-3"><br>
                                             <div class="form-group">
                                                 <label for="name">Horario de comida</label>
-                                                <input type="text" name="comida" class="form-control" required> 
+                                                <input type="text" name="comida" class="form-control" > 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -245,7 +245,7 @@
                 html +='<div class="col-xs-12 col-sm-12 col-md-12">';
                     html +='<div class="form-group">';
                     html +='<label for="confirm-password"><br>Prestación</label>';
-                    html +='<select class="form-control" name="tipo_pago[]" required>';
+                    html +='<select class="form-control" name="tipo_pago[]" >';
                     html +='<option value="">Seleccione</option>';
                     html +='<option value="Aguinaldo">Días de aguinaldo</option>';
                     html +='<option value="DSueldo">Días de sueldo</option>';
@@ -266,7 +266,7 @@
                 html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                 html += '<div class="form-group">';
                 html += '<label for="password">Monto a pagar</label>';
-                html +='<input type="text" class="form-control" name="monto_pago[]"  oninput="this.value = this.value.toUpperCase()" required>';
+                html +='<input type="text" class="form-control" name="monto_pago[]"  oninput="this.value = this.value.toUpperCase()" >';
                 html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>';
                 html += '</div> </div>';
 
@@ -296,14 +296,14 @@
                 html +='<div class="col-xs-12 col-sm-12 col-md-12">';
                 html +='<div class="form-group">';
                 html +='<label for="confirm-password"><br>Días de pago</label>';
-                html +='<input type="date" class="form-control" name="dias_pagos[]" required>';
+                html +='<input type="date" class="form-control" name="dias_pagos[]" >';
                 html +='</div> </div>';                                
                 
                 //HORARIO A PAGAR
                 html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                 html += '<div class="form-group">';
                 html += '<label for="password">Hora de pago</label>';
-                html +='<input type="text" class="form-control" name="hora_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
+                html +='<input type="text" class="form-control" name="hora_pagos[]"  oninput="this.value = this.value.toUpperCase()" >';
                 html += '<div class="invalid-feedback">';
                 html += 'La Dirección es obligatoria.';
                 html += '</div> </div> </div>';
@@ -312,7 +312,7 @@
                 html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                 html += '<div class="form-group">';
                 html += '<label for="password">Monto a pagar</label>';
-                html +='<input type="text" class="form-control" name="monto_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
+                html +='<input type="text" class="form-control" name="monto_pagos[]"  oninput="this.value = this.value.toUpperCase()" >';
                 html += '<div class="invalid-feedback">';
                 html += 'La Dirección es obligatoria.';
                 html += '</div> </div> </div>';
@@ -321,7 +321,7 @@
                 html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                 html += '<div class="form-group">';
                 html += '<label for="password">Descripción</label>';
-                html +='<input type="text" class="form-control" name="descripcion_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
+                html +='<input type="text" class="form-control" name="descripcion_pagos[]"  oninput="this.value = this.value.toUpperCase()" >';
                 html += '<div class="invalid-feedback">';
                 html += 'La Dirección es obligatoria.';
                 html += '</div> </div> </div>';
