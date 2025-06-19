@@ -11,5 +11,14 @@ class Pagos extends Model
     protected $table = 'pago_solicitud';
     protected $primaryKey = 'id';
     protected $fillable = ['id_solicitud','fecha','hora','monto','descripcion','observaciones','estatus','tipo_pago'];
+    protected $casts = [
+        'fecha' => 'date',
+        'hora' => 'datetime:H:i'
+    ];
+
+    public function turno()
+    {
+        return $this->hasOne(Turnos::class, 'id', 'id_solicitud');
+    }
     
 }

@@ -7,6 +7,9 @@
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <!-- Bootstrap 4.1.1 -->
     <link href="public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js'></script>
+
     <!-- Ionicons -->
     <link href="//fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
     <link href="public/assets/css/all.css" rel="stylesheet" type="text/css">
@@ -31,7 +34,8 @@
             background: url('public/assets/images/pageLoader.gif') 50% 50% no-repeat rgb(249,249,249);
             opacity: .8;
         }
-</style>
+        
+    </style>
 
     @livewireStyles
 
@@ -117,7 +121,7 @@
         <div class="main-content">
             <section class="section">
                 <div class="section-header">
-                    <h3 class="page__heading">Sistema integral para la conciliación</h3>
+                    <h3 class="page__heading">Sistema integral para la Conciliación</h3>
                 </div>
                 <div class="section-body">
                     <div class="row">
@@ -130,6 +134,23 @@
                                                 <img src="public/assets/images/ccl-r.png" alt="" style="max-width: 50%; height: auto;">
                                             </li>
                                         </ul>
+                                        <div class="container">
+                                            <h1>Calendario de Pagos</h1>
+                                            <div class="mt-3 mb-3 text-left">
+                                                    <button id="btn-actualizar" class="btn btn-lg btn-custom-morado">Actualizar</button>
+                                                    <button id="btn-audiencias" class="btn btn-lg btn-custom-morado float-right">Calendario de audiencias</button>
+                                                    <button id="btn-pagos" class="btn btn-lg btn-custom-morado mr-2 float-right">Calendario de pagos</button>
+                                            </div>
+                                            <div id="calendar">
+                                            </div>
+                                            <div class="mt-3 mb-3 text-center">
+                                                <form action="{{ url('citas/exportar-excel') }}" method="GET">
+                                                    <button type="submit" class="btn btn-success">
+                                                        <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -143,6 +164,26 @@
     </div>
 </div>
 
+<div class="modal fade" id="evento" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Datos</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+            </div>
+            <div class="modal-body">
+                Cita
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <a href="{{ url('/calendario') }}" class="btn btn-info">Ver detalle</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 <div id="menu_carga" style ="display: none;">
@@ -152,12 +193,11 @@
 
 
 @section('scripts')
-    <script src="public/js/general/menu.js"></script>
+    <script src="public/assets/js/general/menu.js"></script>
 @endsection
 
 
 </body>
-
 
 
     <script src="public/assets/js/jquery.min.js"></script>
@@ -166,6 +206,8 @@
     <script src="public/assets/js/sweetalert.min.js"></script>
     <script src="public/assets/js/select2.min.js"></script>
     <script src="public/assets/js/jquery.nicescroll.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/locales-all.min.js"></script>
+    <script src="public/assets/js/calendar.js"></script>
 
     <!-- Template JS File -->
     <script src="public/assets/js/stisla.js"></script>
@@ -189,6 +231,10 @@
             }
         };
     }(jQuery));
+</script>
+
+<script>
+
 </script>
 </html>
 

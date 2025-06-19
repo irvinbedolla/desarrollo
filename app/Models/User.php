@@ -51,6 +51,11 @@ class User extends Authenticatable
         'last_login_at' => 'datetime',
     ];
 
+    public function citas()
+    {
+        return $this->hasMany(Cita::class);
+    }
+
     public function getProfilePhotoUrlAttribute()
     {
         if ($this->profile_photo_path) {

@@ -25,6 +25,9 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
+        <!-- Calendar -->
+        <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js'></script>
+
         <style>
             .loader {
                 position: fixed;
@@ -74,6 +77,7 @@
         </div>
 
 
+        @livewireScripts
     </body>
         
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>

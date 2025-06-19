@@ -7,6 +7,9 @@
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <!-- Bootstrap 5.3.3 -->
     <link href="public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js'></script>
+
     <!-- Ionicons -->
     <link rel="icon" href="public/assets/images/ccl-r.png" type="image/x-icon">
     <link href="//fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
@@ -40,6 +43,60 @@
         }
         .resultado.ok {
             background-color: green;
+        }
+
+        .fc-event {
+            padding: 3px 6px !important;
+            border-radius: 4px !important;
+            font-size: 12px !important;
+            cursor: pointer;
+        }
+
+        #calendar {
+            width: 100%;
+            min-height: 500px;
+        }
+
+        .fc-event-disponible {
+            background-color: #00CE1C !important;
+            border-color: #00CE1C !important;
+            cursor: pointer;
+        }
+
+        .fc-event-ocupado {
+            background-color: #DA0909 !important;
+            border-color: #DA0909 !important;
+            cursor: not-allowed;
+        }
+
+        .fc-event-selected {
+            border: 2px solid #FFD700 !important;
+            box-shadow: 0 0 8px #FFD700;
+        }
+
+        .modal-xl {
+            max-width: 95% !important;
+        }
+
+        .modal-content {
+            height: 90vh;
+        }
+
+        .modal-body {
+            overflow-y: auto;
+        }
+
+        .btn-custom-morado {
+            height: 50px;
+            font-size: 12px;
+            padding: 5px 10px;
+            background-color: #6A0F49 !important;
+            color: #fff !important;
+            border: none;
+        }
+        .btn-custom-morado:hover, .btn-custom-morado:focus {
+            background-color: #530c3a !important;
+            color: #fff !important;
         }
     </style>
     @livewireStyles
@@ -507,49 +564,77 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                                    <div class="form-group">
-                                                        <h4 class="text-center">Seleccionar la fecha</h4>
+                                                   
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Sedes</label>
+                                                    <select id="sede" name="sede" class="form-control" onchange="modalCalendar();" required>
+                                                        <option value="">Seleccione la sede</option>
+                                                        <option value="Morelia">Morelia</option>
+                                                        <option value="Uruapan">Uruapan</option>
+                                                        <option value="Zamora">Zamora</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        La sede es obligatoria.
                                                     </div>
                                                 </div>
-
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="name">Sedes</label>
-                                                        <select id="sede" name="sede" class="form-control" onchange="sedes();" required>
-                                                            <option value="">Seleccione la sede</option>
-                                                            <option value="Morelia">Morelia</option>
-                                                            <option value="Uruapan">Uruapan</option>
-                                                            <option value="Zamora">Zamora</option>
-                                                        </select>
-                                                        <div class="invalid-feedback">
-                                                            La sede es obligatoria.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="name">Día</label>
-                                                        <input id="fecha" type="date" name="fecha" class="form-control" onchange="diaSemana();" disabled>
-                                                        <div class="invalid-feedback">
-                                                            El campo conflicto es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="password">Horario Disponible</label>
-                                                        <select id="horarios" name="hora" class="form-control">
-                                                            <option value=""> --Primero selecciona un Dia --</option>
-                                                        </select>
-                                                        <div class="invalid-feedback">
-                                                            El Horario es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-
                                             </div>
+                                            <!--div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Día</label>
+                                                    <input id="fecha" type="date" name="fecha" class="form-control" onchange="diaSemana();" disabled>
+                                                    <div class="invalid-feedback">
+                                                        El campo conflicto es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-6 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="password">Horario Disponible</label>
+                                                    <select id="horarios" name="hora" class="form-control">
+                                                        <option value=""> --Primero selecciona un Dia --</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El Horario es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div-->
+
+                                            <input type="hidden" name="fecha" id="fechaSeleccionada" required>
+                                            <input type="hidden" name="hora" id="horaSeleccionada" required>
+                                            
+                                            <!-- Botón para abrir el modal -->
+                                            <div style="display: flex; align-items: center; justify-content: center;">
+                                                <button type="button" id="botonCalendar" class="btn btn-lg btn-custom-morado" data-toggle="modal" data-target="#calendarModal" disabled>
+                                                    Seleccionar Fecha y Horario
+                                                </button>
+                                            </div>
+
+                                            <div class="modal fade" id="calendarModal" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered modal-xl">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Seleccionar Fecha y Horario</h5>
+                                                            <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div id="calendar"></div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                                            <button type="button" class="btn btn-primary" id="confirmarSeleccion">Confirmar</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div id="resumenCita" class="col-xs-12 col-sm-12 col-md-12" style="margin-top: 10px; display: none;">
+                                            <div class="alert alert-info">
+                                                <strong>Cita seleccionada:</strong> <span id="fechaResumen"></span> a las <span id="horaResumen"></span>
+                                            </div>
+                                        </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div align="center">
@@ -584,6 +669,7 @@
     <script src="public/assets/js/sweetalert.min.js"></script>
     <script src="public/assets/js/select2.min.js"></script>
     <script src="public/assets/js/jquery.nicescroll.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/locales-all.min.js"></script>
 
     <!-- Template JS File -->
     <script src="public/assets/js/stisla.js"></script>
@@ -612,7 +698,12 @@
         function sedes(){
             document.getElementById("fecha").removeAttribute("disabled");
         }
-        function diaSemana() {
+
+        function modalCalendar(){
+            document.getElementById("botonCalendar").removeAttribute("disabled");
+        }
+
+        /*function diaSemana() {
             var dia_semana  = document.getElementById("fecha").value;
             var sede        = document.getElementById("sede").value;
 
@@ -623,7 +714,7 @@
                     $('#horarios').html(html_select);
 
             });
-        }
+        }*/
 
         $(function(){
             $('#check_folio').on('change', validarcheckfolio);
@@ -762,3 +853,101 @@
             termino.addEventListener("change", validarFechas);
         });
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                locale: 'es',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                },
+                validRange: {
+                    start: new Date(new Date().setDate(new Date().getDate() - 20)).toISOString().split('T')[0],
+                    end: new Date(new Date().setDate(new Date().getDate() + 20)).toISOString().split('T')[0]
+                },
+                events: function(fetchInfo, successCallback, failureCallback) {
+                    // Obtener sede seleccionada
+                    var sede = document.getElementById('sede').value;
+                    
+                    // Hacer petición AJAX con parámetro sede
+                    $.ajax({
+                        url: '/desarrollo/api/obtenerEventos',
+                        method: 'GET',
+                        data: {
+                            sede: sede,
+                            start: fetchInfo.startStr,
+                            end: fetchInfo.endStr
+                        },
+                        success: function(data) {
+                            successCallback(data);
+                        },
+                        error: function() {
+                            failureCallback('Error al cargar eventos');
+                        }
+                    });
+                },
+                eventClick: function(info) {
+                    // Solo permitir selección de horarios disponibles
+                    if (info.event.extendedProps.estado === 'disponible') {
+                        // Deseleccionar evento anterior
+                        document.querySelectorAll('.fc-event-selected').forEach(el => {
+                            el.classList.remove('fc-event-selected');
+                        });
+                        
+                        // Seleccionar este evento
+                        info.el.classList.add('fc-event-selected');
+                        window.selectedEvent = info.event;
+                    } else {
+                        alert('Este horario no está disponible. Por favor seleccione otro.');
+                    }
+                },
+                eventDidMount: function(info) {
+                    // Añade clases CSS según el tipo de evento
+                    if (info.event.extendedProps.estado === 'disponible') {
+                        info.el.classList.add('fc-event-disponible');
+                    } else {
+                        info.el.classList.add('fc-event-ocupado');
+                    }
+                },
+            });
+
+            calendar.render();
+
+            $('#calendarModal').on('shown.bs.modal', function () {
+                calendar.refetchEvents();
+                calendar.updateSize();
+            });
+
+            // Confirmar selección
+            document.getElementById('confirmarSeleccion').addEventListener('click', function() {
+                if (window.selectedEvent) {
+                    const fechaHora = new Date(window.selectedEvent.start);
+                    const fecha = fechaHora.toISOString().split('T')[0];
+                    const hora = fechaHora.toTimeString().substring(0, 8);
+                    
+                    // Guardar en campos ocultos
+                    document.getElementById('fechaSeleccionada').value = fecha;
+                    document.getElementById('horaSeleccionada').value = hora;
+                    
+                    // Mostrar resumen al usuario
+                    document.getElementById('fechaResumen').textContent = fecha;
+                    document.getElementById('horaResumen').textContent = hora;
+                    document.getElementById('resumenCita').style.display = 'block';
+                    
+                    // Cerrar modal
+                    $('#calendarModal').modal('hide');
+                } else {
+                    alert('Por favor selecciona un horario disponible');
+                }
+            });
+        });
+    </script>
+
+
+    <div id="crear_poder" style ="display: none;">
+        <div>.</div>
+        <div class="loader"></div>
+    </div>
