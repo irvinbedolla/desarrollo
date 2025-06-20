@@ -197,7 +197,6 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         'Maatwebsite\Excel\ExcelServiceProvider',
-
     ],
 
     /*

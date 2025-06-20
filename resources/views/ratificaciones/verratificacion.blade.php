@@ -140,6 +140,25 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
+                                            <h4 class="text-center">Documentos del representante</h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <label for="email">*INE</label><br>
+                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/{{$ruta_abogado}}/{{$folio->ine}}">Existente</a>
+                                            <input type="file" name="documentoIne" class="form-control-file" accept=".pdf">        
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <label>*Documento que acredite la representación</label><br>
+                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/{{$ruta_abogado}}/{{$folio->representacion}}">Existente</a>
+                                            <input type="file" name="documentoRepresentacion" class="form-control-file" accept=".pdf">
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                        <div class="form-group">
                                             <h4 class="text-center">Documentos del trabajador</h4>
                                         </div>
                                     </div>
@@ -155,32 +174,18 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-12">
-                                        <div class="form-group">
-                                            <label for="email">*INE</label><br>
-                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/{{$ruta_abogado}}/{{$folio->ine}}">Existente</a>
-                                            <input type="file" name="documentoIne" class="form-control-file" accept=".pdf">        
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-12">
-                                        <div class="form-group">
-                                            <label>*Documento que acredite la representación</label><br>
-                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/{{$ruta_abogado}}/{{$folio->representacion}}">Existente</a>
-                                            <input type="file" name="documentoRepresentacion" class="form-control-file" accept=".pdf">
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-12">
-                                        <div class="form-group">
-                                            <label for="email">*Documento curp</label><br>
-                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_ratificacion/{{$folio->documentoCurp}}">Existente</a>
-                                            <input type="file" name="documentoCurp" class="form-control-file" accept=".pdf">        
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-12">
+                                    <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label for="email">*Documento identificación</label><br>
                                             <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_ratificacion/{{$folio->documentoidentificacion}}">Existente</a>
                                             <input type="file" name="documentoidentificacion" class="form-control-file" accept=".pdf">        
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-4">
+                                        <div class="form-group">
+                                            <label for="email">*Documento curp</label><br>
+                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_ratificacion/{{$folio->documentoCurp}}">Existente</a>
+                                            <input type="file" name="documentoCurp" class="form-control-file" accept=".pdf">        
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
@@ -338,7 +343,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         @if($userRole[0] == "Auxiliar")
-                                            <a class="btn btn-primary" href="{{ route('atender_ratificacion') }}">Regresar</a>
+                                            <a class="btn btn-primary" href="{{ route('ratificacion_atender') }}">Regresar</a>
                                         @elseif($userRole[0] == "Solicitante")
                                             <a class="btn btn-primary" href="{{ route('ratificacion') }}">Regresar</a>
                                         @elseif($userRole[0] == "Administrador Solicitante")

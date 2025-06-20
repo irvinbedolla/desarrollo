@@ -285,7 +285,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/Verpdfmulta/{id}',                     [SeerController::class, 'VerPDFMulta'])->name('PDFmulta');        
         Route::get('/solicitud/pdfs/{id}',                  [SeerController::class, 'pdfCitatorio'])->name('PDFSolicitud');
         Route::get('solicitud/consultar/{id}',              [SeerController::class, 'consultar_solicitudes'])->name('consultar_solicitud');
-        Route::get('/audiencias/historial',                 [SeerController::class, 'audiencia_fecha'])->name('audiencia_fecha');
+        //Route::get('/audiencias/historial',                 [SeerController::class, 'audiencia_fecha'])->name('audiencia_fecha');
         Route::post('/historial/conciliador',               [SeerController::class, 'historial_conciliador'])->name('historial_conciliador');
         Route::get('/PDF/faltaInteres/{id}',                [SeerController::class, 'VerPDFInteres'])->name('PDFfalltaInteres');
         Route::get('/Verpdfnoconciliacion/{id}',            [SeerController::class, 'VerPDFNoConciliacion'])->name('PDFno_conciliacion');

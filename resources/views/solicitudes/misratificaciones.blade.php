@@ -33,7 +33,13 @@
                                                     <td>{{$solicitud->trabajador}}</td>
                                                     <td>{{$solicitud->telefono}}</td>
                                                     <td>{{$solicitud->email}}</td>
-                                                    <td>{{$solicitud->estatus}}</td>
+                                                    <td>
+                                                        @if($solicitud->estatus == "Rechazado")
+                                                            En correción
+                                                        @else
+                                                            {{$solicitud->estatus}}
+                                                        @endif
+                                                    </td>
                                                     <td><a class="btn btn-primary" href="{{ route('consultar_ratificacion', $solicitud->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
                                                     <td>
                                                         @if($solicitud->estatus === "Confirmado")

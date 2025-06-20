@@ -91,7 +91,9 @@ body {font-family: Arial;}
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
+
                             <h3 class="text-center">Editar Solicitud</h3>
+                            
                             @if(session()->has('success'))
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                                     <strong>¡Registro correcto!</strong>
@@ -127,7 +129,11 @@ body {font-family: Arial;}
                                         <a class="btn btn-info" onclick="openCity(event, 'documentos')">Citado(s)</a>
                                         <a class="btn btn-info" onclick="openCity(event, 'citados')">Documentos</a>
                                     </div>
-
+                                    @if($general->estatus == "Rechazado")
+                                        <div class="row">
+                                            <textarea rows="10" cols="50" class="form-control">Observaciones: <?=$general["observaciones"];?></textarea>
+                                        </div>
+                                    @endif
                                     <div id="detalles" class="tabcontent">
                                         <div id="tabla_detalles" class="row">
                                             <div class="col-xs-12 col-sm-6 col-md-3">
@@ -166,40 +172,43 @@ body {font-family: Arial;}
                                                             <tr>
                                                                 <td>
                                                                     <option value="{{$motivo['id']}}">{{$motivo['motivo']}}</option>
-                                                                </td>  
-                                                                <td>
-                                                                   <a href="{{ route('eliminar_motivo', ['id' => $id, 'id_motivo' => $motivo->id] ) }}" class="eliminar btn btn-danger btn-sm">Eliminar</button>
-                                                                </td>   
+                                                                </td> 
+                                                                @if($general->estatus == "Rechazado") 
+                                                                    <td>
+                                                                    <a href="{{ route('eliminar_motivo', ['id' => $id, 'id_motivo' => $motivo->id] ) }}" class="eliminar btn btn-danger btn-sm">Eliminar</button>
+                                                                    </td>   
+                                                                @endif
                                                             </tr>
                                                         @endforeach
                                                     </tbody>
                                                 </table>
                                             </div>
-                                       
-                                            <div class="col-xs-6 col-sm-6 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="name">Agregar Otro Motivo a la Solicitud</label>
-                                                    <select  class="form-control" id="motivo_solicitud">
-                                                        <option value="">Seleccione</option>
-                                                        @foreach($mostrarMotivos as $motivo)
-                                                            <option value="{{$motivo['id']}}">{{$motivo['motivo']}}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        El objeto de solicitud es obligatoria.
+                                            @if($general->estatus == "Rechazado")
+                                                <div class="col-xs-6 col-sm-6 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="name">Agregar Otro Motivo a la Solicitud</label>
+                                                        <select  class="form-control" id="motivo_solicitud">
+                                                            <option value="">Seleccione</option>
+                                                            @foreach($mostrarMotivos as $motivo)
+                                                                <option value="{{$motivo['id']}}">{{$motivo['motivo']}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El objeto de solicitud es obligatoria.
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
 
-                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-12"><br>
-                                                <table id="tabla" name="motivo_solicitud[]" class="table table-striped mt-1" style="margin: 0 center; text-align:center;">
-                                                    <thead style="background-color: #D2D3D5;">
-                                                        <th style="color: black;">Objeto de la Solicitud</th>
-                                                        <th style="color: black;">Acción</th>
-                                                    </thead>
-                                                    <tbody></tbody>
-                                                </table>
-                                            </div>
+                                                <div id="div1"  class="col-xs-12 col-sm-12 col-md-12"><br>
+                                                    <table id="tabla" name="motivo_solicitud[]" class="table table-striped mt-1" style="margin: 0 center; text-align:center;">
+                                                        <thead style="background-color: #D2D3D5;">
+                                                            <th style="color: black;">Objeto de la Solicitud</th>
+                                                            <th style="color: black;">Acción</th>
+                                                        </thead>
+                                                        <tbody></tbody>
+                                                    </table>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                     <div id="solicitante" class="tabcontent">
@@ -606,12 +615,14 @@ body {font-family: Arial;}
                                                
                                                 
                                             @endforeach
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
-                                                data-bs-target="#exampleModal1" data-id="{{ $id }}">Agregar Citado</a>
-                                                <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
-                                                data-bs-target="#exampleModal2" data-id="{{ $id }}">Borrar Citado</a>
-                                            </div>
+                                            @if($general->estatus == "Rechazado")
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
+                                                    data-bs-target="#exampleModal1" data-id="{{ $id }}">Agregar Citado</a>
+                                                    <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
+                                                    data-bs-target="#exampleModal2" data-id="{{ $id }}">Borrar Citado</a>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
 
@@ -625,13 +636,13 @@ body {font-family: Arial;}
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <label for="password">CURP</label><br>
-                                                <a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoIdentificacion}}">PDF</a><br>
+                                                <a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoCurp}}">PDF</a><br>
                                                 <input type="file" name="documentoCurp" accept=".pdf" class="form-control">
                                             </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <label for="password">Identificacíon Oficial</label><br>
-                                                <a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoCurp}}">PDF</a><br>
+                                                <a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoIdentificacion}}">PDF</a><br>
                                                 <input type="file" name="documentoIdentificacion" accept=".pdf" class="form-control">
                                             </div>
           

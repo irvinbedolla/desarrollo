@@ -874,7 +874,7 @@
                     
                     // Hacer petición AJAX con parámetro sede
                     $.ajax({
-                        url: '/desarrollo/api/obtenerEventos',
+                        url: '../sistema-integral/api/obtenerEventos',
                         method: 'GET',
                         data: {
                             sede: sede,

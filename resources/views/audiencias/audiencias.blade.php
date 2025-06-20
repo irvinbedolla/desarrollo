@@ -14,7 +14,7 @@
                     <div class="card">
                         <div class="card-body">
                             <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#ModalArchivar" data-id="{{ $id }}">
-                                Archivar
+                                Archivar por falta de interes
                             </button>
                             <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#ModalReagendar" data-id="{{ $id }}">
                                 Reagendar
@@ -108,7 +108,7 @@
                         <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
                                 <label for="name">CURP del Solicitante (*)</label>
-                                <input type="text" name="curp" id="curp_input" oninput="validarInput(this)"class="form-control" value="<?=$solicitante["curp"];?>" required> 
+                                <input type="text" name="curp" id="curp_input" oninput="validarInput(this)"class="form-control" value="<?=$solicitante["curp"];?>" readonly > 
                                 <pre id="resultado"></pre>
                                 <div class="invalid-feedback">
                                     El campo curp es obligatorio.
@@ -578,18 +578,20 @@
                 <div class="modal-header">
                     @if($bandera != 0)
                         <span>Si no seleccionas todos los representantes debes seleccionar un fecha para que proxima audiencia.<br>
-                        Va notificar el centro</span>
-                        <input type="date" name="fecha" class="form-control">
+                        Notificará el centro</span>
+                        
                     @else
                         Continuar con la audiencia.
                     @endif
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                   
                     <form class="needs-validation novalidate" method="POST" action="{{route('audiencia_parte2')}}">
                         @csrf
+                        <input type="date" name="fecha" class="form-control">
                         <input type="hidden" name="id" value="{{$id}}">
                         <input type="hidden" name="bandera" value="{{$bandera}}">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                         <button type="submit" class="btn btn-success">Continuar</button>
                     </form> 
                 </div>

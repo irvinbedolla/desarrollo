@@ -228,7 +228,7 @@ body {font-family: Arial;}
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="confirm-password">CURP</label>
-                                                        <input type="text" class="form-control" name="curp_solicitante" value="<?=$solicitante["curp"];?>">
+                                                        <input type="text" class="form-control" name="curp_solicitante" value="<?=$solicitante["curp"];?>" readonly >
                                                     </div>
                                                 </div>
                                                 
@@ -526,7 +526,7 @@ body {font-family: Arial;}
                                                 <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label for="password">CURP</label>
-                                                        <input type="text" class="form-control" name="curp_citado[]" value="<?=$citado["curp"];?>" maxlength="18">   
+                                                        <input type="text" class="form-control" name="curp_citado[]" value="<?=$citado["curp"];?>" maxlength="18" >   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-6">

@@ -29,11 +29,26 @@
                                                     <td>{{$solicitud->id}}</td>
                                                     <td>{{$solicitud->fecha}}</td> 
                                                     <td>{{$solicitud->nombre}}</td>
-                                                    <td>{{$solicitud->estatus}}</td>
+                                                    <td>
+                                                        @if($solicitud->estatus == "Rechazado")
+                                                            En correción
+                                                        @else
+                                                            {{$solicitud->estatus}}
+                                                        @endif
+                                                    </td>
                                                     <td><a class="btn btn-primary" href="{{ route('consulta_solicitante', $solicitud->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
                                                     <td>
                                                         @if(($solicitud->estatus !== "Pendiente") && ($solicitud->estatus !== "Rechazado"))
-                                                            <button type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Ver PDF</button><br><br>
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                    Documentos
+                                                                </button>
+                                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                                    <button type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Ver Citatorios</button>
+                                                                    <a class="btn btn-success" href="{{ route('PDFnotificacion_solicitante', $solicitud->id) }}" target="_black">Notificación al solicitante</a>
+                                                                    <a class="btn btn-success" href="{{ route('PDFacuse_solicitud', $solicitud->id) }}"  target="_black">Acuse de solicitud</a>
+                                                                </div>
+                                                            </div>
                                                         @endif
                                                         @if($solicitud->estatus === "Concluida")
                                                             <a class="btn btn-success" href="{{ route('PDFconveniosolicitud', $solicitud->id) }}"  target="_black">Convenio</a>
@@ -77,18 +92,6 @@
                   </tr>
                 </thead>
                 <tbody id="pdf-list"></tbody>
-            </table>
-            <table class="table table-striped" style="width: 100%; text-align: center;">
-                <thead style="background-color: #D2D3D5;">
-                  <tr>
-                    <th>Notificación al solicitante</th>
-                    <th><a class="btn btn-success" href="{{ route('PDFnotificacion_solicitante', $solicitud->id) }}" target="_black">Ver PDF</a></th>
-                  </tr>
-                  <tr>
-                    <th>Acuse de solicitud</th>
-                    <th><a class="btn btn-success" href="{{ route('PDFacuse_solicitud', $solicitud->id) }}"  target="_black">Ver PDF</a></th>
-                  </tr>
-                </thead>
             </table>
         </div>
         <div class="modal-footer">
