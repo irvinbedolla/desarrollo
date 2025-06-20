@@ -4549,4 +4549,8 @@ class SeerController extends Controller
 
         return redirect()->route('mis_solicitudes'); 
     }
+
+    public function calendario_ver($id){
+        dd($id);
+    }
 }

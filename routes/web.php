@@ -356,7 +356,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('/cumplimiento/PDFpago/{id}',            [SeerController::class, 'VerPDFAudiencia'])->name('VerPDFAudiencia');
         Route::get('/cumplimiento/PDFIncumplimiento/{id}',  [SeerController::class, 'PDFincumplimientoAudiencia'])->name('PDFincumplimientoAudiencia');
+        Route::get('/cumplimiento/consulta/{id}/{tipo}',    [SeerController::class, 'consulta_cumplimiento'])->name('consulta_cumplimiento');
     //Fin de cumplimientos
+    //Calendario
+        Route::get('/calendario',           [HomeController::class, 'calendario'])->name('calendario');
+        Route::get('/calendario/{id}',      [HomeController::class, 'calendario_ver'])->name('calendario_ver');
+    //Fin de Calendario
 
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);

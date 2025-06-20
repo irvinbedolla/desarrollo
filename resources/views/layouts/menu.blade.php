@@ -87,6 +87,9 @@
 
     @auth
         @role('Auxiliar')
+            <a class="nav-link" href="{{ route('calendario') }}">
+               <i class="bi bi-calendar-date"></i><span class="text-dark" onclick="poderes()">Calendario</span>
+            </a>
             <a class="nav-link" href="{{ route('poderes') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>

@@ -135,11 +135,11 @@
                                             </li>
                                         </ul>
                                         <div class="container">
-                                            <h1>Calendario de Pagos</h1>
+                                            <h1>Agenda de Cumplimientos</h1>
                                             <div class="mt-3 mb-3 text-left">
                                                     <button id="btn-actualizar" class="btn btn-lg btn-custom-morado">Actualizar</button>
                                                     <button id="btn-audiencias" class="btn btn-lg btn-custom-morado float-right">Calendario de audiencias</button>
-                                                    <button id="btn-pagos" class="btn btn-lg btn-custom-morado mr-2 float-right">Calendario de pagos</button>
+                                                    <button id="btn-pagos" class="btn btn-lg btn-custom-morado mr-2 float-right">Calendario de Cumplimientos</button>
                                             </div>
                                             <div id="calendar">
                                             </div>

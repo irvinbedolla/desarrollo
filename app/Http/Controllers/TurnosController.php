@@ -1371,8 +1371,6 @@ class TurnosController extends Controller
     public function VerPDFConvenio($id){
         $solicitud = Turnos::find($id);
         $pagos = Pagos::where('id_solicitud', $id)->get();
-        //$prestacionesLab = Concepto::where('id_solicitud', $id)->first();
-        //dd($prestaciones);
         $prestaciones = Concepto::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
         // Inicializa las variables de texto
         $vacacionesTexto = '';
@@ -1720,7 +1718,7 @@ class TurnosController extends Controller
             $ruta_abogado = 'documentos_ratificacion';
         }
         //dd($ruta_abogado);
-        return view('/solicitudes/verratificacion',compact('folio','ruta_abogado','userRole'));
+        return view('/ratificaciones/verratificacion',compact('folio','ruta_abogado','userRole'));
     }
 
     public function editar_ratificaciones(Request $request){
@@ -1888,7 +1886,7 @@ class TurnosController extends Controller
 
 
         if($userRole[0] == "Auxiliar")
-            return redirect()->route('atender_ratificacion');
+            return redirect()->route('ratificacion_atender');
         else if($userRole[0] == "Solicitante")
             return redirect()->route('ratificacion');
         else if($userRole[0] == "Administrador Solicitante")
@@ -1961,7 +1959,7 @@ class TurnosController extends Controller
 
         'estatus'                       => $estatus]);
         
-        return redirect()->route('atender_ratificacion');
+        return redirect()->route('ratificacion_atender');
     }
 
     public function pagar_ratificacion($id){
@@ -1986,7 +1984,7 @@ class TurnosController extends Controller
             ->update(['estatus' => "Conluida"]);
         }
 
-        return redirect()->route('atender_ratificacion');
+        return redirect()->route('ratificacion_atender');
     }
 
     public function pagoR_ratificacion($id){
@@ -1999,7 +1997,7 @@ class TurnosController extends Controller
         Turnos::find($id_solicitud)
         ->update(['estatus' => "Incumplimiento"]);
 
-        return redirect()->route('atender_ratificacion');
+        return redirect()->route('ratificacion_atender');
     }
 
     public function GeneraExpediente($id,$delegacion){
@@ -2030,7 +2028,7 @@ class TurnosController extends Controller
         $expediente = $this->GeneraExpediente($turno["id"],$turno["delegacion"]);
         Turnos::find($turno["id"])->update(['auxiliar' => $user["id"],'lugar_auxiliar' => $user["name"],'estatus' => 'Archivada','NUE' => $expediente, 'id_conciliador' => $user["id"], 'observaciones' => $data["observaciones"]]);
 
-        return redirect()->route('atender_ratificacion');
+        return redirect()->route('ratificacion_atender');
     
     }
 

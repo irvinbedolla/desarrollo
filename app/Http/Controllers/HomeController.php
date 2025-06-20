@@ -106,4 +106,11 @@ class HomeController extends Controller
         }
     }
     
+    public function calendario(){
+        return view('/pages/dashboards/index');
+    }
+
+    public function calendario_ver($id){
+        
+    }
 }
