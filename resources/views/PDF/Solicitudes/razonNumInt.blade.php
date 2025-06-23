@@ -81,7 +81,7 @@
                             </tr>
                     </table>
                 </div><br><br><br>
-                <!-- DELIGENCIA EXITOSA, ATIENDE OTRA PERSONA -->
+                <!-- DELIGENCIA NO EXITOSA, NO SE LOCALIZA INTERIOR -->
                 <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p><br>
                 <p><b>EXPEDIENTE: <br>
                       SOLICITANTE: <br>
@@ -89,35 +89,21 @@
                 </b></p>  
                            
                 <p>Siendo las <b>[14 HORAS CON 56 MINUTOS DEL DÍA [FECHA DE NOTIFICACIÓN], LIC. [NOMBRE NOTIFICADOR]</b> en mi
-                    calidad de notificador adscrito al Centro de Conciliación Laboral, oficina estatal [SEDE], me constituyo física y legalmente en el
-                    domicilio ubicado en <b>[AVENIDA FRANCISCO I MADERO ORIENTE 313, COLONIA CENTRO, MORELIA, CP 58000, MUNICIPIO
-                    MORELIA, ESTADO MICHOACÁN DE OCAMPO]</b>, siendo este el domicilio señalado en la solicitud de conciliación como el del <b>CITADO:
-                    [RECORRIDOS TURISTICOS PIKIS]</b>. Todo ello a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN de fecha <b>[2025-05-21]</b> en el
-                    expediente citado. <br><br>
+                    calidad de notificador adscrito al Centro de Conciliación Laboral, oficina estatal [SEDE], a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN
+                    de fecha <b>[FECHA CITATORIO]</b> en el expediente citado, en el que se ordena NOTIFICAR <b>AL CITADO: [NOMBRE CITADO]</b>, en el domicilio señalado
+                    en <b>[AVENIDA FRANCISCO I MADERO ORIENTE 313, COLONIA CENTRO, MORELIA, CP 58000, MUNICIPIO
+                    MORELIA, ESTADO MICHOACÁN DE OCAMPO]</b>. Cerciorándome de ser el domicilio correcto por <b>a) LA(S) PLACAS DE SEÑALIZACIÓN OFICIAL MÁS PRÓXIMA(S) 
+                    AL DOMICILIO EN QUE SE ACTÚA, CON EL RESPECTIVO NOMBRE DE LA ALCALDÍA, COLONIA Y [TIPO_VILAIDAD], b) EL MÚMERO VISIBLE DEL INMUEBLE</b>.<br><br>
 
-                    Y cerciorando de ser este el domicilio correcto y completo, apegándome en los siguientes elementos de convicción:
-                    <b>a) EL NÚMERO VISIBLE DEL INMUEBLE, Y b) LOS INFORMES DE VECINOS DEL LUGAR, QUIENES CONFIRMAN QUE SE TRATA
-                    DEL DOMICILIO CORRECTO</b>. A mayor abundamiento, verifico que cerca del domicilio se encuentran los siguientes puntos de referencia:
-                    <b>DOMICILIO UBICADO ENTRE LAS CALLES GUILLERMO PRIETO Y NIGROMANTE, A MEDIA CUADRA DE LA CATEDRAL DE MORELIA</b>.
-                    De iqual forma, he constatado que se trata de un inmueble con las siguientes características: <b>INMUEBLE TIPO EDIFICIO, DE FACHADA DE
-                    CANTERA, CON VARIOS ACCESOS Y VENTANAS, ALBERGA AL HOTEL ALAMEDA, COMPARTEN EL DOMICILIO VARIOS
-                    NEGOCIOS</b>.<br><br>
+                    Hago constar a la autoridad conciliadora competente que al recorrer la parte señalada del inmueble, no logro localizar el número interior proporcionado 
+                    por la parte solicitante; adicionalmente hago constar que <b>[RECORRIENDO LA PLANTA BAJA DEL INMUEBLE SEÑALADO SE PUEDE APRECIAR QUE NO TIENEN SEÑALADOS LOS 
+                    INTERIORES, Y SE PUEDE APRECIAR UNA TINTORERIA, BANCOS SCOTIANBANK, BANAMEX, CAFÉ STARBUCKS, SALÓN & SPA, RELOJERÍA Y JOYERÍA, SIN EMBARGO NO ME ES POSIBLE 
+                    LOCALIZAR EL INMUEBLE SEÑALADO POR LA PARTE ACTORA]</b>.<br><br>
+                    
+                    En esa razón, me encuentro imposibilitado para dar cumplimiento a lo ordenado en el citatorio de conciliación; toda vez que no cuento 
+                    con los elementos de cercioramiento requeridos por el Artículo 743 Fracción I de la Ley Federal del Trabajo, por lo que me es imposible 
+                    dar cumplimiento al citatorio antes citado.<br><br>
 
-                    Asimismo, por los informes que me proporciona la persona con quien se entiende la presente diligencia, quien dijo llamarse <b>MARÍA SABINA,
-                    QUIEN NO SE IDENTIFICA ALEGANDO QUE POR EL MOMENTO NO LO TIENE AL ALCANCE</b>. Procedo a especificar su media filiación,
-                    que incluye los siguientes rasgos: <b>SEXO [FEMENINO], TEZ [TRIGUEÑA], EDAD [ENTRE 50 Y 55 AÑOS], ALTURA [ENTRE 1.65 Y 1.70 м],
-                    COMPLEXIÓN [DELGADA], CABELLO [RUBIO], OJOS [GRISES] Y SEÑAS PARTICULARES: [NINGUNA]. LO ANTERIOR SE HACE DE
-                    MANERA APROXIMADA, YA QUE EL SUSCRITO NO ES PERITO EN LA MATERIA</b>. Quien manifiesta que <b>OCUPA EL PUESTO DE
-                    [ATENCIÓN AL PÚBLICO]</b> en el domicilio en que se actúa. Enseguida me identifico con credencial vigente expedida por el Centro
-                    Conciliación Laboral, oficina estatal <b>[MORELIA]</b> que me acredita como Notificador y le informo el motivo de mi visita, mediante lectura del
-                    CITATORIO DE CONCILIACIÓN antes mencionado, requiriendo así la presencia <b>DEL REPRESENTANTE LEGAL DEL CITADO:
-                    [RECORRIDOS TURISTICOS PIKIS]</b> a fin de NOTIFICARLO; la persona que me atiende manifiesta que el citado no se encuentra por el
-                    momento, pero que efectivamente tiene su asiento de negocios en este domicilio. Por todo lo anterior, y de conformidad con lo dispuesto en
-                    los artículos 741. 742 fracción XIII, 743 y 751 de la Ley Federal del Trabajo procedo a dejar CITATORIO DE LEY para
-                    <b>EL REPRESENTANTE LEGAL DEL CITADO</b>.<br><br>
-
-                    <b>[FIRMA PARA CONSTANCIA LEGAL].</b><br>
-                    Anexando impresión fotográfica para constancia legal.<br>
                     <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. DOY FE.</b> 
                 </p>
                 <br>

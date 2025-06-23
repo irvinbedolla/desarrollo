@@ -33,7 +33,7 @@
                                                     <td>{{$notificacion->nombre}}</td>
                                                     <td>{{$notificacion->estatus}}</td>
                                                     <td>
-                                                        <a class="btn btn-success" href="{{ route('PDFconvenio', $notificacion->id_citado) }}" onclick=consultar_estadistica(); tarjet="_black">Citatorio</a>
+                                                        <a class="btn btn-success" href="{{ route('PDFRazonNoticacion', $notificacion->id_citado) }}" onclick=consultar_estadistica(); target="_black">Citatorio</a>
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -56,7 +56,7 @@
         </div>
         
         @section('scripts')
-            <script src="../../public/js/estadistica/estadistica.js"></script>
+            <script src="/public/js/estadistica/estadistica.js"></script>
         @endsection
         
     </section>

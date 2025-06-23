@@ -193,7 +193,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Núm int. del citado</label>
-                                                    <input type="text" name="interior" class="form-control" > 
+                                                    <input type="text" name="interior" class="form-control"  oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo núm. interior es obligatorio.
                                                     </div>
@@ -283,7 +283,7 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-6" id="lenguaje_señas">
                                                 <div class="form-group">
-                                                    <label for="name">Que tipo de lenguaje require</label>
+                                                    <label for="name">Qué tipo de lenguaje require</label>
                                                     <input type="text" name="lenguaje" class="form-control">
                                                 </div>
                                             </div>

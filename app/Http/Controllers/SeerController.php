@@ -1663,29 +1663,74 @@ class SeerController extends Controller
             );
         }
         if(!isset($foto1)){
-            $documento = $data["id"]."-foto2.jpg";
+            $documento1 = $data["id"]."-foto2.jpg";
             $path = Storage::putFileAs(
-                'documentos_notificacion', $request->file('foto'), $documento
+                'documentos_notificacion', $request->file('foto'), $documento1
             );
         }
-        if(!isset($foto1)){
-            $documento = $data["id"]."-foto3.jpg";
+        if(!isset($foto2)){
+            $documento2 = $data["id"]."-foto3.jpg";
             $path = Storage::putFileAs(
-                'documentos_notificacion', $request->file('foto'), $documento
+                'documentos_notificacion', $request->file('foto'), $documento2
             );
         }
+
+        $request->validate([
+            'quien_atiende'               => 'required',
+            'medio'                       => 'required',
+            'vialidad_notificacion'       => 'required',
+            'abundar_area'                => 'required',
+            'abundar_inmueble'            => 'required',
+            'nombre_notificacion'         => 'required',
+            'relacion_notificacion'       => 'required',
+            'puesto'                      => 'required',
+            'identificacion_notificacion' => 'required',
+            'motivo_notificacion'         => 'nullable',
+            'firma'                       => 'nullable',
+            'problema_diligencia'         => 'nullable',
+            'genero'                      => 'nullable',
+            'tez'                         => 'nullable',
+            'edad_filiacion'              => 'nullable',
+            'altura'                      => 'nullable',
+            'complexion'                  => 'nullable',
+            'cabello'                     => 'nullable',
+            'ojos'                        => 'nullable',
+            'particulares'                => 'nullable',
+            'especificar'                 => 'nullable',
+        ]);
 
         SeerCitados::find($data["id"])
         ->update([
-            'estatus'       => $data["estatus"],
-            'observaciones' => $data["observaciones"],
-            'documento'     => $documento,
-            'documento1'    => $documento1,
-            'documento2'    => $documento2,
-            'fecha'         => $fecha_actual
+            'estatus'                    => $data["estatus"],
+            'observaciones'              => $data["observaciones"],
+            'documento'                  => $documento,
+            'documento1'                 => $documento1,
+            'documento2'                 => $documento2,
+            'fecha'                      => $fecha_actual,
+            'quien_atiende'              => $data["quien_atiende"],
+            'medio'                      => $data["medio"],
+            'vialidad_notificacion'      => $data["vialidad_notificacion"],
+            'abundar_area'               => $data["abundar_area"],
+            'abundar_inmueble'           => $data["abundar_inmueble"],
+            'nombre_notificacion'        => $data["nombre_notificacion"],
+            'relacion_notificacion'      => $data["relacion_notificacion"],
+            'puesto'                     => $data["puesto"],
+            'identificacion_notificacion'=> $data["identificacion_notificacion"],
+            'firma'                      => $data["firma"],
+            'problema_diligencia'        => $data["problema_diligencia"],
+            'genero'                     => $data["genero"],
+            'tez'                        => $data["tez"],
+            'edad_filiacion'             => $data["edad_filiacion"],
+            'altura'                     => $data["altura"],
+            'complexion'                 => $data["complexion"],
+            'cabello'                    => $data["cabello"],
+            'ojos'                       => $data["ojos"],
+            'particulares'               => $data["particulares"],
+            'especificar'                => $data["especificar"],
         ]);
 
         return redirect()->route('seer'); 
+ 
     }
 
     public function store_enlace(Request $request){
@@ -4426,5 +4471,81 @@ class SeerController extends Controller
         SeerPerGeneral::find($data["id"])->update(['estatus' => "Pendiente" ]);
 
         return redirect()->route('mis_solicitudes'); 
+    }
+
+    //PDF NOTIFICADORES NOTIFICACION
+    //PDF Notificación Por instructivo
+    public function PDFnotificadoInstructivo($id){
+        $solicitud = SeerPerGeneral::find($id);
+        
+        //$solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
+        //$solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
+       // ->first();
+        
+        //$citado = SeerCitados::where('id_solicitud', $id)->get();
+        //$citado  = SeerPerGeneral::join("seer_citados","seer_citados.id_solicitud","=","seer_general.id");
+        //$citado = $citado->where("seer_citados.id_solicitud", "=", $solicitud["id"])
+        //->first();
+
+        //dd($citado);
+        $html = view('PDF/Solicitudes/razonNotificacion', compact('id', 'solicitud'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'Razón_Notificación_'.'.pdf';
+        return $pdf->stream($nombreArchivo);                 
+    }
+
+    //PDF Notificación No exitosa SE CONSTITUYE, CERRADO
+    public function PDFnotificadoNoexitosa($id){
+        $solicitud = SeerPerGeneral::find($id);
+        
+        //$solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
+        //$solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
+       // ->first();
+        
+        //$citado = SeerCitados::where('id_solicitud', $id)->get();
+        //$citado  = SeerPerGeneral::join("seer_citados","seer_citados.id_solicitud","=","seer_general.id");
+        //$citado = $citado->where("seer_citados.id_solicitud", "=", $solicitud["id"])
+        //->first();
+
+        //dd($citado);
+        $html = view('PDF/Solicitudes/razonNotificacion', compact('id', 'solicitud'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'Razón_Notificación_'.'.pdf';
+        return $pdf->stream($nombreArchivo);                 
+    }
+
+    //PDF Notificación No exitosa NO SE LOCALIZA INTERIOR
+    public function PDFnotificadoNoexitosaInt($id){
+        $solicitud = SeerPerGeneral::find($id);
+        
+        //$solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
+        //$solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
+       // ->first();
+        
+        //$citado = SeerCitados::where('id_solicitud', $id)->get();
+        //$citado  = SeerPerGeneral::join("seer_citados","seer_citados.id_solicitud","=","seer_general.id");
+        //$citado = $citado->where("seer_citados.id_solicitud", "=", $solicitud["id"])
+        //->first();
+
+        //dd($citado);
+        $html = view('PDF/Solicitudes/razonNotificacion', compact('id', 'solicitud'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'Razón_Notificación_'.'.pdf';
+        return $pdf->stream($nombreArchivo);                 
     }
 }

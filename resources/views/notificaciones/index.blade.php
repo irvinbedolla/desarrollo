@@ -23,6 +23,7 @@
                                                 <th style="color: #fff;">Dirección</th>
                                                 <th style="color: #fff;">Estatus</th>
                                                 <th style="color: #fff;">Asignar</th>
+                                                <th style="color: #fff;"></th>
                                                 <th style="color: #fff;">Acciones</th>
                                             </thead>
                                             <tbody>
@@ -43,15 +44,17 @@
                                                                         <option value="{{$persona->id}}">{{$persona->name}}</option>
                                                                     @endforeach
                                                                 </select> 
-                                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                            <td>    
+                                                                <div class="col-xs-12 col-sm-12 col-md-6">
                                                                     <button type="submit" class="btn btn-primary">Asignar</button>
                                                                 </div> 
+                                                            </td>    
                                                             </form>
                                                         </td>
                                                         <td>
                                                             <div class="col-xs-12 col-sm-12 col-md-12"> 
                                                                 @if($notificacion->estatus == "Pendiente" || $notificacion->estatus == "Por asignar")
-                                                                    <a class="btn btn-info" href="{{ route('editar_citado', $notificacion->id_citado) }}" onclick=consultar_estadistica();>Editar</a>
+                                                                    <a class="btn btn-primary" href="{{ route('editar_citado', $notificacion->id_citado) }}" onclick=consultar_estadistica();>Editar</a>
                                                                 @endif
                                                             </div> 
                                                         </td>
