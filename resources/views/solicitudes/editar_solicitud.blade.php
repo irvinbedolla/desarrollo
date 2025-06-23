@@ -636,28 +636,7 @@ body {font-family: Arial;}
                                             </div>
                                             <br>
                                        
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <div class="form-group">
-                                                    <h4 class="text-center">Fecha de audiencia</h4>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
-                                                <label for="password">Fecha de audiencia</label><br>
-                                                <input type="date" name="fecha_audiencia" class="form-control">
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
-                                                <label for="password">Hora de audiencia</label><br>
-                                                <input type="time" name="hora_audiencia" class="form-control">
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-5">
-                                                <label for="password">Conciliador</label><br>
-                                                <select name="conciliador" class="form-control">
-                                                    <option value="">Seleccione</option>
-                                                        @foreach($conciliadores as $conciliador)
-                                                            <option value="{{$conciliador['id']}}">{{$conciliador['name']}}</option>
-                                                        @endforeach
-                                                </select>
-                                            </div>
+
 
                                             <div class="col-xs-12 col-sm-12 col-md-12"><br>
                                                 <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
