@@ -113,7 +113,7 @@
                                                 </div>
                                             </div>                                        
 
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Tipo de Vialidad del citado *</label>
                                                     <select name="vialidad" class="form-control" required>
@@ -125,6 +125,20 @@
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El campo vialidad es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">Quien entregara las Notificaciones *</label>
+                                                    <select name="notificacion" class="form-control" required>
+                                                        <option value="">SELECCIONE</option>
+                                                        <option value="Trabajador">Trabajador</option>
+                                                        <option value="Centro">Centro de conciliación Laboral</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
