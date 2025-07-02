@@ -56,7 +56,7 @@ class SeerController extends Controller
             ->join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
             ->join('seer_solicitante','seer_solicitante.id_solicitud','=','seer_general.id')
             ->where('seer_citados.estatus', 'Pendiente')
-            ->select('seer_citados.id','seer_general.NUE','seer_solicitante.nombre as nombre_solicitado','seer_citados.nombre','seer_citados.colonia','seer_citados.estatus')
+            ->select('seer_citados.id','seer_general.NUE','seer_solicitante.nombre as nombre_solicitado','seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido','seer_citados.colonia','seer_citados.estatus')
             ->get();
         }
         //Si es otro usuario le va mostrar unicamente las del ese usuario
@@ -1646,8 +1646,9 @@ class SeerController extends Controller
     public function seer_estatus($id){
         $citados  = SeerCitados::find($id);
         $id = $citados->id;
-
-        return view('estadisticas.actualizarCitado', compact('id'));
+        $municipios = Municipios::all();
+        
+        return view('estadisticas.actualizarCitado', compact('id','municipios'));
     }
 
     public function update_notificador(Request $request){
@@ -1655,6 +1656,8 @@ class SeerController extends Controller
         $documento = "Sin documento";
         $documento1 = "Sin documento";
         $documento2 = "Sin documento";
+        $foto1 = "Sin documento";
+        $foto2 = "Sin documento";
         $fecha_actual = date('y-m-d');
 
         if(!isset($foto)){
@@ -1663,30 +1666,30 @@ class SeerController extends Controller
                 'documentos_notificacion', $request->file('foto'), $documento
             );
         }
-        if(!isset($foto1)){
+        if($request->hasFile($foto1)){
             $documento1 = $data["id"]."-foto2.jpg";
             $path = Storage::putFileAs(
-                'documentos_notificacion', $request->file('foto'), $documento1
+                'documentos_notificacion', $request->file('foto1'), $documento1
             );
         }
-        if(!isset($foto2)){
+        if($request->hasFile($foto2)){
             $documento2 = $data["id"]."-foto3.jpg";
             $path = Storage::putFileAs(
-                'documentos_notificacion', $request->file('foto'), $documento2
+                'documentos_notificacion', $request->file('foto2'), $documento2
             );
         }
-
+        
         $request->validate([
-            'quien_atiende'               => 'required',
-            'medio'                       => 'required',
-            'vialidad_notificacion'       => 'required',
-            'abundar_area'                => 'required',
-            'abundar_inmueble'            => 'required',
-            'nombre_notificacion'         => 'required',
-            'relacion_notificacion'       => 'required',
-            'puesto'                      => 'required',
-            'identificacion_notificacion' => 'required',
-            'motivo_notificacion'         => 'nullable',
+            'quien_atiende'               => 'nullable',
+            'medio'                       => 'nullable',
+            'vialidad_notificacion'       => 'nullable',
+            'abundar_area'                => 'nullable',
+            'abundar_inmueble'            => 'nullable',
+            'nombre_notificacion'         => 'nullable',
+            'relacion_notificacion'       => 'nullable',
+            'puesto'                      => 'nullable',
+            'identificacion_notificacion' => 'nullable',
+            'motivo_identificacion'       => 'nullable',
             'firma'                       => 'nullable',
             'problema_diligencia'         => 'nullable',
             'genero'                      => 'nullable',
@@ -1698,6 +1701,7 @@ class SeerController extends Controller
             'ojos'                        => 'nullable',
             'particulares'                => 'nullable',
             'especificar'                 => 'nullable',
+            'municipio_citado'            => 'nullable',
         ]);
 
         SeerCitados::find($data["id"])
@@ -1717,6 +1721,7 @@ class SeerController extends Controller
             'relacion_notificacion'      => $data["relacion_notificacion"],
             'puesto'                     => $data["puesto"],
             'identificacion_notificacion'=> $data["identificacion_notificacion"],
+            'motivo_identificacion'      => $data["motivo_identificacion"],
             'firma'                      => $data["firma"],
             'problema_diligencia'        => $data["problema_diligencia"],
             'genero'                     => $data["genero"],
@@ -1728,9 +1733,10 @@ class SeerController extends Controller
             'ojos'                       => $data["ojos"],
             'particulares'               => $data["particulares"],
             'especificar'                => $data["especificar"],
+            'municipio_citado'           => $data["municipio_citado"],
         ]);
 
-        return redirect()->route('seer'); 
+        return redirect()->route('seer');  
  
     }
 
@@ -4591,77 +4597,133 @@ class SeerController extends Controller
 
     //PDF NOTIFICADORES NOTIFICACION
     //PDF Notificación Por instructivo
-    public function PDFnotificadoInstructivo($id){
-        $solicitud = SeerPerGeneral::find($id);
-        
-        //$solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
-        //$solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
-       // ->first();
-        
-        //$citado = SeerCitados::where('id_solicitud', $id)->get();
-        //$citado  = SeerPerGeneral::join("seer_citados","seer_citados.id_solicitud","=","seer_general.id");
-        //$citado = $citado->where("seer_citados.id_solicitud", "=", $solicitud["id"])
-        //->first();
+    public function PDFnotificadoInstructivo($id,  $id_solicitud){
+        $solicitud = SeerPerGeneral::find($id_solicitud);
+       // dd($solicitud);
+        $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
+        $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
+        ->first();
+       
+        $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
+        ->where("seer_citados.id", $id)
+        ->first();
 
         //dd($citado);
-        $html = view('PDF/Solicitudes/razonNotificacion', compact('id', 'solicitud'))->render();
+        $id_notificador = $citado->id_notificador;
+
+        $notificador = User::where('id', $id_notificador)
+            ->select('name')
+            ->first();
+
+        $imagenes = [];
+
+        for ($i = 1; $i <= 3; $i++) {
+            $path = storage_path("app/documentos_notificacion/{$citado->id}-foto{$i}.jpg");
+
+            if (file_exists($path)) {
+                $imagenes[] = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($path));
+            } else {
+                $imagenes[] = null;
+            }
+        }
+            
+        //dd($citado);
+        $html = view('PDF/Solicitudes/razonPorInstructivo', compact('id', 'solicitud','citado','solicitante','notificador','imagenes'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true); 
 
-        $nombreArchivo = 'Razón_Notificación_'.'.pdf';
-        return $pdf->stream($nombreArchivo);                 
+        $nombreArchivo = 'Razón_NotificaciónIns' . $solicitud->empresa .'.pdf';
+        return $pdf->stream($nombreArchivo);                
     }
 
     //PDF Notificación No exitosa SE CONSTITUYE, CERRADO
-    public function PDFnotificadoNoexitosa($id){
-        $solicitud = SeerPerGeneral::find($id);
-        
-        //$solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
-        //$solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
-       // ->first();
-        
-        //$citado = SeerCitados::where('id_solicitud', $id)->get();
-        //$citado  = SeerPerGeneral::join("seer_citados","seer_citados.id_solicitud","=","seer_general.id");
-        //$citado = $citado->where("seer_citados.id_solicitud", "=", $solicitud["id"])
-        //->first();
+    public function PDFnotificadoNoexitosa($id, $id_solicitud){
+        $solicitud = SeerPerGeneral::find($id_solicitud);
+       // dd($solicitud);
+        $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
+        $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
+        ->first();
+       
+        $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
+        ->where("seer_citados.id", $id)
+        ->first();
 
         //dd($citado);
-        $html = view('PDF/Solicitudes/razonNotificacion', compact('id', 'solicitud'))->render();
+        $id_notificador = $citado->id_notificador;
+
+        $notificador = User::where('id', $id_notificador)
+            ->select('name')
+            ->first();
+
+        $imagenes = [];
+
+        for ($i = 1; $i <= 3; $i++) {
+            $path = storage_path("app/documentos_notificacion/{$citado->id}-foto{$i}.jpg");
+
+            if (file_exists($path)) {
+                $imagenes[] = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($path));
+            } else {
+                $imagenes[] = null;
+            }
+        }
+            
+        //dd($citado);
+        $html = view('PDF/Solicitudes/razonNoExitosa', compact('id', 'solicitud','citado','solicitante','notificador','imagenes'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true); 
 
-        $nombreArchivo = 'Razón_Notificación_'.'.pdf';
+        $nombreArchivo = 'Razón_NotificaciónN' . $solicitud->empresa .'.pdf';
         return $pdf->stream($nombreArchivo);                 
     }
 
     //PDF Notificación No exitosa NO SE LOCALIZA INTERIOR
-    public function PDFnotificadoNoexitosaInt($id){
-        $solicitud = SeerPerGeneral::find($id);
+    public function PDFnotificadoNoexitosaInt($id,  $id_solicitud){
+        $solicitud = SeerPerGeneral::find($id_solicitud);
+        // dd($solicitud);
+         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
+         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
+         ->first();
         
-        //$solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
-        //$solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
-       // ->first();
-        
-        //$citado = SeerCitados::where('id_solicitud', $id)->get();
-        //$citado  = SeerPerGeneral::join("seer_citados","seer_citados.id_solicitud","=","seer_general.id");
-        //$citado = $citado->where("seer_citados.id_solicitud", "=", $solicitud["id"])
-        //->first();
-
-        //dd($citado);
-        $html = view('PDF/Solicitudes/razonNotificacion', compact('id', 'solicitud'))->render();
-
-        $pdf = \PDF::loadHTML($html)
-            ->setPaper('a4', 'portrait')
-            ->setOption('isHtml5ParserEnabled', true)
-            ->setOption('isPhpEnabled', true); 
-
-        $nombreArchivo = 'Razón_Notificación_'.'.pdf';
-        return $pdf->stream($nombreArchivo);                 
+         
+ 
+         $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
+         ->where("seer_citados.id", $id)
+         ->first();
+ 
+         //dd($citado);
+         $id_notificador = $citado->id_notificador;
+ 
+         $notificador = User::where('id', $id_notificador)
+             ->select('name')
+             ->first();
+ 
+         $imagenes = [];
+ 
+         for ($i = 1; $i <= 3; $i++) {
+             $path = storage_path("app/documentos_notificacion/{$citado->id}-foto{$i}.jpg");
+ 
+             if (file_exists($path)) {
+                 $imagenes[] = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($path));
+             } else {
+                 $imagenes[] = null;
+             }
+         }
+             
+         //dd($citado);
+         $html = view('PDF/Solicitudes/razonNumInt', compact('id', 'solicitud','citado','solicitante','notificador','imagenes'))->render();
+ 
+         $pdf = \PDF::loadHTML($html)
+             ->setPaper('a4', 'portrait')
+             ->setOption('isHtml5ParserEnabled', true)
+             ->setOption('isPhpEnabled', true); 
+ 
+         $nombreArchivo = 'Razón_NotificaciónNInt' . $solicitud->empresa .'.pdf';
+         return $pdf->stream($nombreArchivo);                      
     }
 }
