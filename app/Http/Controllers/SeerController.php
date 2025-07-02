@@ -2472,6 +2472,37 @@ class SeerController extends Controller
         $delegacion = $this->ObtenerAudiencia($user["delegacion"]);
         //dd($delegacion);
         $sala = 1;
+        switch($delegacion[3]){
+           //Morelia
+            case 16:
+                $sala = "Sala 2";
+            case 22:
+                $sala = "Sala 11";
+            case 25:
+                $sala = "Sala 12";
+            case 33:
+                $sala = "Sala 8";
+            case 35:
+                $sala = "Sala 9";
+            case 36:
+                $sala = "Sala 7";
+            case 38:
+                $sala = "Sala 5";
+            //Usuapan
+            case 41:
+                $sala = "Sala 10";
+            case 42:
+                $sala = "Sala 4";
+            case 45:
+                $sala = "Sala 1";
+            //Zamora
+            case 51:
+                $sala = "Sala 3";
+            case 54:
+                $sala = "Sala 6";
+            default:
+                $sala = "Pendiente";
+        }
         $audiencia_insert=array(
             'id_solicitud'      => $data["id"],
             'numero_audiencia'  => $num_audi,
@@ -2484,7 +2515,7 @@ class SeerController extends Controller
         );
         Audiencias::create($audiencia_insert);
         //Actualizar genera
-        SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $data["conciliador"], 'estatus' => 'Confirmado' ]);
+        SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $delegacion[3], 'estatus' => 'Confirmado' ]);
 
         return redirect()->route('solicitudes_pendientes'); 
     }
@@ -3244,56 +3275,18 @@ class SeerController extends Controller
         ->where("hora",$fecha_hora)
         ->selectRaw('count(id) as total')->first();
         //Validar si hay espacio a esa hora
-        /*
-        if($contador_conciliadores > $conteo["total"]){
-            //dd("IF:".$fecha_revisar." ".$fecha_hora);
-            //$fechasuma = strtotime('+1 day', strtotime($fecha_revisar)); 
-            //$fecha = date('l', strtotime($fechasuma));
-            //Se asigna a un conciliador
-            foreach($conciliadores as $token ){
-                //Voy a revisar si ese usario tiene un registro para no agregarlo
-                $revisar = Audiencias::where('delegacion',$delegacion)
-                ->where('fecha',$fecha_revisar)
-                ->where('hora' ,$fecha_hora)
-                ->where('id_conciliador' ,$token["id"])
-                ->selectRaw('id_conciliador')->first();
+        
+        do {   
+            $tomorrow = strtotime($fecha_revisar." +1 day");
+            $fecha_dia = date('l', $tomorrow);
+            $fecha_tomorrow = date('Y-m-d', $tomorrow);
 
-                $revisar_disponible = DiasInhabiles::
-                where('fecha_inicio', $fecha_revisar)
-                ->where('horario_inicio', $fecha_hora)
-                ->where('user_id',$token["id"])
-                ->first();
-                
-                //Si no tiene audiencia lo voy agregar
-                if(empty($revisar) && empty($revisar_disponible)){
-                    array_push($listado_auxiliares, $token["id"]);
-                    $bandera = 1;
-                }
+            if ($fecha_dia == 'Saturday') {
+                $fechasuma = strtotime($fecha_revisar." +3 day");
+                $fecha_revisar = date('Y-m-d', $fechasuma);
+                $fecha_hora = "09:00:00";
             }
-            $random = array_rand($listado_auxiliares);
-            $array_horarios[0] = $fecha_revisar;
-            $array_horarios[1] = $fecha_hora;
-            $array_horarios[3] = $listado_auxiliares[$random];
-             
-            //dd($array_horarios);   
-            return $array_horarios;
-        }
-        //Vamos a validar en el proximo horario
-        else{
-        */
-    //dd($fecha_revisar);
-            for($i=0;$i < $contador_conciliadores; $i++){
-                $fechasuma = strtotime('+1 day', strtotime($fecha_revisar)); 
-                $fecha_dia = date('l', strtotime($fechasuma));
-                dd($fecha_dia);
-
-                if ($fecha == 'Saturday') {
-                    $fechasuma = strtotime('+2 day', strtotime($fecha_revisar)); 
-                    $fecha_revisar = date('Y-m-d', $fechasuma);
-                    $hora_solicitud = "09:00:00";
-                    dd();
-                }
-
+            else{
                 switch($fecha_hora){
                     case ($fecha_hora == "09:00:00") :
                         //dd($fecha_revisar." ".$fecha_hora);
@@ -3306,16 +3299,16 @@ class SeerController extends Controller
 
                             $revisar_centro = DiasInhabiles::
                             where('fecha_inicio', $fecha_revisar)
-                            ->where('horario_inicio', $fecha_hora)
                             ->where('centro',$user["delegacion"])
                             ->first();
 
                             $revisar_disponible = DiasInhabiles::
                             where('fecha_inicio', $fecha_revisar)
-                            ->where('horario_inicio', $fecha_hora)
+                            ->where('horario_inicio',"<=",$fecha_hora)
+                            ->where('horario_final',">=",$fecha_hora)
                             ->where('user_id',$token["id"])
                             ->first();
-                            
+
                             //Si no tiene audiencia  ni dias inahibles o centro lo voy agregar
                             if(empty($revisar) && empty($revisar_disponible) && empty($revisar_centro)){
                                 array_push($listado_auxiliares, $token["id"]);
@@ -3332,7 +3325,6 @@ class SeerController extends Controller
                         else{
                             $fecha_hora = "10:15:00";
                         }
-
                     case ($fecha_hora == "10:15:00"):
                         //dd($fecha_revisar." ".$fecha_hora);
                         foreach($conciliadores as $token ){
@@ -3341,19 +3333,19 @@ class SeerController extends Controller
                             ->where('hora' ,$fecha_hora)
                             ->where('id_conciliador' ,$token["id"])
                             ->select('id_conciliador')->first();
-                         
+                            
                             $revisar_centro = DiasInhabiles::
                             where('fecha_inicio', $fecha_revisar)
-                            ->where('horario_inicio', $fecha_hora)
                             ->where('centro',$user["delegacion"])
                             ->first();
 
                             $revisar_disponible = DiasInhabiles::
                             where('fecha_inicio', $fecha_revisar)
-                            ->where('horario_inicio', $fecha_hora)
+                            ->where('horario_inicio',"<=",$fecha_hora)
+                            ->where('horario_final',">=",$fecha_hora)
                             ->where('user_id',$token["id"])
                             ->first();
-                            
+                                
                             //Si no tiene audiencia lo voy agregar
                             if(empty($revisar) && empty($revisar_disponible) && empty($revisar_centro)){
                                 array_push($listado_auxiliares, $token["id"]);
@@ -3377,19 +3369,19 @@ class SeerController extends Controller
                             ->where('hora' ,$fecha_hora)
                             ->where('id_conciliador' ,$token["id"])
                             ->select('id_conciliador')->first();
-                         
+                            
                             $revisar_centro = DiasInhabiles::
                             where('fecha_inicio', $fecha_revisar)
-                            ->where('horario_inicio', $fecha_hora)
                             ->where('centro',$user["delegacion"])
                             ->first();
 
                             $revisar_disponible = DiasInhabiles::
                             where('fecha_inicio', $fecha_revisar)
-                            ->where('horario_inicio', $fecha_hora)
+                            ->where('horario_inicio',"<=",$fecha_hora)
+                            ->where('horario_final',">=",$fecha_hora)
                             ->where('user_id',$token["id"])
                             ->first();
-                            
+                                
                             //Si no tiene audiencia lo voy agregar
                             if(empty($revisar) && empty($revisar_disponible) && empty($revisar_centro)){
                                 array_push($listado_auxiliares, $token["id"]);
@@ -3413,19 +3405,19 @@ class SeerController extends Controller
                             ->where('hora' ,$fecha_hora)
                             ->where('id_conciliador' ,$token["id"])
                             ->select('id_conciliador')->first();
-                         
+                            
                             $revisar_centro = DiasInhabiles::
                             where('fecha_inicio', $fecha_revisar)
-                            ->where('horario_inicio', $fecha_hora)
                             ->where('centro',$user["delegacion"])
                             ->first();
 
                             $revisar_disponible = DiasInhabiles::
                             where('fecha_inicio', $fecha_revisar)
-                            ->where('horario_inicio', $fecha_hora)
+                            ->where('horario_inicio',"<=",$fecha_hora)
+                            ->where('horario_final',">=",$fecha_hora)
                             ->where('user_id',$token["id"])
                             ->first();
-                            
+                                
                             //Si no tiene audiencia lo voy agregar
                             if(empty($revisar) && empty($revisar_disponible) && empty($revisar_centro)){
                                 array_push($listado_auxiliares, $token["id"]);
@@ -3449,19 +3441,19 @@ class SeerController extends Controller
                             ->where('hora' ,$fecha_hora)
                             ->where('id_conciliador' ,$token["id"])
                             ->select('id_conciliador')->first();
-                         
+                            
                             $revisar_centro = DiasInhabiles::
                             where('fecha_inicio', $fecha_revisar)
-                            ->where('horario_inicio', $fecha_hora)
                             ->where('centro',$user["delegacion"])
                             ->first();
 
                             $revisar_disponible = DiasInhabiles::
                             where('fecha_inicio', $fecha_revisar)
-                            ->where('horario_inicio', $fecha_hora)
+                            ->where('horario_inicio',"<=",$fecha_hora)
+                            ->where('horario_final',">=",$fecha_hora)
                             ->where('user_id',$token["id"])
                             ->first();
-                            
+                                
                             //Si no tiene audiencia lo voy agregar
                             if(empty($revisar) && empty($revisar_disponible) && empty($revisar_centro)){
                                 array_push($listado_auxiliares, $token["id"]);
@@ -3485,16 +3477,16 @@ class SeerController extends Controller
                             ->where('hora' ,$fecha_hora)
                             ->where('id_conciliador' ,$token["id"])
                             ->select('id_conciliador')->first();
-                         
+                            
                             $revisar_centro = DiasInhabiles::
                             where('fecha_inicio', $fecha_revisar)
-                            ->where('horario_inicio', $fecha_hora)
                             ->where('centro',$user["delegacion"])
                             ->first();
 
                             $revisar_disponible = DiasInhabiles::
                             where('fecha_inicio', $fecha_revisar)
-                            ->where('horario_inicio', $fecha_hora)
+                            ->where('horario_inicio',"<=",$fecha_hora)
+                            ->where('horario_final',">=",$fecha_hora)
                             ->where('user_id',$token["id"])
                             ->first();
                             
@@ -3515,25 +3507,11 @@ class SeerController extends Controller
                             $fecha_hora = "18:00:00";
                         }
                     case ($fecha_hora == "18:00:00"):
-                        dd("18");
-                        //Si ya es el ultimo horario tengo que mandar al otro dia
-                        //Actualizo la fecha
-                        $fechasuma = strtotime('+1 day', strtotime($fecha_revisar)); 
-                        $fecha = date('l', strtotime($fechasuma));
-                        dd($fechasuma);
-                        //Validar que los dias no sea inhabiles dependiendo de la seded
-                        if ($fecha == 'Saturday') {
-                            $fechasuma = strtotime('+2 day', strtotime($fecha_revisar)); 
-                            $fecha_revisar = date('Y-m-d', $fechasuma);
-                            $hora_solicitud = "09:00:00";
-                        }
-                        else{
-                            $fecha_revisar = date('Y-m-d', $fechasuma);
-                            $fecha_hora = "09:00:00";
-                        }
+                        $fecha_revisar = $fecha_tomorrow;
+                        $fecha_hora = "09:00:00";
                 }
             }
-        //}
+        }while ($bandera != 1);
     }
 
     public function concluir_audiencia_conciliador(Request $request){
