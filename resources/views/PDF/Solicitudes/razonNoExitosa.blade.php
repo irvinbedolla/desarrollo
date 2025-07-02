@@ -73,46 +73,73 @@
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                             <tr>    
                                 <td><b>Número de identificación único: </b></td>
-                                <td>[ EXPEDIENTE] </td>
+                                <td>{{ $solicitud->NUE }}</td>
                             </tr> 
                             <tr>   
                                 <td><b>Centro de conciliación: </b></td>
-                                <td>[DIRECCIÓN DE SEDE] </td>
+                                <td>{{ $solicitud->delegacion }}</td>
                             </tr>
                     </table>
                 </div><br><br><br>
                 <!-- DELIGENCIA NO EXITOSA, SE CONSTITUYE, CERRADO -->
                 <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p><br>
-                <p><b>EXPEDIENTE: <br>
-                      SOLICITANTE: <br>
-                      CITADO: 
+                <p><b>
+                      SOLICITANTE: {{$solicitante->nombre}}<br>
+                      CITADO: {{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}
                 </b></p>  
                            
-                <p>Siendo las <b>[14 HORAS CON 56 MINUTOS DEL DÍA [FECHA DE NOTIFICACIÓN], LIC. FELIPE MORENO DÍAZ</b> en mi
-                    calidad de notificador adscrito al Centro de Conciliación Laboral, oficina estatal [SEDE], a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN
-                    de fecha <b>[FECHA CITATORIO]</b> en el expediente citado, en el que se ordena NOTIFICAR <b>AL CITADO: [NOMBRE CITADO]</b>, en el domicilio señalado
-                    en <b>[AVENIDA FRANCISCO I MADERO ORIENTE 313, COLONIA CENTRO, MORELIA, CP 58000, MUNICIPIO
-                    MORELIA, ESTADO MICHOACÁN DE OCAMPO]</b>.<br><br>
+                <p>Siendo las <<b>{{ \Carbon\Carbon::now()->format('H') }} HORAS CON {{ \Carbon\Carbon::now()->format('i') }} MINUTOS
+                    DEL DÍA {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}, LIC. {{$notificador->name}}</b> en mi
+                    calidad de notificador adscrito al Centro de Conciliación Laboral, oficina estatal {{ $solicitud->delegacion }}, a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN
+                    de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> en el expediente citado, en el que se ordena NOTIFICAR <b>AL CITADO: {{$citado->nombre}} 
+                    {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</b>, en el domicilio señalado
+                    en <b>{{$citado->tipo_vialidad}} {{$citado->calle}} {{$citado->n_ext}} {{$citado->n_int}}, COLONIA {{$citado->colonia}}, MORELIA, CP {{$citado->cp}}, ESTADO MICHOACÁN DE OCAMPO</b>.<br><br>
 
                     Cerciorándome de ser éstos los Municipio, Colonia y Vialidad correctas señaladas en la solicitude de conciliación, por
-                    <b>a) LA(S) PLACAS DE SEÑALIZACIÓN OFICIAL MÁS PRÓXIMA(S) AL DOMICILIO EN QUE SE ACTÚA, CON EL RESPECTIVO NOMBRE DE LA ALCALDÍA, COLONIA Y CALLE, 
+                    <b>{{$citado->abundar_area}} a) LA(S) PLACAS DE SEÑALIZACIÓN OFICIAL MÁS PRÓXIMA(S) AL DOMICILIO EN QUE SE ACTÚA, CON EL RESPECTIVO NOMBRE DE LA ALCALDÍA, COLONIA Y CALLE, 
                     b) EL MÚMERO VISIBLE DEL INMUEBLE, c) EL NÚMERO DEL INMUEBLE ES CONSISTENTE CON LA NUMERACIÓN DE LA CALLE, Y d) LOS INFORMES DE VECINOS DEL LUGAR, 
                     QUIENES CONFIRMAN QUE SE TRATA DEL DOMICILIO CORRECTO. A mayor abundamiento, verifico que cerca del domicilio se encuentran los siguientes puntos  
-                    de referencia: A SU COSTADO DERECHO SE ENCUNTRA EL INMUEBLE CON EL NÚMERO 218. De igual forma, he constatado que se trata de un inmueble con las 
+                    de referencia: {{$citado->abundar_inmueble}} A SU COSTADO DERECHO SE ENCUNTRA EL INMUEBLE CON EL NÚMERO 218. De igual forma, he constatado que se trata de un inmueble con las 
                     siguientes características: CONSTA DE PLANTA BAJA Y UN PISO, CON FACHADA EN COLOR GRIS CON PORTÓN DE ACCESO EM SOLOR GRIS</b>.<br><br>
 
-                    Hago constar a la autoridad conciliadora competente que el acceso se encuentra cerrado; no obstante, procedí a tocar en repetidas ocasiones, sin 
+                    <b>{{$citado->observaciones}} Hago constar a la autoridad conciliadora competente que el acceso se encuentra cerrado; no obstante, procedí a tocar en repetidas ocasiones, sin 
                     haber recibido respuesta. Y después de haber esperado un tiempo prudente, lógico y razonable, nadie acude a mi llamado, por lo que no tengo 
-                    persona alguna con quien atender la presente diligencia.<br><br>
+                    persona alguna con quien atender la presente diligencia.</b><br><br>
 
                     En esa razón, me encuentro imposibilitado para dar cumplimiento a lo ordenado en el citatorio de conciliación; toda vez que no cuento 
                     con los elementos de cercioramiento requeridos por el Artículo 743 Fracción I de la Ley Federal del Trabajo, por lo que me es imposible 
                     dar cumplimiento al citatorio antes citado.<br><br>
 
+                    <b>Anexando impresión fotográfica para constancia legal.</b><br>
                     <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. DOY FE.</b> 
                 </p>
                 <br>
-                <p><center><b>___________________________________<br> LIC. FELIPE MORENO DÍAZ<br> FUNCIONARIO/A NOTIFICADOR/A</b></center> </p>
+                <p><center><b>___________________________________<br> LIC. {{$notificador->name}}<br> FUNCIONARIO/A NOTIFICADOR/A</b></center> </p>
+                <div class="page-break"></div> <!-- Genera un salto de línea-->
+                @foreach($imagenes as $index => $imagen) <!--Muestra una fotografía por hoja, númerando por anexos-->
+                    @if($imagen)
+                        <div class="content">
+                            <div class="table-responsive">
+                                <table id="tabla_solicitud" class="table-striped" style="width:65%; float: right;">
+                                    <tr>   
+                                        <td><b>ANEXO FOTOGRAFÍAS {{ $index + 1 }}</b></td>
+                                    </tr>
+                                    <tr>    
+                                        <td><b>Número de identificación único: </b></td>
+                                        <td>{{ $solicitud->NUE }}</td>
+                                    </tr> 
+                                    <tr>   
+                                        <td><b>Centro de conciliación: </b></td>
+                                        <td>{{ $solicitud->delegacion }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div style="text-align: center;">
+                            <img src="{{ $imagen }}" style="width: 100%; height: 90%;">
+                        </div>
+                    @endif
+                @endforeach
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

@@ -206,9 +206,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/seer/updateNotificador',          [SeerController::class, 'update_notificador'])->name('seer.cambioEstatus');
         //Ruta de enlace
         Route::post('/seer/store_enlace',               [SeerController::class, 'store_enlace'])->name('seer.store_enlace');
-        Route::get('/notificaciones/consultar/{id}',        [SeerController::class, 'mostrar_citados'])->name('editar_citado');
-        Route::get('notificaciones/editar',                 [SeerController::class, 'editar_citados'])->name('editar_citado_enlace');  
-        Route::post('notificaciones/actualizar',             [SeerController::class, 'editar_citados'])->name('actualizar_enlace');  
+        Route::get('/notificaciones/consultar/{id}',    [SeerController::class, 'mostrar_citados'])->name('editar_citado');
+        Route::get('notificaciones/editar',             [SeerController::class, 'editar_citados'])->name('editar_citado_enlace');  
+        Route::post('notificaciones/actualizar',        [SeerController::class, 'editar_citados'])->name('actualizar_enlace');  
 
         Route::post('/seer/store_auxiliar',             [SeerController::class, 'store_auxiliares'])->name('seer.store_auxiliar');
         Route::post('/seer/store_conciliador',          [SeerController::class, 'store_conciliadores'])->name('seer.store_conciliador');
@@ -281,23 +281,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/correcion_solicitudes',               [SeerController::class, 'correccion_solicitante'])->name('correccion_solicitante');
     //Fin de Solicitudes
     //PDF Solicitudes    
-        Route::get('/Verpdfincompetencias/{id}',            [SeerController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');
-        Route::get('/Verpdfcs/{id}',                        [SeerController::class, 'VerPDFConvenioSol'])->name('PDFconveniosolicitud');
-        Route::get('/Verpdfacuse/{id}',                     [SeerController::class, 'PDFacuseSolicitud'])->name('PDFacuse_solicitud');
-        Route::get('/Verpdfnotificacion/{id}',              [SeerController::class, 'PDFnotificacionSolicitante'])->name('PDFnotificacion_solicitante');
-        Route::get('/Verpdfmulta/{id}',                     [SeerController::class, 'VerPDFMulta'])->name('PDFmulta');        
-        Route::get('/solicitud/pdfs/{id}',                  [SeerController::class, 'pdfCitatorio'])->name('PDFSolicitud');
-        Route::get('solicitud/consultar/{id}',              [SeerController::class, 'consultar_solicitudes'])->name('consultar_solicitud');
-        Route::get('/audiencias/historial',                 [SeerController::class, 'audiencia_fecha'])->name('audiencia_fecha');
-        Route::post('/historial/conciliador',               [SeerController::class, 'historial_conciliador'])->name('historial_conciliador');
-        Route::get('/PDF/faltaInteres/{id}',                [SeerController::class, 'VerPDFInteres'])->name('PDFfalltaInteres');
-        Route::get('/Verpdfnoconciliacion/{id}',            [SeerController::class, 'VerPDFNoConciliacion'])->name('PDFno_conciliacion');
-        Route::get('/Verpdfincomparecencia/{id}',           [SeerController::class, 'VerPDFincomparecencia'])->name('PDFincomparecencia');
-        Route::get('/pdf/estadistica',                      [PDFController::class, 'pdfEstadistica'])->name('PDFestaditica');
-        Route::get('/VerpdfRnotificacion/{id}',             [SeerController::class, 'VerPDFRNotificacion'])->name('PDFRazonNoticacion'); // Notificación exitosa, ATIENDE OTRA PERSONA
-        Route::get('/VerpdfNotificacion/{id}',              [SeerController::class, 'PDFnotificadoInstructivo'])->name('PDFInstructivo'); //Notificación por instructivo
-        Route::get('/VerpdfNotificacionNoExitosa/{id}',     [SeerController::class, 'PDFnotificadoNoexitosa'])->name('PDFNoExitosa'); //Notificación No exitosa SE CONSTITUYE, CERRADO
-        Route::get('/VerpdfNotificacionNoInt/{id}',         [SeerController::class, 'PDFnotificadoNoexitosaInt'])->name('PDFNoExitosaInt'); //Notificación No exitosa NO SE LOCALIZA INTERIOR
+        Route::get('/Verpdfincompetencias/{id}',                        [SeerController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');
+        Route::get('/Verpdfcs/{id}',                                    [SeerController::class, 'VerPDFConvenioSol'])->name('PDFconveniosolicitud');
+        Route::get('/Verpdfacuse/{id}',                                 [SeerController::class, 'PDFacuseSolicitud'])->name('PDFacuse_solicitud');
+        Route::get('/Verpdfnotificacion/{id}',                          [SeerController::class, 'PDFnotificacionSolicitante'])->name('PDFnotificacion_solicitante');
+        Route::get('/Verpdfmulta/{id}',                                 [SeerController::class, 'VerPDFMulta'])->name('PDFmulta');        
+        Route::get('/solicitud/pdfs/{id}',                              [SeerController::class, 'pdfCitatorio'])->name('PDFSolicitud');
+        Route::get('solicitud/consultar/{id}',                          [SeerController::class, 'consultar_solicitudes'])->name('consultar_solicitud');
+        Route::get('/audiencias/historial',                             [SeerController::class, 'audiencia_fecha'])->name('audiencia_fecha');
+        Route::post('/historial/conciliador',                           [SeerController::class, 'historial_conciliador'])->name('historial_conciliador');
+        Route::get('/PDF/faltaInteres/{id}',                            [SeerController::class, 'VerPDFInteres'])->name('PDFfalltaInteres');
+        Route::get('/Verpdfnoconciliacion/{id}',                        [SeerController::class, 'VerPDFNoConciliacion'])->name('PDFno_conciliacion');
+        Route::get('/Verpdfincomparecencia/{id}',                       [SeerController::class, 'VerPDFincomparecencia'])->name('PDFincomparecencia');
+        Route::get('/pdf/estadistica',                                  [PDFController::class, 'pdfEstadistica'])->name('PDFestaditica');
+        Route::get('/VerpdfRnotificacion/{id}/{id_solicitud}',          [SeerController::class, 'VerPDFRNotificacion'])->name('PDFRazonNoticacion'); // Notificación exitosa, ATIENDE OTRA PERSONA
+        Route::get('/VerpdfNotificacion/{id}/{id_solicitud}',           [SeerController::class, 'PDFnotificadoInstructivo'])->name('PDFInstructivo'); //Notificación por instructivo
+        Route::get('/VerpdfNotificacionNoExitosa/{id}/{id_solicitud}',  [SeerController::class, 'PDFnotificadoNoexitosa'])->name('PDFNoExitosa'); //Notificación No exitosa SE CONSTITUYE, CERRADO
+        Route::get('/VerpdfNotificacionNoInt/{id}/{id_solicitud}',      [SeerController::class, 'PDFnotificadoNoexitosaInt'])->name('PDFNoExitosaInt'); //Notificación No exitosa NO SE LOCALIZA INTERIOR
     //Fin de PDF
     //Ratificaciones
         Route::get('/ratificaciones/index',         [TurnosController::class, 'index_ratificacion'])->name('index_ratificacion');

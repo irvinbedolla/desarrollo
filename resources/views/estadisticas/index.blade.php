@@ -27,7 +27,7 @@
                                                         <td style="display: none;">{{$estadistica->id}}</td>
                                                         <td>{{$estadistica->NUE}}</td>
                                                         <td>{{$estadistica->nombre_solicitado}}</td>
-                                                        <td>{{$estadistica->nombre}}</td>
+                                                        <td>{{$estadistica->nombre}} {{$estadistica->primer_apellido}} {{$estadistica->segundo_apellido}}</td>
                                                         <td>{{$estadistica->estatus}}</td>
                                                         <td><a class="btn btn-info" href="{{ route('seer.notificador', $estadistica->id) }}" onclick=nuevo_estadistica();>Atender</a></td>
                                                     </tr>

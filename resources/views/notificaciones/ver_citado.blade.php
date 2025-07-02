@@ -28,7 +28,7 @@
                                     </button>
                                 </div>
                             @endif
-                            <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('editar_citado_enlace')}}" enctype='multipart/form-data'>
+                            <form class="needs-validation novalidate" method="POST" action="{{route('actualizar_enlace')}}" enctype='multipart/form-data'>
                                 @csrf    
                                 <input type="hidden" name="id" value="{{ $folio->id }}">
                                 
@@ -48,7 +48,7 @@
                                             <label for="name">Primer apellido *</label>
                                             <input type="text" name="primer_apellido" class="form-control" value="<?=$folio["primer_apellido"];?>" oninput="this.value = this.value.toUpperCase()" > 
                                             <div class="invalid-feedback">
-                                                El nombre es obligatorio.
+                                                El primer apellido es obligatorio.
                                             </div>
                                         </div>
                                     </div>
@@ -58,7 +58,7 @@
                                             <label for="name">Segundo apellido *</label>
                                             <input type="text" name="segundo_apellido" class="form-control" value="<?=$folio["segundo_apellido"];?>"oninput="this.value = this.value.toUpperCase()" > 
                                             <div class="invalid-feedback">
-                                                El nombre es obligatorio.
+                                                El segundo apellido es obligatorio.
                                             </div>
                                         </div>
                                     </div>
@@ -68,7 +68,7 @@
                                             <label for="name">RFC</label>
                                             <input type="text" name="rfc" class="form-control" value="<?=$folio["rfc"];?>"minlength="13" maxlength="13" > 
                                             <div class="invalid-feedback">
-                                                El campo conflicto es obligatorio.
+                                                El campo RFC es obligatorio.
                                             </div>
                                         </div>
                                     </div>
@@ -78,7 +78,7 @@
                                             <label for="name">Tipo de Vialidad del citado *</label>
                                             <select name="vialidad" class="form-control" required>
                                                 <option value="">SELECCIONE</option>
-                                                <option value="Calle">CALLE</option>
+                                                <option value="Calle" @php if($folio->tipo_vialidad === "Calle") echo "selected"  @endphp>CALLE</option>
                                                     <option value="Avenida" @php if($folio->tipo_vialidad === "Avenida") echo "selected"  @endphp>AVENIDA</option>
                                                     <option value="Calzada" @php if($folio->tipo_vialidad === "Calzada") echo "selected"  @endphp>CALZADA</option>
                                                     <option value="Boulevard" @php if($folio->tipo_vialidad === "Boulevard") echo "selected"  @endphp>BOULEVARD</option>
@@ -89,7 +89,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Calle del citado *</label>
                                             <input type="text" name="calle" class="form-control" value="<?=$folio["calle"];?>"required> 
@@ -139,32 +139,32 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
-                                            <label for="name">Num ext. del citado</label>
+                                            <label for="name">Núm ext. del citado</label>
                                             <input type="text" name="exterior" class="form-control" value="<?=$folio["n_ext"];?>" required> 
                                             <div class="invalid-feedback">
-                                                El campo calle es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
-                                        <div class="form-group">
-                                            <label for="name">Num int. del citado</label>
-                                            <input type="text" name="interior" class="form-control" value="<?=$folio["n_int"];?>" > 
-                                            <div class="invalid-feedback">
-                                                El campo calle es obligatorio.
+                                                El campo núm. ext. es obligatorio.
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
-                                            <label for="name">Tipo de personas</label>
+                                            <label for="name">Núm int. del citado</label>
+                                            <input type="text" name="interior" class="form-control" value="<?=$folio["n_int"];?>" > 
+                                            <div class="invalid-feedback">
+                                                El campo núm. int. es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
+                                            <label for="name">Tipo de persona</label>
                                             <select name="tipo" class="form-control">
                                                 <option value="">Seleccione</option>
-                                                <option value="Fisica" @php if($folio->tipo_persona === "Fisica") echo "selected"  @endphp>Fisica</option>
+                                                <option value="Fisica" @php if($folio->tipo_persona === "Fisica") echo "selected"  @endphp>Física</option>
                                                 <option value="Moral" @php if($folio->tipo_persona === "Moral") echo "selected"  @endphp>Moral</option>
                                             </select>
                                             <div class="invalid-feedback">
@@ -173,18 +173,18 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
                                             <label for="name">CURP</label>
                                             <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control" value="<?=$folio["curp"];?>"> 
                                             <pre id="resultado"></pre>
                                             <div class="invalid-feedback">
-                                                El nombre es obligatorio.
+                                                El CURP es obligatorio.
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                    <div class="col-xs-12 col-sm-12 col-md-9">
                                         <div class="form-group">
                                             <label for="floatingTextarea">Referencias del domicilio del citado</label>
                                             <textarea class="form-control" placeholder="" name="referencia"><?=$folio["referencia"];?></textarea>
@@ -216,7 +216,7 @@
 @section('scripts')
     <script src="../../public/assets/js/poderes/general.js"></script>
 @endsection
-
+    <script src="../../public/assets/js/validaciones.js"></script>
     <script src="../../public/assets/js/jquery.min.js"></script>
     <script src="../../public/assets/js/popper.min.js"></script>
     <script src="../../public/assets/js/bootstrap.min.js"></script>

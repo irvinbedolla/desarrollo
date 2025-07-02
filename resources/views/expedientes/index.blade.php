@@ -21,7 +21,7 @@
                                         <th style="display: none;">ID</th>
                                         <th style="color: #fff;">Nombres</th>
                                         <th style="color: #fff;">Correo</th>
-                                        <th style="color: #fff;">Telefono</th>
+                                        <th style="color: #fff;">Teléfono</th>
                                         <th style="color: #fff;">Acciones</th>
                                     </thead>
                                     <tbody>

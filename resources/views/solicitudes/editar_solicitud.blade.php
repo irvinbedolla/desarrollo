@@ -220,7 +220,7 @@ body {font-family: Arial;}
                                                     <div class="form-group">
                                                         <label for="confirm-password">Tipo de Persona</label>
                                                         <select name="tipo_persona_solicitante" class="form-control">
-                                                            <option value="Fisica" {{ $solicitante["tipo_persona"] == 'Fisica' ? "selected" : '' }}>Fisica</option>
+                                                            <option value="Fisica" {{ $solicitante["tipo_persona"] == 'Fisica' ? "selected" : '' }}>Física</option>
                                                             <option value="Moral"  {{ $solicitante['tipo_persona'] == 'Moral' ? "selected" : '' }}>Moral</option>
                                                         </select>
                                                     </div>
@@ -280,7 +280,7 @@ body {font-family: Arial;}
                                                             @endforeach
                                                         </select>
                                                         <div class="invalid-feedback">
-                                                            El Estado es obligatorio.
+                                                            El Municipio es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
@@ -304,13 +304,13 @@ body {font-family: Arial;}
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Télefono</label>
+                                                        <label for="password">Teléfono</label>
                                                         <input type="text" class="form-control" name="telefono1_solicitante" value="<?=$solicitante["telefono1"];?>">   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Télefono (Opcional)</label>
+                                                        <label for="password">Teléfono (Opcional)</label>
                                                         <input type="text" class="form-control" name="telefono2_solicitante" value="<?=$solicitante["telefono2"];?>">   
                                                     </div>
                                                 </div>
@@ -325,7 +325,7 @@ body {font-family: Arial;}
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Lenjuage requerido</label>
+                                                        <label for="password">Lenguaje requerido</label>
                                                         <input type="text" class="form-control" name="lenguaje_solicitante" value="<?=$solicitante["lenguaje"];?>">   
                                                     </div>
                                                 </div>
@@ -340,7 +340,7 @@ body {font-family: Arial;}
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Lenjuage requerido</label>
+                                                        <label for="password">Discapacidad</label>
                                                         <input type="text" class="form-control" name="disc_solicitante" value="<?=$solicitante["tipo_discapacidad"];?>">   
                                                     </div>
                                                 </div>
@@ -365,13 +365,13 @@ body {font-family: Arial;}
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Num Ext.</label>
+                                                        <label for="password">Núm Ext.</label>
                                                         <input type="text" class="form-control" name="num_ext_solicitante" value="<?=$solicitante["num_ext"];?>">   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Num Int.</label>
+                                                        <label for="password">Núm Int.</label>
                                                         <input type="text" class="form-control" name="num_int_solicitante" value="<?=$solicitante["num_int"];?>">   
                                                     </div>
                                                 </div>
@@ -383,7 +383,7 @@ body {font-family: Arial;}
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Referencia.</label>
+                                                        <label for="password">Referencia</label>
                                                         <input type="text" class="form-control" name="referencia_solicitante" value="<?=$solicitante["referencia"];?>">   
                                                     </div>
                                                 </div>
@@ -630,7 +630,7 @@ body {font-family: Arial;}
                                             </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <label for="password">Identificacíon Oficial</label><br>
+                                                <label for="password">Identificación Oficial</label><br>
                                                 <a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoCurp}}">PDF</a><br>
                                                 <input type="file" name="documentoIdentificacion" accept=".pdf" class="form-control">
                                             </div>

@@ -445,9 +445,6 @@
                                                 <div class="form-group">
                                                     <label for="name">Fecha de Salida</label>
                                                     <input type="date" name="fecha_salida" class="form-control"> 
-                                                    <div class="invalid-feedback">
-                                                        El campo fecha de salida es obligatoria.
-                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
@@ -465,7 +462,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
-                                                    <h4 class="text-center">En caso de ser mayor de edad subir su identificación y en caso de ser menor su identificaión es su Acta de Nacimiento</h4>
+                                                    <h4 class="text-center">En caso de ser mayor de edad subir su identificación y en caso de ser menor su identificación es su Acta de Nacimiento</h4>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">

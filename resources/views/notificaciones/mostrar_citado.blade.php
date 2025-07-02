@@ -78,7 +78,7 @@
                                             <label for="name">Tipo de Vialidad del citado *</label>
                                             <select name="vialidad" class="form-control" readonly>
                                                 <option value="">SELECCIONE</option>
-                                                <option value="Calle">CALLE</option>
+                                                <option value="Calle" @php if($folio->tipo_vialidad === "Calle") echo "selected"  @endphp>CALLE</option>
                                                     <option value="Avenida" @php if($folio->tipo_vialidad === "Avenida") echo "selected"  @endphp>AVENIDA</option>
                                                     <option value="Calzada" @php if($folio->tipo_vialidad === "Calzada") echo "selected"  @endphp>CALZADA</option>
                                                     <option value="Boulevard" @php if($folio->tipo_vialidad === "Boulevard") echo "selected"  @endphp>BOULEVARD</option>

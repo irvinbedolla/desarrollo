@@ -30,7 +30,7 @@
                                                     <td>{{$notificacion->fecha}}</td> 
                                                     <td>{{$notificacion->NUE}}</td>
                                                     <td>{{$notificacion->nombre_solicitante}}</td>
-                                                    <td>{{$notificacion->nombre}}</td>
+                                                    <td>{{$notificacion->nombre}} {{$notificacion->primer_apellido}} {{$notificacion->segundo_apellido}}</td>
                                                     <td>{{$notificacion->estatus}}</td>
                                                     <td>
                                                         <a class="btn btn-success" href="{{ route('PDFconvenio', $notificacion->id_citado) }}" onclick=consultar_estadistica(); tarjet="_black">Citatorio</a>

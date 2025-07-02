@@ -31,7 +31,7 @@
                                                     <tr>
                                                         <td style="display: none;">{{$notificacion->id_solicitud}}</td>
                                                         <td>{{$notificacion->NUE}}</td>
-                                                        <td>{{$notificacion->nombre}}</td>
+                                                        <td>{{$notificacion->nombre}} {{$notificacion->primer_apellido}} {{$notificacion->segundo_apellido}}</td>
                                                         <td>{{$notificacion->colonia}}</td>
                                                         <td>{{$notificacion->estatus}}</td>
                                                         <td>
