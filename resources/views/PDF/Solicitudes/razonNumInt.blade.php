@@ -58,6 +58,9 @@
                 line-height: 1.5;
                 text-align: justify;
             }
+            .page-break {
+                page-break-after: always;
+            }
         </style>
     </head>
     
@@ -73,30 +76,32 @@
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                             <tr>    
                                 <td><b>Número de identificación único: </b></td>
-                                <td>[ EXPEDIENTE] </td>
+                                <td>{{ $solicitud->NUE }}</td>
                             </tr> 
                             <tr>   
                                 <td><b>Centro de conciliación: </b></td>
-                                <td>[DIRECCIÓN DE SEDE] </td>
+                                <td>{{ $solicitud->delegacion }}</td>
                             </tr>
                     </table>
                 </div><br><br><br>
                 <!-- DELIGENCIA NO EXITOSA, NO SE LOCALIZA INTERIOR -->
                 <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p><br>
-                <p><b>EXPEDIENTE: <br>
-                      SOLICITANTE: <br>
-                      CITADO: 
+                <p>
+                    SOLICITANTE: {{$solicitante->nombre}}<br>
+                    CITADO: {{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}
                 </b></p>  
                            
-                <p>Siendo las <b>[14 HORAS CON 56 MINUTOS DEL DÍA [FECHA DE NOTIFICACIÓN], LIC. [NOMBRE NOTIFICADOR]</b> en mi
-                    calidad de notificador adscrito al Centro de Conciliación Laboral, oficina estatal [SEDE], a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN
-                    de fecha <b>[FECHA CITATORIO]</b> en el expediente citado, en el que se ordena NOTIFICAR <b>AL CITADO: [NOMBRE CITADO]</b>, en el domicilio señalado
-                    en <b>[AVENIDA FRANCISCO I MADERO ORIENTE 313, COLONIA CENTRO, MORELIA, CP 58000, MUNICIPIO
-                    MORELIA, ESTADO MICHOACÁN DE OCAMPO]</b>. Cerciorándome de ser el domicilio correcto por <b>a) LA(S) PLACAS DE SEÑALIZACIÓN OFICIAL MÁS PRÓXIMA(S) 
+                <p>Siendo las <b>{{ \Carbon\Carbon::now()->format('H') }} HORAS CON {{ \Carbon\Carbon::now()->format('i') }} MINUTOS
+                    DEL DÍA {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}, LIC. {{$notificador->name}}</b> en mi
+                    calidad de notificador adscrito al Centro de Conciliación Laboral, oficina estatal {{ $solicitud->delegacion }}, a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN
+                    de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> en el expediente citado, en el que se ordena NOTIFICAR <b>AL CITADO: {{$citado->nombre}} {{$citado->primer_apellido}} 
+                    {{$citado->segundo_apellido}}</b>, en el domicilio señalado
+                    en <b>{{$citado->tipo_vialidad}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) int. {{$citado->n_int}}@endif, COLONIA {{$citado->colonia}}, 
+                    {{$municipioCitado}}, CP {{$citado->cp}}, ESTADO MICHOACÁN DE OCAMPO</b></b>. Cerciorándome de ser el domicilio correcto por <b>a) LA(S) PLACAS DE SEÑALIZACIÓN OFICIAL MÁS PRÓXIMA(S) 
                     AL DOMICILIO EN QUE SE ACTÚA, CON EL RESPECTIVO NOMBRE DE LA ALCALDÍA, COLONIA Y [TIPO_VILAIDAD], b) EL MÚMERO VISIBLE DEL INMUEBLE</b>.<br><br>
 
                     Hago constar a la autoridad conciliadora competente que al recorrer la parte señalada del inmueble, no logro localizar el número interior proporcionado 
-                    por la parte solicitante; adicionalmente hago constar que <b>[RECORRIENDO LA PLANTA BAJA DEL INMUEBLE SEÑALADO SE PUEDE APRECIAR QUE NO TIENEN SEÑALADOS LOS 
+                    por la parte solicitante; adicionalmente hago constar que <b>{{$citado->abundar_area}}[RECORRIENDO LA PLANTA BAJA DEL INMUEBLE SEÑALADO SE PUEDE APRECIAR QUE NO TIENEN SEÑALADOS LOS 
                     INTERIORES, Y SE PUEDE APRECIAR UNA TINTORERIA, BANCOS SCOTIANBANK, BANAMEX, CAFÉ STARBUCKS, SALÓN & SPA, RELOJERÍA Y JOYERÍA, SIN EMBARGO NO ME ES POSIBLE 
                     LOCALIZAR EL INMUEBLE SEÑALADO POR LA PARTE ACTORA]</b>.<br><br>
                     
@@ -107,7 +112,32 @@
                     <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. DOY FE.</b> 
                 </p>
                 <br>
-                <p><center><b>___________________________________<br> <br> FUNCIONARIO/A NOTIFICADOR/A</b></center> </p>
+                <p><center><b>___________________________________<br>LIC. {{$notificador->name}}<br> FUNCIONARIO/A NOTIFICADOR/A</b></center> </p>
+                <div class="page-break"></div> <!-- Genera un salto de línea-->
+                @foreach($imagenes as $index => $imagen) <!--Muestra una fotografía por hoja, númerando por anexos-->
+                    @if($imagen)
+                        <div class="content">
+                            <div class="table-responsive">
+                                <table id="tabla_solicitud" class="table-striped" style="width:65%; float: right;">
+                                    <tr>   
+                                        <td><b>ANEXO FOTOGRAFÍAS {{ $index + 1 }}</b></td>
+                                    </tr>
+                                    <tr>    
+                                        <td><b>Número de identificación único: </b></td>
+                                        <td>{{ $solicitud->NUE }}</td>
+                                    </tr> 
+                                    <tr>   
+                                        <td><b>Centro de conciliación: </b></td>
+                                        <td>{{ $solicitud->delegacion }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div style="text-align: center;">
+                            <img src="{{ $imagen }}" style="width: 100%; height: 90%;">
+                        </div>
+                    @endif
+                @endforeach
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

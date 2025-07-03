@@ -58,6 +58,9 @@
                 line-height: 1.5;
                 text-align: justify;
             }
+            .page-break {
+                page-break-after: always;
+            }
         </style>
     </head>
     
@@ -93,7 +96,8 @@
                     calidad de notificador adscrito al Centro de Conciliación Laboral, oficina estatal {{ $solicitud->delegacion }}, a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN
                     de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> en el expediente citado, en el que se ordena NOTIFICAR 
                     <b>AL CITADO: {{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</b>, en el domicilio señalado
-                    en <b>{{$citado->tipo_vialidad}} {{$citado->calle}} {{$citado->n_ext}} {{$citado->n_int}}, COLONIA {{$citado->colonia}}, MORELIA, CP {{$citado->cp}}, ESTADO MICHOACÁN DE OCAMPO</b><br><br>
+                    en <b>{{$citado->tipo_vialidad}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) int. {{$citado->n_int}}@endif, COLONIA {{$citado->colonia}}, {{$municipioCitado}}, CP {{$citado->cp}}, 
+                    ESTADO MICHOACÁN DE OCAMPO</b><br><br>
 
                     Cerciorándome de ser éstos los Municipio, Colonia y Vialidad correctas señaladas en la solicitude de conciliación, por
                     <b>{{$citado->abundar_area}} a) LA(S) PLACAS DE SEÑALIZACIÓN OFICIAL MÁS PRÓXIMA(S) AL DOMICILIO EN QUE SE ACTÚA, CON EL RESPECTIVO NOMBRE DE LA ALCALDÍA, COLONIA Y CALLE, 
@@ -115,7 +119,7 @@
                     Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. DOY FE.</b> 
                 </p>
                 <br>
-                <p><center><b>___________________________________<br>LIC. FELIPE MORENO DÍAZ <br> FUNCIONARIO/A NOTIFICADOR/A</b></center></p>
+                <p><center><b>___________________________________<br>LIC. {{$notificador->name}} <br> FUNCIONARIO/A NOTIFICADOR/A</b></center></p>
                 <div class="page-break"></div> <!-- Genera un salto de línea-->
                 @foreach($imagenes as $index => $imagen) <!--Muestra una fotografía por hoja, númerando por anexos-->
                     @if($imagen)

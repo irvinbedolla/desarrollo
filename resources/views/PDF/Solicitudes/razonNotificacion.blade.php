@@ -96,7 +96,7 @@
                     DEL DÍA {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}, LIC. {{$notificador->name}}</b> en mi
                     calidad de notificador adscrito al Centro de Conciliación Laboral, oficina estatal {{ $solicitud->delegacion }}, me constituyo física y legalmente en el
                     domicilio ubicado en <b>{{$citado->tipo_vialidad}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) int. {{$citado->n_int}}@endif, COLONIA {{$citado->colonia}}, 
-                    {{ $municipioNombre ?? 'SIN MUNICIPIO' }}, CP {{$citado->cp}}, ESTADO MICHOACÁN DE OCAMPO</b>, 
+                    {{$municipioCitado}}, CP {{$citado->cp}}, ESTADO MICHOACÁN DE OCAMPO</b>, 
                     siendo este el domicilio señalado en la solicitud de conciliación como el del <b>CITADO:
                     {{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</b>. Todo ello a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN de 
                     fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> en el expediente citado. <br><br>

@@ -1647,7 +1647,7 @@ class SeerController extends Controller
         $citados  = SeerCitados::find($id);
         $id = $citados->id;
         $municipios = Municipios::all();
-        
+
         return view('estadisticas.actualizarCitado', compact('id','municipios'));
     }
 
@@ -4197,20 +4197,42 @@ class SeerController extends Controller
     }
 
     //PDF NOTIFICADORES Razón de notificación
-    public function VerPDFRNotificacion($id){
-        $solicitud = SeerPerGeneral::find($id);
-        
+    public function VerPDFRNotificacion($id, $id_solicitud){
+        $solicitud = SeerPerGeneral::find($id_solicitud);
+       // dd($solicitud);
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
         ->first();
-        
-        //$citado = SeerCitados::where('id_solicitud', $id)->get();
-        $citado  = SeerPerGeneral::join("seer_citados","seer_citados.id_solicitud","=","seer_general.id");
-        $citado = $citado->where("seer_citados.id_solicitud", "=", $solicitud["id"])
+
+        $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
+        ->where("seer_citados.id", $id)
         ->first();
 
+        $municipioCitado = null;
+        if ($citado && $citado->municipio_citado) {
+            $municipio = \App\Models\Municipios::find($citado->municipio_citado);
+            $municipioCitado = $municipio ? $municipio->nombre : null;
+        }
         //dd($citado);
-        $html = view('PDF/Solicitudes/razonNotificacion', compact('id', 'solicitud','citado','solicitante'))->render();
+        $id_notificador = $citado->id_notificador;
+
+        $notificador = User::where('id', $id_notificador)
+            ->select('name')
+            ->first();
+
+        $imagenes = [];
+
+        for ($i = 1; $i <= 3; $i++) {
+            $path = storage_path("app/documentos_notificacion/{$citado->id}-foto{$i}.jpg");
+
+            if (file_exists($path)) {
+                $imagenes[] = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($path));
+            } else {
+                $imagenes[] = null;
+            }
+        }
+        //dd($citado);
+        $html = view('PDF/Solicitudes/razonNotificacion', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -4218,7 +4240,7 @@ class SeerController extends Controller
             ->setOption('isPhpEnabled', true); 
 
         $nombreArchivo = 'Razón_Notificación' . $solicitud->empresa .'.pdf';
-        return $pdf->stream($nombreArchivo);                 
+        return $pdf->stream($nombreArchivo);                
     }
 
     public function consulta_cumplimiento($id,$tipo){
@@ -4597,7 +4619,7 @@ class SeerController extends Controller
 
     //PDF NOTIFICADORES NOTIFICACION
     //PDF Notificación Por instructivo
-    public function PDFnotificadoInstructivo($id,  $id_solicitud){
+    public function PDFnotificadoInstructivo($id, $id_solicitud){
         $solicitud = SeerPerGeneral::find($id_solicitud);
        // dd($solicitud);
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
@@ -4608,6 +4630,11 @@ class SeerController extends Controller
         ->where("seer_citados.id", $id)
         ->first();
 
+        $municipioCitado = null;
+        if ($citado && $citado->municipio_citado) {
+            $municipio = \App\Models\Municipios::find($citado->municipio_citado);
+            $municipioCitado = $municipio ? $municipio->nombre : null;
+        }
         //dd($citado);
         $id_notificador = $citado->id_notificador;
 
@@ -4628,7 +4655,7 @@ class SeerController extends Controller
         }
             
         //dd($citado);
-        $html = view('PDF/Solicitudes/razonPorInstructivo', compact('id', 'solicitud','citado','solicitante','notificador','imagenes'))->render();
+        $html = view('PDF/Solicitudes/razonPorInstructivo', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -4651,6 +4678,11 @@ class SeerController extends Controller
         ->where("seer_citados.id", $id)
         ->first();
 
+        $municipioCitado = null;
+        if ($citado && $citado->municipio_citado) {
+            $municipio = \App\Models\Municipios::find($citado->municipio_citado);
+            $municipioCitado = $municipio ? $municipio->nombre : null;
+        }
         //dd($citado);
         $id_notificador = $citado->id_notificador;
 
@@ -4671,7 +4703,7 @@ class SeerController extends Controller
         }
             
         //dd($citado);
-        $html = view('PDF/Solicitudes/razonNoExitosa', compact('id', 'solicitud','citado','solicitante','notificador','imagenes'))->render();
+        $html = view('PDF/Solicitudes/razonNoExitosa', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -4683,19 +4715,22 @@ class SeerController extends Controller
     }
 
     //PDF Notificación No exitosa NO SE LOCALIZA INTERIOR
-    public function PDFnotificadoNoexitosaInt($id,  $id_solicitud){
+    public function PDFnotificadoNoexitosaInt($id, $id_solicitud){
         $solicitud = SeerPerGeneral::find($id_solicitud);
         // dd($solicitud);
-         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
-         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
-         ->first();
+        $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
+        $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
+        ->first();
         
-         
- 
-         $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
-         ->where("seer_citados.id", $id)
-         ->first();
- 
+        $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
+        ->where("seer_citados.id", $id)
+        ->first();
+
+        $municipioCitado = null;
+        if ($citado && $citado->municipio_citado) {
+            $municipio = \App\Models\Municipios::find($citado->municipio_citado);
+            $municipioCitado = $municipio ? $municipio->nombre : null;
+        }
          //dd($citado);
          $id_notificador = $citado->id_notificador;
  
@@ -4716,7 +4751,7 @@ class SeerController extends Controller
          }
              
          //dd($citado);
-         $html = view('PDF/Solicitudes/razonNumInt', compact('id', 'solicitud','citado','solicitante','notificador','imagenes'))->render();
+         $html = view('PDF/Solicitudes/razonNumInt', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado'))->render();
  
          $pdf = \PDF::loadHTML($html)
              ->setPaper('a4', 'portrait')
