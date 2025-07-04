@@ -47,9 +47,26 @@
                                                     </td>
                                                     <td>
                                                         @if($solicitud->estatus == "Conluida")
-                                                            <button type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Ver PDF</button>
+                                                        <div class="dropdown">
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    Documentos
+                                                                </button>
+                                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                    <li><a class="dropdown-item" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}"  target="_blank">Convenio</a></li>
+                                                                    <li><a class="dropdown-item" href="{{ route('PDFaudiencia', $solicitud->id) }}"  target="_blank">Acta de audiencia</a></li>
+                                                                    <li><a class="dropdown-item" href="{{ route('PDFcumplimiento', $solicitud->id) }}"  target="_blank">Constancia de cumplimiento</a></li>
+                                                                </ul>
+                                                            </div>
                                                         @elseif($solicitud->estatus == "Concluida Pagos")
-                                                            <button type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#documentos2" data-id="{{ $solicitud->id }}">Ver PDF</button>
+                                                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    Documentos
+                                                                </button>
+                                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                    <li><a class="dropdown-item" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}"  target="_blank">Convenio</a></li>
+                                                                    <li><a class="dropdown-item" href="{{ route('PDFaudiencia', $solicitud->id) }}"  target="_blank">Acta de audiencia</a></li>
+                                                                </ul>
+                                                            </div>
                                                         @elseif($solicitud->estatus == "Confirmado")
                                                             <a class="btn btn-success" href="{{ route('PDFratifi', $solicitud->id) }}"  target="_blank">Acuse</a>
                                                         @elseif($solicitud->estatus == "Incumplimiento")
@@ -99,66 +116,6 @@
             </div>
         </div>
     </form>
-</div>
-<!-- Modal Documentos -->
-<div class="modal fade" id="documentos" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalLabel">DOCUMENTOS</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
-        <div class="modal-body">
-            <table class="table table-striped" style="width: 100%; text-align: center;">
-                <thead style="background-color: #D2D3D5;">
-                  <tr>
-                    <th>Convenio</th>
-                    <th><a class="btn btn-success" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}"  target="_blank">Ver PDF</a></th>
-                  </tr>
-                  <tr>
-                    <th>Acta de audiencia</th>
-                    <th><a class="btn btn-success" href="{{ route('PDFaudiencia', $solicitud->id) }}"  target="_blank">Ver PDF</a></th>
-                  </tr>
-                  <tr>
-                    <th>Constancia de cumplimiento</th>
-                    <th><a class="btn btn-success" href="{{ route('PDFcumplimiento', $solicitud->id) }}"  target="_blank">Ver PDF</a></th>
-                  </tr>
-                </thead>
-            </table>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-        </div>
-      </div>
-    </div>
-</div>
-<!-- Modal Documentos 2-->
-<div class="modal fade" id="documentos2" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalLabel">DOCUMENTOS</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
-        <div class="modal-body">
-            <table class="table table-striped" style="width: 100%; text-align: center;">
-                <thead style="background-color: #D2D3D5;">
-                  <tr>
-                    <th>Convenio</th>
-                    <th><a class="btn btn-success" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}"  target="_blank">Ver PDF</a></th>
-                  </tr>
-                  <tr>
-                    <th>Acta de audiencia</th>
-                    <th><a class="btn btn-success" href="{{ route('PDFaudiencia', $solicitud->id) }}"  target="_blank">Ver PDF</a></th>
-                  </tr>
-                </thead>
-            </table>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-        </div>
-      </div>
-    </div>
 </div>
 <div id="nuevo_poder" style ="display: none;">
     <div>.</div>
