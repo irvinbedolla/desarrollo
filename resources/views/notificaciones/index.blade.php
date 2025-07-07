@@ -32,7 +32,7 @@
                                                         <td style="display: none;">{{$notificacion->id_solicitud}}</td>
                                                         <td>{{$notificacion->NUE}}</td>
                                                         <td>{{$notificacion->nombre}} {{$notificacion->primer_apellido}} {{$notificacion->segundo_apellido}}</td>
-                                                        <td>{{$notificacion->colonia}}</td>
+                                                        <td>{{$notificacion->colonia}} {{$notificacion->calle}} {{$notificacion->n_ext}}</td>
                                                         <td>{{$notificacion->estatus}}</td>
                                                         <td>
                                                             <form method="POST" action="{{ route('seer.store_enlace') }}" class="needs-validation novalidate">
@@ -53,8 +53,8 @@
                                                         </td>
                                                         <td>
                                                             <div class="col-xs-12 col-sm-12 col-md-12"> 
-                                                                @if($notificacion->estatus == "Pendiente" || $notificacion->estatus == "Por asignar")
-                                                                    <a class="btn btn-primary" href="{{ route('editar_citado', $notificacion->id_citado) }}" onclick=consultar_estadistica();>Editar</a>
+                                                                @if($notificacion->estatus == "Pendiente" || $notificacion->estatus == "Sin asignar")
+                                                                    <a class="btn btn-primary" href="{{ route('editar_citado', $notificacion->id_citado) }}" onclick="consultar_estadistica();">Editar</a>
                                                                 @endif
                                                             </div> 
                                                         </td>

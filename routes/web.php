@@ -336,6 +336,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/incompentencia_audiencia',            [SeerController::class, 'incopentencia_audiencia'])->name('incopentencia_audiencia');
         Route::get('/audieniecias/complimientos',           [SeerController::class, 'audiencias_cumplimiento'])->name('audiencias.cumplimiento');
         Route::post('/audiencia/guardar/solicitud',         [SeerController::class, 'solicitudes_busqueda'])->name('solicitudes_busqueda');
+        Route::post('/solicitud/indexA',                    [SeerController::class, 'guardar_expediente'])->name('subir_expediente'); //Subir expediente
     //Fin de Audiencias
     //Citados
         Route::post('/solicitud/guardar_citadoC',           [SeerController::class, 'insertar_citados_con'])->name('insertar_citado');

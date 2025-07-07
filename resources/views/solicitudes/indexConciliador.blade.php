@@ -8,6 +8,25 @@
             <h3 class="page__heading">Audiencias</h3>
         </div>
         <div class="section-body">
+            <!-- Muestra los mensajes de éxito y/o error según sea el caso, al subir el expediente -->
+            @if (session('success'))
+                <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            @endif
+            <!-- Fin de alertas -->
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
@@ -36,6 +55,9 @@
                                                 <td>
                                                     @if($audiencia->estatus == "Confirmado")
                                                         <a class="btn btn-success" href="{{ route('inicioAudiencia', $audiencia->id, 'Confirmado') }}">Iniciar</a><br>
+                                                    @endif
+                                                    @if($audiencia->estatus == "Conciliacion" || $audiencia->estatus == "No conciliacion" || $audiencia->estatus == "Archivada")
+                                                        <button type="button" class="btn btn-warning open-expediente-modal" data-bs-toggle="modal" data-bs-target="#expediente" data-id="{{ $audiencia->id }}">Subir expediente</button>
                                                     @endif
                                                 </td>
                                                 <td>
@@ -96,6 +118,36 @@
     </div>
 </div>
 
+<!-- Modal Expediente -->
+<div class="modal fade" id="expediente" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <form  class='needs-validation novalidate' method='POST' action="{{ route('subir_expediente') }}" enctype="multipart/form-data">
+        @csrf
+        <input type="hidden" name="audiencia_id" id="expediente_audiencia_id">
+        <div class="modal-dialog modal-l">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Subir expediente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label>Documento en PDF</label>
+                            <input type="file" name="documentoExpediente" class="form-control" accept=".pdf" required>
+                            <div class="invalid-feedback">
+                                El doceumento es obligatorio.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar</button> 
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 <div id="nuevo_poder" style ="display: none;">
     <div>.</div>
     <div class="loader"></div>
@@ -156,6 +208,12 @@
             $('#documentos').on('hidden.bs.modal', function () {
                 $('.modal-backdrop').remove();
                 $('body').removeClass('modal-open');
+            });
+        });
+        $(document).ready(function() {
+            $('.open-expediente-modal').click(function () {
+                const id = $(this).data('id');
+                $('#expediente_audiencia_id').val(id);
             });
         });
     </script>

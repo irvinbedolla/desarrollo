@@ -4761,4 +4761,36 @@ class SeerController extends Controller
          $nombreArchivo = 'Razón_NotificaciónNInt' . $solicitud->empresa .'.pdf';
          return $pdf->stream($nombreArchivo);                      
     }
+    //Guarda el expediente
+    public function guardar_expediente(Request $request){
+        $data = $request->all();
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        $request->validate([
+            'documentoExpediente' => 'required',
+        ]);
+
+        $audienciaId = $data['audiencia_id']; 
+        $solicitud = SeerPerGeneral::find($audienciaId);
+
+        if ($request->hasFile('documentoExpediente')) {
+            $file = $request->file('documentoExpediente');
+        
+            if ($file->isValid()) {
+                $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $documentoExpediente = $filename . "_Expediente." . $file->getClientOriginalExtension();
+        
+                $path = Storage::putFileAs(
+                    'documentosSolicitud', $file, $documentoExpediente
+                );
+        
+                $solicitud->update([
+                    'documentoExpediente' => $documentoExpediente
+                ]);
+            } else {
+                return back()->withErrors(['documentoExpediente' => 'Archivo no válido.']);
+            }
+        }
+        return back()->with('success', 'Expediente cargado correctamente.');
+    }
 }
