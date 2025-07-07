@@ -12,7 +12,6 @@
                     <div class="card">
                         <div class="card-body">
                             @can('crear-turnos')
-                                <a class="btn btn-warning" href="{{ route('turnos.create') }}"  onclick=crear_turnos();> Nuevo</a>
                                 <a class="btn btn-info"    href="{{ route('turnos.listado') }}" onclick=crear_turnos();> Turnos</a>
                             @endcan
 

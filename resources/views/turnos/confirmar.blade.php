@@ -3,14 +3,14 @@
 @section('content')
     <section class="section">
         <div class="section-header">
-            <h3 class="page__heading">Turnos</h3>
+            <h3 class="page__heading">Caso de Excepcíon</h3>
         </div>
         <div class="section-body">
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <h3 class="text-center">Confirmar Turno</h3>
+                            <h3 class="text-center">Confirmar</h3>
                             
                             <!--Se realiza la validación de campos para ver si dejó alguno vacío-->
                             @if ($errors->any())
@@ -30,7 +30,8 @@
                             @endif
 
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                            {!! Form::open(array('route'=>'turnos.edit', 'method'=>'POST', 'class' => 'needs-validation','novalidate')) !!}
+                            <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('turnos.edit')}}">
+                                @csrf
                                 <input type="hidden" name="id" value="{{ $turno->id }}">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-6">
@@ -44,73 +45,133 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
-                                            <label for="name">Tipo Solicitud</label>
-                                            <select name="tipo" class="form-control" >
+                                            <label for="name">Motivo/Causa de la Atención</label>
+                                            <input type="text" name="motivo" class="form-control" required>
+                                            <div class="invalid-feedback">
+                                                El campo es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
+                                            <label for="name">Posible caso de excepción</label>
+                                            <select name="excepcion" class="form-control" required>
                                                 <option value="">Seleccione</option>
-                                                <option value="Solicitud" @php if($turno->tipo === "Solicitud") echo "selected"  @endphp >Solicitud</option>
-                                                <option value="Ratificación" @php if($turno->tipo === "Ratificación") echo "selected"  @endphp>Ratificación</option>
+                                                <option value="Si">Si</option>
+                                                <option value="No">No</option>
                                             </select>
                                             <div class="invalid-feedback">
-                                                El tipo de solicitud es obligatoria.
+                                                El campo es obligatorio.
                                             </div>
                                         </div>
                                     </div>
 
-                                        <div  class="col-xs-12 col-sm-12 col-md-6">
-                                            <div class="form-group">
-                                                <label for="name">Edad</label>
-                                                <input type="number" name="edad" class="form-control" value="{{ $turno->edad }}"> 
-                                                <div class="invalid-feedback">
-                                                    El campo edad es obligatorio.
-                                                </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
+                                            <label for="name">Posible caso de excepción</label>
+                                            <select name="tipo_caso" class="form-control" required>
+                                                <option value="">Seleccione</option>
+                                                <option value="No aplica">No aplica</option>
+                                                <option value="Discriminación">Discriminación</option>
+                                                <option value="Acoso u hostigamiento sexual">Acoso u hostigamiento sexual</option>
+                                                <option value="Discriminación">Designación de beneficiarios</option>
+                                                <option value="Discriminación">Prestaciones de Seguridad Social</option>
+                                                <option value="Discriminación">Maternidad</option>
+                                                <option value="Acoso u hostigamiento sexual">Riesgos de trabajo</option>
+                                                <option value="Discriminación">Accidentes de Trabajo</option>
+                                                <option value="Discriminación">Invalidez</option>
+                                                <option value="Discriminación">Seguros de Vida</option>
+                                                <option value="Discriminación">Otras</option>
+                                                <option value="Discriminación">Libertad y Asociación Sindical</option>
+                                                <option value="Discriminación">Trata Laboral y Trabajo Forzoso</option>
+                                                <option value="Discriminación">Trabajo Infantil</option>
+                                                <option value="Discriminación">Disputa de titularidad de Contrato Coletivo y Contrato Ley</option>
+                                                <option value="Discriminación">Impugnación de estatutos de Sindicato y su Modificación</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El campo es obligatorio.
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-6">
-                                            <div class="form-group">
-                                                <label for="name">Sexo</label>
-                                                <select name="sexo" class="form-control">
-                                                    <option value="">Seleccione</option>
-                                                    <option value="H" @php if($turno->sexo === "H") echo "selected"  @endphp>Hombre</option>
-                                                    <option value="M" @php if($turno->sexo === "M") echo "selected"  @endphp>Mujer</option>
-                                                    <option value="NB" @php if($turno->sexo === "NB") echo "selected"  @endphp>No Binarios</option>
-                                                    <option value="LGBTTTIQ" @php if($turno->sexo === "LGBTTTIQ") echo "selected"  @endphp>LGBTTTIQ+</option>
-                                                </select>
-                                                <div class="invalid-feedback">
-                                                    El campo sexo es obligatorio.
-                                                </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
+                                            <label for="name">Grupos vulnerables</label>
+                                            <select name="vulnerables" class="form-control" required>
+                                                <option value="">Seleccione</option>
+                                                <option value="Menores de edad">Menores de edad</option>
+                                                <option value="Mayores">Adultos mayores</option>
+                                                <option value="Discapacidad">Personas con discapacidad</option>
+                                                <option value="Indigena">Población indígena</option>
+                                                <option value="Personas Migrantes">Personas Migrantes</option>
+                                                <option value="LGBTTTIQ">LGBTTTIQ+</option>
+                                                <option value="Ninguno">No aplica</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El campo es obligatorio.
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-6">
-                                            <div class="form-group">
-                                                <label for="name">Grupos vulnerables</label>
-                                                <select name="vulnerables" class="form-control">
-                                                    <option value="">Seleccione</option>
-                                                    <option value="Discapacidad" @php if($turno->vulnerables === "Discapacidad") echo "selected"  @endphp>Personas con discapacidad</option>
-                                                    <option value="Mayores" @php if($turno->vulnerables === "Mayores") echo "selected"  @endphp>Adultos mayores</option>
-                                                    <option value="Indigena" @php if($turno->vulnerables === "Indigena") echo "selected"  @endphp>Población indígena</option>
-                                                    <option value="Violencia" @php if($turno->vulnerables === "Violencia") echo "selected"  @endphp>Violencia laboral ( acoso/ hostigamiento laboral)</option>
-                                                </select>
-                                                <div class="invalid-feedback">
-                                                    El campo sexo es obligatorio.
-                                                </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
+                                            <label for="name">Resultado  de Atencíon</label>
+                                            <select id="resultado" name="resultado" class="form-control"  onchange="cambiaEstatus(this)" required>
+                                                <option value="">Seleccione</option>
+                                                <option value="Solicitud">Solicitud</option>
+                                                <option value="Canaliza">Canaliza</option>
+                                                <option value="Asesoria">Asesoria</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El campo es obligatorio.
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-6">
-                                            <div class="form-group">
-                                                <label for="name">Conflicto</label>
-                                                <textarea name="conflicto" class="form-control">{{ $turno->conflicto }}</textarea>
-                                                <div class="invalid-feedback">
-                                                    El campo edad es obligatorio.
-                                                </div>
+                                    </div>
+                                    <div id="link" class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
+                                            <label for="name">SINACOL</label><br>
+                                            <a type="button" href="https://michoacan.cencolab.mx/solicitudes/create-public" target="_blank">Levantar Solicitud</a>
+                                        </div>
+                                    </div>
+                                    <div id="folio" class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
+                                            <label for="name">Folio de solicitud</label>
+                                            <input type="text" name="folio" class="form-control">
+                                            <div class="invalid-feedback">
+                                                El campo  es obligatorio.
                                             </div>
                                         </div>
-                                    
+                                    </div>
+                                    <div id="tarjeta" class="col-xs-12 col-sm-12 col-md-8">
+                                        <div class="form-group">
+                                            <label for="name">Tarjeta informativa</label>
+                                            <input type="text" name="tarjeta" class="form-control">
+                                            <div class="invalid-feedback">
+                                                El campo  es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="canaliza" class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
+                                            <label for="name">Institución a la que se canalizá</label>
+                                            <select name="INS" class="form-control">
+                                                <option value="">Seleccione</option>
+                                                <option value="CEEADV">CEEADV</option>
+                                                <option value="COEPRED">COEPRED</option>
+                                                <option value="SEIMUJER">SEIMUJER</option>
+                                                <option value="PRODET">PRODET</option>
+                                                <option value="OTRO">OTRO</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El campo  es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <button type="submit" class="btn btn-primary">Guardar</button>
                                     </div>
                                     
                                 </div>
-                            {!! Form::close() !!}
+                            </form>
         
 
                         </div>
@@ -128,20 +189,33 @@
 
 
 @section('scripts')
-    <script src="../../public/js/turnos/turnos.js"></script>
+    <script src="../../public/assets/js/turnos/turnos.js"></script>
     <script>
-        $('input[type="checkbox"]').on('change', function(e){
-            if (this.checked) {
-                document.getElementById("div1").style.display = "block";
-                document.getElementById("div2").style.display = "block";
-                document.getElementById("div3").style.display = "block";
-                document.getElementById("div4").style.display = "block";
-            } else {
-                document.getElementById("div1").style.display = "none";
-                document.getElementById("div2").style.display = "none";
-                document.getElementById("div3").style.display = "none";
-                document.getElementById("div4").style.display = "none";
+        document.getElementById("tarjeta").style.display="none";
+        document.getElementById("folio").style.display="none";
+        document.getElementById("link").style.display="none";
+        document.getElementById("canaliza").style.display="none";
+        
+        function cambiaEstatus(elemento){
+            var valor = elemento.value;
+            if(valor == "Solicitud"){
+                document.getElementById("tarjeta").style.display="block";
+                document.getElementById("folio").style.display="block";
+                document.getElementById("link").style.display="block";
+                document.getElementById("canaliza").style.display="none";
             }
-        });
+            else if(valor == "Canaliza"){
+                document.getElementById("tarjeta").style.display="none";
+                document.getElementById("folio").style.display="none";
+                document.getElementById("link").style.display="none";
+                document.getElementById("canaliza").style.display="block";
+            }
+            else{
+                document.getElementById("tarjeta").style.display="block";
+                document.getElementById("folio").style.display="none";
+                document.getElementById("link").style.display="none";
+                document.getElementById("canaliza").style.display="none";
+            }
+        }
     </script>
 @endsection

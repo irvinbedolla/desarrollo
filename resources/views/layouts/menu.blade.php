@@ -187,12 +187,6 @@
             <a class="nav-link" href="{{ route('poderes') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
-            <a class="nav-link" href="{{ route('miscapacitaciones') }}">
-                <i class="bi bi-backpack4-fill"></i><span class="text-dark" onclick="mis_capacitaciones()">Mis capacitaciones</span>
-            </a>
-            <a class="nav-link" href="{{ route('expedientes') }}">
-                <i class="bi bi-graph-down"></i><span class="text-dark" onclick="expedientes()">Expediente</span>
-            </a>
         @endrole
     @endauth
     
@@ -203,12 +197,6 @@
             </a>
             <a class="nav-link" href="{{ route('seer') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">SEER</span>
-            </a>
-            <a class="nav-link" href="{{ route('miscapacitaciones') }}">
-                <i class="bi bi-backpack4-fill"></i><span class="text-dark" onclick="mis_capacitaciones()">Mis capacitaciones</span>
-            </a>
-            <a class="nav-link" href="{{ route('expedientes') }}">
-                <i class="bi bi-graph-down"></i><span class="text-dark" onclick="expedientes()">Mi Expediente</span>
             </a>
             <a class="nav-link" href="{{ route('misturnos') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="turnos()">Mis turnos</span>
