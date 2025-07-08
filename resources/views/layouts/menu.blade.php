@@ -201,6 +201,9 @@
             <a class="nav-link" href="{{ route('misturnos') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="turnos()">Mis turnos</span>
             </a>
+            <a class="nav-link" href="{{ route('tarjeta_informativa') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="turnos()">Tarjeta Informativa</span>
+            </a>
         @endrole
     @endauth
 

@@ -516,7 +516,6 @@ class RecepcionController extends Controller
 
     public function misturnos(){
         $id = auth()->user()->id;
-        //$fecha_actual = date('Y-m-d');
 
         /////Validar si es auxiliar o exepcion /////
         $misturnos = Recepcion::where('auxiliar', $id)
@@ -649,7 +648,7 @@ class RecepcionController extends Controller
                 'tipo_caso'     => $data["tipo_caso"],
                 'vulnerables'   => $data["vulnerables"],
                 'folio'         => $data["folio"],
-                'tarjeta'       => $data["tarjeta"],
+                //'tarjeta'       => $data["tarjeta"],
                 'auxiliar'      => 0,
                 'resultado'     => $data["resultado"]
             );
@@ -667,23 +666,32 @@ class RecepcionController extends Controller
         }else{
             $turno_update= array(
                 'solicitante'   => $data["nombre"],
-                'tarjeta'       => $data["tarjeta"],
+                //'tarjeta'       => $data["tarjeta"],
                 'estatus'       => "atendido",
                 'resultado'     => $data["resultado"]
             );
         }
 
         $turno = Recepcion::find($data["id"])->update($turno_update);
-        //Hacer una consulta a la solictud y obtener el auxiliar
-        /*
-        $consulta = Turnos::find($data["id"]);
-        $persona = DB::table('turno_disponible')
-        ->where('id_auxiliar', $consulta["auxiliar"])
-        ->where('fecha', $fecha_actual)
-        ->update(['estatus' => 'Ocupado']);
-        */
-
 
         return redirect()->route('misturnos');
+    }
+
+    public function index_tarjeta(){
+        $id = auth()->user()->id;
+
+        $misturnos = Recepcion::where('auxiliar', $id)
+        ->where('estatus', 'atendido')
+        ->where('exepcion','Si')
+        ->where('tarjeta',NULL)
+        ->get();
+
+        return view('recepcion/index',compact('misturnos'));
+    }
+
+    public function tarjeta_crear($id){
+        $tarjeta = Recepcion::find($id);
+
+        return view('recepcion/tarjeta',compact('tarjeta'));
     }
 }

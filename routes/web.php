@@ -114,7 +114,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/poderes/index',            [PoderController::class, 'index'])->name('poderes');
         Route::get('/seer/estadistica',         [SeerController::class, 'estadistica'])->name('seer.estadistica');
         Route::get('/turnos/index',             [TurnosController::class, 'index_turnos'])->name('turnos');
-        Route::get('/turnos/misturnos',         [TurnosController::class, 'misturnos'])->name('misturnos');
+        Route::get('/turnos/misturnos',         [RecepcionController::class, 'misturnos'])->name('misturnos');
         Route::get('/turnos/estadistica',       [TurnosController::class, 'estadistica'])->name('turno_estadistica');
         Route::get('/notificaciones/index',     [SeerController::class, 'notificaciones'])->name('notificaciones');
         Route::get('/solicitudes/home',         [SeerController::class, 'solicitudes'])->name('solicitudes_index');
@@ -232,7 +232,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Fin de Expedientes
     //Turnos
         Route::get('/turnos/index1',             [TurnosController::class, 'index'])->name('turnos.index');
-        Route::get('/turnos/misturnos',          [TurnosController::class, 'misturnos'])->name('misturnos');
+        //Route::get('/turnos/misturnos',          [TurnosController::class, 'misturnos'])->name('misturnos');
         Route::get('/turnos/estadistica',        [TurnosController::class, 'estadistica'])->name('turno_estadistica');
         Route::post('/turnos/mostrar',           [TurnosController::class, 'mostrar'])->name('turnos_mostrar');
         Route::get('/Verpdf/{id}',               [TurnosController::class, 'VerPDF'])->name('PDFratifi');
@@ -365,6 +365,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/turnos/cambio/{id}',        [RecepcionController::class, 'cambio'])->name('turnos.cambioexcepcion');
         Route::get('/turnos/terminado/{id}',     [RecepcionController::class, 'terminado'])->name('turnos.terminado');
         Route::post('/turnos/edit',              [RecepcionController::class, 'edit'])->name('turnos.edit');
+        Route::get('/turnos/tarjeta',            [RecepcionController::class, 'index_tarjeta'])->name('tarjeta_informativa');
+        Route::get('/tarjeta/llenar/{id}',       [RecepcionController::class, 'tarjeta_crear'])->name('llenar_tarjeta');
+        Route::post('/tarjeta/guardar',          [RecepcionController::class, 'guardar'])->name('agregar_tarjeta');
     //Fin recepcion
 
     Route::name('user-management.')->group(function () {

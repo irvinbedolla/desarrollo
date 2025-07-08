@@ -68,7 +68,7 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
-                                            <label for="name">Posible caso de excepción</label>
+                                            <label for="name">Tipo de caso</label>
                                             <select name="tipo_caso" class="form-control" required>
                                                 <option value="">Seleccione</option>
                                                 <option value="No aplica">No aplica</option>
@@ -140,15 +140,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="tarjeta" class="col-xs-12 col-sm-12 col-md-8">
-                                        <div class="form-group">
-                                            <label for="name">Tarjeta informativa</label>
-                                            <input type="text" name="tarjeta" class="form-control">
-                                            <div class="invalid-feedback">
-                                                El campo  es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
                                     <div id="canaliza" class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
                                             <label for="name">Institución a la que se canalizá</label>
@@ -166,7 +157,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-6"><br>
                                         <button type="submit" class="btn btn-primary">Guardar</button>
                                     </div>
                                     
@@ -191,7 +182,6 @@
 @section('scripts')
     <script src="../../public/assets/js/turnos/turnos.js"></script>
     <script>
-        document.getElementById("tarjeta").style.display="none";
         document.getElementById("folio").style.display="none";
         document.getElementById("link").style.display="none";
         document.getElementById("canaliza").style.display="none";
@@ -199,19 +189,16 @@
         function cambiaEstatus(elemento){
             var valor = elemento.value;
             if(valor == "Solicitud"){
-                document.getElementById("tarjeta").style.display="block";
                 document.getElementById("folio").style.display="block";
                 document.getElementById("link").style.display="block";
                 document.getElementById("canaliza").style.display="none";
             }
             else if(valor == "Canaliza"){
-                document.getElementById("tarjeta").style.display="none";
                 document.getElementById("folio").style.display="none";
                 document.getElementById("link").style.display="none";
                 document.getElementById("canaliza").style.display="block";
             }
             else{
-                document.getElementById("tarjeta").style.display="block";
                 document.getElementById("folio").style.display="none";
                 document.getElementById("link").style.display="none";
                 document.getElementById("canaliza").style.display="none";
