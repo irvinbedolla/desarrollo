@@ -338,7 +338,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         @if($userRole[0] == "Auxiliar")
-                                            <a class="btn btn-primary" href="{{ route('ratificacion_atenderificacion') }}">Regresar</a>
+                                            <a class="btn btn-primary" href="{{ route('ratificacion_atender') }}">Regresar</a>
                                         @elseif($userRole[0] == "Solicitante")
                                             <a class="btn btn-primary" href="{{ route('ratificacion') }}">Regresar</a>
                                         @elseif($userRole[0] == "Administrador Solicitante")

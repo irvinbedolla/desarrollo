@@ -113,7 +113,7 @@
                     </b></p>
                     <p><b> 
                         SOLICITANTE: {{ $solicitante->nombre }}<br><br>
-                        CITADO (S): @foreach($citados as $citado)
+                        CITADO (S): <br>@foreach($citados as $citado)
                                         {{ $citado->nombre }} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}} <br>
                                     @endforeach
                         <br>

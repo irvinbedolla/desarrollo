@@ -109,7 +109,6 @@
                     <p class="sangria">                
                         b) Que por el desempeño de sus labores contaba con las siguientes prestaciones:<br>
                             - Salario mensual: <b>${{ number_format($salario_mensual, 2) }} {{ $mensualTexto }} M.N</b>. <br>
-                            - Días de descanso: <b> dias_descanso </b><br>
                             - Vacaciones: <b>{{ $solicitud->vacaciones_dias }}</b> días al año.<br>
                             - Aguinaldo: <b>{{ $solicitud->aguinaldo_dias }}</b> días al año.<br>
                             - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>{{ $solicitud->Otras }}</b>.
@@ -212,7 +211,7 @@
                             </p>
 
                     <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
-                    <p>{{ $pago->observaciones }}</p> 
+                    
 
                     <!-- CON PAGOS DIFERIDOS-->       
                     @if($pagosDif>'1')            
@@ -221,7 +220,7 @@
                             <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }} M.N</b>, tal como se muestra:
                         </p>
                         <div class="table-responsive">
-                            <table id="pagos" class="table-striped" style="width:60%;">
+                            <table id="pagos" class="table-striped" style="width:100%;">
                                 <thead>
                                     <th style="display: none;">ID</th>
                                     <th>Fecha</th>
@@ -234,14 +233,14 @@
                                         <tr>
                                             <td style="display: none;">{{$pago->id_solicitud}}</td>
                                             <td>{{ \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d/m/y') }}</td> 
-                                            <td>{{$pago->hora}}</td>
+                                            <td>{{ \Carbon\Carbon::parse(str_replace(' HORAS', '', $pago->hora))->format('H:i') }}</td>
                                             <td>${{ number_format($pago->monto, 2) }}</td>
                                             <td>{{$pago->descripcion}}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>      
-                        </div>
+                        </div><br>
                         
                         <p>En caso de que la parte <b>EMPLEADORA</b> no cubra el pago de la cantidad estipulada y dentro del plazo determinado en esta cláusula, deberá pagar a la parte <b>TRABAJADORA</b> 
                             el equivalente a un día de salario diario, el cual se fijará en razón del salario que percibía dicha parte antes de finalizar la relación de trabajo correspondiente a la cantidad de 

@@ -119,7 +119,7 @@
                     <p class="sangria">
                         c) Que desempeñaba sus actividades laborales en las siguientes condiciones: <br>
                             - Horario: <b>{{ $solicitud->horario }}</b>.<br>
-                            - Horario de comida: de <b>{{ $solicitud->comida }}</b>.<br>
+                            - Horario de comida: <b>{{ $solicitud->comida }}</b>.<br>
                             - Domicilio donde prestaba sus servicios: <b>{{ $solicitud->domicilio }}</b>.
                     </p>
                         <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
@@ -208,9 +208,8 @@
                                 @endforeach
                             </p>
 
-                    <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
-                    <p>{{ $pago->observaciones }}</p> 
-
+                    
+                            
                     <!-- CON PAGOS DIFERIDOS-->       
                     @if($pagosDif>'1')            
                         <p><b>SEXTA</b>. La <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará en <b>{{ $pagosDif->C_pagos}}</b> 
@@ -218,7 +217,7 @@
                             <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }} M.N</b>, tal como se muestra:
                         </p>
                         <div class="table-responsive">
-                            <table id="pagos" class="table-striped" style="width:60%;">
+                            <table id="pagos" class="table-striped" style="width:100%;">
                                 <thead>
                                     <th style="display: none;">ID</th>
                                     <th>Fecha</th>
@@ -231,14 +230,14 @@
                                         <tr>
                                             <td style="display: none;">{{$pago->id_solicitud}}</td>
                                             <td>{{ \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d/m/y') }}</td> 
-                                            <td>{{$pago->hora}}</td>
+                                            <td>{{ \Carbon\Carbon::parse(str_replace(' HORAS', '', $pago->hora))->format('H:i') }}</td>
                                             <td>${{ number_format($pago->monto, 2) }}</td>
                                             <td>{{$pago->descripcion}}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>      
-                        </div>
+                        </div><br>
 
                         <p>En caso de que la parte <b>EMPLEADORA</b> no cubra el pago de la cantidad estipulada y dentro del plazo determinado en esta cláusula, deberá pagar a la parte <b>TRABAJADORA</b> 
                             el equivalente a un día de salario diario, el cual se fijará en razón del salario que percibía dicha parte antes de finalizar la relación de trabajo correspondiente a la cantidad de 

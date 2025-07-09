@@ -28,6 +28,7 @@ use App\Models\Concepto;
 use App\Models\PersonaFisica;
 use App\Models\Turnos;
 use App\Models\DiasInhabiles;
+use NumberToWords\NumberToWords; // para convertir números(cantidades) a letras
 
 //Para sacar el Id del usuario
 use Illuminate\Support\Facades\Auth;
@@ -3632,7 +3633,7 @@ class SeerController extends Controller
     
     // PDF Convenio para solicitudes
     public function VerPDFConvenioSol($id){
-        $solicitud = SeerPerGeneral::find($id);
+        $solicitud = SeerPerGeneral::find($id); 
         $pagos = Pagos::where('id_solicitud', $id)->get();
         //$prestacionesLab = Concepto::where('id_solicitud', $id)->first();
         //dd($prestaciones);
@@ -3685,7 +3686,7 @@ class SeerController extends Controller
             }
         }
         
-        //$dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
+       // $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
 
         $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
         $salario_mensual = $salario_diario * 30;
@@ -3698,9 +3699,9 @@ class SeerController extends Controller
         ->select(DB::raw('count(pago_solicitud.id_solicitud) as C_pagos'))
         ->first();
 
-        $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
-        $conciliador = $conciliador->where("seer_general.conciliador_id", "=", $solicitud["conciliador_id"])
-        ->select('users.name')
+        $conciliador = User::join("seer_general", "seer_general.conciliador_id", "=", "users.id")
+        ->where("seer_general.id", "=", $id)
+        ->select("users.name")
         ->first();
 
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
@@ -3890,9 +3891,11 @@ class SeerController extends Controller
         $user = User::find($id);
         $data = $request->all();
         $audiencias = SeerPerGeneral::where('conciliador_id', $user->id)
+            ->join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id")
             ->where('conciliador_id',$id)
             ->whereBetween('seer_general.fecha', [$data["fecha_inicio"], $data["fecha_final"]])
             ->get();
+        //dd($audiencias);
         return view('/historial/conciliadores',compact('audiencias'));
     }
 
@@ -3900,7 +3903,6 @@ class SeerController extends Controller
     public function citado_personaF(Request $request){
         $data = $request->all();
         $citados = SeerCitados::find($data["id_citado_pf"]);
-       
         $data_insertar= array(
             'id_solicitud'              => $data["id"],
             'id_citado'                 => $data["id_citado_pf"],
@@ -4442,7 +4444,7 @@ class SeerController extends Controller
     public function guardar_rechazo(Request $request){
         $data = $request->all();
        // dd($data);
-        SeerPerGeneral::find($data["id"])->update(['estatus' => 'Rechazado','observaciones' => $data["observaciones"]]);
+        SeerPerGeneral::find($data["id"])->update(['estatus' => 'Prevencion','observaciones' => $data["observaciones"]]);
         
         return redirect()->route('solicitudes_pendientes');
     }

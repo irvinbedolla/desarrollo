@@ -1183,7 +1183,7 @@ class TurnosController extends Controller
 
     public function guardar_rechazo(Request $request){
         $data = $request->all();
-        Turnos::find($data["id"])->update(['estatus' => 'Rechazado','observaciones' => $data["observaciones"]]);
+        Turnos::find($data["id"])->update(['estatus' => 'Prevencion','observaciones' => $data["observaciones"]]);
 
         return redirect()->route('Ratificacion');
     }

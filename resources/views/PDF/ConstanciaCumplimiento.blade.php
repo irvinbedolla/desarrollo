@@ -108,7 +108,7 @@
                     De acuerdo con lo establecido en el convenio referido el <b>EMPLEADOR</b> se obligó al pago de los siguientes conceptos: <br>
               
                     <div class="table-responsive">
-                        <table id="pagos" class="table-striped" style="width:60%;">
+                        <table id="pagos" class="table-striped" style="width:100%;">
                             <thead>
                                 <th style="display: none;">ID</th>
                                 <th>Fecha</th>
@@ -121,7 +121,7 @@
                                     <tr>
                                         <td style="display: none;">{{$pago->id_solicitud}}</td>
                                         <td>{{ \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d/m/y') }}</td> 
-                                        <td>{{$pago->hora}}</td>
+                                        <td>{{ \Carbon\Carbon::parse(str_replace(' HORAS', '', $pago->hora))->format('H:i') }} HORAS</td>
                                         <td>${{ number_format($pago->monto, 2) }}</td>
                                         <td>{{$pago->descripcion}}</td>
                                     </tr>

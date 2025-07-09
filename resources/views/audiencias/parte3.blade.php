@@ -86,7 +86,7 @@
                                             </div>
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-6"><br>
-                                            <label for="name">Conclución de audencia</label>
+                                            <label for="name">Conclución de audiencia</label>
                                             <select id="conclucion" name="conclucion" class="form-control">
                                                 <option>Seleccione</option>
                                                 <option value="Conciliacion">Hubo Convenio</option>

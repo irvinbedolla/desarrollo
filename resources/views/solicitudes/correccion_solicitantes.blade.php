@@ -518,7 +518,7 @@ body {font-family: Arial;}
                                                         <label for="name">Tipo de persona</label>
                                                         <select name="tipo_persona_citado[]" class="form-control">
                                                             <option value="">SELECCIONE</option>
-                                                            <option value="Fisica" {{ $citado['tipo_persona'] == 'Fisica' ? "selected" : '' }}>Fisica</option>
+                                                            <option value="Fisica" {{ $citado['tipo_persona'] == 'Fisica' ? "selected" : '' }}>Física</option>
                                                             <option value="Moral"  {{ $citado['tipo_persona'] == 'Moral' ? "selected" : '' }}>Moral</option>
                                                         </select>
                                                     </div>
