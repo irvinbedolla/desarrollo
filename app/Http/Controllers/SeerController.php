@@ -3902,17 +3902,18 @@ class SeerController extends Controller
     //Citado persona física
     public function citado_personaF(Request $request){
         $data = $request->all();
-        $citados = SeerCitados::find($data["id_citado_pf"]);
+        //$citados = SeerCitados::find($data["id_citado_pf"]);
+       
         $data_insertar= array(
             'id_solicitud'              => $data["id"],
             'id_citado'                 => $data["id_citado_pf"],
-            'nombre'                    => $citados["nombre"],
-            'primer_apellido'           => $citados["primer_apellido"], 
-            'segundo_apellido'          => $citados["segundo_apellido"],
+            'nombre'                    => $data["nombre"],
+            'primer_apellido'           => $data["primer_apellido"], 
+            'segundo_apellido'          => $data["segundo_apellido"],
             'identificacion'            => $data["identificacionAlta"],
         );
         
-        $documento = $citados["nombre"]."-".$citados["primer_apellido"]."-".$citados["segundo_apellido"]."_Identificacion.pdf";
+        $documento = $data["nombre"]."-".$data["primer_apellido"]."-".$data["segundo_apellido"]."_Identificacion.pdf";
         $path = Storage::putFileAs(
             'documentosSolicitud', $request->file('documentoIdentificacion'), $documento
         );
@@ -3920,7 +3921,13 @@ class SeerController extends Controller
 
         PersonaFisica::create($data_insertar);   
         $id_adiencia = PersonaFisica::select('id')->orderBy('id', 'desc')->first();
-        SeerCitados::find($data['id_citado_pf'])->update(['id_fisica' => $id_adiencia["id"]]);
+        SeerCitados::find($data['id_citado_pf'])->update([
+            'id_fisica'         => $id_adiencia["id"],
+            'nombre'            => $data["nombre"],
+            'primer_apellido'   => $data["primer_apellido"], 
+            'segundo_apellido'  => $data["segundo_apellido"]
+        ]);
+
         return back()->with('success', 'Representante legal registrado y asignado correctamente al citado.');
     }
 
@@ -4794,5 +4801,25 @@ class SeerController extends Controller
             }
         }
         return back()->with('success', 'Expediente cargado correctamente.');
+    }
+        
+    public function actualiza_citados(Request $request){
+        $data = $request->all();
+
+        SeerCitados::find($data['id_citado_pf'])->update([
+            'nombre'            => $data["nombre"],
+            'primer_apellido'   => $data["primer_apellido"], 
+            'segundo_apellido'  => $data["segundo_apellido"]
+        ]);
+
+        return back()->with('success', 'Nombre del Citado Actualizado Correctamente.');
+    }
+
+    public function Ver_INE_Solicitante(){
+
+    }
+
+    public function Ver_Documentos_Solicitante($id){
+
     }
 }

@@ -118,6 +118,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/turnos/estadistica',       [TurnosController::class, 'estadistica'])->name('turno_estadistica');
         Route::get('/notificaciones/index',     [SeerController::class, 'notificaciones'])->name('notificaciones');
         Route::get('/solicitudes/home',         [SeerController::class, 'solicitudes'])->name('solicitudes_index');
+        Route::get('/ratificaciones/index',     [TurnosController::class, 'index_ratificacion'])->name('index_ratificacion');
     //Fin de ruta de los menus
     //Usuarios
         Route::get('/usuarios/index',           [UsuarioController::class, 'index'])->name('usuarios.index');
@@ -269,6 +270,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/solicitudes/guardar',                 [SeerController::class, 'guardar_rechazo'])->name('rechazar_solicitud');
         Route::get('/correcion_solicitudes/{id}',           [SeerController::class, 'solicitud_consultarSolicitante'])->name('consulta_solicitante');
         Route::post('/correcion_solicitudes',               [SeerController::class, 'correccion_solicitante'])->name('correccion_solicitante');
+        Route::post('/solicitudes/actualiza',               [SeerController::class, 'actualiza_citados'])->name('actualiza_citados');
     //Fin de Solicitudes
     //PDF Solicitudes    
         Route::get('/Verpdfincompetencias/{id}',                        [SeerController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');
@@ -290,7 +292,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/VerpdfNotificacionNoInt/{id}/{id_solicitud}',      [SeerController::class, 'PDFnotificadoNoexitosaInt'])->name('PDFNoExitosaInt'); //Notificación No exitosa NO SE LOCALIZA INTERIOR
     //Fin de PDF
     //Ratificaciones
-        Route::get('/ratificaciones/index',         [TurnosController::class, 'index_ratificacion'])->name('index_ratificacion');
         Route::get('/ratificaciones/atender',       [TurnosController::class, 'revisar_ratificaciones_hoy'])->name('ratificacion_atender');
         Route::get('/ratificaciones/buscar',        [TurnosController::class, 'buscar_ratificacion'])->name('ratificacion_buscar');
         Route::get('/ratificaciones/concluir/{id}', [TurnosController::class, 'concluir_ratificaciones'])->name('ratificacion_concluir');
@@ -368,8 +369,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/turnos/tarjeta',            [RecepcionController::class, 'index_tarjeta'])->name('tarjeta_informativa');
         Route::get('/tarjeta/llenar/{id}',       [RecepcionController::class, 'tarjeta_crear'])->name('llenar_tarjeta');
         Route::post('/tarjeta/guardar',          [RecepcionController::class, 'guardar'])->name('agregar_tarjeta');
+        Route::get('/tarjetas/index',            [RecepcionController::class, 'reporte_excepcion'])->name('reporte_excepcion');
+        Route::post('reportes/excepcion',        [RecepcionController::class, 'reportePDF'])->name('turnos_excepcion');
     //Fin recepcion
-
+    //Documentos
+        Route::get('/INE_Solicitante/{id}',             [SeerController::class, 'Ver_INE_Solicitante'])->name('PDF_INE_solicitante');
+        Route::get('/VerDocumentosSolicitud/{id}',      [SeerController::class, 'Ver_Documentos_Solicitante'])->name('VerDocumentosAudiencia');
+    //Fin de Documentos
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);
         Route::resource('/user-management/roles', RoleManagementController::class);

@@ -694,4 +694,35 @@ class RecepcionController extends Controller
 
         return view('recepcion/tarjeta',compact('tarjeta'));
     }
+
+    public function guardar(Request $request){
+        $data = $request->all();
+        $turno_update= array(
+            'tarjeta'       => $data["tarjeta"],
+        );
+        $turno = Recepcion::find($data["id"])->update($turno_update); 
+        
+        return redirect()->route('tarjeta_informativa');
+    }
+
+    public function reporte_excepcion(){
+        return view('/turnos/reporte');
+    }
+
+    public function reportePDF(Request $request){
+        $data = $request->all();
+
+        $turnos = Recepcion::whereBetween("fecha",[$data["fecha_inicial"],$data["fecha_final"]])
+        ->where("exepcion","Si")
+        ->where("orientacion","Si");
+        if($data["delegacion"] != "Todas"){
+            $turnos = $turnos->where("delegacion",$data["delegacion"]);
+        }
+        $turnos = $turnos->get();
+
+        $pdf = \PDF::loadView('PDF/pdf-casos', compact('turnos'));
+        $pdf->setPaper('A4', 'landscape');
+    
+        return $pdf->stream('archivo.pdf');
+    }
 }

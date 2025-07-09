@@ -195,14 +195,14 @@
             <a class="nav-link" href="{{ route('poderes') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
-            <a class="nav-link" href="{{ route('seer') }}">
-                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">SEER</span>
-            </a>
             <a class="nav-link" href="{{ route('misturnos') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="turnos()">Mis turnos</span>
             </a>
             <a class="nav-link" href="{{ route('tarjeta_informativa') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="turnos()">Tarjeta Informativa</span>
+            </a>
+            <a class="nav-link" href="{{ route('reporte_excepcion') }}">
+                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Reporte</span>
             </a>
         @endrole
     @endauth

@@ -56,13 +56,22 @@
                                                     @if($audiencia->estatus == "Confirmado")
                                                         <a class="btn btn-success" href="{{ route('inicioAudiencia', $audiencia->id, 'Confirmado') }}">Iniciar</a><br>
                                                     @endif
-                                                    @if($audiencia->estatus == "Conciliacion" || $audiencia->estatus == "No conciliacion" || $audiencia->estatus == "Archivada")
-                                                        <button type="button" class="btn btn-warning open-expediente-modal" data-bs-toggle="modal" data-bs-target="#expediente" data-id="{{ $audiencia->id }}">Subir expediente</button>
-                                                    @endif
                                                 </td>
                                                 <td>
+                                                    <button type="button" class="btn btn-warning open-expediente-modal" data-bs-toggle="modal" data-bs-target="#expediente" data-id="{{ $audiencia->id }}">Subir Documento</button>
+
                                                     @if($audiencia->estatus == "Archivada")
-                                                        <a class="btn btn-success" href="{{ route('PDFfalltaInteres', $audiencia->id) }}"  target="_blank">Acta de Archivo</a><br>
+                                                        <div class="dropdown">
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    Documentos
+                                                                </button>
+                                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                    <li><a class="dropdown-item" href="{{ route('PDF_INE_solicitante', $audiencia->id) }}"  target="_blank">Identificación del solicitante</a></li>
+                                                                    <li><a class="dropdown-item" href="{{ route('PDFfalltaInteres', $audiencia->id) }}"  target="_blank">Acta de Archivo</a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
                                                     @elseif($audiencia->estatus == "Incompetencia")
                                                         <a class="btn btn-success" href="{{ route('PDFincompetencia', $audiencia->id) }}"  target="_blank">Incompetencia</a><br>
                                                     @elseif($audiencia->estatus == "Comparecencia")
@@ -73,10 +82,23 @@
                                                     @elseif($audiencia->estatus == "No conciliacion")
                                                         <a class="btn btn-success" target="_blank" href="{{ route('PDFno_conciliacion', $audiencia->id) }}">Constancia de no conciliación</a><br>
                                                     @elseif($audiencia->estatus == "Conciliacion")
-                                                        <a class="btn btn-success" href="{{ route('PDFconvenioratificacion', $audiencia->id) }}" tarjet="_blank">Convenio</a>
-                                                        <a class="btn btn-success" href="{{ route('PDFcumplimiento', $audiencia->id) }}"  target="_blank">Constancia de cumplimiento</a>
+                                                        <a class="btn btn-success" target="_blank" href="{{ route('VerDocumentosAudiencia', $audiencia->id) }}">Documentos</a><br>
+                                                        <div class="dropdown">
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    Documentos
+                                                                </button>
+                                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                    <li><a class="dropdown-item" href="{{ route('PDF_INE_solicitante', $audiencia->id) }}"  target="_blank">Consultar Documentos</a></li>
+                                                                    <li><a class="dropdown-item" href="{{ route('PDFconvenioratificacion', $audiencia->id) }}"  target="_blank">Acta de Archivo</a></li>
+                                                                    <li><a class="dropdown-item" href="{{ route('PDFconvenioratificacion', $audiencia->id) }}" tarjet="_blank">Convenio</a></li>
+                                                                    <li><a class="dropdown-item" href="{{ route('PDFcumplimiento', $audiencia->id) }}"  target="_blank">Constancia de cumplimiento</a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
                                                     @endif 
                                                 </td>
+
                                             </tr>
                                         @endforeach
                                         </tbody>

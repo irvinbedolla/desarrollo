@@ -61,7 +61,7 @@
                                                     @else
                                                         @if($representante->id_abogado != null && $representante->id_fisica == null)
                                                             {{ $representante->nombre_abogado }} {{ $representante->primero_abogado }} {{ $representante->segundo_abogado }}
-                                                        @else
+                                                        @elseif($representante->id_abogado == null && $representante->id_fisica != null)
                                                             {{ $representante->nombre_fisica }} {{ $representante->primer_fisica }} {{ $representante->segundo_fisica }}
                                                         @endif
                                                     @endif
@@ -265,6 +265,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarCitados">Agregar en reprecentantación</button>
                 <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarDerecho">Agregar por propio derecho</button>
+                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalActualizaCitados">Actualizar citado</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
@@ -600,8 +601,8 @@
 <div class="modal fade" id="modalAgregarDerecho" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <form class='needs-validation novalidate'  method='POST' enctype="multipart/form-data" name="AgregarPersonaFisica" id="AgregarPersonaFisica" action="{{route('insertar_citado_PF')}}">
         @csrf
-        <input type="text" name="id" value="{{$id}}">
-        <input type="text" name="id_citado_pf" id="id_citado_pf" value="">
+        <input type="hidden" name="id" value="{{$id}}">
+        <input type="hidden" name="id_citado_pf" id="id_citado_pf" value="">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -610,6 +611,33 @@
                 </div>
                 <div class="modal-body">
                     <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label>Nombre del citado</label>
+                                <input type="text" name="nombre" class="form-control" required>
+                                <div class="invalid-feedback">
+                                    La Identificación es obligatoria.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label>Primer apellido</label>
+                                <input type="text" name="primer_apellido" class="form-control" required>
+                                <div class="invalid-feedback">
+                                    La Identificación es obligatoria.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label>Segudno apellido</label>
+                                <input type="text" name="segundo_apellido" class="form-control" required>
+                                <div class="invalid-feedback">
+                                    La Identificación es obligatoria.
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
                                 <label for="name">Tipo de identificación (*)</label>
@@ -650,6 +678,61 @@
         </div>
     </form>
 </div>
+<div class="modal fade" id="modalActualizaCitados" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <form class='needs-validation novalidate'  method='POST' name="AgregarPersonaFisica" id="AgregarPersonaFisica" action="{{route('actualiza_citados')}}">
+        @csrf
+        <input type="hidden" name="id" value="{{$id}}">
+        <input type="hidden" name="id_citado_pf" id="modal-id-citado" value="">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Actualizar Citado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label>Nombre del citado</label>
+                                <input type="text" name="nombre" class="form-control" required>
+                                <div class="invalid-feedback">
+                                    La Identificación es obligatoria.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label>Primer apellido</label>
+                                <input type="text" name="primer_apellido" class="form-control" required>
+                                <div class="invalid-feedback">
+                                    La Identificación es obligatoria.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label>Segudno apellido</label>
+                                <input type="text" name="segundo_apellido" class="form-control" required>
+                                <div class="invalid-feedback">
+                                    La Identificación es obligatoria.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <input type="hidden" name="id_usuario_registro" value="{{ Auth::id() }}">
+                        </div>
+                        
+                    </div>                                     
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 
 <div id="nuevo_poder" style ="display: none;">
     <div>.</div>
@@ -668,6 +751,7 @@
             document.getElementById('modal-id-archivar').value = id;
             document.getElementById('modal-id-reagendar').value = id;
             document.getElementById('modal-id-incopentencia').value = id;
+            document.getElementById('modal-id-citado').value = id;
         });
     </script>
     <script src="../../public/assets/js/validaciones.js"></script> 
