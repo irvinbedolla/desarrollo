@@ -640,7 +640,7 @@ body {font-family: Arial;}
 
                                             <div class="col-xs-12 col-sm-12 col-md-12"><br>
                                                 <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
-                                                <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $general->id }}"> Rechazar </button>
+                                                <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $general->id }}"> Prevención </button>
                                            
                                                
                                             </div>

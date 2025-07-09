@@ -43,7 +43,7 @@
                                                     </td>
                                                     <td>
                                                         <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $solicitud->id }}">
-                                                            Rechazar
+                                                            Prevención
                                                         </button>
                                                     </td>
                                                 </tr>
