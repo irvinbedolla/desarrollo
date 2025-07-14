@@ -100,7 +100,7 @@
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Solicitudes</span>
             </a>
             <a class="nav-link" href="{{ route('audiencias.cumplimiento') }}">
-                <i class="bi bi-file-person"></i><span class="text-dark" >Complimientos</span>
+                <i class="bi bi-file-person"></i><span class="text-dark" >Cumplimientos</span>
             </a>
             <a class="nav-link" href="{{ route('index_ratificacion') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Ratificaciones</span>
@@ -120,7 +120,7 @@
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Solicitudes</span>
             </a>
             <a class="nav-link" href="{{ route('audiencias.cumplimiento') }}">
-                <i class="bi bi-file-person"></i><span class="text-dark" >Complimientos</span>
+                <i class="bi bi-file-person"></i><span class="text-dark" >Cumplimientos</span>
             </a>
         @endrole
     @endauth

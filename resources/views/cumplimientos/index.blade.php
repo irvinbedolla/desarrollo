@@ -25,7 +25,7 @@
                                 </div>
                                 <div class="col-xs-4 col-sm-4 col-md-4">
                                     <div align="center">
-                                        <button type="submit" class="btn btn-primary">Agenda de complimientos</button>
+                                        <button type="submit" class="btn btn-primary">Agenda de cumplimientos</button>
                                     </div>
                                 </div> 
                             </div>
