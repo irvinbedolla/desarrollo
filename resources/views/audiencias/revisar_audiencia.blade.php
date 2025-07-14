@@ -606,12 +606,14 @@ body {font-family: Arial;}
                                                 
                                                 
                                             @endforeach
-                                            <div class="col-xs-12 col-sm-12 col-md-12"><br>
-                                                <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
-                                                data-bs-target="#exampleModal1" data-id="{{ $id }}">Agregar Citado</a>
-                                                <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
-                                                data-bs-target="#exampleModal2" data-id="{{ $id }}">Borrar Citado</a>
-                                            </div>
+                                            @if(($solicitud->estatus !== "Conciliacion") || ($solicitud->estatus !== "No conciliacion") || ($solicitud->estatus !== "Archivada"))
+                                                <div class="col-xs-12 col-sm-12 col-md-12"><br>
+                                                    <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
+                                                    data-bs-target="#exampleModal1" data-id="{{ $id }}">Agregar Citado</a>
+                                                    <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
+                                                    data-bs-target="#exampleModal2" data-id="{{ $id }}">Borrar Citado</a>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                     <div id="citados" class="tabcontent">
@@ -654,9 +656,11 @@ body {font-family: Arial;}
                                                     </div>
                                                 </div>
                                             @endforeach
-
+                                            
                                             <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
+                                                @if(($solicitud->estatus !== "Conciliacion") || ($solicitud->estatus !== "No conciliacion") || ($solicitud->estatus !== "Archivada"))
+                                                    <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
+                                                @endif
                                                 <a href="{{ route('audiencias.conciliador') }}" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Regresar</a>
                                             </div>
                                         </div>

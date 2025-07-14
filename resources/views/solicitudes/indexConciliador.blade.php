@@ -73,9 +73,9 @@
                                                             </div>
                                                         </div>
                                                     @elseif($audiencia->estatus == "Incompetencia")
-                                                        <a class="btn btn-success" href="{{ route('PDFincompetencia', $audiencia->id) }}"  target="_blank">Incompetencia</a><br>
+                                                        <a class="btn btn-success" href="{{ route('PDFincompetencia', $audiencia->id) }}"  target="_blank">Incompetencia</a><br> <!-- revisar -->
                                                     @elseif($audiencia->estatus == "Comparecencia")
-                                                        <a class="btn btn-success" href="{{ route('PDFincomparecencia', $audiencia->id) }}"  target="_blank">Acta de incomparecencia</a><br>
+                                                        <a class="btn btn-success" href="{{ route('PDFinteres', $audiencia->id) }}"  target="_blank">Acta de incomparecencia</a><br><!-- Revisar Ana -->
                                                     @elseif($audiencia->estatus == "Reagendada")
                                                         <a class="btn btn-info" target="_blank" href="{{ route('PDFnotificacion_solicitante', $audiencia->id) }}">Notificación al solicitante</a><br><br>
                                                         <button type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $audiencia->id }}">Citatorios</button>
@@ -90,7 +90,7 @@
                                                                 </button>
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="dropdown-item" href="{{ route('PDF_INE_solicitante', $audiencia->id) }}"  target="_blank">Consultar Documentos</a></li>
-                                                                    <li><a class="dropdown-item" href="{{ route('PDFconvenioratificacion', $audiencia->id) }}"  target="_blank">Acta de Archivo</a></li>
+                                                                    <li><a class="dropdown-item" href="{{ route('PDFinteres', $audiencia->id) }}"  target="_blank">Acta de Archivo</a></li>
                                                                     <li><a class="dropdown-item" href="{{ route('PDFconvenioratificacion', $audiencia->id) }}" tarjet="_blank">Convenio</a></li>
                                                                     <li><a class="dropdown-item" href="{{ route('PDFcumplimiento', $audiencia->id) }}"  target="_blank">Constancia de cumplimiento</a></li>
                                                                 </ul>

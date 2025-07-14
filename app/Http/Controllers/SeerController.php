@@ -2262,7 +2262,7 @@ class SeerController extends Controller
             $mensaje = " el correo:".$usuario["email"]." para continuar tú trámite.";
         }
 
-        return view('solicitudes.aviso',compact('id','mensaje'));
+        return view('solicitudes.aviso',compact('id','mensaje','delegacion'));
     }
 
     public function solicitudes_pendientes(){
@@ -2674,7 +2674,7 @@ class SeerController extends Controller
             ->where(function ($query) {
                 $query->where('estatus', 'Conciliacion')
                     ->orWhere('estatus', 'No conciliacion')
-                    ->orWhere('estatus', 'Archivado por comparecencia')
+                    ->orWhere('estatus', 'Archivado por incomparecencia')
                     ->orWhere('estatus', 'Reagendada')
                     ->orWhere('estatus', 'Incompetencia')
                     ->orWhere('estatus', 'Confirmado');
@@ -4821,5 +4821,8 @@ class SeerController extends Controller
 
     public function Ver_Documentos_Solicitante($id){
 
+    }
+    public function Historial_Solicitante(){ //ANA
+        return view('solicitudes.solicitud_revision');
     }
 }

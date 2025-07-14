@@ -32,7 +32,7 @@
                                                     <td>{{$solicitud->estatus}}</td>
                                                     <td><a class="btn btn-primary" href="{{ route('consulta_solicitante', $solicitud->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
                                                     <td>
-                                                        @if(($solicitud->estatus !== "Pendiente") && ($solicitud->estatus !== "Rechazado"))
+                                                        @if(($solicitud->estatus !== "Pendiente") && ($solicitud->estatus !== "Prevencion"))
                                                             <div class="dropdown  mt-2">
                                                                 <button class="btn btn-warning dropdown-toggle load-pdfs" type="button" id="dropdownCitatoriosBtn-{{ $solicitud->id }}" data-id="{{ $solicitud->id }}" data-bs-toggle="dropdown" aria-expanded="false">
                                                                     Documentos

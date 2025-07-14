@@ -220,7 +220,7 @@
                 </div>
             </div>
         </div>
-    </form>
+    </form>
 </div>
 <!-- Modal Citados -->
 <div class="modal fade" id="modalCitados" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -553,11 +553,11 @@
     {{$bandera;}}
 
     @if($representantes[$contador-1]->notificacion == "Centro")
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-l">
             <div class="modal-content">
                 <div class="modal-header">
                     @if($bandera != 0)
-                        Si no seleccionas todos los representantes se va multar los que no selecciones.
+                        Si no seleccionas todos los representantes se va a multar a los que no selecciones.
                     @else
                         Continuar con la audiencia.
                     @endif
@@ -575,11 +575,11 @@
         </div>
     @else
         <div class="modal-dialog">
-            <div class="modal-content">
+            <div class="modal-content modal-xl">
                 <div class="modal-header">
                     @if($bandera != 0)
-                        <span>Si no seleccionas todos los representantes debes seleccionar un fecha para que proxima audiencia.<br>
-                        Va notificar el centro</span>
+                        <span>Si no seleccionas todos los representantes debes seleccionar una fecha para que próxima audiencia.<br>
+                        Notificará el centro</span>
                         <input type="date" name="fecha" class="form-control">
                     @else
                         Continuar con la audiencia.
@@ -606,7 +606,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Agregar Persona Fisica</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Agregar Persona Física</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

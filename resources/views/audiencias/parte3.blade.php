@@ -91,6 +91,7 @@
                                                 <option>Seleccione</option>
                                                 <option value="Conciliacion">Hubo Convenio</option>
                                                 <option value="No conciliacion">No hubo Convenio</option>
+                                                <option value="Archivada por incomparecencia">Archivar</option>
                                             </select>
                                         </div>
                                     </div>
@@ -175,7 +176,6 @@
                                                 </select>
                                             </div> 
 
-                                            
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <br><button type="submit" class="btn btn-primary">Guardar</button>
@@ -183,6 +183,12 @@
                                     </div>
                     
                                     <div id="no_conciliacion" class="row home-shape">
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <br><button type="submit" class="btn btn-primary">Guardar</button>
+                                        </div>
+                                    </div>
+
+                                    <div id="archivada" class="row home-shape">
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <br><button type="submit" class="btn btn-primary">Guardar</button>
                                         </div>
@@ -196,16 +202,15 @@
         </div>
     </section>
 @endsection
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <form class='needs-validation novalidate'  method='POST' action="{{route('archivar_ratificacion')}}">
+<!-- Modal para archivar audiencia-->
+<div class="modal fade" id="ModalArchivar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <form class='needs-validation novalidate'  method='POST' action="{{route('archivar_audiencia')}}">
         @csrf
-        <input type="hidden" id="modal-id" name="id" value="">
+        <input type="hidden" id="solicitud-id" value="{{ $id }}">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Motivo de Archivo</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Motivo del archivo de audiencia</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -213,7 +218,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Enviar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
                 </div>
             </div>
         </div>
@@ -225,13 +230,13 @@
     <div class="loader"></div>
 </div>
 
-
 @section('scripts')
     <script src="../../public/assets/js/turnos/turnos.js"></script>
 
 
     <script>
        document.getElementById("no_conciliacion").style.display = "none";
+       document.getElementById("archivada").style.display = "none";
        document.getElementById("dias").style.display = "none";
        document.getElementById("pagos").style.display = "none";
        
@@ -353,12 +358,27 @@
             // Realiza la validación o acciones necesarias
             if (valorSeleccionado === 'Conciliacion') {
                 document.getElementById('no_conciliacion').style.display = "none";
+                document.getElementById('archivada').style.display = "none";
                 document.getElementById("pagos").style.display = "block";
                 document.getElementById('dias').style.display = "block";
-            } else {
+            } if (valorSeleccionado === 'No conciliacion'){
                 document.getElementById('no_conciliacion').style.display = "block";
+                document.getElementById('conciliacion').style.display = "none"
+                document.getElementById('archivada').style.display = "none"
                 document.getElementById("pagos").style.display = "none";
                 document.getElementById('dias').style.display = "none";
+            } 
+            if (valorSeleccionado === 'Archivada por incomparecencia') {
+                const confirmar = confirm("¿Estás seguro de que deseas archivar esta audiencia?");
+                if (confirmar) {
+                    $('#ModalArchivar').modal('show');
+                    document.getElementById('no_conciliacion').style.display = "none";
+                    document.getElementById('archivada').style.display = "block";
+                    document.getElementById("pagos").style.display = "none";
+                    document.getElementById('dias').style.display = "none";
+                } else {
+                    this.value = "Seleccione"; // Regresa al estado inicial
+                }
             }
         });
 

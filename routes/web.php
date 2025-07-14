@@ -245,7 +245,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/VerpdfInParcial/{id}',      [TurnosController::class, 'VerPDFInParcial'])->name('PDFincumplimientoParcial');
         Route::get('/VerpdfPago/{id}',           [TurnosController::class, 'VerPDFPagos'])->name('PDFpagos');
         Route::get('/Verpdfaudiencia/{id}',      [TurnosController::class, 'VerPDFAudiencia'])->name('PDFaudiencia');
-        Route::get('/Verpdfincomparecencia/{id}',[TurnosController::class, 'VerPDFIncomparecencia'])->name('PDFincomparecencia');
+        Route::get('/Verpdfincomparecencia/{id}',[TurnosController::class, 'VerPDFIncomparecencia'])->name('PDFincomparecencia'); Revisa ANA
         Route::get('turnos/index2',              [TurnosController::class, 'index_empresa'])->name('ratificacion');
         Route::get('turnos/indexr',              [TurnosController::class, 'indexr'])->name('Ratificacion');
         Route::get('turnos/aceptar/{id}',        [TurnosController::class, 'aceptacion'])->name('turno.aceptar');
@@ -271,6 +271,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/correcion_solicitudes/{id}',           [SeerController::class, 'solicitud_consultarSolicitante'])->name('consulta_solicitante');
         Route::post('/correcion_solicitudes',               [SeerController::class, 'correccion_solicitante'])->name('correccion_solicitante');
         Route::post('/solicitudes/actualiza',               [SeerController::class, 'actualiza_citados'])->name('actualiza_citados');
+        Route::get('/solicitudes/historialSolicitante',               [SeerController::class, 'Historial_Solicitante'])->name('historial_solicitante');
     //Fin de Solicitudes
     //PDF Solicitudes    
         Route::get('/Verpdfincompetencias/{id}',                        [SeerController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');

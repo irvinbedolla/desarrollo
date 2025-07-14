@@ -34,6 +34,28 @@
         
     </style>   
 </head>
+@php     
+    $direccion_sede='';
+    if($delegacion->delegacion === 'Morelia'){
+        $direccion_sede='BLVD. GARCÍA DE LEÓN NO. 1575, COL. CHAPULTEPEC ORIENTE, C.P.58260 MORELIA, MICHOACÁN DE OCAMPO, con un horario de atención Lunes a Viernes de 9:00 am a 5:00 pm';
+    }    
+    if($delegacion->delegacion === 'Uruapan'){
+        $direccion_sede='NUEVO PARICUTÍN NO. 308, COL. JARDINES DE SAN RAFAEL, C.P.30136 URUAPAN, MICHOACÁN DE OCAMPO. SE ENCUENTRA DENTRO DEL RECINTÓ DONDE ESTA RENTAS DEL
+            ESTADO, POR LA CLÍNICA DEL IMSS NO.76, con un horario de atención Lunes a Viernes de 9:00 am a 4:00 pm';
+    }
+    if($delegacion->delegacion === 'Zamora') {
+        $direccion_sede='JUSTO SIERRA PONIENTE NO. 290, COL. JARDINES DE CATEDRAL, C.P.59600 ZAMORA, MICHOACÁN DE OCAMPO, con un horario de atención Lunes a Viernes de 9:00 am a 3:00 pm';
+    }  
+    if($delegacion->delegacion === 'Zitácuaro') {
+        $direccion_sede='CUAUHTEMOC ORIENTE NO. 15, COL. CUAUHTEMOC, C.P. 61506ZITÁCUARO, MICHOACÁN DE OCAMPO, con un horario de atención Lunes a Viernes de 9:00 am a 3:00 pm';
+    } 
+    if($delegacion->delegacion === 'Lázaro Cárdenas') {
+        $direccion_sede='PARACHO NO. 26, COL. 600 CASAS, C.P.60950 LÁZARO CÁRDENAS, MICHOACÁN DE OCAMPO, con un horario de atención Lunes a Viernes de 9:00 am a 3:00 pm';
+    }  
+    if($delegacion->delegacion === 'Sahuayo') {
+        $direccion_sede='AV. UNIVERSIDAD SUR NO. 300, COL. LOMAS DE UNIVERSIDAD, C.P.59103 SAHUAYO DE MORELOS, MICHOACÁN DE OCAMPO, con un horario de atención Lunes a Viernes de 9:00 am a 3:00 pm';
+    } 
+@endphp
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="">
@@ -64,11 +86,13 @@
                                     <input type="hidden" name="id" value="{{ $id }}">
                                     <strong>¡Registro completo!</strong><br>
                                     <label>Tu solicitud fue capturada correctamente, tu número de folio es: "{{$id}}", Debes ingresar a 
-                                    http://siconcilio.cclmichoacan.gob.mx/ en el apartado de buzón electrónico con: "{{$mensaje}}".
+                                    http://siconcilio.cclmichoacan.gob.mx/ en el apartado de buzón electrónico con: "{{$mensaje}}"
                                     <br><br>
 
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NOTA: En caso de detectar algún error en los datos proporcionados, el personal del centro se pondrá en contacto contigo.<br><br>
-                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Para dudas y/o acude a tu Delegación u Oficina de Apoyo del Centro de Conciliación Laboral más cercana.
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Para dudas acude a tu Delegación u Oficina de Apoyo del Centro de Conciliación Laboral en {{$delegacion->delegacion}}.<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ubicada en {{$direccion_sede}}
+                                        
                                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
