@@ -121,7 +121,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">CURP del Solicitante (*)</label>
+                                                    <label for="name">CURP del <Solicitante>No. de Migración (*)</label>
                                                     <input type="text" name="curp" id="curp_input" oninput="validarInput(this)"class="form-control" required> 
                                                     <pre id="resultado"></pre>
                                                     <div class="invalid-feedback">
@@ -383,11 +383,11 @@
                                                 <div class="form-group">
                                                     <label for="name">Frecuencia de Pago (*)</label>
                                                     <select name="periodo_pago" class="form-control" required>
-                                                        <option value="">SELECCIONE</option>
+                                                        <!--<option value="">SELECCIONE</option>-->
                                                         <option value="Diario">DIARIO</option>
-                                                        <option value="Semana">SEMANAL</option>
+                                                        <!--<option value="Semana">SEMANAL</option>
                                                         <option value="Quincenal">QUINCENAL</option>
-                                                        <option value="Mensual">MENSUAL</option>
+                                                        <option value="Mensual">MENSUAL</option>-->
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El campo frecuencia de pagos es obligatorio.
@@ -453,7 +453,7 @@
                                             
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label>CURP (*)</label>
+                                                    <label>CURP/No. de Migración (*)</label>
                                                     <input type="file" name="documentoCurp" class="form-control" accept=".pdf" required>
                                                     <div class="invalid-feedback">
                                                         El campo curp es obligatorio.

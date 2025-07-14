@@ -313,7 +313,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Fin de enlace
     //Cambiar las contraseña
         Route::get('/cambio_contraseña/index',  [HomeController::class, 'password_cambiar'])->name('password_cambiar');
-        Route::post('/notificaciones/editar',   [HomeController::class, 'contraseña_update'])->name('contraseña_update');   
+        Route::post('/notificaciones/editar',   [HomeController::class, 'contraseña_update'])->name('contraseña_update'); 
+    //Administración
+        Route::get('administracion/configuracion',                         [AdministracionController::class, 'configuracion'])->name('configuracion');
+        Route::get('administracion/sedes',                                 [AdministracionController::class, 'configuracion_sedes'])->name('configuracion_sedes');
+    //Fin de Administración  
     //Audiencias
         Route::get('/audiencias/index',                     [SeerController::class, 'audiencia_index'])->name('audiencia_index');
         Route::get('/audiencias/{id}',                      [SeerController::class, 'solicitud_audiencia_revisar'])->name('solicitud_audiencia');
