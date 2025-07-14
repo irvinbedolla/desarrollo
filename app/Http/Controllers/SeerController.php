@@ -4822,7 +4822,47 @@ class SeerController extends Controller
     public function Ver_Documentos_Solicitante($id){
 
     }
+     // PDF PTU
+     public function VerPDFConvenioPTU($id){
+        $solicitud = SeerPerGeneral::find($id); 
+        $citado = SeerCitados::where('id_solicitud', $id)->get();
+       // $citado = SeerCitados::where('id_solicitud', $id)->get();
+        $pagos = Pagos::where('id_solicitud', $id)->get();
+        
+       // $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
+
+        $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
+        $salario_mensual = $salario_diario * 30;
+        $diarioTexto = $this->convertirNumerosALetras($salario_diario);
+        $mensualTexto = $this->convertirNumerosALetras($salario_mensual);
+        $montoTexto = $this->convertirNumerosALetras($solicitud->monto);
+        
+        $pagosDif  = Pagos::join("turnos","turnos.id","=","pago_solicitud.id_solicitud");
+        $pagosDif = $pagosDif->where("pago_solicitud.id_solicitud", "=", $id)
+        ->select(DB::raw('count(pago_solicitud.id_solicitud) as C_pagos'))
+        ->first();
+
+        $conciliador = User::join("seer_general", "seer_general.conciliador_id", "=", "users.id")
+        ->where("seer_general.id", "=", $id)
+        ->select("users.name")
+        ->first();
+
+        $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
+        $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
+        ->first();
+        
+        $html = view('PDF/Solicitudes/convenioPTU', 
+        compact('id', 'solicitud', /*'dias_descanso',*/ 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','pagosDif','conciliador','solicitante','citado'))
+        ->render();
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true);
+
+        return $pdf->stream('Convenio_PTU.pdf');            
+    }
     public function Historial_Solicitante(){ //ANA
         return view('solicitudes.solicitud_revision');
     }
+
 }

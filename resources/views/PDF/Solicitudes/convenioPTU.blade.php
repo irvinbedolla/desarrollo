@@ -62,23 +62,23 @@
     </head>
     @php     
         $direccion_sede='';
-        if($delegacion->delegacion === 'Morelia'){
+        if($solicitud->delegacion === 'Morelia'){
             $direccion_sede='BLVD. GARCÍA DE LEÓN NO. 1575, COL. CHAPULTEPEC ORIENTE, C.P.58260 MORELIA, MICHOACÁN DE OCAMPO.';
         }    
-        if($delegacion->delegacion === 'Uruapan'){
+        if($solicitud->delegacion === 'Uruapan'){
             $direccion_sede='NUEVO PARICUTÍN NO. 308, COL. JARDINES DE SAN RAFAEL, C.P.30136 URUAPAN, MICHOACÁN DE OCAMPO. SE ENCUENTRA DENTRO DEL RECINTÓ DONDE ESTA RENTAS DEL
                 ESTADO, POR LA CLÍNICA DEL IMSS NO.76.';
         }
-        if($delegacion->delegacion === 'Zamora') {
+        if($solicitud->delegacion === 'Zamora') {
             $direccion_sede='JUSTO SIERRA PONIENTE NO. 290, COL. JARDINES DE CATEDRAL, C.P.59600 ZAMORA, MICHOACÁN DE OCAMPO.';
         }  
-        if($delegacion->delegacion === 'Zitácuaro') {
+        if($solicitud->delegacion === 'Zitácuaro') {
             $direccion_sede='CUAUHTEMOC ORIENTE NO. 15, COL. CUAUHTEMOC, C.P. 61506ZITÁCUARO, MICHOACÁN DE OCAMPO.';
         } 
-        if($delegacion->delegacion === 'Lázaro Cárdenas') {
+        if($solicitud->delegacion === 'Lázaro Cárdenas') {
             $direccion_sede='PARACHO NO. 26, COL. 600 CASAS, C.P.60950 LÁZARO CÁRDENAS, MICHOACÁN DE OCAMPO.';
         }  
-        if($delegacion->delegacion === 'Sahuayo') {
+        if($solicitud->delegacion === 'Sahuayo') {
             $direccion_sede='AV. UNIVERSIDAD SUR NO. 300, COL. LOMAS DE UNIVERSIDAD, C.P.59103 SAHUAYO DE MORELOS, MICHOACÁN DE OCAMPO.';
         } 
     @endphp
@@ -110,8 +110,8 @@
                 <p>Con fundamento en los artículos 123, apartado A, fracciones XX párrafo segundo y  XXVII, inciso h)  de la Constitución Política de los Estados Unidos Mexicanos; 33, 98, 117, 
                     122, 130, 590-E fracción I, 684-E fracción VI, XIII y 684-F fracción VIII, IX de la Ley Federal del Trabajo, artículo 8 fracción I, III y artículo 27 de Ley Orgánica del 
                     Centro de Conciliación Laboral del Estado de <b>MICHOACÁN</b> con domicilio en <b>{{$direccion_sede}}</b> se celebra el presente convenio por una parte 
-                    {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }} quién en lo subsecuente se denominará la parte <b>“EMPLEADORA”</b> y, por otro el C. 
-                    {{ $solicitante->nombre }}, a quién en lo subsecuente se le denominará la parte <b>“TRABAJADOR”</b>, a quienes en lo sucesivo de forma conjunta se les denominará las <b>“PARTES”</b>, quienes 
+                    <b>{{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}</b> quién en lo subsecuente se denominará la parte <b>“EMPLEADORA”</b> y, por otro el <b>C. 
+                    {{ $solicitante->nombre }}</b>, a quién en lo subsecuente se le denominará la parte <b>“TRABAJADOR”</b>, a quienes en lo sucesivo de forma conjunta se les denominará las <b>“PARTES”</b>, quienes 
                     se someten y obligan en términos de las siguientes declaraciones y cláusulas:
                 </p>
 
@@ -131,13 +131,13 @@
                         b) Que por el desempeño de sus labores contaba con todas las prestaciones, incluido el REPARTO DE UTILIDAD.
                     </p>
                     <p class="sangria"> <!-- REVISAR PORQUE INDICA QUE EL CITATORIO FUE ENTREGADO POR EL SOLICITANTE -->
-                        c) Que con motivo del citatorio de fecha 19 de mayo del 2025 emitido por el Centro de Conciliación Laboral del Estado de Morelia, Michoacán, la parte TRABAJADORA fue notificada y comparece para desahogar la 
+                        c) Que con motivo del citatorio de fecha 19 de mayo del 2025 emitido por el Centro de Conciliación Laboral del Estado de Morelia, Michoacán, la parte <b>TRABAJADORA</b> fue notificada y comparece para desahogar la 
                         etapa de conciliación prejudicial conforme a los artículos 684-E de la Ley Federal del Trabajo.
                     </p>
 
                 <p> <b>CUARTA.</b> Declara la parte <b>EMPLEADORA:</b> </p>
                     <p class="sangria">     
-                        a) Que la parte <b>TRABAJADORA</b>, fue contratada para laborar como <b>{{$solicitud->puesto}}</b> en el domicilio ubicado en <b>{{$solicitud->}}</b>LIBRAMIENTO SUR NUMERO 2389, SAN MIGUEL CURAHUANGO, MARAVATIO MICHOACAN.
+                        a) Que la parte <b>TRABAJADORA</b>, fue contratada para laborar como <b>{{$solicitud->puesto}}</b> en el domicilio ubicado en <b>LIBRAMIENTO SUR #2389, SAN MIGUEL CURAHUANGO, MARAVATIO MICHOACAN.</b>
                     </p> 
                     <p class="sangria"> 
                         b) <b>Que bajo protesta de decir verdad conformo la Comisión Mixta de Participación de Utilidades a qué se refiere el artículo 125 de la Ley Federal del Trabajo, a efecto de determinar la cantidad que por 
@@ -201,7 +201,7 @@
                         que la Ley Federal del Trabajo contempla.<br><br>
                         
                         <b>Enteradas las <b>PARTES</b> del alcance legal del presente convenio que se eleva a cosa juzgada, conforme al artículo 684-E fracción XIII, mismo que se firma en el CENTRO DE CONCILIACION LABORAL DEL ESTADO DE MICHOACÁN, 
-                        DELEGACIÓN {{$sede}} ubicado en <b>{{$direccion_sede}}</b>, ante la fe del/la <b>LIC. {{ $conciliador->name }}</b>, funcionario/a conciliadoro/a, quien lo sanciona en este mismo acto. <b>Doy fe.</b>
+                        DELEGACIÓN Morelia ubicado en <b>{{$direccion_sede}}</b>, ante la fe del/la <b>LIC. {{ $conciliador->name }}</b>, funcionario/a conciliadoro/a, quien lo sanciona en este mismo acto. <b>Doy fe.</b>
                     </p>
                                     
                     <br><br>

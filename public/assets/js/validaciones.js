@@ -144,10 +144,10 @@ function validarfechaNacimiento(){
     //document.getElementById("años_edad").value = edad;
     //Si la fecha de nacimiento es menos a 15 años
     if(años <= 15) {
-      alert("Requieres tener al menos 15 años de edad.");
+      alert("Requieres tener al menos 15 años de edad. Debes presentarte con tu tutor legal.");
     }
     if(años > 15 && años < 18){
-      alert("Debes presentarte con tu tutor.");
+      alert("Debes presentarte con tu tutor legal.");
       //document.getElementById("documentacionMenor").style.display = "block";
     }
     else{
