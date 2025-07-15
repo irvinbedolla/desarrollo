@@ -29,6 +29,7 @@ use App\Models\PersonaFisica;
 use App\Models\Turnos;
 use App\Models\DiasInhabiles;
 use NumberToWords\NumberToWords; // para convertir números(cantidades) a letras
+use App\Models\DocumentosSolicitud;
 
 //Para sacar el Id del usuario
 use Illuminate\Support\Facades\Auth;
@@ -4770,6 +4771,7 @@ class SeerController extends Controller
          $nombreArchivo = 'Razón_NotificaciónNInt' . $solicitud->empresa .'.pdf';
          return $pdf->stream($nombreArchivo);                      
     }
+
     //Guarda el expediente
     public function guardar_expediente(Request $request){
         $data = $request->all();
@@ -4784,7 +4786,7 @@ class SeerController extends Controller
 
         if ($request->hasFile('documentoExpediente')) {
             $file = $request->file('documentoExpediente');
-        
+            //dd($file->getClientOriginalName());
             if ($file->isValid()) {
                 $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
                 $documentoExpediente = $filename . "_Expediente." . $file->getClientOriginalExtension();
@@ -4792,10 +4794,15 @@ class SeerController extends Controller
                 $path = Storage::putFileAs(
                     'documentosSolicitud', $file, $documentoExpediente
                 );
-        
-                $solicitud->update([
-                    'documentoExpediente' => $documentoExpediente
-                ]);
+
+                $data_insertar= array(
+                    'id_solicitud'      => $data["audiencia_id"],
+                    'nombre_documento'  => $documentoExpediente,
+                    'tipo_documentos'   => $file->getClientOriginalName(),
+                    'tramite'           => "Audiencia", 
+                );
+                DocumentosSolicitud::create($data_insertar);
+
             } else {
                 return back()->withErrors(['documentoExpediente' => 'Archivo no válido.']);
             }
@@ -4822,8 +4829,9 @@ class SeerController extends Controller
     public function Ver_Documentos_Solicitante($id){
 
     }
-     // PDF PTU
-     public function VerPDFConvenioPTU($id){
+
+    // PDF PTU
+    public function VerPDFConvenioPTU($id){
         $solicitud = SeerPerGeneral::find($id); 
         $citado = SeerCitados::where('id_solicitud', $id)->get();
        // $citado = SeerCitados::where('id_solicitud', $id)->get();
@@ -4861,8 +4869,31 @@ class SeerController extends Controller
 
         return $pdf->stream('Convenio_PTU.pdf');            
     }
+
     public function Historial_Solicitante(){ //ANA
         return view('solicitudes.solicitud_revision');
     }
 
+    public function VerDocumentosAudiencia($id){
+       $documento_general = SeerPerGeneral::find($id); 
+       $documento_solicitante = SeerSolicitante::where('id_solicitud',$id)
+       ->select('documentoCurp','documentoIdentificacion')
+       ->first(); 
+       //Documentos del abogado y citados
+       $documento_abogado = Poder::
+       join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
+       ->where('id_solicitud',$id)
+       ->select('abogados.ine','abogados.representacion','abogados.anexo','abogados.cedula')
+       ->get();
+       //Documentos perdona fisica
+       $documento_fisica = PersonaFisica::
+       join('seer_citados','seer_citados.id_fisica','persona_fisica.id')
+       ->where('seer_citados.id_solicitud',$id)
+       ->select('persona_fisica.documentoIdentificacion')
+       ->get();
+        //Documentos subidos
+        $documento_subidos = DocumentosSolicitud::where('id_solicitud',$id)->get(); 
+
+       return view('solicitudes/verDocumentos',compact('documento_general','documento_solicitante','documento_abogado','documento_fisica','documento_subidos'));
+    }
 }

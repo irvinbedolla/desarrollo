@@ -128,7 +128,6 @@
                                         <a class="btn btn-info" onclick="openCity(event, 'detalles')">Detalles</a>
                                         <a class="btn btn-info" onclick="openCity(event, 'solicitante')">Solicitante</a>
                                         <a class="btn btn-info" onclick="openCity(event, 'documentos')">Citado(s)</a>
-                                        <a class="btn btn-info" onclick="openCity(event, 'citados')">Documentos</a>
                                     </div>
 
                                     <div id="detalles" class="tabcontent">
@@ -542,48 +541,6 @@
                                                     </div>
                                                 </div>
                                             @endforeach
-                                        </div>
-                                    </div>
-                                    <div id="citados" class="tabcontent">
-                                        <div id="tabla_citados" class="row">
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <div class="form-group">
-                                                    <h4 class="text-center">Documentos</h4>
-                                                </div>
-                                            </div><br>
-                                            @foreach($solicitantes as $solicitante)
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <label for="password">CURP</label><br>
-                                                    <a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoIdentificacion}}">PDF</a><br>
-                                                </div>
-
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <label for="password">Identificacíon Oficial</label><br>
-                                                    <a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoCurp}}">PDF</a><br>
-                                                </div>
-                                            @endforeach
-                                            <br>
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <div class="form-group">
-                                                    <h4 class="text-center">Fecha de audiencia</h4>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <label for="password">Fecha de audiencia</label><br>
-                                                <span class="badge badge-pill badge-secondary">{{ $audiencia == 'NULL' ? "Sin seleccionar" : $audiencia["fecha"] }}</span>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <label for="password">Hora de audiencia</label><br>+
-                                                <span class="badge badge-pill badge-secondary">{{ $audiencia == 'NULL' ? "Sin seleccionar" : $audiencia["hora"] }}</span>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <label for="password">Conciliador</label><br>
-                                                <span class="badge badge-secondary">{{ $conciliadores["name"] == 'NULL' ? "Sin seleccionar" : $conciliadores["name"] }}</span>
-                                            </div>
-
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Regresar</button>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

@@ -37,7 +37,7 @@
                                                     <td>Sindical</td>
                                                 @endif
                                                 <td>
-                                                    <a class="btn btn-info" href="{{ route('solicitud_revisar', $solicitud->id)}}" onclick=editar_usuario();>Revisar</a>
+                                                    <a class="btn btn-info" href="{{ route('solicitud_revisar', $solicitud->id)}}" target="_blank">Revisar</a>
                                                 </td>
                                             </tr>
                                         @endforeach

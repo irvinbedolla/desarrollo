@@ -380,7 +380,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Fin recepcion
     //Documentos
         Route::get('/INE_Solicitante/{id}',             [SeerController::class, 'Ver_INE_Solicitante'])->name('PDF_INE_solicitante');
-        Route::get('/VerDocumentosSolicitud/{id}',      [SeerController::class, 'Ver_Documentos_Solicitante'])->name('VerDocumentosAudiencia');
+        //Route::get('/VerDocumentosSolicitud/{id}',      [SeerController::class, 'Ver_Documentos_Solicitante'])->name('VerDocumentosAudiencia');
         Route::get('/VerDcocumentos/{id}',              [SeerController::class, 'VerDocumentosAudiencia'])->name('VerDocumentosAudiencia');
     //Fin de Documentos
     Route::name('user-management.')->group(function () {
