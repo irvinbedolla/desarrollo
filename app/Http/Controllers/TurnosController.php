@@ -1563,12 +1563,13 @@ class TurnosController extends Controller
     public function busqueda_ratificaciones(Request $request){
         $data = $request->all();
         $id = auth()->user()->id;
-        $user = User::find($id);
+        //$user = User::find($id);
 
         $solicitudes = Turnos::where('tipo','Ratificación')
-        ->where('auxiliar',$user["id"])
+        //->where('auxiliar',$user["id"])
         ->whereBetween('turnos.fecha', [$data["fecha_inicio"], $data["fecha_final"]])
         ->get();
+        dd($solicitudes);
         return view('/ratificaciones/busqueda',compact('solicitudes'));
     }
 }
