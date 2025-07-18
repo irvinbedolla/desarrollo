@@ -2232,8 +2232,9 @@ class SeerController extends Controller
     public function vista_citado($id){
         $estados = Estados::all();
         $municipios = Municipios::all();
+        $citados = SeerCitados::where('id_solicitud', $id)->count(); //LLeva el conteo de los citados agregados
 
-        return view('solicitudes.citados',compact('estados','id'));
+        return view('solicitudes.citados',compact('estados','id','citados'));
     }
 
     /*public function vista_solicitante($id){
