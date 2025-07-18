@@ -281,8 +281,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/Verpdfmulta/{id}',                                 [SeerController::class, 'VerPDFMulta'])->name('PDFmulta');        
         Route::get('/solicitud/pdfs/{id}',                              [SeerController::class, 'pdfCitatorio'])->name('PDFSolicitud');
         Route::get('solicitud/consultar/{id}',                          [SeerController::class, 'consultar_solicitudes'])->name('consultar_solicitud');
-        Route::get('/audiencias/historial',                             [SeerController::class, 'audiencia_fecha'])->name('audiencia_fecha');
-        Route::post('/historial/conciliador',                           [SeerController::class, 'historial_conciliador'])->name('historial_conciliador');
+        
+        Route::get('/audiencias/busqueda/buscar',                       [SeerController::class, 'audiencia_fecha'])->name('audiencia_fecha');
+
+        Route::post('/historial/conciliador/busqueda',                  [SeerController::class, 'historial_conciliador'])->name('historial_conciliador');
+
         Route::get('/PDF/faltaInteres/{id}',                            [SeerController::class, 'VerPDFInteres'])->name('PDFfalltaInteres');
         Route::get('/Verpdfnoconciliacion/{id}',                        [SeerController::class, 'VerPDFNoConciliacion'])->name('PDFno_conciliacion');
         Route::get('/Verpdfincomparecencia/{id}',                       [SeerController::class, 'VerPDFincomparecencia'])->name('PDFincomparecencia');
@@ -292,6 +295,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/VerpdfNotificacionNoExitosa/{id}/{id_solicitud}',  [SeerController::class, 'PDFnotificadoNoexitosa'])->name('PDFNoExitosa'); //Notificación No exitosa SE CONSTITUYE, CERRADO
         Route::get('/VerpdfNotificacionNoInt/{id}/{id_solicitud}',      [SeerController::class, 'PDFnotificadoNoexitosaInt'])->name('PDFNoExitosaInt'); //Notificación No exitosa NO SE LOCALIZA INTERIOR
         Route::get('/VerpdfcPTU/{id}',                                  [SeerController::class, 'VerPDFConvenioPTU'])->name('PDFconvenioPTU'); //Conevnio por PTU
+        Route::get('/Verpdfcumpumplimiento/{id}',                       [SeerController::class, 'VerPDFCumplimiento'])->name('PDFcumplimiento');
     //Fin de PDF
     //Ratificaciones
         Route::get('/ratificaciones/atender',       [TurnosController::class, 'revisar_ratificaciones_hoy'])->name('ratificacion_atender');
@@ -332,8 +336,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/seleccionar_abogado',                 [SeerController::class, 'seleccionar_abogado'])->name('seleccionar_abogado');
         Route::post('/incompentencia_audiencia',            [SeerController::class, 'incopentencia_audiencia'])->name('incopentencia_audiencia');
         Route::get('/audieniecias/complimientos',           [SeerController::class, 'audiencias_cumplimiento'])->name('audiencias.cumplimiento');
-        Route::post('/audiencia/guardar/solicitud',         [SeerController::class, 'solicitudes_busqueda'])->name('solicitudes_busqueda');
-        Route::post('/solicitud/indexA',                    [SeerController::class, 'guardar_expediente'])->name('subir_expediente'); //Subir expediente
+        Route::post('/audiencia/consulta/solictud',         [SeerController::class, 'solicitudes_busqueda'])->name('solicitudes_busqueda');
+        Route::post('/solicitud/guardarExpediente',         [SeerController::class, 'guardar_expediente'])->name('subir_expediente'); //Subir expediente
     //Fin de Audiencias
     //Citados
         Route::post('/solicitud/guardar_citadoC',           [SeerController::class, 'insertar_citados_con'])->name('insertar_citado');
@@ -361,7 +365,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/cumplimiento/PDFpago/{id}',            [SeerController::class, 'VerPDFAudiencia'])->name('VerPDFAudiencia');
         Route::get('/cumplimiento/PDFIncumplimiento/{id}',  [SeerController::class, 'PDFincumplimientoAudiencia'])->name('PDFincumplimientoAudiencia');
     //Fin de cumplimientos
-     //Recepcion
+    //Recepcion
         Route::get('/turnos/create',             [RecepcionController::class, 'create'])->name('turnos.create');
         Route::post('/turnos/store',             [RecepcionController::class, 'store_turnos'])->name('turnos.store');
         Route::get('/turnos/turnos',             [RecepcionController::class, 'turnos'])->name('turnos.listado');

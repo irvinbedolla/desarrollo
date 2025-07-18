@@ -46,6 +46,11 @@
                                 </div>
                                 <div class="col-xs-4 col-sm-4 col-md-4">
                                     <div align="center">
+                                        <a href="{{ route('solicitud') }}" class="btn btn-primary" target="_blank">Nueva Solicitud</a>
+                                    </div>
+                                </div>
+                                <div class="col-xs-4 col-sm-4 col-md-4">
+                                    <div align="center">
                                        <button type="button" class="btn btn-primary open-modal" data-bs-toggle="modal" data-bs-target="#ModalArchivar">
                                             Buscar
                                         </button>

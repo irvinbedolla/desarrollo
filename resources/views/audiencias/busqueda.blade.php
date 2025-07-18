@@ -1,9 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.app_editar')
 
 @section('content')
     <section class="section">
         <div class="section-header">
-            <h3 class="page__heading">Historial</h3>
+            <h3 class="page__heading">Busqueda de audiencias</h3>
         </div>
         <div class="section-body">
             <div class="row">
@@ -14,17 +14,74 @@
                             <form method="POST" action="{{ route('historial_conciliador') }}">
                                 @csrf
                                 <div class="row">
-                                    <div class="col-xs-12 col-sm-6 col-md-6">
-                                        <div class="form-group">
-                                            <label for="fecha_inicio">Fecha de inicio</label>
-                                            <input type="date" class="form-control" name="fecha_inicio" required>
-                                        </div>
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <label>Fecha inicio</label>
+                                        <input type="date" name="fecha_inicio" class="form-control">
                                     </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-6">
-                                        <div class="form-group">
-                                            <label for="fecha_final">Fecha final</label>
-                                            <input type="date" class="form-control" name="fecha_final" required>
-                                        </div>
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <label>Fecha final</label>
+                                        <input type="date" name="final" class="form-control">
+                                    </div>
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <label>Número de expediente</label>
+                                        <input type="text" name="nue" class="form-control">
+                                    </div>
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <label>CURP</label>
+                                        <input type="text" name="curp" class="form-control">
+                                    </div>
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <label>Nombre Solicitante</label>
+                                        <input type="text" name="solicitante" class="form-control">
+                                    </div>
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <label>Nombre del citado</label>
+                                        <input type="text" name="citado" class="form-control">
+                                    </div>
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <label>Folio</label>
+                                        <input type="text" name="folio" class="form-control">
+                                    </div>
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <label>Estatus solicitud</label>
+                                        <select class="form-control" name="estatus">
+                                            <option value="">Seleccione</option>
+                                            <option value="Pendiente">Pendiente</option>
+                                            <option value="Confirmado">Confirmado</option>
+                                            <option value="Incompetencia">Incompetencia</option>
+                                            <option value="Incomparecencia">Incomparecencia</option>
+                                            <option value="Archivada">Archivada</option>
+                                            <option value="Conciliacion">Conciliacion</option>
+                                            <option value="No conciliacion">No conciliacion</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <label>Tipo de solicitud</label>
+                                        <select class="form-control" name="tipo">
+                                            <option value="">Seleccione</option>
+                                            <option value="1">Trabajador</option>
+                                            <option value="2">Patron individual</option>
+                                            <option value="3">Patron colectiva</option>
+                                            <option value="4">Sindicato</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <label>Auxiliar</label>
+                                        <select class="form-control" name="auxiliar">
+                                            <option value="">Seleccione</option>
+                                            @foreach($auxiliares as $aux)
+                                                <option value="{{$aux['id']}}">{{$aux['name']}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <label>Conciliador</label>
+                                        <select class="form-control" name="conciliador">
+                                            <option value="">Seleccione</option>
+                                            @foreach($conciliadores as $con)
+                                                <option value="{{$con['id']}}">{{$con['name']}}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="modal-footer text-center">

@@ -513,6 +513,7 @@
                 </div>
                 <div class="modal-body">
                     <input type="date" class="form-control" name="fecha">
+                    <input type="time" class="form-control" name="hora">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>

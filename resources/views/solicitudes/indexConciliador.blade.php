@@ -35,8 +35,7 @@
                                     <table id="example" class="table table-striped mt-1">
                                         <thead style="background-color: #4A001F;">
                                             <th style="color: #fff;">Núm. expediente</th>
-                                            <th style="color: #fff;">Fecha</th>
-                                            <th style="color: #fff;">Hora</th>
+                                            <th style="color: #fff;">Fecha y Hora</th>
                                             <th style="color: #fff;">Solicitante</th>
                                             <th style="color: #fff;">Estatus</th>
                                             <th style="color: #fff;">Detalles</th>
@@ -47,18 +46,17 @@
                                             @foreach($audiencias as $audiencia)
                                             <tr>
                                                 <td>{{$audiencia->NUE}}</td>
-                                                <td>{{$audiencia->fecha}}</td> 
                                                 <td>{{$audiencia->hora}}</td>
                                                 <td>{{$audiencia->nombre}}</td>
                                                 <td>{{$audiencia->estatus}}</td>
-                                                <td><a class="btn btn-info" href="{{ route('solicitud_audiencia', $audiencia->id)}}" onclick=editar_usuario();>Revisar</a></td>
+                                                <td><a class="btn btn-info" href="{{ route('solicitud_audiencia', $audiencia->id_solicitud)}}" onclick=editar_usuario();>Revisar</a></td>
                                                 <td>
                                                     @if($audiencia->estatus == "Confirmado")
-                                                        <a class="btn btn-success" href="{{ route('inicioAudiencia', $audiencia->id, 'Confirmado') }}">Iniciar</a><br>
+                                                        <a class="btn btn-success" href="{{ route('inicioAudiencia', $audiencia->id_solicitud, 'Confirmado') }}">Iniciar</a><br>
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <button type="button" class="btn btn-warning open-expediente-modal" data-bs-toggle="modal" data-bs-target="#expediente" data-id="{{ $audiencia->id }}">Subir Documento</button>
+                                                    <button type="button" class="btn btn-warning open-expediente-modal" data-bs-toggle="modal" data-bs-target="#expediente" data-id="{{ $audiencia->id_solicitud }}">Subir Documento</button>
                                                     @if($audiencia->estatus == "Archivada")
                                                         <div class="dropdown">
                                                             <div class="dropdown">
@@ -66,8 +64,8 @@
                                                                     Documentos
                                                                 </button>
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                                    <li><a class="dropdown-item" href="{{ route('VerDocumentosAudiencia', $audiencia->id) }}"  target="_blank">Identificaciones</a></li>
-                                                                    <li><a class="dropdown-item" href="{{ route('PDFfalltaInteres', $audiencia->id) }}"  target="_blank">Acta de Archivo</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Identificaciones</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFfalltaInteres', $audiencia->id_solicitud) }}"        target="_blank">Acta de Archivo</a></li>
                                                                 </ul>
                                                             </div>
                                                         </div>
@@ -78,8 +76,8 @@
                                                                     Documentos
                                                                 </button>
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                                    <li><a class="dropdown-item" href="{{ route('VerDocumentosAudiencia', $audiencia->id) }}"  target="_blank">Identificaciones</a></li>
-                                                                    <li><a class="dropdown-item" href="{{ route('PDFincompetencia', $audiencia->id) }}"  target="_blank">Incompetencia</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Identificaciones</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFincompetencia', $audiencia->id_solicitud) }}"        target="_blank">Incompetencia</a></li>
                                                                 </ul>
                                                             </div>
                                                         </div>
@@ -90,8 +88,8 @@
                                                                     Documentos
                                                                 </button>
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                                    <li><a class="dropdown-item" href="{{ route('VerDocumentosAudiencia', $audiencia->id) }}"  target="_blank">Identificaciones</a></li>
-                                                                    <li><a class="dropdown-item" href="{{ route('PDFinteres', $audiencia->id) }}"  target="_blank">Acta de incomparecencia</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Identificaciones</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFinteres', $audiencia->id_solicitud) }}"              target="_blank">Acta de incomparecencia</a></li>
                                                                 </ul>
                                                             </div>
                                                         </div>
@@ -102,9 +100,9 @@
                                                                     Documentos
                                                                 </button>
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                                    <li><a class="dropdown-item" href="{{ route('VerDocumentosAudiencia', $audiencia->id) }}"  target="_blank">Identificaciones</a></li>
-                                                                    <li><a class="btn btn-info" target="_blank" href="{{ route('PDFnotificacion_solicitante', $audiencia->id) }}">Notificación al solicitante</a></li>
-                                                                    <li><button type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $audiencia->id }}">Citatorios</button></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"      target="_blank">Identificaciones</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFnotificacion_solicitante', $audiencia->id_solicitud) }}" target="_blank">Notificación al solicitante</a></li>
+                                                                    <li><button type="button" class="btn btn-info open-modal" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $audiencia->id_solicitud }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
                                                         </div>                                                        
@@ -115,8 +113,8 @@
                                                                     Documentos
                                                                 </button>
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                                    <li><a class="dropdown-item" href="{{ route('VerDocumentosAudiencia', $audiencia->id) }}"  target="_blank">Identificaciones</a></li>
-                                                                    <li><a class="btn btn-info" target="_blank" href="{{ route('PDFno_conciliacion', $audiencia->id) }}">>Constancia de no conciliación</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Identificaciones</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFno_conciliacion', $audiencia->id_solicitud) }}"      target="_blank">Constancia de no conciliación</a></li>
                                                                 </ul>
                                                             </div>
                                                         </div> 
@@ -127,11 +125,11 @@
                                                                     Documentos
                                                                 </button>
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                                    <li><a class="dropdown-item" href="{{ route('VerDocumentosAudiencia', $audiencia->id) }}"  target="_blank">Identificaciones</a></li>
-                                                                    <li><a class="dropdown-item" href="{{ route('PDFinteres', $audiencia->id) }}"  target="_blank">Acta de Audiencia</a></li>
-                                                                    <li><a class="dropdown-item" href="{{ route('PDFconvenioratificacion', $audiencia->id) }}" tarjet="_blank">Convenio</a></li>
-                                                                    <li><a class="dropdown-item" href="{{ route('PDFcumplimiento', $audiencia->id) }}"  target="_blank">Constancia de cumplimiento</a></li>
-                                                                    <li><button type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $audiencia->id }}">Citatorios</button></li>
+                                                                    <li><a class="dropdown-item" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Identificaciones</a></li>
+                                                                    <li><a class="dropdown-item" href="{{ route('VerPDFAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Acta de Audiencia</a></li>
+                                                                    <li><a class="dropdown-item" href="{{ route('PDFconveniosolicitud', $audiencia->id_solicitud) }}" target="_blank">Convenio</a></li>
+                                                                    <li><a class="dropdown-item" href="{{ route('PDFcumplimiento', $audiencia->id_solicitud) }}"  target="_blank">Constancia de cumplimiento</a></li>
+                                                                    <li><button type="button" class="btn open-modal" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $audiencia->id_solicitud }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
                                                         </div> 
@@ -223,6 +221,7 @@
         $(document).ready(function() {
             $('.open-modal').click(function() {
                 const id = $(this).data('id');
+                console.log(id);
                 $('#pdf-list').empty();
 
                 var myModal = new bootstrap.Modal(document.getElementById('documentos'));
@@ -265,16 +264,17 @@
                 });
             });
 
+            $('.open-expediente-modal').click(function () {
+                console.log("modal");
+                const id = $(this).data('id');
+                
+                $('#expediente_audiencia_id').val(id);
+            });
+            
             // Limpiar backdrop y modal-open cuando modal se oculta
             $('#documentos').on('hidden.bs.modal', function () {
                 $('.modal-backdrop').remove();
                 $('body').removeClass('modal-open');
-            });
-        });
-        $(document).ready(function() {
-            $('.open-expediente-modal').click(function () {
-                const id = $(this).data('id');
-                $('#expediente_audiencia_id').val(id);
             });
         });
     </script>
