@@ -85,7 +85,6 @@
                     NÚMERO DE IDENTIFICACIÓN ÚNICO {{ $solicitud->NUE }}<br><br>
                     SOLICITANTES:<br>
                     {{ $solicitud->empresa }}<br>
-                    {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}
                 </b></p>  
                 <p><center><b>CONVENIO DE CONCILIACIÓN</b></center></p><br>
                 <p>Con fundamento en los artículos 123, apartado A, fracción XXVII, inciso h) párrafo segundo, de la Constitución Política de los Estados Unidos Mexicanos; 
@@ -230,7 +229,7 @@
                                         <tr>
                                             <td style="display: none;">{{$pago->id_solicitud}}</td>
                                             <td>{{ \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d/m/y') }}</td> 
-                                            <td>{{ \Carbon\Carbon::parse(str_replace(' HORAS', '', $pago->hora))->format('H:i') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse(str_replace(' HORAS', '', $pago->hora))->format('H:i') }} HRS</td>
                                             <td>${{ number_format($pago->monto, 2) }}</td>
                                             <td>{{$pago->descripcion}}</td>
                                         </tr>

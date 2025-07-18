@@ -121,7 +121,7 @@
                         el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>  a las <b>{{ $solicitud->hora }}</b> horas, en la Delegación Regional/Oficina de Apoyo de 
                         <b>{{ $solicitud->delegacion }}</b> del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con domicilio en <b>{{$direccion_sede}}</b>, apercibiéndolo que de no presentarse 
                         cualquiera de las partes en la fecha y hora señalada, su solicitud quedará <b>ARCHIVADA</b>, dejando a salvo el derecho de cualquiera de las partes para iniciar su solicitud. 
-                    </p><br>
+                    </p>
                     <p>
                         Agradecemos presentarse a la dirección proporcionada con diez minutos de anticipación de la hora citada, acompañado de sus documentos originales para cotejo. (En caso de no contar con Folio 
                         Interno de Registro de Representación Patronal deberá presentar las identificaciones, Poder Notarial/Carta Poder originales el día y hora señalados). <br><br>

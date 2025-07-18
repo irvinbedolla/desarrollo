@@ -103,7 +103,7 @@
                                         <input type="hidden" name="id" value="{{$id}}">
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-4">
-                                                <label for="name">Tipo de Persona</label>
+                                                <label for="name">Tipo de Persona (*)</label>
                                                 <select name="tipo" class="form-control" required>
                                                     <option value="">SELECCIONE</option>
                                                     <option value="Fisica">FÍSICA</option>
@@ -119,9 +119,10 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">CURP del <Solicitante>No. de Migración (*)</label>
+                                                    <label for="name">CURP/No. de Migración (*)</label>
                                                     <input type="text" name="curp" id="curp_input" oninput="validarInput(this)"class="form-control" required> 
                                                     <pre id="resultado"></pre>
                                                     <div class="invalid-feedback">
@@ -149,8 +150,8 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">RFC del Solicitante (*)</label>
-                                                    <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <label for="name">RFC del Solicitante</label>
+                                                    <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo RFC es obligatorio.
                                                     </div>
@@ -396,7 +397,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Salario (*)</label>
+                                                    <label for="name">Salario diario (*)</label>
                                                     <input type="text" name="pago" class="form-control soloMontos" required> 
                                                     <div class="invalid-feedback">
                                                         El campo salario es obligatorio.
@@ -580,38 +581,47 @@
                 const dia = String(hoy.getDate()).padStart(2, '0');
                 return `${año}-${mes}-${dia}`;
             }
-
+            function esFechaValida(fechaStr) {
+                return /^\d{4}-\d{2}-\d{2}$/.test(fechaStr) && !isNaN(new Date(fechaStr).getTime());
+            }
             function validarFechas() {
                 const fechaHoyStr = obtenerFechaHoyFormato();
+                const fechaHoy = new Date(fechaHoyStr);
+                const fechaInicioStr = inicio.value;
+                const fechaTerminoStr = termino.value;
 
+                if (!esFechaValida(fechaInicioStr) && fechaInicioStr !== "") return;
+                if (!esFechaValida(fechaTerminoStr) && fechaTerminoStr !== "") return;
+
+                const fechaInicio = new Date(fechaInicioStr);
+                const fechaTermino = new Date(fechaTerminoStr);
                 // Validar que fecha inicio no sea la fecha de hoy
-                if (inicio.value === fechaHoyStr) {
+                if (fechaInicioStr === fechaHoyStr) {
                     alert("La fecha de ingreso no puede ser la fecha actual.");
                     inicio.value = "";
                     return;
                 }
 
-                // Validar que fecha inicio no sea mayor a hoy
-                if (inicio.value && new Date(inicio.value) > new Date(fechaHoyStr)) {
+                if (fechaInicio > fechaHoy) {
                     alert("La fecha de ingreso no puede ser mayor a la fecha actual.");
                     inicio.value = "";
                     return;
                 }
 
-                if (termino.value && new Date(termino.value) > new Date(fechaHoyStr)) {
+                if (fechaTerminoStr && fechaTermino > fechaHoy) {
                     alert("La fecha de término no puede ser mayor a la fecha actual.");
                     termino.value = "";
                     return;
                 }
 
-                // Validar que fecha inicio no sea mayor que fecha término
-                if (inicio.value && termino.value && new Date(inicio.value) > new Date(termino.value)) {
+                if (fechaInicioStr && fechaTerminoStr && fechaInicio > fechaTermino) {
                     alert("La fecha de ingreso no puede ser mayor que la fecha de término.");
                     termino.value = "";
                     return;
                 }
             }
-            inicio.addEventListener("change", validarFechas);
-            termino.addEventListener("change", validarFechas);
+
+            inicio.addEventListener("blur", validarFechas);
+            termino.addEventListener("blur", validarFechas);
         });
     </script>

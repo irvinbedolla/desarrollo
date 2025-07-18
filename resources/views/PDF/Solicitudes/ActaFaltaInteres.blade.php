@@ -101,7 +101,7 @@
                         Asunto: Archivo de asunto por falta de interés<br>
                         Solicitante: {{ $solicitante->nombre }} <br> 
                 </b></p>  
-                <p>En <b>{{ $direccion_sede }} a {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }},</b></p>
+                <p>En <b>{{ $direccion_sede }} a {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}.</b></p>
                 <p>
                     <b>VISTO</b> el estado que guarda el expediente identificado con el número <b>{{ $solicitud->NUE }}</b> relativo a la solicitud de conciliación realizada por
                     <b>{{ $solicitante->nombre }}</b>, por falta de interés se formula resolución en atención a los siguientes:
@@ -116,24 +116,22 @@
                         @foreach($citados as $citado)    
                             {{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}},&nbsp;
                         @endforeach
-                    </b> por objeto de <b>
+                    </b>por objeto de<b>
                          @foreach($motivos as $motivo)    
-                            {{$motivo->motivo}},&nbsp;
+                            {{$motivo->motivo}}&nbsp;
                         @endforeach
-                    </b>.<br><br>
+                    </b><br><br>
 
                     <b>Segundo.</b> El <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, el Centro de Conciliación <b>{{ $solicitud->delegacion }}</b> admitió la 
-                    solicitud de Conciliación, señalando que la celebración de la Audiencia de Conciliación se realizaría el <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>
-                    {{ $audiencia->hora }}
-                    </b> 
-                    horas, en las instalaciones de este Centro.<br><br>
+                    solicitud de Conciliación, señalando que la celebración de la Audiencia de Conciliación se realizaría el <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las<b>
+                    {{ $audiencia->hora }}</b> horas, en las instalaciones de este Centro.<br><br>
 
                     <b>Tercero.</b> El <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, se concluyó la notificación personal de él(los) citado(s).<br><br>
 
                     <b>Cuarto.</b> El día de la audiencia, <b>{{ $solicitante->nombre }}</b> no se presentó en ningún momento 
-                              durante el tiempo que se tenía programado para la audiencia.<br>
+                              durante el tiempo que se tenía programado para la audiencia.<br><br>
                                 
-                    <br>En esas condiciones, este Centro expone los siguientes: 
+                    En esas condiciones, este Centro expone los siguientes: 
                 </p>
                 <p>
                     <center><b>CONSIDERANDOS</b></center>
@@ -143,18 +141,18 @@
                     <b>I.</b> Esta Autoridad es competente para conocer del presente asunto en términos de lo dispuesto por los artículos 123, apartado A, fracción XX, 
                     párrafos tercero y cuarto de la Constitución Política de los Estados Unidos Mexicanos; artículos 590-E, 590-F, 684-B y 684-D, y 684-E de la Ley Federal 
                     de Trabajo; artículos 5 y 27 de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo; y artículos 17 y 20 del Reglamento 
-                    Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<br>
+                    Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<br><br>
 
                     Y toda vez que la solicitud de Ratificación de Convenio presentada y admitida de conformidad con lo establecido por los artículos 33 párrafo segundo, 
                     684-C y 684-E de la Ley Federal del Trabajo. Señalándose 
                     <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{$audiencia->hora}}
-                    </b> para la Audiencia, se notificó a la parte 
+                    </b> horas para la Audiencia, se notificó a la parte 
                     solicitante <b>{{ $solicitante->nombre }}</b>, sin embargo, no acudió, no obrando una causa justificada de la incomparecencia. <br><br> 
                     Por lo anteriormente expuesto, se:
                 </p>       
                 <p>
                     <center><b>RESUELVE</b></center>
-                </p><br>
+                </p>
                 <p>
                     <b>Primero.</b> Se archiva el expediente <b>{{ $solicitud->NUE }}</b> que consta desde el <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, 
                     en este Centro, por falta de interés del Solicitante.<br><br>
@@ -166,10 +164,12 @@
                     y con ello interrumpir nuevamente la prescripción.<br><br>
 
                     <b>Cuarto.</b> La interrupción de la prescripción cesa al día siguiente en que se emite esta Resolución, de conformidad con el artículo 521, fracción III de la Ley Federal 
-                    del Trabajo.
+                    del Trabajo.<br><br>
+
+                    <b>{{ $solicitud->observaciones }}</b>
                 </p>
 
-                <br><br><br><br>  
+                <br>
                 <center><br><br> <p><b>___________________________________<br>{{ $conciliador->name }} <br> FUNCIONARIO/A CONCILIADOR/A</b></p></center>     
             </div>
             <script type="text/php">

@@ -151,7 +151,7 @@
                 </p><br>
                 <p>
                     <b>Primero.</b> Se archiva el expediente <b>{{ $solicitud->NUE }}</b> que consta desde el <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, 
-                    en este Centro, por falta de interés del Solicitante.<br><br>
+                    en este Centro, por falta de interés del Citado.<br><br>
 
                     <b>Segundo.</b> Se le informa que el plazo de prescripción se reanuda a partir del día siguiente en que fue programada la audiencia, de conformidad con el artículo 684-E, 
                     fracción X de la Ley Federal del Trabajo.<br><br>

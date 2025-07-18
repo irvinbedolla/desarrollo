@@ -2148,7 +2148,7 @@ class SeerController extends Controller
             'calle'             => 'required',
             'exterior'          => 'required',
             'referencia'        => 'required',
-            'calle'
+            'municipio_citado'  => 'nullable',
         ]);
         
         $data_insert=array(
@@ -2159,6 +2159,7 @@ class SeerController extends Controller
             'calle'             => $data["calle"],
             'tipo_vialidad'     => $data["vialidad"],
             'referencia'        => $data["referencia"],
+            'municipio_citado'  => $data["municipio_citado"],
         );
         $data_insert["notificacion"] =  $data["notificacion"];
 
@@ -2181,12 +2182,12 @@ class SeerController extends Controller
         if(isset($data["calle2"])){
             $data_insert["calle2"] =  $data["calle2"];
         }
-        if(isset($data["nombre"])){
+        /*if(isset($data["nombre"])){
             $data_insert["nombre"] =  $data["nombre"];
         }
-        if(isset($data["tipo"])){
+         /* if(isset($data["tipo"])){
             $data_insert["tipo_persona"] =  $data["tipo"];
-        }
+        }*/
         if(isset($data["curp"])){
             $data_insert["curp"] =  $data["curp"];
         }
@@ -2199,18 +2200,30 @@ class SeerController extends Controller
         if(isset($data["segundo_apellido"])){
             $data_insert["segundo_apellido"] =  $data["segundo_apellido"];
         }
-        if(isset($data["rfc"])){
+        if (isset($data["tipo"])) {
+            $data_insert["tipo_persona"] = $data["tipo"];
+        
+            if ($data["tipo"] == "Moral" && isset($data["razon"])) {
+                $data_insert["nombre"] = $data["razon"];
+            }
+        
+            if ($data["tipo"] == "Fisica" && isset($data["nombre"])) {
+                $data_insert["nombre"] = $data["nombre"];
+            }
+        }
+        
+        /*if(isset($data["rfc"])){
             $data_insert["rfc"] =  $data["rfc"];
-        }
-        if(isset($data["estado_solicitante"])){
+        }*/
+        /*if(isset($data["estado_solicitante"])){
             $data_insert["estado_solicitante"] =  $data["estado_solicitante"];
-        }
+        }*/
         
         //Se van a generar el citatorio
         SeerCitados::create($data_insert); 
         //Se van a generar quien resulte responsable
         $data_insert["nombre"] =  "REPRESENTANTE LEGAL  DE: QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O
-        USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN ".$data["calle1"].", NÚMERO ".$data["exterior"]." COLONIA ".$data["colonia"].", MORELIA, MICHOACÁN.";
+        USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN ".$data["calle1"].", NÚMERO ".$data["exterior"]." COLONIA ".$data["colonia"].", ".$data["municipio_citado"].", MICHOACÁN.";
         SeerCitados::create($data_insert); 
 
         return back()->with('success', 'Citado agregado correctamente, puedes agregar otro o continuar.');
@@ -2558,7 +2571,9 @@ class SeerController extends Controller
             'calle'             => $data["calle"],
             'tipo_vialidad'     => $data["vialidad"],
             'referencia'        => $data["referencia"],
+            'municipio_citado'  => $data["municipio_citado"]
         );
+        $data_insert["notificacion"] =  $data["notificacion"];
 
         if(isset($data["rfc"])){
             $data_insert["rfc"] =  $data["rfc"];
@@ -2579,12 +2594,12 @@ class SeerController extends Controller
         if(isset($data["calle2"])){
             $data_insert["calle2"] =  $data["calle2"];
         }
-        if(isset($data["nombre"])){
+        /*if(isset($data["nombre"])){
             $data_insert["nombre"] =  $data["nombre"];
-        }
-        if(isset($data["tipo"])){
+        }*/
+        /*if(isset($data["tipo"])){
             $data_insert["tipo_persona"] =  $data["tipo"];
-        }
+        }*/
         if(isset($data["curp"])){
             $data_insert["curp"] =  $data["curp"];
         }
@@ -2597,11 +2612,25 @@ class SeerController extends Controller
         if(isset($data["segundo_apellido"])){
             $data_insert["segundo_apellido"] =  $data["segundo_apellido"];
         }
-        if(isset($data["rfc"])){
+        /*if(isset($data["rfc"])){
             $data_insert["rfc"] =  $data["rfc"];
         }
         if(isset($data["estado_solicitante"])){
             $data_insert["estado_solicitante"] =  $data["estado_solicitante"];
+        }*/
+        if(isset($data["municipio_citado"])){
+            $data_insert["municipio_citado"] =  $data["municipio_citado"];
+        }
+        if (isset($data["tipo"])) {
+            $data_insert["tipo_persona"] = $data["tipo"];
+        
+            if ($data["tipo"] == "Moral" && isset($data["razon"])) {
+                $data_insert["nombre"] = $data["razon"];
+            }
+        
+            if ($data["tipo"] == "Fisica" && isset($data["nombre"])) {
+                $data_insert["nombre"] = $data["nombre"];
+            }
         }
         
         //Se van a generar el citatorio
@@ -2609,7 +2638,7 @@ class SeerController extends Controller
         if($data["lenguaje"] == "Si"){
             $data_insert["nombre"] =  "REPRESENTANTE LEGAL  DE: QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O
             USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN ".$data["calle1"].", NÚMERO ".$data["exterior"].
-            " COLONIA ".$data["colonia"].", MORELIA, MICHOACÁN.";
+            " COLONIA ".$data["colonia"].", ".$data["municipio_citado"].", MICHOACÁN.";
             SeerCitados::create($data_insert);
         }
  

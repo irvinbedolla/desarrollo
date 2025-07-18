@@ -326,13 +326,13 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Num Ext.</label><br>
+                                                        <label for="password">Núm. Ext.</label><br>
                                                         <span class="badge badge-pill badge-secondary">{{ $solicitante["num_ext"] == 'NULL' ? "" : $solicitante["num_ext"] }}</span>
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Num Int.</label><br>
+                                                        <label for="password">Núm. Int.</label><br>
                                                         <span class="badge badge-pill badge-secondary">{{ $solicitante["num_int"] == 'NULL' ? "" : $solicitante["num_int"] }}</span>
                                                     </div>
                                                 </div>
@@ -344,7 +344,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Referencia.</label><br>
+                                                        <label for="password">Referencia</label><br>
                                                         <span class="badge badge-pill badge-secondary">{{ $solicitante["referencia"] == 'NULL' ? "" : $solicitante["referencia"] }}</span>
                                                     </div>
                                                 </div>
@@ -528,16 +528,29 @@
                                                         <span class="badge badge-pill badge-secondary">{{ $citado["n_int"] == 'NULL' ? "" : $citado["n_int"] }}</span>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-12">
-                                                    <div class="form-group">
-                                                        <label for="password">Referencia</label><br>
-                                                        <span class="badge badge-pill badge-secondary">{{ $citado["referencia"] == 'NULL' ? "" : $citado["referencia"] }}</span>
-                                                    </div>
-                                                </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">Código Postal</label><br>
                                                         <span class="badge badge-pill badge-secondary">{{ $citado["cp"] == 'NULL' ? "" : $citado["cp"] }}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="name">Municipio o Alcaldía del citado *</label>
+                                                        <select class="form-control" name="municipio_citado">
+                                                            @foreach($municipios as $mun)
+                                                                <option value="{{$mun['id']}}" {{ $citado['municipio_citado'] == $mun['id'] ? "selected" : '' }}>{{$mun['nombre']}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo municipio o alcaldía es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="password">Referencia</label><br>
+                                                        <span class="badge badge-pill badge-secondary">{{ $citado["referencia"] == 'NULL' ? "" : $citado["referencia"] }}</span>
                                                     </div>
                                                 </div>
                                             @endforeach
@@ -636,7 +649,7 @@
 
                             <div class="col-xs-12 col-sm-12 col-md-6">
                                 <div class="form-group">
-                                    <label for="name">Entre calle del domicilio del citado</label>
+                                    <label for="name">Entre calle del domicilio del citado *</label>
                                     <input type="text" name="calle1" class="form-control"> 
                                     <div class="invalid-feedback">
                                         El campo calle es obligatorio.
@@ -646,7 +659,7 @@
 
                             <div class="col-xs-12 col-sm-12 col-md-6">
                                 <div class="form-group">
-                                    <label for="name">y calle del domicilio del citado</label>
+                                    <label for="name">y calle del domicilio del citado *</label>
                                     <input type="text" name="calle2" class="form-control"> 
                                     <div class="invalid-feedback">
                                         El campo calle es obligatorio.
@@ -656,7 +669,7 @@
 
                             <div class="col-xs-12 col-sm-12 col-md-6">
                                 <div class="form-group">
-                                    <label for="name">Num ext. del citado</label>
+                                    <label for="name">Núm ext. del citado *</label>
                                     <input type="text" name="exterior" class="form-control" required> 
                                     <div class="invalid-feedback">
                                         El campo c
@@ -666,7 +679,7 @@
 
                             <div class="col-xs-12 col-sm-12 col-md-6">
                                 <div class="form-group">
-                                    <label for="name">Num int. del citado</label>
+                                    <label for="name">Núm int. del citado</label>
                                     <input type="text" name="interior" class="form-control" > 
                                     <div class="invalid-feedback">
                                         El campo calle es obligatorio.
@@ -674,9 +687,24 @@
                                 </div>
                             </div>
 
+                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                <div class="form-group">
+                                    <label for="name">Nombre del Municipio o Alcaldía del citado *</label>
+                                    <select id="municipio_citado" class="form-control" name="municipio_citado" required>
+                                        <option value="">Seleccione</option>
+                                        @foreach($municipios as $mun)
+                                            <option value="{{$mun['id']}}">{{$mun['nombre']}}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        El campo municipio o alcaldía es obligatorio.
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
-                                <label for="floatingTextarea">Referencias del domicilio del citado</label>
+                                <label for="floatingTextarea">Referencias del domicilio del citado *</label>
                                     <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencia"></textarea>
                                     <div class="invalid-feedback">
                                         El campo referencias es obligatorio.

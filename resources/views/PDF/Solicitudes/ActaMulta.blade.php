@@ -109,7 +109,7 @@
                     de Conciliación Laboral del Estado de Michoacán de Ocampo, <b>hace constar y certifica</b> que la parte citada 
                     <b>{{ $citado->nombre }} {{ $citado->primero_apellido }} {{ $citado->segundo_apellido }} <b>no compareció,</b> a la Audiencia de Conciliación prevista para las 
                     <b>{{$audiencia->hora}}</b> horas de esta misma fecha, a pesar de encontrarse debidamente notificado(a) para tal efecto, circunstancia que se corrobora 
-                    con <b>la razón de notificación de fecha [SOLICITADO_FECHA_NOTIFICACION]. Doy fe</b>.
+                    con <b>la razón de notificación de fecha {{ \Carbon\Carbon::parse($citado->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}. Doy fe</b>.
                 </p>
                 <p>
                     <b>{{ $direccion_sede }}</b>, a <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} </b>.
@@ -117,7 +117,7 @@
                 <p>
                     Vista la certificación mencionada, se advierte que la parte citada <b>{{ $citado->nombre }} {{ $citado->primero_apellido }} {{ $citado->segundo_apellido }}</b>, no compareció a la 
                     audiencia de conciliación prevista para las <b>{{$audiencia->hora}}</b> horas de esta misma fecha, a pesar de encontrarse debidamente notificado(a) para tal efecto, circunstancia que se 
-                    corrobora con la notificación de fecha <b>[SOLICITADO_FECHA_NOTIFICACION]</b>, por lo que con fundamento en los artículos 16, primer párrafo, 
+                    corrobora con la notificación de fecha <b>{{ \Carbon\Carbon::parse($citado->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, por lo que con fundamento en los artículos 16, primer párrafo, 
                     de la Constitución Política de los Estados Unidos Mexicanos; 590-E, 590-F, 684-E, fracciones IV, X, 684-I, fracción II de la Ley Federal del Trabajo; y 27 de 
                     la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo; Artículo 20 Fracción XVI y XVII del Reglamento Interior del Centro de 
                     Conciliación del Estado de Michoacán de Ocampo, <b>SE ACUERDA</b>:
@@ -139,10 +139,14 @@
                     citada <b>{{ $citado->nombre }} {{ $citado->primero_apellido }} {{ $citado->segundo_apellido }}</b> con los datos de identificación con los que se cuenta:
                 </p>
 
-                <p class="sangria"><b>Nombre o razón social {{ $citado->nombre }} {{ $citado->primero_apellido }} {{ $citado->segundo_apellido }}  <br> 
+                <p class="sangria"><b>Nombre o razón social {{ $citado->nombre }} {{ $citado->primero_apellido }} {{ $citado->segundo_apellido }}<br> 
                     2. CURP: {{ $citado->curp }}  <br>
                     3. RFC: {{ $citado->rfc }}  <br>
-                    4. Domicilio: {{ $citado->calle }} #{{ $citado->n_ext }}  {{ $citado->colonia }} {{ $citado->cp }} 
+                    4. Domicilio: {{ $citado->calle }} #{{ $citado->n_ext }} 
+                    @if(!empty($citado->n_int))
+                        int. {{ $citado->n_int }}
+                    @endif 
+                    {{ $citado->colonia }}, {{ $citado->municipio_citado }} {{ $citado->cp }} 
                 </b></p>
 
                 <p><b>

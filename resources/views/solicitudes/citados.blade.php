@@ -99,21 +99,121 @@
                                         </div>
                                     @endif
                                     <div style="background-color:#D2D3D5; width:100%; height:40px;">
-                                        <h3 class="text-center" style="color:black">Ingresa los datos de citado (Debes capturar al menos un Citado)</h3>
+                                        <h3 class="text-center" style="color:black">Ingresa los datos del citado (Debes capturar al menos un Citado)</h3>
                                     </div>    
 
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                                     <form class="needs-validation novalidate" method="POST" action="{{route('seer.citados')}}">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $id }}">
+                                        <div class="row" id="div_datos_citado">
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">Tipo de persona *</label>
+                                                    <select name="tipo" id="tipo" class="form-control">
+                                                        <option value="">Seleccione</option>
+                                                        <option value="Fisica">Física</option>
+                                                        <option value="Moral">Moral</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El tipo de persona es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="name">CURP</label>
+                                                    <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control"> 
+                                                    <pre id="resultado"></pre>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-12" id="tipoPersona_razon" style="display:none;">
+                                                <div class="form-group">
+                                                    <label for="name">Razón social *</label>
+                                                    <input type="text" name="razon" id="razon" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                    <div class="invalid-feedback">
+                                                        La razón social es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-12" id="tipoPersona_nombre" style="display:none;">
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="name">Nombre(s) *</label>
+                                                            <input type="text" name="nombre" id="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                            <div class="invalid-feedback">
+                                                                El nombre es obligatorio.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                
+                                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="name">Primer apellido *</label>
+                                                            <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                            <div class="invalid-feedback">
+                                                                El primer apellido es obligatorio.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="name">Segundo apellido *</label>
+                                                            <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                            <div class="invalid-feedback">
+                                                                El segundo apellido es obligatorio.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">RFC</label>
+                                                    <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()">   
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-2">
+                                                <spam for="btncheck1">¿Requiere Traductor?</spam>
+                                                <input type="checkbox" class="btn-check" id="check_lenguaje" name="traductor" autocomplete="off">
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6" id="lenguaje_señas">
+                                                <div class="form-group">
+                                                    <label for="name">¿Qué tipo de lenguaje require?</label>
+                                                    <input type="text" name="lenguaje" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <div class="row">
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:30px;">
                                                 <div class="form-group">
                                                     <h4 class="text-center">Dirección del citado</h4>
                                                 </div>
-                                            </div>                                        
+                                            </div>    
 
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">¿Quién entregará las Notificaciones? *</label>
+                                                    <select name="notificacion" class="form-control" required>
+                                                        <option value="">SELECCIONE</option>
+                                                        <option value="Trabajador">Trabajador</option>
+                                                        <option value="Centro">Centro de conciliación Laboral</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Tipo de Vialidad del citado *</label>
                                                     <select name="vialidad" class="form-control" required>
@@ -129,21 +229,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="name">Quien entregara las Notificaciones *</label>
-                                                    <select name="notificacion" class="form-control" required>
-                                                        <option value="">SELECCIONE</option>
-                                                        <option value="Trabajador">Trabajador</option>
-                                                        <option value="Centro">Centro de conciliación Laboral</option>
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        El campo es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Calle del citado *</label>
                                                     <input type="text" name="calle" class="form-control" required> 
@@ -153,7 +239,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
                                                     <label for="name">Colonia del citado *</label>
                                                     <input type="text" name="colonia" class="form-control" required> 
@@ -163,9 +249,9 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-1">
                                                 <div class="form-group">
-                                                    <label for="name">Código Postal del citado *</label>
+                                                    <label for="name">Código Postal *</label>
                                                     <input type="text" name="cp" class="form-control soloNumeros" minlength="5" maxlength="5" required> 
                                                     <div class="invalid-feedback">
                                                         El campo Código Postal es obligatorio.
@@ -173,29 +259,29 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
-                                                    <label for="name">Entre calle del domicilio del citado</label>
-                                                    <input type="text" name="calle1" class="form-control"> 
+                                                    <label for="name">Entre calle del domicilio del citado *</label>
+                                                    <input type="text" name="calle1" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo calle es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
-                                                    <label for="name">y calle del domicilio del citado</label>
-                                                    <input type="text" name="calle2" class="form-control"> 
+                                                    <label for="name">y calle del domicilio del citado *</label>
+                                                    <input type="text" name="calle2" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo calle es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-1">
                                                 <div class="form-group">
-                                                    <label for="name">Núm ext. del citado *</label>
+                                                    <label for="name">Núm ext. *</label>
                                                     <input type="number" name="exterior" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El núm. exterior es obligatorio.
@@ -204,9 +290,9 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-1">
                                                 <div class="form-group">
-                                                    <label for="name">Núm int. del citado</label>
+                                                    <label for="name">Núm int.</label>
                                                     <input type="text" name="interior" class="form-control"  oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo núm. interior es obligatorio.
@@ -214,10 +300,25 @@
                                                 </div>
                                             </div>
 
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">Municipio o Alcaldía del citado *</label>
+                                                    <select id="municipio_citado" class="form-control" name="municipio_citado" required>
+                                                        <option value="">Seleccione</option>
+                                                        @foreach($municipios as $mun)
+                                                            <option value="{{$mun['id']}}">{{$mun['nombre']}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo municipio o alcaldía es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
-                                                <label for="floatingTextarea">Referencias del domicilio del citado</label>
-                                                    <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencia"></textarea>
+                                                <label for="floatingTextarea">Referencias del domicilio del citado *</label>
+                                                    <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencia" required></textarea>
                                                     <div class="invalid-feedback">
                                                         El campo referencias es obligatorio.
                                                     </div>
@@ -225,15 +326,15 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-xs-12 col-sm-12 col-md-6">
-                                            <spam for="btncheck1">Datos adicionales del Patron/Empresa</spam>
+                                        <!--<div class="col-xs-12 col-sm-12 col-md-6">
+                                            <spam for="btncheck1">Datos adicionales del Patrón/Empresa</spam>
                                             <input type="checkbox" class="btn-check" id="check_datos" autocomplete="off">
                                         </div>
                                             
                                         <div class="row" id="div_datos_citado" style="display:none">
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Tipo de personas</label>
+                                                    <label for="name">Tipo de persona</label>
                                                     <select name="tipo" class="form-control">
                                                         <option value="">Seleccione</option>
                                                         <option value="Fisica">Física</option>
@@ -291,24 +392,24 @@
                                             </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <spam for="btncheck1">Requiere Traductor</spam>
+                                                <spam for="btncheck1">¿Requiere Traductor?</spam>
                                                 <input type="checkbox" class="btn-check" id="check_lenguaje" name="traductor" autocomplete="off">
                                             </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-6" id="lenguaje_señas">
                                                 <div class="form-group">
-                                                    <label for="name">Qué tipo de lenguaje require</label>
+                                                    <label for="name">¿Qué tipo de lenguaje require?</label>
                                                     <input type="text" name="lenguaje" class="form-control">
                                                 </div>
                                             </div>
-                                        </div>
-
-
+                                        </div>-->
 
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div align="center">
-                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar</button>
-                                                <a href="{{ route('seer.finaliza',$id); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Finalizar</a>    
+                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar citado</button>
+                                                @if($citados > 0)
+                                                    <a href="{{ route('seer.finaliza',$id); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Concluir solicitud</a> 
+                                                @endif  
                                                 </div>
                                         </div>    
                                     </form>
@@ -328,8 +429,6 @@
 @section('scripts')
     <script src="../public/assets/js/poderes/general.js"></script>
 @endsection
-
-
 
     <script src="../public/assets/js/jquery.min.js"></script>
     <script src="../public/assets/js/popper.min.js"></script>
@@ -354,7 +453,7 @@
     <script src="../public/assets/js/validaciones.js"></script> 
     <script>
         
-        $(function(){
+       /* $(function(){
             $('#check_datos').on('change', mostrarDatos);
             console.log("llego");
         })
@@ -368,8 +467,35 @@
             else{
                 document.getElementById("div_datos_citado").style.display = "none";
             }
-        }
+        }*/
 
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectTipo = document.getElementById('tipo');
+            const nombreDiv = document.getElementById('tipoPersona_nombre');
+            const razonDiv = document.getElementById('tipoPersona_razon');
+
+            function actualizarTipoPersona() {
+                const valor = selectTipo.value;
+
+                // Oculta ambos inicialmente
+                nombreDiv.style.display = 'none';
+                razonDiv.style.display = 'none';
+
+
+                if (valor === 'Fisica') {
+                    nombreDiv.style.display = 'block';
+                } else if (valor === 'Moral') {
+                    razonDiv.style.display = 'block';
+                }
+            }
+
+            if (selectTipo) {
+                selectTipo.addEventListener('change', actualizarTipoPersona);
+                // Ejecutar al cargar por si ya tiene valor
+                actualizarTipoPersona();
+            }
+        });
+        
         function sedes(){
             document.getElementById("fecha").removeAttribute("disabled");
         }

@@ -79,14 +79,14 @@
                 <p><b>
                     Trabajador(a): {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
                     Empresa/Patrón: {{ $solicitud->empresa }}<br>
-                    Funcionario Conciliador Responsable: {{$conciliador->name}}<br>
+                    Funcionario/a Conciliador/a Responsable: {{$conciliador->name}}<br>
                     Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
                     Asistencia de los interesados: Si<br>
                     Convenio conciliatorio: Si
                 </b></p>  
                 <p><center><b>CONSTANCIA DE PAGO PARCIAL DE CONVENIO</b></center></p><br>
                 <p>
-                    <b>Fundamentación:</b> Artículos 33 párrafo segundo, 590-E, 590-F, 684-C y 684-E fracciones XIII y XIV, 684-F fracción VII de la Ley Federal del Trabajo, articulo 8 fracción I, II y III 
+                    <b>Fundamentación:</b> Artículos 33 párrafo segundo, 590-E, 590-F, 684-C y 684-E fracciones XIII y XIV, 684-F fracción VII de la Ley Federal del Trabajo, artículo 8 fracción I, II y III 
                     de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo y artículo 20 del Reglamento Interior del Centro de Conciliación Laboral del Estado de 
                     Michoacán de Ocampo.<br><br>
 
@@ -102,7 +102,7 @@
                     Quien suscribe da fe del cumplimiento del concepto anteriormente descrito por parte del <b>EMPLEADOR. Doy fe.</b><br><br>
 
                     <b>Con fecha {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }} se emite la presente Constancia de Pago Parcial del Convenio de Conciliación, con 
-                    fundamento en la fracción XIV del articulo 684-E y fracción VIII del articulo 684-F de la Ley Federal del Trabajo.</b>
+                    fundamento en la fracción XIV del artículo 684-E y fracción VIII del artículo 684-F de la Ley Federal del Trabajo.</b>
                 </p>
 
                 <br><br><br><br>       

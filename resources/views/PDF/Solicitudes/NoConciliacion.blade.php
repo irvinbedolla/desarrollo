@@ -104,7 +104,7 @@
                             @if(!empty($citado->n_int))
                                 int. {{ $citado->n_int }}
                             @endif 
-                            {{ $citado->colonia }} {{ $citado->cp }}<br>
+                            {{ $citado->colonia }}, {{ $citado->municipio_citado }} {{ $citado->cp }}<br>
                         Funcionario(a) conciliador(a) responsable: {{ $conciliador->name }}<br>
                         Fecha de conflicto: 09 de Mayo de 2025<br>
                         Fecha de registro de la solicitud: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}<br>

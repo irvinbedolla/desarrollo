@@ -72,7 +72,7 @@
                             </tr> 
                             <tr>   
                                 <td><b>Centro de conciliación: </b></td>
-                                <td>{{ $solicitud->delegacion }} </td>
+                                <td>{{ $solicitud->delegacion }}</td>
                             </tr>
                             <tr>
                                 <td><b>Salario diario: </b></td>
@@ -81,11 +81,11 @@
                     </table>
                 </div><br><br><br><br><br>
                 <p><b>
-                    Trabajador(a): {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
+                    Trabajador(a): {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}<br> 
                     Empresa/Patrón: {{ $solicitud->empresa }}<br>
                     Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
                     Fecha que se emite la constancia de incumplimiento: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}<br>
-                    Pena Convencional: Si <br>
+                    Pena Convencional: Si<br>
                 </b></p>  
 
                 <p><center><b>CONSTANCIA DE INCUMPLIMIENTO DE CONVENIO</b></center></p><br>

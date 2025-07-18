@@ -141,7 +141,7 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
-                                            <label for="name">Num ext. del citado</label>
+                                            <label for="name">Núm ext. del citado</label>
                                             <input type="text" name="exterior" class="form-control" value="<?=$folio["n_ext"];?>" readonly> 
                                             <div class="invalid-feedback">
                                                 El campo calle es obligatorio.
@@ -151,7 +151,7 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
-                                            <label for="name">Num int. del citado</label>
+                                            <label for="name">Núm int. del citado</label>
                                             <input type="text" name="interior" class="form-control" value="<?=$folio["n_int"];?>" readonly> 
                                             <div class="invalid-feedback">
                                                 El campo calle es obligatorio.
@@ -161,10 +161,10 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
-                                            <label for="name">Tipo de personas</label>
+                                            <label for="name">Tipo de persona</label>
                                             <select name="tipo" class="form-control" readonly>
                                                 <option value="">Seleccione</option>
-                                                <option value="Fisica" @php if($folio->tipo_persona === "Fisica") echo "selected"  @endphp>Fisica</option>
+                                                <option value="Fisica" @php if($folio->tipo_persona === "Fisica") echo "selected"  @endphp>Física</option>
                                                 <option value="Moral" @php if($folio->tipo_persona === "Moral") echo "selected"  @endphp>Moral</option>
                                             </select>
                                             <div class="invalid-feedback">

@@ -83,12 +83,12 @@
                     En el <b>Centro de Conciliación Laboral del Estado de Michoacán de Ocampo con sede en {{ $solicitud->delegacion }}</b>, siendo las <b>{{ $solicitud->hora }} horas del
                     {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> , hora y día señalados para la celebración de la Audiencia de Conciliación 
                     Prejudicial, relativa al número de expediente electrónico con Número de Identificación Único <b>{{ $solicitud->NUE }}</b>, misma que se celebra ante  
-                    <b>{{ $conciliador->name }}</b>, Funcionaria Conciliadora/Funcionario Conciliador adscrito al Centro de Conciliación 
+                    <b>{{ $conciliador->name }}</b>, Funcionario/a Conciliador/a adscrito al Centro de Conciliación 
                     Laboral del Estado de Michoacán de Ocampo,  con fundamento en los artículos 33, 590-E, 590-F, 684-A, 684-B, 684-C, 684-D, 684-E, fracción V, 684-F, 684-G y 684-I, de la 
                     Ley Federal del Trabajo, artículo 27 de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, y artículo 20 del Reglamento Interior del 
                     Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, <b>declara abierta</b> la Audiencia de Conciliación Prejudicial en la que comparecen: <br><br>
 
-                    La parte solicitante <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> y, por la parte citada 
+                    La parte citada <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> y, por la parte solicitante 
                     <b>{{ $solicitud->empresa }} {{$solicitud->observaciones}}</b>, identificaciones que concuerdan fisionómicamente con las partes y, que, en este acto, se agrega copia cotejada al 
                     expediente electrónico para que conste como corresponda; documentos que les son devueltos por ser innecesaria su retención. <br><br>
 
@@ -126,7 +126,7 @@
 
                     A efecto de conocer la opinión de las partes, se cede el uso de la voz de manera ordenada y respetuosa a los presentes en esta audiencia, con la finalidad de escuchar lo que 
                     tengan que expresar en torno a la propuesta y sus alcances, <b>haciendo de su conocimiento que no se podrán negociar derechos y prestaciones irrenunciables en términos de la Ley 
-                    Federal del Trabajo</b>, y respetando los adquiridos; de no estar de acuerdo se podrá solicitar una nueva audiencia que tendrá verificativo dentro de los cinco días siguientes al 
+                    Federal del Trabajo,</b> y respetando los adquiridos; de no estar de acuerdo se podrá solicitar una nueva audiencia que tendrá verificativo dentro de los cinco días siguientes al 
                     cierre de esta diligencia.<br><br>
 
                     <!--[RESOLUCION_SEGUNDA_MANIFESTACION]-->
