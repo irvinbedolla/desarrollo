@@ -2234,7 +2234,7 @@ class SeerController extends Controller
         $municipios = Municipios::all();
         $citados = SeerCitados::where('id_solicitud', $id)->count(); //LLeva el conteo de los citados agregados
 
-        return view('solicitudes.citados',compact('estados','id','citados'));
+        return view('solicitudes.citados',compact('estados','id','citados','municipios'));
     }
 
     /*public function vista_solicitante($id){
@@ -2413,7 +2413,6 @@ class SeerController extends Controller
             SeerSolicitante::where('id_solicitud', $data["id"])->update(['nss' => $data["nss"] ]);
         }
 
-
         //Citados
         SeerCitados::where('id_solicitud',$data["id"])->delete();
         $cont = count($data["colonia_citado"]);
@@ -2470,14 +2469,14 @@ class SeerController extends Controller
             $path = Storage::putFileAs('documentosSolicitud', $request->file('documentoCurp'), $documento);
             SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoCurp' => $documento ]);
         }
-        
+ 
         //Acta de nacimiento
         if(isset($data["indetificacion"])){
             $documentoidentificacion = $data["curp"]."_Identificacion.pdf";
             $path = Storage::putFileAs('documentosSolicitud', $request->file('indetificacion'), $documentoidentificacion);
             SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoIdentificacion' => $documentoidentificacion ]);
         }
-
+      
         //Actualizar el estatus
         SeerPerGeneral::find($data["id"])->update(['estatus' => "Confirmado" ]);
 
@@ -2492,7 +2491,6 @@ class SeerController extends Controller
         $num_audi = $num_audi+1;
 
         $delegacion = $this->ObtenerAudiencia($user["delegacion"]);
-        //dd($delegacion);
         $sala = 1;
         switch($delegacion[3]){
            //Morelia
@@ -2538,7 +2536,7 @@ class SeerController extends Controller
         Audiencias::create($audiencia_insert);
         //Actualizar genera
         SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $delegacion[3], 'estatus' => 'Confirmado' ]);
-
+        
         return redirect()->route('solicitudes_pendientes'); 
     }
 
@@ -3309,9 +3307,9 @@ class SeerController extends Controller
         })
         ->where('delegacion', $user["delegacion"])
         ->get();
+
         //Numero de conciliadores
         $contador_conciliadores = count($conciliadores);
-
         //Obtener la ultima fecha y hora
         $fecha_reciente = Audiencias::where('delegacion',$delegacion)->select('fecha','hora')->orderBy('fecha', 'desc')->first();
         $fecha_revisar = date('Y-m-d', strtotime($fecha_reciente["fecha"]));
@@ -3322,7 +3320,6 @@ class SeerController extends Controller
         ->where("hora",$fecha_hora)
         ->selectRaw('count(id) as total')->first();
         //Validar si hay espacio a esa hora
-        
         do {   
             $tomorrow = strtotime($fecha_revisar." +1 day");
             $fecha_dia = date('l', $tomorrow);
@@ -3336,7 +3333,6 @@ class SeerController extends Controller
             else{
                 switch($fecha_hora){
                     case ($fecha_hora == "09:00:00") :
-                        //dd($fecha_revisar." ".$fecha_hora);
                         foreach($conciliadores as $token ){
                             $revisar = Audiencias::where('delegacion',$delegacion)
                             ->where('fecha',$fecha_revisar)
@@ -3373,7 +3369,6 @@ class SeerController extends Controller
                             $fecha_hora = "10:15:00";
                         }
                     case ($fecha_hora == "10:15:00"):
-                        //dd($fecha_revisar." ".$fecha_hora);
                         foreach($conciliadores as $token ){
                             $revisar = Audiencias::where('delegacion',$delegacion)
                             ->where('fecha',$fecha_revisar)
