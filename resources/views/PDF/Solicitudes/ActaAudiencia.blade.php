@@ -82,21 +82,21 @@
                 <p>
                     En el <b>Centro de Conciliación Laboral del Estado de Michoacán de Ocampo con sede en {{ $solicitud->delegacion }}</b>, siendo las <b>{{ $solicitud->hora }} horas del
                     {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> , hora y día señalados para la celebración de la Audiencia de Conciliación 
-                    Prejudicial, relativa al número de expediente electrónico con Número de Identificación Único <b>{{ $solicitud->NUE }}</b>, misma que se celebra ante  
-                    <b>{{ $conciliador->name }}</b>, Funcionaria Conciliadora/Funcionario Conciliador adscrito al Centro de Conciliación 
-                    Laboral del Estado de Michoacán de Ocampo,  con fundamento en los artículos 33, 590-E, 590-F, 684-A, 684-B, 684-C, 684-D, 684-E, fracción V, 684-F, 684-G y 684-I, de la 
+                    Prejudicial, relativa al número de expediente electrónico con Número de Identificación Único <b>{{ $solicitud->NUE }}</b>, misma que se celebra ante la fe publica del(a)
+                    Funcionario(a) Conciliador(a) <b>{{ $conciliador->name }}</b>, adscrito al Centro de Conciliación 
+                    Laboral del Estado de Michoacán de Ocampo, con fundamento en los artículos 33, 590-E, 590-F, 684-A, 684-B, 684-C, 684-D, 684-E, fracción V, 684-F, 684-G y 684-I, de la 
                     Ley Federal del Trabajo, artículo 27 de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, y artículo 20 del Reglamento Interior del 
                     Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, <b>declara abierta</b> la Audiencia de Conciliación Prejudicial en la que comparecen: <br><br>
 
                     La parte solicitante <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> y, por la parte citada 
                     <b>{{ $solicitud->empresa }} {{$solicitud->observaciones}}</b>, identificaciones que concuerdan fisionómicamente con las partes y, que, en este acto, se agrega copia cotejada al 
                     expediente electrónico para que conste como corresponda; documentos que les son devueltos por ser innecesaria su retención. <br><br>
-
-                    Por tanto, esta Autoridad Conciliadora se encuentra en condiciones para desahogar la <b>Audiencia de Conciliación Prejudicial.</b><br><br>
-
-                    Se hace del conocimiento del trabajador(a) que podrá comparecer asistido por abogado(a) o persona de su confianza, pero no se reconocerá a ésta como apoderado, por tratarse 
+                    
+                    Se hace del conocimiento del trabajador(a) que puede comparecer dentro de la presente audiencia asistido por abogado(a) o persona de su confianza, pero no se reconocerá a ésta como apoderado, por tratarse 
                     de un Procedimiento de Conciliación y no de un juicio; por lo que respecta al empleador, éste podrá comparecer a través de su representante, siempre y cuando cuente con las 
                     facultades suficientes para obligarse en su nombre y lo acredite ante esta instancia.<br><br>
+
+                    Por tanto, esta Autoridad Conciliadora se encuentra en condiciones para desahogar la <b>Audiencia de Conciliación Prejudicial.</b><br><br>
 
                     Asimismo, se les informa a las partes que las manifestaciones que realicen durante la audiencia, no podrán constituir prueba o indicio en ningún procedimiento administrativo 
                     o judicial ni el personal de las autoridades conciliadoras podrán ser llamados a comparecer como testigos ante los Tribunales Laborales, de conformidad con los establecido en 
@@ -149,7 +149,7 @@
 
                     Asimismo, se informa que sus datos no podrán ser difundidos sin el consentimiento expreso, salvo las excepciones previstas en ley.<br><br>
 
-                    Así lo proveyó, <b>{{ $conciliador->name }}</b>, Funcionario Conciliador adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
+                    Así lo proveyó, <b>{{ $conciliador->name }}</b>, Funcionario(a) Conciliador(a) adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
                 </p>
 
                 <br><br>

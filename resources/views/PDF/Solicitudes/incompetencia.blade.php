@@ -84,7 +84,7 @@
                         {{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}<br>
                     @endforeach
                     <br>
-                    Fecha de conflicto: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} <br>
+                    Fecha de presentación de solicitud: {{ COLOCAR FECHA }} <br>
                     Posible prescripción de derechos: No <br>
                 </b></p>  
                 <p>
@@ -95,7 +95,7 @@
                     Estado de Michoacán Delegación <b>{{ $solicitud->delegacion }}</b> la solicitud <b>{{ $solicitud->NUE }}.</b><br><br>
 
                     La Oficina Regional del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, de conformidad con la información aportada y derivado del análisis de la solicitud mencionada, esta Autoridad 
-                    Conciliadora se declara incompetente por declinatoria, toda vez que la rama industrial o de servicio materia de la solicitud presentada es de cáracter federal local de conformidad con la fracción XXXI 
+                    Conciliadora se declara incompetente por declinatoria, toda vez que la rama industrial o de servicio materia de la solicitud presentada es de cáracter federal de conformidad con la fracción XXXI 
                     del apartado A del artículo 123 Constitucional, así como del artículo 527 de la Ley Federal del Trabajo.<br><br>
 
                     <!-- LLenado de los conciliadores -->
@@ -108,7 +108,7 @@
                     ante la Autoridad Conciliadora competente.<br><br>
 
                     Finalmemnte, se dejan a salvo los derechos de los interesados para continuar con el procedimiento de conciliación ante el Centro de Conciliación Laboral competente, en términos de los artículos 527 y 684-E fracción 
-                    V párrafo segundo de la Ley Federal del Trabajo. <b>Doy Fe.</b>
+                    V párrafo segundo de la Ley Federal del Trabajo. Artículo 18 fracción XII del Reglamento Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<b>Doy Fe.</b>
                 </p>
 
                 <br>       

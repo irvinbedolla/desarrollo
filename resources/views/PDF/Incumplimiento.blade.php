@@ -74,10 +74,6 @@
                                 <td><b>Centro de conciliación: </b></td>
                                 <td>{{ $solicitud->delegacion }}</td>
                             </tr>
-                            <tr>
-                                <td><b>Salario diario: </b></td>
-                                <td>${{ number_format($salario_diario, 2) }} M.N</td>
-                            </tr>
                     </table>
                 </div><br><br><br><br><br>
                 <p><b>
@@ -86,6 +82,7 @@
                     Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
                     Fecha que se emite la constancia de incumplimiento: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}<br>
                     Pena Convencional: Si<br>
+                    Salario diario: ${{ number_format($salario_diario, 2) }} M.N
                 </b></p>  
 
                 <p><center><b>CONSTANCIA DE INCUMPLIMIENTO DE CONVENIO</b></center></p><br>
@@ -95,7 +92,7 @@
                     987 y 990 de la Ley Federal del Trabajo; así como los artículos 17 y 20 del Reglamento Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<br><br>
 
                     Ante la falta de pago pactado en las cláusulas <b>QUINTA</b> y <b>SEXTA</b> del <b>CONVENIO DE CONCILIACIÓN</b> relacionada con el expediente <b>{{ $solicitud->NUE }}</b> 
-                    y el Convenio ratificado ante esta autoridad conciliadora en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, por tanto,  
+                    ratificado ante esta autoridad conciliadora en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, por tanto,  
                     se emite el siguiente:<br><br>
                                 
                     <p><center><b>ACUERDO:</b></center></p><br>

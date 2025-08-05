@@ -106,9 +106,7 @@
                             @endif 
                             {{ $citado->colonia }}, {{ $citado->municipio_citado }} {{ $citado->cp }}<br>
                         Funcionario(a) conciliador(a) responsable: {{ $conciliador->name }}<br>
-                        Fecha de conflicto: 09 de Mayo de 2025<br>
                         Fecha de registro de la solicitud: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}<br>
-                        Fecha de presentación de identificación del solicitante:13 de Mayo de 2025<br>
                         Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>
                             {{ $audiencia->hora }}<br>
                         Asistencia del citado: Si
@@ -129,7 +127,7 @@
                         la presente <b>CONSTANCIA DE NO CONCILIACIÓN</b>.<br><br>
 
                         Finalmente, se dejan a salvo los derechos de los interesados para ejercer las acciones respectivas ante el Tribunal
-                        laboral competente, en términos de los artículos 123, apartado A, fracción XX, de la Constitución Política de los Estados
+                        Laboral competente, en términos de los artículos 123, apartado A, fracción XX, de la Constitución Política de los Estados
                         Unidos Mexicanos; 521, fracción III, 870 Bis, de la Ley Federal del Trabajo <b>Doy fe</b>.
                          
                 </p>    

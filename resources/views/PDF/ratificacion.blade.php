@@ -120,11 +120,12 @@
                     <p> Por este conducto se notifica a la parte solicitante que se ha generado exitosamente su cita para la <b>Ratificación de Convenio</b>, misma que tendrá lugar 
                         el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>  a las <b>{{ $solicitud->hora }}</b> horas, en la Delegación Regional/Oficina de Apoyo de 
                         <b>{{ $solicitud->delegacion }}</b> del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con domicilio en <b>{{$direccion_sede}}</b>, apercibiéndolo que de no presentarse 
-                        cualquiera de las partes en la fecha y hora señalada, su solicitud quedará <b>ARCHIVADA</b>, dejando a salvo el derecho de cualquiera de las partes para iniciar su solicitud. 
+                        cualquiera de las partes en la fecha y hora señalada, su solicitud quedará <b>ARCHIVADA</b>, dejando a salvo el derecho de cualquiera de las partes para iniciar su solicitud de conciliación. 
                     </p>
                     <p>
-                        Agradecemos presentarse a la dirección proporcionada con diez minutos de anticipación de la hora citada, acompañado de sus documentos originales para cotejo. (En caso de no contar con Folio 
-                        Interno de Registro de Representación Patronal deberá presentar las identificaciones, Poder Notarial/Carta Poder originales el día y hora señalados). <br><br>
+                        Agradecemos presentarse a la dirección proporcionada con diez minutos de anticipación de la hora citada, acompañado de las identificaciones de la parte trabajadora y empleadora, en el caso de está última, 
+                        se acude atraves de representante legal con los documentos originales que acrediten su representación para cotejo, en el caso de no contar con Folio 
+                        Interno de Registro de Representación Patronal que emite el Centro.<br><br>
 
                         <span style="color: red;"><b>NOTA:</b></span> La cantidad total a pagar estará sujeta a la revisión del Personal del Centro de Conciliación, para verificar que no exista Renuncia de Derechos, así como 
                         a la aceptación voluntaria de la persona trabajadora para proceder en la fecha y hora señalada a la firma de la Ratificación de su Convenio.<br><br>

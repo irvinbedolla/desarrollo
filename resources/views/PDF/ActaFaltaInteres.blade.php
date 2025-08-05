@@ -120,12 +120,9 @@
                     <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> por objeto de <b>{{ $solicitud->motivo }}</b>.<br><br>
 
                     <b>Segundo.</b> El <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, el Centro de Conciliación <b>{{ $solicitud->delegacion }}</b> admitió la 
-                    solicitud de Conciliación, señalando que la celebración de la Audiencia de Conciliación no se realizó.<br><br>
+                    solicitud de Conciliación, señalando que la celebración de la Audiencia de Conciliación no se realizó, deribado de la incomparecencia del solicitante.<br><br>
 
                     <b>Tercero.</b> El <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, se concluyó la notificación personal de él(los) citado(s).<br><br>
-
-                    <b>Cuarto.</b> El día de la audiencia, <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> no se presentó en ningún momento 
-                              durante el tiempo que se tenía programado para la audiencia.<br>
                                 
                     <br>En esas condiciones, este Centro expone los siguientes: 
                 </p>
@@ -139,9 +136,9 @@
                     de Trabajo; artículos 5 y 27 de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo; y artículos 17 y 20 del Reglamento 
                     Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<br>
 
-                    Y toda vez que la solicitud de Ratificación de Convenio presentada y admitida de conformidad con lo establecido por los artículos 33 párrafo segundo, 
+                    Y toda vez que la solicitud fue presentada y admitida de conformidad con lo establecido por los artículos  
                     684-C y 684-E de la Ley Federal del Trabajo. Señalándose el <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\í\a\s \d\e F \d\e\l Y') }}
-                    </b> a las <b>{{ $solicitud->hora }}</b> hrs. para la Audiencia de Ratificación de Convenio, se notificó a la parte 
+                    </b> a las <b>{{ $solicitud->hora }}</b> hrs. para la Audiencia de '''' Ratificación de Convenio''''''', se notificó a la parte 
                     solicitante <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b>, sin embargo, no acudió, no 
                     obrando una causa justificada de la incomparecencia. <br><br> 
                     Por lo anteriormente expuesto, se:
@@ -151,7 +148,7 @@
                 </p><br>
                 <p>
                     <b>Primero.</b> Se archiva el expediente <b>{{ $solicitud->NUE }}</b> que consta desde el <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, 
-                    en este Centro, por falta de interés del Citado.<br><br>
+                    en este Centro, por falta de interés del solicitante.<br><br>
 
                     <b>Segundo.</b> Se le informa que el plazo de prescripción se reanuda a partir del día siguiente en que fue programada la audiencia, de conformidad con el artículo 684-E, 
                     fracción X de la Ley Federal del Trabajo.<br><br>
