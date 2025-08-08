@@ -1760,11 +1760,10 @@ class SeerController extends Controller
 
     public function store_enlace(Request $request){
         $data = $request->all();
+       
         SeerCitados::where('id', $data["id"])
-        ->update(['id_notificador' => $data["notificador"]], ['estatus' => ["Pendiente"]]);
-       /* SeerCitados::where('id', $data["id"])
         ->update([
-            'id_notificador' => $data["notificador"], 'estatus' => "Pendiente"]);*/
+            'id_notificador' => $data["notificador"], 'estatus' => "Pendiente"]);
         return redirect()->route('notificaciones');
     }
 
