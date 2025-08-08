@@ -600,9 +600,9 @@ body {font-family: Arial;}
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="password">Municipio del citado</label>
-                                                        <select class="form-control" name="municipio_citado">
+                                                        <select class="form-control" name="municipio_citado" id="municipio_citado">
                                                             @foreach($municipios as $mun)
-                                                                <option value="{{$mun['id']}}" {{ $solicitante['municipio_citado'] == $mun['id'] ? "selected" : '' }}>{{$mun['nombre']}}</option>
+                                                                <option value="{{$mun['id']}}" {{ $citado['municipio_citado'] == $mun['id'] ? "selected" : '' }}>{{$mun['nombre']}}</option>
                                                             @endforeach
                                                         </select>
                                                         <div class="invalid-feedback">
@@ -617,7 +617,6 @@ body {font-family: Arial;}
                                                     </div>
                                                 </div>
                                                
-                                                
                                             @endforeach
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 

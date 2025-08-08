@@ -128,7 +128,7 @@
 
                         Finalmente, se dejan a salvo los derechos de los interesados para ejercer las acciones respectivas ante el Tribunal
                         Laboral competente, en términos de los artículos 123, apartado A, fracción XX, de la Constitución Política de los Estados
-                        Unidos Mexicanos; 521, fracción III, 870 Bis, de la Ley Federal del Trabajo <b>Doy fe</b>.
+                        Unidos Mexicanos; 521, fracción III, 870 Bis, de la Ley Federal del Trabajo. <b>Doy fe</b>.
                          
                 </p>    
                 <br><br><br><br>  

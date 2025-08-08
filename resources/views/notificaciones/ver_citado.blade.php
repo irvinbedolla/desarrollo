@@ -73,7 +73,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
                                             <label for="name">Tipo de Vialidad del citado *</label>
                                             <select name="vialidad" class="form-control" required>
@@ -89,7 +89,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
                                             <label for="name">Calle del citado *</label>
                                             <input type="text" name="calle" class="form-control" value="<?=$folio["calle"];?>"required> 
@@ -99,7 +99,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
                                             <label for="name">Colonia del citado *</label>
                                             <input type="text" name="colonia" class="form-control" value="<?=$folio["colonia"];?>"required> 
@@ -109,7 +109,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
                                             <label for="name">Código Postal del citado *</label>
                                             <input type="text" name="cp" class="form-control" value="<?=$folio["cp"];?>" minlength="5" maxlength="5" required> 
@@ -119,7 +119,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
                                             <label for="name">Entre calle del domicilio del citado</label>
                                             <input type="text" name="calle1" class="form-control" value="<?=$folio["calle1"];?>">
@@ -129,7 +129,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
                                             <label for="name">y calle del domicilio del citado</label>
                                             <input type="text" name="calle2" class="form-control" value="<?=$folio["calle2"];?>"> 
@@ -139,7 +139,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
                                             <label for="name">Núm ext. del citado</label>
                                             <input type="text" name="exterior" class="form-control" value="<?=$folio["n_ext"];?>" required> 
@@ -149,7 +149,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
                                             <label for="name">Núm int. del citado</label>
                                             <input type="text" name="interior" class="form-control" value="<?=$folio["n_int"];?>" > 
@@ -158,8 +158,20 @@
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                    <div class="col-xs-12 col-sm-6 col-md-3">
+                                        <div class="form-group">
+                                            <label for="password">Municipio del citado</label>
+                                            <select class="form-control" name="municipio_citado" id="municipio_citado">
+                                                @foreach($municipios as $mun)
+                                                    <option value="{{$mun['id']}}" {{ $folio['municipio_citado'] == $mun['id'] ? "selected" : '' }}>{{$mun['nombre']}}</option>
+                                                @endforeach
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El Estado es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
                                             <label for="name">Tipo de persona</label>
                                             <select name="tipo" class="form-control">
@@ -173,7 +185,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">CURP</label>
                                             <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control" value="<?=$folio["curp"];?>"> 
@@ -184,7 +196,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-9">
+                                    <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <label for="floatingTextarea">Referencias del domicilio del citado</label>
                                             <textarea class="form-control" placeholder="" name="referencia"><?=$folio["referencia"];?></textarea>

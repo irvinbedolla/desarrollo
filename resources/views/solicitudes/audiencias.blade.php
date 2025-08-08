@@ -68,6 +68,9 @@
                                                 </td>
                                                 <td>
                                                     <button type="button" class="btn btn-primary open-modal" data-id="{{ $representante->id }}" data-bs-toggle="modal" data-bs-target="#modalCitados"> Citado </button>
+                                                    @if($representante->id_abogado != null)
+                                                        <a class="btn btn-success" href="{{ route('PDFcompareceSP', $solicitud->id) }}"  target="_blank">Comparece sin poder</a>
+                                                    @endif
                                                 </td>
                                             </tr>
                                             @php $contador++; @endphp
@@ -263,7 +266,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarCitados">Agregar en reprecentantación</button>
+                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarCitados">Agregar en representación</button>
                 <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarDerecho">Agregar por propio derecho</button>
                 <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalActualizaCitados">Actualizar citado</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -273,7 +276,7 @@
 </div>
 <!-- Modal Agregar Citados -->
 <div class="modal fade" id="modalAgregarCitados" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <form class='needs-validation novalidate'  method='POST' name="AgregarRepresentante" id="AgregarRepresentante" action="{{route('insertar_citado')}}">
+    <form class='needs-validation novalidate'  method='POST'  enctype="multipart/form-data" name="AgregarRepresentante" id="AgregarRepresentante" action="{{route('insertar_citado')}}">
         @csrf
         <input type="hidden" name="id" value="{{$id}}">
         <input type="hidden" name="id_citado_2" id="id_citado_2" value="">
@@ -287,7 +290,7 @@
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12">
                             <div class="form-group">
-                                <h4 class="text-center">Datos del reprecentante</h4>
+                                <h4 class="text-center">Datos del representante</h4>
                             </div>
                         </div>  
                         <div class="col-xs-12 col-sm-12 col-md-6">
@@ -558,7 +561,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     @if($bandera != 0)
-                        Si no seleccionas todos los representantes se va a multar a los que no selecciones.
+                        Se multará a los citados que no tengan un representante asignado.
                     @else
                         Continuar con la audiencia.
                     @endif
@@ -632,7 +635,7 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
-                                <label>Segudno apellido</label>
+                                <label>Segundo apellido</label>
                                 <input type="text" name="segundo_apellido" class="form-control" required>
                                 <div class="invalid-feedback">
                                     La Identificación es obligatoria.

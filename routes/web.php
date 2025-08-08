@@ -245,7 +245,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/VerpdfInParcial/{id}',      [TurnosController::class, 'VerPDFInParcial'])->name('PDFincumplimientoParcial');
         Route::get('/VerpdfPago/{id}',           [TurnosController::class, 'VerPDFPagos'])->name('PDFpagos');
         Route::get('/Verpdfaudiencia/{id}',      [TurnosController::class, 'VerPDFAudiencia'])->name('PDFaudiencia');
-        Route::get('/Verpdfincomparecencia/{id}',[TurnosController::class, 'VerPDFIncomparecencia'])->name('PDFincomparecencia'); //Revisa ANA
+        Route::get('/Verpdfincomparecencia/{id}',[TurnosController::class, 'VerPDFIncomparecencia'])->name('PDFincomparecencia'); //Revisa ANA no existe la función
+        Route::get('/pdfincomTrabajador/{id}',   [TurnosController::class, 'VerPDFIncomTrabajador'])->name('PDFincomparecenciaT'); //Incomparecencia por parte del trabajador
         Route::get('turnos/index2',              [TurnosController::class, 'index_empresa'])->name('ratificacion');
         Route::get('turnos/indexr',              [TurnosController::class, 'indexr'])->name('Ratificacion');
         Route::get('turnos/aceptar/{id}',        [TurnosController::class, 'aceptacion'])->name('turno.aceptar');
@@ -295,20 +296,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/VerpdfNotificacionNoExitosa/{id}/{id_solicitud}',  [SeerController::class, 'PDFnotificadoNoexitosa'])->name('PDFNoExitosa'); //Notificación No exitosa SE CONSTITUYE, CERRADO
         Route::get('/VerpdfNotificacionNoInt/{id}/{id_solicitud}',      [SeerController::class, 'PDFnotificadoNoexitosaInt'])->name('PDFNoExitosaInt'); //Notificación No exitosa NO SE LOCALIZA INTERIOR
         Route::get('/VerpdfcPTU/{id}',                                  [SeerController::class, 'VerPDFConvenioPTU'])->name('PDFconvenioPTU'); //Conevnio por PTU
+        Route::get('/pdfsinPoder/{id}',                                 [SeerController::class, 'VerPDFCompareceSinPoder'])->name('PDFcompareceSP'); //Comparece representante legal sin poder
         Route::get('/Verpdfcumpumplimiento/{id}',                       [SeerController::class, 'VerPDFCumplimiento'])->name('PDFcumplimiento');
     //Fin de PDF
     //Ratificaciones
-        Route::get('/ratificaciones/atender',       [TurnosController::class, 'revisar_ratificaciones_hoy'])->name('ratificacion_atender');
-        Route::get('/ratificaciones/buscar',        [TurnosController::class, 'buscar_ratificacion'])->name('ratificacion_buscar');
-        Route::get('/ratificaciones/concluir/{id}', [TurnosController::class, 'concluir_ratificaciones'])->name('ratificacion_concluir');
-        Route::post('/ratificacion/busqueda',       [TurnosController::class, 'busqueda_ratificaciones'])->name('ratificaciones_busqueda');
-        Route::post('/guardar_manifestaciones',     [TurnosController::class, 'guardar_manifestacion'])->name('solicitudes.manidestaciones');
-        Route::get('/ratificaciones/pagos/{id}',    [TurnosController::class, 'pagar_ratificacion'])->name('ratificacion_pagar');
-        Route::post('/ratificaciones/pagoA',        [TurnosController::class, 'pagoA_ratificacion'])->name('ratificacion_pagoA');
-        Route::get('/ratificaciones/pagoR/{id}',    [TurnosController::class, 'pagoR_ratificacion'])->name('ratificacion_pagoR');
-        Route::get('ratificaciones/consultar/{id}', [TurnosController::class, 'consultar_ratificaciones'])->name('consultar_ratificacion');
-        Route::post('ratificaciones/editar',        [TurnosController::class, 'editar_ratificaciones'])->name('editar_ratificacion');
-        Route::get('/PDF/falta_interes/{id}',       [TurnosController::class, 'VerPDFInteres'])->name('PDFfallta_interes');
+        Route::get('/ratificaciones/atender',               [TurnosController::class, 'revisar_ratificaciones_hoy'])->name('ratificacion_atender');
+        Route::get('/ratificaciones/buscar',                [TurnosController::class, 'buscar_ratificacion'])->name('ratificacion_buscar');
+        Route::get('/ratificaciones/concluir/{id}',         [TurnosController::class, 'concluir_ratificaciones'])->name('ratificacion_concluir');
+        Route::post('/ratificacion/busqueda',               [TurnosController::class, 'busqueda_ratificaciones'])->name('ratificaciones_busqueda');
+        Route::post('/guardar_manifestaciones',             [TurnosController::class, 'guardar_manifestacion'])->name('solicitudes.manidestaciones');
+        Route::get('/ratificaciones/pagos/{id}',            [TurnosController::class, 'pagar_ratificacion'])->name('ratificacion_pagar');
+        Route::post('/ratificaciones/pagoA',                [TurnosController::class, 'pagoA_ratificacion'])->name('ratificacion_pagoA');
+        Route::get('/ratificaciones/pagoR/{id}',            [TurnosController::class, 'pagoR_ratificacion'])->name('ratificacion_pagoR');
+        Route::get('ratificaciones/consultar/{id}',         [TurnosController::class, 'consultar_ratificaciones'])->name('consultar_ratificacion');
+        Route::post('ratificaciones/editar',                [TurnosController::class, 'editar_ratificaciones'])->name('editar_ratificacion');
+        Route::get('/PDF/falta_interes/{id}',               [TurnosController::class, 'VerPDFInteres'])->name('PDFfallta_interes');
+        Route::get('/ratificaciones/pIncomparecencia/{id}', [TurnosController::class, 'pagoIncomparecencia_ratificacion'])->name('ratificacion_pagoIncom'); //No comparece el trabajador al pago
     //Fin de RAtificaciones
      //Enlace
         Route::get('/notificaciones/consultar/{id}',        [SeerController::class, 'mostrar_citados'])->name('editar_citado');

@@ -1658,16 +1658,32 @@ class SeerController extends Controller
         $documento = "Sin documento";
         $documento1 = "Sin documento";
         $documento2 = "Sin documento";
-        $foto1 = "Sin documento";
-        $foto2 = "Sin documento";
+        //$foto = "Sin documento";
+       /* $foto1 = "Sin documento";
+        $foto2 = "Sin documento";*/
         $fecha_actual = date('y-m-d');
 
-        if(!isset($foto)){
+        if ($request->hasFile('foto')) {
+            $documento = $data["id"] . "-foto1.jpg";
+            Storage::putFileAs('documentos_notificacion', $request->file('foto'), $documento);
+        }
+        
+        if ($request->hasFile('foto1')) {
+            $documento1 = $data["id"] . "-foto2.jpg";
+            Storage::putFileAs('documentos_notificacion', $request->file('foto1'), $documento1);
+        }
+        
+        if ($request->hasFile('foto2')) {
+            $documento2 = $data["id"] . "-foto3.jpg";
+            Storage::putFileAs('documentos_notificacion', $request->file('foto2'), $documento2);
+        }
+        /*if(!isset($foto)){
             $documento = $data["id"]."-foto1.jpg";
             $path = Storage::putFileAs(
                 'documentos_notificacion', $request->file('foto'), $documento
             );
         }
+        
         if($request->hasFile($foto1)){
             $documento1 = $data["id"]."-foto2.jpg";
             $path = Storage::putFileAs(
@@ -1679,7 +1695,7 @@ class SeerController extends Controller
             $path = Storage::putFileAs(
                 'documentos_notificacion', $request->file('foto2'), $documento2
             );
-        }
+        }*/
         
         $request->validate([
             'quien_atiende'               => 'nullable',
@@ -1745,9 +1761,10 @@ class SeerController extends Controller
     public function store_enlace(Request $request){
         $data = $request->all();
         SeerCitados::where('id', $data["id"])
-        ->update(['id_notificador' => $data["notificador"]], ['estatus' => ["Pendiente"]
-    ]);
-
+        ->update(['id_notificador' => $data["notificador"]], ['estatus' => ["Pendiente"]]);
+       /* SeerCitados::where('id', $data["id"])
+        ->update([
+            'id_notificador' => $data["notificador"], 'estatus' => "Pendiente"]);*/
         return redirect()->route('notificaciones');
     }
 
@@ -2148,7 +2165,7 @@ class SeerController extends Controller
             'calle'             => 'required',
             'exterior'          => 'required',
             'referencia'        => 'required',
-            'municipio_citado'  => 'nullable',
+            
         ]);
         
         $data_insert=array(
@@ -2159,7 +2176,6 @@ class SeerController extends Controller
             'calle'             => $data["calle"],
             'tipo_vialidad'     => $data["vialidad"],
             'referencia'        => $data["referencia"],
-            'municipio_citado'  => $data["municipio_citado"],
         );
         $data_insert["notificacion"] =  $data["notificacion"];
 
@@ -2182,10 +2198,10 @@ class SeerController extends Controller
         if(isset($data["calle2"])){
             $data_insert["calle2"] =  $data["calle2"];
         }
-        /*if(isset($data["nombre"])){
+        if(isset($data["nombre"])){
             $data_insert["nombre"] =  $data["nombre"];
         }
-         /* if(isset($data["tipo"])){
+       /* if(isset($data["tipo"])){
             $data_insert["tipo_persona"] =  $data["tipo"];
         }*/
         if(isset($data["curp"])){
@@ -2212,17 +2228,10 @@ class SeerController extends Controller
             }
         }
         
-        /*if(isset($data["rfc"])){
-            $data_insert["rfc"] =  $data["rfc"];
-        }*/
-        /*if(isset($data["estado_solicitante"])){
-            $data_insert["estado_solicitante"] =  $data["estado_solicitante"];
-        }*/
-        
         //Se van a generar el citatorio
         SeerCitados::create($data_insert); 
         //Se van a generar quien resulte responsable
-        $data_insert["nombre"] =  "REPRESENTANTE LEGAL  DE: QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O
+        $data_insert["nombre"] = "QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O
         USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN ".$data["calle1"].", NÚMERO ".$data["exterior"]." COLONIA ".$data["colonia"].", ".$data["municipio_citado"].", MICHOACÁN.";
         SeerCitados::create($data_insert); 
 
@@ -2875,8 +2884,9 @@ class SeerController extends Controller
                 'regionZamora'      => $regionzamora,
             );
 
-
+            
             $nombre_ine = $data["nombresAbogadoAlta"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresaAbogadoAlta"]."_IDENTIFICACION.pdf";
+            //dd($request->hasFile('documentoIne'), $request->file('documentoIne'));
             $path = Storage::putFileAs(
                 'documentos_abogados', $request->file('documentoIne'), $nombre_ine
             );
@@ -2942,6 +2952,7 @@ class SeerController extends Controller
             'n_int'                    => $data["interior"],
             'tipo_vialidad'            => $data["vialidad"],
             'calle'                    => $data["calle"],
+            'municipio_citado'         => $data["municipio_citado"],
             'referencia'               => $data["referencia"],
         ]);
 
@@ -3232,8 +3243,9 @@ class SeerController extends Controller
     }
 
     public function mostrar_citados($id){
+        $municipios = Municipios::all();
         $folio = SeerCitados::find($id);
-        return view('/notificaciones/ver_citado',compact('folio'));
+        return view('/notificaciones/ver_citado',compact('folio','municipios'));
     }
 
     public function audienciaParte3($id){
@@ -5093,5 +5105,34 @@ class SeerController extends Controller
 
         $nombreArchivo = 'constancia_de_cumplimiento_' . $solicitud->trabajador .'.pdf';
         return $pdf->stream($nombreArchivo);                  
+    }
+
+    //PDF COMPARECE REPRESENTANTE LEGAL SIN PODER
+    public function VerPDFCompareceSinPoder($id){
+        $solicitud = SeerPerGeneral::find($id);
+        $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
+        $conciliador = $conciliador->where("seer_general.id", "=", $id)
+        ->select('users.name')
+        ->first();
+       
+        $solicitante = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
+        $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
+        ->first();
+        //dd($solicitante);
+        $citado = SeerCitados::where('id_solicitud', $id)->first();
+        //dd($citado);
+        $abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
+        ->where('id_solicitud',$id)
+        ->select('abogados.nombres','abogados.primer_apellido','abogados.segundo_apellido','abogados.poder')
+        ->first();
+        $html = view('PDF/Solicitudes/compareceSinPoder', 
+            compact('id', 'solicitud', 'conciliador','solicitante','citado','abogado'))
+            ->render();
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true);
+
+        return $pdf->stream('incomparecencia_Trabajador.pdf');                   
     }
 }

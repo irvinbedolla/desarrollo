@@ -81,8 +81,8 @@
                     </table>
                 </div><br><br><br><br><br>
                 <p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br>
-                    SOLICITUD RATIFICACIÓN DE CONVENIO TERMINACIÓN VOLUNTARIA <br>
-                    NÚMERO DE IDENTIFICACIÓN ÚNICO {{ $solicitud->NUE }}<br><br>
+                    SOLICITUD RATIFICACIÓN DE CONVENIO TERMINACIÓN VOLUNTARIA <br><br>
+        
                     SOLICITANTES:<br>
                     {{ $solicitud->empresa }}<br>
                 </b></p>  
@@ -269,7 +269,7 @@
                         <b>DÉCIMA PRIMERA</b>. En caso de que no se cumplan los términos de lo convenido en el presente instrumento, las <b>PARTES</b> deberán acudir a los juzgados Laborales del fuero común a 
                         efecto de que se realice el procedimiento de ejecución que la Ley Federal del Trabajo contempla. <br>
                         <br>Enteradas las <b>PARTES</b> del alcance legal del presente convenio que se eleva a la categoria de cosa juzgada, conforme al artículo 684-E fracción XIII, mismo que se firma en <b>{{ $solicitud->delegacion }}</b> 
-                        de Michoacán de Ocampo a los <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\í\a\s \d\e F \d\e\l Y') }}</b>, ante la fe de <b>{{ $conciliador->name }}</b>, funcionario conciliador, quien 
+                        de Michoacán de Ocampo a los <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\í\a\s \d\e F \d\e\l Y') }}</b>, ante la fe de <b>{{ $conciliador->name }}</b>, funcionario(a) conciliador(a), quien 
                         lo sanciona en este mismo acto. <b>Doy fe</b>.
                     </p>
                                     

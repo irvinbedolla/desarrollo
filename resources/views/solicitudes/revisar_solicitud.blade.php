@@ -440,7 +440,7 @@
                                             </div><br>
 
                                             @foreach($citados as $citado)
-                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:30px;">
                                                     <div class="form-group">
                                                         <h4 class="text-center">Citado</h4>
                                                     </div>
@@ -537,7 +537,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="name">Municipio o Alcaldía del citado *</label>
-                                                        <select class="form-control" name="municipio_citado">
+                                                        <select class="form-control" name="municipio_citado" id="municipio_citado">
                                                             @foreach($municipios as $mun)
                                                                 <option value="{{$mun['id']}}" {{ $citado['municipio_citado'] == $mun['id'] ? "selected" : '' }}>{{$mun['nombre']}}</option>
                                                             @endforeach

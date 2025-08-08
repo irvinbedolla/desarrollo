@@ -1572,4 +1572,40 @@ class TurnosController extends Controller
         dd($solicitudes);
         return view('/ratificaciones/busqueda',compact('solicitudes'));
     }
+
+    //PDF INCOMPARECENCIA POR PARTE DEL TRABAJADOR
+    public function VerPDFIncomTrabajador($id){
+        $solicitud = Turnos::find($id);
+
+        $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
+        $conciliador = $conciliador->where("turnos.id", "=", $id)
+        ->select('users.name')
+        ->first();
+
+        //dd($conciliador);
+        $html = view('PDF/incomparecenciaTrabajador', 
+            compact('id', 'solicitud', 'conciliador'))
+            ->render();
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true);
+
+        return $pdf->stream('incomparecencia_Trabajador.pdf');                   
+    }
+
+    //INCOMPARECENCIA TRABAJADOR
+    public function pagoIncomparecencia_ratificacion($id){
+        $pagos = Pagos::find($id);
+        
+        $id_solicitud = $pagos["id_solicitud"];
+        Pagos::find($id)
+        ->update(['estatus'  => "Incomparecencia trabajador"]);
+
+        Turnos::find($id_solicitud)
+        ->update(['estatus' => "Archivada"]); //Revisar Ana, a que estatus cambiaria (aún está pendiente)
+
+        return redirect()->route('ratificacion_atender');
+    }
+
 }

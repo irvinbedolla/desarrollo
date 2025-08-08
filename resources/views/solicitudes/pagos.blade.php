@@ -36,6 +36,7 @@
                                                                 Pagar
                                                             </button>
                                                             <a class="btn btn-danger" href="{{ route('ratificacion_pagoR', $pago->id) }}" onclick=consultar_estadistica();>Rechazar</a>
+                                                            <a class="btn btn-danger" href="{{ route('ratificacion_pagoIncom', $pago->id) }}" onclick=consultar_estadistica();> No comparece el trabajador</a>
                                                         @endif
                                                     </td>
                                                     <td>
@@ -43,6 +44,8 @@
                                                             <a class="btn btn-info" href="{{ route('PDFpagos', $pago->id) }}" target="_blank">PDF</a>
                                                         @elseif($pago->estatus == "No pagado")
                                                             <a class="btn btn-info" href="{{ route('PDFincumplimientoParcial', $pago->id) }}" target="_blank">PDF</a>
+                                                        @elseif($pago->estatus == "Incomparecencia trabajador")
+                                                            <a class="btn btn-info" href="{{ route('PDFincomparecenciaT', $pago->id) }}" target="_blank">PDF</a>
                                                         @endif
                                                     </td>
                                                 </tr>

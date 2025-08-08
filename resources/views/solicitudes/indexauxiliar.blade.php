@@ -72,7 +72,8 @@
                                                         @elseif($solicitud->estatus == "Incumplimiento")
                                                             <a class="btn btn-success" href="{{ route('PDFincumplimiento', $solicitud->id) }}"  target="_blank">Incumplimiento</a>
                                                         @elseif($solicitud->estatus == "Archivada")
-                                                            <a class="btn btn-success" href="{{ route('PDFinteres', $solicitud->id) }}"  target="_blank">Acta de Archivo</a>
+                                                            <a class="btn btn-success" href="{{ route('PDFinteres', $solicitud->id) }}"  target="_blank">Acta de Archivo</a><br><br>
+                                                            <a class="btn btn-info" href="{{ route('PDFincomparecenciaT', $solicitud->id) }}" target="_blank">Certificado de incomparecencia del trabajador</a>
                                                         @endif
                                                         
                                                     </td>

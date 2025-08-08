@@ -130,7 +130,7 @@
                         <span style="color: red;"><b>NOTA:</b></span> La cantidad total a pagar estará sujeta a la revisión del Personal del Centro de Conciliación, para verificar que no exista Renuncia de Derechos, así como 
                         a la aceptación voluntaria de la persona trabajadora para proceder en la fecha y hora señalada a la firma de la Ratificación de su Convenio.<br><br>
 
-                        Lo anterior, con fundamento en los artículos 123 fracción XX de la Constitución Política de los Estados Unidos Mexicanos, artículos 33, 590-E, 684-C, 684-E, 684-F de la Ley Federal del Trabajo, articulo 
+                        Lo anterior, con fundamento en los artículos 123 fracción XX de la Constitución Política de los Estados Unidos Mexicanos, artículos 33, 590-E, 684-C, 684-E, 684-F de la Ley Federal del Trabajo, artículo 
                         17 y 20 del Reglamento Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, función 1.3.1.1 De los Auxiliares de Conciliadores del Manual de Organización del Centro de Conciliación 
                         Laboral del Estado de Michoacán de Ocampo y demás normativa aplicable.
                     </p>

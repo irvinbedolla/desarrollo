@@ -84,7 +84,7 @@
                                 <td>{{ $solicitud->delegacion }}</td>
                             </tr>
                     </table>
-                </div><br><br><br>
+                </div><br><br>
                 <!-- DELIGENCIA EXITOSA, ATIENDE OTRA PERSONA -->
                 <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p><br>
                 <p><b>
@@ -124,7 +124,7 @@
 
                     <b>FIRMA PARA CONSTANCIA LEGAL.</b><br>
                     Anexando impresión fotográfica para constancia legal.<br>
-                    <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. DOY FE.</b> 
+                    <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. Doy fe.</b> 
                 </p>
                 <br>
                 <p><center><b>___________________________________<br> LIC. {{$notificador->name}}<br> FUNCIONARIO/A NOTIFICADOR/A</b></center> </p>

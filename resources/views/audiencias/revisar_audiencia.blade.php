@@ -274,7 +274,7 @@ body {font-family: Arial;}
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="password">Municipio del solicitante</label>
-                                                        <select class="form-control" name="municipio_solicitante">
+                                                        <select class="form-control" name="municipio_solicitante" id="municipio_solicitante">
                                                             @foreach($municipios as $mun)
                                                                 <option value="{{$mun['id']}}" {{ $solicitante['municipio_domicilio'] == $mun['id'] ? "selected" : '' }}>{{$mun['nombre']}}</option>
                                                             @endforeach
@@ -490,24 +490,24 @@ body {font-family: Arial;}
                                             </div><br>
 
                                             @foreach($citados as $citado)
-                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:30px;">
                                                     <div class="form-group">
                                                         <h4 class="text-center">Citado</h4>
                                                     </div>
                                                 </div><br>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">Nombre Citado</label>
                                                         <input type="text" class="form-control" name="nombre_citado[]" value="<?=$citado["nombre"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">Primer apellido</label>
                                                         <input type="text" class="form-control" name="primer_apellido[]" value="<?=$citado["primer_apellido"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">Segundo apellido</label>
                                                         <input type="text" class="form-control" name="segundo_apellido[]" value="<?=$citado["segundo_apellido"];?>">   
@@ -523,13 +523,13 @@ body {font-family: Arial;}
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">CURP</label>
                                                         <input type="text" class="form-control" name="curp_citado[]" value="<?=$citado["curp"];?>" maxlength="18">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">RFC</label>
                                                         <input type="text" class="form-control" name="rfc_citado[]" value="<?=$citado["rfc"];?>">   
@@ -540,7 +540,7 @@ body {font-family: Arial;}
                                                         <h4 class="text-center">Dirección</h4>
                                                     </div>
                                                 </div><br>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">Colonia del citado</label>
                                                         <input type="text" class="form-control" name="colonia_citado[]" value="<?=$citado["colonia"];?>" required>   
@@ -561,6 +561,12 @@ body {font-family: Arial;}
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="password">Código Postal</label>
+                                                        <input type="text" class="form-control" name="cp_citado[]" value="<?=$citado["cp"];?>" required>   
+                                                    </div>
+                                                </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label for="password">Calle del citado</label>
@@ -579,25 +585,32 @@ body {font-family: Arial;}
                                                         <input type="text" class="form-control" name="calle2_citado[]" value="<?=$citado["calle2"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-2">
+                                                <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="password">N° Ext.</label>
                                                         <input type="text" class="form-control" name="n_ext_citado[]" value="<?=$citado["n_ext"];?>" required>   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-2">
+                                                <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="password">N° Int.</label>
                                                         <input type="text" class="form-control" name="n_int_citado[]" value="<?=$citado["n_int"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-2">
+                                                <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Código Postal</label>
-                                                        <input type="text" class="form-control" name="cp_citado[]" value="<?=$citado["cp"];?>" required>   
+                                                        <label for="password">Municipio del citado</label>
+                                                        <select class="form-control" name="municipio_citado" id="municipio_citado">
+                                                            @foreach($municipios as $mun)
+                                                                <option value="{{$mun['id']}}" {{ $citado['municipio_citado'] == $mun['id'] ? "selected" : '' }}>{{$mun['nombre']}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El Estado es obligatorio.
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-12">
+                                                <div class="col-xs-12 col-sm-6 col-md-9">
                                                     <div class="form-group">
                                                         <label for="password">Referencia</label>
                                                         <input type="text" class="form-control" name="referencia_citado[]" value="<?=$citado["referencia"];?>" required>   
