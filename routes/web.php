@@ -301,7 +301,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Fin de PDF
     //Ratificaciones
         Route::get('/ratificaciones/atender',               [TurnosController::class, 'revisar_ratificaciones_hoy'])->name('ratificacion_atender');
-        Route::get('/ratificaciones/buscar',                [TurnosController::class, 'buscar_ratificacion'])->name('ratificacion_buscar');
+        Route::get('/ratificaciones/buscar',                [TurnosController::class, 'busqueda_ratificaciones'])->name('ratificacion_buscar');
         Route::get('/ratificaciones/concluir/{id}',         [TurnosController::class, 'concluir_ratificaciones'])->name('ratificacion_concluir');
         Route::post('/ratificacion/busqueda',               [TurnosController::class, 'busqueda_ratificaciones'])->name('ratificaciones_busqueda');
         Route::post('/guardar_manifestaciones',             [TurnosController::class, 'guardar_manifestacion'])->name('solicitudes.manidestaciones');
@@ -312,13 +312,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('ratificaciones/editar',                [TurnosController::class, 'editar_ratificaciones'])->name('editar_ratificacion');
         Route::get('/PDF/falta_interes/{id}',               [TurnosController::class, 'VerPDFInteres'])->name('PDFfallta_interes');
         Route::get('/ratificaciones/pIncomparecencia/{id}', [TurnosController::class, 'pagoIncomparecencia_ratificacion'])->name('ratificacion_pagoIncom'); //No comparece el trabajador al pago
-    //Fin de RAtificaciones
-     //Enlace
+    //Fin de Ratificaciones
+    //Enlace
         Route::get('/notificaciones/consultar/{id}',        [SeerController::class, 'mostrar_citados'])->name('editar_citado');
         Route::post('/notificaciones/editar',               [SeerController::class, 'editar_citados'])->name('editar_citado_enlace');   
         Route::get('/notificaciones/consultar_citado/{id}', [SeerController::class, 'mostrar_citadoC'])->name('consultar_citado');
-        Route::get('/notificaciones/consulta',              [SeerController::class, 'notificaciones_consultar'])->name('notificaciones_consultar'); 
+        Route::get('/notificaciones/historial',             [SeerController::class, 'notificaciones_consultar'])->name('notificaciones_consultar');
+        //Route::get('/notificaciones/consulta',              [SeerController::class, 'notificaciones_consultar'])->name('notificaciones_consultar'); 
     //Fin de enlace
+    //Notificador
+        Route::get('/notificaciones/busqueda',              [SeerController::class, 'notificaciones_consultar'])->name('notificaciones_consultar'); 
+        Route::post('/notificaciones/resultado',            [SeerController::class, 'notificaciones_busqueda'])->name('notificaciones_busqueda');
+    //Fin de Notificador
     //Cambiar las contraseña
         Route::get('/cambio_contraseña/index',  [HomeController::class, 'password_cambiar'])->name('password_cambiar');
         Route::post('/notificaciones/editar',   [HomeController::class, 'contraseña_update'])->name('contraseña_update'); 
@@ -351,7 +356,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Fin de Citados
     //Cumplimientos
         //Ligas de busqueda
-        Route::get('/cumplimiento/consulta',                [SeerController::class, 'cumplimiento_buscar'])->name('cumplimiento_buscar');
+        //Route::get('/cumplimiento/consulta',                [SeerController::class, 'cumplimiento_buscar'])->name('cumplimiento_buscar');
         Route::post('/cumplimiento/busqueda',               [SeerController::class, 'cumplimientos_busqueda'])->name('cumplimientos_busqueda');
         Route::get('/cumplimietos/actual',                  [SeerController::class, 'cumplimiento_actual'])->name('cumplimiento_actual');
         Route::get('/cumplimiento/consulta/{id}/{tipo}',    [SeerController::class, 'consulta_cumplimiento'])->name('consulta_cumplimiento');

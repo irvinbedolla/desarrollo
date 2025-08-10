@@ -12,7 +12,7 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <a class="btn btn-warning" href="{{ route('cumplimiento_buscar') }}"  onclick=nuevo_poder();> Regresar</a>
+                            <a class="btn btn-warning" href="{{ route('audiencias.cumplimiento') }}"  onclick=nuevo_poder();> Regresar</a>
                                 <div class="table-responsive">
                                     <table id="example" class="table table-striped mt-2">
                                         <thead style="background-color: #4A001F;">

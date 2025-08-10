@@ -46,7 +46,7 @@
                                                         @endif
                                                     </td>
                                                     <td>
-                                                    @if($audiencia->estatus == "Archivada")
+                                                    @if($solicitud->estatus == "Archivada")
                                                         <div class="dropdown">
                                                             <div class="dropdown">
                                                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -58,7 +58,7 @@
                                                                 </ul>
                                                             </div>
                                                         </div>
-                                                    @elseif($audiencia->estatus == "Incompetencia")
+                                                    @elseif($solicitud->estatus == "Incompetencia")
                                                         <div class="dropdown">
                                                             <div class="dropdown">
                                                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -70,7 +70,7 @@
                                                                 </ul>
                                                             </div>
                                                         </div>
-                                                    @elseif($audiencia->estatus == "Comparecencia")
+                                                    @elseif($solicitud->estatus == "Comparecencia")
                                                         <div class="dropdown">
                                                             <div class="dropdown">
                                                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -82,7 +82,7 @@
                                                                 </ul>
                                                             </div>
                                                         </div>
-                                                    @elseif($audiencia->estatus == "Reagendada")
+                                                    @elseif($solicitud->estatus == "Reagendada")
                                                         <div class="dropdown">
                                                             <div class="dropdown">
                                                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -95,7 +95,7 @@
                                                                 </ul>
                                                             </div>
                                                         </div>                                                        
-                                                    @elseif($audiencia->estatus == "No conciliacion")
+                                                    @elseif($solicitud->estatus == "No conciliacion")
                                                         <div class="dropdown">
                                                             <div class="dropdown">
                                                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -107,7 +107,7 @@
                                                                 </ul>
                                                             </div>
                                                         </div> 
-                                                    @elseif($audiencia->estatus == "Conciliacion")
+                                                    @elseif($solicitud->estatus == "Conciliacion")
                                                         <div class="dropdown">
                                                             <div class="dropdown">
                                                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">

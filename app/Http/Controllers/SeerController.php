@@ -1755,15 +1755,12 @@ class SeerController extends Controller
         ]);
 
         return redirect()->route('seer');  
- 
     }
 
     public function store_enlace(Request $request){
         $data = $request->all();
-       
         SeerCitados::where('id', $data["id"])
-        ->update([
-            'id_notificador' => $data["notificador"], 'estatus' => "Pendiente"]);
+        ->update(['id_notificador' => $data["notificador"], 'estatus' => "Pendiente"]);
         return redirect()->route('notificaciones');
     }
 
@@ -2498,9 +2495,9 @@ class SeerController extends Controller
         }
         $num_audi = $num_audi+1;
 
-        $delegacion = $this->ObtenerAudiencia($user["delegacion"]);
+        $Audiencia = $this->ObtenerAudiencia($delegacion["delegacion"]);
         $sala = 1;
-        switch($delegacion[3]){
+        switch($Audiencia[3]){
            //Morelia
             case 16:
                 $sala = "Sala 2";
@@ -2535,15 +2532,15 @@ class SeerController extends Controller
             'id_solicitud'      => $data["id"],
             'numero_audiencia'  => $num_audi,
             'folio_audiencia'   => $numero_audiencia[0],
-            'fecha'             => $delegacion[0],
-            'hora'              => $delegacion[1],
-            'id_conciliador'    => $delegacion[3],
+            'fecha'             => $Audiencia[0],
+            'hora'              => $Audiencia[1],
+            'id_conciliador'    => $Audiencia[3],
             'sala'              => $sala,
-            'delegacion'        => $user["delegacion"]
+            'delegacion'        => $delegacion["delegacion"]
         );
         Audiencias::create($audiencia_insert);
         //Actualizar genera
-        SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $delegacion[3], 'estatus' => 'Confirmado' ]);
+        SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $Audiencia[3], 'estatus' => 'Confirmado' ]);
         
         return redirect()->route('solicitudes_pendientes'); 
     }
@@ -2680,7 +2677,6 @@ class SeerController extends Controller
         ->where('seer_citados.id_notificador', 0)
         ->where('seer_citados.notificacion',"!=", "Trabajador")
         ->get();
-
 
         return view('notificaciones.index',compact('personas','notificaciones','userRole'));
     }
@@ -4133,7 +4129,26 @@ class SeerController extends Controller
     }
 
     public function audiencias_cumplimiento(){
-        return view('/cumplimientos/index');
+        $id = auth()->user()->id;
+        $user = User::find($id);
+
+        $auxiliares = User::whereHas('roles', function ($query) {
+            return $query->where('name', '=', 'Auxiliar');
+        })
+        ->where('delegacion', $user["delegacion"])
+        ->get();
+        $notificadores = User::whereHas('roles', function ($query) {
+            return $query->where('name', '=', 'Notificador');
+        })
+        ->where('delegacion', $user["delegacion"])
+        ->get();
+        $conciliadores = User::whereHas('roles', function ($query) {
+            return $query->where('name', '=', 'Conciliador');
+        })
+        ->where('delegacion', $user["delegacion"])
+        ->get();
+
+        return view('/cumplimientos/index',compact('auxiliares','conciliadores'));
     }
 
     public function solicitud_audiencia_revisar($id){
@@ -4185,8 +4200,6 @@ class SeerController extends Controller
     public function solicitudes(){
         $id = auth()->user()->id;
         $user = User::find($id);
-        //$roles = Role::pluck('name','name')->all();
-        //$userRole = $user->roles->pluck('name')->all();
 
         $auxiliares = User::whereHas('roles', function ($query) {
             return $query->where('name', '=', 'Auxiliar');
@@ -4502,14 +4515,39 @@ class SeerController extends Controller
         return redirect()->route('cumplimiento_actual');
     }
 
-    public function cumplimiento_buscar(){
+    /*public function cumplimiento_buscar(){
         return view('cumplimientos/busqueda');
-    }
+    }*/
 
     public function cumplimientos_busqueda(Request $request){
         $data = $request->all();
+        $bandera_fechas = 0;
+        //Si existe la fecha de inicio
+        if(isset($data["inicio"]) ){
+            if(isset($data["final"]) ){
+                if($data["inicio"] > $data["final"]){
+                    return back()->withErrors('Si seleccionas una fecha de inicio, no debe ser mayor a la fecha final.');
+                }
+                //Agregar fecha inicio y final
+                $bandera_fechas = 1;
+            }
+            else{
+                return back()->withErrors('Si selecciones una fecha de inicio, debes seleccionar fecha final.');
+            }
+        }else if(isset($data["final"])){
+            if(isset($data["inicio"]) ){
+                if($data["inicio"] > $data["final"]){
+                    return back()->withErrors('Si seleccionas una fecha de inicio, no debe ser mayor a la fecha final.');
+                }
+                //Agregar fecha inicio y final
+                $bandera_fechas = 1;
+            }
+            else{
+                return back()->withErrors('Si selecciones una fecha final, debes seleccionar fecha de inicio.');
+            }
+        }
 
-        $complimientos_ratificacion = Pagos::whereBetween("pago_solicitud.fecha",[$data["fecha_inicio"],$data["fecha_final"]])
+        $solicitudes = Pagos::whereBetween("pago_solicitud.fecha",[$data["inicio"],$data["final"]])
         ->where("pago_solicitud.tipo_pago","Ratificacion")
         ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
         ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
@@ -4518,15 +4556,7 @@ class SeerController extends Controller
         DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
         ->get();
 
-        $complimientos_audiencias = Pagos::whereBetween("pago_solicitud.fecha",[$data["fecha_inicio"],$data["fecha_final"]])
-        ->where("pago_solicitud.tipo_pago","Audiencia")
-        ->join("seer_general","seer_general.id","pago_solicitud.id_solicitud")
-        ->join("seer_solicitante","seer_general.id","seer_solicitante.id_solicitud")
-        ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
-        "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE","seer_general.id as id_solicitud",
-        DB::raw('seer_solicitante.nombre AS trabajador'))
-        ->get();
-        return view('cumplimientos/busqueda_resultado',compact('complimientos_ratificacion','complimientos_audiencias'));
+        return view('cumplimientos/busqueda_resultado',compact('solicitudes'));
     }
 
     public function PDFincumplimientoAudiencia($id){
@@ -5085,7 +5115,6 @@ class SeerController extends Controller
        return view('solicitudes/verDocumentos',compact('documento_general','documento_solicitante','documento_abogado','documento_fisica','documento_subidos'));
     }
 
-    
     //PDF Constancia de cumplimiento
     public function VerPDFCumplimiento($id){
         $solicitud = SeerPerGeneral::find($id);
@@ -5106,6 +5135,32 @@ class SeerController extends Controller
         return $pdf->stream($nombreArchivo);                  
     }
 
+    public function notificaciones_consultar(){
+        return view('/notificaciones/consultar');
+    }
+
+    public function notificaciones_busqueda(Request $request){
+        $request->validate([
+            'fecha_inicio' => 'required',
+            'fecha_final' => 'required',
+        ]);
+
+        $data = $request->all();
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        $notificaciones = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+        ->select('seer_general.id as id_solicitud','seer_citados.id as id_citado','seer_general.NUE',
+            'seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido',
+            'seer_citados.colonia','seer_citados.calle','seer_citados.n_ext','seer_citados.n_int','seer_citados.estatus')
+        ->where('seer_general.delegacion', $user["delegacion"])
+        ->where('seer_citados.id_notificador', 0)
+        ->where('seer_citados.notificacion',"!=", "Trabajador")
+        ->whereBetween('seer_general.fecha', [$data["fecha_inicio"], $data["fecha_final"]])
+        ->get();
+
+        return view('notificaciones.index',compact('notificaciones'));
+    }
+    
     //PDF COMPARECE REPRESENTANTE LEGAL SIN PODER
     public function VerPDFCompareceSinPoder($id){
         $solicitud = SeerPerGeneral::find($id);

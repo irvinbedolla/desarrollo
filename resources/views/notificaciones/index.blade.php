@@ -11,9 +11,7 @@
                     <div class="card">
                         <div class="card-body">
                             
-                            
                             @can('ver-seer')
-                                @if($userRole[0] == "Enlace")
                                     <div class="table-responsive">
                                         <table id="example" class="table table-striped mt-1" style="text-align:center">
                                             <thead style="background-color: #4A001F;">
@@ -63,7 +61,6 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                @endif
                             @endcan
                             <!-- Centramos la paginación a la derecha-->
                             <div class="pagination justify-content-end">

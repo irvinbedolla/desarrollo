@@ -119,7 +119,7 @@
                                                 <th style="color: #fff;">Documentos</th>
                                             </thead>
                                             <tbody>
-                                                @foreach($complimientos_ratificacion as $ratificacion)
+                                                @foreach($solicitudes as $ratificacion)
                                                     <tr>
                                                         <td>{{$ratificacion->fecha}}</td> 
                                                         <td>{{$ratificacion->hora}}</td>
@@ -130,7 +130,7 @@
                                                         <td>{{$ratificacion->observaciones}}</td>
                                                         <td>${{number_format($ratificacion->monto, 2)}}</td>
                                                         <td>{{$ratificacion->estatus}}</td>
-                                                        <td><a class="btn btn-primary" href="{{ route('consulta_cumplimiento', ['id' => $ratificacion->id, 'tipo' => 3] ) }}">Consultar</a></td>
+                                                        <td><a class="btn btn-primary" href="{{ route('consulta_cumplimiento', ['id' => $ratificacion->id, 'tipo' => 3] ) }}" target="_blank">Consultar</a></td>
                                                         <td>
                                                            @if($ratificacion->estatus == "Pagado")
                                                                 <a class="btn btn-success" href="{{ route('PDFpagos', $ratificacion->id) }}" target="_blank">PDF</a>
@@ -162,7 +162,7 @@
                                                 <th style="color: #fff;">Documentos</th>
                                             </thead>
                                             <tbody>
-                                                @foreach($complimientos_audiencias as $audiencia)
+                                                @foreach($solicitudes as $audiencia)
                                                     <tr>
                                                         <td>{{$audiencia->fecha}}</td> 
                                                         <td>{{$audiencia->hora}}</td>

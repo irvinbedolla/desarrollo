@@ -1552,24 +1552,136 @@ class TurnosController extends Controller
     
     }
 
-    public function index_ratificacion(){
-        return view('/ratificaciones/index');
-    }
+     public function index_ratificacion(){
+        $id = auth()->user()->id;
+        $user = User::find($id);
 
-    public function buscar_ratificacion(){
-        return view('/ratificaciones/buscar');
+        $auxiliares = User::whereHas('roles', function ($query) {
+            return $query->where('name', '=', 'Auxiliar');
+        })
+        ->where('delegacion', $user["delegacion"])
+        ->get();
+        $notificadores = User::whereHas('roles', function ($query) {
+            return $query->where('name', '=', 'Notificador');
+        })
+        ->where('delegacion', $user["delegacion"])
+        ->get();
+        $conciliadores = User::whereHas('roles', function ($query) {
+            return $query->where('name', '=', 'Conciliador');
+        })
+        ->where('delegacion', $user["delegacion"])
+        ->get();
+
+        return view('/ratificaciones/index',compact('auxiliares','conciliadores'));
     }
 
     public function busqueda_ratificaciones(Request $request){
         $data = $request->all();
-        $id = auth()->user()->id;
-        //$user = User::find($id);
+        $bandera_fechas         = 0;
+        $bandera_nue            = 0;
+        $bandera_curp           = 0;
+        $bandera_solicitante    = 0;
+        $bandera_citado         = 0;
+        $bandera_folio          = 0;
+        $bandera_año            = 0;
+        $bandera_estatus        = 0;
+        $bandera_tipo           = 0;
+        $bandera_auxiliar       = 0;
+        $bandera_conciliador    = 0;
 
-        $solicitudes = Turnos::where('tipo','Ratificación')
-        //->where('auxiliar',$user["id"])
-        ->whereBetween('turnos.fecha', [$data["fecha_inicio"], $data["fecha_final"]])
-        ->get();
-        dd($solicitudes);
+        //Si existe la fecha de inicio
+        if(isset($data["inicio"]) ){
+            if(isset($data["final"]) ){
+                if($data["inicio"] > $data["final"]){
+                    return back()->withErrors('Si seleccionas una fecha de inicio, no debe ser mayor a la fecha final.');
+                }
+                //Agregar fecha inicio y final
+                $bandera_fechas = 1;
+            }
+            else{
+                return back()->withErrors('Si selecciones una fecha de inicio, debes seleccionar fecha final.');
+            }
+        }else if(isset($data["final"])){
+            if(isset($data["inicio"]) ){
+                if($data["inicio"] > $data["final"]){
+                    return back()->withErrors('Si seleccionas una fecha de inicio, no debe ser mayor a la fecha final.');
+                }
+                //Agregar fecha inicio y final
+                $bandera_fechas = 1;
+            }
+            else{
+                return back()->withErrors('Si selecciones una fecha final, debes seleccionar fecha de inicio.');
+            }
+        }
+        else if(isset($data["nue"])){
+            //se va agregar el nue a la busqueda
+            $bandera_nue = 1;
+        }
+        else if(isset($data["curp"])){
+            //se va agregar el nue a la busqueda
+            $bandera_curp = 1;
+        }
+        else if(isset($data["solicitante"])){
+            //se va agregar el nue a la busqueda
+            $bandera_solicitante = 1;
+        }
+        else if(isset($data["citado"])){
+            //se va agregar el nue a la busqueda
+            $bandera_citado = 1;
+        }
+        else if(isset($data["folio"])){
+            //se va agregar el nue a la busqueda
+            $bandera_folio = 1;
+        }
+        else if(isset($data["estatus"])){
+            //se va agregar el nue a la busqueda
+            $bandera_estatus = 1;
+        }
+        else if(isset($data["tipo"])){
+            //se va agregar el nue a la busqueda
+            $bandera_tipo = 1;
+        }
+        else if(isset($data["auxiliar"])){
+            //se va agregar el nue a la busqueda
+            $bandera_auxiliar = 1;
+        }
+        else if(isset($data["conciliador"])){
+            //se va agregar el nue a la busqueda
+            $bandera_conciliador = 1;
+        }
+
+        $solicitudes  = Turnos::select("turnos.id","turnos.fecha","turnos.trabajador","turnos.primero_trabajador","turnos.segundo_trabajador",
+        "turnos.empresa","turnos.NUE","turnos.estatus");
+        if($bandera_fechas == 1){
+            $solicitudes = $solicitudes->where("turnos.fecha",">=",$data["inicio"]);
+            $solicitudes = $solicitudes->where("turnos.fecha","<=",$data["final"]);
+        }
+        if($bandera_nue == 1){
+            $solicitudes = $solicitudes->where("turnos.NUE",$data["nue"]);
+        }
+        if($bandera_curp == 1){
+            $solicitudes = $solicitudes->where("turnos.curp_solicitante",$data["curp"]);
+        }
+        if($bandera_solicitante == 1){
+            $solicitudes = $solicitudes->where("turnos.nombre",'like',$data["solicitante"]);
+        }
+        if($bandera_citado == 1){
+            $solicitudes = $solicitudes->where("turnos.empresa",'like',$data["citado"]);
+        }
+        if($bandera_folio == 1){
+            $solicitudes = $solicitudes->where("turnos.id","=",$data["folio"]);
+        }
+        if($bandera_estatus == 1){
+            $solicitudes = $solicitudes->where("turnos.estatus","=",$data["estatus"]);
+        }
+        if($bandera_auxiliar == 1){
+            $solicitudes = $solicitudes->where("turnos.user_id","=",$data["auxiliar"]);
+        }
+        if($bandera_conciliador == 1){
+            $solicitudes = $solicitudes->where("turnos.id_conciliador","=",$data["conciliador"]);
+        }
+        $solicitudes = $solicitudes->get();
+
         return view('/ratificaciones/busqueda',compact('solicitudes'));
     }
 
