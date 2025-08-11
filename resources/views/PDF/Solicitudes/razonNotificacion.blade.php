@@ -83,26 +83,32 @@
                                 <td><b>Centro de conciliación: </b></td>
                                 <td>{{ $solicitud->delegacion }}</td>
                             </tr>
+                            <tr>   
+                                <td><b>Solicitante: </b></td>
+                                <td>{{$solicitante->nombre}}</td>
+                            </tr>
+                             <tr>   
+                                <td><b>Citado: </b></td>
+                                <td>{{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</td>
+                            </tr>
                     </table>
                 </div><br><br>
                 <!-- DELIGENCIA EXITOSA, ATIENDE OTRA PERSONA -->
                 <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p><br>
-                <p><b>
-                      SOLICITANTE: {{$solicitante->nombre}}<br>
-                      CITADO: {{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}
-                </b></p>  
                            
                 <p>Siendo las <b>{{ \Carbon\Carbon::now()->format('H') }} HORAS CON {{ \Carbon\Carbon::now()->format('i') }} MINUTOS
                     DEL DÍA {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}, LIC. {{$notificador->name}}</b> en mi
-                    calidad de notificador adscrito al Centro de Conciliación Laboral, oficina estatal {{ $solicitud->delegacion }}, me constituyo física y legalmente en el
-                    domicilio ubicado en <b>{{$citado->tipo_vialidad}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) int. {{$citado->n_int}}@endif, COLONIA {{$citado->colonia}}, 
-                    {{$municipioCitado}}, CP {{$citado->cp}}, ESTADO MICHOACÁN DE OCAMPO</b>, 
-                    siendo este el domicilio señalado en la solicitud de conciliación como el del <b>CITADO:
-                    {{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</b>. Todo ello a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN de 
-                    fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> en el expediente citado. <br><br>
+                    calidad de notificador adscrito al Centro de Conciliación Laboral, oficina estatal {{ $solicitud->delegacion }}, en 
+                    ejercicio de las facultades conferidas en los artìculos de la Ley Orgànica del Centro de Conciliaciòn Laboral del 
+                    Estado de Michoacàn de Ocampo y 21 del reglamento interior del Centro de Conciliaciòn Laboral del Estado de Michoacàn 
+                    de Ocampo, a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN, me constituyo física y legalmente en el
+                    domicilio ubicado en <b>{{strtoupper($citado->tipo_vialidad)}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) int. {{$citado->n_int}}@endif, COLONIA {{$citado->colonia}}, 
+                    {{$municipioCitado}}, CP {{$citado->cp}}, ESTADO MICHOACÁN DE OCAMPO</b>, siendo este el domicilio señalado en la solicitud de Conciliación como el del <b>CITADO:
+                    {{$citado->nombre}}@if($citado->primer_apellido!=null) {{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null) {{$citado->segundo_apellido}}@endif</b>. Todo ello a efecto 
+                    de dar cumplimiento al CITATORIO DE CONCILIACIÓN de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> en el expediente citado. <br><br>
 
-                    Y cerciorando de ser este el domicilio correcto y completo, apegándome en los siguientes elementos de convicción:
-                    <b>{{$citado->abundar_area}}a) EL NÚMERO VISIBLE DEL INMUEBLE, Y b) LOS INFORMES DE VECINOS DEL LUGAR, QUIENES CONFIRMAN QUE SE TRATA
+                    Y cercioràndo de ser este el domicilio correcto y completo, apegándome en los siguientes elementos de convicción:
+                    <b>{{$citado->abundar_area}} a) EL NÚMERO VISIBLE DEL INMUEBLE, Y b) LOS INFORMES DE VECINOS DEL LUGAR, QUIENES CONFIRMAN QUE SE TRATA
                     DEL DOMICILIO CORRECTO</b>. A mayor abundamiento, verifico que cerca del domicilio se encuentran los siguientes puntos de referencia:
                     <b>DOMICILIO UBICADO ENTRE LAS CALLES GUILLERMO PRIETO Y NIGROMANTE, A MEDIA CUADRA DE LA CATEDRAL DE MORELIA</b>.
                     De igual forma, he constatado que se trata de un inmueble con las siguientes características: <b>{{$citado->abundar_inmueble}}INMUEBLE TIPO EDIFICIO, DE FACHADA DE
@@ -110,16 +116,14 @@
                     NEGOCIOS</b>.<br><br>
 
                     Asimismo, por los informes que me proporciona la persona con quien se entiende la presente diligencia, quien dijo llamarse <b>{{$citado->nombre_notificacion}},
-                    QUIEN NO SE IDENTIFICA {{$citado->motivo_identificacion}}</b>. Procedo a especificar su media filiación,
-                    que incluye los siguientes rasgos: <b>SEXO {{$citado->genero}}, TEZ {{$citado->tez}}, EDAD {{$citado->edad_filiacion}} AÑOS, ALTURA {{$citado->altura}} M.,
-                    COMPLEXIÓN {{$citado->complexion}}, CABELLO {{$citado->cabello}}, OJOS {{$citado->ojos}} Y SEÑAS PARTICULARES: {{$citado->particulares}}. LO ANTERIOR SE HACE DE
-                    MANERA APROXIMADA, YA QUE EL SUSCRITO NO ES PERITO EN LA MATERIA</b>. Quien manifiesta que <b>OCUPA EL PUESTO DE
+                    QUIEN NO SE IDENTIFICA {{$citado->motivo_identificacion}}</b>. Procedo a especificar su media filiación,que incluye los siguientes rasgos: <b>SEXO {{$citado->genero}}, 
+                    TEZ {{$citado->tez}}, EDAD {{$citado->edad_filiacion}} AÑOS, ALTURA {{$citado->altura}} M., COMPLEXIÓN {{$citado->complexion}}, CABELLO {{$citado->cabello}}, OJOS {{$citado->ojos}} 
+                    Y SEÑAS PARTICULARES: {{$citado->particulares}}. LO ANTERIOR SE HACE DE MANERA APROXIMADA, YA QUE EL SUSCRITO NO ES PERITO EN LA MATERIA</b>. Quien manifiesta que <b>OCUPA EL PUESTO DE 
                     {{$citado->puesto}}</b> en el domicilio en que se actúa. Enseguida me identifico con credencial vigente expedida por el Centro
                     Conciliación Laboral, oficina estatal <b>{{$solicitud->delegacion}}</b> que me acredita como Notificador y le informo el motivo de mi visita, mediante lectura del
-                    CITATORIO DE CONCILIACIÓN antes mencionado, requiriendo así la presencia <b>DEL REPRESENTANTE LEGAL DEL CITADO:
-                    {{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</b> a fin de NOTIFICARLO; <b>{{$citado->observaciones}} la persona que me atiende manifiesta que el citado no se encuentra por el
-                    momento, pero que efectivamente tiene su asiento de negocios en este domicilio.</b> Por todo lo anterior, y de conformidad con lo dispuesto en
-                    los artículos 741. 742 fracción XIII, 743 y 751 de la Ley Federal del Trabajo procedo a dejar CITATORIO DE LEY para
+                    CITATORIO DE CONCILIACIÓN antes mencionado, requiriendo así la presencia <b>DEL REPRESENTANTE LEGAL DEL CITADO: {{$citado->nombre}}@if($citado->primer_apellido!=null) {{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null) {{$citado->segundo_apellido}}@endif</b> 
+                    a fin de NOTIFICARLO; <b>{{$citado->observaciones}} la persona que me atiende manifiesta que el citado no se encuentra por el momento, pero que efectivamente tiene su asiento de negocios 
+                    en este domicilio.</b> Por todo lo anterior, y de conformidad con lo dispuesto en los artículos 741. 742 fracción XIII, 743 y 751 de la Ley Federal del Trabajo procedo a dejar CITATORIO DE LEY para
                     <b>EL REPRESENTANTE LEGAL DEL CITADO</b>.<br><br>
 
                     <b>FIRMA PARA CONSTANCIA LEGAL.</b><br>

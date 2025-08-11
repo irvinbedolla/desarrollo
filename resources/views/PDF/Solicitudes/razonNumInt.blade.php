@@ -82,22 +82,28 @@
                                 <td><b>Centro de conciliación: </b></td>
                                 <td>{{ $solicitud->delegacion }}</td>
                             </tr>
+                            <tr>   
+                                <td><b>Solicitante: </b></td>
+                                <td>{{$solicitante->nombre}}</td>
+                            </tr>
+                             <tr>   
+                                <td><b>Citado: </b></td>
+                                <td>{{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</td>
+                            </tr>
                     </table>
                 </div><br><br><br>
                 <!-- DELIGENCIA NO EXITOSA, NO SE LOCALIZA INTERIOR -->
                 <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p><br>
-                <p>
-                    SOLICITANTE: {{$solicitante->nombre}}<br>
-                    CITADO: {{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}
-                </b></p>  
                            
                 <p>Siendo las <b>{{ \Carbon\Carbon::now()->format('H') }} HORAS CON {{ \Carbon\Carbon::now()->format('i') }} MINUTOS
                     DEL DÍA {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}, LIC. {{$notificador->name}}</b> en mi
-                    calidad de notificador adscrito al Centro de Conciliación Laboral, oficina estatal {{ $solicitud->delegacion }}, a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN
-                    de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> en el expediente citado, en el que se ordena NOTIFICAR <b>AL CITADO: {{$citado->nombre}} {{$citado->primer_apellido}} 
-                    {{$citado->segundo_apellido}}</b>, en el domicilio señalado
-                    en <b>{{$citado->tipo_vialidad}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) int. {{$citado->n_int}}@endif, COLONIA {{$citado->colonia}}, 
-                    {{$municipioCitado}}, CP {{$citado->cp}}, ESTADO MICHOACÁN DE OCAMPO</b></b>. Cerciorándome de ser el domicilio correcto por <b>a) LA(S) PLACAS DE SEÑALIZACIÓN OFICIAL MÁS PRÓXIMA(S) 
+                    calidad de notificador adscrito al Centro de Conciliación Laboral, oficina estatal {{ $solicitud->delegacion }}, en 
+                    ejercicio de las facultades conferidas en los artìculos de la Ley Orgànica del Centro de Conciliaciòn Laboral del 
+                    Estado de Michoacàn de Ocampo y 21 del reglamento interior del Centro de Conciliaciòn Laboral del Estado de Michoacàn 
+                    de Ocampo, a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
+                    en el expediente citado, en el que se ordena NOTIFICAR <b>AL CITADO: {{$citado->nombre}}@if($citado->primer_apellido!=null) {{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null) {{$citado->segundo_apellido}}@endif</b>, 
+                    en el domicilio señalado en <b>{{strtoupper($citado->tipo_vialidad)}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) int. {{$citado->n_int}}@endif, COLONIA {{$citado->colonia}}, 
+                    {{$municipioCitado}}, CP {{$citado->cp}}, ESTADO MICHOACÁN DE OCAMPO</b>. Cerciorándome de ser el domicilio correcto por <b>a) LA(S) PLACAS DE SEÑALIZACIÓN OFICIAL MÁS PRÓXIMA(S) 
                     AL DOMICILIO EN QUE SE ACTÚA, CON EL RESPECTIVO NOMBRE DE LA ALCALDÍA, COLONIA Y [TIPO_VILAIDAD], b) EL MÚMERO VISIBLE DEL INMUEBLE</b>.<br><br>
 
                     Hago constar a la autoridad conciliadora competente que al recorrer la parte señalada del inmueble, no logro localizar el número interior proporcionado 
@@ -106,10 +112,10 @@
                     LOCALIZAR EL INMUEBLE SEÑALADO POR LA PARTE ACTORA]</b>.<br><br>
                     
                     En esa razón, me encuentro imposibilitado para dar cumplimiento a lo ordenado en el citatorio de conciliación; toda vez que no cuento 
-                    con los elementos de cercioramiento requeridos por el Artículo 743 Fracción I de la Ley Federal del Trabajo, por lo que me es imposible 
+                    con los elementos de cercioramiento requeridos por el artículo 743 fracción I de la Ley Federal del Trabajo, por lo que me es imposible 
                     dar cumplimiento al citatorio antes citado.<br><br>
 
-                    <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. DOY FE.</b> 
+                    <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. Doy fe.</b> 
                 </p>
                 <br>
                 <p><center><b>___________________________________<br>LIC. {{$notificador->name}}<br> FUNCIONARIO/A NOTIFICADOR/A</b></center> </p>

@@ -82,39 +82,46 @@
                                 <td><b>Centro de conciliación: </b></td>
                                 <td>{{ $solicitud->delegacion }}</td>
                             </tr>
+                             <tr>   
+                                <td><b>Solicitante: </b></td>
+                                <td>{{$solicitante->nombre}}</td>
+                            </tr>
+                             <tr>   
+                                <td><b>Citado: </b></td>
+                                <td>{{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</td>
+                            </tr>
                     </table>
                 </div><br><br><br>
                 <!-- DELIGENCIA NO EXITOSA, SE CONSTITUYE, CERRADO -->
                 <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p><br>
-                <p><b>
-                      SOLICITANTE: {{$solicitante->nombre}}<br>
-                      CITADO: {{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}
-                </b></p>  
                            
                 <p>Siendo las <<b>{{ \Carbon\Carbon::now()->format('H') }} HORAS CON {{ \Carbon\Carbon::now()->format('i') }} MINUTOS
                     DEL DÍA {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}, LIC. {{$notificador->name}}</b> en mi
-                    calidad de notificador adscrito al Centro de Conciliación Laboral, oficina estatal {{ $solicitud->delegacion }}, a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN
-                    de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> en el expediente citado, en el que se ordena NOTIFICAR <b>AL CITADO: {{$citado->nombre}} 
-                    {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</b>, en el domicilio señalado
-                    en <b>{{$citado->tipo_vialidad}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) int. {{$citado->n_int}}@endif, COLONIA {{$citado->colonia}},{{$municipioCitado}}, CP {{$citado->cp}}, ESTADO MICHOACÁN DE OCAMPO</b>.<br><br>
+                    calidad de notificador adscrito al Centro de Conciliación Laboral, oficina estatal {{ $solicitud->delegacion }}, en 
+                    ejercicio de las facultades conferidas en los artìculos de la Ley Orgànica del Centro de Conciliaciòn Laboral del Estado 
+                    de Michoacàn de Ocampo y 21 del reglamento interior del Centro de Conciliaciòn Laboral del Estado de Michoacàn de Ocampo, 
+                    a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
+                    en el expediente citado, en el que se ordena NOTIFICAR <b>AL CITADO: {{$citado->nombre}}@if($citado->primer_apellido!=null) {{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null) {{$citado->segundo_apellido}}@endif</b>, 
+                    en el domicilio señalado en <b>{{$citado->tipo_vialidad}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) int. {{$citado->n_int}}@endif, 
+                    COLONIA {{$citado->colonia}},{{$municipioCitado}}, CP {{$citado->cp}}, ESTADO MICHOACÁN DE OCAMPO</b>.<br><br>
 
-                    Cerciorándome de ser éstos los Municipio, Colonia y Vialidad correctas señaladas en la solicitude de conciliación, por
-                    <b>{{$citado->abundar_area}} a) LA(S) PLACAS DE SEÑALIZACIÓN OFICIAL MÁS PRÓXIMA(S) AL DOMICILIO EN QUE SE ACTÚA, CON EL RESPECTIVO NOMBRE DE LA ALCALDÍA, COLONIA Y CALLE, 
+                    Cerciorándome de ser éstos los Municipio, Colonia y Vialidad correctas señaladas en la solicitude de conciliación, por 
+                    <b>a) LA(S) PLACAS DE SEÑALIZACIÓN OFICIAL MÁS PRÓXIMA(S) AL DOMICILIO EN QUE SE ACTÚA, CON EL RESPECTIVO NOMBRE DE LA ALCALDÍA, COLONIA Y CALLE, 
                     b) EL MÚMERO VISIBLE DEL INMUEBLE, c) EL NÚMERO DEL INMUEBLE ES CONSISTENTE CON LA NUMERACIÓN DE LA CALLE, Y d) LOS INFORMES DE VECINOS DEL LUGAR, 
                     QUIENES CONFIRMAN QUE SE TRATA DEL DOMICILIO CORRECTO. A mayor abundamiento, verifico que cerca del domicilio se encuentran los siguientes puntos  
-                    de referencia: {{$citado->abundar_inmueble}} A SU COSTADO DERECHO SE ENCUNTRA EL INMUEBLE CON EL NÚMERO 218. De igual forma, he constatado que se trata de un inmueble con las 
-                    siguientes características: CONSTA DE PLANTA BAJA Y UN PISO, CON FACHADA EN COLOR GRIS CON PORTÓN DE ACCESO EM SOLOR GRIS</b>.<br><br>
+                    de referencia: {{$citado->abundar_area}} A SU COSTADO DERECHO SE ENCUNTRA EL INMUEBLE CON EL NÚMERO 218. De igual forma, he constatado que se trata de un inmueble con las 
+                    siguientes características: {{$citado->abundar_inmueble}} CONSTA DE PLANTA BAJA Y UN PISO, CON FACHADA EN COLOR GRIS CON PORTÓN DE ACCESO EM SOLOR GRIS</b>.<br><br>
 
                     <b>{{$citado->observaciones}} Hago constar a la autoridad conciliadora competente que el acceso se encuentra cerrado; no obstante, procedí a tocar en repetidas ocasiones, sin 
                     haber recibido respuesta. Y después de haber esperado un tiempo prudente, lógico y razonable, nadie acude a mi llamado, por lo que no tengo 
                     persona alguna con quien atender la presente diligencia.</b><br><br>
 
                     En esa razón, me encuentro imposibilitado para dar cumplimiento a lo ordenado en el citatorio de conciliación; toda vez que no cuento 
-                    con los elementos de cercioramiento requeridos por el Artículo 743 Fracción I de la Ley Federal del Trabajo, por lo que me es imposible 
+                    con los elementos de cercioramiento requeridos por el artículo 743 fracción I de la Ley Federal del Trabajo, por lo que me es imposible 
                     dar cumplimiento al citatorio antes citado.<br><br>
 
                     <b>Anexando impresión fotográfica para constancia legal.</b><br>
-                    <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. DOY FE.</b> 
+                    <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. Doy fe.</b> 
                 </p>
                 <br>
                 <p><center><b>___________________________________<br> LIC. {{$notificador->name}}<br> FUNCIONARIO/A NOTIFICADOR/A</b></center> </p>
