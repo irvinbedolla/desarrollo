@@ -192,7 +192,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="row">
+                                        <div class="row"> 
                                             <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:30px;">
                                                 <div class="form-group">
                                                     <h4 class="text-center">Dirección del citado</h4>
