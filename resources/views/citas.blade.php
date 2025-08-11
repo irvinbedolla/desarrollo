@@ -383,7 +383,7 @@
                                                     </div>
                                                 </div>
                                                 
-                                                <div class="col-xs-12 col-sm-12 col-md-2">
+                                                <div class="col-xs-12 col-sm-12 col-md-2"> 
                                                     <div class="form-group">
                                                         <label for="fecha_inicio">Fecha de inicio de la relación laboral</label>
                                                         <input type="date" name="fecha_inicio" class="form-control" required> 
@@ -818,10 +818,20 @@
                 const dia = String(hoy.getDate()).padStart(2, '0');
                 return `${año}-${mes}-${dia}`;
             }
-
+            function esFechaValida(fechaStr) {
+                return /^\d{4}-\d{2}-\d{2}$/.test(fechaStr) && !isNaN(new Date(fechaStr).getTime());
+            }
             function validarFechas() {
                 const fechaHoyStr = obtenerFechaHoyFormato();
+                const fechaHoy = new Date(fechaHoyStr);
+                const fechaInicioStr = inicio.value;
+                const fechaTerminoStr = termino.value;
 
+                if (!esFechaValida(fechaInicioStr) && fechaInicioStr !== "") return;
+                if (!esFechaValida(fechaTerminoStr) && fechaTerminoStr !== "") return;
+
+                const fechaInicio = new Date(fechaInicioStr);
+                const fechaTermino = new Date(fechaTerminoStr);
                 // Validar que fecha inicio no sea la fecha de hoy
                 if (inicio.value === fechaHoyStr) {
                     alert("La fecha de inicio no puede ser la fecha actual.");
@@ -849,8 +859,9 @@
                     return;
                 }
             }
-            inicio.addEventListener("change", validarFechas);
-            termino.addEventListener("change", validarFechas);
+            inicio.addEventListener("blur", validarFechas);
+            termino.addEventListener("blur", validarFechas);
+
         });
     </script>
 
@@ -874,7 +885,7 @@
                     
                     // Hacer petición AJAX con parámetro sede
                     $.ajax({
-                        url: '/sistema-integral/api/obtenerEventos',
+                        url: '/nuevo_siconcilio/api/obtenerEventos',
                         method: 'GET',
                         data: {
                             sede: sede,

@@ -419,7 +419,7 @@
                                                     <input name="labora" type="checkbox" class="btn-check" id="check_fecha" autocomplete="off"/>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-4"> 
                                                 <div class="form-group">
                                                     <label for="name">Fecha de Ingreso (*)</label>
                                                     <input type="date" name="fecha_ingreso" class="form-control" required> 
