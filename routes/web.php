@@ -257,7 +257,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/solicitudes/pedientes',                [SeerController::class, 'solicitudes_pendientes'])->name('solicitudes_pendientes');
         Route::get('/solicitud/index',                      [SeerController::class, 'mis_solicitudes'])->name('mis_solicitudes');
         Route::get('/solicitudes_revisar/{id}',             [SeerController::class, 'solicitudes_pendientes_revisar'])->name('solicitud_revisar');
-        Route::get('/solicitudes_editar/{id}',              [SeerController::class, 'solicitudes_pendientes_editar'])->name('solicitud_editar');
+        Route::get('/solicitudes_editar/{id}',              [SeerController::class, 'solicitudes_pendientes_editar'])->name('solicitud_editar'); 
         Route::post('/confirmar_solicitudes',               [SeerController::class, 'solicitud_confirmar'])->name('confirmar_solicitud');
         Route::get('/rechazar_solicitudes',                 [SeerController::class, 'rechazar_solicitud'])->name('rechazar_solicitud');
         Route::get('/eliminar_motivo/{id}/{id_motivo}',     [SeerController::class, 'eliminar_motivo'])->name('eliminar_motivo');

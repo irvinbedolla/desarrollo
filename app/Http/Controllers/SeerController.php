@@ -2197,9 +2197,6 @@ class SeerController extends Controller
         if(isset($data["nombre"])){
             $data_insert["nombre"] =  $data["nombre"];
         }
-       /* if(isset($data["tipo"])){
-            $data_insert["tipo_persona"] =  $data["tipo"];
-        }*/
         if(isset($data["curp"])){
             $data_insert["curp"] =  $data["curp"];
         }
@@ -2223,7 +2220,7 @@ class SeerController extends Controller
                 $data_insert["nombre"] = $data["nombre"];
             }
         }
-        
+        //dd($data_insert);
         //Se van a generar el citatorio
         SeerCitados::create($data_insert); 
         //Se van a generar quien resulte responsable
@@ -2309,7 +2306,7 @@ class SeerController extends Controller
         $estados        = Estados::all();
         $municipios     = Municipios::all();
         $conciliadores  = User::find($general["conciliador_id"]);
-        $audiencia      = SeerPerConciliador::where("id_solicitud",$id)->first();
+        $audiencia      = SeerPerConciliador::where("id_solicitud",$id)->get();
         //Catalogo de motivos
         $mostrarMotivos = SolicitudMotivo::all();
         //Motivos capturados
