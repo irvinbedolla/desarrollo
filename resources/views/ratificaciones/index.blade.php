@@ -15,6 +15,11 @@
                             <div class="row">
                                 <div class="col-xs-4 col-sm-4 col-md-4">
                                     <div align="center">
+                                        <a href="{{ route('Ratificacion') }}" class="btn btn-primary">Ratificacion por validad</a>
+                                    </div>
+                                </div>
+                                <div class="col-xs-4 col-sm-4 col-md-4">
+                                    <div align="center">
                                         <a href="{{ route('ratificacion_atender') }}" class="btn btn-primary">Ratificaciones hoy</a>
                                     </div>
                                 </div>

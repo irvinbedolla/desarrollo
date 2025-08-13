@@ -1194,7 +1194,7 @@ class TurnosController extends Controller
         $fecha_actual = date('Y-m-d');
 
         $solicitudes = Turnos::where('tipo','Ratificación')
-        ->where('auxiliar',$user["id"])
+        //->where('auxiliar',$user["id"])
         /*->where('estatus','Confirmado')
         ->orwhere('estatus','Conluida')
         ->orwhere('estatus','Concluida Pagos')
