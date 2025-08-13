@@ -600,9 +600,9 @@ body {font-family: Arial;}
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="password">Municipio del citado</label>
-                                                        <select class="form-control" name="municipio_citado">
+                                                        <select class="form-control" name="municipio_citado[]">
                                                             @foreach($municipios as $mun)
-                                                                <option value="{{$mun['id']}}" {{ $solicitante['municipio_citado'] == $mun['id'] ? "selected" : '' }}>{{$mun['nombre']}}</option>
+                                                                <option value="{{$mun['id']}}" {{ $citado['municipio_citado'] == $mun['id'] ? "selected" : '' }}>{{$mun['nombre']}}</option>
                                                             @endforeach
                                                         </select>
                                                         <div class="invalid-feedback">
@@ -610,7 +610,19 @@ body {font-family: Arial;}
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-9">
+                                                <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">¿Quién entregará las Notificaciones?</label>
+                                                    <select name="notificacion[]" class="form-control">
+                                                        <option value="Trabajador"  {{ $citado['notificacion'] == 'Trabajador' ? "selected" : '' }}>Trabajador</option>
+                                                        <option value="Centro"      {{ $citado['notificacion'] == 'Centro' ? "selected" : '' }}>Centro de conciliación Laboral</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-12">
                                                     <div class="form-group">
                                                         <label for="password">Referencia</label>
                                                         <input type="text" class="form-control" name="referencia_citado[]" value="<?=$citado["referencia"];?>" required>   

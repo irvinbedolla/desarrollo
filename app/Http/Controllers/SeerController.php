@@ -2161,7 +2161,7 @@ class SeerController extends Controller
             'calle'             => 'required',
             'exterior'          => 'required',
             'referencia'        => 'required',
-            
+            'municipio_citado'  => 'required',
         ]);
         
         $data_insert=array(
@@ -2172,6 +2172,7 @@ class SeerController extends Controller
             'calle'             => $data["calle"],
             'tipo_vialidad'     => $data["vialidad"],
             'referencia'        => $data["referencia"],
+            'municipio_citado'  => $data["municipio_citado"],
         );
         $data_insert["notificacion"] =  $data["notificacion"];
 
@@ -2419,52 +2420,35 @@ class SeerController extends Controller
         SeerCitados::where('id_solicitud',$data["id"])->delete();
         $cont = count($data["colonia_citado"]);
         for($i = 0; $i < $cont; $i++) {
+            
             $data_insert=array(
                 'id_solicitud'      => $data["id"],
                 'colonia'           => $data["colonia_citado"][$i],
                 'cp'                => $data["cp_citado"][$i],
                 'n_ext'             => $data["n_ext_citado"][$i],
-                'calle'             => $data["calle_citado"][$i],
+                'calle'             => $data["n_int_citado"][$i],
                 'tipo_vialidad'     => $data["vialidad_citado"][$i],
                 'referencia'        => $data["referencia_citado"][$i],
+                'municipio_citado'  => $data["municipio_citado"][$i],
+                'tipo_persona'      => $data["tipo_persona_citado"][$i],
+                'nombre'            => $data["nombre_citado"][$i],
+                'notificacion'      => $data["notificacion"][$i],
+                'primer_apellido'   => $data["primer_apellido"][$i],
+                'segundo_apellido'  => $data["segundo_apellido"][$i],
+                'calle'             => $data["calle_citado"][$i],
+                'calle1'            => $data["calle1_citado"][$i],
+                'calle2'            => $data["calle2_citado"][$i],
+                'curp'              => $data["curp_citado"][$i],
+                'rfc'               => $data["rfc_citado"][$i],
             );
             
-            if(isset($data["rfc"])){
-                $data_insert["rfc"] =  $data["rfc_citado"][$i];
+            if(isset($data["traductor"])){
+                $data_insert["traductor"] =  1;
+                $data_insert["lenguaje"]  =  $data["lenguaje"];
             }
-                if(isset($data["curp"])){
-                    $data_insert["curp"] =  $data["curp_citado"][$i];
-                }
-                if(isset($data["interior"])){
-                    $data_insert["n_int"] =  $data["n_int_citado"][$i];
-                }
-                if(isset($data["calle1"])){
-                    $data_insert["calle1"] =  $data["calle1_citado"][$i];
-                }
-                if(isset($data["calle2"])){
-                    $data_insert["calle2"] =  $data["calle2_citado"][$i];
-                }
-                if(isset($data["tipo"])){
-                    $data_insert["tipo_persona"] =  $data["tipo_persona_citado"][$i];
-                }
-                if(isset($data["curp"])){
-                    $data_insert["curp"] =  $data["curp_citado"][$i];
-                }
-                if(isset($data["nombre"])){
-                    $data_insert["nombre"] =  $data["nombre_citado"][$i];
-                }
-                if(isset($data["primer_apellido"])){
-                    $data_insert["primer_apellido"] =  $data["primer_apellido"][$i];
-                }
-                if(isset($data["segundo_apellido"])){
-                    $data_insert["segundo_apellido"] =  $data["segundo_apellido"][$i];
-                }
-                if(isset($data["rfc"])){
-                    $data_insert["rfc"] =  $data["rfc"][$i];
-                }
             SeerCitados::create($data_insert);
         }
-        
+
         //Documentos
         if(isset($data["curp"])){
             $documento = $data["curp"]."_CURP.pdf";
@@ -2478,7 +2462,6 @@ class SeerController extends Controller
             $path = Storage::putFileAs('documentosSolicitud', $request->file('indetificacion'), $documentoidentificacion);
             SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoIdentificacion' => $documentoidentificacion ]);
         }
-      
         //Actualizar el estatus
         SeerPerGeneral::find($data["id"])->update(['estatus' => "Confirmado" ]);
 
@@ -2493,6 +2476,7 @@ class SeerController extends Controller
         $num_audi = $num_audi+1;
 
         $Audiencia = $this->ObtenerAudiencia($delegacion["delegacion"]);
+
         $sala = 1;
         switch($Audiencia[3]){
            //Morelia
