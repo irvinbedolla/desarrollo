@@ -66,7 +66,7 @@
                                                                 </button>
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Identificaciones</a></li>
-                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFincompetencia', $audiencia->id_solicitud) }}"        target="_blank">Incompetencia</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFincompetencia', $audiencia->id_solicitud) }}" target="_blank">Incompetencia</a></li>
                                                                 </ul>
                                                             </div>
                                                         </div>
@@ -126,9 +126,26 @@
 
 
                                                         @if($solicitud->estatus == "Conluida")
-                                                            <button type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Ver PDF</button>
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    Documentos
+                                                                </button>
+                                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                    <li><a class="btn btn-info" href="{{ route('PDFaudiencia', $solicitud->id) }}"  target="_blank">Acta de Audiencia</a></li><br>
+                                                                    <li><a class="btn btn-info" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}" target="_blank">Convenio</a></li><br>
+                                                                    <li><a class="btn btn-info" href="{{ route('PDFcumplimiento', $solicitud->id) }}" target="_blank">Constancia de cumplimiento</a></li>
+                                                                </ul>
+                                                            </div>
                                                         @elseif($solicitud->estatus == "Concluida Pagos")
-                                                            <button type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#documentos2" data-id="{{ $solicitud->id }}">Ver PDF</button>
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    Documentos
+                                                                </button>
+                                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                    <li><a class="btn btn-info" href="{{ route('PDFaudiencia', $solicitud->id) }}"  target="_blank">Acta de Audiencia</a></li><br>
+                                                                    <li><a class="btn btn-info" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}" target="_blank">Convenio</a></li>
+                                                                </ul>
+                                                            </div>
                                                         @elseif($solicitud->estatus == "Confirmado")
                                                             <a class="btn btn-success" href="{{ route('PDFratifi', $solicitud->id) }}"  target="_blank">Acuse</a>
                                                         @elseif($solicitud->estatus == "Incumplimiento")
