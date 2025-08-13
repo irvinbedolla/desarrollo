@@ -299,7 +299,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Fin de PDF
     //Ratificaciones
         Route::get('/ratificaciones/atender',               [TurnosController::class, 'revisar_ratificaciones_hoy'])->name('ratificacion_atender');
-        Route::get('/ratificaciones/buscar',                [TurnosController::class, 'busqueda_ratificaciones'])->name('ratificacion_buscar');
+        Route::post('/ratificaciones/buscar',                [TurnosController::class, 'busqueda_ratificaciones'])->name('ratificacion_buscar');
         Route::get('/ratificaciones/concluir/{id}',         [TurnosController::class, 'concluir_ratificaciones'])->name('ratificacion_concluir');
         Route::post('/ratificacion/busqueda',               [TurnosController::class, 'busqueda_ratificaciones'])->name('ratificaciones_busqueda');
         Route::post('/guardar_manifestaciones',             [TurnosController::class, 'guardar_manifestacion'])->name('solicitudes.manidestaciones');

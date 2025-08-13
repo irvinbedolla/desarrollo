@@ -25,11 +25,6 @@
                                         </button>
                                     </div>
                                 </div> 
-                                <div class="col-xs-4 col-sm-4 col-md-4">
-                                    <div align="center">
-                                        <a href="{{ route('ratificacion_buscar') }}" class="btn btn-primary">Buscar Ratificaciones</a>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
