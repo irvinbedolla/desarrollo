@@ -2,6 +2,9 @@
 <li class="side-menus {{ Request::is('*') ? 'active' : '' }}">
     @auth
         @role('Super Usuario')
+            <a class="nav-link" href="{{ route('agenda') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Agenda</span>
+            </a>
             <a class="nav-link" href="{{ route('usuarios') }}">
                 <i class="bi bi-people-fill"></i><span class="text-dark" onclick="usuarios()">Usuarios</span>
             </a>
@@ -90,6 +93,9 @@
 
     @auth
         @role('Auxiliar')
+            <a class="nav-link" href="{{ route('agenda') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Agenda</span>
+            </a>
             <a class="nav-link" href="{{ route('poderes') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
@@ -109,7 +115,10 @@
     @endauth
 
     @auth
-        @role('Conciliador')
+        @role('Conciliador') 
+            <a class="nav-link" href="{{ route('agenda') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Agenda</span>
+            </a>
             <a class="nav-link" href="{{ route('poderes') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
@@ -127,6 +136,9 @@
 
     @auth
         @role('Notificador')
+            <a class="nav-link" href="{{ route('agenda') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Agenda</span>
+            </a>
             <a class="nav-link" href="{{ route('seer') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Por notificar</span>
             </a>
@@ -152,6 +164,9 @@
 
     @auth
         @role('Delegado')
+            <a class="nav-link" href="{{ route('agenda') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Agenda</span>
+            </a>
             <a class="nav-link" href="{{ route('poderes') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
@@ -184,6 +199,9 @@
 
     @auth
         @role('Turnos')
+            <a class="nav-link" href="{{ route('agenda') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Agenda</span>
+            </a>
             <a class="nav-link" href="{{ route('turnos') }}">
                 <i class="fa fa-book" aria-hidden="true"></i></i><span class="text-dark" onclick="turnos()">Turnos</span>
             </a>
@@ -195,6 +213,9 @@
     
     @auth
         @role('Excepcion')
+            <a class="nav-link" href="{{ route('agenda') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Agenda</span>
+            </a>
             <a class="nav-link" href="{{ route('poderes') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
@@ -212,6 +233,9 @@
 
     @auth
         @role('Enlace')
+            <a class="nav-link" href="{{ route('agenda') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Agenda</span>
+            </a>
             <a class="nav-link" href="{{ route('seer.estadistica') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadisticas</span>
             </a>

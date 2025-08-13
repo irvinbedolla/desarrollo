@@ -21,7 +21,8 @@ class AudienciasController extends Controller
         $userRole = Auth::user()->roles->pluck('name')->all();
         
         if ($userRole[0] == "Super Usuario") {
-            $audiencias = Audiencias::all();
+            $audiencias = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
+            ->select('audiencias.*','seer_general.NUE','seer_general.estatus')->get();
 
             $eventos = [];
             foreach ($audiencias as $audiencia) {
@@ -42,7 +43,7 @@ class AudienciasController extends Controller
                 $eventos[] = [
                     'id' => $audiencia->id,
                     'id_solicitud' => $audiencia->id_solicitud,
-                    'title' => $audiencia->tipo,
+                    'title' => $audiencia->NUE,
                     'start' => $audiencia->fecha->format('Y-m-d') . 'T' . $audiencia->hora->format('H:i:s'),
                     'extendedProps' => [
                         'hora' => $audiencia->hora->format('h:i A'),
@@ -106,6 +107,87 @@ class AudienciasController extends Controller
             return response()->json($eventos);
         }
 
+    }
+
+    public function ratificaciones() {
+        $userID = Auth::user()->id;
+        $userRole = Auth::user()->roles->pluck('name')->all();
+        
+        if ($userRole[0] == "Super Usuario") {
+            $ratificaciones = Turnos::all();
+
+            $eventos = [];
+            foreach ($ratificaciones as $rati) {
+
+                if ($rati->estatus === 'Incumplimiento') {
+                    $color = '#DA0909';
+                } elseif ($rati->estatus === 'Archivada') {
+                    $color = '#EAE300';
+                } elseif ($rati->estatus === 'Conluida') {
+                    $color = '#00CE1C';
+                } elseif ($rati->estatus === 'Concluida Pagos') {
+                    $color = '#00CE1C';
+                }
+                 else {
+                    $color = '#CCCCCC';
+                }
+
+                $eventos[] = [
+                    'id' => $rati->id,
+                    'title' => $rati->empresa,
+                    'start' => $rati->fecha . 'T' . $rati->hora,
+                    'extendedProps' => [
+                        'hora' => $rati->hora,
+                        'color' => $color,
+                        'folio_audiencia' => $rati->id,
+                        'fecha' => $rati->fecha,
+                        'estatus' => $rati->estatus,
+                        'delegacion' => $rati->delegacion,
+                        'usuario' => $userID,
+                    ]
+                ];
+            }
+
+            return response()->json($eventos);
+        }
+        else if ($userRole[0] == "Delegado") {
+            $delegacion = Auth::user()->delegacion;
+            $audiencias = Audiencias::where('delegacion', $delegacion)->get();
+
+            $eventos = [];
+            foreach ($ratificaciones as $rati) {
+
+                if ($rati->estatus === 'Incumplimiento') {
+                    $color = '#DA0909';
+                } elseif ($rati->estatus === 'Archivada') {
+                    $color = '#EAE300';
+                } elseif ($rati->estatus === 'Conluida') {
+                    $color = '#00CE1C';
+                } elseif ($rati->estatus === 'Concluida Pagos') {
+                    $color = '#00CE1C';
+                }
+                 else {
+                    $color = '#CCCCCC';
+                }
+
+                $eventos[] = [
+                    'id' => $rati->id,
+                    'title' => $rati->empresa,
+                    'start' => $rati->fecha . 'T' . $rati->hora,
+                    'extendedProps' => [
+                        'hora' => $rati->hora,
+                        'color' => $color,
+                        'folio_audiencia' => $rati->id,
+                        'fecha' => $rati->fecha,
+                        'estatus' => $rati->estatus,
+                        'delegacion' => $rati->delegacion,
+                        'usuario' => $userID,
+                    ]
+                ];
+            }
+
+            return response()->json($eventos);
+        }
     }
 
     public function exportarExcel()

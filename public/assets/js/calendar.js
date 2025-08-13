@@ -1,4 +1,4 @@
-var calendarPagos, calendarAudiencias, currentCalendar;
+var calendarPagos, calendarAudiencias, currentCalendar, calendarRatificaciones;
 
 document.addEventListener('DOMContentLoaded', function () {
     var calendarEl = document.getElementById('calendar');
@@ -79,6 +79,42 @@ document.addEventListener('DOMContentLoaded', function () {
         },
     });
 
+    // Configuración del calendario de ratificaciones
+    calendarRatificaciones = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridWeek',
+        locale: 'es',
+        events: 'ratificaciones/eventos',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,dayGridWeek'
+        },
+        buttonText: {
+            today: 'Hoy',
+            month: 'Mensual',
+            week: 'Semanal'
+        },
+        eventClick: function (info) {
+            handleEventClick(info, 'ratificaciones');
+        },
+        eventDidMount: function (info) {
+            styleEvent(info);
+        },
+        eventContent: function (info) {
+            return {
+                html: `
+                    <div class="fc-event-content">
+                        <div class="fc-event-title">${info.event.title}</div>
+                        <div class="fc-event-time">
+                            <div class="color-indicator" style="background:${info.event.extendedProps.color}"></div>
+                            ${info.event.extendedProps.hora}
+                        </div>
+                    </div>
+                `
+            };
+        },
+    });
+
     currentCalendar = calendarPagos;
     currentCalendar.render();
 
@@ -88,6 +124,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('btn-audiencias').addEventListener('click', function () {
         switchCalendar(calendarAudiencias);
+    });
+
+    document.getElementById('btn-ratificaciones').addEventListener('click', function () {
+        switchCalendar(calendarRatificaciones);
     });
 
     document.getElementById('btn-actualizar').addEventListener('click', function () {
@@ -115,8 +155,6 @@ function handleEventClick(info, calendarType) {
             <strong>ID:</strong> ${info.event.id}<br>
             <strong>Fecha:</strong> ${props.fecha}<br>
             <strong>Hora:</strong> ${props.hora}<br>
-            <strong>Empresa:</strong> ${props.empresa}<br>
-            <strong>Trabajador:</strong> ${props.trabajador}<br>
             <strong>Estatus:</strong> ${props.estatus}<br>
             <strong>Monto:</strong> ${props.monto}<br>
             <strong>Observaciones:</strong> ${props.observaciones}<br>
@@ -129,11 +167,18 @@ function handleEventClick(info, calendarType) {
             <strong>Fecha:</strong> ${props.fecha}<br>
             <strong>Hora:</strong> ${props.hora}<br>
             <strong>Estatus:</strong> ${props.estatus}<br>
-            <strong>Tipo:</strong> ${props.tipo}<br>
-            <strong>Usuario:</strong> ${props.usuario}<br>
-            <strong>Conciliador:</strong> ${props.conciliador}<br>
             <strong>Delegación:</strong> ${props.delegacion}<br>
             <strong>Sala:</strong> ${props.sala}<br>
+        `;
+    }
+    else if (calendarType === 'ratificaciones') {
+        modalContent = `
+            <strong>Motivo:</strong> ${info.event.title}<br>
+            <strong>Folio:</strong> ${info.event.id}<br>
+            <strong>Fecha:</strong> ${props.fecha}<br>
+            <strong>Hora:</strong> ${props.hora}<br>
+            <strong>Estatus:</strong> ${props.estatus}<br>
+            <strong>Delegación:</strong> ${props.delegacion}<br>
         `;
     }
 

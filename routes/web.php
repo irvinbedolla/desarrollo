@@ -57,6 +57,7 @@ use App\Http\Controllers\RecepcionController;
     Route::get('/citas/eventos', [App\Http\Controllers\CitaController::class, 'eventos'])->name('citas.eventos');
     Route::get('/pagos/eventos', [App\Http\Controllers\CitaController::class, 'pagos'])->name('pagos.eventos');
     Route::get('/audiencias/eventos', [App\Http\Controllers\AudienciasController::class, 'audiencias'])->name('audiencias.eventos');
+    Route::get('/ratificaciones/eventos', [App\Http\Controllers\AudienciasController::class, 'ratificaciones'])->name('ratificaciones.eventos');
     Route::get('citas/exportar-excel', [CitaController::class, 'exportarExcel']);
 
     //Rutas fuera del login
@@ -103,7 +104,7 @@ use App\Http\Controllers\RecepcionController;
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/home', [DashboardController::class, 'index'])->name('dashboard');
-
+    Route::get('/agenda', [DashboardController::class, 'index'])->name('agenda');
     //Rutas de los menus
         Route::get('/usuarios/index',           [UsuarioController::class, 'index'])->name('usuarios');
         Route::get('/roles/index',              [RolController::class, 'index'])->name('roles');
@@ -282,11 +283,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/Verpdfmulta/{id}',                                 [SeerController::class, 'VerPDFMulta'])->name('PDFmulta');        
         Route::get('/solicitud/pdfs/{id}',                              [SeerController::class, 'pdfCitatorio'])->name('PDFSolicitud');
         Route::get('solicitud/consultar/{id}',                          [SeerController::class, 'consultar_solicitudes'])->name('consultar_solicitud');
-        
         Route::get('/audiencias/busqueda/buscar',                       [SeerController::class, 'audiencia_fecha'])->name('audiencia_fecha');
-
         Route::post('/historial/conciliador/busqueda',                  [SeerController::class, 'historial_conciliador'])->name('historial_conciliador');
-
         Route::get('/PDF/faltaInteres/{id}',                            [SeerController::class, 'VerPDFInteres'])->name('PDFfalltaInteres');
         Route::get('/Verpdfnoconciliacion/{id}',                        [SeerController::class, 'VerPDFNoConciliacion'])->name('PDFno_conciliacion');
         Route::get('/Verpdfincomparecencia/{id}',                       [SeerController::class, 'VerPDFincomparecencia'])->name('PDFincomparecencia');

@@ -135,14 +135,17 @@
                                             </li>
                                         </ul>
                                         <div class="container">
-                                            <h1>Calendario de Cumplimientos</h1>
+                                            <h1>Agenda</h1>
                                             <div class="mt-3 mb-3 text-left">
-                                                    <button id="btn-actualizar" class="btn btn-lg btn-custom-morado">Actualizar</button>
-                                                    <button id="btn-audiencias" class="btn btn-lg btn-custom-morado float-right">Calendario de Audiencias</button>
-                                                    <button id="btn-pagos" class="btn btn-lg btn-custom-morado mr-2 float-right">Calendario de Cunplimientos</button>
+                                                    <button id="btn-actualizar" class="btn btn-lg btn-custom-morado">Actualizar</button>                                                    
+                                                    
+                                                    <button id="btn-ratificaciones" class="btn btn-lg btn-custom-morado float-right">Ratificaciones</button>
+                                                    <button id="btn-pagos" class="btn btn-lg btn-custom-morado float-right">Cunplimientos</button>
+                                                    <button id="btn-audiencias" class="btn btn-lg btn-custom-morado  float-right">Audiencias</button>
                                             </div>
                                             <div id="calendar">
                                             </div>
+                                            <!--
                                             <div class="mt-3 mb-3 text-center">
                                                 <form action="{{ url('citas/exportar-excel') }}" method="GET">
                                                     <button type="submit" class="btn btn-success">
@@ -150,6 +153,7 @@
                                                     </button>
                                                 </form>
                                             </div>
+                                            -->
                                         </div>
                                     </div>
                                 </div>

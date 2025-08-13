@@ -77,8 +77,7 @@ class CitaController extends Controller
 
             $eventos[] = [
                 'id' => $pago->id_solicitud,
-                //'title' => $pago->descripcion,
-                'title' => $nombre_turno . ' ' . $primer_apellido_turno,
+                'title' => $pago->descripcion,
                 'start' => $pago->fecha->format('Y-m-d') . 'T' . $pago->hora->format('H:i:s'),
                 'extendedProps' => [
                     'descripcion' => $pago->descripcion,
