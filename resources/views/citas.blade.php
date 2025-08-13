@@ -355,7 +355,7 @@
                                                 </div>
                                                 <div  class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">Subir Identificación Ofícial</label>
+                                                        <label for="name">Subir Identificación Oficial</label>
                                                         <input type="file" name="documentoidentificacion" class="form-control" accept=".pdf" required> 
                                                         <div class="invalid-feedback">
                                                             El campo es obligatorio.
@@ -546,7 +546,7 @@
                                                             <option value="Efectivo">Efectivo</option>
                                                             <option value="Transferencia">Transferencia</option>
                                                             <option value="Cheque">Cheque</option>
-                                                            <option value="Cheque Electronio">Cheque Electronio</option>
+                                                            <option value="Cheque Electrónico">Cheque Electrónico</option>
                                                             <option value="Orden de Pago">Orden de Pago</option>
                                                         </select>
                                                         <div class="invalid-feedback">
