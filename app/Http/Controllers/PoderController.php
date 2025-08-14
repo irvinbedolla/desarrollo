@@ -334,8 +334,10 @@ class PoderController extends Controller
 
     public function edit($id)
     {
+        $estados = Estados::all();
+        $municipios = Municipios::all();
         $poder = Poder::find($id);
-        return view('poderes.editar', compact('poder'));
+        return view('poderes.editar', compact('poder','estados','municipios'));
     }
 
 

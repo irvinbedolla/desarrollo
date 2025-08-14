@@ -23,7 +23,7 @@
                                     <table id="example" class="table table-striped mt-2">
                                         <thead style="background-color: #4A001F;">
                                             <th style="color: #fff;">Folio</th>
-                                            <th style="color: #fff;">Nombres</th>
+                                            <th style="color: #fff;">Nombre(s)</th>
                                             <th style="color: #fff;">Primer apellido</th>
                                             <th style="color: #fff;">Segundo apellido</th>
                                             <th style="color: #fff;">Telefono</th>
