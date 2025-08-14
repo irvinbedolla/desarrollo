@@ -7,6 +7,8 @@ use App\Models\Poder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Arr;
+use App\Models\Municipios;
+use App\Models\Estados;
 
 //Para sacar el Id del usuario
 use Illuminate\Support\Facades\Auth;
@@ -26,12 +28,16 @@ class PoderController extends Controller
     public function create()
     {
         $id_usuario = Auth::id();
-        return view('poderes.crear', compact('id_usuario'));
+        $estados = Estados::all();
+        $municipios = Municipios::all();
+        return view('poderes.crear', compact('id_usuario','municipios','estados'));
     }
 
     public function registro()
     {
-        return view('poder');
+        $estados = Estados::all();
+        $municipios = Municipios::all();
+        return view('poder', compact('municipios','estados'));
     }
 
     public function store(Request $request)
@@ -65,7 +71,13 @@ class PoderController extends Controller
             'correoAbogadoAlta'         => 'required',
             'empresaAbogadoAlta'        => 'required',
             'curpAbogadoAlta'           => 'required',
-            'domicilioAbogadoAlta'      => 'required',
+            'estado_poder'              => 'required',
+            'municipio_poder'           => 'required',
+            'vialidadPoder'             => 'required',
+            'vialidad_callePoder'       => 'required',
+            'coloniaAbogadoAlta'        => 'required',
+            'NExtAbogadoAlta'           => 'required',
+            'cpAbogadoAlta'             => 'required',
             'fechaVigenciaAlta'         => 'required',
             'industriaAlta'             => 'required',
             'descripcionpoderAlta'      => 'required',
@@ -87,24 +99,31 @@ class PoderController extends Controller
         if(!$abogado){
 
             $data_insertar= array(
-                'nombres'           => $data["nombresAbogadoAlta"],
-                'primer_apellido'   => $data["primer_apellido"], 
-                'segundo_apellido'  => $data["segundo_apellido"], 
-                'telefono'          => $data["telefonoAbogadoAlta"], 
-                'email'             => $data["correoAbogadoAlta"],
-                'fechaRegistro'     => date('y-m-d'),
-                'fechaVigencia'     => $data["fechaVigenciaAlta"],
-                'empresa'           => $data["empresaAbogadoAlta"],
-                'eliminado'         => 0,
-                'curp'              => $data["curpAbogadoAlta"],
-                'domicilio'         => $data["domicilioAbogadoAlta"],
-                'rfc'               => $data["RFCAbogadoAlta"],
-                'industria'         => $data["industriaAlta"],
-                'poder'             => $data["descripcionpoderAlta"],
-                'regionMorelia'     => $regionmorelia,
-                'regionUruapan'     => $regionuruapan,
-                'regionZamora'      => $regionuruapan,
-                'estatus'           => "Pendiente"
+                'nombres'               => $data["nombresAbogadoAlta"],
+                'primer_apellido'       => $data["primer_apellido"], 
+                'segundo_apellido'      => $data["segundo_apellido"], 
+                'telefono'              => $data["telefonoAbogadoAlta"], 
+                'email'                 => $data["correoAbogadoAlta"],
+                'fechaRegistro'         => date('y-m-d'),
+                'fechaVigencia'         => $data["fechaVigenciaAlta"],
+                'empresa'               => $data["empresaAbogadoAlta"],
+                'eliminado'             => 0,
+                'curp'                  => $data["curpAbogadoAlta"],
+                'estado_poder'          => $data["estado_poder"],
+                'municipio_poder'       => $data["municipio_poder"],
+                'vialidadPoder'         => $data["vialidadPoder"],
+                'vialidad_callePoder'   => $data["vialidad_callePoder"],
+                'coloniaAbogadoAlta'    => $data["coloniaAbogadoAlta"],
+                'NExtAbogadoAlta'       => $data["NExtAbogadoAlta"],
+                'NIntAbogadoAlta'       => $data["NIntAbogadoAlta"],
+                'cpAbogadoAlta'         => $data["cpAbogadoAlta"],
+                'rfc'                   => $data["RFCAbogadoAlta"],
+                'industria'             => $data["industriaAlta"],
+                'poder'                 => $data["descripcionpoderAlta"],
+                'regionMorelia'         => $regionmorelia,
+                'regionUruapan'         => $regionuruapan,
+                'regionZamora'          => $regionuruapan,
+                'estatus'               => "Pendiente"
             );
 
 
@@ -183,7 +202,13 @@ class PoderController extends Controller
             'correoAbogadoAlta'         => 'required',
             'empresaAbogadoAlta'        => 'required',
             'curpAbogadoAlta'           => 'required',
-            'domicilioAbogadoAlta'      => 'required',
+            'estado_poder'              => 'required',
+            'municipio_poder'           => 'required',
+            'vialidadPoder'             => 'required',
+            'vialidad_callePoder'       => 'required',
+            'coloniaAbogadoAlta'        => 'required',
+            'NExtAbogadoAlta'           => 'required',
+            'cpAbogadoAlta'             => 'required',
             'fechaVigenciaAlta'         => 'required',
             'industriaAlta'             => 'required',
             'descripcionpoderAlta'      => 'required',
@@ -280,7 +305,14 @@ class PoderController extends Controller
                 'empresa'       => $data["empresaAbogadoAlta"],
                 'eliminado'     => 0,
                 'curp'          => $data["curpAbogadoAlta"],
-                'domicilio'     => $data["domicilioAbogadoAlta"],
+                'estado_poder'          => $data["estado_poder"],
+                'municipio_poder'       => $data["municipio_poder"],
+                'vialidadPoder'         => $data["vialidadPoder"],
+                'vialidad_callePoder'   => $data["vialidad_callePoder"],
+                'coloniaAbogadoAlta'    => $data["coloniaAbogadoAlta"],
+                'NExtAbogadoAlta'       => $data["NExtAbogadoAlta"],
+                'NIntAbogadoAlta'       => $data["NIntAbogadoAlta"],
+                'cpAbogadoAlta'         => $data["cpAbogadoAlta"],
                 'rfc'           => $data["RFCAbogadoAlta"],
                 'industria'     => $data["industriaAlta"],
                 'poder'         => $data["descripcionpoderAlta"],
@@ -342,7 +374,13 @@ class PoderController extends Controller
             'correoAbogadoAlta'         => 'required',
             'empresaAbogadoAlta'        => 'required',
             'curpAbogadoAlta'           => 'required',
-            'domicilioAbogadoAlta'      => 'required',
+            'estado_poder'              => 'required',
+            'municipio_poder'           => 'required',
+            'vialidadPoder'             => 'required',
+            'vialidad_callePoder'       => 'required',
+            'coloniaAbogadoAlta'        => 'required',
+            'NExtAbogadoAlta'           => 'required',
+            'cpAbogadoAlta'             => 'required',
             'fechaVigenciaAlta'         => 'required',
             'industriaAlta'             => 'required',
             'descripcionpoderAlta'      => 'required',
@@ -446,7 +484,14 @@ class PoderController extends Controller
             'empresa'       => $data["empresaAbogadoAlta"],
             'eliminado'     => 0,
             'curp'          => $data["curpAbogadoAlta"],
-            'domicilio'     => $data["domicilioAbogadoAlta"],
+            'estado_poder'          => $data["estado_poder"],
+            'municipio_poder'       => $data["municipio_poder"],
+            'vialidadPoder'         => $data["vialidadPoder"],
+            'vialidad_callePoder'   => $data["vialidad_callePoder"],
+            'coloniaAbogadoAlta'    => $data["coloniaAbogadoAlta"],
+            'NExtAbogadoAlta'       => $data["NExtAbogadoAlta"],
+            'NIntAbogadoAlta'       => $data["NIntAbogadoAlta"],
+            'cpAbogadoAlta'         => $data["cpAbogadoAlta"],
             'rfc'           => $data["RFCAbogadoAlta"],
             'industria'     => $data["industriaAlta"],
             'poder'         => $data["descripcionpoderAlta"],
@@ -511,7 +556,13 @@ class PoderController extends Controller
             'correoAbogadoAlta'         => 'required',
             'empresaAbogadoAlta'        => 'required',
             'curpAbogadoAlta'           => 'required',
-            'domicilioAbogadoAlta'      => 'required',
+            'estado_poder'              => 'required',
+            'municipio_poder'           => 'required',
+            'vialidadPoder'             => 'required',
+            'vialidad_callePoder'       => 'required',
+            'coloniaAbogadoAlta'        => 'required',
+            'NExtAbogadoAlta'           => 'required',
+            'cpAbogadoAlta'             => 'required',
             'fechaVigenciaAlta'         => 'required',
             'industriaAlta'             => 'required',
             'descripcionpoderAlta'      => 'required',
@@ -543,7 +594,14 @@ class PoderController extends Controller
                 'empresa'           => $data["empresaAbogadoAlta"],
                 'eliminado'         => 0,
                 'curp'              => $data["curpAbogadoAlta"],
-                'domicilio'         => $data["domicilioAbogadoAlta"],
+                'estado_poder'          => $data["estado_poder"],
+                'municipio_poder'       => $data["municipio_poder"],
+                'vialidadPoder'         => $data["vialidadPoder"],
+                'vialidad_callePoder'   => $data["vialidad_callePoder"],
+                'coloniaAbogadoAlta'    => $data["coloniaAbogadoAlta"],
+                'NExtAbogadoAlta'       => $data["NExtAbogadoAlta"],
+                'NIntAbogadoAlta'       => $data["NIntAbogadoAlta"],
+                'cpAbogadoAlta'         => $data["cpAbogadoAlta"],
                 'rfc'               => $data["RFCAbogadoAlta"],
                 'industria'         => $data["industriaAlta"],
                 'poder'             => $data["descripcionpoderAlta"],

@@ -64,7 +64,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="">Teléfono</label>
-                                            <input type="text" class="form-control" placeholder="*Telefono"  name="telefonoAbogadoAlta" maxlength="10" pattern="[0-9]+" required>
+                                            <input type="text" class="form-control" placeholder="*Teléfono"  name="telefonoAbogadoAlta" maxlength="10" pattern="[0-9]+" required>
                                             <div class="invalid-feedback">
                                                 El telefono es obligatorio.
                                             </div>
@@ -80,7 +80,7 @@
                                             </div>
                                         </div>
                                     </div>
-
+                                    
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="">Empresa</label>
@@ -100,25 +100,111 @@
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:30px;">
                                         <div class="form-group">
-                                            <label for="">Domicilio</label>
-                                            <input type="text" class="form-control" placeholder="*Domicilio" name="domicilioAbogadoAlta" id="domicilioAbogadoAlta" oninput="this.value = this.value.toUpperCase()" required>
+                                            <h4 class="text-center">Datos de la empresa</h4>
+                                        </div>
+                                    </div><br>
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                        <div class="form-group">
+                                            <label for="password">Entidad Federativa</label>
+                                            <select id="estado_poder" class="form-control" name="estado_poder" placeholder="*Entidad Federativa" required>
+                                                <option value="">Seleccione</option>
+                                                @foreach($estados as $est)
+                                                    <option value="{{$est['id']}}">{{$est['nombre']}}</option>
+                                                @endforeach
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El campo Estado es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                        <div class="form-group">
+                                            <label for="name">Nombre del Municipio o Alcaldía (*)</label>
+                                            <select id="municipio_poder" class="form-control" name="municipio_poder" placeholder="*Municipio" required>
+                                                <option value="">Seleccione</option>
+                                                @foreach($municipios as $mun)
+                                                    <option value="{{$mun['id']}}">{{$mun['nombre']}}</option>
+                                                @endforeach
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El campo municipio o alcaldía es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                        <div class="form-group">
+                                            <label for="name">Tipo de Vialidad (*)</label>
+                                            <select name="vialidadPoder" id="vialidadPoder" class="form-control" placeholder="*Vialidad" required>
+                                                <option value="">SELECCIONE</option>
+                                                <option value="Calle">CALLE</option>
+                                                <option value="Avenida">AVENIDA</option>
+                                                <option value="Calzada">CALZADA</option>
+                                                <option value="Boulevard">BOULEVARD</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El campo vialidad es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                        <div class="form-group">
+                                            <label for="name">Nombre de la Vialidad (*)</label>
+                                            <input type="text" name="vialidad_callePoder" id="vialidad_callePoder" class="form-control" placeholder="*Nombre vialidad" oninput="this.value = this.value.toUpperCase()" required> 
+                                            <div class="invalid-feedback">
+                                                El campo vialidad o calle es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                        <div class="form-group">
+                                            <label for="">Colonia</label>
+                                            <input type="text" class="form-control" placeholder="*Colonia" name="coloniaAbogadoAlta" id="coloniaAbogadoAlta" oninput="this.value = this.value.toUpperCase()" required>
+                                            <div class="invalid-feedback">
+                                                El domicilio es obligatoria.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                        <div class="form-group">
+                                            <label for="">Núm. Ext.</label>
+                                            <input type="text" class="form-control" placeholder="*Número exterior" name="NExtAbogadoAlta" id="NExtAbogadoAlta" oninput="this.value = this.value.toUpperCase()" required>
                                             <div class="invalid-feedback">
                                                 El domicilio es obligatoria.
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                        <div class="form-group">
+                                            <label for="">Núm. Int.</label>
+                                            <input type="text" class="form-control" placeholder="Número interior" name="NIntAbogadoAlta" id="NIntAbogadoAlta" oninput="this.value = this.value.toUpperCase()">
+                                            <div class="invalid-feedback">
+                                                El domicilio es obligatoria.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                        <div class="form-group">
+                                            <label for="">Código postal</label>
+                                            <input type="text" class="form-control" placeholder="*Código postal" name="cpAbogadoAlta" id="cpAbogadoAlta" oninput="this.value = this.value.toUpperCase()" required>
+                                            <div class="invalid-feedback">
+                                                El domicilio es obligatoria.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
                                             <label for="">RFC</label>
                                             <input type="text" class="form-control" placeholder="RFC Empresa" name="RFCAbogadoAlta" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()">
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-2">
                                         <div class="form-group">
                                             <label for="">Fecha vigencia</label>
                                             <input type="date" class="form-control" aria-describedby="basic-addon1" name="fechaVigenciaAlta" id="fechaVigenciaAlta" min="<?= date("Y-m-d") ?>" required>
@@ -128,7 +214,7 @@
                                         </div>
                                     </div>
                                     
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
                                             <label for="">Industria</label>
                                             <input type="text" class="form-control" placeholder="Giro Comercial" name="industriaAlta" required>
