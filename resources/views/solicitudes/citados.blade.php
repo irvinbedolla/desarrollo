@@ -103,13 +103,13 @@
                                     </div>    
 
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                    <form class="needs-validation novalidate" method="POST" action="{{route('seer.citados')}}">
+                                    <form class="needs-validation" novalidate method="POST" action="{{route('seer.citados')}}">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $id }}">
                                         <div class="row" id="div_datos_citado">
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
-                                                    <label for="name">Tipo de persona *</label>
+                                                    <label for="name">Tipo de persona <span style="color:red;">(*)</span></label>
                                                     <select name="tipo" id="tipo" class="form-control">
                                                         <option value="">Seleccione</option>
                                                         <option value="Fisica">Física</option>
@@ -121,60 +121,26 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
-                                                    <label for="name">CURP</label>
+                                                    <label for="name">CURP (Campo opcional)</label>
                                                     <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control"> 
                                                     <pre id="resultado"></pre>
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-12" id="tipoPersona_razon" style="display:none;">
+                                            <div class="col-xs-12 col-sm-12 col-md-3" id="tipoPersona_razon" style="display:none;">
                                                 <div class="form-group">
-                                                    <label for="name">Razón social *</label>
+                                                    <label for="name">Razón social <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="razon" id="razon" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                     <div class="invalid-feedback">
                                                         La razón social es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            <div class="col-xs-12 col-sm-12 col-md-12" id="tipoPersona_nombre" style="display:none;">
-                                                <div class="row">
-                                                    <div class="col-xs-12 col-sm-12 col-md-4">
-                                                        <div class="form-group">
-                                                            <label for="name">Nombre(s) *</label>
-                                                            <input type="text" name="nombre" id="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
-                                                            <div class="invalid-feedback">
-                                                                El nombre es obligatorio.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                
-                                                    <div class="col-xs-12 col-sm-12 col-md-4">
-                                                        <div class="form-group">
-                                                            <label for="name">Primer apellido *</label>
-                                                            <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
-                                                            <div class="invalid-feedback">
-                                                                El primer apellido es obligatorio.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-12 col-sm-12 col-md-4">
-                                                        <div class="form-group">
-                                                            <label for="name">Segundo apellido *</label>
-                                                            <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
-                                                            <div class="invalid-feedback">
-                                                                El segundo apellido es obligatorio.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
-                                                    <label for="name">RFC</label>
+                                                    <label for="name">RFC (Campo opcional)</label>
                                                     <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()">   
                                                 </div>
                                             </div>
@@ -184,12 +150,46 @@
                                                 <input type="checkbox" class="btn-check" id="check_lenguaje" name="traductor" autocomplete="off">
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-6" id="lenguaje_señas">
+                                            <div class="col-xs-12 col-sm-12 col-md-4" id="lenguaje_señas">
                                                 <div class="form-group">
                                                     <label for="name">¿Qué tipo de lenguaje require?</label>
                                                     <input type="text" name="lenguaje" class="form-control">
                                                 </div>
                                             </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-12" id="tipoPersona_nombre" style="display:none;">
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="name">Nombre(s) <span style="color:red;">(*)</span></label>
+                                                            <input type="text" name="nombre" id="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                            <div class="invalid-feedback">
+                                                                El nombre es obligatorio.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                
+                                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
+                                                            <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                            <div class="invalid-feedback">
+                                                                El primer apellido es obligatorio.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="name">Segundo apellido <span style="color:red;">(*)</span></label>
+                                                            <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                            <div class="invalid-feedback">
+                                                                El segundo apellido es obligatorio.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
                                         </div>
 
                                         <div class="row"> 
@@ -201,21 +201,21 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">¿Quién entregará las Notificaciones? *</label>
+                                                    <label for="name">¿Quién entregará los Citatorios? <span style="color:red;">(*)</span></label>
                                                     <select name="notificacion" class="form-control" required>
                                                         <option value="">SELECCIONE</option>
-                                                        <option value="Trabajador">Trabajador</option>
+                                                        <option value="Trabajador">Yo</option>
                                                         <option value="Centro">Centro de conciliación Laboral</option>
                                                     </select>
                                                     <div class="invalid-feedback">
-                                                        El campo es obligatorio.
+                                                        El campo ¿quién entregará los citatorios? es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Tipo de Vialidad del citado *</label>
+                                                    <label for="name">Tipo de Vialidad del citado <span style="color:red;">(*)</span></label>
                                                     <select name="vialidad" class="form-control" required>
                                                         <option value="">SELECCIONE</option>
                                                         <option value="Calle">CALLE</option>
@@ -231,7 +231,7 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Calle del citado *</label>
+                                                    <label for="name">Calle del citado <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="calle" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo calle es obligatorio.
@@ -241,7 +241,7 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
-                                                    <label for="name">Colonia del citado *</label>
+                                                    <label for="name">Colonia del citado <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="colonia" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo colonia es obligatorio.
@@ -251,7 +251,7 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-1">
                                                 <div class="form-group">
-                                                    <label for="name">Código Postal *</label>
+                                                    <label for="name">Código Postal <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="cp" class="form-control soloNumeros" minlength="5" maxlength="5" required> 
                                                     <div class="invalid-feedback">
                                                         El campo Código Postal es obligatorio.
@@ -261,48 +261,44 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
-                                                    <label for="name">Entre calle del domicilio del citado *</label>
+                                                    <label for="name">Entre calle del domicilio del citado <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="calle1" class="form-control" required> 
                                                     <div class="invalid-feedback">
-                                                        El campo calle es obligatorio.
+                                                        El campo entre calle es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
-                                                    <label for="name">y calle del domicilio del citado *</label>
+                                                    <label for="name">y calle del domicilio del citado <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="calle2" class="form-control" required> 
                                                     <div class="invalid-feedback">
-                                                        El campo calle es obligatorio.
+                                                        El campo y calle es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-1">
                                                 <div class="form-group">
-                                                    <label for="name">Núm ext. *</label>
+                                                    <label for="name">Núm. ext. <span style="color:red;">(*)</span></label>
                                                     <input type="number" name="exterior" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El núm. exterior es obligatorio.
-
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-1">
                                                 <div class="form-group">
-                                                    <label for="name">Núm int.</label>
+                                                    <label for="name">Núm. int.</label>
                                                     <input type="text" name="interior" class="form-control"  oninput="this.value = this.value.toUpperCase()"> 
-                                                    <div class="invalid-feedback">
-                                                        El campo núm. interior es obligatorio.
-                                                    </div>
                                                 </div>
                                             </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Municipio o Alcaldía del citado *</label>
+                                                    <label for="name">Municipio o Alcaldía del citado <span style="color:red;">(*)</span></label>
                                                     <select id="municipio_citado" class="form-control" name="municipio_citado" required>
                                                         <option value="">Seleccione</option>
                                                         @foreach($municipios as $mun)
@@ -317,7 +313,7 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
-                                                <label for="floatingTextarea">Referencias del domicilio del citado *</label>
+                                                <label for="floatingTextarea">Referencias del domicilio del citado <span style="color:red;">(*)</span></label>
                                                     <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencia" required></textarea>
                                                     <div class="invalid-feedback">
                                                         El campo referencias es obligatorio.
