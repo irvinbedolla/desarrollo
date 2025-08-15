@@ -2712,8 +2712,9 @@ class SeerController extends Controller
         $solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
         $abogados = Poder::all();
         SeerPerGeneral::find($id)->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
-
-        return view('/solicitudes/audiencias',compact('id','solicitudes','representantes','solicitante','conciliador','solicitud','abogados'));
+        $estados        = Estados::all();
+        $municipios     = Municipios::all();
+        return view('/solicitudes/audiencias',compact('id','solicitudes','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios'));
     }
 
     public function guardar_audiencia_archivo(Request $request){
