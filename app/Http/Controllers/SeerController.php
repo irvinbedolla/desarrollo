@@ -2030,7 +2030,7 @@ class SeerController extends Controller
 
         //validando información
        $request->validate([
-            'tipo'                      => 'required|in:Fisica,Moral',
+            /*'tipo'                      => 'required|in:Fisica,Moral',*/
             'curp'                      => 'required|min:18|max:18',
             'nombre'                    => 'required',
             'fecha_nacimiento'          => 'required|date',
@@ -2063,7 +2063,7 @@ class SeerController extends Controller
         
         $data_insert=array(
             'id_solicitud'         => $data["id"],
-            'tipo_persona'         => $data["tipo"],
+            /*'tipo_persona'         => $data["tipo"],*/
             'curp'                 => $data["curp"],
             'nombre'               => $data["nombre"],
             'fecha_nacimiento'     => $data["fecha_nacimiento"],
