@@ -2288,8 +2288,8 @@ class SeerController extends Controller
         ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
         ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
         ->select('seer_general.id','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
-        'catalogo_rama.rama_industrial','seer_general.tipo_solicitud')
-        ->where('seer_general.estatus','Pendiente')
+        'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
+        ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
         ->orderBy('seer_general.fecha')
         ->get();
 

@@ -125,7 +125,9 @@ body {font-family: Arial;}
                                         <a class="btn btn-info" onclick="openCity(event, 'detalles')">Detalles</a>
                                         <a class="btn btn-info" onclick="openCity(event, 'solicitante')">Solicitante</a>
                                         <a class="btn btn-info" onclick="openCity(event, 'documentos')">Citado(s)</a>
+                                        <a class="btn btn-info" onclick="openCity(event, 'observaciones')">Observaciones</a>
                                         <a class="btn btn-info" onclick="openCity(event, 'citados')">Documentos</a>
+                                        
                                     </div>
 
                                     <div id="detalles" class="tabcontent">
@@ -567,31 +569,31 @@ body {font-family: Arial;}
                                                         <input type="text" class="form-control" name="cp_citado[]" value="<?=$citado["cp"];?>" required>   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">Calle del citado</label>
                                                         <input type="text" class="form-control" name="calle_citado[]" value="<?=$citado["calle"];?>" required>   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">Entre Calle</label>
                                                         <input type="text" class="form-control" name="calle1_citado[]" value="<?=$citado["calle1"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">Entre Calle</label>
                                                         <input type="text" class="form-control" name="calle2_citado[]" value="<?=$citado["calle2"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                <div class="col-xs-12 col-sm-6 col-md-2">
                                                     <div class="form-group">
                                                         <label for="password">N° Ext.</label>
                                                         <input type="text" class="form-control" name="n_ext_citado[]" value="<?=$citado["n_ext"];?>" required>   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                <div class="col-xs-12 col-sm-6 col-md-2">
                                                     <div class="form-group">
                                                         <label for="password">N° Int.</label>
                                                         <input type="text" class="form-control" name="n_int_citado[]" value="<?=$citado["n_int"];?>">   
@@ -610,7 +612,7 @@ body {font-family: Arial;}
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="col-xs-12 col-sm-12 col-md-5">
                                                 <div class="form-group">
                                                     <label for="name">¿Quién entregará las Notificaciones?</label>
                                                     <select name="notificacion[]" class="form-control">
@@ -664,10 +666,30 @@ body {font-family: Arial;}
                                             </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-12"><br>
-                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
-                                                <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $general->id }}"> Prevención </button>
-                                           
-                                               
+                                                @if($general['estatus'] == 'Prevencion' || $general['estatus'] == 'Pendiente')
+                                                    <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
+                                                    <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $general->id }}"> Prevención </button>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="observaciones" class="tabcontent">
+                                        <div id="tabla_citados" class="row">
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <h4 class="text-center">Observaciones</h4>
+                                                </div>
+                                            </div><br>
+
+                                            <div class="col-xs-12 col-sm-6 col-md-12">
+                                                <div class="form-group">
+                                                    <label for="email">Observaciones</label>
+                                                    <input type="text" class="form-control" name="observaciones" value="<?=$general["observaciones"];?>" readonly>
+                                                </div>
+                                            </div>
+          
+                                            <div class="col-xs-12 col-sm-12 col-md-12"><br>
+                                                <a class="btn btn-primary" href="{{ url()->previous() }}">Regresar</a>
                                             </div>
                                         </div>
                                     </div>
@@ -873,7 +895,7 @@ body {font-family: Arial;}
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12" id="tipoPersona_nombre" style="display:none;">
                             <div class="row">
-                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                <div class="col-xs-12 col-sm-12 col-md-4">
                                     <div class="form-group">
                                         <label for="name">Nombre(s) *</label>
                                         <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
@@ -883,7 +905,7 @@ body {font-family: Arial;}
                                     </div>
                                 </div>
                                 
-                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                <div class="col-xs-12 col-sm-12 col-md-4">
                                     <div class="form-group">
                                         <label for="name">Primer apellido *</label>
                                         <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
@@ -892,7 +914,7 @@ body {font-family: Arial;}
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                <div class="col-xs-12 col-sm-12 col-md-4">
                                     <div class="form-group">
                                         <label for="name">Segundo apellido *</label>
                                         <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
@@ -1101,6 +1123,7 @@ body {font-family: Arial;}
             //$('#tabla_solicitante').sow();
             $('#tabla_citados').show();
             $('#tabla_documentos').show();
+            $('#tabla_observaciones').show();
 
        
         $('.open-modal').click(function() {

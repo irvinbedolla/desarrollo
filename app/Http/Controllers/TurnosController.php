@@ -1151,7 +1151,7 @@ class TurnosController extends Controller
 
     public function indexr(){
         $solicitudes = Turnos::where('tipo','Ratificación')
-        ->where('estatus','Pendiente')
+        ->whereIn('estatus', ['Pendiente', 'Prevencion'])
         ->get();
         return view('/solicitudes/indexr',compact('solicitudes'));
     }

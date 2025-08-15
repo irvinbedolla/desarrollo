@@ -19,6 +19,7 @@
                                         <th style="color: #fff;">Rama IndustriaL</th>
                                         <th style="color: #fff;">Actividad Economica</th>
                                         <th style="color: #fff;">Tipo Solicitud</th>
+                                        <th style="color: #fff;">Estatus</th>
                                         <th style="color: #fff;">Acciones</th>
                                     </thead>
                                     <tbody class="contenidobusqueda">
@@ -39,7 +40,9 @@
                                                     @elseif($solicitud->tipo_solicitud == 4)
                                                         <td>Sindical</td>
                                                     @endif
-                                                    
+                                                    <td>
+                                                        {{$solicitud->estatus}}
+                                                    </td>    
                                                     <td>
                                                         <a class="btn btn-info" href="{{ route('solicitud_editar', $solicitud->id)}}" onclick=editar_usuario();>Revisar</a>
                                                     </td>

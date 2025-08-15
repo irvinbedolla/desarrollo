@@ -333,12 +333,12 @@
                                     <div class="col-xs-12 col-sm-6 col-md-12">
                                         <div class="form-group">
                                             <label for="email">Observaciones</label>
-                                            <input type="text" class="form-control" name="observaciones" value="<?=$folio["observaciones"];?>">
+                                            <input type="text" class="form-control" name="observaciones" value="<?=$folio["observaciones"];?>" readonly>
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         @if($userRole[0] == "Auxiliar")
-                                            <a class="btn btn-primary" href="{{ route('ratificacion_atender') }}">Regresar</a>
+                                            <a class="btn btn-primary" href="{{ route('Ratificacion') }}">Regresar</a>
                                         @elseif($userRole[0] == "Solicitante")
                                             <a class="btn btn-primary" href="{{ route('ratificacion') }}">Regresar</a>
                                         @elseif($userRole[0] == "Administrador Solicitante")
@@ -350,7 +350,7 @@
                                                 <button type="submit" class="btn btn-primary">Guardar</button>
                                             @endif
                                         @elseif($userRole[0] == "Solicitante")
-                                            @if($folio->estatus == "Rechazada")
+                                            @if($folio->estatus == "Prevencion")
                                                 <button type="submit" class="btn btn-primary">Guardar</button>
                                             @endif
                                         @endif

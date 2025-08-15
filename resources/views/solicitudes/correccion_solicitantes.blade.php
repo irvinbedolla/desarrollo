@@ -126,6 +126,7 @@ body {font-family: Arial;}
                                         <a class="btn btn-info" onclick="openCity(event, 'solicitante')">Solicitante</a>
                                         <a class="btn btn-info" onclick="openCity(event, 'documentos')">Citado(s)</a>
                                         <a class="btn btn-info" onclick="openCity(event, 'citados')">Documentos</a>
+                                        <a class="btn btn-info" onclick="openCity(event, 'observaciones')">Observaciones</a>
                                     </div>
 
                                     <div id="detalles" class="tabcontent">
@@ -646,9 +647,25 @@ body {font-family: Arial;}
                                                 <a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoCurp}}">PDF</a><br>
                                                 <input type="file" name="documentoIdentificacion" accept=".pdf" class="form-control">
                                             </div>
+                                        </div>
+                                    </div>
+                                    <div id="observaciones" class="tabcontent">
+                                        <div id="tabla_citados" class="row">
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <h4 class="text-center">Observaciones</h4>
+                                                </div>
+                                            </div><br>
+
+                                            <div class="col-xs-12 col-sm-6 col-md-12">
+                                                <div class="form-group">
+                                                    <label for="email">Observaciones</label>
+                                                    <input type="text" class="form-control" name="observaciones" value="<?=$general["observaciones"];?>" readonly>
+                                                </div>
+                                            </div>
           
                                             <div class="col-xs-12 col-sm-12 col-md-12"><br>
-                                                @if($general['estatus']=='Rechazado')
+                                                @if($general['estatus'] == 'Prevencion')
                                                     <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
                                                 @endif
                                                 <a class="btn btn-primary" href="{{ url()->previous() }}">Regresar</a>
@@ -1059,6 +1076,7 @@ body {font-family: Arial;}
             $('#tabla_solicitante').show();
             $('#tabla_citados').show();
             $('#tabla_documentos').show();
+            $('#tabla_observaciones').show();
     </script>
     <script src="../public/assets/js/poderes/general.js"></script>
 @endsection
