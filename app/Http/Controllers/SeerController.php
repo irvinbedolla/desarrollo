@@ -331,7 +331,7 @@ class SeerController extends Controller
             $estadisticas = Sedes::where('nombre', $user["delegacion"])->ORwhere('oficina_apoyo', $esta["id"])->get();
         }
         $estados = Estados::all();
-        $municipios = Municipios::all();
+        $municipios = Municipios::where('estado',16)->get();
 
         return view('estadisticas.estadistica', compact('user','userRole','estadisticas','usuariosconciliador','usuariosauxiliares','usuariosnotificadores','estados','municipios'));
     }
@@ -1159,7 +1159,7 @@ class SeerController extends Controller
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
         $estados = Estados::all();
-        $municipios = Municipios::all();
+        $municipios = Municipios::where('estado',16)->get();
         $relacionEloquent = 'roles';
 
         $conciliadores = User::whereHas($relacionEloquent, function ($query) {
@@ -1177,7 +1177,7 @@ class SeerController extends Controller
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
         $estados = Estados::all();
-        $municipios = Municipios::all();
+        $municipios = Municipios::where('estado',16)->get();
         $relacionEloquent = 'roles';
 
         $conciliadores = User::whereHas($relacionEloquent, function ($query) {
@@ -1454,7 +1454,7 @@ class SeerController extends Controller
 
         //Voy a mandar todos las variables
         $estados            = Estados::all();
-        $municipios         = Municipios::all();
+        $municipios         = Municipios::where('estado',16)->get();
         $estado_solicitante = Estados::find($general["estado_solicitante"]);
         $mun_solicitante    = Municipios::find($general["mun_solicitante"]);
         $conciliador        = User::find($general["conciliador_id"]);
@@ -1648,7 +1648,7 @@ class SeerController extends Controller
     public function seer_estatus($id){
         $citados  = SeerCitados::find($id);
         $id = $citados->id;
-        $municipios = Municipios::all();
+        $municipios = Municipios::where('estado',16)->get();
 
         return view('estadisticas.actualizarCitado', compact('id','municipios'));
     }
@@ -1811,7 +1811,7 @@ class SeerController extends Controller
         $auxiliar   = SeerPerAuxiliar::where("id_solicitud",$id)->first();
         //dd($auxiliar);
         $estados    = Estados::all();
-        $municipios = Municipios::all();
+        $municipios = Municipios::where('estado',16)->get();
         $citados    = SeerCitados::where("id_solicitud",$id)->get();
         //dd($citados);
         $conciliador= User::find($general["conciliador_id"]);
@@ -2019,7 +2019,7 @@ class SeerController extends Controller
             }
         }
         $estados = Estados::all();
-        $municipios = Municipios::all();
+        $municipios = Municipios::where('estado',16)->get();
         return view('solicitudes.solicitante', compact('estados','municipios','id'));
     }
     
@@ -2234,7 +2234,7 @@ class SeerController extends Controller
 
     public function vista_citado($id){
         $estados = Estados::all();
-        $municipios = Municipios::all();
+        $municipios = Municipios::where('estado',16)->get();
         $citados = SeerCitados::where('id_solicitud', $id)->count(); //LLeva el conteo de los citados agregados
 
         return view('solicitudes.citados',compact('estados','id','citados','municipios'));
@@ -2305,7 +2305,7 @@ class SeerController extends Controller
         $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
         $citados        = SeerCitados::where("id_solicitud",$id)->get();
         $estados        = Estados::all();
-        $municipios     = Municipios::all();
+        $municipios     = Municipios::where('estado',16)->get();
         $conciliadores  = User::find($general["conciliador_id"]);
         $audiencia      = SeerPerConciliador::where("id_solicitud",$id)->get();
         //Catalogo de motivos
@@ -2330,7 +2330,7 @@ class SeerController extends Controller
         $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
         $citados        = SeerCitados::where("id_solicitud",$id)->get();
         $estados        = Estados::all();
-        $municipios     = Municipios::all();
+        $municipios     = Municipios::where('estado',16)->get();
         
         //Catalogo de motivos
         $mostrarMotivos = SolicitudMotivo::all();
@@ -2713,7 +2713,7 @@ class SeerController extends Controller
         $abogados = Poder::all();
         SeerPerGeneral::find($id)->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
         $estados        = Estados::all();
-        $municipios     = Municipios::all();
+        $municipios     = Municipios::where('estado',16)->get();
         return view('/solicitudes/audiencias',compact('id','solicitudes','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios'));
     }
 
@@ -3220,7 +3220,7 @@ class SeerController extends Controller
     }
 
     public function mostrar_citados($id){
-        $municipios = Municipios::all();
+        $municipios = Municipios::where('estado',16)->get();
         $folio = SeerCitados::find($id);
         return view('/notificaciones/ver_citado',compact('folio','municipios'));
     }
@@ -3302,6 +3302,7 @@ class SeerController extends Controller
         //Obtener la ultima fecha y hora
         $fecha_reciente = Audiencias::where('delegacion',$delegacion)->select('fecha','hora')->orderBy('fecha', 'desc')->first();
         $fecha_revisar = date('Y-m-d', strtotime($fecha_reciente["fecha"]));
+        $fecha_revisar = strtotime($fecha_revisar." +7 day");
         $fecha_hora = date('H:i:s', strtotime($fecha_reciente["hora"]));
         //Validar cuantas audiencias hay en ese horario y eas hora
         $conteo = Audiencias::where('delegacion',$delegacion)
@@ -4142,7 +4143,7 @@ class SeerController extends Controller
         $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
         $citados        = SeerCitados::where("id_solicitud",$id)->get();
         $estados        = Estados::all();
-        $municipios     = Municipios::all();
+        $municipios     = Municipios::where('estado',16)->get();
         $conciliadores = User::whereHas('roles', function ($query) {
             return $query->where('name', '=', 'Conciliador');
         })
@@ -4327,7 +4328,7 @@ class SeerController extends Controller
         $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
         $citados        = SeerCitados::where("id_solicitud",$id)->get();
         $estados        = Estados::all();
-        $municipios     = Municipios::all();
+        $municipios     = Municipios::where('estado',16)->get();
         $conciliadores = User::whereHas('roles', function ($query) {
             return $query->where('name', '=', 'Conciliador');
         })
@@ -4665,7 +4666,7 @@ class SeerController extends Controller
         $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
         $citados        = SeerCitados::where("id_solicitud",$id)->get();
         $estados        = Estados::all();
-        $municipios     = Municipios::all();
+        $municipios     = Municipios::where('estado',16)->get();
         $conciliadores = User::whereHas('roles', function ($query) {
             return $query->where('name', '=', 'Conciliador');
         })
@@ -5099,14 +5100,14 @@ class SeerController extends Controller
 
     //PDF Constancia de cumplimiento
     public function VerPDFCumplimiento($id){
-        $solicitud = SeerPerGeneral::find($id);
-        $pagos = Pagos::where('id_solicitud', $id)->get();
+        $pagos = Pagos::find($id);
+        $solicitud = SeerPerGeneral::find($pagos["id_solicitud"]);
         $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
-        $conciliador = $conciliador->where("seer_general.id", "=", $id)
+        $conciliador = $conciliador->where("seer_general.id", "=", $solicitud["id"])
         ->select('users.name')
         ->first();
 
-        $html = view('PDF/ConstanciaCumplimiento', compact('id', 'solicitud','conciliador','pagos'))->render();
+        $html = view('PDF/Solicitudes/pagosParciales', compact('id', 'solicitud','conciliador','pagos'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')

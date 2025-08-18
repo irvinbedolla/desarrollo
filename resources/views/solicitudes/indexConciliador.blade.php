@@ -118,6 +118,18 @@
                                                                 </ul>
                                                             </div>
                                                         </div> 
+                                                    @elseif($audiencia->estatus == "Incumplimiento")
+                                                        <div class="dropdown">
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    Documentos
+                                                                </button>
+                                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Identificaciones</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFincumplimientoAudiencia', $audiencia->id_solicitud) }}"      target="_blank">Constancia de Incumplimiento</a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div> 
                                                     @elseif($audiencia->estatus == "Conciliacion")
                                                         <div class="dropdown">
                                                             <div class="dropdown">

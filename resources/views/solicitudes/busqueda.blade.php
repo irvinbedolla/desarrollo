@@ -20,6 +20,7 @@
                                         <th style="color: #fff;">Tipo Solicitud</th>
                                         <th style="color: #fff;">Estatus</th>
                                         <th style="color: #fff;">Revisar</th>
+                                        <th style="color: #fff;">Acciones</th>
                                         <th style="color: #fff;">Documentos</th>
                                     </thead>
                                     <tbody class="contenidobusqueda">
@@ -41,6 +42,11 @@
                                                 <td>{{$solicitud->estatus}}</td>
                                                 <td>
                                                     <a class="btn btn-info" href="{{ route('solicitud_revisar', $solicitud->id)}}" target="_blank">Revisar</a>
+                                                </td>
+                                                <td>
+                                                    @if($solicitud->estatus == "Confirmado")
+                                                        <a class="btn btn-success" href="{{ route('inicioAudiencia', $solicitud->id, 'Confirmado') }}">Iniciar</a><br>
+                                                    @endif
                                                 </td>
                                                 <td>
                                                     @if($solicitud->estatus == "Archivada")
@@ -101,6 +107,18 @@
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}"  target="_blank">Identificaciones</a></li>
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFno_conciliacion', $solicitud->id) }}"      target="_blank">Constancia de no conciliación</a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div> 
+                                                    @elseif($solicitud->estatus == "Incumplimiento")
+                                                        <div class="dropdown">
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    Documentos
+                                                                </button>
+                                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}"  target="_blank">Identificaciones</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFincumplimientoAudiencia', $solicitud->id) }}"      target="_blank">Constancia de Incumplimiento</a></li>
                                                                 </ul>
                                                             </div>
                                                         </div> 
