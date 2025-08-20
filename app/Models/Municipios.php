@@ -10,7 +10,7 @@ class Municipios extends Model
     //use HasFactory;
     protected $table = 'municipios';
     protected $primaryKey = 'id';
-    protected $fillable = ['nombre','estado'];
+    protected $fillable = ['nombre','estado','delegacion_id'];
 
     
 }

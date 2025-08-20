@@ -287,7 +287,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Número Exterior <span style="color:red;">(*)</span></label><br>
-                                                    <input type="number" name="numExt" class="form-control" required> 
+                                                    <input type="text" name="numExt" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo número exterior es obligatorio.
                                                     </div>
@@ -333,8 +333,8 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Entre calle <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="calle1" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <label for="name">Entre calle (Opcional)</span></label>
+                                                    <input type="text" name="calle1" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo entre calle es obligatoria.
                                                     </div>
@@ -342,8 +342,8 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">y calle <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="calle2" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <label for="name">y calle (Opcional)</label>
+                                                    <input type="text" name="calle2" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo calle es obligatoria.
                                                     </div>                                    
@@ -351,8 +351,8 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
-                                                    <label for="name">Referencias <span style="color:red;">(*)</span></label>
-                                                    <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencias" required></textarea>
+                                                    <label for="name">Referencias (Opcional)</label>
+                                                    <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencias"></textarea>
                                                     <div class="invalid-feedback">
                                                         El campo referencia es obligatorio.
                                                     </div>
@@ -419,7 +419,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Jornada Laboral(Dia(s) y hora(s))<span style="color:red;">(*)</span></label>
+                                                    <label for="name">Jornada Laboral(Día(s) y hora(s))<span style="color:red;">(*)</span></label>
                                                     <input type="text" name="jornada" class="form-control" required>
                                                     <div class="invalid-feedback">
                                                         El campo jornada laboral es obligatoria.

@@ -136,6 +136,8 @@
                                                                 <a class="btn btn-success" href="{{ route('PDFpagos', $ratificacion->id) }}" target="_blank">PDF</a>
                                                             @elseif($ratificacion->estatus == "No pagado")
                                                                 <a class="btn btn-info" href="{{ route('PDFincumplimiento', $ratificacion->id_solicitud) }}" target="_blank">PDF</a>
+                                                            @elseif($ratificacion->estatus == "Incomparecencia trabajador")
+                                                                <a class="btn btn-info" href="{{ route('PDFincomparecenciaT', $ratificacion->id_solicitud) }}" target="_blank">PDF</a>
                                                             @endif
                                                         </td>
                                                     </tr>

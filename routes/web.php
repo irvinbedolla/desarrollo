@@ -95,6 +95,7 @@ use App\Http\Controllers\RecepcionController;
     Route::post('guardar_trabajador',       [SeerController::class, 'solicitud_parte1'])->name('parte1');
     Route::post('solicitud_solicitante',    [SeerController::class, 'solicitud_parte2'])->name('parte2');
     Route::get('vista_solicitante/{id}' ,   [SeerController::class, 'vista_solicitante'])->name('solicitante');
+    Route::post('/delegacion/{municipioId}',[SeerController::class, 'DelegacionPorMunicipio']); //Muestra la delegación que le corresponde según el municipio seleccionado
     //Ruta de agregar citados
     Route::get('/agrega_citado/{id}',       [SeerController::class, 'vista_citado'])->name('agregar_citado');
     Route::post('/agrega_citado',           [SeerController::class, 'guardar_citado'])->name('seer.citados');
@@ -246,13 +247,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/VerpdfInParcial/{id}',      [TurnosController::class, 'VerPDFInParcial'])->name('PDFincumplimientoParcial');
         Route::get('/VerpdfPago/{id}',           [TurnosController::class, 'VerPDFPagos'])->name('PDFpagos');
         Route::get('/Verpdfaudiencia/{id}',      [TurnosController::class, 'VerPDFAudiencia'])->name('PDFaudiencia');
-        Route::get('/Verpdfincomparecencia/{id}',[TurnosController::class, 'VerPDFIncomparecencia'])->name('PDFincomparecencia'); //Revisa ANA no existe la función
-        Route::get('/pdfincomTrabajador/{id}',   [TurnosController::class, 'VerPDFIncomTrabajador'])->name('PDFincomparecenciaT'); //Incomparecencia por parte del trabajador
+        //Route::get('/Verpdfincomparecencia/{id}',[TurnosController::class, 'VerPDFIncomparecencia'])->name('PDFincomparecencia'); //Revisa ANA no existe la función
+        Route::get('/pdfincomTrabajador/{id}',      [TurnosController::class, 'VerPDFIncomTrabajador'])->name('PDFincomparecenciaT');  //Incomparecencia por parte del trabajador
         Route::get('turnos/index2',              [TurnosController::class, 'index_empresa'])->name('ratificacion');
         Route::get('turnos/indexr',              [TurnosController::class, 'indexr'])->name('Ratificacion');
         Route::get('turnos/aceptar/{id}',        [TurnosController::class, 'aceptacion'])->name('turno.aceptar');
         Route::post('/turnos/guardar',           [TurnosController::class, 'guardar_rechazo'])->name('rechazar_turnos');
         Route::post('/turnos/archivar',          [TurnosController::class, 'archivar_ratificacion'])->name('archivar_ratificacion');
+        Route::get('/validar_folio_abogado/{folio}',[TurnosController::class, 'validarFolio'])->name('validar_folio_abogado'); //valida si existe ya un abogado
     //Fin de  turnos
     //Solicitudes
         Route::get('/solicitudes/pedientes',                [SeerController::class, 'solicitudes_pendientes'])->name('solicitudes_pendientes');
@@ -287,7 +289,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/historial/conciliador/busqueda',                  [SeerController::class, 'historial_conciliador'])->name('historial_conciliador');
         Route::get('/PDF/faltaInteres/{id}',                            [SeerController::class, 'VerPDFInteres'])->name('PDFfalltaInteres');
         Route::get('/Verpdfnoconciliacion/{id}',                        [SeerController::class, 'VerPDFNoConciliacion'])->name('PDFno_conciliacion');
-        Route::get('/Verpdfincomparecencia/{id}',                       [SeerController::class, 'VerPDFincomparecencia'])->name('PDFincomparecencia');
+        //Route::get('/Verpdfincomparecencia/{id}',                       [SeerController::class, 'VerPDFincomparecencia'])->name('PDFincomparecencia');
         Route::get('/pdf/estadistica',                                  [PDFController::class, 'pdfEstadistica'])->name('PDFestaditica');
         Route::get('/VerpdfRnotificacion/{id}/{id_solicitud}',          [SeerController::class, 'VerPDFRNotificacion'])->name('PDFRazonNoticacion'); // Notificación exitosa, ATIENDE OTRA PERSONA
         Route::get('/VerpdfNotificacion/{id}/{id_solicitud}',           [SeerController::class, 'PDFnotificadoInstructivo'])->name('PDFInstructivo'); //Notificación por instructivo
@@ -309,7 +311,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('ratificaciones/consultar/{id}',         [TurnosController::class, 'consultar_ratificaciones'])->name('consultar_ratificacion');
         Route::post('ratificaciones/editar',                [TurnosController::class, 'editar_ratificaciones'])->name('editar_ratificacion');
         Route::get('/PDF/falta_interes/{id}',               [TurnosController::class, 'VerPDFInteres'])->name('PDFfallta_interes');
-        Route::get('/ratificaciones/pIncomparecencia/{id}', [TurnosController::class, 'pagoIncomparecencia_ratificacion'])->name('ratificacion_pagoIncom'); //No comparece el trabajador al pago
+        //Route::get('/ratificaciones/pIncomparecencia/{id}', [TurnosController::class, 'pagoIncomparecencia_ratificacion'])->name('ratificacion_pagoIncom'); //No comparece el trabajador al pago
     //Fin de Ratificaciones
     //Enlace
         Route::get('/notificaciones/consultar/{id}',        [SeerController::class, 'mostrar_citados'])->name('editar_citado');

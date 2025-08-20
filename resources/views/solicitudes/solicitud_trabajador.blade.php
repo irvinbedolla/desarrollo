@@ -92,16 +92,31 @@
                                         <h3 class="text-center" style="color:black;">Datos generales de la solicitud</h3>
                                     </div>   
                                     <h6 class="text-center" style="color: #828282"><b>Requisitos para realizar tu solicitud:</b></h6> 
-                                    <h6 class="text-center" style="color: #828282"><b>Teléfono, correo electrónico, identificación oficial(INE, PASAPORTE), en caso de ser menor de edad tu identificación son tu CURP o Acta de Nacimiento.</b></h6> 
+                                    <h6 class="text-center" style="color: #828282"><b>Teléfono, correo electrónico, identificación oficial(INE, PASAPORTE, LICENCIA DE CONDUCIR, CÉDULA PROFESIONAL), en caso de ser menor de edad tu identificación son tu CURP o Acta de Nacimiento.</b></h6> 
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                                     <form class="needs-validation novalidate" method="POST" action="{{route('parte1')}}">
                                         @csrf
                                         <input type="hidden" name="tipo_solicitud" value="{{ $tipo_solicitud }}">
                                         <div class="row">
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Municipio de la Fuente de Empleo <span style="color:red;">(*)</span></label>
+                                                    <select id="dSolicitud" class="form-control" name="dSolicitud">
+                                                        <option value="">Seleccione</option>
+                                                        @foreach($municipios as $municipio)
+                                                            <option value="{{$municipio['id']}}" data-delegacion-id="{{ $municipio['delegacion_id'] }}">
+                                                                {{ $municipio['nombre'] }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El municipio es obligatoria.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--<div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Delegación <span style="color:red;">(*)</span></label>
-                                                    <select class="form-control" name="delegacion">
+                                                    <select class="form-control" id="delegacion" name="delegacion">
                                                         <option value="">Seleccione</option>
                                                         <option value="Morelia">Morelia</option>
                                                         <option value="Uruapan">Uruapan</option>
@@ -114,22 +129,19 @@
                                                         La delegación es obligatoria.
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            </div>-->
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Municipio de la Fuente de Empleo <span style="color:red;">(*)</span></label>
-                                                    <select id="dSolicitud" class="form-control" name="dSolicitud">
+                                                    <label for="delegacion">Delegación <span style="color:red;">(*)</span></label>
+                                                    <select class="form-control" id="delegacion" name="delegacion">
                                                         <option value="">Seleccione</option>
-                                                        @foreach($municipios as $municipio)
-                                                            <option value="{{$municipio['id']}}">{{$municipio['nombre']}}</option>
-                                                        @endforeach
                                                     </select>
                                                     <div class="invalid-feedback">
-                                                        El municipio es obligatoria.
+                                                        La delegación es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-6 col-sm-6 col-md-6">
+                                            <div class="col-xs-6 col-sm-6 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Objeto de la solicitud <span style="color:red;">(*)</span></label>
                                                     <select  class="form-control" id="motivo_solicitud">
@@ -246,6 +258,35 @@
 
                 // Actualiza la lista de los motivos seleccionados
                 motivosSeleccionados = motivosSeleccionados.filter(id => id !== idMotivo);
+            });
+        });
+
+        //Dependiendo del Municipio seleccionado muestra la delegación y oficina de apoyo que le corresponde
+        document.addEventListener('DOMContentLoaded', function () {
+            const delegacionSelect = document.getElementById('delegacion');
+            const municipioSelect = document.getElementById('dSolicitud');
+
+            const delegaciones = {
+                1: ['Morelia', 'Zitácuaro'],
+                2: ['Uruapan', 'Lázaro Cárdenas'],
+                3: ['Zamora', 'Sahuayo']
+            };
+
+            municipioSelect.addEventListener('change', function () {
+                const selectedOption = municipioSelect.options[municipioSelect.selectedIndex];
+                const delegacionId = selectedOption.getAttribute('data-delegacion-id');
+
+                // Limpia el select de delegación
+                delegacionSelect.innerHTML = '<option value="">Seleccione</option>';
+
+                if (delegacionId && delegaciones[delegacionId]) {
+                    delegaciones[delegacionId].forEach(delegacion => {
+                        const option = document.createElement('option');
+                        option.value = delegacion;
+                        option.textContent = delegacion;
+                        delegacionSelect.appendChild(option);
+                    });
+                }
             });
         });
     </script>

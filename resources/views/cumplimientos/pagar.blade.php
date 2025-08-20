@@ -35,6 +35,7 @@
                                                                 Pagar
                                                             </button>
                                                             <a class="btn btn-danger" href="{{ route('cumplimiento_rechazar', $pago->id) }}" onclick=consultar_estadistica();>Rechazar</a>
+                                                            <a class="btn btn-danger" href="{{ route('cumplimiento_incomparecencia', $pago->id) }}" onclick=consultar_estadistica();>No comparece trabajador</a>
                                                         @endif
                                                     </td>
                                                 </tr>

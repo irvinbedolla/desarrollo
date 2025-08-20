@@ -178,7 +178,7 @@
                                                     <select  class="form-control" name="tipo_audiencia">
                                                         <option value="">Todos</option>
                                                         <option value="Conciliacion">Convenio</option>
-                                                        <option value="No conciliacion">No conciliacion</option>
+                                                        <option value="No conciliacion">No conciliación</option>
                                                         <option value="Archivado">Archivado</option>
                                                         <option value="Archivado por incomparecencia">Archivado por incomparecencia</option>
                                                         <option value="Regenerada">Reagendada</option>

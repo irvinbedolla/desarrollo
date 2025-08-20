@@ -281,8 +281,8 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-1">
                                                 <div class="form-group">
-                                                    <label for="name">Núm. ext. <span style="color:red;">(*)</span></label>
-                                                    <input type="number" name="exterior" class="form-control" required> 
+                                                    <label for="text">Núm. ext. <span style="color:red;">(*)</span></label>
+                                                    <input type="number" name="exterior" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El núm. exterior es obligatorio.
                                                     </div>

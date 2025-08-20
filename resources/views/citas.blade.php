@@ -162,13 +162,14 @@
 
                                                 <div id="folio" class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">Folio Interno de Registro <span style="color:red;">(*)</span></label>
-                                                        <input type="number" name="folio" class="form-control"> 
+                                                        <label for="folio_input">Folio Interno de Registro <span style="color:red;">(*)</span></label>
+                                                        <input type="number" id="folio_input" name="folio" class="form-control"> 
                                                         <div class="invalid-feedback">
                                                             El folio es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div id="abogado_info" class="mt-2"></div>
 
                                                 <div id="empresa" class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
@@ -237,7 +238,7 @@
                                                 </div>
                                                 <div id="ine" class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label>Identificación oficial (PDF) <span style="color:red;">(*)</span></label><br>
+                                                        <label>Identificación oficial <span style="color:red;">*</span>(PDF)</label><br>
                                                         <input type="file" name="documentoIne" class="form-control" accept=".pdf">
                                                         <div class="invalid-feedback">
                                                             La Identificación es obligatoria.
@@ -246,7 +247,7 @@
                                                 </div>
                                                 <div id="acta" class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label>Acta constitutiva (Si acude en representación *PDF) </label><br>
+                                                        <label>Acta constitutiva (Si acude en reprecentación <span style="color:red;">*</span>PDF) </label><br>
                                                         <input type="file" name="documentoPoder" class="form-control" accept=".pdf">
                                                         <div class="invalid-feedback">
                                                             La Identificación es obligatoria.
@@ -346,7 +347,7 @@
                                                 </div>
                                                 <div id="espesificar_tipo_identificacion" class="col-xs-12 col-sm-12 col-md-4" style="display:none">
                                                     <div class="form-group">
-                                                        <label for="name">Especificar <span style="color:red;">(*)</span></label>
+                                                        <label for="name">Especificar</label>
                                                         <input type="text" name="tipo_otros" class="form-control" > 
                                                         <div class="invalid-feedback">
                                                             El campo es obligatorio.
@@ -464,7 +465,7 @@
 
                                                 <div id="motivo_pago" class="col-xs-12 col-sm-12 col-md-2" style="display:none">
                                                     <div class="form-group">
-                                                        <label for="name">Selecciona las casillas correspondientes<span style="color:red;">(*)</span></label>
+                                                        <label for="name">Selecciona las casillas correspondientes <span style="color:red;">(*)</span></label>
                                                         <div class="form-check">
                                                             <input class="form-check-input" type="checkbox" name="Aguinaldo">
                                                             <label class="form-check-label" for="flexCheckDefault">
@@ -557,7 +558,7 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">Sube tu cuantificación(Opcional)</label>
+                                                        <label for="name">Sube tu cuantificación (Opcional)</label>
                                                         <input type="file" name="cuantificacion" class="form-control" accept=".pdf"> 
                                                         <div class="invalid-feedback">
                                                             El campo edad es obligatorio.
@@ -652,6 +653,52 @@
             </section>
         </div>
     </main>
+    <script>
+        //dependiendo del folio ingresado para el abogado indica el nombre del representante y la empresa, o una leyenda en caso de no existir
+        document.addEventListener('DOMContentLoaded', function () {
+            const folioInput = document.getElementById('folio_input');
+            const abogadoInfoDiv = document.getElementById('abogado_info');
+            let timeout = null;
+
+            const baseUrl = `{{ route('validar_folio_abogado', ['folio' => '__FOLIO__']) }}`;
+            folioInput.addEventListener('keyup', function () {
+                clearTimeout(timeout);
+                const folio = this.value.trim();
+                if (folio === '') {
+                    abogadoInfoDiv.textContent = '';
+                    abogadoInfoDiv.classList.remove('alert', 'alert-success', 'alert-danger');
+                    return;
+                }
+                timeout = setTimeout(() => {
+                    const finalUrl = baseUrl.replace('__FOLIO__', folio);
+                    fetch(finalUrl, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Folio no encontrado');
+                        return response.json();
+                    })
+                    .then(data => {
+                        abogadoInfoDiv.classList.remove('alert-danger');
+                        abogadoInfoDiv.textContent = `Representante: ${data.nombre} / Empresa: ${data.empresa}`;
+                        abogadoInfoDiv.classList.add('alert', 'alert-success');
+                    })
+                    .catch(error => {
+                        abogadoInfoDiv.classList.remove('alert-success');
+                        abogadoInfoDiv.classList.add('alert', 'alert-danger');
+                        abogadoInfoDiv.textContent = (error.message === 'Folio no encontrado')
+                            ? 'El folio no existe. Por favor, verifica el número.'
+                            : 'Ocurrió un error al buscar. Inténtalo de nuevo.';
+                        console.error('Error:', error);
+                    });
+                }, 500);
+            });
+        });
+</script>
 </body>
 <div id="crear_poder" style ="display: none;">
     <div>.</div>
@@ -885,7 +932,7 @@
                     
                     // Hacer petición AJAX con parámetro sede
                     $.ajax({
-                        url: '/CCL/api/obtenerEventos',
+                        url: '/nuevo_siconcilio/api/obtenerEventos',
                         method: 'GET',
                         data: {
                             sede: sede,
@@ -956,8 +1003,6 @@
             });
         });
     </script>
-
-
     <div id="crear_poder" style ="display: none;">
         <div>.</div>
         <div class="loader"></div>

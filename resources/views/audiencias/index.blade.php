@@ -94,8 +94,8 @@
                                 <option value="Incompetencia">Incompetencia</option>
                                 <option value="Incomparecencia">Incomparecencia</option>
                                 <option value="Archivada">Archivada</option>
-                                <option value="Conciliacion">Conciliacion</option>
-                                <option value="No conciliacion">No conciliacion</option>
+                                <option value="Conciliacion">Convenio</option>
+                                <option value="No conciliacion">No conciliación</option>
                             </select>
                         </div>
                         <div class="col-xs-6 col-sm-6 col-md-6">

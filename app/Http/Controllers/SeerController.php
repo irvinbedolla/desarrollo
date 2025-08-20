@@ -1982,6 +1982,7 @@ class SeerController extends Controller
 
     public function solicitud_parte1(Request $request){
         $data = $request->all();
+        //dd($data);
 
         if($data["delegacion"] == "Lázaro Cárdenas"){
             $data["delegacion"] = "Uruapan";
@@ -1993,10 +1994,12 @@ class SeerController extends Controller
             $data["delegacion"] = "Zamora";
         }
         //validando información
+        
         $request->validate([
             'ramaIndustrial'      => 'required',
             'actividad_economica' => 'required',
-            'motivo_solicitud'    => 'required',           
+            'motivo_solicitud'    => 'required',
+
         ]);
         
         $data_insert=array(
@@ -2047,9 +2050,9 @@ class SeerController extends Controller
             'colonia_solicitante'       => 'required',
             'municipio_solicitante'     => 'required',
             'cp'                        => 'required|numeric',
-            'referencias'               => 'required|string|max:300',
+            /*'referencias'               => 'required|string|max:300',
             'calle1'                    => 'required',
-            'calle2'                    => 'required',
+            'calle2'                    => 'required',*/
             'puesto'                    => 'required', 
             'periodo_pago'              => 'required',
             'pago'                      => 'required',
@@ -2080,9 +2083,9 @@ class SeerController extends Controller
             'colonia'              => $data["colonia_solicitante"],
             'municipio_domicilio'  => $data["municipio_solicitante"],
             'codigo_postal'        => $data["cp"],
-            'referencia'           => $data["referencias"],
+            /*'referencia'           => $data["referencias"],
             'calle2'               => $data["calle1"],
-            'calle3'               => $data["calle2"],
+            'calle3'               => $data["calle2"],*/
             'puesto'               => $data["puesto"],
             'pago'                 => $data["pago"],
             'periodo_pago'         => $data["periodo_pago"],
@@ -2118,6 +2121,15 @@ class SeerController extends Controller
         }
         if(isset($data["fecha_salida"])){
             $data_insert["fecha_salida"] =  $data["fecha_salida"];
+        }
+        if(isset($data["referencias"])){
+            $data_insert["referencia"] =  $data["referencias"];
+        }
+        if(isset($data["calle1"])){
+            $data_insert["calle2"] =  $data["calle1"];
+        }
+        if(isset($data["calle2"])){
+            $data_insert["calle3"] =  $data["calle2"];
         } 
         //CURP
         $documento = $data["curp"]."_CURP.pdf";
@@ -5170,6 +5182,36 @@ class SeerController extends Controller
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true);
 
-        return $pdf->stream('incomparecencia_Trabajador.pdf');                   
+        return $pdf->stream('compareceSinPoder.pdf');                   
+    }
+    
+    //Cumplimiento cuando no comparece el trabajador
+    public function cumplimiento_incompa_rati($id){
+        $pagos = Pagos::find($id);
+        
+        $id_solicitud = $pagos["id_solicitud"];
+        Pagos::find($id)->update(['estatus'  => "Incomparecencia trabajador"]);
+        Turnos::find($id_solicitud)->update(['estatus' => "Incumplimiento"]); //Revisar si se va a archivar, o q procede ANA
+
+        return redirect()->route('cumplimiento_actual');
+        //return redirect()->route('ratificacion_atender');
+    }
+
+    //Muestra la delegación que le corresponde según el municipío seleccionado
+    public function DelegacionPorMunicipio($municipioId)
+    {
+        $municipio = Municipios::find($municipioId);
+
+        if (!$municipio) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Municipio no encontrado',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'delegacion_id' => $municipio->delegacion_id,
+        ]);
     }
 }

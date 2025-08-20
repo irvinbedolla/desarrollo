@@ -275,8 +275,8 @@
                                                     <label for="confirm-password">Estatus de audiencias</label>
                                                     <select id="estatus" class="form-control" name="estatus" required>
                                                         <option value="">Seleccione</option>
-                                                        <option value="Conciliacion">Conciliacion</option>
-                                                        <option value="No conciliacion">No Conciliacion</option>
+                                                        <option value="Conciliacion">Convenio</option>
+                                                        <option value="No conciliacion">No Conciliación</option>
                                                         <option value="Regenerada">Reagendada</option>
                                                         <option value="Archivada">Archivada</option>
                                                         <option value="Archivado por incomparecencia">Archivado por incomparecencia</option>

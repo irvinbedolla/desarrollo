@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use NumberToWords\NumberToWords; // para convertir números(cantidades) a letras
 use DateTime;
-
+use Illuminate\Support\Facades\Log; //ANA
 class TurnosController extends Controller 
 {
     public function destroy($id)
@@ -1706,18 +1706,36 @@ class TurnosController extends Controller
         return $pdf->stream('incomparecencia_Trabajador.pdf');                   
     }
 
-    //INCOMPARECENCIA TRABAJADOR
-    public function pagoIncomparecencia_ratificacion($id){
-        $pagos = Pagos::find($id);
-        
-        $id_solicitud = $pagos["id_solicitud"];
-        Pagos::find($id)
-        ->update(['estatus'  => "Incomparecencia trabajador"]);
-
-        Turnos::find($id_solicitud)
-        ->update(['estatus' => "Archivada"]); //Revisar Ana, a que estatus cambiaria (aún está pendiente)
-
-        return redirect()->route('ratificacion_atender');
+    //Valida si existe el abogado en base al folio y muestra el nombre en Ratificaciones
+    public function validarFolio($folio)
+    {
+        try {
+            Log::info("Buscando folio: " . $folio);
+            $representante = Poder::where('idAbogado', (int)$folio)->first();
+    
+            if ($representante) {
+                $nombre = trim("{$representante->nombres} {$representante->primer_apellido} {$representante->segundo_apellido}");
+                Log::info("Folio encontrado: " . $nombre);
+    
+                return response()->json([
+                    'success' => true,
+                    'nombre'  => $nombre,
+                    'empresa' => $representante->empresa,
+                ]);
+            }
+            Log::warning("Folio no encontrado: " . $folio);
+            return response()->json([
+                'success' => false,
+                'message' => 'El folio no existe',
+            ], 404);
+    
+        } catch (\Throwable $e) {
+            Log::error('Error en validarFolio: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error interno del servidor',
+            ], 500);
+        }
     }
 
 }
