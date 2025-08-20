@@ -114,7 +114,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/seer/index',               [SeerController::class, 'index'])->name('seer');
         Route::get('/poderes/index',            [PoderController::class, 'index'])->name('poderes');
         Route::get('/seer/estadistica',         [SeerController::class, 'estadistica'])->name('seer.estadistica');
-        Route::get('/turnos/index',             [TurnosController::class, 'index_turnos'])->name('turnos');
+        Route::get('/turnos/index',             [RecepcionController::class, 'index_turnos'])->name('turnos');
         Route::get('/turnos/misturnos',         [RecepcionController::class, 'misturnos'])->name('misturnos');
         Route::get('/turnos/estadistica',       [TurnosController::class, 'estadistica'])->name('turno_estadistica');
         Route::get('/notificaciones/index',     [SeerController::class, 'notificaciones'])->name('notificaciones');
@@ -387,6 +387,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/tarjeta/guardar',          [RecepcionController::class, 'guardar'])->name('agregar_tarjeta');
         Route::get('/tarjetas/index',            [RecepcionController::class, 'reporte_excepcion'])->name('reporte_excepcion');
         Route::post('reportes/excepcion',        [RecepcionController::class, 'reportePDF'])->name('turnos_excepcion');
+        Route::get('/turnos/nuevo',              [RecepcionController::class, 'nueva_cita'])->name('nueva_cita');
+        Route::post('/tuenos/guardar',           [RecepcionController::class, 'turnos_guardar'])->name('turnos_guardar_nuevo'); 
     //Fin recepcion
     //Documentos
         Route::get('/INE_Solicitante/{id}',             [SeerController::class, 'Ver_INE_Solicitante'])->name('PDF_INE_solicitante');

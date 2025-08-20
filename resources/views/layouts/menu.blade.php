@@ -209,7 +209,7 @@
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Agenda</span>
             </a>
             <a class="nav-link" href="{{ route('turnos') }}">
-                <i class="fa fa-book" aria-hidden="true"></i></i><span class="text-dark" onclick="turnos()">Turnos</span>
+                <i class="bi bi-book" aria-hidden="true"></i></i><span class="text-dark" onclick="turnos()">Turnos</span>
             </a>
             <a class="nav-link" href="{{ route('poderes') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>

@@ -16,12 +16,14 @@ class RecepcionController extends Controller
         return view('turnos');
     }
 
-    public function turnos_publico(Request $request){
+    public function turnos_guardar(Request $request){
         $data = $request->all();
         $fecha_actual = date('Y-m-d');
         $hora_actual  = date("H:i:s");
         $numero_consecutivo = 0;
         $consecutivo  = Recepcion::latest('id')->where('fecha', $fecha_actual)->first();
+        $id = auth()->user()->id;
+        $user = User::find($id);
 
         if(empty($consecutivo)){
             $numero_consecutivo = 1;
@@ -31,96 +33,54 @@ class RecepcionController extends Controller
             $numero_consecutivo++;
         }
 
-        if($data["orientacion"] == "Si" && $data["excepcion"] == "Si"){
-            if($data["delegacion"] == "Morelia" || $data["delegacion"] == "Zitácuaro"){
-                $data_insertar= array(
-                    'consecutivo'   => $numero_consecutivo,
-                    'fecha'         => $fecha_actual,
-                    'hora'          => $hora_actual,
-                    'hora_fin'      => $hora_actual,
-                    'auxiliar'      => 13,
-                    'tipo'          => $data["tipo"],
-                    'lugar_auxiliar'=> "Departamento de Igualdad de Género",
-                    'exepcion'      => $data["excepcion"],
-                    'edad'          => $data["edad"],
-                    'sexo'          => $data["sexo"],
-                    'tipo_caso'     => $data["tipo_caso"],
-                    'vulnerables'   => $data["vulnerables"],
-                    'orientacion'   => $data["orientacion"],
-                    'conflicto'     => $data["conflicto"],
-                    'solicitante'   => $data["nombre"],
-                    'estatus'       => "no atendido",
-                    'delegacion'    => $data["delegacion"],
-                );   
-            }
-            if($data["delegacion"] == "Uruapan" || $data["delegacion"] == "Lázaro Cárdenas"){
-                $data_insertar= array(
-                    'consecutivo'   => $numero_consecutivo,
-                    'fecha'         => $fecha_actual,
-                    'hora'          => $hora_actual,
-                    'hora_fin'      => $hora_actual,
-                    'auxiliar'      => 43,
-                    'tipo'          => $data["tipo"],
-                    'lugar_auxiliar'=> "Delegada Regional",
-                    'exepcion'      => $data["excepcion"],
-                    'edad'          => $data["edad"],
-                    'sexo'          => $data["sexo"],
-                    'tipo_caso'     => $data["tipo_caso"],
-                    'vulnerables'   => $data["vulnerables"],
-                    'orientacion'   => $data["orientacion"],
-                    'conflicto'     => $data["conflicto"],
-                    'solicitante'   => $data["nombre"],
-                    'estatus'       => "no atendido",
-                    'delegacion'    => $data["delegacion"],
-                );
-            }
-            if($data["delegacion"] == "Zamora" || $data["delegacion"] == "Sahuayo"){
-                $data_insertar= array(
-                    'consecutivo'   => $numero_consecutivo,
-                    'fecha'         => $fecha_actual,
-                    'hora'          => $hora_actual,
-                    'hora_fin'      => $hora_actual,
-                    'auxiliar'      => 26,
-                    'tipo'          => $data["tipo"],
-                    'lugar_auxiliar'=> "Delegada Regional",
-                    'exepcion'      => $data["excepcion"],
-                    'edad'          => $data["edad"],
-                    'sexo'          => $data["sexo"],
-                    'tipo_caso'     => $data["tipo_caso"],
-                    'vulnerables'   => $data["vulnerables"],
-                    'orientacion'   => $data["orientacion"],
-                    'conflicto'     => $data["conflicto"],
-                    'solicitante'   => $data["nombre"],
-                    'estatus'       => "no atendido",
-                    'delegacion'    => $data["delegacion"],
-                );
-            }
-        }
-        else{
-            $data_insertar= array(
-                'consecutivo'   => $numero_consecutivo,
-                'fecha'         => $fecha_actual,
-                'hora'          => $hora_actual,
-                'hora_fin'      => $hora_actual,
-                'auxiliar'      => 0,
-                'tipo'          => $data["tipo"],
-                'lugar_auxiliar'=> "Recepción",
-                'exepcion'      => $data["excepcion"],
-                'edad'          => $data["edad"],
-                'sexo'          => $data["sexo"],
-                'tipo_caso'     => $data["tipo_caso"],
-                'vulnerables'   => $data["vulnerables"],
-                'orientacion'   => $data["orientacion"],
-                'conflicto'     => $data["conflicto"],
-                'solicitante'   => $data["nombre"],
-                'estatus'       => "no atendido",
-                'delegacion'    => $data["delegacion"],
-            );    
-        }
+        $data_insertar= array(
+            'consecutivo'   => $numero_consecutivo,
+            'solicitante'   => $data["nombre"],
+            'auxiliar'      => 0,
+            'lugar_auxiliar'=> "Recepción",
+            'tipo'          => $data["tipo"],
+            'fecha'         => $fecha_actual,
+            'hora'          => $hora_actual,
+            'hora_fin'      => $hora_actual,
+            'delegacion'    => "Morelia",
+            'estatus'       => "no atendido",
+            'exepcion'      => "No",
+            'edad'          => $data["edad"],
+            'sexo'          => $data["sexo"],
+            'vulnerables'   => $data["vulnerables"],
+        );    
         
         Recepcion::create($data_insertar);
         
-        return back()->with('success', 'Turno registrado correctamente favor de pasar al Módulo de Recepción.'); 
+        $auxiliares = User::whereHas('roles', function ($query) {
+            return $query->where('name', '=', 'Auxiliar');
+        })
+        ->where('delegacion', $user["delegacion"])
+        ->get();
+
+        $auxiliares_morelia = array();
+        foreach($auxiliares as $auxiliar){
+            $estatus = "Disponible";
+            $ocupados = TurnoDisponible::where('fecha', $fecha_actual)
+            ->where('id_auxiliar', $auxiliar["id"])
+            ->select('turno_disponible.estatus')
+            ->orderBy('id', 'DESC')
+            ->get();
+
+            if(!count($ocupados) == 0){
+                $estatus = $ocupados[0]["estatus"];
+            }
+            $data_insertar = [
+                'id'        => $auxiliar["id"],
+                'name'      => $auxiliar["name"],
+                'delegacion'=> $auxiliar["delegacion"],
+                'estatus'   => $estatus,
+            ];
+            array_push($auxiliares_morelia, $data_insertar);
+        }
+        $total = count($auxiliares_morelia);
+
+        return view('turnos.index',compact('auxiliares_morelia','total'));
     }
 
     public function index_turnos()
@@ -440,7 +400,7 @@ class RecepcionController extends Controller
     {
         $fecha_actual = date('Y-m-d');
         $hora_actual  = date("H:i:s");
-        /*
+        
         $ocupados = TurnoDisponible::where('fecha', $fecha_actual)
         ->where('id_auxiliar', $id)
         ->get();
@@ -458,7 +418,7 @@ class RecepcionController extends Controller
             ->where('id_auxiliar', $id)
             ->update(['estatus' => 'Ocupado']);
         }
-        */
+        
         $data_update = DB::table('turno_disponible')
         ->where('id_auxiliar', $id)
         ->update(['estatus' => 'Ocupado']);
@@ -725,4 +685,9 @@ class RecepcionController extends Controller
     
         return $pdf->stream('archivo.pdf');
     }
+
+    public function nueva_cita(){
+        return view('turnos/crear');
+    }
+    
 }

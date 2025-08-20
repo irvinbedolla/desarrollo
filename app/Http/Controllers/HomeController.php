@@ -50,7 +50,7 @@ class HomeController extends Controller
         $fecha_actual = date('Y-m-d');
         $hora_actual  = date("H:i:s");
         $numero_consecutivo = 0;
-        $consecutivo  = Turnos::latest('id')->where('fecha', $fecha_actual)->first();
+        $consecutivo  = Recepcion::latest('id')->where('fecha', $fecha_actual)->first();
 
         if(empty($consecutivo)){
             $numero_consecutivo = 1;
@@ -74,8 +74,9 @@ class HomeController extends Controller
             'exepcion'      => "No",
             'edad'          => $data["edad"],
             'sexo'          => $data["sexo"],
+            'vulnerables'   => $data["vulnerables"],
         );    
-        Turnos::create($data_insertar);
+        Recepcion::create($data_insertar);
         
         return back()->with('success', 'Turno registrado correctamente favor de pasar a ventanilla.'); 
     }
