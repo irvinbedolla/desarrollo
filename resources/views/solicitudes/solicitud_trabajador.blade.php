@@ -100,7 +100,7 @@
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Delegación (*)</label>
+                                                    <label for="name">Delegación <span style="color:red;">(*)</span></label>
                                                     <select class="form-control" name="delegacion">
                                                         <option value="">Seleccione</option>
                                                         <option value="Morelia">Morelia</option>
@@ -117,7 +117,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Municipio de la Fuente de Empleo(*)</label>
+                                                    <label for="name">Municipio de la Fuente de Empleo <span style="color:red;">(*)</span></label>
                                                     <select id="dSolicitud" class="form-control" name="dSolicitud">
                                                         <option value="">Seleccione</option>
                                                         @foreach($municipios as $municipio)
@@ -131,7 +131,7 @@
                                             </div>
                                             <div class="col-xs-6 col-sm-6 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Objeto de la solicitud (*)</label>
+                                                    <label for="name">Objeto de la solicitud <span style="color:red;">(*)</span></label>
                                                     <select  class="form-control" id="motivo_solicitud">
                                                         <option value="">Seleccione</option>
                                                         @foreach($mostrarMotivos as $motivo)
@@ -155,7 +155,7 @@
                                             <div id="div1"  class="col-xs-12 col-sm-12 col-md-6">
                                                 <p>Rama Industrial del Negocio</p>
                                                 <div class="form-group">
-                                                    <label for="name">Paso 1. Rama Industrial (*)</label>
+                                                    <label for="name">Paso 1. Rama Industrial <span style="color:red;">(*)</span></label>
                                                     <select id="ramaIndustrial" class="form-control" name="ramaIndustrial" required>
                                                         <option value="">Seleccione</option>
                                                         @foreach($ramas as $rama)
@@ -170,7 +170,7 @@
                                             <div id="div2"  class="col-xs-12 col-sm-12 col-md-6">
                                                 <p style="color: white">.</p>
                                                 <div class="form-group">  
-                                                    <label for="name">Paso 2: Actividad Económica del Patrón(a)/Empresa (*)   <em>Ejemplos: comercio de productos al por menor, construcción, servicios médicos...</em></label>
+                                                    <label for="name">Paso 2: Actividad Económica del Patrón(a)/Empresa <span style="color:red;">(*)</span>   <em>Ejemplos: comercio de productos al por menor, construcción, servicios médicos...</em></label>
                                                     <input type="text" name="actividad_economica" id="actividad_economica" oninput="this.value = this.value.toUpperCase()" class="form-control" required> 
                                                 <!--<select id="actividad_economica" name="actividad_economica" class="form-control" disabled>
                                                         <option value=""> --Primero selecciona una rama industrial --</option>  
