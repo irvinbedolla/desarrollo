@@ -865,6 +865,7 @@
                 const dia = String(hoy.getDate()).padStart(2, '0');
                 return `${año}-${mes}-${dia}`;
             }
+
             function esFechaValida(fechaStr) {
                 return /^\d{4}-\d{2}-\d{2}$/.test(fechaStr) && !isNaN(new Date(fechaStr).getTime());
             }
@@ -923,8 +924,14 @@
                     center: 'title',
                 },
                 validRange: {
-                    start: new Date(new Date().setDate(new Date().getDate() - 20)).toISOString().split('T')[0],
-                    end: new Date(new Date().setDate(new Date().getDate() + 20)).toISOString().split('T')[0]
+                    start: (() => {
+                        const now = new Date();
+                        return new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().split('T')[0];
+                    })(),
+                    end: (() => {
+                        const now = new Date();
+                        return new Date(now.getFullYear(), now.getMonth() + 3, 0).toISOString().split('T')[0];
+                    })()
                 },
                 events: function(fetchInfo, successCallback, failureCallback) {
                     // Obtener sede seleccionada
@@ -932,7 +939,7 @@
                     
                     // Hacer petición AJAX con parámetro sede
                     $.ajax({
-                        url: '/nuevo_siconcilio/api/obtenerEventos',
+                        url: '/desarrollo/api/obtenerEventos',
                         method: 'GET',
                         data: {
                             sede: sede,
@@ -947,9 +954,14 @@
                         }
                     });
                 },
+
+
                 eventClick: function(info) {
                     // Solo permitir selección de horarios disponibles
-                    if (info.event.extendedProps.estado === 'disponible') {
+                    let ahora = new Date();
+                    let slotDate = new Date(info.event.start);
+
+                    if (info.event.extendedProps.estado === 'disponible' && slotDate > ahora) {
                         // Deseleccionar evento anterior
                         document.querySelectorAll('.fc-event-selected').forEach(el => {
                             el.classList.remove('fc-event-selected');

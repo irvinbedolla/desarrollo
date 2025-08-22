@@ -32,6 +32,10 @@ Route::get('/citados/{id}',         [SeerController::class, 'obtenerCitados']);
 Route::get('/obtenerHorario/{id}/{sede}',  [TurnosController::class, 'obtenerHorario']);
 
 //Ruta para obtener eventos para el calendario de creación de citas
+/*Route::prefix('nuevo_siconcilio')->group(function () {
+    Route::get('/obtenerEventos', [TurnosController::class, 'obtenerEventos']);
+});*/
+
 Route::get('/obtenerEventos', [TurnosController::class, 'obtenerEventos']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

@@ -127,8 +127,9 @@ class AudienciasController extends Controller
                     $color = '#00CE1C';
                 } elseif ($rati->estatus === 'Concluida Pagos') {
                     $color = '#00CE1C';
-                }
-                 else {
+                } elseif ($rati->estatus === 'Confirmado') {
+                    $color = '#0EB6F0';
+                } else {
                     $color = '#CCCCCC';
                 }
 

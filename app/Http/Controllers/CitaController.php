@@ -71,6 +71,8 @@ class CitaController extends Controller
                 $color = '#EAE300';
             } elseif ($pago->estatus === 'Pagado') {
                 $color = '#00CE1C';
+            } elseif ($pago->estatus === 'Incomparecencia trabajador') {
+                $color = '#FF2C2C';
             } else {
                 $color = '#CCCCCC';
             }
