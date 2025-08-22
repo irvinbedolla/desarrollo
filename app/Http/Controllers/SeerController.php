@@ -5006,9 +5006,6 @@ class SeerController extends Controller
         $data = $request->all();
         $id = auth()->user()->id;
         $user = User::find($id);
-        $request->validate([
-            'documentoExpediente' => 'required',
-        ]);
 
         $audienciaId = $data['audiencia_id']; 
         $solicitud = SeerPerGeneral::find($audienciaId);
