@@ -31,7 +31,7 @@
                 font-size: 14px;
             }
 
-            footer {
+            footer { 
                 position: fixed;
                 bottom: -60px;
                 left: 0;
@@ -83,6 +83,9 @@
             $direccion_sede='AV. UNIVERSIDAD SUR NO. 300, COL. LOMAS DE UNIVERSIDAD, C.P.59103 SAHUAYO DE MORELOS, MICHOACÁN DE OCAMPO';
         } 
     @endphp
+    @php
+        use Carbon\Carbon;
+    @endphp
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
         <footer>
@@ -104,49 +107,50 @@
                 </div><br><br><br><br>
                 <center><p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br> 
                         ACTA DE MULTA POR INCOMPARECENCIA</b></p></center>
-                <p>En <b>{{ $direccion_sede }}</b> a <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, el funcionario 
-                    conciliador <b>{{$conciliador->nombre}}</b>, adscrito al Centro 
+                <p>En <b>{{ $direccion_sede }}</b> a <b>{{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}</b>, el(la) funcionario(a) 
+                    conciliador(a) <b>Natalia Itzel Estrada Guzman</b>, adscrito al Centro 
                     de Conciliación Laboral del Estado de Michoacán de Ocampo, <b>hace constar y certifica</b> que la parte citada 
-                    <b>{{ $citado->nombre }} {{ $citado->primero_apellido }} {{ $citado->segundo_apellido }} <b>no compareció,</b> a la Audiencia de Conciliación prevista para las 
-                    <b>{{$audiencia->hora}}</b> horas de esta misma fecha, a pesar de encontrarse debidamente notificado(a) para tal efecto, circunstancia que se corrobora 
+                    <b>{{ $citado->nombre }} @if(!empty($citado->primer_apellido)){{ $citado->primer_apellido }}@endif  @if(!empty($citado->segundo_apellido)){{ $citado->segundo_apellido }}@endif no compareció,</b> 
+                    a la Audiencia de Conciliación prevista para las 
+                    <b>{{ \Carbon\Carbon::parse($audiencia->hora)->format('H:i') }}</b> horas de esta misma fecha, a pesar de encontrarse debidamente notificado(a) para tal efecto, circunstancia que se corrobora 
                     con <b>la razón de notificación de fecha {{ \Carbon\Carbon::parse($citado->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}. Doy fe</b>.
                 </p>
                 <p>
-                    <b>{{ $direccion_sede }}</b>, a <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} </b>.
+                    <b>{{ $direccion_sede }}</b>, a <b>{{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}</b>.
                 </p>
                 <p>
-                    Vista la certificación mencionada, se advierte que la parte citada <b>{{ $citado->nombre }} {{ $citado->primero_apellido }} {{ $citado->segundo_apellido }}</b>, no compareció a la 
-                    audiencia de conciliación prevista para las <b>{{$audiencia->hora}}</b> horas de esta misma fecha, a pesar de encontrarse debidamente notificado(a) para tal efecto, circunstancia que se 
-                    corrobora con la notificación de fecha <b>{{ \Carbon\Carbon::parse($citado->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, por lo que con fundamento en los artículos 16, primer párrafo, 
+                    Vista la certificación mencionada, se advierte que la parte citada <b>{{ $citado->nombre }} @if(!empty($citado->primer_apellido)){{ $citado->primer_apellido }}@endif  @if(!empty($citado->segundo_apellido)){{ $citado->segundo_apellido }}@endif</b>, no compareció a la 
+                    audiencia de conciliación prevista para las <b>{{ \Carbon\Carbon::parse($audiencia->hora)->format('H:i') }}</b> horas de esta misma fecha, a pesar de encontrarse debidamente notificado(a) para tal efecto, circunstancia que se 
+                    corrobora con la notificación de fecha <b>{{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}</b>, por lo que con fundamento en los artículos 16, primer párrafo, 
                     de la Constitución Política de los Estados Unidos Mexicanos; 590-E, 590-F, 684-E, fracciones IV, X, 684-I, fracción II de la Ley Federal del Trabajo; y 27 de 
-                    la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo; Artículo 20 Fracción XVI y XVII del Reglamento Interior del Centro de 
+                    la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo; artículo 20 fracción XVI y XVII del Reglamento Interior del Centro de 
                     Conciliación del Estado de Michoacán de Ocampo, <b>SE ACUERDA</b>:
                 </p>
 
                 <p>
-                    En atención a lo anterior, se tiene a la parte citada <b>{{ $citado->nombre }} {{ $citado->primero_apellido }} {{ $citado->segundo_apellido }}</b> por <b>inconforme con todo 
+                    En atención a lo anterior, se tiene a la parte citada <b>{{ $citado->nombre }} @if(!empty($citado->primer_apellido)){{ $citado->primer_apellido }}@endif  @if(!empty($citado->segundo_apellido)){{ $citado->segundo_apellido }}@endif</b> por <b>inconforme con todo 
                     arreglo conciliatorio</b>.
                 </p>
 
                 <p>
-                    En este acto, <b>se hace efectivo el apercibimiento decretado</b> en el citatorio notificado el <b> [FECHA DE NOTIFICACIÓN]</b> 
-                    y se impone a la parte citada <b>{{ $citado->nombre }} {{ $citado->primero_apellido }} {{ $citado->segundo_apellido }} una 
+                    En este acto, <b>se hace efectivo el apercibimiento decretado</b> en el citatorio notificado el <b>{{ \Carbon\Carbon::parse($citado->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
+                    y se impone a la parte citada <b>{{ $citado->nombre }} @if(!empty($citado->primer_apellido)){{ $citado->primer_apellido }}@endif  @if(!empty($citado->segundo_apellido)){{ $citado->segundo_apellido }}@endif una 
                     multa mínima por el monto de $5,657.00 (equivalente a Cincuenta veces la Unidad de Medida y Actualización)</b>.
                 </p>
                             
                 <p>
                     Gírese atento oficio electrónico <b>al Servicio de Administración Tributaria</b>, para que haga efectivo el cobro de la multa impuesta a la parte 
-                    citada <b>{{ $citado->nombre }} {{ $citado->primero_apellido }} {{ $citado->segundo_apellido }}</b> con los datos de identificación con los que se cuenta:
+                    citada <b>{{ $citado->nombre }} @if(!empty($citado->primer_apellido)){{ $citado->primer_apellido }}@endif  @if(!empty($citado->segundo_apellido)){{ $citado->segundo_apellido }}@endif</b> con los datos de identificación con los que se cuenta:
                 </p>
 
-                <p class="sangria"><b>Nombre o razón social {{ $citado->nombre }} {{ $citado->primero_apellido }} {{ $citado->segundo_apellido }}<br> 
-                    2. CURP: {{ $citado->curp }}  <br>
-                    3. RFC: {{ $citado->rfc }}  <br>
-                    4. Domicilio: {{ $citado->calle }} #{{ $citado->n_ext }} 
+                <p class="sangria"><b>1. Nombre o razón social: {{ $citado->nombre }} @if(!empty($citado->primer_apellido)){{ $citado->primer_apellido }}@endif  @if(!empty($citado->segundo_apellido)){{ $citado->segundo_apellido }}@endif<br> 
+                    2. CURP: @if(!empty($citado->curp)){{ $citado->curp }}@endif<br>
+                    3. RFC: @if(!empty($citado->rfc)){{ $citado->rfc }}@endif<br>
+                    4. Domicilio: {{ $citado->tipo_vialidad }} {{ $citado->calle }} #{{ $citado->n_ext }} 
                     @if(!empty($citado->n_int))
                         int. {{ $citado->n_int }}
                     @endif 
-                    {{ $citado->colonia }}, {{ $citado->municipio_citado }} {{ $citado->cp }} 
+                    {{ $citado->colonia }}, {{ $citado->municipio_citado }} {{ $citado->cp }} {{ $citado->municipio_citado }}, MICHOACÁN DE OCAMPO.
                 </b></p>
 
                 <p><b>
@@ -154,11 +158,11 @@
                 </b></p>
 
                 <p>
-                    Así lo proveyó <b>{{ $conciliador->name }}</b>, funcionario conciliador adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
+                    Así lo proveyó <b>Natalia Itzel Estrada Guzman</b>, funcionario(a) conciliador(a) adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
                 </p>
 
-                <br><br><br><br>
-                <p><center><b>___________________________________<br> {{ $conciliador->name }} <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>               
+                <br><br>
+                <p><center><b>___________________________________<br> Natalia Itzel Estrada Guzman <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>               
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

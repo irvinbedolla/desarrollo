@@ -21,7 +21,7 @@
                                             <th style="color: #fff;">Solicitante</th>
                                             <th style="color: #fff;">Motivo</th>
                                             <th style="color: #fff;">Estatus</th>
-                                            <th style="color: #fff;">Actividad economica</th>
+                                            <th style="color: #fff;">Actividad económica</th>
                                             <th style="color: #fff;">Detalles</th>
 
                                         </thead>

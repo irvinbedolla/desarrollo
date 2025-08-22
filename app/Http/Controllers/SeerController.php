@@ -2383,9 +2383,9 @@ class SeerController extends Controller
 
         //Actualizar SEER SOLICTUD
         SeerSolicitante::where('id_solicitud', $data["id"])
-        ->update(['tipo_persona' => $data["tipo_persona_solicitante"], 
+        ->update([/*'tipo_persona' => $data["tipo_persona_solicitante"],*/ 
             'curp'                  => $data["curp_solicitante"],
-            'rfc'                   => $data["rfc_solicitante"],
+            //'rfc'                   => $data["rfc_solicitante"],
             'nombre'                => $data["nombre_solicitante"],
             'sexo'                  => $data["sexo_solicitante"],
             'nacionalidad'          => $data["nacionalidad_solicitante"],
@@ -2402,10 +2402,10 @@ class SeerController extends Controller
             'calle'                 => $data["calle_solicitante"],
             'num_ext'               => $data["num_ext_solicitante"],
             'codigo_postal'         => $data["codigo_postal_solicitante"],
-            'referencia'            => $data["referencia_solicitante"],
+            //'referencia'            => $data["referencia_solicitante"],
             'colonia'               => $data["colonia_solicitante"],
-            'calle2'                => $data["calle2_solicitante"],
-            'calle3'                => $data["calle3_solicitante"],
+            //'calle2'                => $data["calle2_solicitante"],
+            //'calle3'                => $data["calle3_solicitante"],
             'municipio_domicilio'   => $data["municipio_solicitante"],
             'puesto'                => $data["puesto"],
             'pago'                  => $data["pago"],
@@ -2426,6 +2426,18 @@ class SeerController extends Controller
         }
         if(isset($data["nss"])){
             SeerSolicitante::where('id_solicitud', $data["id"])->update(['nss' => $data["nss"] ]);
+        }
+        if(isset($data["rfc"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['rfc' => $data["rfc_solicitante"] ]);
+        }
+        if(isset($data["referencia"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['referencia' => $data["referencia_solicitante"] ]);
+        }
+        if(isset($data["calle2"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle2' => $data["calle2_solicitante"] ]);
+        }
+        if(isset($data["calle3"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle3' => $data["calle3_solicitante"] ]);
         }
 
         //Citados
@@ -2665,7 +2677,7 @@ class SeerController extends Controller
         $notificaciones = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
         ->select('seer_general.id as id_solicitud','seer_citados.id as id_citado','seer_general.NUE',
             'seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido',
-            'seer_citados.colonia','seer_citados.calle','seer_citados.n_ext','seer_citados.n_int','seer_citados.estatus')
+            'seer_citados.colonia','seer_citados.calle','seer_citados.n_ext','seer_citados.n_int','seer_citados.estatus','seer_citados.tipo_notificacion')
         ->where('seer_general.delegacion', $user["delegacion"])
         ->where('seer_citados.id_notificador', 0)
         ->where('seer_citados.notificacion',"!=", "Trabajador")
@@ -3848,26 +3860,25 @@ class SeerController extends Controller
     }
     
     //PDF Multa de solicitud
-    public function VerPDFMulta($id){
-        $solicitud = SeerPerGeneral::find($id);
-
-        $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
-        $conciliador = $conciliador->where("seer_general.conciliador_id", "=", $solicitud["conciliador_id"])
-        ->select('users.name')
+    public function VerPDFMulta($id, $id_solicitud){
+        $solicitud = SeerPerGeneral::find($id_solicitud);
+        //$solicitud = SeerPerGeneral::find($id);
+        //dd($solicitud);
+        $conciliador = User::join("seer_general", "seer_general.conciliador_id", "=", "users.id")
+        ->where("seer_general.id", "=", $id_solicitud)
+        ->select("users.name")
         ->first();
-
-        $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
-        $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
+        //dd($conciliador);
+        $citado = SeerCitados::find($id);
+        // dd($citado);
+        $audiencia = Audiencias::where('id_solicitud', $id_solicitud)
+        ->orderBy('fecha', 'desc')
         ->first();
-
-        $citado = SeerCitados::where('id_solicitud', $id)->get();
-        //dd($citado);
-        $html = view('PDF/Solicitudes/ActaMulta', compact('id', 'solicitud','conciliador','citado','audiencia'))->render();
-
-        $pdf = \PDF::loadHTML($html)
-            ->setPaper('a4', 'portrait')
-            ->setOption('isHtml5ParserEnabled', true)
-            ->setOption('isPhpEnabled', true); 
+       // dd($audiencia);
+        $pdf = \PDF::loadView('PDF/Solicitudes/ActaMulta', compact('id','solicitud','citado','conciliador','audiencia'))
+        ->setPaper('a4', 'portrait')
+        ->setOption('isHtml5ParserEnabled', true)
+        ->setOption('isPhpEnabled', true);
 
         $nombreArchivo = 'multa_' . $solicitud->empresa .'.pdf';
         return $pdf->stream($nombreArchivo);                  
@@ -5157,17 +5168,27 @@ class SeerController extends Controller
         $data = $request->all();
         $id = auth()->user()->id;
         $user = User::find($id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+        //$fecha_actual = date('y-m-d');
+        $personas = User::whereHas('roles', function ($query) {
+            return $query->where('name', '=', 'Notificador');
+        })
+        ->where('delegacion', $user["delegacion"])
+        ->get();
+
         $notificaciones = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+        ->leftJoin('users', 'seer_citados.id_notificador', '=', 'users.id')
         ->select('seer_general.id as id_solicitud','seer_citados.id as id_citado','seer_general.NUE',
             'seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido',
-            'seer_citados.colonia','seer_citados.calle','seer_citados.n_ext','seer_citados.n_int','seer_citados.estatus')
+            'seer_citados.colonia','seer_citados.calle','seer_citados.n_ext','seer_citados.n_int','seer_citados.estatus','seer_citados.tipo_notificacion','users.name as notificador_nombre')
         ->where('seer_general.delegacion', $user["delegacion"])
-        ->where('seer_citados.id_notificador', 0)
+        ->where('seer_citados.id_notificador', '!=', 0)
         ->where('seer_citados.notificacion',"!=", "Trabajador")
         ->whereBetween('seer_general.fecha', [$data["fecha_inicio"], $data["fecha_final"]])
         ->get();
 
-        return view('notificaciones.index',compact('notificaciones'));
+        return view('notificaciones.index',compact('notificaciones','personas','userRole'));
     }
     
     //PDF COMPARECE REPRESENTANTE LEGAL SIN PODER

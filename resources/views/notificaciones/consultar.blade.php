@@ -17,17 +17,17 @@
                                     <div class="col-xs-12 col-sm-6 col-md-6">
                                         <div class="form-group">
                                             <label for="fecha_inicio">Fecha de inicio</label>
-                                            <input type="date" class="form-control" name="fecha_inicio" required>
+                                            <input type="date" class="form-control" name="fecha_inicio" id="fecha_inicio" required>
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-6">
                                         <div class="form-group">
                                             <label for="fecha_final">Fecha final</label>
-                                            <input type="date" class="form-control" name="fecha_final" required>
+                                            <input type="date" class="form-control" name="fecha_final" id="fecha_final" required>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="modal-footer text-center">
+                                <div class="text-center mt-4">
                                     <button type="submit" class="btn btn-primary" onclick=consultar_estadistica(); >Consultar</button>
                                 </div>
                             </form>
@@ -46,6 +46,21 @@
 
 @section('scripts')
     <script src="../../public/js/estadistica/estadistica.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const fechaInicio = document.getElementById("fecha_inicio");
+            const fechaFinal = document.getElementById("fecha_final");
+
+            // Mostrar el calendario cuando se hace clic en los campos
+            fechaInicio.addEventListener("click", function() {
+                this.showPicker?.(); // El signo ? asegura compatibilidad
+            });
+
+            fechaFinal.addEventListener("click", function() {
+                this.showPicker?.();
+            });
+        });
+    </script>
 @endsection
 
 

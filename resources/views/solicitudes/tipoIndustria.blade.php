@@ -10,6 +10,8 @@
         <!-- Bootstrap core CSS -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel="icon" href="../public/assets/images/logo-ccl.png" type="image/x-icon">
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- ================== LIBRERIAS AGREGADAS ================== -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -275,7 +277,6 @@
     li{
         text-align: justify;
     }
-    
 </style>
 
 <body class="pace-top pace-done" style="">
@@ -287,7 +288,7 @@
     </div>
 
 <!-- inicio Modal Aviso privacidad-->
-<div class="modal fade" id="modal-aviso-privacidad" data-backdrop="static" style="display: none;" data-keyboard="false" aria-hidden="true">
+<div class="modal fade" id="modal-aviso-privacidad">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header header-default font-size-14" style="height: 38px">
@@ -315,15 +316,20 @@
                     <div class="col-md-12">
                         <hr>
                     </div>
-                    <div class="row col-md-12">
-                        <div class="col-md-4"></div>
-                        <div class="custom-control custom-radio col-md-4">
-                            <input type="radio" id="radioAviso1" name="radioAviso" value="1" class="custom-control-input pointer" data-parsley-multiple="radioAviso" data-parsley-id="28">
-                            <label class="custom-control-label pointer" for="radioAviso1">Sí acepto</label>
+                    <div class="row justify-content-center mb-3">
+                        <div class="col-auto">
+                            <div class="form-check form-check-inline">
+                                <input type="radio" id="radioAviso1" name="radioAviso" value="1" class="form-check-input pointer" data-parsley-multiple="radioAviso" 
+                                        style="width: 18px; height: 18px; border: 2px solid #CEA845; accent-color: #CEA845;">
+                                <label class="form-check-label pointer" for="radioAviso1" style="font-size: 13px; color:black;">Sí acepto</label>
+                            </div>
                         </div>
-                        <div class="custom-control custom-radio col-md-4">
-                            <input type="radio" id="radioAviso2" name="radioAviso" value="2" class="custom-control-input pointer" data-parsley-multiple="radioAviso">
-                            <label class="custom-control-label pointer" for="radioAviso2">No acepto</label>
+                        <div class="col-auto">
+                            <div class="form-check form-check-inline">
+                                <input type="radio" id="radioAviso2" name="radioAviso" value="2" class="form-check-input pointer" data-parsley-multiple="radioAviso" 
+                                        style="width: 18px; height: 18px; border: 2px solid #CEA845; accent-color: #CEA845;">
+                                <label class="form-check-label pointer" for="radioAviso2" style="font-size: 13px; color:black;">No acepto</label>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-12">
@@ -337,6 +343,40 @@
         </div>
     </div>
 </div>
+<!-- PDF Derechos y Obligaciones -->
+<div class="modal fade" id="modal-derechos-obligaciones">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Derechos y obligaciones</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="text-center mb-3">
+                    <button onclick="zoomIn()" class="btn btn-sm btn-primary">+</button>
+                    <button onclick="zoomOut()" class="btn btn-sm btn-secondary">-</button>
+                </div>
+                <div class="text-center" style="overflow: auto;">
+                    <img id="pdfImg" src="{{ asset('storage/app/public/pdf/terminos_condiciones.jpg') }}" alt="PDF como imagen" style="transition: transform 0.2s ease; max-width: 50%; height: auto;" />
+                </div>
+                <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" id="aceptarCheck"  style="width: 18px; height: 18px; border: 2px solid #CEA845; accent-color: #CEA845; border-radius: 4px;">
+                    <label class="form-check-label" for="aceptarCheck" style="font-size: 13px; color:black; margin-left: 8px;">
+                        He leído y acepto mis derechos y obligaciones del procedimiento de conciliación.
+                    </label>
+                    <div id="mensaje-error" class="text-danger mt-2" style="display: none;" style="font-size: 13px;">
+                        Debes aceptar los derechos y obligaciones para poder continuar con el proceso de conciliación.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="continuarBtn" class="btn btn-success">Continuar</button>
+                <button type="button" class="btn btn-secondary" onclick="cancelarProceso()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- begin #page-loader -->
 <div id="page-loader" class="fade show d-none"><span class="spinner"></span></div>
@@ -1030,8 +1070,20 @@ Acude a la Oficina Estatal del Centro Federal de Conciliación y Registro Labora
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    //Para realizar zoom en el modal con la imagen
+    let zoomLevel = 1;
+    function zoomIn() {
+        zoomLevel += 0.1;
+        document.getElementById('pdfImg').style.transform = `scale(${zoomLevel})`;
+    }
+    function zoomOut() {
+        zoomLevel = Math.max(0.5, zoomLevel - 0.1);
+        document.getElementById('pdfImg').style.transform = `scale(${zoomLevel})`;
+    }
+
     /*para mostrar los detalles de la industria*/
     document.addEventListener('DOMContentLoaded', function () {
         $('[data-toggle="popover"]').popover();
@@ -1057,7 +1109,47 @@ Acude a la Oficina Estatal del Centro Federal de Conciliación y Registro Labora
             return;
         }
         $('#modal-aviso-privacidad').modal('hide'); 
+        
+        setTimeout(function () {
+            $('#modal-derechos-obligaciones').modal('show');
+        }, 500); 
     }
+
+    /* Derechos y obligaciones */
+    document.addEventListener('DOMContentLoaded', function () {
+        const check = document.getElementById('aceptarCheck');
+        const continuarBtn = document.getElementById('continuarBtn');
+        const mensajeError = document.getElementById('mensaje-error');
+
+        continuarBtn.addEventListener('click', function () {
+            if (check.checked) {
+                mensajeError.style.display = 'none';
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modal-derechos-obligaciones'));
+                modal.hide();
+            } else {
+                mensajeError.style.display = 'block';
+            }
+        });
+        check.addEventListener('change', function () {
+            if (this.checked) {
+                mensajeError.style.display = 'none';
+            }
+        });
+        window.cancelarProceso = function () {
+            window.location.href = "{{ route('publico') }}";
+        };
+        let zoomLevel = 1;
+    function zoomIn() {
+        zoomLevel += 0.1;
+        document.getElementById('pdfImg').style.transform = `scale(${zoomLevel})`;
+    }
+
+    function zoomOut() {
+        zoomLevel = Math.max(0.5, zoomLevel - 0.1);
+        document.getElementById('pdfImg').style.transform = `scale(${zoomLevel})`;
+    }
+    });
+
     /*Competencia Federal*/
     function validarIndustria() {
         var industria = $("input[name='industria']:checked");

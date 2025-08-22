@@ -122,7 +122,7 @@
                     <p> Con fecha <b>{{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}</b> siendo las <b>{{ \Carbon\Carbon::now()->translatedFormat('H:i') }}</b> horas, ante esta 
                         Autoridad Conciliadora, <b>{{ $solicitante->nombre }}</b>, me doy por notificado (a) personalmente de la fecha para la celebraciónn de la Audiencia de Conciliación de
                         la solicitud de Conciliación con número de identificación único <b>{{ $solicitud->NUE }}</b>, misma que tendrá verificativo el día 
-                        <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{ $audiencia->hora }}</b> horas, en la sala <b>[SALA]</b> de la Delegación 
+                        <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{ $audiencia->hora }}</b> horas, en la sala <b>{{ $audiencia->sala }}</b> de la Delegación 
                         Regional de Michoacán de Ocampo del Centro de Conciliación Laboral 
                         del Estado de Michoacán de Ocampo, con domicilio en <b>{{$direccion_sede}}</b>.<br><br>
                         Asimismo, de conformidad con la fracción X del artículo 684-E, me hago conocedor que <b>de no comparecer se archivara el presente asunto por falta de interés</b>.
