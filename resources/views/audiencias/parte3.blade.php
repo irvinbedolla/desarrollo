@@ -12,6 +12,14 @@
                         <div class="card-body">
                             <h3 class="text-center">Concluir Audiencia</h3>
                             
+                            @if (session('show_modal'))
+                                <script>
+                                    $(document).ready(function(){
+                                        $('#miModal').modal('show');
+                                    });
+                                </script>
+                            @endif
+
                             <!--Se realiza la validación de campos para ver si dejó alguno vacío-->
                             @if ($errors->any())
                                 <div class="alert alert-dark alert-dismissible fade show" role="alert">
@@ -178,10 +186,10 @@
 
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12">
-                                            <br><button type="submit" class="btn btn-primary">Guardar</button>
+                                            <br><button type="submit" class="btn btn-primary" name="valor" value="1">Vista Previa</button>
                                         </div>
                                     </div>
-                    
+
                                     <div id="no_conciliacion" class="row home-shape">
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <br><button type="submit" class="btn btn-primary">Guardar</button>
@@ -193,6 +201,7 @@
                                             <br><button type="submit" class="btn btn-primary">Guardar</button>
                                         </div>
                                     </div>
+
                                 </div>
                             </forms>
                         </div>
@@ -202,6 +211,27 @@
         </div>
     </section>
 @endsection
+
+<div class="modal fade" id="miModal" tabindex="-1" role="dialog" aria-labelledby="miModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="miModalLabel">Título del Modal</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Contenido del modal...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <!-- Modal para archivar audiencia-->
 <div class="modal fade" id="ModalArchivar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <form class='needs-validation novalidate'  method='POST' action="{{route('archivar_audiencia')}}">

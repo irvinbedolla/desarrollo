@@ -213,7 +213,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/notificaciones/consultar/{id}',    [SeerController::class, 'mostrar_citados'])->name('editar_citado');
         Route::get('notificaciones/editar',             [SeerController::class, 'editar_citados'])->name('editar_citado_enlace');  
         Route::post('notificaciones/actualizar',        [SeerController::class, 'editar_citados'])->name('actualizar_enlace');  
-
         Route::post('/seer/store_auxiliar',             [SeerController::class, 'store_auxiliares'])->name('seer.store_auxiliar');
         Route::post('/seer/store_conciliador',          [SeerController::class, 'store_conciliadores'])->name('seer.store_conciliador');
         Route::post('/seer/store_delegado',             [SeerController::class, 'store_delegado'])->name('seer.store_delegado');
@@ -346,6 +345,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/audieniecias/complimientos',           [SeerController::class, 'audiencias_cumplimiento'])->name('audiencias.cumplimiento');
         Route::post('/audiencia/consulta/solictud',         [SeerController::class, 'solicitudes_busqueda'])->name('solicitudes_busqueda');
         Route::post('/solicitud/guardarExpediente',         [SeerController::class, 'guardar_expediente'])->name('subir_expediente'); //Subir expediente
+        Route::get('/audieniecias/vista_previa/{id_solicitud}',             [SeerController::class, 'vista_previa'])->name('vista_previa');
+        Route::post('/solicitud/editar_audiencia',          [SeerController::class, 'editar_solicitud_audiencia'])->name('editar_solicitud_audiencia');
+        Route::post('/seleccionar_abogado_audiencia',       [SeerController::class, 'seleccionar_abogado_audiencia'])->name('seleccionar_abogado_audiencia');
+        Route::post('/audieencia/guardar_citadoC',          [SeerController::class, 'insertar_citados_audiencia'])->name('insertar_citados_audiencia');
+        Route::post('/audieencia/crear/PF',                 [SeerController::class, 'insertar_citado_audiencia'])->name('insertar_citado_audiencia');
+        Route::post('/solicitudes/actualiza_audiencia',     [SeerController::class, 'actualiza_citados_audiencia'])->name('actualiza_citados_audiencia');
+        Route::delete('/audieniecias/concepto_eliminar_pago/{id_solicitud}',  [SeerController::class, 'concepto_eliminar_pago'])->name('concepto_eliminar_pago');
+        Route::delete('/audieniecias/pago_eliminar_pago/{id_solicitud}',      [SeerController::class, 'pago_eliminar_pago'])->name('pago_eliminar_pago');
+        Route::post('/solicitudes/terminar_audiencia',      [SeerController::class, 'terminar_audiencia'])->name('terminar_audiencia');
     //Fin de Audiencias
     //Citados
         Route::post('/solicitud/guardar_citadoC',           [SeerController::class, 'insertar_citados_con'])->name('insertar_citado');
