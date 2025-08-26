@@ -37,20 +37,59 @@
                                                     <td><a class="btn btn-primary" href="{{ route('consultar_ratificacion', $solicitud->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
                                                     <td>
                                                         @if($solicitud->estatus === "Confirmado")
-                                                            <a class="btn btn-success" href="{{ route('PDFratifi', $solicitud->id) }}"  target="_black">Acuse</a>
+                                                            <div class="dropdown  mt-2">
+                                                                <button class="btn btn-warning dropdown-toggle load-pdfs" type="button" id="dropdownCitatoriosBtn-{{ $solicitud->id }}" data-id="{{ $solicitud->id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    Documentos
+                                                                </button>
+                                                                <ul class="dropdown-menu" aria-labelledby="dropdownCitatoriosBtn-{{ $solicitud->id }}">
+                                                                    <li><a class="btn btn-info" href="{{ route('VerDocumentosRatificacion', $solicitud->id) }}"       target="_blank">Documentos Digitales</a></li>
+                                                                    <li><a class="dropdown-item" href="{{ route('PDFratifi', $solicitud->id) }}" target="_blank">Acuse</a></li>
+                                                                    <li class="dropdown-divider"></li>
+                                                                </ul>
+                                                            </div>
                                                         @elseif($solicitud->estatus === "Conluida")
-                                                            <a class="btn btn-success" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}" target="_black">Convenio</a>
-                                                            <a class="btn btn-success" href="{{ route('PDFcumplimiento', $solicitud->id) }}"  target="_blank">Constancia de cumplimiento</a>
+                                                            <div class="dropdown  mt-2">
+                                                                <button class="btn btn-warning dropdown-toggle load-pdfs" type="button" id="dropdownCitatoriosBtn-{{ $solicitud->id }}" data-id="{{ $solicitud->id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    Documentos
+                                                                </button>
+                                                                <ul class="dropdown-menu" aria-labelledby="dropdownCitatoriosBtn-{{ $solicitud->id }}">
+                                                                    <li><a class="btn btn-info" href="{{ route('VerDocumentosRatificacion', $solicitud->id) }}" target="_blank">Documentos Digitales</a></li>
+                                                                    <li><a class="btn btn-success" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}" target="_black">Convenio</a></li>
+                                                                    <li><a class="btn btn-success" href="{{ route('PDFcumplimiento', $solicitud->id) }}"  target="_blank">Constancia de cumplimiento</a></li>
+                                                                </ul>
+                                                            </div>
                                                         @elseif($solicitud->estatus == "Concluida Pagos")
-                                                            <a class="btn btn-success" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}"  target="_blank">Convenio</a>
-                                                            <a class="btn btn-success" href="{{ route('PDFaudiencia', $solicitud->id) }}"  target="_blank">Acta de audiencia</a>
+                                                            <div class="dropdown  mt-2">
+                                                                <button class="btn btn-warning dropdown-toggle load-pdfs" type="button" id="dropdownCitatoriosBtn-{{ $solicitud->id }}" data-id="{{ $solicitud->id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    Documentos
+                                                                </button>
+                                                                <ul class="dropdown-menu" aria-labelledby="dropdownCitatoriosBtn-{{ $solicitud->id }}">
+                                                                    <li><a class="btn btn-info" href="{{ route('VerDocumentosRatificacion', $solicitud->id) }}" target="_blank">Documentos Digitales</a></li>
+                                                                    <li><a class="btn btn-success" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}" target="_black">Convenio</a></li>
+                                                                    <li><a class="btn btn-success" href="{{ route('PDFaudiencia', $solicitud->id) }}"  target="_blank">Acta de audiencia</a></li>
+                                                                </ul>
+                                                            </div>
                                                         @elseif($solicitud->estatus == "Incumplimiento")
-                                                            <a class="btn btn-success" href="{{ route('PDFincumplimiento', $solicitud->id) }}"  target="_blank">Incumplimiento</a>
+                                                            <div class="dropdown  mt-2">
+                                                                <button class="btn btn-warning dropdown-toggle load-pdfs" type="button" id="dropdownCitatoriosBtn-{{ $solicitud->id }}" data-id="{{ $solicitud->id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    Documentos
+                                                                </button>
+                                                                <ul class="dropdown-menu" aria-labelledby="dropdownCitatoriosBtn-{{ $solicitud->id }}">
+                                                                    <li><a class="btn btn-info" href="{{ route('VerDocumentosRatificacion', $solicitud->id) }}" target="_blank">Documentos Digitales</a></li>
+                                                                    <li><a class="btn btn-success" href="{{ route('PDFincumplimiento', $solicitud->id) }}" target="_black">Incumplimiento</a></li>
+                                                                </ul>
+                                                            </div>
                                                         @elseif($solicitud->estatus == "Archivada")
-                                                            <a class="btn btn-success" href="{{ route('PDFinteres', $solicitud->id) }}"  target="_blank">Acta de Archivo</a>
+                                                            <div class="dropdown  mt-2">
+                                                                <button class="btn btn-warning dropdown-toggle load-pdfs" type="button" id="dropdownCitatoriosBtn-{{ $solicitud->id }}" data-id="{{ $solicitud->id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    Documentos
+                                                                </button>
+                                                                <ul class="dropdown-menu" aria-labelledby="dropdownCitatoriosBtn-{{ $solicitud->id }}">
+                                                                    <li><a class="btn btn-info" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}" target="_blank">Documentos Digitales</a></li>
+                                                                    <li><a class="btn btn-success" href="{{ route('PDFinteres', $solicitud->id) }}" target="_black">Acta de Archivo</a></li>
+                                                                </ul>
+                                                            </div>
                                                         @endif
-
-
                                                     </td>
                                                 </tr>
                                             @endforeach

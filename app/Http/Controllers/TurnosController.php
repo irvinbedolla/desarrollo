@@ -1738,4 +1738,16 @@ class TurnosController extends Controller
         }
     }
 
+    public function VerDocumentosRatificacion($id){
+        $documento_general = Turnos::find($id); 
+        //Documentos del abogado y citados
+        $documento_abogado = Poder::
+        join('turnos','turnos.curp_solicitante','abogados.curp')
+        ->where('id',$id)
+        ->select('abogados.empresa','abogados.ine','abogados.representacion','abogados.anexo','abogados.cedula')
+        ->get();
+        
+       return view('ratificaciones/verDocumentos',compact('documento_general','documento_abogado'));
+    }
+
 }

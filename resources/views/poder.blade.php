@@ -342,14 +342,14 @@
 
                                         <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div class="form-group">
-                                                <label>Anexos(Solo si se requiere, Acta Constitutiva, Poder General con facultades para sustituir o delegar poder)</label><br>
+                                                <label>Anexos (Opcional)</label><br>
                                                 <input type="file" name="documentoAnexo" class="form-control" accept=".pdf">
                                             </div>
                                         </div>
 
                                         <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div class="form-group">
-                                                <label>Anexos 2(Solo si se requiere)</label><br>
+                                                <label>Anexos 2 (Opcional)</label><br>
                                                 <input type="file" name="documentoPoder" class="form-control" accept=".pdf">
                                             </div>
                                         </div>

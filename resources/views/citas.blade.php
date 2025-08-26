@@ -312,7 +312,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="name">CURP del trabajador <span style="color:red;">(*)</span></label>
+                                                        <label for="name">CURP del trabajador</span></label>
                                                         <input type="text" name="trabajador_curp"  oninput="validarInput(this, 'resultado_curp_trabajador')" class="form-control" required> 
                                                         <pre id="resultado_curp_trabajador" class="resultado"></pre>
                                                         <div class="invalid-feedback">
@@ -322,7 +322,7 @@
                                                 </div>
                                                 <div  class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">Documento de la CURP <span style="color:red;">(*)</span></label>
+                                                        <label for="name">Documento de la CURP</span></label>
                                                         <input type="file" name="documentoCurp" class="form-control" accept=".pdf" required> 
                                                         <div class="invalid-feedback">
                                                             El campo edad es obligatorio.
@@ -452,7 +452,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="name">Motivo de la conciliación <span style="color:red;">(*)</span></label>
-                                                        <select id="motivo" name="motivo" class="form-control"  required>
+                                                        <select id="motivo" name="motivo" class="form-control" type="number"  required>
                                                             <option value="">Seleccione</option>
                                                             <option value="Pago de prestaciones">Pago de prestaciones</option>
                                                             <option value="Terminación voluntaria de la relación de trabajo">Terminación voluntaria de la relación de trabajo</option>

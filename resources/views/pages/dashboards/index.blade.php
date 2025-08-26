@@ -134,28 +134,30 @@
                                                 <img src="public/assets/images/ccl-r.png" alt="" style="max-width: 50%; height: auto;">
                                             </li>
                                         </ul>
-                                        <div class="container">
-                                            <h1>Agenda</h1>
-                                            <div class="mt-3 mb-3 text-left">
-                                                    <button id="btn-actualizar" class="btn btn-lg btn-custom-morado">Actualizar</button>                                                    
-                                                    
-                                                    <button id="btn-citas" class="btn btn-lg btn-custom-morado float-right">Citas</button>
-                                                    <button id="btn-ratificaciones" class="btn btn-lg btn-custom-morado float-right">Ratificaciones</button>
-                                                    <button id="btn-pagos" class="btn btn-lg btn-custom-morado float-right">Cumplimientos</button>
-                                                    <button id="btn-audiencias" class="btn btn-lg btn-custom-morado  float-right">Audiencias</button>
+                                        @if($userRole == 'Super Usuario' || $userRole=='Auxiliar' || $userRole='Conciliador' || $userRole=='Notificador' || $userRole=='Excepcion')
+                                            <div class="container">
+                                                <h1>Agenda</h1>
+                                                <div class="mt-3 mb-3 text-left">
+                                                        <button id="btn-actualizar" class="btn btn-lg btn-custom-morado">Actualizar</button>                                                    
+                                                        
+                                                        <button id="btn-citas" class="btn btn-lg btn-custom-morado float-right">Citas</button>
+                                                        <button id="btn-ratificaciones" class="btn btn-lg btn-custom-morado float-right">Ratificaciones</button>
+                                                        <button id="btn-pagos" class="btn btn-lg btn-custom-morado float-right">Cumplimientos</button>
+                                                        <button id="btn-audiencias" class="btn btn-lg btn-custom-morado  float-right">Audiencias</button>
+                                                </div>
+                                                <div id="calendar">
+                                                </div>
+                                                <!--
+                                                <div class="mt-3 mb-3 text-center">
+                                                    <form action="{{ url('citas/exportar-excel') }}" method="GET">
+                                                        <button type="submit" class="btn btn-success">
+                                                            <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                                -->
                                             </div>
-                                            <div id="calendar">
-                                            </div>
-                                            <!--
-                                            <div class="mt-3 mb-3 text-center">
-                                                <form action="{{ url('citas/exportar-excel') }}" method="GET">
-                                                    <button type="submit" class="btn btn-success">
-                                                        <i class="bi bi-file-earmark-excel"></i> Exportar Excel
-                                                    </button>
-                                                </form>
-                                            </div>
-                                            -->
-                                        </div>
+                                        @endrole
                                     </div>
                                 </div>
                             </div>

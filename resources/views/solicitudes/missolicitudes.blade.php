@@ -38,15 +38,15 @@
                                                                     Documentos
                                                                 </button>
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownCitatoriosBtn-{{ $solicitud->id }}">
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}"      target="_blank">Documentos Digitales</a></li>
                                                                     <li><a class="dropdown-item" href="{{ route('PDFnotificacion_solicitante', $solicitud->id) }}" target="_blank">Notificación al solicitante</a></li>
                                                                     <li><a class="dropdown-item" href="{{ route('PDFacuse_solicitud', $solicitud->id) }}"  target="_blank">Acuse de solicitud</a></li>
                                                                     <li class="dropdown-divider"></li>
-                                                                    <li class="dropdown-item text-muted">Citatorios</li>
-                                                                    <div id="citatorios-list-{{ $solicitud->id }}"></div>
                                                                 </ul>
                                                             </div>                                           
                                                         @endif
                                                         @if($solicitud->estatus === "Concluida")
+                                                            <a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}"      target="_blank">Documentos Digitales</a>
                                                             <a class="btn btn-success" href="{{ route('PDFconveniosolicitud', $solicitud->id) }}"  target="_blank">Convenio</a>
                                                         @endif
                                                     </td>
