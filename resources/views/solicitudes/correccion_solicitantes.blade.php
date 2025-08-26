@@ -552,10 +552,26 @@ body {font-family: Arial;}
                                                         <label for="name">Tipo de Vialidad</label>
                                                         <select name="vialidad_citado[]" class="form-control" required>
                                                             <option value="">SELECCIONE</option>
-                                                            <option value="Calle"     {{ $citado['tipo_vialidad'] == 'Calle' ? "selected" : '' }}   >Calle</option>
-                                                            <option value="Avenida"   {{ $citado['tipo_vialidad'] == 'Avenida' ? "selected" : '' }} >Avenida</option>
-                                                            <option value="Calzada"   {{ $citado['tipo_vialidad'] == 'Calzada' ? "selected" : '' }} >Calzada</option>
-                                                            <option value="Boulevard" {{ $citado['tipo_vialidad'] == 'Boulevard' ? "selected" : '' }}>Boulevard</option>
+                                                            <option value="CALLE"          {{ $citado['tipo_vialidad'] == 'CALLE' ? "selected" : '' }}   >Calle</option>
+                                                            <option value="AVENIDA"        {{ $citado['tipo_vialidad'] == 'AVENIDA' ? "selected" : '' }} >Avenida</option>
+                                                            <option value="CALZADA"        {{ $citado['tipo_vialidad'] == 'CALZADA' ? "selected" : '' }} >Calzada</option>
+                                                            <option value="BOULEVARD"      {{ $citado['tipo_vialidad'] == 'BOULEVARD' ? "selected" : '' }} >Boulevard</option>
+                                                            <option value="AMPLIACIÓN"     {{ $citado['tipo_vialidad'] == 'AMPLIACIÓN' ? "selected" : '' }} >Ampliación</option>
+                                                            <option value="ANDADOR"        {{ $citado['tipo_vialidad'] == 'ANDADOR' ? "selected" : '' }} >Andador</option>
+                                                            <option value="AUTOPISTA"      {{ $citado['tipo_vialidad'] == 'AUTOPISTA' ? "selected" : '' }} >Autopista</option>
+                                                            <option value="CALLEJÓN"       {{ $citado['tipo_vialidad'] == 'CALLEJÓN' ? "selected" : '' }}>Callejón</option>
+                                                            <option value="CARRETERA"      {{ $citado['tipo_vialidad'] == 'CARRETERA' ? "selected" : '' }}   >Carretera</option>
+                                                            <option value="CERRADA"        {{ $citado['tipo_vialidad'] == 'CERRADA' ? "selected" : '' }} >Cerrada</option>
+                                                            <option value="CIRCUITO"       {{ $citado['tipo_vialidad'] == 'CIRCUITO' ? "selected" : '' }} >Circuito</option>
+                                                            <option value="CIRCUNVALACIÓN" {{ $citado['tipo_vialidad'] == 'CIRCUNVALACIÓN' ? "selected" : '' }} >Circunvalación</option>
+                                                            <option value="CONTINUACIÓN"   {{ $citado['tipo_vialidad'] == 'CONTINUACIÓN' ? "selected" : '' }} >Continuación</option>
+                                                            <option value="CORREDOR"       {{ $citado['tipo_vialidad'] == 'CORREDOR' ? "selected" : '' }} >Corredor</option>
+                                                            <option value="DIAGONAL"       {{ $citado['tipo_vialidad'] == 'DIAGONAL' ? "selected" : '' }} >Diagonal</option>
+                                                            <option value="EJE VIAL"       {{ $citado['tipo_vialidad'] == 'EJE VIAL' ? "selected" : '' }}>Eje vial</option>
+                                                            <option value="PERIFÉRICO"     {{ $citado['tipo_vialidad'] == 'PERIFÉRICO' ? "selected" : '' }}   >Periférico</option>
+                                                            <option value="PROLONGACIÓN"   {{ $citado['tipo_vialidad'] == 'PROLONGACIÓN' ? "selected" : '' }} >Prolongación</option>
+                                                            <option value="RETORNO"        {{ $citado['tipo_vialidad'] == 'RETORNO' ? "selected" : '' }} >Retorno</option>
+                                                            <option value="VIADUCTO"       {{ $citado['tipo_vialidad'] == 'VIADUCTO' ? "selected" : '' }} >Viaducto</option>
                                                         </select>
                                                         <div class="invalid-feedback">
                                                             El campo vialidad es obligatorio.
@@ -732,10 +748,26 @@ body {font-family: Arial;}
                                 <label for="name">Tipo de Vialidad del citado *</label>
                                 <select name="vialidad" class="form-control" required>
                                     <option value="">SELECCIONE</option>
-                                    <option value="Calle">CALLE</option>
-                                    <option value="Avenida">AVENIDA</option>
-                                    <option value="Calzada">CALZADA</option>
-                                    <option value="Boulevard">BOULEVARD</option>
+                                    <option value="AMPLIACIÓN">Ampliación</option>
+                                    <option value="ANDADOR">Andador</option>
+                                    <option value="AUTOPISTA">Autopista</option>
+                                    <option value="AVENIDA">Avenida</option>
+                                    <option value="BOULEVARD">Boulevard</option>
+                                    <option value="CALLE">Calle</option>
+                                    <option value="CALLEJÓN">Callejón</option>
+                                    <option value="CALZADA">Calzada</option>
+                                    <option value="CARRETERA">Carretera</option>
+                                    <option value="CERRADA">Cerrada</option>
+                                    <option value="CIRCUITO">Circuito</option>
+                                    <option value="CIRCUNVALACIÓN">Circunvalación</option>
+                                    <option value="CONTINUACIÓN">Continuación</option>
+                                    <option value="CORREDOR">Corredor</option>
+                                    <option value="DIAGONAL">Diagonal</option>
+                                    <option value="EJE VIAL">Eje vial</option>
+                                    <option value="PERIFÉRICO">Periférico</option>
+                                    <option value="PROLONGACIÓN">Prolongación</option>
+                                    <option value="RETORNO">Retorno</option>
+                                    <option value="VIADUCTO">Viaducto</option>
                                 </select>
                                 <div class="invalid-feedback">
                                     El campo vialidad es obligatorio.

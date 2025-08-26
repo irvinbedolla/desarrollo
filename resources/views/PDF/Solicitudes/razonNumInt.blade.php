@@ -61,55 +61,77 @@
             .page-break {
                 page-break-after: always;
             }
+            table, th, td {
+                border: 1px solid #869b9c;
+                border-collapse: collapse;
+            }
         </style>
+        @php
+            $descripcionesMedio = [
+                'PLACAS OFICIALES' => 'LA(S) PLACAS DE SEÑALIZACIÓN OFICIAL MÁS PRÓXIMA(S) AL DOMICILIO EN QUE SE ACTÚA, CON EL RESPECTIVO NOMBRE DE LA ALCALDÍA, COLONIA Y CALLE,',
+                'NÚMERO VISIBLE' => 'EL MÚMERO VISIBLE DEL INMUEBLE,',
+                'NUMERACIÓN CONSISTENTE' => 'EL NÚMERO DEL INMUEBLE ES CONSISTENTE CON LA NUMERACIÓN DE LA CALLE,',
+                'INFORMES DE VECINOS' => 'LOS INFORMES DE VECINOS DEL LUGAR, QUIENES CONFIRMAN QUE SE TRATA DEL DOMICILIO CORRECTO,',
+                'RÓTULOS VISIBLES' => 'LOS RÓTULOS VISIBLES EN EL INMUEBLE'
+            ];
+        @endphp
     </head>
-    
 
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
-        <footer>
-           
-        </footer>
+        <footer></footer>
         <main>
             <div class="content">
                 <div class="table-responsive">
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
-                            <tr>    
-                                <td><b>Número de identificación único: </b></td>
-                                <td>{{ $solicitud->NUE }}</td>
-                            </tr> 
-                            <tr>   
-                                <td><b>Centro de conciliación: </b></td>
-                                <td>{{ $solicitud->delegacion }}</td>
-                            </tr>
-                            <tr>   
-                                <td><b>Solicitante: </b></td>
-                                <td>{{$solicitante->nombre}}</td>
-                            </tr>
-                             <tr>   
-                                <td><b>Citado: </b></td>
-                                <td>{{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</td>
-                            </tr>
+                        <tr>    
+                            <td><b>Número de identificación único: </b></td>
+                            <td>{{ $solicitud->NUE }}</td>
+                        </tr> 
+                        <tr>   
+                            <td><b>Centro de conciliación: </b></td>
+                            <td>{{ $solicitud->delegacion }}</td>
+                        </tr>
+                        <tr>   
+                            <td><b>Solicitante: </b></td>
+                            <td>{{$solicitante->nombre}}</td>
+                        </tr>
+                        <tr>   
+                            <td><b>Citado: </b></td>
+                            <td>{{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</td>
+                        </tr>
                     </table>
-                </div><br><br><br>
+                </div><br><br><br><br><br><br><br><br><br><br><br>
                 <!-- DELIGENCIA NO EXITOSA, NO SE LOCALIZA INTERIOR -->
                 <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p><br>
                            
                 <p>Siendo las <b>{{ \Carbon\Carbon::now()->format('H') }} HORAS CON {{ \Carbon\Carbon::now()->format('i') }} MINUTOS
                     DEL DÍA {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}, LIC. {{$notificador->name}}</b> en mi
-                    calidad de notificador adscrito al Centro de Conciliación Laboral, oficina estatal {{ $solicitud->delegacion }}, en 
-                    ejercicio de las facultades conferidas en los artìculos de la Ley Orgànica del Centro de Conciliaciòn Laboral del 
-                    Estado de Michoacàn de Ocampo y 21 del reglamento interior del Centro de Conciliaciòn Laboral del Estado de Michoacàn 
+                    calidad de notificador(a) adscrito al Centro de Conciliación Laboral, oficina estatal {{ $solicitud->delegacion }}, en 
+                    ejercicio de las facultades conferidas en los artículos de la Ley Orgánica del Centro de Conciliación Laboral del 
+                    Estado de Michoacán de Ocampo y 21 del reglamento interior del Centro de Conciliación Laboral del Estado de Michoacán 
                     de Ocampo, a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
                     en el expediente citado, en el que se ordena NOTIFICAR <b>AL CITADO: {{$citado->nombre}}@if($citado->primer_apellido!=null) {{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null) {{$citado->segundo_apellido}}@endif</b>, 
                     en el domicilio señalado en <b>{{strtoupper($citado->tipo_vialidad)}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) int. {{$citado->n_int}}@endif, COLONIA {{$citado->colonia}}, 
-                    {{$municipioCitado}}, CP {{$citado->cp}}, ESTADO MICHOACÁN DE OCAMPO</b>. Cerciorándome de ser el domicilio correcto por <b>a) LA(S) PLACAS DE SEÑALIZACIÓN OFICIAL MÁS PRÓXIMA(S) 
-                    AL DOMICILIO EN QUE SE ACTÚA, CON EL RESPECTIVO NOMBRE DE LA ALCALDÍA, COLONIA Y [TIPO_VILAIDAD], b) EL MÚMERO VISIBLE DEL INMUEBLE</b>.<br><br>
+                    {{strtoupper($municipioCitado)}}, CP {{$citado->cp}}, ESTADO MICHOACÁN DE OCAMPO.</b> Cerciorándome de ser el domicilio correcto por
+                    <b>
+                        @php
+                            $letras = range('A', 'Z'); // Para incisos: a), b), c), ...
+                            $index = 0;
+                            $medios = is_array($citado->medio) ? $citado->medio : explode(',', $citado->medio);
+                        @endphp
+
+                        @foreach($medios as $medioSeleccionado)
+                            @php $medioSeleccionado = trim($medioSeleccionado); @endphp
+                            @if(isset($descripcionesMedio[$medioSeleccionado]))
+                                <strong>{{ $letras[$index] }})</strong> {{ $descripcionesMedio[$medioSeleccionado] }}
+                                @php $index++; @endphp
+                            @endif
+                        @endforeach 
+                    </b><br><br>
 
                     Hago constar a la autoridad conciliadora competente que al recorrer la parte señalada del inmueble, no logro localizar el número interior proporcionado 
-                    por la parte solicitante; adicionalmente hago constar que <b>{{$citado->abundar_area}}[RECORRIENDO LA PLANTA BAJA DEL INMUEBLE SEÑALADO SE PUEDE APRECIAR QUE NO TIENEN SEÑALADOS LOS 
-                    INTERIORES, Y SE PUEDE APRECIAR UNA TINTORERIA, BANCOS SCOTIANBANK, BANAMEX, CAFÉ STARBUCKS, SALÓN & SPA, RELOJERÍA Y JOYERÍA, SIN EMBARGO NO ME ES POSIBLE 
-                    LOCALIZAR EL INMUEBLE SEÑALADO POR LA PARTE ACTORA]</b>.<br><br>
+                    por la parte solicitante; adicionalmente hago constar que <b>{{$citado->abundar_area}}.</b><br><br>
                     
                     En esa razón, me encuentro imposibilitado para dar cumplimiento a lo ordenado en el citatorio de conciliación; toda vez que no cuento 
                     con los elementos de cercioramiento requeridos por el artículo 743 fracción I de la Ley Federal del Trabajo, por lo que me es imposible 
@@ -117,7 +139,7 @@
 
                     <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. Doy fe.</b> 
                 </p>
-                <br>
+                <br><br><br>
                 <p><center><b>___________________________________<br>LIC. {{$notificador->name}}<br> FUNCIONARIO/A NOTIFICADOR/A</b></center> </p>
                 <div class="page-break"></div> <!-- Genera un salto de línea-->
                 @foreach($imagenes as $index => $imagen) <!--Muestra una fotografía por hoja, númerando por anexos-->
@@ -126,7 +148,8 @@
                             <div class="table-responsive">
                                 <table id="tabla_solicitud" class="table-striped" style="width:65%; float: right;">
                                     <tr>   
-                                        <td><b>ANEXO FOTOGRAFÍAS {{ $index + 1 }}</b></td>
+                                        <td><b>ANEXO FOTOGRAFÍAS</b></td>
+                                        <td><b>{{ $index + 1 }}</b></td>
                                     </tr>
                                     <tr>    
                                         <td><b>Número de identificación único: </b></td>

@@ -218,10 +218,26 @@
                                                     <label for="name">Tipo de Vialidad del citado <span style="color:red;">(*)</span></label>
                                                     <select name="vialidad" class="form-control" required>
                                                         <option value="">SELECCIONE</option>
-                                                        <option value="Calle">CALLE</option>
-                                                        <option value="Avenida">AVENIDA</option>
-                                                        <option value="Calzada">CALZADA</option>
-                                                        <option value="Boulevard">BOULEVARD</option>
+                                                        <option value="AMPLIACIÓN">Ampliación</option>
+                                                        <option value="ANDADOR">Andador</option>
+                                                        <option value="AUTOPISTA">Autopista</option>
+                                                        <option value="AVENIDA">Avenida</option>
+                                                        <option value="BOULEVARD">Boulevard</option>
+                                                        <option value="CALLE">Calle</option>
+                                                        <option value="CALLEJÓN">Callejón</option>
+                                                        <option value="CALZADA">Calzada</option>
+                                                        <option value="CARRETERA">Carretera</option>
+                                                        <option value="CERRADA">Cerrada</option>
+                                                        <option value="CIRCUITO">Circuito</option>
+                                                        <option value="CIRCUNVALACIÓN">Circunvalación</option>
+                                                        <option value="CONTINUACIÓN">Continuación</option>
+                                                        <option value="CORREDOR">Corredor</option>
+                                                        <option value="DIAGONAL">Diagonal</option>
+                                                        <option value="EJE VIAL">Eje vial</option>
+                                                        <option value="PERIFÉRICO">Periférico</option>
+                                                        <option value="PROLONGACIÓN">Prolongación</option>
+                                                        <option value="RETORNO">Retorno</option>
+                                                        <option value="VIADUCTO">Viaducto</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El campo vialidad es obligatorio.

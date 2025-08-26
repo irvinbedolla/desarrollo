@@ -353,11 +353,15 @@
             </div>
             <div class="modal-body text-center">
                 <div class="text-center mb-3">
-                    <button onclick="zoomIn()" class="btn btn-sm btn-primary">+</button>
-                    <button onclick="zoomOut()" class="btn btn-sm btn-secondary">-</button>
+                    <div style="display: inline-block; background-color: #CEA845; padding: 10px 40px; border-radius: 4px;">
+                        <button onclick="zoomIn()" class="btn btn-lg btn-secondary mx-2" style="font-size: 18px; width: 30px; height: 30px; padding: 0; line-height: 30px; text-align: center;"><b>+</b></button>
+                        <button onclick="zoomOut()" class="btn btn-lg btn-secondary mx-2" style="font-size: 18px; width: 30px; height: 30px; padding: 0; line-height: 30px; text-align: center;"><b>−</b></button>
+                    </div>
                 </div>
-                <div class="text-center" style="overflow: auto;">
-                    <img id="pdfImg" src="{{ asset('storage/app/public/pdf/terminos_condiciones.jpg') }}" alt="PDF como imagen" style="transition: transform 0.2s ease; max-width: 50%; height: auto;" />
+                <div id="pdfContainer" style="overflow: auto; max-height: 600px;">
+                    <img id="pdfImg"
+                        src="{{ asset('storage/app/public/pdf/terminos_condiciones.jpg') }}" alt="PDF como imagen"
+                        style="width: 100%; max-width: none; transition: width 0.2s ease;" />
                 </div>
                 <div class="form-check mt-3">
                     <input class="form-check-input" type="checkbox" id="aceptarCheck"  style="width: 18px; height: 18px; border: 2px solid #CEA845; accent-color: #CEA845; border-radius: 4px;">
@@ -1074,14 +1078,18 @@ Acude a la Oficina Estatal del Centro Federal de Conciliación y Registro Labora
 
 <script>
     //Para realizar zoom en el modal con la imagen
-    let zoomLevel = 1;
+    let zoomLevel = 100; // porcentaje inicial
     function zoomIn() {
-        zoomLevel += 0.1;
-        document.getElementById('pdfImg').style.transform = `scale(${zoomLevel})`;
+        if (zoomLevel < 300) { 
+            zoomLevel += 10;
+            document.getElementById("pdfImg").style.width = zoomLevel + "%";
+        }
     }
     function zoomOut() {
-        zoomLevel = Math.max(0.5, zoomLevel - 0.1);
-        document.getElementById('pdfImg').style.transform = `scale(${zoomLevel})`;
+        if (zoomLevel > 50) { 
+            zoomLevel -= 10;
+            document.getElementById("pdfImg").style.width = zoomLevel + "%";
+        }
     }
 
     /*para mostrar los detalles de la industria*/

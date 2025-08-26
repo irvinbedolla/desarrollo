@@ -78,11 +78,27 @@
                                             <label for="name">Tipo de Vialidad del citado *</label>
                                             <select name="vialidad" class="form-control" readonly>
                                                 <option value="">SELECCIONE</option>
-                                                <option value="Calle" @php if($folio->tipo_vialidad === "Calle") echo "selected"  @endphp>CALLE</option>
-                                                    <option value="Avenida" @php if($folio->tipo_vialidad === "Avenida") echo "selected"  @endphp>AVENIDA</option>
-                                                    <option value="Calzada" @php if($folio->tipo_vialidad === "Calzada") echo "selected"  @endphp>CALZADA</option>
-                                                    <option value="Boulevard" @php if($folio->tipo_vialidad === "Boulevard") echo "selected"  @endphp>BOULEVARD</option>
-                                                </select>
+                                                <option value="CALLE"          @php if($folio->tipo_vialidad === "CALLE") echo "selected"  @endphp>Calle</option>
+                                                <option value="AVENIDA"        @php if($folio->tipo_vialidad === "AVENIDA") echo "selected"  @endphp>Avenida</option>
+                                                <option value="CALZADA"        @php if($folio->tipo_vialidad === "CALZADA") echo "selected"  @endphp>Calzada</option>
+                                                <option value="BOULEVARD"      @php if($folio->tipo_vialidad === "BOULEVARD") echo "selected"  @endphp>Boulevard</option>
+                                                <option value="AMPLIACIÓN"     @php if($folio->tipo_vialidad === 'AMPLIACIÓN') echo "selected"  @endphp >Ampliación</option>
+                                                <option value="ANDADOR"        @php if($folio->tipo_vialidad === 'ANDADOR') echo "selected"  @endphp >Andador</option>
+                                                <option value="AUTOPISTA"      @php if($folio->tipo_vialidad === 'AUTOPISTA') echo "selected"  @endphp >Autopista</option>
+                                                <option value="CALLEJÓN"       @php if($folio->tipo_vialidad === 'CALLEJÓN') echo "selected"  @endphp>Callejón</option>
+                                                <option value="CARRETERA"      @php if($folio->tipo_vialidad === 'CARRETERA') echo "selected"  @endphp>Carretera</option>
+                                                <option value="CERRADA"        @php if($folio->tipo_vialidad === 'CERRADA') echo "selected"  @endphp>Cerrada</option>
+                                                <option value="CIRCUITO"       @php if($folio->tipo_vialidad === 'CIRCUITO') echo "selected"  @endphp>Circuito</option>
+                                                <option value="CIRCUNVALACIÓN" @php if($folio->tipo_vialidad === 'CIRCUNVALACIÓN') echo "selected"  @endphp>Circunvalación</option>
+                                                <option value="CONTINUACIÓN"   @php if($folio->tipo_vialidad === 'CONTINUACIÓN') echo "selected"  @endphp>Continuación</option>
+                                                <option value="CORREDOR"       @php if($folio->tipo_vialidad === 'CORREDOR') echo "selected"  @endphp>Corredor</option>
+                                                <option value="DIAGONAL"       @php if($folio->tipo_vialidad === 'DIAGONAL') echo "selected"  @endphp>Diagonal</option>
+                                                <option value="EJE VIAL"       @php if($folio->tipo_vialidad === 'EJE VIAL') echo "selected"  @endphp>Eje vial</option>
+                                                <option value="PERIFÉRICO"     @php if($folio->tipo_vialidad === 'PERIFÉRICO') echo "selected"  @endphp>Periférico</option>
+                                                <option value="PROLONGACIÓN"   @php if($folio->tipo_vialidad === 'PROLONGACIÓN') echo "selected"  @endphp>Prolongación</option>
+                                                <option value="RETORNO"        @php if($folio->tipo_vialidad === 'RETORNO') echo "selected"  @endphp>Retorno</option>
+                                                <option value="VIADUCTO"       @php if($folio->tipo_vialidad === 'VIADUCTO') echo "selected"  @endphp>Viaducto</option>
+                                            </select>
                                             <div class="invalid-feedback">
                                                 El campo vialidad es obligatorio.
                                             </div>

@@ -3753,7 +3753,6 @@ class SeerController extends Controller
         }
         
        // $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
-
         $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
         $salario_mensual = $salario_diario * 30;
         $diarioTexto = $this->convertirNumerosALetras($salario_diario);
@@ -3773,11 +3772,17 @@ class SeerController extends Controller
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
         ->first();
-        
+
+        $citados = SeerCitados::where('id_solicitud', $id)->get();
+
+        $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
+        $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
+        ->first();
+
         $html = view('PDF/Solicitudes/convenioSolicitud', 
         compact('id', 'solicitud', /*'dias_descanso',*/ 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','vacacionesTexto',
         'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
-        'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones','solicitante'))
+        'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones','solicitante','citados','audiencia'))
         ->render();
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -4879,7 +4884,9 @@ class SeerController extends Controller
         $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
         ->where("seer_citados.id", $id)
         ->first();
-
+        if (!empty($citado->medio)) {
+            $citado->medio = json_decode($citado->medio);
+        }
         $municipioCitado = null;
         if ($citado && $citado->municipio_citado) {
             $municipio = \App\Models\Municipios::find($citado->municipio_citado);
@@ -4927,7 +4934,9 @@ class SeerController extends Controller
         $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
         ->where("seer_citados.id", $id)
         ->first();
-
+        if (!empty($citado->medio)) {
+            $citado->medio = json_decode($citado->medio);
+        }
         $municipioCitado = null;
         if ($citado && $citado->municipio_citado) {
             $municipio = \App\Models\Municipios::find($citado->municipio_citado);
@@ -4975,7 +4984,9 @@ class SeerController extends Controller
         $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
         ->where("seer_citados.id", $id)
         ->first();
-
+        if (!empty($citado->medio)) {
+            $citado->medio = json_decode($citado->medio);
+        }
         $municipioCitado = null;
         if ($citado && $citado->municipio_citado) {
             $municipio = \App\Models\Municipios::find($citado->municipio_citado);
