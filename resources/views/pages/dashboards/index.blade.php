@@ -134,7 +134,8 @@
                                                 <img src="public/assets/images/ccl-r.png" alt="" style="max-width: 50%; height: auto;">
                                             </li>
                                         </ul>
-                                        @if($userRole == 'Super Usuario' || $userRole=='Auxiliar' || $userRole='Conciliador' || $userRole=='Notificador' || $userRole=='Excepcion')
+                                        @if($userRole[0] == 'Super Usuario' || $userRole[0] == 'Auxiliar'    || 
+                                            $userRole[0] == 'Conciliador'   || $userRole[0] == 'Notificador' || $userRole[0] == 'Excepcion')
                                             <div class="container">
                                                 <h1>Agenda</h1>
                                                 <div class="mt-3 mb-3 text-left">
@@ -157,7 +158,7 @@
                                                 </div>
                                                 -->
                                             </div>
-                                        @endrole
+                                        @endif
                                     </div>
                                 </div>
                             </div>

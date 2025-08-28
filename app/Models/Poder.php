@@ -12,5 +12,5 @@ class Poder extends Model
     protected $primaryKey = 'idAbogado';
     protected $fillable = ['nombres', 'primer_apellido','segundo_apellido','telefono','email', 'ine', 'cedula', 'anexo', 'representacion', 'fechaRegistro', 'fechaVigencia', 
                             'empresa', 'eliminado', 'curp', 'estado_poder', 'municipio_poder', 'vialidadPoder', 'vialidad_callePoder', 'coloniaAbogadoAlta', 'NExtAbogadoAlta',
-                            'NIntAbogadoAlta', 'cpAbogadoAlta', 'rfc', 'industria', 'poder', 'regionMorelia', 'regionUruapan', 'regionZamora','estatus'];
+                            'NIntAbogadoAlta', 'cpAbogadoAlta', 'rfc', 'industria', 'poder', 'regionMorelia', 'regionUruapan', 'regionZamora','estatus','tipo'];
 }

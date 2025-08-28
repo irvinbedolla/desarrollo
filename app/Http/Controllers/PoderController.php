@@ -36,14 +36,13 @@ class PoderController extends Controller
     public function registro()
     {
         $estados = Estados::all();
-        $municipios = Municipios::all();
+        $municipios = Municipios::where('estado',"=",16)->get();
         return view('poder', compact('municipios','estados'));
     }
 
     public function store(Request $request)
     {
         $data = $request->all();
-        
         if(!isset($data['moreliaSucursal'])){
             $regionmorelia = "No";
         }
@@ -65,67 +64,116 @@ class PoderController extends Controller
 
         //Validar documentacion
         request()->validate([
-            'nombresAbogadoAlta'        => 'required',
-            'primer_apellido'           => 'required',
-            'segundo_apellido'          => 'required',
-            'correoAbogadoAlta'         => 'required',
-            'empresaAbogadoAlta'        => 'required',
-            'curpAbogadoAlta'           => 'required',
-            'estado_poder'              => 'required',
-            'municipio_poder'           => 'required',
-            'vialidadPoder'             => 'required',
-            'vialidad_callePoder'       => 'required',
-            'coloniaAbogadoAlta'        => 'required',
-            'NExtAbogadoAlta'           => 'required',
-            'cpAbogadoAlta'             => 'required',
-            'fechaVigenciaAlta'         => 'required',
-            'industriaAlta'             => 'required',
-            'descripcionpoderAlta'      => 'required',
-            'documentoIne'              => 'required',
-            'documentoRepresentacion'   => 'required',
+            'tipo'                      => 'required',
             'documentoPoder'            => 'nullable',
             'documentoAnexo'            => 'nullable',
         ], $data);
 
-        //Validar las regiones
-        if($regionmorelia == "No" && $regionuruapan == "No" && $regionzamora == "No"){
-            return back()->withErrors('Debes seleccionar al menos una Región.');
-        }
 
+        if($data["tipo"] != "FisicaD"){
+            //Validar las regiones
+            if($regionmorelia == "No" && $regionuruapan == "No" && $regionzamora == "No"){
+                return back()->withErrors('Debes seleccionar al menos una Región.');
+            }
+        }
 
         //Validar que no exista el abogado
         $abogado = Poder::where(['nombres' => $data["nombresAbogadoAlta"], 'primer_apellido' => $data["primer_apellido"], 
         'segundo_apellido' => $data["segundo_apellido"], 'empresa' => $data["empresaAbogadoAlta"]])->first();
         if(!$abogado){
+            //Vamos insetar los datos para la persona fisica con representante legal
+            if($data["tipo"] == "FisicaR"){
+                $data_insertar = array(
+                    'nombres'               => $data["nombresAbogadoAlta"],
+                    'primer_apellido'       => $data["primer_apellido"],
+                    'segundo_apellido'      => $data["segundo_apellido"],
+                    'telefono'              => $data["telefonoAbogadoAlta"], 
+                    'email'                 => $data["correoAbogadoAlta"],
+                    'fechaRegistro'         => date('y-m-d'),
+                    'fechaVigencia'         => $data["fechaVigenciaAlta"],
+                    'empresa'               => $data["empresaAbogadoAlta"],
+                    'eliminado'             => 0,
+                    'curp'                  => $data["curpAbogadoAlta"],
+                    'estado_poder'          => $data["estado_poder"],
+                    'municipio_poder'       => $data["municipio_poder"],
+                    'vialidadPoder'         => $data["vialidadPoder"],
+                    'vialidad_callePoder'   => $data["vialidad_callePoder"],
+                    'coloniaAbogadoAlta'    => $data["coloniaAbogadoAlta"],
+                    'NExtAbogadoAlta'       => $data["NExtAbogadoAlta"],
+                    'NIntAbogadoAlta'       => $data["NIntAbogadoAlta"],
+                    'cpAbogadoAlta'         => $data["cpAbogadoAlta"],
+                    'rfc'                   => $data["RFCAbogadoAlta"],
+                    'industria'             => $data["industriaAlta"],
+                    'poder'                 => $data["descripcionpoderAlta"],
+                    'regionMorelia'         => $regionmorelia,
+                    'regionUruapan'         => $regionuruapan,
+                    'regionZamora'          => $regionuruapan,
+                    'estatus'               => "Pendiente",
+                    'tipo'                  => "FisicaR"
+                );
+            }
+            else if($data["tipo"] == "Moral"){
+                $data_insertar = array(
+                    'nombres'               => $data["razon"],
+                    'primer_apellido'       => "",
+                    'segundo_apellido'      => "",
+                    'telefono'              => $data["telefono_moral"], 
+                    'email'                 => $data["correo_moral"],
+                    'fechaRegistro'         => date('y-m-d'),
+                    'fechaVigencia'         => $data["fechaVigenciaAlta"],
+                    'empresa'               => $data["empresaAbogadoAlta"],
+                    'eliminado'             => 0,
+                    'curp'                  => $data["curp_moral"],
+                    'estado_poder'          => $data["estado_poder"],
+                    'municipio_poder'       => $data["municipio_poder"],
+                    'vialidadPoder'         => $data["vialidadPoder"],
+                    'vialidad_callePoder'   => $data["vialidad_callePoder"],
+                    'coloniaAbogadoAlta'    => $data["coloniaAbogadoAlta"],
+                    'NExtAbogadoAlta'       => $data["NExtAbogadoAlta"],
+                    'NIntAbogadoAlta'       => $data["NIntAbogadoAlta"],
+                    'cpAbogadoAlta'         => $data["cpAbogadoAlta"],
+                    'rfc'                   => $data["RFCAbogadoAlta"],
+                    'industria'             => $data["industriaAlta"],
+                    'poder'                 => $data["descripcionpoderAlta"],
+                    'regionMorelia'         => $regionmorelia,
+                    'regionUruapan'         => $regionuruapan,
+                    'regionZamora'          => $regionuruapan,
+                    'estatus'               => "Pendiente",
+                    'tipo'                  => "Moral"
+                );
+            }
+            else if($data["tipo"] == "FisicaD"){
+                $data_insertar = array(
+                    'nombres'               => $data["nombre_derecho"],
+                    'primer_apellido'       => $data["primero_derecho"],
+                    'segundo_apellido'      => $data["segundo_derecho"],
+                    'telefono'              => $data["telefono_derecho"], 
+                    'email'                 => $data["correo_derecho"],
+                    'fechaRegistro'         => date('y-m-d'),
+                    'fechaVigencia'         => date('y-m-d'),
+                    'empresa'               => $data["nombre_derecho"],
+                    'eliminado'             => 0,
+                    'curp'                  => $data["curp_derecha"],
+                    'estado_poder'          => 16,
+                    'municipio_poder'       => 16,
+                    'vialidadPoder'         => "Calle",
+                    'vialidad_callePoder'   => $data["vialidad_derecho"],
+                    'coloniaAbogadoAlta'    => $data["colonia_derecho"],
+                    'NExtAbogadoAlta'       => $data["num_ext_derecho"],
+                    'NIntAbogadoAlta'       => $data["num_int_derecho"],
+                    'cpAbogadoAlta'         => $data["cp_derecho"],
+                    'rfc'                   => $data["RFC_derecho"],
+                    'industria'             => $data["giro_derecho"],
+                    'poder'                 => "",
+                    'regionMorelia'         => "Si",
+                    'regionUruapan'         => "Si",
+                    'regionZamora'          => "Si",
+                    'estatus'               => "Pendiente",
+                    'tipo'                  => "FisicaD"
+                );
+            }
 
-            $data_insertar= array(
-                'nombres'               => $data["nombresAbogadoAlta"],
-                'primer_apellido'       => $data["primer_apellido"], 
-                'segundo_apellido'      => $data["segundo_apellido"], 
-                'telefono'              => $data["telefonoAbogadoAlta"], 
-                'email'                 => $data["correoAbogadoAlta"],
-                'fechaRegistro'         => date('y-m-d'),
-                'fechaVigencia'         => $data["fechaVigenciaAlta"],
-                'empresa'               => $data["empresaAbogadoAlta"],
-                'eliminado'             => 0,
-                'curp'                  => $data["curpAbogadoAlta"],
-                'estado_poder'          => $data["estado_poder"],
-                'municipio_poder'       => $data["municipio_poder"],
-                'vialidadPoder'         => $data["vialidadPoder"],
-                'vialidad_callePoder'   => $data["vialidad_callePoder"],
-                'coloniaAbogadoAlta'    => $data["coloniaAbogadoAlta"],
-                'NExtAbogadoAlta'       => $data["NExtAbogadoAlta"],
-                'NIntAbogadoAlta'       => $data["NIntAbogadoAlta"],
-                'cpAbogadoAlta'         => $data["cpAbogadoAlta"],
-                'rfc'                   => $data["RFCAbogadoAlta"],
-                'industria'             => $data["industriaAlta"],
-                'poder'                 => $data["descripcionpoderAlta"],
-                'regionMorelia'         => $regionmorelia,
-                'regionUruapan'         => $regionuruapan,
-                'regionZamora'          => $regionuruapan,
-                'estatus'               => "Pendiente"
-            );
-
+            
 
             $nombre_ine = $data["nombresAbogadoAlta"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresaAbogadoAlta"]."_IDENTIFICACION.pdf";
             $path = Storage::putFileAs(
@@ -164,7 +212,9 @@ class PoderController extends Controller
             $data_insertar["representacion"] = $nombre_representación;
 
             Poder::create($data_insertar);  
-            return redirect()->route('poderes'); 
+            //$data = Poder::latest('idAbogado')->first();
+
+            return redirect()->route('poderes');         
         }
         else{
             return back()->withErrors('El poder ya tiene asignado ese abogado.');
@@ -529,7 +579,6 @@ class PoderController extends Controller
     public function publico(Request $request)
     {
         $data = $request->all();
-        
         if(!isset($data['moreliaSucursal'])){
             $regionmorelia = "No";
         }
@@ -551,67 +600,113 @@ class PoderController extends Controller
 
         //Validar documentacion
         request()->validate([
-            'nombresAbogadoAlta'        => 'required',
-            'primer_apellido'           => 'required',
-            'segundo_apellido'          => 'required',
-            'telefonoAbogadoAlta'       => 'required|digits:10',
-            'correoAbogadoAlta'         => 'required',
-            'empresaAbogadoAlta'        => 'required',
-            'curpAbogadoAlta'           => 'required',
-            'estado_poder'              => 'required',
-            'municipio_poder'           => 'required',
-            'vialidadPoder'             => 'required',
-            'vialidad_callePoder'       => 'required',
-            'coloniaAbogadoAlta'        => 'required',
-            'NExtAbogadoAlta'           => 'required',
-            'cpAbogadoAlta'             => 'required',
-            'fechaVigenciaAlta'         => 'required',
-            'industriaAlta'             => 'required',
-            'descripcionpoderAlta'      => 'required',
-            'documentoIne'              => 'required',
-            'documentoRepresentacion'   => 'required',
+            'tipo'                      => 'required',
             'documentoPoder'            => 'nullable',
             'documentoAnexo'            => 'nullable',
         ], $data);
 
-        //Validar las regiones
-        if($regionmorelia == "No" && $regionuruapan == "No" && $regionzamora == "No"){
-            return back()->withErrors('Debes seleccionar al menos una Región.');
-        }
 
+        if($data["tipo"] != "FisicaD"){
+            //Validar las regiones
+            if($regionmorelia == "No" && $regionuruapan == "No" && $regionzamora == "No"){
+                return back()->withErrors('Debes seleccionar al menos una Región.');
+            }
+        }
 
         //Validar que no exista el abogado
         $abogado = Poder::where(['nombres' => $data["nombresAbogadoAlta"], 'primer_apellido' => $data["primer_apellido"], 
         'segundo_apellido' => $data["segundo_apellido"], 'empresa' => $data["empresaAbogadoAlta"]])->first();
         if(!$abogado){
+            //Vamos insetar los datos para la persona fisica con representante legal
+            if($data["tipo"] == "FisicaR"){
+                $data_insertar = array(
+                    'nombres'               => $data["nombresAbogadoAlta"],
+                    'primer_apellido'       => $data["primer_apellido"],
+                    'segundo_apellido'      => $data["segundo_apellido"],
+                    'telefono'              => $data["telefonoAbogadoAlta"], 
+                    'email'                 => $data["correoAbogadoAlta"],
+                    'fechaRegistro'         => date('y-m-d'),
+                    'fechaVigencia'         => $data["fechaVigenciaAlta"],
+                    'empresa'               => $data["empresaAbogadoAlta"],
+                    'eliminado'             => 0,
+                    'curp'                  => $data["curpAbogadoAlta"],
+                    'estado_poder'          => $data["estado_poder"],
+                    'municipio_poder'       => $data["municipio_poder"],
+                    'vialidadPoder'         => $data["vialidadPoder"],
+                    'vialidad_callePoder'   => $data["vialidad_callePoder"],
+                    'coloniaAbogadoAlta'    => $data["coloniaAbogadoAlta"],
+                    'NExtAbogadoAlta'       => $data["NExtAbogadoAlta"],
+                    'NIntAbogadoAlta'       => $data["NIntAbogadoAlta"],
+                    'cpAbogadoAlta'         => $data["cpAbogadoAlta"],
+                    'rfc'                   => $data["RFCAbogadoAlta"],
+                    'industria'             => $data["industriaAlta"],
+                    'poder'                 => $data["descripcionpoderAlta"],
+                    'regionMorelia'         => $regionmorelia,
+                    'regionUruapan'         => $regionuruapan,
+                    'regionZamora'          => $regionuruapan,
+                    'estatus'               => "Pendiente"
+                );
+            }
+            else if($data["tipo"] == "Moral"){
+                $data_insertar = array(
+                    'nombres'               => $data["razon"],
+                    'primer_apellido'       => "",
+                    'segundo_apellido'      => "",
+                    'telefono'              => $data["telefono_moral"], 
+                    'email'                 => $data["correo_moral"],
+                    'fechaRegistro'         => date('y-m-d'),
+                    'fechaVigencia'         => $data["fechaVigenciaAlta"],
+                    'empresa'               => $data["empresaAbogadoAlta"],
+                    'eliminado'             => 0,
+                    'curp'                  => $data["curp_moral"],
+                    'estado_poder'          => $data["estado_poder"],
+                    'municipio_poder'       => $data["municipio_poder"],
+                    'vialidadPoder'         => $data["vialidadPoder"],
+                    'vialidad_callePoder'   => $data["vialidad_callePoder"],
+                    'coloniaAbogadoAlta'    => $data["coloniaAbogadoAlta"],
+                    'NExtAbogadoAlta'       => $data["NExtAbogadoAlta"],
+                    'NIntAbogadoAlta'       => $data["NIntAbogadoAlta"],
+                    'cpAbogadoAlta'         => $data["cpAbogadoAlta"],
+                    'rfc'                   => $data["RFCAbogadoAlta"],
+                    'industria'             => $data["industriaAlta"],
+                    'poder'                 => $data["descripcionpoderAlta"],
+                    'regionMorelia'         => $regionmorelia,
+                    'regionUruapan'         => $regionuruapan,
+                    'regionZamora'          => $regionuruapan,
+                    'estatus'               => "Pendiente"
+                );
+            }
+            else if($data["tipo"] == "FisicaD"){
+                $data_insertar = array(
+                    'nombres'               => $data["nombre_derecho"],
+                    'primer_apellido'       => $data["primero_derecho"],
+                    'segundo_apellido'      => $data["segundo_derecho"],
+                    'telefono'              => $data["telefono_derecho"], 
+                    'email'                 => $data["correo_derecho"],
+                    'fechaRegistro'         => date('y-m-d'),
+                    'fechaVigencia'         => date('y-m-d'),
+                    'empresa'               => $data["nombre_derecho"],
+                    'eliminado'             => 0,
+                    'curp'                  => $data["curp_derecha"],
+                    'estado_poder'          => 16,
+                    'municipio_poder'       => 16,
+                    'vialidadPoder'         => "Calle",
+                    'vialidad_callePoder'   => $data["vialidad_derecho"],
+                    'coloniaAbogadoAlta'    => $data["colonia_derecho"],
+                    'NExtAbogadoAlta'       => $data["num_ext_derecho"],
+                    'NIntAbogadoAlta'       => $data["num_int_derecho"],
+                    'cpAbogadoAlta'         => $data["cp_derecho"],
+                    'rfc'                   => $data["RFC_derecho"],
+                    'industria'             => $data["giro_derecho"],
+                    'poder'                 => "",
+                    'regionMorelia'         => "Si",
+                    'regionUruapan'         => "Si",
+                    'regionZamora'          => "Si",
+                    'estatus'               => "Pendiente"
+                );
+            }
 
-            $data_insertar = array(
-                'nombres'           => $data["nombresAbogadoAlta"],
-                'primer_apellido'   => $data["primer_apellido"],
-                'segundo_apellido'  => $data["segundo_apellido"],
-                'telefono'          => $data["telefonoAbogadoAlta"], 
-                'email'             => $data["correoAbogadoAlta"],
-                'fechaRegistro'     => date('y-m-d'),
-                'fechaVigencia'     => $data["fechaVigenciaAlta"],
-                'empresa'           => $data["empresaAbogadoAlta"],
-                'eliminado'         => 0,
-                'curp'              => $data["curpAbogadoAlta"],
-                'estado_poder'          => $data["estado_poder"],
-                'municipio_poder'       => $data["municipio_poder"],
-                'vialidadPoder'         => $data["vialidadPoder"],
-                'vialidad_callePoder'   => $data["vialidad_callePoder"],
-                'coloniaAbogadoAlta'    => $data["coloniaAbogadoAlta"],
-                'NExtAbogadoAlta'       => $data["NExtAbogadoAlta"],
-                'NIntAbogadoAlta'       => $data["NIntAbogadoAlta"],
-                'cpAbogadoAlta'         => $data["cpAbogadoAlta"],
-                'rfc'               => $data["RFCAbogadoAlta"],
-                'industria'         => $data["industriaAlta"],
-                'poder'             => $data["descripcionpoderAlta"],
-                'regionMorelia'     => $regionmorelia,
-                'regionUruapan'     => $regionuruapan,
-                'regionZamora'      => $regionuruapan,
-                'estatus'           => "Pendiente"
-            );
+            
 
             $nombre_ine = $data["nombresAbogadoAlta"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresaAbogadoAlta"]."_IDENTIFICACION.pdf";
             $path = Storage::putFileAs(

@@ -368,7 +368,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/cumplimiento/busqueda',               [SeerController::class, 'cumplimientos_busqueda'])->name('cumplimientos_busqueda');
         Route::get('/cumplimietos/actual',                  [SeerController::class, 'cumplimiento_actual'])->name('cumplimiento_actual');
         Route::get('/cumplimiento/consulta/{id}/{tipo}',    [SeerController::class, 'consulta_cumplimiento'])->name('consulta_cumplimiento');
-        Route::get('/cumplimiento/crear',                  [SeerController::class, 'crear_cumplimiento'])->name('crear_cumplimiento'); //Se crear un cumplimiento desde el menú de cumplimientos
+        Route::get('/cumplimiento/crear',                   [SeerController::class, 'crear_cumplimiento'])->name('crear_cumplimiento'); //Se crear un cumplimiento desde el menú de cumplimientos
         //Ratificaciones diarias
         Route::post('/cumplimiento/pagar/rati',             [SeerController::class, 'cumplimiento_pagar_rati'])->name('cumplimiento_pagar');
         Route::get('/cumplimiento/rechazar/rati/{id}',      [SeerController::class, 'cumplimiento_rechazar_rati'])->name('cumplimiento_rechazar');
@@ -378,9 +378,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         //Ratificaciones busqueda
         Route::post('/cumplimiento/consulta',               [SeerController::class, 'cumplimiento_pagar_busqueda_rati'])->name('cumplimiento_pagar_busqueda');
         Route::get('/cumplimiento/rechazar/{id}',           [SeerController::class, 'cumplimiento_rechazar_busqueda_rati'])->name('cumplimiento_rechazar_busqueda');
-
+        Route::get('/cumplimientos/index',                  [SeerController::class, 'audiencias_cumplimiento'])->name('audiencias.cumplimiento');
         Route::get('/cumplimiento/PDFpago/{id}',            [SeerController::class, 'VerPDFAudiencia'])->name('VerPDFAudiencia');
         Route::get('/cumplimiento/PDFIncumplimiento/{id}',  [SeerController::class, 'PDFincumplimientoAudiencia'])->name('PDFincumplimientoAudiencia');
+        Route::post('/cumplimiento/guardar',                [SeerController::class, 'guardar_cumplimiento'])->name('guardar_cumplimiento');
     //Fin de cumplimientos
     //Recepcion
         Route::get('/turnos/create',             [RecepcionController::class, 'create'])->name('turnos.create');

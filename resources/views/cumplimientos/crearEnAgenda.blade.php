@@ -1,128 +1,16 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="csrf-token" content="{{ csrf_token() }}"/>
-    <title>Si concilio</title>
-    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
-    <!-- Bootstrap 5.3.3 -->
-    <link href="../public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js'></script>
+@extends('layouts.app')
 
-    <!-- Ionicons -->
-    <link rel="icon" href="public/assets/images/ccl-r.png" type="image/x-icon">
-    <link href="//fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
-    <link href="../public/assets/css/all.css" rel="stylesheet" type="text/css">
-    <link href="../public/assets/css/iziToast.min.css" rel="stylesheet">
-    <link href="../public/assets/css/sweetalert.css" rel="stylesheet" type="text/css"/>
-    <link href="../public/assets/css/select2.min.css" rel="stylesheet" type="text/css"/>
-    
-    <!-- Agregados para los Select del Formulario Personas-->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-
-    <style>
-        .loader {
-            position: fixed;
-            left: 0px;
-            top: 0px;
-            width: 100%;
-            height: 100%;
-            z-index: 9999;
-            background: url('public/assets/images/pageLoader.gif') 50% 50% no-repeat rgb(249,249,249);
-           /* background-color: #6A0F49;/*<p style="color: #CEA845*/
-            opacity: .8;
-        }
-        .resultado {
-            background-color: red;
-            color: white;
-            font-weight: bold;
-        }
-        .resultado.ok {
-            background-color: green;
-        }
-
-        .fc-event {
-            padding: 3px 6px !important;
-            border-radius: 4px !important;
-            font-size: 12px !important;
-            cursor: pointer;
-        }
-
-        #calendar {
-            width: 100%;
-            min-height: 500px;
-        }
-
-        .fc-event-disponible {
-            background-color: #00CE1C !important;
-            border-color: #00CE1C !important;
-            cursor: pointer;
-        }
-
-        .fc-event-ocupado {
-            background-color: #DA0909 !important;
-            border-color: #DA0909 !important;
-            cursor: not-allowed;
-        }
-
-        .fc-event-selected {
-            border: 2px solid #FFD700 !important;
-            box-shadow: 0 0 8px #FFD700;
-        }
-
-        .modal-xl {
-            max-width: 95% !important;
-        }
-
-        .modal-content {
-            height: 90vh;
-        }
-
-        .modal-body {
-            overflow-y: auto;
-        }
-
-        .btn-custom-morado {
-            height: 50px;
-            font-size: 12px;
-            padding: 5px 10px;
-            background-color: #6A0F49 !important;
-            color: #fff !important;
-            border: none;
-        }
-        .btn-custom-morado:hover, .btn-custom-morado:focus {
-            background-color: #530c3a !important;
-            color: #fff !important;
-        }
-    </style>
-    @livewireStyles
-
-    @yield('page_css')
-    <!-- Template CSS <img src="public/assets_seer/images/ccl.png" width="180" height="90" style="position: absolute; left: 100px; top: 10px; right:0px;"/>  -->
-    <link rel="stylesheet" href="../public/assets/css/components.css">
-    @yield('page_css')
-</head>
-<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-    <div class="">
-        <img src="../public/assets/images/Logos 2.png" class="img" width="260" height="90">
-    </div> 
-</nav>
-<body>
-    <main>
-        <div class="container">
-            <br><br><br><br>
+@section('content')
+    <section class="section">
+        <div class="section-header">
+            <h3 class="page__heading">Cumplimientos</h3>
         </div>
-        <section class="section">
-            <div class="section-body">
-                <?php $fecha_actual = date('d-m-Y');?>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <h3 class="text-center">Crear cumplimiento</h3>
+        <div class="section-body">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="text-center">Agregar Cumplimiento</h3>
                                 @if(session()->has('success'))
                                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                                         <strong>¡Registro correcto!</strong>
@@ -148,14 +36,14 @@
                                     </div>
                                 @endif  
                                 <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                <form class="needs-validation novalidate" method="POST" action="{{route('turnos.publico')}}" enctype="multipart/form-data" onsubmit="return validacionCamposInput()">
+                                <form class="needs-validation novalidate" method="POST" action="{{route('guardar_cumplimiento')}}" onsubmit="return validacionCamposInput()">
                                     @csrf
                                     <br><br>
                                     <div class="row">
                                         <div id="empresa" class="col-xs-12 col-sm-12 col-md-4">
                                             <div class="form-group">
                                                 <label for="name">Número de identificación único<span style="color:red;">(*)</span></label>
-                                                <input type="text" name="NUE" id="NUE" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                <input type="text" name="NUE" id="NUE" class="form-control" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()"> 
                                                 <div class="invalid-feedback">
                                                     El Número de identificación es obligatorio.
                                                 </div>
@@ -197,6 +85,15 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-7">
+                                            <div class="form-group">
+                                                <label for="name">Descripción<span style="color:red;">(*)</span></label>
+                                                <input type="text" name="descripcion" class="form-control"required>
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-xs-12 col-sm-12 col-md-3">
                                             <div class="form-group">
                                                 <label for="name">Sedes <span style="color:red;">(*)</span></label>
@@ -211,6 +108,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        
                                         <input type="hidden" name="fecha" id="fechaSeleccionada" required>
                                         <input type="hidden" name="hora" id="horaSeleccionada" required>
                                         <!-- Botón para abrir el modal -->  
@@ -221,6 +119,26 @@
                                                 </button>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div id="resumenCita" class="col-xs-12 col-sm-12 col-md-12" style="margin-top: 10px; display: none;">
+                                        <div class="alert alert-info">
+                                            <strong>Cita seleccionada:</strong> <span id="fechaResumen"></span> a las <span id="horaResumen"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                        <div align="center">
+                                            <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color: #CEA845">Guardar</button> 
+                                        </div>
+                                    </div>     
+                                </form>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
                                         <div class="modal fade" id="calendarModal" tabindex="-1" aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered modal-xl">
                                                 <div class="modal-content">
@@ -238,67 +156,27 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div id="resumenCita" class="col-xs-12 col-sm-12 col-md-12" style="margin-top: 10px; display: none;">
-                                        <div class="alert alert-info">
-                                            <strong>Cita seleccionada:</strong> <span id="fechaResumen"></span> a las <span id="horaResumen"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-12">
-                                        <div align="center">
-                                            <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color: #CEA845">Guardar</button>
-                                            <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845; border-color: #CEA845">Cancelar</a>    
-                                        </div>
-                                    </div>     
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-</body>   
+@endsection
+
+    
+                                        
+                                        
     <div id="crear_poder" style ="display: none;">
         <div>.</div>
         <div class="loader"></div>
     </div>
 
     @section('scripts')
-       <!-- <script src="../public/assets/js/validaciones-ratificacion.js"></script> -->
-        <script src="../public/assets/js/poderes/general.js"></script>
-    @endsection
-    <script src="../public/assets/js/jquery.min.js"></script>
-    <script src="../public/assets/js/popper.min.js"></script>
-    <script src="../public/assets/js/bootstrap.min.js"></script>
-    <script src="../public/assets/js/sweetalert.min.js"></script>
-    <script src="../public/assets/js/select2.min.js"></script>
-    <script src="../public/assets/js/jquery.nicescroll.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/locales-all.min.js"></script>
+       <script>
+            function sedes(){
+                document.getElementById("fecha").removeAttribute("disabled");
+            }
 
-    <!-- Template JS File -->
-    <script src="../public/assets/js/stisla.js"></script>
-    <script src="../public/assets/js/scripts.js"></script>
-    <script src="../public/assets/js/profile.js"></script>
-    <script src="../public/assets/js/custom.js"></script>
+            function modalCalendar(){
+                document.getElementById("botonCalendar").removeAttribute("disabled");
+            }
 
-    <script src="https://cdn.datatables.net/2.1.5/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.1.5/js/dataTables.bootstrap4.js"></script>
-
-    @yield('page_js')
-    @yield('scripts')
-    <script>
-        function sedes(){
-            document.getElementById("fecha").removeAttribute("disabled");
-        }
-
-        function modalCalendar(){
-            document.getElementById("botonCalendar").removeAttribute("disabled");
-        }
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'timeGridWeek',
@@ -323,7 +201,7 @@
                     
                     // Hacer petición AJAX con parámetro sede
                     $.ajax({
-                        url: '/nuevo_siconcilio/api/obtenerEventos',
+                        url: '../api/obtenerCumplimientos',
                         method: 'GET',
                         data: {
                             sede: sede,
@@ -398,4 +276,6 @@
                 }
             });
         });
-    </script>
+        </script>
+        <script src="../public/assets/js/poderes/general.js"></script>
+    @endsection

@@ -145,6 +145,17 @@
                                                                 </ul>
                                                             </div>
                                                         </div> 
+                                                    @elseif($audiencia->estatus == "Confirmado")
+                                                        <div class="dropdown">
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    Documentos
+                                                                </button>
+                                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                    <li><a class="dropdown-item" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Documentos Digitales</a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div> 
                                                     @endif 
                                                 </td>
 

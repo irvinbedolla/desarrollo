@@ -5509,7 +5509,7 @@ class SeerController extends Controller
         $fecha_actual = date('y-m-d');
         $id = auth()->user()->id;
         $user = User::find($id);
-
+        
         if($data["conclucion"] == "Conciliacion"){
             //Revisar si existe
             if(isset($data["dias_pagos"])){
@@ -5528,6 +5528,7 @@ class SeerController extends Controller
                     Pagos::create($data_pagos);
                 }
             }
+            //Validar si existe un pago extra
             if(isset($data["tipo_pago"])){
                 $cont = count($data["monto_pago"]);
                 for($i = 0; $i < $cont; $i++) {
@@ -5540,16 +5541,7 @@ class SeerController extends Controller
                     Concepto::create($data_citado);
                 }
             }
-
-            if($conteo >= 2){
-                $estatus = "Concluida Pagos";
-            }
-            else{
-                $estatus = "Conluida";
-            }
             
-            //$solicitante = SeerSolicitante::where('id_solicitud',$data["id"])->first();
-            //$numero_audiencia = $this->GeneraAudiencia($data["id"]);
             //Actualizar Audiecia
             SeerPerConciliador::where('id_solicitud',$data["id"])
             ->orderBy('id', 'desc')
@@ -5610,47 +5602,102 @@ class SeerController extends Controller
     }
 
     //Crear un cumplimiento desde la agenda
-    public function crear_cumplimiento(Request $request){
-            $data = $request->all();
-    
-            //validando información
-           /* $request->validate([
-                'id'                => 'required',
-                'colonia'           => 'required',
-                'vialidad'          => 'required',
-                'cp'                => 'required|numeric',
-                'calle'             => 'required',
-                'exterior'          => 'required',
-                'referencia'        => 'required',
-                'municipio_citado'  => 'required',
-            ]);
-            
-            $data_insert=array(
-                'id_solicitud'      => $data["id"],
-                'colonia'           => $data["colonia"],
-                'cp'                => $data["cp"],
-                'n_ext'             => $data["exterior"],
-                'calle'             => $data["calle"],
-                'tipo_vialidad'     => $data["vialidad"],
-                'referencia'        => $data["referencia"],
-                'municipio_citado'  => $data["municipio_citado"],
-            );
-            $data_insert["notificacion"] =  $data["notificacion"];
-    
-            if(isset($data["rfc"])){
-                $data_insert["rfc"] =  $data["rfc"];
-            }
-            if(isset($data["curp"])){
-                $data_insert["curp"] =  $data["curp"];
-            }
-            if(isset($data["traductor"])){
-                $data_insert["traductor"] =  1;
-                $data_insert["lenguaje"]  =  $data["lenguaje"];
-            }
-            if(isset($data["interior"])){
-                $data_insert["n_int"] =  $data["interior"];
-            }*/
-
+    public function crear_cumplimiento(){
         return view('cumplimientos/crearEnAgenda');
+    }
+
+
+    public function guardar_cumplimiento(Request $request){
+        $data = $request->all();
+        $id = auth()->user()->id;
+
+        $request->validate([
+            'NUE'           => 'required',
+            'empresa'       => 'required',
+            'trabajador'    => 'required',
+            'monto'         => 'required|numeric',
+            'forma_pago'    => 'required',
+            'sede'          => 'required',
+            'fecha'         => 'required',
+            'hora'          => 'required',
+            'descripcion'   => 'required'
+        ]);
+            
+        $data_insert=array(
+            'id_solicitud'          => 0,
+            'fecha'                 => $data["fecha"],
+            'hora'                  => $data["hora"],
+            'monto'                 => $data["monto"],
+            'descripcion'           => $data["descripcion"],
+            'estatus'               => "Pendiente",
+            'tipo_pago'             => "Audiencia",
+            'delegacion'            => $data["sede"],
+            'id_conciliador'        => $id,
+            'NUE'                   => $data["NUE"],
+            'empresa_representante' => $data["empresa"],
+            'nombre_trabajador'     => $data["trabajador"],
+            'forma_pago'            => $data["forma_pago"],
+        );
+
+        Pagos::create($data_insert);
+
+        return back()->with('success', 'Poder registrado correctamente.'); 
+        //return view('cumplimientos/index')->with('success', 'Poder registrado correctamente.'); 
+    }
+
+
+    public function obtenerEventos(Request $request)
+    {
+        $fecha_inicio = now()->subDays(20)->format('Y-m-d');
+        $fecha_fin = now()->addDays(20)->format('Y-m-d');
+        $sede = $request->input('sede'); // Obtener sede de la solicitud
+
+        // 1. Obtener turnos ocupados filtrando por sede
+        $ocupados = Pagos::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
+            ->where('delegacion', $sede) // FILTRO POR SEDE
+            ->get()
+            ->map(function ($turno) {
+                return [
+                    'title' => 'Ocupado',
+                    'start' => $turno->fecha . 'T' . $turno->hora,
+                    'color' => '#DA0909',
+                    'extendedProps' => ['estado' => 'ocupado']
+                ];
+            });
+
+        // 2. Crear slots disponibles
+        $todosLosEventos = [];
+        $fecha = new \DateTime($fecha_inicio);
+        $fin = new \DateTime($fecha_fin);
+
+        while ($fecha <= $fin) {
+            if ($fecha->format('N') < 6) { // Saltar fines de semana
+                for ($hora = 9; $hora <= 15; $hora++) {
+                    $slotStart = $fecha->format('Y-m-d') . 'T' . str_pad($hora, 2, '0', STR_PAD_LEFT) . ':00:00';
+                    
+                    // Verificar si el slot está ocupado
+                    $ocupado = collect($ocupados)->contains('start', $slotStart);
+                    
+                    if ($ocupado) {
+                        $todosLosEventos[] = [
+                            'title' => 'Ocupado',
+                            'start' => $slotStart,
+                            'color' => '#DA0909',
+                            'extendedProps' => ['estado' => 'ocupado']
+                        ];
+                    } else {
+                        $todosLosEventos[] = [
+                            'title' => 'Disponible',
+                            'start' => $slotStart,
+                            'color' => '#00CE1C',
+                            'extendedProps' => ['estado' => 'disponible']
+                        ];
+                    }
+                }
+            }
+            $fecha->modify('+1 day');
+        }
+
+        return response()->json($todosLosEventos);
     }
 }

@@ -12,6 +12,15 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
+                                @if(session()->has('success'))
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <strong>¡Registro correcto!</strong>
+                                        {{ session()->get('success') }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                @endif
                             <div class="row">
                                 <div class="col-xs-4 col-sm-4 col-md-4">
                                     <div align="center">
@@ -27,7 +36,7 @@
                                 </div>
                                 <div class="col-xs-4 col-sm-4 col-md-4">
                                     <div align="center">
-                                        <a href="{{ route('crear_cumplimiento') }}" class="btn btn-primary">Agenda de cumplimientos</a>
+                                        <a href="{{ route('crear_cumplimiento') }}" class="btn btn-primary">Agregar Nuevo</a>
                                     </div>
                                 </div> 
                             </div>

@@ -36,7 +36,8 @@ Route::get('/obtenerHorario/{id}/{sede}',  [TurnosController::class, 'obtenerHor
     Route::get('/obtenerEventos', [TurnosController::class, 'obtenerEventos']);
 });*/
 
-Route::get('/obtenerEventos', [TurnosController::class, 'obtenerEventos']);
+Route::get('/obtenerEventos',       [TurnosController::class, 'obtenerEventos']);
+Route::get('/obtenerCumplimientos', [SeerController::class, 'obtenerEventos']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
