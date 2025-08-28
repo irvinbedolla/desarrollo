@@ -27,6 +27,8 @@ class AudienciasController extends Controller
             $eventos = [];
             foreach ($audiencias as $audiencia) {
 
+                $tipo = 5;
+
                 if ($audiencia->estatus === 'Incompetencia') {
                     $color = '#DA0909';
                 } elseif ($audiencia->estatus === 'Archivada') {
@@ -57,6 +59,7 @@ class AudienciasController extends Controller
                         'delegacion' => $audiencia->delegacion,
                         'sala' => $audiencia->sala,
                         'usuario' => $userID,
+                        'tipo' => $tipo
                     ]
                 ];
             }
@@ -69,6 +72,8 @@ class AudienciasController extends Controller
 
             $eventos = [];
             foreach ($audiencias as $audiencia) {
+
+                $tipo = 5;
 
                 if ($audiencias->estatus === 'Incompetencia') {
                     $color = '#DA0909';
@@ -100,6 +105,7 @@ class AudienciasController extends Controller
                         'delegacion' => $audiencia->delegacion,
                         'sala' => $audiencia->sala,
                         'usuario' => $userID,
+                        'tipo' => $tipo
                     ]
                 ];
             }
@@ -118,6 +124,8 @@ class AudienciasController extends Controller
 
             $eventos = [];
             foreach ($ratificaciones as $rati) {
+
+                $tipo = 7;
 
                 if ($rati->estatus === 'Incumplimiento') {
                     $color = '#DA0909';
@@ -145,6 +153,7 @@ class AudienciasController extends Controller
                         'estatus' => $rati->estatus,
                         'delegacion' => $rati->delegacion,
                         'usuario' => $userID,
+                        'tipo' => $tipo
                     ]
                 ];
             }
@@ -157,6 +166,8 @@ class AudienciasController extends Controller
 
             $eventos = [];
             foreach ($ratificaciones as $rati) {
+
+                $tipo = 7;
 
                 if ($rati->estatus === 'Incumplimiento') {
                     $color = '#DA0909';
@@ -183,6 +194,7 @@ class AudienciasController extends Controller
                         'estatus' => $rati->estatus,
                         'delegacion' => $rati->delegacion,
                         'usuario' => $userID,
+                        'tipo' => $tipo
                     ]
                 ];
             }

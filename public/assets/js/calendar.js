@@ -160,13 +160,14 @@ function handleEventClick(info, calendarType) {
             <strong>Observaciones:</strong> ${props.observaciones}<br>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <a href="{{ url('/cumplimiento/consulta/{id}/{tipo}') }}" class="btn btn-info">Ver detalle</a>
+                <a href="/desarrollo/cumplimiento/consulta/${info.event.id}/${props.tipo}" class="btn btn-info">Ver detalle</a>
             </div>
         `;
     } else if (calendarType === 'audiencias') {
         modalContent = `
             <strong>Motivo:</strong> ${info.event.title}<br>
             <strong>Numero:</strong> ${props.numero_audiencia}<br>
+            <strong>ID:</strong> ${info.event.id}<br>
             <strong>Folio:</strong> ${props.folio_audiencia}<br>
             <strong>Fecha:</strong> ${props.fecha}<br>
             <strong>Hora:</strong> ${props.hora}<br>
@@ -175,12 +176,14 @@ function handleEventClick(info, calendarType) {
             <strong>Sala:</strong> ${props.sala}<br>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <a href="/desarrollo/audiencia/consulta/${info.event.id}/${props.tipo}" class="btn btn-info">Ver detalle</a>
             </div>
         `;
     }
     else if (calendarType === 'ratificaciones') {
         modalContent = `
             <strong>Motivo:</strong> ${info.event.title}<br>
+            <strong>ID:</strong> ${info.event.id}<br>
             <strong>Folio:</strong> ${info.event.id}<br>
             <strong>Fecha:</strong> ${props.fecha}<br>
             <strong>Hora:</strong> ${props.hora}<br>
@@ -188,6 +191,7 @@ function handleEventClick(info, calendarType) {
             <strong>Delegación:</strong> ${props.delegacion}<br>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <a href="/desarrollo/ratificacion/consulta/${info.event.id}/${props.tipo}" class="btn btn-info">Ver detalle</a>
             </div>
         `;
     }

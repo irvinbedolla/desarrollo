@@ -21,7 +21,7 @@ class CitaController extends Controller
         ]);
     }
 
-    public function eventos() {
+    /*public function eventos() {
         $citas = Cita::all();
 
         $eventos = [];
@@ -53,6 +53,41 @@ class CitaController extends Controller
         }
 
         return response()->json($eventos);
+    }*/
+
+    public function citas() {
+        $recepciones = Recepcion::all();
+
+        $eventos = [];
+        foreach ($recepciones as $cita  ) {
+
+            if ($cita->estatus === 'cancelada') {
+                $color = '#DA0909';
+            } elseif ($cita->estatus === 'pendiente') {
+                $color = '#EAE300';
+            } elseif ($cita->estatus === 'confirmada') {
+                $color = '#00CE1C';
+            } else {
+                $color = '#CCCCCC';
+            }
+
+            $eventos[] = [
+                'id' => $cita->id,
+                'title' => $cita->motivo,
+                'start' => $cita->fecha->format('Y-m-d') . 'T' . $cita->hora->format('H:i:s'),
+                'extendedProps' => [
+                    'hora' => $cita->hora->format('h:i A'),
+                    'color' => $color,
+                    'fecha' => $cita->fecha->format('d/m/Y'),
+                    'estatus' => $cita->estatus,
+                    'tipo' => $cita->tipo,
+                    'usuario' => $cita->usuario,
+                ]
+            ];
+        }
+
+        return response()->json($eventos);
+
     }
 
     public function pagos() {
@@ -65,6 +100,8 @@ class CitaController extends Controller
             $nombre_turno = $turno ? $turno->trabajador : null;
             $primer_apellido_turno = $turno ? $turno->primero_trabajador : null;
             $segundo_apellido_turno = $turno ? $turno->segundo_trabajador : null;
+
+            $tipo = 6;
 
 
             if ($pago->estatus === 'Pendiente') {
@@ -90,7 +127,8 @@ class CitaController extends Controller
                     'trabajador' => $nombre_turno . ' ' . $primer_apellido_turno . ' ' . $segundo_apellido_turno,
                     'estatus' => $pago->estatus,
                     'monto' => $pago->monto,
-                    'observaciones' => $pago->observaciones
+                    'observaciones' => $pago->observaciones,
+                    'tipo' => $tipo
                 ]
             ];
         }
