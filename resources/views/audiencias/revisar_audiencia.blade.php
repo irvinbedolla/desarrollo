@@ -37,47 +37,44 @@
         border-top: none;
     }
 
-    <style>
-body {font-family: Arial;}
+    body {font-family: Arial;}
 
-/* Style the tab */
-.tab {
-  overflow: hidden;
-  border: 1px solid #ccc;
-  background-color: #f1f1f1;
-}
+    /* Style the tab */
+    .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+    }
 
-/* Style the buttons inside the tab */
-.tab button {
-  background-color: inherit;
-  float: left;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 16px;
-  transition: 0.3s;
-  font-size: 17px;
-}
+    /* Style the buttons inside the tab */
+    .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+        font-size: 17px;
+    }
 
-/* Change background color of buttons on hover */
-.tab button:hover {
-  background-color: #ddd;
-}
+    /* Change background color of buttons on hover */
+    .tab button:hover {
+    background-color: #ddd;
+    }
 
-/* Create an active/current tablink class */
-.tab button.active {
-  background-color: #ccc;
-}
+    /* Create an active/current tablink class */
+    .tab button.active {
+        background-color: #ccc;
+    }
 
-/* Style the tab content */
-.tabcontent {
-  display: none;
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-top: none;
-}
-</style>
-    
+    /* Style the tab content */
+    .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+    }
 </style>
 
 @section('content')
@@ -350,26 +347,31 @@ body {font-family: Arial;}
                                                         <h4 class="text-center">Dirección</h4>
                                                     </div>
                                                 </div>
-
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="password">Colonia</label>
+                                                        <input type="text" class="form-control" name="colonia_solicitante" value="<?=$solicitante["colonia"];?>">   
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-2">
                                                     <div class="form-group">
                                                         <label for="password">Tipo de Vialidad</label>
                                                         <input type="text" class="form-control" name="tipo_vialidad" value="<?=$solicitante["tipo_vialidad"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-9">
+                                                <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="password">Calle</label>
                                                         <input type="text" class="form-control" name="calle_solicitante" value="<?=$solicitante["calle"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                <div class="col-xs-12 col-sm-6 col-md-2">
                                                     <div class="form-group">
                                                         <label for="password">Núm Ext.</label>
                                                         <input type="text" class="form-control" name="num_ext_solicitante" value="<?=$solicitante["num_ext"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                <div class="col-xs-12 col-sm-6 col-md-2">
                                                     <div class="form-group">
                                                         <label for="password">Núm Int.</label>
                                                         <input type="text" class="form-control" name="num_int_solicitante" value="<?=$solicitante["num_int"];?>">   
@@ -377,34 +379,30 @@ body {font-family: Arial;}
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Código postal</label>
-                                                        <input type="text" class="form-control" name="codigo_postal_solicitante" value="<?=$solicitante["codigo_postal"];?>">   
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
-                                                    <div class="form-group">
-                                                        <label for="password">Referencia.</label>
-                                                        <input type="text" class="form-control" name="referencia_solicitante" value="<?=$solicitante["referencia"];?>">   
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-2">
-                                                    <div class="form-group">
-                                                        <label for="password">Colonia</label>
-                                                        <input type="text" class="form-control" name="colonia_solicitante" value="<?=$solicitante["colonia"];?>">   
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-5">
-                                                    <div class="form-group">
                                                         <label for="password">Entre calle</label>
                                                         <input type="text" class="form-control" name="calle2_solicitante" value="<?=$solicitante["calle2"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-5">
+                                                <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="password">Y entre calle</label>
                                                         <input type="text" class="form-control" name="calle3_solicitante" value="<?=$solicitante["calle3"];?>">   
                                                     </div>
                                                 </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-1">
+                                                    <div class="form-group">
+                                                        <label for="password">Código postal</label>
+                                                        <input type="text" class="form-control" name="codigo_postal_solicitante" value="<?=$solicitante["codigo_postal"];?>">   
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-5">
+                                                    <div class="form-group">
+                                                        <label for="password">Referencia.</label>
+                                                        <input type="text" class="form-control" name="referencia_solicitante" value="<?=$solicitante["referencia"];?>">   
+                                                    </div>
+                                                </div>
+                                               
+                                                
                                                 
                                                 
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
@@ -551,10 +549,26 @@ body {font-family: Arial;}
                                                         <label for="name">Tipo de Vialidad</label>
                                                         <select name="vialidad_citado[]" class="form-control" required>
                                                             <option value="">SELECCIONE</option>
-                                                            <option value="Calle"     {{ $citado['tipo_vialidad'] == 'Calle' ? "selected" : '' }}   >Calle</option>
-                                                            <option value="Avenida"   {{ $citado['tipo_vialidad'] == 'Avenida' ? "selected" : '' }} >Avenida</option>
-                                                            <option value="Calzada"   {{ $citado['tipo_vialidad'] == 'Calzada' ? "selected" : '' }} >Calzada</option>
-                                                            <option value="Boulevard" {{ $citado['tipo_vialidad'] == 'Boulevard' ? "selected" : '' }}>Boulevard</option>
+                                                            <option value="CALLE"          {{ $citado['tipo_vialidad'] == 'CALLE' ? "selected" : '' }}   >Calle</option>
+                                                            <option value="AVENIDA"        {{ $citado['tipo_vialidad'] == 'AVENIDA' ? "selected" : '' }} >Avenida</option>
+                                                            <option value="CALZADA"        {{ $citado['tipo_vialidad'] == 'CALZADA' ? "selected" : '' }} >Calzada</option>
+                                                            <option value="BOULEVARD"      {{ $citado['tipo_vialidad'] == 'BOULEVARD' ? "selected" : '' }} >Boulevard</option>
+                                                            <option value="AMPLIACIÓN"     {{ $citado['tipo_vialidad'] == 'AMPLIACIÓN' ? "selected" : '' }} >Ampliación</option>
+                                                            <option value="ANDADOR"        {{ $citado['tipo_vialidad'] == 'ANDADOR' ? "selected" : '' }} >Andador</option>
+                                                            <option value="AUTOPISTA"      {{ $citado['tipo_vialidad'] == 'AUTOPISTA' ? "selected" : '' }} >Autopista</option>
+                                                            <option value="CALLEJÓN"       {{ $citado['tipo_vialidad'] == 'CALLEJÓN' ? "selected" : '' }}>Callejón</option>
+                                                            <option value="CARRETERA"      {{ $citado['tipo_vialidad'] == 'CARRETERA' ? "selected" : '' }}   >Carretera</option>
+                                                            <option value="CERRADA"        {{ $citado['tipo_vialidad'] == 'CERRADA' ? "selected" : '' }} >Cerrada</option>
+                                                            <option value="CIRCUITO"       {{ $citado['tipo_vialidad'] == 'CIRCUITO' ? "selected" : '' }} >Circuito</option>
+                                                            <option value="CIRCUNVALACIÓN" {{ $citado['tipo_vialidad'] == 'CIRCUNVALACIÓN' ? "selected" : '' }} >Circunvalación</option>
+                                                            <option value="CONTINUACIÓN"   {{ $citado['tipo_vialidad'] == 'CONTINUACIÓN' ? "selected" : '' }} >Continuación</option>
+                                                            <option value="CORREDOR"       {{ $citado['tipo_vialidad'] == 'CORREDOR' ? "selected" : '' }} >Corredor</option>
+                                                            <option value="DIAGONAL"       {{ $citado['tipo_vialidad'] == 'DIAGONAL' ? "selected" : '' }} >Diagonal</option>
+                                                            <option value="EJE VIAL"       {{ $citado['tipo_vialidad'] == 'EJE VIAL' ? "selected" : '' }}>Eje vial</option>
+                                                            <option value="PERIFÉRICO"     {{ $citado['tipo_vialidad'] == 'PERIFÉRICO' ? "selected" : '' }}   >Periférico</option>
+                                                            <option value="PROLONGACIÓN"   {{ $citado['tipo_vialidad'] == 'PROLONGACIÓN' ? "selected" : '' }} >Prolongación</option>
+                                                            <option value="RETORNO"        {{ $citado['tipo_vialidad'] == 'RETORNO' ? "selected" : '' }} >Retorno</option>
+                                                            <option value="VIADUCTO"       {{ $citado['tipo_vialidad'] == 'VIADUCTO' ? "selected" : '' }} >Viaducto</option>
                                                         </select>
                                                         <div class="invalid-feedback">
                                                             El campo vialidad es obligatorio.
@@ -680,7 +694,6 @@ body {font-family: Arial;}
                                     </div>                                  
                                 </div>
                             </form>
-                
                         </div>
                     </div>
                 </div>
@@ -709,9 +722,9 @@ body {font-family: Arial;}
                             </div>
                         </div>                                        
 
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
-                                <label for="name">Agregar "Quien resulte responsable"</label>
+                                <label for="name">Agregar "Quien resulte responsable" *</label>
                                 <select name="responsable" class="form-control" required>
                                     <option value="">SELECCIONE</option>
                                     <option value="Si">Si</option>
@@ -722,16 +735,45 @@ body {font-family: Arial;}
                                 </div>
                             </div>
                         </div>
-
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label for="name">Municipio o Alcaldía del citado *</label>
+                                <select id="municipio_citado" class="form-control" name="municipio_citado" required>
+                                    <option value="">SELECCIONE</option>
+                                    @foreach($municipios as $mun)
+                                        <option value="{{$mun['id']}}">{{$mun['nombre']}}</option>
+                                    @endforeach
+                                </select>
+                                <div class="invalid-feedback">
+                                    El campo municipio o alcaldía es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
                                 <label for="name">Tipo de Vialidad del citado *</label>
                                 <select name="vialidad" class="form-control" required>
                                     <option value="">SELECCIONE</option>
-                                    <option value="Calle">CALLE</option>
-                                    <option value="Avenida">AVENIDA</option>
-                                    <option value="Calzada">CALZADA</option>
-                                    <option value="Boulevard">BOULEVARD</option>
+                                    <option value="AMPLIACIÓN">Ampliación</option>
+                                    <option value="ANDADOR">Andador</option>
+                                    <option value="AUTOPISTA">Autopista</option>
+                                    <option value="AVENIDA">Avenida</option>
+                                    <option value="BOULEVARD">Boulevard</option>
+                                    <option value="CALLE">Calle</option>
+                                    <option value="CALLEJÓN">Callejón</option>
+                                    <option value="CALZADA">Calzada</option>
+                                    <option value="CARRETERA">Carretera</option>
+                                    <option value="CERRADA">Cerrada</option>
+                                    <option value="CIRCUITO">Circuito</option>
+                                    <option value="CIRCUNVALACIÓN">Circunvalación</option>
+                                    <option value="CONTINUACIÓN">Continuación</option>
+                                    <option value="CORREDOR">Corredor</option>
+                                    <option value="DIAGONAL">Diagonal</option>
+                                    <option value="EJE VIAL">Eje vial</option>
+                                    <option value="PERIFÉRICO">Periférico</option>
+                                    <option value="PROLONGACIÓN">Prolongación</option>
+                                    <option value="RETORNO">Retorno</option>
+                                    <option value="VIADUCTO">Viaducto</option>
                                 </select>
                                 <div class="invalid-feedback">
                                     El campo vialidad es obligatorio.
@@ -739,7 +781,7 @@ body {font-family: Arial;}
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
                                 <label for="name">Calle del citado *</label>
                                 <input type="text" name="calle" class="form-control" required> 
@@ -749,7 +791,7 @@ body {font-family: Arial;}
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
                                 <label for="name">Colonia del citado *</label>
                                 <input type="text" name="colonia" class="form-control" required> 
@@ -759,7 +801,26 @@ body {font-family: Arial;}
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label for="name">Entre calle del domicilio del citado *</label>
+                                <input type="text" name="calle1" class="form-control" required> 
+                                <div class="invalid-feedback">
+                                    El campo calle es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label for="name">y calle del domicilio del citado  *</label>
+                                <input type="text" name="calle2" class="form-control" required> 
+                                <div class="invalid-feedback">
+                                    El campo calle es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-2">
                             <div class="form-group">
                                 <label for="name">Código Postal del citado *</label>
                                 <input type="text" name="cp" class="form-control" minlength="5" maxlength="5" required> 
@@ -768,30 +829,9 @@ body {font-family: Arial;}
                                 </div>
                             </div>
                         </div>
-
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-2">
                             <div class="form-group">
-                                <label for="name">Entre calle del domicilio del citado</label>
-                                <input type="text" name="calle1" class="form-control"> 
-                                <div class="invalid-feedback">
-                                    El campo calle es obligatorio.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-xs-12 col-sm-12 col-md-6">
-                            <div class="form-group">
-                                <label for="name">y calle del domicilio del citado</label>
-                                <input type="text" name="calle2" class="form-control"> 
-                                <div class="invalid-feedback">
-                                    El campo calle es obligatorio.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-xs-12 col-sm-12 col-md-3">
-                            <div class="form-group">
-                                <label for="name">Núm ext. del citado</label>
+                                <label for="name">Núm ext. del citado *</label>
                                 <input type="text" name="exterior" class="form-control" required> 
                                 <div class="invalid-feedback">
                                     El campo c
@@ -799,7 +839,7 @@ body {font-family: Arial;}
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-3">
+                        <div class="col-xs-12 col-sm-12 col-md-2">
                             <div class="form-group">
                                 <label for="name">Núm int. del citado</label>
                                 <input type="text" name="interior" class="form-control" > 
@@ -811,7 +851,7 @@ body {font-family: Arial;}
 
                         <div class="col-xs-12 col-sm-12 col-md-12">
                             <div class="form-group">
-                            <label for="floatingTextarea">Referencias del domicilio del citado</label>
+                            <label for="floatingTextarea">Referencias del domicilio del citado *</label>
                                 <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencia"></textarea>
                                 <div class="invalid-feedback">
                                     El campo referencias es obligatorio.
@@ -821,12 +861,12 @@ body {font-family: Arial;}
                     </div>
 
                     <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
-                                <label for="name">Tipo de personas</label>
+                                <label for="name">Tipo de personas *</label>
                                 <select name="tipo" class="form-control">
                                     <option value="">Seleccione</option>
-                                    <option value="Fisica">Fisica</option>
+                                    <option value="Fisica">Física</option>
                                     <option value="Moral">Moral</option>
                                 </select>
                                 <div class="invalid-feedback">
@@ -835,7 +875,7 @@ body {font-family: Arial;}
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-8">
                             <div class="form-group">
                                 <label for="name">CURP</label>
                                 <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control"> 
@@ -846,7 +886,7 @@ body {font-family: Arial;}
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
                                 <label for="name">Nombre(s) *</label>
                                 <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
@@ -856,7 +896,7 @@ body {font-family: Arial;}
                             </div>
                         </div>
                         
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
                                 <label for="name">Primer apellido *</label>
                                 <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
@@ -865,7 +905,7 @@ body {font-family: Arial;}
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
                                 <label for="name">Segundo apellido *</label>
                                 <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
@@ -875,7 +915,7 @@ body {font-family: Arial;}
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-2">
                             <div class="form-group">
                                 <label for="name">RFC</label>
                                 <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" > 
@@ -885,21 +925,34 @@ body {font-family: Arial;}
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-6">
-                            <label for="name">Requiere algun lenguaje</label>
-                            <select name="lenguaje" class="form-control" required>
+                        <div class="col-xs-12 col-sm-12 col-md-3">
+                            <label for="name">¿Requiere algún lenguaje?</label>
+                            <select name="lenguaje" class="form-control">
                                 <option value="">SELECCIONE</option>
                                 <option value=" ">Si</option>
                                 <option value="No">No</option>
                             </select>
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-6" id="lenguaje_señas">
+                        <div class="col-xs-12 col-sm-12 col-md-3" id="lenguaje_señas">
                             <div class="form-group">
-                                <label for="name">Que tipo de lenguaje require</label>
+                                <label for="name">Qué tipo de lenguaje require</label>
                                 <input type="text" name="lenguaje" class="form-control">
                                 <div class="invalid-feedback">
                                     La nacionalidad es obligatoria.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label for="name">¿Quién entregará los Citatorios? *</label>
+                                <select name="notificacion" class="form-control" required>
+                                    <option value="">SELECCIONE</option>
+                                    <option value="Trabajador">Trabajador</option>
+                                    <option value="Centro">Centro de conciliación Laboral</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    El campo ¿quién entregará los citatorios? es obligatorio.
                                 </div>
                             </div>
                         </div>

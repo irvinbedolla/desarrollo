@@ -5608,4 +5608,49 @@ class SeerController extends Controller
         return redirect()->route('audiencias.conciliador');
         
     }
+
+    //Crear un cumplimiento desde la agenda
+    public function crear_cumplimiento(Request $request){
+            $data = $request->all();
+    
+            //validando información
+           /* $request->validate([
+                'id'                => 'required',
+                'colonia'           => 'required',
+                'vialidad'          => 'required',
+                'cp'                => 'required|numeric',
+                'calle'             => 'required',
+                'exterior'          => 'required',
+                'referencia'        => 'required',
+                'municipio_citado'  => 'required',
+            ]);
+            
+            $data_insert=array(
+                'id_solicitud'      => $data["id"],
+                'colonia'           => $data["colonia"],
+                'cp'                => $data["cp"],
+                'n_ext'             => $data["exterior"],
+                'calle'             => $data["calle"],
+                'tipo_vialidad'     => $data["vialidad"],
+                'referencia'        => $data["referencia"],
+                'municipio_citado'  => $data["municipio_citado"],
+            );
+            $data_insert["notificacion"] =  $data["notificacion"];
+    
+            if(isset($data["rfc"])){
+                $data_insert["rfc"] =  $data["rfc"];
+            }
+            if(isset($data["curp"])){
+                $data_insert["curp"] =  $data["curp"];
+            }
+            if(isset($data["traductor"])){
+                $data_insert["traductor"] =  1;
+                $data_insert["lenguaje"]  =  $data["lenguaje"];
+            }
+            if(isset($data["interior"])){
+                $data_insert["n_int"] =  $data["interior"];
+            }*/
+
+        return view('cumplimientos/crearEnAgenda');
+    }
 }
