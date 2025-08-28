@@ -97,7 +97,7 @@
                                     </div>
 
                                     <div id="dias" class="row home-shape">
-                                        <div class="col-xs-12 col-sm-12 col-md-4"><br>
+                                        <div class="col-xs-12 col-sm-12 col-md-2"><br>
                                             <div class="form-group">
                                                 <label for="name">Días de vacaciones</label>
                                                 <input type="number" name="vacaciones" class="form-control" required> 
@@ -115,7 +115,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-2">
+                                        <div class="col-xs-12 col-sm-12 col-md-1">
                                             <div class="form-group"><br>
                                                 <label for="name">Otros</label>
                                                 <input type="text" name="otros" class="form-control" required> 
@@ -124,7 +124,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-3">
+                                        <div class="col-xs-12 col-sm-12 col-md-2">
                                             <div class="form-group"><br>
                                                 <label for="name">Horario laboral</label>
                                                 <input type="text" name="horario" class="form-control" required> 
@@ -132,27 +132,18 @@
                                                     El campo es obligatorio.
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div>                                       
                                         <div class="col-xs-12 col-sm-12 col-md-2">
-                                            <div class="form-group">
+                                            <div class="form-group"><br>
                                                 <label for="name">Horario de comida</label>
                                                 <input type="text" name="comida" class="form-control" required> 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-6">
-                                            <div class="form-group">
-                                                <label for="name">Domicilio de la empresa</label>
-                                                <input type="text" name="domicilio" class="form-control" required> 
-                                                <div class="invalid-feedback">
-                                                    El campo es obligatorio.
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-6 col-md-4">
-                                            <div class="form-group">
+                                        </div>                                       
+                                        <div class="col-xs-12 col-sm-6 col-md-3">
+                                            <div class="form-group"><br>
                                                 <label for="password">Conciliador</label>
                                                 <select class="form-control" name="conciliador_id" required>
                                                     <option value="">Seleccione</option>

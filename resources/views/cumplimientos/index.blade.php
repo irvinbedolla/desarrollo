@@ -27,7 +27,7 @@
                                 </div>
                                 <div class="col-xs-4 col-sm-4 col-md-4">
                                     <div align="center">
-                                        <button type="submit" class="btn btn-primary">Agenda de cumplimientos</button>
+                                        <a href="{{ route('crear_cumplimiento') }}" class="btn btn-primary">Agenda de cumplimientos</a>
                                     </div>
                                 </div> 
                             </div>

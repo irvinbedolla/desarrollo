@@ -16,6 +16,7 @@ use App\Models\TurnoDisponible;
 use App\Models\Poder; 
 use App\Models\Pagos; 
 use App\Models\Concepto; 
+use App\Models\Municipios;
 
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
@@ -483,7 +484,8 @@ class TurnosController extends Controller
     }
 
     public function create_publico(){
-        return view('citas');
+        $municipios = Municipios::where('estado',16)->get();
+        return view('citas', compact('municipios'));
     }
 
     public function store_publico(Request $request)
@@ -514,7 +516,13 @@ class TurnosController extends Controller
                 'hora'              => 'required',
                 'JLCA'              => 'required',
                 'motivo'            => 'required',
-                'salario'           => 'required'
+                'salario'           => 'required',
+                'municipio_rat'     => 'required',
+                'tipo_vialidad'     => 'required',
+                'vialidad_calle'    => 'required',
+                'colonia'           => 'required',
+                'N_Ext'             => 'required',
+                'cp'                => 'required',
             ], $data);
         }
         else{
@@ -548,7 +556,13 @@ class TurnosController extends Controller
                 'hora'              => 'required',
                 'JLCA'              => 'required',
                 'motivo'            => 'required',
-                'salario'           => 'required'
+                'salario'           => 'required',
+                'municipio_rat'     => 'required',
+                'tipo_vialidad'     => 'required',
+                'vialidad_calle'    => 'required',
+                'colonia'           => 'required',
+                'N_Ext'             => 'required',
+                'cp'                => 'required',
             ], $data);
         }
 
@@ -610,7 +624,13 @@ class TurnosController extends Controller
                 'JLCA'              => $data["JLCA"],
                 'motivo'            => $data["motivo"],
                 'curp_solicitante'  => $representante["curp"],
-                'salario'           => $data["salario"]
+                'salario'           => $data["salario"],
+                'municipio_rat'     => $data["municipio_rat"],
+                'tipo_vialidad'     => $data["tipo_vialidad"],
+                'calle'             => $data["vialidad_calle"],
+                'colonia'           => $data["colonia"],
+                'num_ext'           => $data["N_Ext"],
+                'codigo_postal'     => $data["cp"],
             ); 
             $nombre = $data["trabajador"];
             $email  = $representante["email"];
@@ -658,7 +678,13 @@ class TurnosController extends Controller
                 'JLCA'                      => $data["JLCA"],
                 'motivo'                    => $data["motivo"],
                 'curp_solicitante'          => $data["curp"],
-                'salario'                   => $data["salario"]
+                'salario'                   => $data["salario"],
+                'municipio_rat'             => $data["municipio_rat"],
+                'tipo_vialidad'             => $data["tipo_vialidad"],
+                'calle'                     => $data["vialidad_calle"],
+                'colonia'                   => $data["colonia"],
+                'num_ext'                   => $data["N_Ext"],
+                'codigo_postal'             => $data["cp"],
             ); 
             $nombre = $data["trabajador"];
             $email  = $data["email"];
@@ -695,6 +721,10 @@ class TurnosController extends Controller
         }
         if(isset($data["tipo_otros"])){
             $data_insertar["tipo_otros"] =  $data["tipo_otros"];
+        }
+
+        if(isset($data["N_Int"])){
+            $data_insert["num_int"] =  $data["N_Int"];
         }
         //dd($data_insertar);
 
@@ -739,6 +769,9 @@ class TurnosController extends Controller
                 'documentos_ratificacion', $request->file('cuantificacion'), $cuantificacion
             );
             $data_insertar["documentoCuanti"] = $cuantificacion;
+        }
+        if(isset($data["N_Int"])){
+            $data_insert["num_int"] =  $data["N_Int"];
         }
 
         //Se van insetar todos los datos
@@ -1473,7 +1506,7 @@ class TurnosController extends Controller
         'otros_dias'                    => $data["otros"],
         'horario'                       => $data["horario"],
         'comida'                        => $data["comida"],
-        'domicilio'                     => $data["domicilio"],
+        /*'domicilio'                     => $data["domicilio"],*/
         'NUE'                           => $expediente,
         'id_conciliador'                => $data["conciliador_id"],
 

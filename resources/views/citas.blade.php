@@ -7,7 +7,6 @@
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <!-- Bootstrap 5.3.3 -->
     <link href="public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js'></script>
 
     <!-- Ionicons -->
@@ -153,13 +152,16 @@
                                             <div class="row">
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
-                                                        <label for="btncheck1">¿Cuenta con Folio Interno de Registro de Representación Legal Patronal?<br> 
-                                                            Puede registrarse en la siguiente liga (Para tramites posteriores) <a href="{{ route('poder-crear'); }}">Registrar</a>
-                                                        </label><br>
-                                                        <input name="labora" type="checkbox" class="btn-check" id="check_folio" autocomplete="off"/>
+                                                        <label for="btncheck1">¿Cuenta con Folio Interno de Registro de Representación Legal Patronal?
+                                                            Si <input name="labora" type="checkbox" class="btn-check" id="check_folio" autocomplete="off" style="width: 18px; height: 14px; border: 2px solid #CEA845; accent-color: #CEA845; border-radius: 4px;"/>
+                                                            No <input name="labora" type="checkbox" class="btn-check" id="check_folio_no" autocomplete="off" style="width: 18px; height: 14px; border: 2px solid #CEA845; accent-color: #CEA845; border-radius: 4px;"/>  
+                                                        </label>
                                                     </div>
                                                 </div>
-
+                                                <div class="col-xs-12 col-sm-12 col-md-12" id="leyenda_folio">
+                                                    Si no cuenta con un Folio Interno, puede registrarse en la siguiente liga (Para tramites posteriores) <a href="{{ route('poder-crear'); }}">Registrar</a>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-12"></div>
                                                 <div id="folio" class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="folio_input">Folio Interno de Registro <span style="color:red;">(*)</span></label>
@@ -169,8 +171,8 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div id="abogado_info" class="mt-2"></div>
 
+                                                <div id="abogado_info" class="mt-2"></div>
                                                 <div id="empresa" class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Nombre de la Empresa o Patrón <span style="color:red;">(*)</span></label>
@@ -255,7 +257,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:30px;">
                                                     <div class="form-group">
                                                         <h4 class="text-center">Datos del Trabajador</h4>
                                                     </div>
@@ -312,7 +314,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="name">CURP del trabajador</span></label>
+                                                        <label for="name">CURP del trabajador <span style="color:red;">(*)</span></span></label>
                                                         <input type="text" name="trabajador_curp"  oninput="validarInput(this, 'resultado_curp_trabajador')" class="form-control" required> 
                                                         <pre id="resultado_curp_trabajador" class="resultado"></pre>
                                                         <div class="invalid-feedback">
@@ -364,12 +366,104 @@
                                                     </div>
                                                 </div>
                                                 
-                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:30px;">
                                                     <div class="form-group">
                                                         <h4 class="text-center">Datos de la Relación Laboral</h4>
                                                     </div>
                                                 </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-2">
+                                                    <div class="form-group">
+                                                        <label for="name">Nombre del Municipio o Alcaldía <span style="color:red;">(*)</span></label>
+                                                        <select id="municipio_rat" class="form-control" name="municipio_rat" placeholder="*Municipio" required>
+                                                            <option value="">Seleccione</option>
+                                                            @foreach($municipios as $mun)
+                                                                <option value="{{$mun['id']}}">{{$mun['nombre']}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo municipio o alcaldía es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-2">
+                                                    <div class="form-group">
+                                                        <label for="name">Tipo de Vialidad <span style="color:red;">(*)</span></label>
+                                                        <select name="tipo_vialidad" id="tipo_vialidad" class="form-control" placeholder="*Vialidad" required>
+                                                            <option value="">SELECCIONE</option>
+                                                            <option value="AMPLIACIÓN">Ampliación</option>
+                                                            <option value="ANDADOR">Andador</option>
+                                                            <option value="AUTOPISTA">Autopista</option>
+                                                            <option value="AVENIDA">Avenida</option>
+                                                            <option value="BOULEVARD">Boulevard</option>
+                                                            <option value="CALLE">Calle</option>
+                                                            <option value="CALLEJÓN">Callejón</option>
+                                                            <option value="CALZADA">Calzada</option>
+                                                            <option value="CARRETERA">Carretera</option>
+                                                            <option value="CERRADA">Cerrada</option>
+                                                            <option value="CIRCUITO">Circuito</option>
+                                                            <option value="CIRCUNVALACIÓN">Circunvalación</option>
+                                                            <option value="CONTINUACIÓN">Continuación</option>
+                                                            <option value="CORREDOR">Corredor</option>
+                                                            <option value="DIAGONAL">Diagonal</option>
+                                                            <option value="EJE VIAL">Eje vial</option>
+                                                            <option value="PERIFÉRICO">Periférico</option>
+                                                            <option value="PROLONGACIÓN">Prolongación</option>
+                                                            <option value="RETORNO">Retorno</option>
+                                                            <option value="VIADUCTO">Viaducto</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo vialidad es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-2">
+                                                    <div class="form-group">
+                                                        <label for="name">Nombre de la Vialidad <span style="color:red;">(*)</span></label>
+                                                        <input type="text" name="vialidad_calle" id="vialidad_calle" class="form-control" placeholder="*Nombre vialidad" oninput="this.value = this.value.toUpperCase()" required> 
+                                                        <div class="invalid-feedback">
+                                                            El campo vialidad o calle es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-2">
+                                                    <div class="form-group">
+                                                        <label for="">Colonia <span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="form-control" placeholder="*Colonia" name="colonia" id="colonia" oninput="this.value = this.value.toUpperCase()" required>
+                                                        <div class="invalid-feedback">
+                                                            El domicilio es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 
+                                                <div class="col-xs-12 col-sm-12 col-md-1">
+                                                    <div class="form-group">
+                                                        <label for="">Núm. Ext. <span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="form-control" placeholder="*Núm. exterior" name="N_Ext" id="N_Ext" oninput="this.value = this.value.toUpperCase()" required>
+                                                        <div class="invalid-feedback">
+                                                            El domicilio es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
+            
+                                                <div class="col-xs-12 col-sm-12 col-md-2">
+                                                    <div class="form-group">
+                                                        <label for="">Núm. Int.(Opcional)</label>
+                                                        <input type="text" class="form-control" placeholder="Núm. interior" name="N_Int" id="N_Int" oninput="this.value = this.value.toUpperCase()">
+                                                        <div class="invalid-feedback">
+                                                            El domicilio es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
+            
+                                                <div class="col-xs-12 col-sm-12 col-md-1">
+                                                    <div class="form-group">
+                                                        <label for="">Código postal <span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="form-control" placeholder="*Código postal" name="cp" id="cp" oninput="this.value = this.value.toUpperCase()" required>
+                                                        <div class="invalid-feedback">
+                                                            El domicilio es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div  class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">¿Existe procedimiento previo en la junta local de conciliación y arbitraje? <span style="color:red;">(*)</span></label>
@@ -565,77 +659,78 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                             
+                                                <div class="col-xs-12 col-sm-12 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="name">Sedes <span style="color:red;">(*)</span></label>
+                                                        <select id="sede" name="sede" class="form-control" onchange="modalCalendar();" required>
+                                                            <option value="">Seleccione la sede</option>
+                                                            <option value="Morelia">Morelia</option>
+                                                            <option value="Uruapan">Uruapan</option>
+                                                            <option value="Zamora">Zamora</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            La sede es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--div class="col-xs-12 col-sm-12 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="name">Día</label>
+                                                        <input id="fecha" type="date" name="fecha" class="form-control" onchange="diaSemana();" disabled>
+                                                        <div class="invalid-feedback">
+                                                            El campo conflicto es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="password">Horario Disponible</label>
+                                                        <select id="horarios" name="hora" class="form-control">
+                                                            <option value=""> --Primero selecciona un Dia --</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El Horario es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div-->
+
+                                                <input type="hidden" name="fecha" id="fechaSeleccionada" required>
+                                                <input type="hidden" name="hora" id="horaSeleccionada" required>
+                                                    
+                                                <!-- Botón para abrir el modal -->
                                                    
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="name">Sedes <span style="color:red;">(*)</span></label>
-                                                    <select id="sede" name="sede" class="form-control" onchange="modalCalendar();" required>
-                                                        <option value="">Seleccione la sede</option>
-                                                        <option value="Morelia">Morelia</option>
-                                                        <option value="Uruapan">Uruapan</option>
-                                                        <option value="Zamora">Zamora</option>
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        La sede es obligatoria.
-                                                    </div>
+                                                <div style="display: flex; align-items: center; justify-content: center;">
+                                                    <button type="button" id="botonCalendar" class="btn btn-lg btn-custom-morado" data-toggle="modal" data-target="#calendarModal" disabled>
+                                                        Seleccionar Fecha y Horario
+                                                    </button>
                                                 </div>
-                                            </div>
-                                            <!--div class="col-xs-12 col-sm-12 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="name">Día</label>
-                                                    <input id="fecha" type="date" name="fecha" class="form-control" onchange="diaSemana();" disabled>
-                                                    <div class="invalid-feedback">
-                                                        El campo conflicto es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="password">Horario Disponible</label>
-                                                    <select id="horarios" name="hora" class="form-control">
-                                                        <option value=""> --Primero selecciona un Dia --</option>
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        El Horario es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div-->
+                                                    
 
-                                            <input type="hidden" name="fecha" id="fechaSeleccionada" required>
-                                            <input type="hidden" name="hora" id="horaSeleccionada" required>
-                                            
-                                            <!-- Botón para abrir el modal -->
-                                            <div style="display: flex; align-items: center; justify-content: center;">
-                                                <button type="button" id="botonCalendar" class="btn btn-lg btn-custom-morado" data-toggle="modal" data-target="#calendarModal" disabled>
-                                                    Seleccionar Fecha y Horario
-                                                </button>
-                                            </div>
-
-                                            <div class="modal fade" id="calendarModal" tabindex="-1" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered modal-xl">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title">Seleccionar Fecha y Horario</h5>
-                                                            <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <div id="calendar"></div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                                            <button type="button" class="btn btn-primary" id="confirmarSeleccion">Confirmar</button>
+                                                <div class="modal fade" id="calendarModal" tabindex="-1" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered modal-xl">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Seleccionar Fecha y Horario</h5>
+                                                                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div id="calendar"></div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                                                <button type="button" class="btn btn-primary" id="confirmarSeleccion">Confirmar</button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                        </div>
-
-                                        <div id="resumenCita" class="col-xs-12 col-sm-12 col-md-12" style="margin-top: 10px; display: none;">
-                                            <div class="alert alert-info">
-                                                <strong>Cita seleccionada:</strong> <span id="fechaResumen"></span> a las <span id="horaResumen"></span>
+                                            <div id="resumenCita" class="col-xs-12 col-sm-12 col-md-12" style="margin-top: 10px; display: none;">
+                                                <div class="alert alert-info">
+                                                    <strong>Cita seleccionada:</strong> <span id="fechaResumen"></span> a las <span id="horaResumen"></span>
+                                                </div>
                                             </div>
-                                        </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div align="center">
@@ -911,6 +1006,37 @@
             termino.addEventListener("blur", validarFechas);
 
         });
+
+        //leyenda folio
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkSi = document.getElementById('folio');
+            const checkNo = document.getElementById('check_folio_no');
+            const leyenda = document.getElementById('leyenda_folio');
+
+            function actualizarLeyenda() {
+                if (checkNo.checked && !checkSi.checked) {
+                    leyenda.style.display = 'block';
+                } else {
+                    leyenda.style.display = 'none';
+                }
+            }
+
+            // Asegurar que solo se seleccione uno
+            checkSi.addEventListener('change', function () {
+                if (this.checked) {
+                    checkNo.checked = false;
+                }
+                actualizarLeyenda();
+            });
+
+            checkNo.addEventListener('change', function () {
+                if (this.checked) {
+                    checkSi.checked = false;
+                }
+                actualizarLeyenda();
+            });
+        });
+
     </script>
 
     <script>
@@ -939,7 +1065,7 @@
                     
                     // Hacer petición AJAX con parámetro sede
                     $.ajax({
-                        url: '/desarrollo/api/obtenerEventos',
+                        url: '/nuevo_siconcilio/api/obtenerEventos',
                         method: 'GET',
                         data: {
                             sede: sede,

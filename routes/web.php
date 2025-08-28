@@ -370,6 +370,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/cumplimiento/busqueda',               [SeerController::class, 'cumplimientos_busqueda'])->name('cumplimientos_busqueda');
         Route::get('/cumplimietos/actual',                  [SeerController::class, 'cumplimiento_actual'])->name('cumplimiento_actual');
         Route::get('/cumplimiento/consulta/{id}/{tipo}',    [SeerController::class, 'consulta_cumplimiento'])->name('consulta_cumplimiento');
+        Route::get('/cumplimiento/crear',                  [SeerController::class, 'crear_cumplimiento'])->name('crear_cumplimiento'); //Se crear un cumplimiento desde el menú de cumplimientos
         //Ratificaciones diarias
         Route::post('/cumplimiento/pagar/rati',             [SeerController::class, 'cumplimiento_pagar_rati'])->name('cumplimiento_pagar');
         Route::get('/cumplimiento/rechazar/rati/{id}',      [SeerController::class, 'cumplimiento_rechazar_rati'])->name('cumplimiento_rechazar');

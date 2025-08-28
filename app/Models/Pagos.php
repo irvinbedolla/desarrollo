@@ -10,7 +10,7 @@ class Pagos extends Model
     //use HasFactory;
     protected $table = 'pago_solicitud';
     protected $primaryKey = 'id';
-    protected $fillable = ['id_solicitud','fecha','hora','monto','descripcion','observaciones','estatus','tipo_pago'];
+    protected $fillable = ['id_solicitud','fecha','hora','monto','descripcion','observaciones','estatus','tipo_pago','delegacion','NUE','id_conciliador','nombre_trabajador','empresa_representante','tipo_generacion','forma_pago'];
     protected $casts = [
         'fecha' => 'date',
         'hora' => 'datetime:H:i'
