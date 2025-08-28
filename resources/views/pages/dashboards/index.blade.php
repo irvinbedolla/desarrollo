@@ -183,10 +183,6 @@
             <div class="modal-body">
                 Cita
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <a href="{{ url('/calendario') }}" class="btn btn-info">Ver detalle</a>
-            </div>
         </div>
     </div>
 </div>
@@ -205,7 +201,6 @@
 
 
 </body>
-
 
     <script src="public/assets/js/jquery.min.js"></script>
     <script src="public/assets/js/popper.min.js"></script>

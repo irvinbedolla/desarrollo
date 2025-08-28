@@ -60,6 +60,8 @@ use App\Http\Controllers\RecepcionController;
     Route::get('/ratificaciones/eventos', [App\Http\Controllers\AudienciasController::class, 'ratificaciones'])->name('ratificaciones.eventos');
     Route::get('citas/exportar-excel', [CitaController::class, 'exportarExcel']);
 
+    Route::get('/cumplimiento/consulta/{id}/{tipo}', [SeerController::class, 'consulta_cumplimiento'])->name('consulta_cumplimiento');
+
     //Rutas fuera del login
     Route::get('/pantalla', function () {
         $fecha_actual = date('Y-m-d');

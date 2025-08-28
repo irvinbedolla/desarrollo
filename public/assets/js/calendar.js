@@ -158,6 +158,10 @@ function handleEventClick(info, calendarType) {
             <strong>Estatus:</strong> ${props.estatus}<br>
             <strong>Monto:</strong> ${props.monto}<br>
             <strong>Observaciones:</strong> ${props.observaciones}<br>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <a href="{{ url('/cumplimiento/consulta/{id}/{tipo}') }}" class="btn btn-info">Ver detalle</a>
+            </div>
         `;
     } else if (calendarType === 'audiencias') {
         modalContent = `
@@ -169,6 +173,9 @@ function handleEventClick(info, calendarType) {
             <strong>Estatus:</strong> ${props.estatus}<br>
             <strong>Delegación:</strong> ${props.delegacion}<br>
             <strong>Sala:</strong> ${props.sala}<br>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
         `;
     }
     else if (calendarType === 'ratificaciones') {
@@ -179,6 +186,9 @@ function handleEventClick(info, calendarType) {
             <strong>Hora:</strong> ${props.hora}<br>
             <strong>Estatus:</strong> ${props.estatus}<br>
             <strong>Delegación:</strong> ${props.delegacion}<br>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
         `;
     }
 
