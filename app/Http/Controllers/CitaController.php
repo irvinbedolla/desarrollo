@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cita;
 use App\Models\Pagos;
+use App\Models\Recepcion;
 use App\Models\Turnos;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -58,14 +59,16 @@ class CitaController extends Controller
     public function citas() {
         $recepciones = Recepcion::all();
 
+        $tipo = 8;
+
         $eventos = [];
         foreach ($recepciones as $cita  ) {
 
-            if ($cita->estatus === 'cancelada') {
+            if ($cita->estatus === 'no atendida') {
                 $color = '#DA0909';
             } elseif ($cita->estatus === 'pendiente') {
                 $color = '#EAE300';
-            } elseif ($cita->estatus === 'confirmada') {
+            } elseif ($cita->estatus === 'atendida') {
                 $color = '#00CE1C';
             } else {
                 $color = '#CCCCCC';
@@ -73,15 +76,14 @@ class CitaController extends Controller
 
             $eventos[] = [
                 'id' => $cita->id,
-                'title' => $cita->motivo,
+                'title' => $cita->solicitante,
                 'start' => $cita->fecha->format('Y-m-d') . 'T' . $cita->hora->format('H:i:s'),
                 'extendedProps' => [
                     'hora' => $cita->hora->format('h:i A'),
                     'color' => $color,
                     'fecha' => $cita->fecha->format('d/m/Y'),
                     'estatus' => $cita->estatus,
-                    'tipo' => $cita->tipo,
-                    'usuario' => $cita->usuario,
+                    'tipo' => $tipo,
                 ]
             ];
         }

@@ -115,6 +115,41 @@ document.addEventListener('DOMContentLoaded', function () {
         },
     });
 
+    calendarCitas = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridWeek',
+        locale: 'es',
+        events: 'citas/eventos',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,dayGridWeek'
+        },
+        buttonText: {
+            today: 'Hoy',
+            month: 'Mensual',
+            week: 'Semanal'
+        },
+        eventClick: function (info) {
+            handleEventClick(info, 'citas');
+        },
+        eventDidMount: function (info) {
+            styleEvent(info);
+        },
+        eventContent: function (info) {
+            return {
+                html: `
+                    <div class="fc-event-content">
+                        <div class="fc-event-title">${info.event.title}</div>
+                        <div class="fc-event-time">
+                            <div class="color-indicator" style="background:${info.event.extendedProps.color}"></div>
+                            ${info.event.extendedProps.hora}
+                        </div>
+                    </div>
+                `
+            };
+        },
+    });
+
     currentCalendar = calendarPagos;
     currentCalendar.render();
 
@@ -128,6 +163,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('btn-ratificaciones').addEventListener('click', function () {
         switchCalendar(calendarRatificaciones);
+    });
+
+    document.getElementById('btn-citas').addEventListener('click', function () {
+        switchCalendar(calendarCitas);
     });
 
     document.getElementById('btn-actualizar').addEventListener('click', function () {
@@ -184,7 +223,6 @@ function handleEventClick(info, calendarType) {
     else if (calendarType === 'ratificaciones') {
         modalContent = `
             <strong>Motivo:</strong> ${info.event.title}<br>
-            <strong>ID:</strong> ${info.event.id}<br>
             <strong>Folio:</strong> ${info.event.id}<br>
             <strong>Fecha:</strong> ${props.fecha}<br>
             <strong>Hora:</strong> ${props.hora}<br>
@@ -193,6 +231,20 @@ function handleEventClick(info, calendarType) {
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <a href="/sistema-integral/ratificacion/consulta/${info.event.id}/${props.tipo}" class="btn btn-info">Ver detalle</a>
+            </div>
+        `;
+    }
+    
+    else if (calendarType === 'citas') {
+        modalContent = `
+            <strong>Solicitante:</strong> ${info.event.title}<br>
+            <strong>ID:</strong> ${info.event.id}<br>
+            <strong>Fecha:</strong> ${props.fecha}<br>
+            <strong>Hora:</strong> ${props.hora}<br>
+            <strong>Estatus:</strong> ${props.estatus}<br>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <a href="/sistema-integral/cita/consulta/${info.event.id}/${props.tipo}" class="btn btn-info">Ver detalle</a>
             </div>
         `;
     }
