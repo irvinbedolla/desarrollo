@@ -160,7 +160,7 @@ function handleEventClick(info, calendarType) {
             <strong>Observaciones:</strong> ${props.observaciones}<br>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <a href="/desarrollo/cumplimiento/consulta/${info.event.id}/${props.tipo}" class="btn btn-info">Ver detalle</a>
+                <a href="/sistema-integral/cumplimiento/consulta/${info.event.id}/${props.tipo}" class="btn btn-info">Ver detalle</a>
             </div>
         `;
     } else if (calendarType === 'audiencias') {
@@ -176,7 +176,7 @@ function handleEventClick(info, calendarType) {
             <strong>Sala:</strong> ${props.sala}<br>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <a href="/desarrollo/audiencia/consulta/${info.event.id}/${props.tipo}" class="btn btn-info">Ver detalle</a>
+                <a href="/sistema-integral/audiencia/consulta/${info.event.id}/${props.tipo}" class="btn btn-info">Ver detalle</a>
             </div>
         `;
     }
@@ -191,7 +191,7 @@ function handleEventClick(info, calendarType) {
             <strong>Delegación:</strong> ${props.delegacion}<br>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <a href="/desarrollo/ratificacion/consulta/${info.event.id}/${props.tipo}" class="btn btn-info">Ver detalle</a>
+                <a href="/sistema-integral/ratificacion/consulta/${info.event.id}/${props.tipo}" class="btn btn-info">Ver detalle</a>
             </div>
         `;
     }

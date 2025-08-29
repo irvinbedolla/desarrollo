@@ -21,6 +21,7 @@
                                             <th style="color: #fff;">Monto</th>
                                             <th style="color: #fff;">Estatus</th>
                                             <th style="color: #fff;">Pagar</th>
+                                            <th style="color: #fff;">Documentos</th>
                                         </thead>
                                         <tbody>
                                             @foreach($solicitudes as $pago)
@@ -35,6 +36,13 @@
                                                                 Pagar
                                                             </button>
                                                             <a class="btn btn-danger" href="{{ route('cumplimiento_rechazar_busqueda', $pago->id) }}" onclick=consultar_estadistica();>Rechazar</a>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if($pago->estatus == "Pagado")
+                                                            <a class="btn btn-success" href="{{ route('PDFcumplimiento', $pago->id) }}" target="_blank">PDF</a>
+                                                        @elseif($pago->estatus == "No pagado")
+                                                        <a class="btn btn-info" href="{{ route('PDFincumplimientoAudiencia', $pago->id) }}" target="_blank">PDF</a>
                                                         @endif
                                                     </td>
                                                 </tr>

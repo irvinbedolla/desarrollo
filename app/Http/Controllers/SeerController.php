@@ -4490,6 +4490,11 @@ class SeerController extends Controller
             ->get();
             return view('/cumplimientos/pagar_busqueda',compact('solicitudes'));
         }
+        else if($tipo == 6){
+            $solicitudes = Pagos::where('id',$id)->get();
+            //dd($solicitudes);
+            return view('/cumplimientos/pagar_busqueda',compact('solicitudes'));
+        }
     }
 
     public function cumplimiento_pagar_rati(Request $request){
@@ -4588,15 +4593,29 @@ class SeerController extends Controller
     }
 
     public function PDFincumplimientoAudiencia($id){
-        $solicitud = SeerSolicitante::where('id_solicitud',$id)->first();
         $pagos = Pagos::find($id);
+
+        if($pagos["id_solicitud"] == 0){
+            $solicitud = [
+                'NUE'  => $pagos["NUE"], 
+            ];
+            $salario_diario = 0;
+            $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
+            $conciliador = $conciliador->where("seer_general.id", "=", $id)
+            ->select('users.name')
+            ->first();
+        }
+        else{
+            $solicitud = SeerSolicitante::where('id_solicitud',$id)->first();
+            $pagos = Pagos::find($id);
+            $salario_diario = $this->calcularSalarioDiario($solicitud->pago, $solicitud->periodo_pago);
+
+            $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
+            $conciliador = $conciliador->where("seer_general.id", "=", $id)
+            ->select('users.name')
+            ->first();
+        }
        
-        $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
-        $conciliador = $conciliador->where("seer_general.id", "=", $id)
-        ->select('users.name')
-        ->first();
-        
-        $salario_diario = $this->calcularSalarioDiario($solicitud->pago, $solicitud->periodo_pago);
 
         $html = view('PDF/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
 
@@ -4628,11 +4647,11 @@ class SeerController extends Controller
     public function cumplimiento_rechazar_busqueda_rati($id){
         $pagos = Pagos::find($id);
         
-        $id_solicitud = $pagos["id_solicitud"];
+        //$id_solicitud = $pagos["id_solicitud"];
         Pagos::find($id)->update(['estatus'  => "No pagado"]);
-        Turnos::find($id_solicitud)->update(['estatus' => "Incumplimiento"]);
+        //Turnos::find($id_solicitud)->update(['estatus' => "Incumplimiento"]);
 
-        return redirect()->route('cumplimiento_buscar');
+        return redirect()->route('agenda');
     }
 
     public function cumplimiento_pagar_busqueda_audiencia(Request $request){
@@ -5646,7 +5665,7 @@ class SeerController extends Controller
     }
 
 
-    public function obtenerEventos(Request $request)
+    public function obtenerCumplimientos(Request $request)
     {
         $fecha_inicio = now()->subDays(20)->format('Y-m-d');
         $fecha_fin = now()->addDays(20)->format('Y-m-d');
@@ -5656,10 +5675,10 @@ class SeerController extends Controller
         $ocupados = Pagos::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
             ->where('delegacion', $sede) // FILTRO POR SEDE
             ->get()
-            ->map(function ($turno) {
+            ->map(function ($cumplimiento) {
                 return [
                     'title' => 'Ocupado',
-                    'start' => $turno->fecha . 'T' . $turno->hora,
+                    'start' => date_format($cumplimiento->fecha, 'Y-m-d') . 'T' . date_format($cumplimiento->hora,'H:i:s'),
                     'color' => '#DA0909',
                     'extendedProps' => ['estado' => 'ocupado']
                 ];
@@ -5674,7 +5693,6 @@ class SeerController extends Controller
             if ($fecha->format('N') < 6) { // Saltar fines de semana
                 for ($hora = 9; $hora <= 15; $hora++) {
                     $slotStart = $fecha->format('Y-m-d') . 'T' . str_pad($hora, 2, '0', STR_PAD_LEFT) . ':00:00';
-                    
                     // Verificar si el slot está ocupado
                     $ocupado = collect($ocupados)->contains('start', $slotStart);
                     

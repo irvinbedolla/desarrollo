@@ -209,6 +209,7 @@
                             end: fetchInfo.endStr
                         },
                         success: function(data) {
+                            console.log(data);
                             successCallback(data);
                         },
                         error: function() {

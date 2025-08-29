@@ -364,7 +364,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Fin de Citados
     //Cumplimientos
         //Ligas de busqueda
-        //Route::get('/cumplimiento/consulta',                [SeerController::class, 'cumplimiento_buscar'])->name('cumplimiento_buscar');
         Route::post('/cumplimiento/busqueda',               [SeerController::class, 'cumplimientos_busqueda'])->name('cumplimientos_busqueda');
         Route::get('/cumplimietos/actual',                  [SeerController::class, 'cumplimiento_actual'])->name('cumplimiento_actual');
         Route::get('/cumplimiento/consulta/{id}/{tipo}',    [SeerController::class, 'consulta_cumplimiento'])->name('consulta_cumplimiento');
@@ -376,7 +375,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/cumplimiento/pagar/audienia',         [SeerController::class, 'cumplimiento_pagar_audiencia'])->name('cumplimiento_pagar_audiencia');
         Route::get('/cumplimiento/rechazara/{id}',          [SeerController::class, 'cumplimiento_rechazar_audiencia'])->name('cumplimiento_rechazar_audiencia');
         //Ratificaciones busqueda
-        Route::post('/cumplimiento/consulta',               [SeerController::class, 'cumplimiento_pagar_busqueda_rati'])->name('cumplimiento_pagar_busqueda');
+        Route::post('/cumplimientos/consulta',               [SeerController::class, 'cumplimiento_pagar_busqueda_rati'])->name('cumplimiento_pagar_busqueda');
         Route::get('/cumplimiento/rechazar/{id}',           [SeerController::class, 'cumplimiento_rechazar_busqueda_rati'])->name('cumplimiento_rechazar_busqueda');
         Route::get('/cumplimientos/index',                  [SeerController::class, 'audiencias_cumplimiento'])->name('audiencias.cumplimiento');
         Route::get('/cumplimiento/PDFpago/{id}',            [SeerController::class, 'VerPDFAudiencia'])->name('VerPDFAudiencia');

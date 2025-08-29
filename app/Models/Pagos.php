@@ -20,5 +20,10 @@ class Pagos extends Model
     {
         return $this->hasOne(Turnos::class, 'id', 'id_solicitud');
     }
+
+    public function cumplimiento()
+    {
+        return $this->hasOne(Pagos::class, 'id', 'id_solicitud');
+    }
     
 }
