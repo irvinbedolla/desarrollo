@@ -17,7 +17,6 @@
                                     <table id="example" class="table table-striped mt-2">
                                         <thead style="background-color: #4A001F;">
                                             <th style="color: #fff;">Fecha</th>
-                                            <th style="color: #fff;">Hora</th>
                                             <th style="color: #fff;">Monto</th>
                                             <th style="color: #fff;">Estatus</th>
                                             <th style="color: #fff;">Pagar</th>
@@ -26,7 +25,6 @@
                                         <tbody>
                                             @foreach($solicitudes as $pago)
                                                 <tr>
-                                                    <td>{{$pago->fecha}}</td> 
                                                     <td>{{$pago->hora}}</td>
                                                     <td>${{number_format($pago->monto, 2)}}</td>
                                                     <td>{{$pago->estatus}}</td>
