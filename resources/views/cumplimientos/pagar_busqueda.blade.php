@@ -35,14 +35,17 @@
                                                             <button type="button" class="btn btn-info open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $pago->id }}">
                                                                 Pagar
                                                             </button>
-                                                            <a class="btn btn-danger" href="{{ route('cumplimiento_rechazar_busqueda', $pago->id) }}" onclick=consultar_estadistica();>Rechazar</a>
+                                                            <a class="btn btn-danger" href="{{ route('cumplimiento_rechazar_busqueda', $pago->id) }}" onclick=consultar_estadistica();>No pagado</a>
+                                                            <a class="btn btn-warning" href="{{ route('cumplimiento_incomparecencia', $pago->id) }}" onclick=consultar_estadistica();>Incomparecencia</a>
                                                         @endif
                                                     </td>
                                                     <td>
                                                         @if($pago->estatus == "Pagado")
                                                             <a class="btn btn-success" href="{{ route('PDFcumplimiento', $pago->id) }}" target="_blank">PDF</a>
                                                         @elseif($pago->estatus == "No pagado")
-                                                        <a class="btn btn-info" href="{{ route('PDFincumplimientoAudiencia', $pago->id) }}" target="_blank">PDF</a>
+                                                            <a class="btn btn-info" href="{{ route('PDFincumplimientoAudiencia', $pago->id) }}" target="_blank">PDF</a>
+                                                        @elseif($pago->estatus == "Incomparecencia trabajador")
+                                                            <a class="btn btn-info" href="{{ route('PDFIncoparecenciaCumplimiento', $pago->id) }}" target="_blank">PDF</a>
                                                         @endif
                                                     </td>
                                                 </tr>

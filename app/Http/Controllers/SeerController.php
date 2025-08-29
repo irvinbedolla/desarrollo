@@ -4548,10 +4548,6 @@ class SeerController extends Controller
         return redirect()->route('cumplimiento_actual');
     }
 
-    /*public function cumplimiento_buscar(){
-        return view('cumplimientos/busqueda');
-    }*/
-
     public function cumplimientos_busqueda(Request $request){
         $data = $request->all();
         $bandera_fechas = 0;
@@ -4596,14 +4592,13 @@ class SeerController extends Controller
         $pagos = Pagos::find($id);
 
         if($pagos["id_solicitud"] == 0){
-            $solicitud = [
-                'NUE'  => $pagos["NUE"], 
-            ];
+            $solicitud = Pagos::find($id);
             $salario_diario = 0;
-            $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
-            $conciliador = $conciliador->where("seer_general.id", "=", $id)
+            $conciliador  = User::join("pago_solicitud","pago_solicitud.id_conciliador","=","users.id");
+            $conciliador = $conciliador->where("pago_solicitud.id", "=", $id)
             ->select('users.name')
             ->first();
+            $html = view('PDF/cumplimientos/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
         }
         else{
             $solicitud = SeerSolicitante::where('id_solicitud',$id)->first();
@@ -4614,11 +4609,9 @@ class SeerController extends Controller
             $conciliador = $conciliador->where("seer_general.id", "=", $id)
             ->select('users.name')
             ->first();
+            $html = view('PDF/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
         }
        
-
-        $html = view('PDF/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
-
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
@@ -4641,7 +4634,7 @@ class SeerController extends Controller
             Turnos::find($id_solicitud)->update(['estatus' => "Conluida"]);
         }
 
-        return redirect()->route('cumplimiento_buscar');
+        return redirect()->route('agenda');
     }
 
     public function cumplimiento_rechazar_busqueda_rati($id){
@@ -4667,7 +4660,7 @@ class SeerController extends Controller
             SeerPerGeneral::find($id_solicitud)->update(['estatus' => "Conluida"]);
         }
 
-        return redirect()->route('cumplimiento_buscar');
+        return redirect()->route('agenda');
     }
 
     public function VerPDFAudiencia($id){
@@ -5168,13 +5161,23 @@ class SeerController extends Controller
     //PDF Constancia de cumplimiento
     public function VerPDFCumplimiento($id){
         $pagos = Pagos::find($id);
-        $solicitud = SeerPerGeneral::find($pagos["id_solicitud"]);
-        $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
-        $conciliador = $conciliador->where("seer_general.id", "=", $solicitud["id"])
-        ->select('users.name')
-        ->first();
+        if($pagos["id_solicitud"] == 0){
+            $solicitud = Pagos::find($id);
+            $conciliador  = User::join("pago_solicitud","pago_solicitud.id_conciliador","=","users.id");
+            $conciliador = $conciliador->where("pago_solicitud.id", "=", $pagos["id"])
+            ->select('users.name')
+            ->first();
+            $html = view('PDF/Cumplimientos/pagosParciales', compact('id', 'solicitud','conciliador','pagos'))->render();
+        }else{
+            $solicitud = SeerPerGeneral::find($pagos["id_solicitud"]);
+            $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
+            $conciliador = $conciliador->where("seer_general.id", "=", $solicitud["id"])
+            ->select('users.name')
+            ->first();
+            $html = view('PDF/Solicitudes/pagosParciales', compact('id', 'solicitud','conciliador','pagos'))->render();
+        }
 
-        $html = view('PDF/Solicitudes/pagosParciales', compact('id', 'solicitud','conciliador','pagos'))->render();
+        
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -5717,5 +5720,44 @@ class SeerController extends Controller
         }
 
         return response()->json($todosLosEventos);
+    }
+
+    public function cumplimiento_incomparecencia($id){
+        Pagos::find($id)->update(['estatus'  => "Incomparecencia trabajador"]);
+
+        return redirect()->route('agenda');
+    }
+
+    public function PDFIncoparecenciaCumplimiento($id){
+        $pagos = Pagos::find($id);
+
+        if($pagos["id_solicitud"] == 0){
+            $solicitud = Pagos::find($id);
+            $salario_diario = 0;
+            $conciliador  = User::join("pago_solicitud","pago_solicitud.id_conciliador","=","users.id");
+            $conciliador = $conciliador->where("pago_solicitud.id", "=", $id)
+            ->select('users.name')
+            ->first();
+            $html = view('PDF/cumplimientos/incomparecenciaTrabajador', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
+        }
+        else{
+            $solicitud = SeerSolicitante::where('id_solicitud',$id)->first();
+            $pagos = Pagos::find($id);
+            $salario_diario = $this->calcularSalarioDiario($solicitud->pago, $solicitud->periodo_pago);
+
+            $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
+            $conciliador = $conciliador->where("seer_general.id", "=", $id)
+            ->select('users.name')
+            ->first();
+            $html = view('PDF/cumplimientos/incomparecenciaTrabajador', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
+        }
+       
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'constancia_de_incumplimiento_'  .'.pdf';
+        return $pdf->stream($nombreArchivo);      
     }
 }
