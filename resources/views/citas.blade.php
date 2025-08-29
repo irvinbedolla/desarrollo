@@ -152,14 +152,11 @@
                                             <div class="row">
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
+                                                        <label>En caso de no cuentar con un Folio Interno, puede registrarse en la siguiente liga (Para tramites posteriores) <a href="{{ route('poder-crear'); }}">Registrar</a></label><br>
                                                         <label for="btncheck1">¿Cuenta con Folio Interno de Registro de Representación Legal Patronal?
-                                                            Si <input name="labora" type="checkbox" class="btn-check" id="check_folio" autocomplete="off" style="width: 18px; height: 14px; border: 2px solid #CEA845; accent-color: #CEA845; border-radius: 4px;"/>
-                                                            No <input name="labora" type="checkbox" class="btn-check" id="check_folio_no" autocomplete="off" style="width: 18px; height: 14px; border: 2px solid #CEA845; accent-color: #CEA845; border-radius: 4px;"/>  
+                                                            Si <input name="labora" type="checkbox" class="btn-check" id="check_folio" autocomplete="off" style="width: 18px; height: 14px; border: 2px solid #CEA845; accent-color: #CEA845; border-radius: 4px;"/>  
                                                         </label>
                                                     </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-12" id="leyenda_folio">
-                                                    Si no cuenta con un Folio Interno, puede registrarse en la siguiente liga (Para tramites posteriores) <a href="{{ route('poder-crear'); }}">Registrar</a>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-12"></div>
                                                 <div id="folio" class="col-xs-12 col-sm-12 col-md-4">
@@ -946,7 +943,6 @@
                 document.getElementById('div_otras').style.display = "block";
         });
         
-
         //Fechas inicio y fin
         document.addEventListener("DOMContentLoaded", function () {
             const inicio = document.querySelector('input[name="fecha_inicio"]');
@@ -1006,37 +1002,6 @@
             termino.addEventListener("blur", validarFechas);
 
         });
-
-        //leyenda folio
-        document.addEventListener('DOMContentLoaded', function () {
-            const checkSi = document.getElementById('folio');
-            const checkNo = document.getElementById('check_folio_no');
-            const leyenda = document.getElementById('leyenda_folio');
-
-            function actualizarLeyenda() {
-                if (checkNo.checked && !checkSi.checked) {
-                    leyenda.style.display = 'block';
-                } else {
-                    leyenda.style.display = 'none';
-                }
-            }
-
-            // Asegurar que solo se seleccione uno
-            checkSi.addEventListener('change', function () {
-                if (this.checked) {
-                    checkNo.checked = false;
-                }
-                actualizarLeyenda();
-            });
-
-            checkNo.addEventListener('change', function () {
-                if (this.checked) {
-                    checkSi.checked = false;
-                }
-                actualizarLeyenda();
-            });
-        });
-
     </script>
 
     <script>

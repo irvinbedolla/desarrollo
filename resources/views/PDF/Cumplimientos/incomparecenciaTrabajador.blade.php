@@ -75,26 +75,26 @@
                                 <td>{{ $solicitud->delegacion }} </td>
                             </tr>
                     </table>
-                </div><br><br><br>
+                </div><br><br><br><br><br>
                 <p><b>
                     Trbajador: {{$solicitud->nombre_trabajador}} <br> 
                     Empresa/Patrón: {{ $solicitud->empresa_representante }} <br>
-                </b></p>  
+                </b></p><br>  
                 <p>
                     En la Ciudad de <b>{{ $solicitud->delegacion }}</b>, Michoacán, siendo las <b>{{ \Carbon\Carbon::now()->format('H:i') }}</b> horas, del día 
                     <b>{{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}</b>, fecha y hora señalada para El 
-                    Cumplimiento de Pago establecido en la Clausula ________ del Convenio de Conciliación celebrado en Audiencia 
+                    Cumplimiento de Pago establecido en la Clausula 5° y 6° del Convenio de Conciliación celebrado en Audiencia 
                     <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las
-                    <b>{{$solicitud->hora}}</b> horas, dentro del número único de registro citado al rubro; ante la fe pública de la persona Conciliadora de nombre <b>{{$conciliador->name}}</b>, 
+                    <b>{{ \Carbon\Carbon::parse($solicitud->hora)->translatedFormat('h:i') }}</b> horas, dentro del número único de registro citado al rubro; ante la fe pública de la persona Conciliadora de nombre <b>{{$conciliador->name}}</b>, 
                     adscrita a la Delegación Regional <b>{{ $solicitud->delegacion }}</b> del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, en ejercicio de mis facultades 
                     establecidas en el artículo 684-E fracción XIII y XIV  párrafo cuarto de la Ley Federal del Trabajo y 20 fracción I, VI y XIII del Reglamento Interior del Centro de 
                     Conciliación Laboral del Estado de Michoacán de Ocampo, hago constar la siguiente:
                 </p>
                 <p><center><b>CERTIFICACIÓN:</b></center></p><br>
                 <p>
-                    Que comparece la persona de nombre <b>C. {{$solicitud->nombre_empresa}} {{$solicitud->primero_empresa}} {{$solicitud->segundo_empresa}}</b>, en su carácter de representante 
+                    Que comparece la persona de nombre <b>C. {{ $solicitud->empresa_representante }}</b>, en su carácter de representante 
                     legal de la parte patronal <b>{{$solicitud->empresa}}</b> a dar cumplimiento al Convenio celebrado entre las partes ante este Centro el día 
-                    <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{$solicitud->hora}}</b> hrs., 
+                    <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{ \Carbon\Carbon::parse($solicitud->hora)->translatedFormat('h:i') }}</b> hrs., 
                     haciendo constar la inasistencia de la parte trabajadora, no obstante de encontrarse legal y debidamente notificada de la fecha y hora del cumplimiento de pago de convenio, 
                     sin que exista causa justificada, motivo por el cual se EMITE CONSTANCIA DE INCUMPLIMIENTO dejando a salvo los derechos de la parte compareciente para hacerlos valer ante 
                     la autoridad competente, para los efectos legales y administrativos a los que haya lugar.- Archívese el presente asunto y Notifíquese.- 

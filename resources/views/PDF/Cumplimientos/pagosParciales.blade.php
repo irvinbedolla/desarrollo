@@ -77,8 +77,8 @@
                     </table>
                 </div><br><br><br><br><br>
                 <p><b>
-                    Trabajador(a): {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
-                    Empresa/Patrón: {{ $solicitud->empresa }}<br>
+                    Trabajador(a): {{ $solicitud->nombre_trabajador }} <br> 
+                    Empresa/Patrón: {{ $solicitud->empresa_representante }}<br>
                     Funcionario/a Conciliador/a Responsable: {{$conciliador->name}}<br>
                     Fecha y hora de cumplimiento: {{ \Carbon\Carbon::parse($solicitud->hora)->translatedFormat('d \d\e F \d\e\l Y \a \l\a\s h:i:s') }} horas.<br
                     Asistencia de los interesados: Si<br>
@@ -92,8 +92,8 @@
 
                     <b>Motivación:</b> Conforme a la determinación de dar por terminado el conflicto laboral, la parte <b>TRABAJADORA</b> y la parte <b>EMPLEADORA</b>, celebraron el Convenio de Conciliación 
                     de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> ante esta Autoridad Conciliadora como resultado de la audiencia de conciliación 
-                    celebrada <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> de 
-                    <b>{{$solicitud->hora}}</b> a <b>{{$solicitud->hora_fin}}</b> hrs.<br><br>
+                    celebrada el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b><!-- de 
+                    <b>{{$solicitud->hora}}</b> a <b>{{$solicitud->hora_fin}} hrs--></b>.<br><br>
 
                     Las <b>PARTES</b> acordaron <b>PAGO</b> en el convenio referido, en este sentido, el <b>EMPLEADOR</b> da cumplimiento ante esta Autoridad Conciliadora al siguiente concepto:<br>
 

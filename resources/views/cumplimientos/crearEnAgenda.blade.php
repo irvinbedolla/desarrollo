@@ -114,7 +114,7 @@
                                         <!-- Botón para abrir el modal -->  
                                         <div class="col-xs-12 col-sm-12 col-md-3 d-flex align-items-center">
                                             <div style="display: flex; align-items: center; justify-content: center;">
-                                                <button type="button" id="botonCalendar" class="btn btn-lg btn-custom-morado" data-toggle="modal" data-target="#calendarModal" disabled>
+                                                <button type="button" id="botonCalendar" class="btn btn-lg btn-custom-morado" data-bs-toggle="modal" data-bs-target="#calendarModal" disabled>
                                                     Seleccionar Fecha y Horario
                                                 </button>
                                             </div>
@@ -144,13 +144,13 @@
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title">Seleccionar Fecha y Horario</h5>
-                                                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <div id="calendar"></div>
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                                                         <button type="button" class="btn btn-primary" id="confirmarSeleccion">Confirmar</button>
                                                     </div>
                                                 </div>
@@ -271,7 +271,10 @@
                     document.getElementById('resumenCita').style.display = 'block';
                     
                     // Cerrar modal
-                    $('#calendarModal').modal('hide');
+                    //$('#calendarModal').modal('hide');
+                    const modalEl = document.getElementById('calendarModal');
+                    const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                    modal.hide();
                 } else {
                     alert('Por favor selecciona un horario disponible');
                 }

@@ -456,17 +456,16 @@ body {font-family: Arial;}
                                                         <input type="date" class="form-control" name="fecha_salida" value="<?=$solicitante["fecha_salida"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">Jornada</label>
-                                                        <select name="jornada" class="form-control">
-                                                            <option value="">SELECCIONE</option>
-                                                            <option value="Diurna"   {{ $solicitante['jornada'] == 'Diurna' ? "selected" : '' }}>DIURNA</option>
-                                                            <option value="Nocturna" {{ $solicitante['jornada'] == 'Nocturna' ? "selected" : '' }}>NOCTURNA</option>
-                                                            <option value="Mixta"    {{ $solicitante['jornada'] == 'Mixta' ? "selected" : '' }}>MIXTA</option>
-                                                        </select>
+                                                        <label for="name">Jornada Laboral(Día(s) y hora(s))</label>
+                                                        <input type="text" name="jornada" class="form-control" value="<?=$solicitante["jornada"];?>">
+                                                        <div class="invalid-feedback">
+                                                            El campo jornada laboral es obligatoria.
+                                                        </div>
                                                     </div>
                                                 </div>
+                                        
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="password">Horas trabajadas a la semana</label>

@@ -77,8 +77,8 @@
                     </table>
                 </div><br><br><br><br><br>
                 <p><b>
-                    Trabajador(a): {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}<br> 
-                    Empresa/Patrón: {{ $solicitud->empresa }}<br>
+                    Trabajador(a): {{ $solicitud->nombre_trabajador }}<br> 
+                    Empresa/Patrón: {{ $solicitud->empresa_representante }}<br>
                     Fecha y hora de cumplimiento: {{ \Carbon\Carbon::parse($solicitud->hora)->translatedFormat('d \d\e F \d\e\l Y \a \l\a\s h:i:s') }} horas.<br> 
                     Fecha que se emite la constancia de incumplimiento: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}<br>
                     Pena Convencional: Si<br>
@@ -97,7 +97,7 @@
                     <p><center><b>ACUERDO:</b></center></p><br>
                                 
                     En atención a los principios de legalidad, imparcialidad, confiabilidad, eficacia, objetividad, profesionalismo, y transparencia se emite <b>CONSTANCIA DE INCUMPLIMIENTO DE CONVENIO</b> 
-                    a favor de la parte <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b>; dejando a salvo sus derechos para ejercer las 
+                    a favor de la parte <b>{{ $solicitud->nombre_trabajador }}</b>; dejando a salvo sus derechos para ejercer las 
                     acciones pertinentes ante el Tribunal Laboral que corresponda. Se ordena el archivo del presente <b>asunto como concluido. Doy Fe.</b>
                 </p>
 
