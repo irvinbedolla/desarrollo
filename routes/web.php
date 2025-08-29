@@ -382,6 +382,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/cumplimiento/PDFIncumplimiento/{id}',  [SeerController::class, 'PDFincumplimientoAudiencia'])->name('PDFincumplimientoAudiencia');
         Route::post('/cumplimiento/guardar',                [SeerController::class, 'guardar_cumplimiento'])->name('guardar_cumplimiento');
         Route::get('/cumplimiento/incomparecencia/{id}',    [SeerController::class, 'PDFIncoparecenciaCumplimiento'])->name('PDFIncoparecenciaCumplimiento');
+        Route::get('/cumplimiento/incompeten/{id}',         [SeerController::class, 'cumplimiento_incomparecencia'])->name('cumplimiento_incomparecencia');
+        
     //Fin de cumplimientos
     //Recepcion
         Route::get('/turnos/create',             [RecepcionController::class, 'create'])->name('turnos.create');
