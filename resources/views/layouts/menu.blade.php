@@ -50,6 +50,9 @@
             <a class="nav-link" href="{{ route('configuracion') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Expedientes Sinacol</span>
             </a>
+            <a class="nav-link" href="{{ route('audiencias.cumplimiento') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" >Cumplimientos</span>
+            </a>
         @endrole
     @endauth
 
@@ -270,6 +273,16 @@
             </a>
             <a class="nav-link" href="{{ route('Ratificacion') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Ratificaciones</span>
+            </a>
+        @endrole
+    @endauth
+    @auth
+        @role('Cumplimientos')
+            <a class="nav-link" href="{{ route('agenda') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Agenda</span>
+            </a>
+            <a class="nav-link" href="{{ route('poderes') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
         @endrole
     @endauth

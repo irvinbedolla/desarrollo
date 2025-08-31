@@ -8,6 +8,10 @@ document.addEventListener('DOMContentLoaded', function () {
         initialView: 'dayGridWeek',
         locale: 'es',
         events: 'pagos/eventos',
+        eventSourceSuccess: function (events) {
+            console.log(events); // Verifica los datos que se están cargando
+            return events;
+        },
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',

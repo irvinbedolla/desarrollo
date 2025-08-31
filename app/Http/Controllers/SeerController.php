@@ -5694,11 +5694,18 @@ class SeerController extends Controller
 
         while ($fecha <= $fin) {
             if ($fecha->format('N') < 6) { // Saltar fines de semana
-                for ($hora = 9; $hora <= 15; $hora++) {
-                    $slotStart = $fecha->format('Y-m-d') . 'T' . str_pad($hora, 2, '0', STR_PAD_LEFT) . ':00:00';
-                    // Verificar si el slot está ocupado
-                    $ocupado = collect($ocupados)->contains('start', $slotStart);
+                // Definir inicio y fin de la jornada
+                $inicioJornada = (clone $fecha)->setTime(9, 0, 0);
+                $finJornada    = (clone $fecha)->setTime(15, 0, 0);
+        
+                // Recorremos cada 20 minutos
+                $slot = clone $inicioJornada;
+                while ($slot < $finJornada) {
+                    $slotStart = $slot->format('Y-m-d\TH:i:s');
                     
+                    // Verificar si está ocupado
+                    $ocupado = collect($ocupados)->contains('start', $slotStart);
+        
                     if ($ocupado) {
                         $todosLosEventos[] = [
                             'title' => 'Ocupado',
@@ -5714,8 +5721,13 @@ class SeerController extends Controller
                             'extendedProps' => ['estado' => 'disponible']
                         ];
                     }
+        
+                    // Avanzar 20 minutos
+                    $slot->modify('+20 minutes');
                 }
             }
+        
+            // Avanzar al siguiente día
             $fecha->modify('+1 day');
         }
 

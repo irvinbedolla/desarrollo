@@ -93,7 +93,7 @@ class CitaController extends Controller
     }
 
     public function pagos() {
-        $pagos = Pagos::with('turno')->get();
+        $pagos = Pagos::with('cumplimiento')->get();
 
         $eventos = [];
         foreach ($pagos as $pago) {
