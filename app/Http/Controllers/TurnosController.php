@@ -1783,4 +1783,10 @@ class TurnosController extends Controller
        return view('ratificaciones/verDocumentos',compact('documento_general','documento_abogado'));
     }
 
+    public function ratificacion_confirmadas(){
+        $solicitudes = Turnos::where('tipo','Ratificación')
+        ->whereIn('estatus', ['Confirmado'])
+        ->get();
+        return view('/solicitudes/indexauxiliar',compact('solicitudes'));
+    }
 }

@@ -50,8 +50,17 @@
             <a class="nav-link" href="{{ route('configuracion') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Expedientes Sinacol</span>
             </a>
+            <a class="nav-link" href="{{ route('audiencia_index') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" >Audiencias</span>
+            </a>
+             <a class="nav-link" href="{{ route('solicitudes_index') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Solicitudes</span>
+            </a>
             <a class="nav-link" href="{{ route('audiencias.cumplimiento') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" >Cumplimientos</span>
+            </a>
+            <a class="nav-link" href="{{ route('index_ratificacion') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Ratificaciones</span>
             </a>
         @endrole
     @endauth

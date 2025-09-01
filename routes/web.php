@@ -310,7 +310,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('ratificaciones/consultar/{id}',         [TurnosController::class, 'consultar_ratificaciones'])->name('consultar_ratificacion');
         Route::post('ratificaciones/editar',                [TurnosController::class, 'editar_ratificaciones'])->name('editar_ratificacion');
         Route::get('/PDF/falta_interes/{id}',               [TurnosController::class, 'VerPDFInteres'])->name('PDFfallta_interes');
-        //Route::get('/ratificaciones/pIncomparecencia/{id}', [TurnosController::class, 'pagoIncomparecencia_ratificacion'])->name('ratificacion_pagoIncom'); //No comparece el trabajador al pago
+        Route::get('/ratificaciones/pendienres',            [TurnosController::class, 'ratificacion_confirmadas'])->name('ratificacion_confirmadas'); //No comparece el trabajador al pago
     //Fin de Ratificaciones
     //Enlace
         Route::get('/notificaciones/consultar/{id}',        [SeerController::class, 'mostrar_citados'])->name('editar_citado');
@@ -383,7 +383,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/cumplimiento/guardar',                [SeerController::class, 'guardar_cumplimiento'])->name('guardar_cumplimiento');
         Route::get('/cumplimiento/incomparecencia/{id}',    [SeerController::class, 'PDFIncoparecenciaCumplimiento'])->name('PDFIncoparecenciaCumplimiento');
         Route::get('/cumplimiento/incompeten/{id}',         [SeerController::class, 'cumplimiento_incomparecencia'])->name('cumplimiento_incomparecencia');
-        
     //Fin de cumplimientos
     //Recepcion
         Route::get('/turnos/create',             [RecepcionController::class, 'create'])->name('turnos.create');
