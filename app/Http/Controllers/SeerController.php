@@ -4465,28 +4465,28 @@ class SeerController extends Controller
         if($tipo == 1){
             $solicitudes = Pagos::join('turnos','turnos.id',"=",'pago_solicitud.id_solicitud')
             ->where('pago_solicitud.id',$id)
-            ->select('pago_solicitud.id','turnos.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus')
+            ->select('pago_solicitud.id','turnos.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
             ->get();
             return view('/cumplimientos/pagar',compact('solicitudes'));
         }
         else if($tipo == 2){
             $solicitudes = Pagos::join('seer_general','seer_general.id',"=",'pago_solicitud.id_solicitud')
             ->where('pago_solicitud.id',$id)
-            ->select('pago_solicitud.id','seer_general.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus')
+            ->select('pago_solicitud.id','seer_general.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
             ->get();
             return view('/cumplimientos/pagarAuciencia',compact('solicitudes'));
         }
         else if($tipo == 3){
             $solicitudes = Pagos::join('turnos','turnos.id',"=",'pago_solicitud.id_solicitud')
             ->where('pago_solicitud.id',$id)
-            ->select('pago_solicitud.id','turnos.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus')
+            ->select('pago_solicitud.id','turnos.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
             ->get();
             return view('/cumplimientos/pagar_busqueda',compact('solicitudes'));
         }
         else if($tipo == 4){
             $solicitudes = Pagos::join('seer_general','seer_general.id',"=",'pago_solicitud.id_solicitud')
             ->where('pago_solicitud.id',$id)
-            ->select('pago_solicitud.id','seer_general.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus')
+            ->select('pago_solicitud.id','seer_general.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
             ->get();
             return view('/cumplimientos/pagar_busqueda',compact('solicitudes'));
         }
@@ -4498,9 +4498,19 @@ class SeerController extends Controller
     }
 
     public function cumplimiento_pagar_rati(Request $request){
+        /*$request->validate([
+            'id'              => 'required|exists:pago_solicitud,id',
+            'observaciones'   => 'nullable|string',
+            'forma_pago'      => 'required|string',
+            'fecha_audiencia' => 'required|date',
+            'hora_audiencia'  => 'required',
+        ]);*/
         $data = $request->all();
 
-        Pagos::find($data["id"])->update(['estatus'  => "Pagado", 'observaciones' => $data["observaciones"]]);
+        Pagos::find($data["id"])->update(['estatus'  => "Pagado", 'observaciones' => $data["observaciones"],
+                                        /*'forma_pago'      => $data["forma_pago"],
+                                        'fecha_audiencia' => $data["fecha_audiencia"],
+                                        'hora_audiencia'  => $data["hora_audiencia"]*/]);
 
         $pagos = Pagos::find($data["id"]);
         $id_solicitud = $pagos["id_solicitud"];
@@ -4622,35 +4632,69 @@ class SeerController extends Controller
     }
     
     public function cumplimiento_pagar_busqueda_rati(Request $request){
+        $request->validate([
+            'forma_pago'      => 'required',
+            'fecha_audiencia' => 'required|date',
+            'hora_audiencia'  => 'required',
+        ]);
         $data = $request->all();
 
-        Pagos::find($data["id"])->update(['estatus'  => "Pagado", 'observaciones' => $data["observaciones"]]);
+        Pagos::find($data["id"])->update(['estatus'  => "Pagado", 'observaciones' => $data["observaciones"], 
+                                            'forma_pago'      => $data["forma_pago"],
+                                            'fecha_audiencia' => $data["fecha_audiencia"],
+                                            'hora_audiencia'  => $data["hora_audiencia"]]);
 
         $pagos = Pagos::find($data["id"]);
         $id_solicitud = $pagos["id_solicitud"];
         $faltantes =  Pagos::where('id_solicitud',$id_solicitud)->where('estatus',"Pendiente")->get();
-
-        if(count($faltantes) == 0){
-            Turnos::find($id_solicitud)->update(['estatus' => "Conluida"]);
+        if($pagos["id_solicitud"] != 0){
+            if(count($faltantes) == 0){
+                Turnos::find($id_solicitud)->update(['estatus' => "Conluida"]);
+            }
         }
 
-        return redirect()->route('agenda');
+        return redirect()->route('agenda')->with('pagos', $pagos);
     }
 
-    public function cumplimiento_rechazar_busqueda_rati($id){
-        $pagos = Pagos::find($id);
+    public function cumplimiento_rechazar_busqueda_rati(Request $request, $id){
+        $request->validate([
+            'fecha_audiencia' => 'required|date',
+            'hora_audiencia'  => 'required',
+        ]);
+        $pago = Pagos::find($id);
+        $pago->update([
+            'estatus'         => "No pagado",
+            'fecha_audiencia' => $request->fecha_audiencia,
+            'hora_audiencia'  => $request->hora_audiencia,
+        ]);
+
+        $id_solicitud = $pago->id_solicitud;
+        Turnos::find($id_solicitud)?->update(['estatus' => "Incumplimiento"]);
+    
+        return redirect()->route('agenda');                         
+      /*Así estab antes de los cambios en los cumplimientos*/ 
+        /* 
+       $pagos = Pagos::find($id);
         
         //$id_solicitud = $pagos["id_solicitud"];
         Pagos::find($id)->update(['estatus'  => "No pagado"]);
         //Turnos::find($id_solicitud)->update(['estatus' => "Incumplimiento"]);
 
-        return redirect()->route('agenda');
+        return redirect()->route('agenda');*/
     }
 
     public function cumplimiento_pagar_busqueda_audiencia(Request $request){
+        $request->validate([
+            'forma_pago'      => 'required',
+            'fecha_audiencia' => 'required|date',
+            'hora_audiencia'  => 'required',
+        ]);
         $data = $request->all();
 
-        Pagos::find($data["id"])->update(['estatus'  => "Pagado", 'observaciones' => $data["observaciones"]]);
+        Pagos::find($data["id"])->update(['estatus'  => "Pagado", 'observaciones' => $data["observaciones"], 
+                                            'forma_pago'      => $data["forma_pago"],
+                                            'fecha_audiencia' => $data["fecha_audiencia"],
+                                            'hora_audiencia'  => $data["hora_audiencia"]]);
 
         $pagos = Pagos::find($data["id"]);
         $id_solicitud = $pagos["id_solicitud"];
@@ -5262,7 +5306,7 @@ class SeerController extends Controller
         Turnos::find($id_solicitud)->update(['estatus' => "Incumplimiento"]); //Revisar si se va a archivar, o q procede ANA
 
         return redirect()->route('cumplimiento_actual');
-        //return redirect()->route('ratificacion_atender');
+        //return redirect()->route('ratificacion_atender'); 
     }
 
     //Muestra la delegación que le corresponde según el municipío seleccionado
@@ -5734,34 +5778,50 @@ class SeerController extends Controller
         return response()->json($todosLosEventos);
     }
 
-    public function cumplimiento_incomparecencia($id){
-        Pagos::find($id)->update(['estatus'  => "Incomparecencia trabajador"]);
+    public function cumplimiento_incomparecencia(Request $request, $id){
+        $request->validate([
+            'fecha_audiencia' => 'required|date',
+            'hora_audiencia'  => 'required',
+        ]);
+        $pago = Pagos::find($id);
+        $pago->update([
+            'estatus'         => "Incomparecencia trabajador",
+            'fecha_audiencia' => $request->fecha_audiencia,
+            'hora_audiencia'  => $request->hora_audiencia,
+        ]);
+    
+        $id_solicitud = $pago->id_solicitud;
+        Pagos::find($id_solicitud)?->update(['estatus' => "Incomparecencia trabajador"]);
+        
+        return redirect()->route('agenda');  
+        /*Así estab antes de los cambios en los cumplimientos*/ 
+        /*Pagos::find($id)->update(['estatus'  => "Incomparecencia trabajador"]);
 
-        return redirect()->route('agenda');
+        return redirect()->route('agenda');*/
     }
 
-    public function PDFIncoparecenciaCumplimiento($id){
+    public function PDFIncomparecenciaCumplimiento($id){
         $pagos = Pagos::find($id);
 
         if($pagos["id_solicitud"] == 0){
             $solicitud = Pagos::find($id);
-            $salario_diario = 0;
+            //$salario_diario = 0;
             $conciliador  = User::join("pago_solicitud","pago_solicitud.id_conciliador","=","users.id");
             $conciliador = $conciliador->where("pago_solicitud.id", "=", $id)
             ->select('users.name')
             ->first();
-            $html = view('PDF/cumplimientos/incomparecenciaTrabajador', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
+            $html = view('PDF/cumplimientos/incomparecenciaTrabajador', compact('id', 'solicitud','conciliador',/*'salario_diario',*/'pagos'))->render();
         }
         else{
             $solicitud = SeerSolicitante::where('id_solicitud',$id)->first();
             $pagos = Pagos::find($id);
-            $salario_diario = $this->calcularSalarioDiario($solicitud->pago, $solicitud->periodo_pago);
+            //$salario_diario = $this->calcularSalarioDiario($solicitud->pago, $solicitud->periodo_pago);
 
             $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
             $conciliador = $conciliador->where("seer_general.id", "=", $id)
             ->select('users.name')
             ->first();
-            $html = view('PDF/cumplimientos/incomparecenciaTrabajador', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
+            $html = view('PDF/cumplimientos/incomparecenciaTrabajador', compact('id','solicitud','conciliador',/*'salario_diario',*/'pagos'))->render();
         }
        
         $pdf = \PDF::loadHTML($html)
@@ -5769,7 +5829,7 @@ class SeerController extends Controller
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true); 
 
-        $nombreArchivo = 'constancia_de_incumplimiento_'  .'.pdf';
+        $nombreArchivo = 'constancia_de_incomparecencia_'  .'.pdf';
         return $pdf->stream($nombreArchivo);      
     }
 }

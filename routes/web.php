@@ -247,7 +247,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/VerpdfPago/{id}',           [TurnosController::class, 'VerPDFPagos'])->name('PDFpagos');
         Route::get('/Verpdfaudiencia/{id}',      [TurnosController::class, 'VerPDFAudiencia'])->name('PDFaudiencia');
         //Route::get('/Verpdfincomparecencia/{id}',[TurnosController::class, 'VerPDFIncomparecencia'])->name('PDFincomparecencia'); //Revisa ANA no existe la función
-        Route::get('/pdfincomTrabajador/{id}',      [TurnosController::class, 'VerPDFIncomTrabajador'])->name('PDFincomparecenciaT');  //Incomparecencia por parte del trabajador
+        Route::get('/pdfincomTrabajador/{id}',   [TurnosController::class, 'VerPDFIncomTrabajador'])->name('PDFincomparecenciaT');  //Incomparecencia por parte del trabajador
         Route::get('turnos/index2',              [TurnosController::class, 'index_empresa'])->name('ratificacion');
         Route::get('turnos/indexr',              [TurnosController::class, 'indexr'])->name('Ratificacion');
         Route::get('turnos/aceptar/{id}',        [TurnosController::class, 'aceptacion'])->name('turno.aceptar');
@@ -376,13 +376,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/cumplimiento/rechazara/{id}',          [SeerController::class, 'cumplimiento_rechazar_audiencia'])->name('cumplimiento_rechazar_audiencia');
         //Ratificaciones busqueda
         Route::post('/cumplimientos/consulta',              [SeerController::class, 'cumplimiento_pagar_busqueda_rati'])->name('cumplimiento_pagar_busqueda');
-        Route::get('/cumplimiento/rechazar/{id}',           [SeerController::class, 'cumplimiento_rechazar_busqueda_rati'])->name('cumplimiento_rechazar_busqueda');
+        Route::post('/cumplimiento/rechazar/{id}',          [SeerController::class, 'cumplimiento_rechazar_busqueda_rati'])->name('cumplimiento_rechazar_busqueda');
         Route::get('/cumplimientos/index',                  [SeerController::class, 'audiencias_cumplimiento'])->name('audiencias.cumplimiento');
         Route::get('/cumplimiento/PDFpago/{id}',            [SeerController::class, 'VerPDFAudiencia'])->name('VerPDFAudiencia');
         Route::get('/cumplimiento/PDFIncumplimiento/{id}',  [SeerController::class, 'PDFincumplimientoAudiencia'])->name('PDFincumplimientoAudiencia');
         Route::post('/cumplimiento/guardar',                [SeerController::class, 'guardar_cumplimiento'])->name('guardar_cumplimiento');
-        Route::get('/cumplimiento/incomparecencia/{id}',    [SeerController::class, 'PDFIncoparecenciaCumplimiento'])->name('PDFIncoparecenciaCumplimiento');
-        Route::get('/cumplimiento/incompeten/{id}',         [SeerController::class, 'cumplimiento_incomparecencia'])->name('cumplimiento_incomparecencia');
+        Route::get('/cumplimiento/incomparecencia/{id}',    [SeerController::class, 'PDFIncomparecenciaCumplimiento'])->name('PDFIncomparecenciaCumplimiento');
+        Route::post('/cumplimiento/no_comparece/{id}',      [SeerController::class, 'cumplimiento_incomparecencia'])->name('cumplimiento_incomparecencia');
     //Fin de cumplimientos
     //Recepcion
         Route::get('/turnos/create',             [RecepcionController::class, 'create'])->name('turnos.create');
