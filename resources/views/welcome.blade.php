@@ -286,7 +286,7 @@
             <div class="flip-box-inner">
               <div class="flip-box-front">
                 <h2 style="font-size: 22px; font-family: Arial; color:#000000">Seer</h2>
-                <img src="public/assets/images/seer_1.png" alt="Descripción de la imagen"
+                <img src="public/assets/images/ccl-r.png" alt="Descripción de la imagen"
                     style="width: 180px; height: auto; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
               </div>
               <div class="flip-box-back">

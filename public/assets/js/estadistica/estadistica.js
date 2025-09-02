@@ -15,7 +15,7 @@
                 }
             }, false);
         });
-    }, false);
+    }, false);
 })();
 
 $(function(){
@@ -32,7 +32,7 @@ function onSelectestadoChange(){
         for(var i=0; i<data.length; ++i)
             html_select += '<option value= "'+data[i].id+'">'+data[i].nombre+'</option>';
             $('#municipio_solicitante').html(html_select);
-    });
+    });
 }
 
 $(function(){
@@ -175,7 +175,7 @@ function buscarCCT(cct){
 $(function(){
     $('#ramaIndustrial').on('change', onSelectestadoChange);
 })
-
+/*
 function onSelectestadoChange(){
     var economica_id = $(this).val();
     $('#actividad_economica').prop('disabled', false);
@@ -188,4 +188,4 @@ function onSelectestadoChange(){
             $('#actividad_economica').html(html_select);
     });
 }
-
+*/

@@ -211,14 +211,14 @@
                 html += '<div id="inputFormRow">';
 
                     //NOMBRE CITADO
-                    html +='<div class="col-xs-12 col-sm-6 col-md-6">';
+                    html +='<div class="col-xs-12 col-sm-12 col-md-12">';
                     html +='<div class="form-group">';
                     html +='<label for="confirm-password">Citado</label>';
                     html +='<input type="text" class="form-control" name="citado[]"  oninput="this.value = this.value.toUpperCase()" required>';
                     html +='</div> </div>';                                
                     
                     //DIRECCION
-                    html += '<div class="col-xs-12 col-sm-12 col-md-6">';
+                    html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                     html += '<div class="form-group">';
                     html += '<label for="password">Dirección del citado</label>';
                     html +='<input type="text" class="form-control" name="direccion[]"  oninput="this.value = this.value.toUpperCase()" required>';
@@ -227,7 +227,7 @@
                     html += '</div> </div> </div>';
 
                     //TIPO DE PERSONA
-                    html +='<div class="col-xs-12 col-sm-6 col-md-6">';
+                    html +='<div class="col-xs-12 col-sm-12 col-md-12">';
                     html +='<div class="form-group">';
                     html +='<label for="confirm-password">Tipo persona</label>';
                     html +='<select class="form-control" name="tipo_persona[]" required>';

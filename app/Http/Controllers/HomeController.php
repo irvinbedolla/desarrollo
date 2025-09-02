@@ -69,7 +69,7 @@ class HomeController extends Controller
             'fecha'         => $fecha_actual,
             'hora'          => $hora_actual,
             'hora_fin'      => $hora_actual,
-            'delegacion'    => "Morelia",
+            'delegacion'    => $data["delegacion"],
             'estatus'       => "no atendido",
             'exepcion'      => "No",
             'edad'          => $data["edad"],
