@@ -83,8 +83,9 @@ use App\Http\Controllers\RecepcionController;
     Route::post('/turnos_guardar',      [HomeController::class, 'turnos_publico'])->name('turnos_publico'); 
     
     //Rutas de citas
-    Route::get('citas',                 [TurnosController::class, 'create_publico'])->name('create_cita');
-    Route::post('/citas/store_publico', [TurnosController::class, 'store_publico'])->name('turnos.publico');
+    Route::get('citas',                         [TurnosController::class, 'create_publico'])->name('create_cita');
+    Route::post('/citas/store_publico',         [TurnosController::class, 'store_publico'])->name('turnos.publico');
+    Route::get('/validar_folio_abogado/{folio}',[TurnosController::class, 'validarFolio'])->name('validar_folio_abogado'); //valida si existe ya un abogado
 
     //Pre registro de solicitudes
     Route::get('registro', [SeerController::class, 'RTemportal'])->name('PreRegistro');
@@ -254,7 +255,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('turnos/aceptar/{id}',        [TurnosController::class, 'aceptacion'])->name('turno.aceptar');
         Route::post('/turnos/guardar',           [TurnosController::class, 'guardar_rechazo'])->name('rechazar_turnos');
         Route::post('/turnos/archivar',          [TurnosController::class, 'archivar_ratificacion'])->name('archivar_ratificacion');
-        Route::get('/validar_folio_abogado/{folio}',[TurnosController::class, 'validarFolio'])->name('validar_folio_abogado'); //valida si existe ya un abogado
     //Fin de  turnos
     //Solicitudes
         Route::get('/solicitudes/pedientes',                [SeerController::class, 'solicitudes_pendientes'])->name('solicitudes_pendientes');

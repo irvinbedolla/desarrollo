@@ -168,90 +168,146 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
                                                 <div id="abogado_info" class="mt-2"></div>
-                                                <div id="empresa" class="col-xs-12 col-sm-12 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="name">Nombre de la Empresa o Patrón <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="empresa" id="empresa" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
-                                                        <div class="invalid-feedback">
-                                                            El nombre es obligatorio.
+                                                <div id="agregar_persona" class="col-md-12">
+                                                    <div class="row">
+                                                    <div class="col-xs-12 col-sm-12 col-md-2">
+                                                        <div class="form-group">
+                                                            <label for="name">Tipo de persona <span style="color:red;">(*)</span></label>
+                                                            <select name="tipo_persona" id="tipo_persona" class="form-control">
+                                                                <option value="">Seleccione</option>
+                                                                <option value="Fisica">Física</option>
+                                                                <option value="Moral">Moral</option>
+                                                            </select>
+                                                            <div class="invalid-feedback">
+                                                                El tipo de persona es obligatorio.
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div id="primero" class="col-xs-12 col-sm-12 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="primero_empresa" id="primero_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()"> 
-                                                        <div class="invalid-feedback">
-                                                            El campo es obligatorio.
+                                                    <div class="col-xs-12 col-sm-12 col-md-3" id="tipoPersona_razon" style="display:none;">
+                                                        <div class="form-group">
+                                                            <label for="name">Razón social <span style="color:red;">(*)</span></label>
+                                                            <input type="text" name="razon" id="razon" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                            <div class="invalid-feedback">
+                                                                La razón social es obligatorio.
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div id="segundo" class="col-xs-12 col-sm-12 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="name">Segundo apellido <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="segundo_empresa" id="segundo_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()"> 
-                                                        <div class="invalid-feedback">
-                                                            El campo es obligatorio.
+                                                    <div class="col-xs-12 col-sm-12 col-md-12" id="tipoPersona_nombre" style="display:none;">
+                                                        <div class="row">
+                                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="name">Nombre <span style="color:red;">(*)</span></label>
+                                                                    <input type="text" name="empresa" id="empresa" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                                    <div class="invalid-feedback">
+                                                                        El nombre es obligatorio.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        
+                                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
+                                                                    <input type="text" name="primero_empresa" id="primero_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()"> 
+                                                                    <div class="invalid-feedback">
+                                                                        El primer apellido es obligatorio.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+        
+                                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="name">Segundo apellido</label>
+                                                                    <input type="text" name="segundo_empresa" id="segundo_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()">  
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div  id="nombre" class="col-xs-12 col-sm-12 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="name">Nombre(s) <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="nombre_empresa" id="nombre_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()"> 
-                                                        <div class="invalid-feedback">
-                                                            El nombre es obligatorio.
+                                                    
+                                                    <!--<div id="empresa" class="col-xs-12 col-sm-12 col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="name">Nombre de la Empresa o Patrón <span style="color:red;">(*)</span></label>
+                                                            <input type="text" name="empresa" id="empresa" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                            <div class="invalid-feedback">
+                                                                El nombre es obligatorio.
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                    <div id="primero" class="col-xs-12 col-sm-12 col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
+                                                            <input type="text" name="primero_empresa" id="primero_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()"> 
+                                                            <div class="invalid-feedback">
+                                                                El campo es obligatorio.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="segundo" class="col-xs-12 col-sm-12 col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="name">Segundo apellido <span style="color:red;">(*)</span></label>
+                                                            <input type="text" name="segundo_empresa" id="segundo_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()"> 
+                                                            <div class="invalid-feedback">
+                                                                El campo es obligatorio.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div  id="nombre" class="col-xs-12 col-sm-12 col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="name">Nombre(s) <span style="color:red;">(*)</span></label>
+                                                            <input type="text" name="nombre_empresa" id="nombre_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()"> 
+                                                            <div class="invalid-feedback">
+                                                                El nombre es obligatorio.
+                                                            </div>
+                                                        </div>
+                                                    </div>-->
 
-                                                <div id="edad" class="col-xs-12 col-sm-12 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="name">Email <span style="color:red;">(*)</span></label>
-                                                        <input type="email" name="email" id="email" class="form-control correoElectronico"> 
-                                                        <div class="invalid-feedback">
-                                                            El campo es obligatorio.
+                                                    <div id="edad" class="col-xs-12 col-sm-12 col-md-3">
+                                                        <div class="form-group">
+                                                            <label for="name">Email <span style="color:red;">(*)</span></label>
+                                                            <input type="email" name="email" id="email" class="form-control correoElectronico"> 
+                                                            <div class="invalid-feedback">
+                                                                El campo es obligatorio.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="sexo" class="col-xs-12 col-sm-12 col-md-2">
+                                                        <div class="form-group">
+                                                        <label for="name">Télefono <span style="color:red;">(*)</span></label>
+                                                        <input type="text" name="telefono" id="telefono" class="form-control numeroTelefonico" maxlength="10" minlength="10"> 
+                                                            <div class="invalid-feedback">
+                                                                El campo es obligatorio.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="curp_empresa" class="col-xs-12 col-sm-12 col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="name">CURP <span style="color:red;">(*)</span></label>
+                                                            <input type="text" name="curp"  class="form-control" oninput="validarInput(this, 'resultado_curp_empresa')"> 
+                                                            <pre id="resultado_curp_empresa" class="resultado"></pre>
+                                                            <div class="invalid-feedback">
+                                                                El campo curp es obligatorio.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="ine" class="col-xs-12 col-sm-12 col-md-3">
+                                                        <div class="form-group">
+                                                            <label>Identificación oficial <span style="color:red;">*</span>(PDF)</label><br>
+                                                            <input type="file" name="documentoIne" class="form-control" accept=".pdf">
+                                                            <div class="invalid-feedback">
+                                                                La Identificación es obligatoria.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="acta" class="col-xs-12 col-sm-12 col-md-3">
+                                                        <div class="form-group">
+                                                            <label>Acta constitutiva (Si acude en representación <span style="color:red;">*</span>PDF) </label><br>
+                                                            <input type="file" name="documentoPoder" class="form-control" accept=".pdf">
+                                                            <div class="invalid-feedback">
+                                                                La Identificación es obligatoria.
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div id="sexo" class="col-xs-12 col-sm-12 col-md-4">
-                                                    <div class="form-group">
-                                                    <label for="name">Télefono <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="telefono" id="telefono" class="form-control numeroTelefonico" maxlength="10" minlength="10"> 
-                                                        <div class="invalid-feedback">
-                                                            El campo es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div id="curp_empresa" class="col-xs-12 col-sm-12 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="name">CURP <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="curp"  class="form-control" oninput="validarInput(this, 'resultado_curp_empresa')"> 
-                                                        <pre id="resultado_curp_empresa" class="resultado"></pre>
-                                                        <div class="invalid-feedback">
-                                                            El campo curp es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div id="ine" class="col-xs-12 col-sm-12 col-md-4">
-                                                    <div class="form-group">
-                                                        <label>Identificación oficial <span style="color:red;">*</span>(PDF)</label><br>
-                                                        <input type="file" name="documentoIne" class="form-control" accept=".pdf">
-                                                        <div class="invalid-feedback">
-                                                            La Identificación es obligatoria.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div id="acta" class="col-xs-12 col-sm-12 col-md-4">
-                                                    <div class="form-group">
-                                                        <label>Acta constitutiva (Si acude en reprecentación <span style="color:red;">*</span>PDF) </label><br>
-                                                        <input type="file" name="documentoPoder" class="form-control" accept=".pdf">
-                                                        <div class="invalid-feedback">
-                                                            La Identificación es obligatoria.
-                                                        </div>
-                                                    </div>
                                                 </div>
 
                                                 <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:30px;">
@@ -752,7 +808,8 @@
             const abogadoInfoDiv = document.getElementById('abogado_info');
             let timeout = null;
 
-            const baseUrl = `{{ route('validar_folio_abogado', ['folio' => '__FOLIO__']) }}`;
+            const baseUrl = "{{ url('/validar_folio_abogado') }}";
+
             folioInput.addEventListener('keyup', function () {
                 clearTimeout(timeout);
                 const folio = this.value.trim();
@@ -762,7 +819,7 @@
                     return;
                 }
                 timeout = setTimeout(() => {
-                    const finalUrl = baseUrl.replace('__FOLIO__', folio);
+                    const finalUrl = `${baseUrl}/${folio}`;
                     fetch(finalUrl, {
                         method: 'GET',
                         headers: {
@@ -771,7 +828,10 @@
                         }
                     })
                     .then(response => {
-                        if (!response.ok) throw new Error('Folio no encontrado');
+                        if (!response.ok) {
+                            if (response.status === 404) throw new Error('Folio no encontrado');
+                            throw new Error('Error en la petición');
+                        }
                         return response.json();
                     })
                     .then(data => {
@@ -790,7 +850,7 @@
                 }, 500);
             });
         });
-</script>
+    </script>
 </body>
 <div id="crear_poder" style ="display: none;">
     <div>.</div>
@@ -824,14 +884,15 @@
     @yield('scripts')
     <script>
         document.getElementById("folio").style.display = "none";
-        document.getElementById("empresa").style.display = "block";
+        document.getElementById("agregar_persona").style.display = "block";
+        /*document.getElementById("empresa").style.display = "block";
         document.getElementById("primero").style.display = "block";
         document.getElementById("segundo").style.display = "block";
         document.getElementById("nombre").style.display = "block";
         document.getElementById("edad").style.display = "block";
         document.getElementById("sexo").style.display = "block";
         document.getElementById("ine").style.display = "block";
-        document.getElementById("acta").style.display = "block";
+        document.getElementById("acta").style.display = "block";*/
 
 
         function sedes(){
@@ -873,6 +934,8 @@
             
             if (tipo == "none") {
                 document.getElementById("folio").style.display = "block";
+                document.getElementById("agregar_persona").style.display = "none";
+                /*document.getElementById("razon").style.display = "none";
                 document.getElementById("empresa").style.display = "none";
                 document.getElementById("primero").style.display = "none";
                 document.getElementById("segundo").style.display = "none";
@@ -881,7 +944,7 @@
                 document.getElementById("sexo").style.display = "none";
                 document.getElementById("ine").style.display = "none";
                 document.getElementById("acta").style.display = "none";
-                document.getElementById("curp_empresa").style.display = "none";
+                document.getElementById("curp_empresa").style.display = "none";*/
                 
                 // Quitar atributos y clases de validación
                 for (const [id, clase] of Object.entries(camposEmpresa)) {
@@ -894,7 +957,8 @@
             }
             else{
                 document.getElementById("folio").style.display = "none";
-                document.getElementById("empresa").style.display = "block";
+                document.getElementById("agregar_persona").style.display = "block";
+                /*document.getElementById("empresa").style.display = "block";
                 document.getElementById("primero").style.display = "block";
                 document.getElementById("segundo").style.display = "block";
                 document.getElementById("nombre").style.display = "block";
@@ -902,7 +966,7 @@
                 document.getElementById("sexo").style.display = "block";
                 document.getElementById("ine").style.display = "block";
                 document.getElementById("acta").style.display = "block";
-                document.getElementById("curp_empresa").style.display = "block";
+                document.getElementById("curp_empresa").style.display = "block";*/
 
                 // Agregar atributos y clases de validación
                 for (const [id, clase] of Object.entries(camposEmpresa)) {
@@ -1001,6 +1065,34 @@
             inicio.addEventListener("blur", validarFechas);
             termino.addEventListener("blur", validarFechas);
 
+        });
+        
+        //Tipo de persona física o moral
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectTipo = document.getElementById('tipo_persona');
+            const nombreDiv = document.getElementById('tipoPersona_nombre');
+            const razonDiv = document.getElementById('tipoPersona_razon');
+
+            function actualizarTipoPersona() {
+                const valor = selectTipo.value;
+
+                // Oculta ambos inicialmente
+                nombreDiv.style.display = 'none';
+                razonDiv.style.display = 'none';
+
+
+                if (valor === 'Fisica') {
+                    nombreDiv.style.display = 'block';
+                } else if (valor === 'Moral') {
+                    razonDiv.style.display = 'block';
+                }
+            }
+
+            if (selectTipo) {
+                selectTipo.addEventListener('change', actualizarTipoPersona);
+                // Ejecutar al cargar por si ya tiene valor
+                actualizarTipoPersona();
+            }
         });
     </script>
 
