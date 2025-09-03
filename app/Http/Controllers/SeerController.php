@@ -1041,6 +1041,7 @@ class SeerController extends Controller
             return view('estadisticas.ver_reporte_cuantitativo', compact('solicitudes','ratificaciones','montoratificaciones','audiencia','montoaudiencia','colectivas','convenios','porcenaje','total_pagos','asesorias'));
         }
         else if($data["tipo_reporte"] == "Concentrado"){
+            /*
             //SOLICITUDES
                 $solicitudes  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
                 $solicitudes = $solicitudes->join("users","users.id","=","seer_general.user_id");
@@ -1145,7 +1146,8 @@ class SeerController extends Controller
                 ->get();
             
                 $porcenaje=0;
-                $pdf = \PDF::loadView('PDF/vista-prueba', compact('solicitudes','ratificaciones','audiencia','montoaudiencia','colectivas','convenios','porcenaje','asesorias'));
+                */
+                $pdf = \PDF::loadView('PDF/Reporte_cuantitativo');
     
             return $pdf->stream('archivo.pdf');
             //return $pdf->download('archivo.pdf');
@@ -5718,7 +5720,7 @@ class SeerController extends Controller
     public function obtenerCumplimientos(Request $request)
     {
         $fecha_inicio = now()->subDays(20)->format('Y-m-d');
-        $fecha_fin = now()->addDays(20)->format('Y-m-d');
+        $fecha_fin = now()->addDays(120)->format('Y-m-d');
         $sede = $request->input('sede'); // Obtener sede de la solicitud
 
         // 1. Obtener turnos ocupados filtrando por sede
