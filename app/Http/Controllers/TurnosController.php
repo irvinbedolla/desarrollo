@@ -566,8 +566,19 @@ class TurnosController extends Controller
             ], $data);
         }
 
+        // Validar que no se excedan las 2 citas por hora
+        $citasExistentes = Turnos::where('fecha', $data["fecha"])
+            ->where('hora', $data["hora"])
+            ->where('delegacion', $data["sede"])
+            ->count();
 
-        //Vamos a buscar la proxima fecha disponible de la sede
+        if ($citasExistentes >= 2) {
+            return back()
+                ->with('error', 'Ya se han agendado las 2 citas máximas para este horario. Por favor selecciona otro.')
+                ->withInput();
+        }
+
+        //Buscar la proxima fecha disponible de la sede
         $numero_consecutivo = 0;
         $consecutivo  = Turnos::latest('id')
         ->where('fecha', $data["fecha"])
@@ -879,21 +890,29 @@ class TurnosController extends Controller
                     $slotStart = $fecha->format('Y-m-d') . 'T' . str_pad($hora, 2, '0', STR_PAD_LEFT) . ':00:00';
                     
                     // Verificar si el slot está ocupado
-                    $ocupado = collect($ocupados)->contains('start', $slotStart);
+                    //$ocupado = collect($ocupados)->contains('start', $slotStart);
+
+                    $citasExistentes = Turnos ::where('fecha', $fecha->format('Y-m-d'))
+                    ->where('hora',str_pad($hora, 2, '0', STR_PAD_LEFT) . ':00:00')
+                    ->where('delegacion', $sede) // FILTRO POR SEDE
+                    ->count();
+                    $disponibles = 2 - $citasExistentes;
+                    $ocupado = $disponibles <= 0;
                     
                     if ($ocupado) {
                         $todosLosEventos[] = [
-                            'title' => 'Ocupado',
+                            'title' => 'Ocupado (2/2)',
                             'start' => $slotStart,
                             'color' => '#DA0909',
-                            'extendedProps' => ['estado' => 'ocupado']
+                            'extendedProps' => ['estado' => 'ocupado', 'espacios disponibles' => 0]
                         ];
                     } else {
                         $todosLosEventos[] = [
-                            'title' => 'Disponible',
+                            'title' => 'Disponible (' . $disponibles . ' espacios)',
                             'start' => $slotStart,
-                            'color' => '#00CE1C',
-                            'extendedProps' => ['estado' => 'disponible']
+                            'color' => $disponibles == 2 ? '#00CE1C' : '#FFA500',
+                            'extendedProps' => ['estado' => 'disponible', 'espacios_disponibles' => $disponibles,
+                            'color' => $disponibles == 2 ? '#00CE1C' : '#FFA500']
                         ];
                     }
                 }
