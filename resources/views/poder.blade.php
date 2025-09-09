@@ -89,14 +89,15 @@
                                         <h5 class="text-center">Bienvenido al Registro de Representación Patronal y Legal del Centro de Conciliación Laboral del 
                                             Estado de Michoacán de Ocampo, el cual tiene como objetivo agilizar el proceso de conciliación prejudicial dentro de las 
                                             audiencias de conciliación, así como para las ratificaciones de convenio. </h5><br><br>
-                                            Antes de iniciar el registro, asegúrate de tener cerca los siguientes requisitos: <br><br>
-                                            *Identificación oficial.<br>
-                                            *Identificación oficial del representante legal (en los casos que así se requiera).<br>
-                                            *Documento que acredite la personería (carta poder, instrumento notarial).<br>
-                                            *Correo electrónico.<br>
-                                            *Número de celular.<br>
-                                            *Domicilio de la fuente laboral.<br>
-                                            *** Será indispensable, que los requisitos con (*), se tengan en documento PDF, no mayor a 20 MB.
+                                            Antes de iniciar el registro, asegúrate de contar con los siguientes requisitos: <br><br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;**Identificación Oficial.<br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;**Identificación Oficial del Representante Legal (en los casos que así se requiera).<br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;**Documento que acredite la personería (Carta Poder, Instrumento Notarial).<br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;**Constancia de Situación Fiscal (Obligatorio en caso de ser Persona Moral).<br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*Correo electrónico electrónico.<br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*Número de celular.<br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*Domicilio de la fuente laboral.<br><br>
+                                            Será indispensable, que los requisitos con (**), se tengan en documento PDF, no mayor a 20 MB.
                                         <br><br>
                                     </div>
                                 </div>
@@ -139,7 +140,7 @@
                                         <div class="row">
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">Nombre(s) del Patrón<span style="color:red;">(*)</span></label>
+                                                        <label for="name">Nombre(s) del Empleador<span style="color:red;">(*)</span></label>
                                                         <input type="text" name="nombre_pF" id="nombre_pF" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                         <div class="invalid-feedback">
                                                             El nombre es obligatorio.
@@ -166,7 +167,7 @@
                                                 </div>
                                                  <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="">CURP</label>
+                                                        <label for="">CURP <span style="color:red;">(*)</span></label>
                                                         <input type="text" class="form-control" aria-label="CURP" name="curp_PF" id="curp_PF" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
                                                             La CURP es obligatoria.
@@ -214,17 +215,17 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="">Correo</label>
-                                                        <input type="email" class="form-control" placeholder="*Correo" name="correo_pF" id="correo_pF" >
+                                                        <label for="">Correo electrónico</label>
+                                                        <input type="email" class="form-control"  name="correo_pF" id="electrónico_pF" >
                                                         <div class="invalid-feedback">
-                                                            El correo es obligatorio.
+                                                            El Correo electrónico es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="">Teléfono</label>
-                                                            <input type="text" class="form-control" placeholder="*Telefono"  name="telefono_PF" id="telefono_PF" maxlength="10" pattern="[0-9]+" >
+                                                            <input type="text" class="form-control"  name="telefono_PF" id="telefono_PF" maxlength="10" pattern="[0-9]+" >
                                                         <div class="invalid-feedback">
                                                             El telefono es obligatorio.
                                                         </div>
@@ -298,8 +299,8 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="name">Nombre de la Vialidad (*)</label>
-                                                        <input type="text" name="vialidad_calle_pF" id="vialidad_calle_pF" class="form-control" placeholder="*Nombre vialidad" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <label for="name">Nombre de la Vialidad <span style="color:red;">(*)</span></label>
+                                                        <input type="text" name="vialidad_calle_pF" id="vialidad_calle_pF" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                         <div class="invalid-feedback">
                                                             El campo vialidad o calle es obligatorio.
                                                         </div>
@@ -307,8 +308,8 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="">Colonia</label>
-                                                        <input type="text" class="form-control" placeholder="*Colonia" name="colonia_pF" id="colonia_pF" oninput="this.value = this.value.toUpperCase()" >
+                                                        <label for="">Colonia <span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="form-control" name="colonia_pF" id="colonia_pF" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
                                                             El domicilio es obligatoria.
                                                         </div>
@@ -316,7 +317,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="">Núm. Ext.</label>
+                                                        <label for="">Núm. Ext. <span style="color:red;">(*)</span></label>
                                                         <input type="text" class="form-control" placeholder="*Número exterior" name="num_ext_pF" id="num_ext_pF" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
                                                             El domicilio es obligatoria.
@@ -334,16 +335,16 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="">Código postal</label>
-                                                        <input type="text" class="form-control" placeholder="*Código postal" name="cp_pF" id="cp_pF" oninput="this.value = this.value.toUpperCase()" >
+                                                        <label for="">Código Postal <span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="form-control" placeholder="*Código Postal" name="cp_pF" id="cp_pF" minlength="5" maxlength="5" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
                                                             El domicilio es obligatoria.
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-2">
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="name">¿Desea registrar representante legal? <span style="color:red;">(*)</span></label>
+                                                        <label for="name">¿Desea registrar Representante Legal? <span style="color:red;">(*)</span></label>
                                                         <select name="representate" id="representate" class="form-control">
                                                             <option value="">Seleccione</option>
                                                             <option value="Si">Si</option>
@@ -398,7 +399,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="">CURP</label>
-                                                        <input type="text" class="form-control" placeholder="*CURP" aria-label="CURP" name="curp_representante_pF" id="curp_representante_pF" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" >
+                                                        <input type="text" class="form-control"  aria-label="CURP" name="curp_representante_pF" id="curp_representante_pF" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
                                                             La CURP es obligatoria.
                                                         </div>
@@ -427,17 +428,17 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="">Correo</label>
-                                                        <input type="email" class="form-control" placeholder="*Correo" name="correo_representante_pF" id="correo_representante_pF" >
+                                                        <label for="">Correo electrónico <span style="color:red;">(*)</span></label>
+                                                        <input type="email" class="form-control" name="correo_representante_pF" id="correo_representante_pF" >
                                                         <div class="invalid-feedback">
-                                                            El correo es obligatorio.
+                                                            El Correo electrónico es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="">Teléfono</label>
-                                                        <input type="text" class="form-control" placeholder="*Telefono"  name="telefono_representante_pF" id="telefono_representante_pF" maxlength="10" pattern="[0-9]+" >
+                                                        <label for="">Teléfono <span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="form-control"  name="telefono_representante_pF" id="telefono_representante_pF" maxlength="10" pattern="[0-9]+" >
                                                         <div class="invalid-feedback">
                                                             El telefono es obligatorio.
                                                         </div>
@@ -465,7 +466,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="">Fecha expedición</label>
+                                                        <label for="">Fecha expedición <span style="color:red;">(*)</span></label>
                                                         <input type="date" class="form-control" aria-describedby="basic-addon1" name="fecha_expedicion_pF" id="fecha_expedicion_pF" >
                                                         <div class="invalid-feedback">
                                                             La fecha es obligatoria.
@@ -483,9 +484,9 @@
                                                 </div>  
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
-                                                        <label for="">Descripción del poder</label>
+                                                        <label for="">Descripción del documento que acredite la personaria</label>
                                                         <textarea class="form-control" aria-describedby="basic-addon1" name="descripcion_pF" id="descripcion_pF" 
-                                                        placeholder="Ejemplo: Carta poder simple de fecha:___, firmada ante dos testigos, suscrita a favor del compareciente por el (C. Lic. Ing. etc)_____, en cuanto ___ de la moral citada, ... "></textarea>
+                                                        placeholder="Ejemplo: Carta poder simple de fecha___, firmada ante dos testigos, suscrita a favor del compareciente por el (C., Lic., Ing., etc.,)_____, en cuanto ___ de la moral citada, personalidad que acredite en terminos de___ número(45 Cuarenta y Cinco), de fecha___, pasada ante la fe del(Lic., Mtro., etc.,)___, Notario Público Número ___, del Estado de ____, y cuyas facultades no han sido revocadas ni mofificadas a la fecha."></textarea>
                                                         <div class="invalid-feedback">
                                                             La descripción es obligatoria.
                                                         </div>
@@ -500,7 +501,7 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label>*Identificación del patrón</label><br>
+                                                        <label>*Identificación del Empleador</label><br>
                                                         <input type="file" name="documentoIne_pF" id="documentoIne_pF" class="form-control" accept=".pdf" >
                                                         <div class="invalid-feedback">
                                                             La Identificación es obligatoria.
@@ -509,7 +510,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label>*Identificación del representante legal</label><br>
+                                                        <label>*Identificación del Representante Legal</label><br>
                                                         <input type="file" name="documentoRepresentacion_pF" id="documentoRepresentacion_pF" class="form-control" accept=".pdf" >
                                                         <div class="invalid-feedback">
                                                             El documento de representación es obligatorio.
@@ -524,7 +525,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label>Anexos 1 (en caso de que se requiera subir documentación complementaria)</label><br>
+                                                        <label>Anexo (Documentos Complementarios)</label><br>
                                                         <input type="file" name="documentoAnexo_pF" class="form-control" accept=".pdf">
                                                     </div>
                                                 </div>
@@ -546,7 +547,7 @@
                                             <div class="row">
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label>*Identificación oficial del representante</label><br>
+                                                        <label>*Identificación Oficial</label><br>
                                                         <input type="file" name="documentoIne_pFSR" id="documentoIne_pFSR" class="form-control" accept=".pdf" >
                                                         <div class="invalid-feedback">
                                                             La Identificación es obligatoria.
@@ -555,7 +556,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label>Anexos (Opcional)</label><br>
+                                                        <label>Anexo (Documentos Complementarios)</label><br>
                                                         <input type="file" name="documentoAnexo_pFSR" class="form-control" accept=".pdf">
                                                     </div>
                                                 </div>
@@ -586,7 +587,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
                                                         <label for="name">Razón Social <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="razon" id="razon" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" name="razon" id="razon" placeholder="Ejemplo: Patos Asados S.A. de C.V." class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                         <div class="invalid-feedback">
                                                             El nombre es obligatorio.
                                                         </div>
@@ -687,8 +688,8 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="">Colonia</label>
-                                                        <input type="text" class="form-control" placeholder="*Colonia" name="colonia_moral" id="colonia_moral" oninput="this.value = this.value.toUpperCase()" >
+                                                        <label for="">Colonia <span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="form-control" name="colonia_moral" id="colonia_moral" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
                                                             El domicilio es obligatoria.
                                                         </div>
@@ -696,7 +697,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="">Núm. Ext.</label>
+                                                        <label for="">Núm. Ext. <span style="color:red;">(*)</span></label>
                                                         <input type="text" class="form-control" placeholder="*Número exterior" name="num_ext_moral" id="num_ext_moral" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
                                                             El domicilio es obligatoria.
@@ -714,8 +715,8 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="">Código postal</label>
-                                                        <input type="text" class="form-control" placeholder="*Código postal" name="cp_moral" id="cp_moral" oninput="this.value = this.value.toUpperCase()" >
+                                                        <label for="">Código Postal <span style="color:red;">(*)</span></label>
+                                                        <input type="text" class="form-control" name="cp_moral" id="cp_moral"  minlength="5" maxlength="5" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
                                                             El domicilio es obligatoria.
                                                         </div>
@@ -730,13 +731,13 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
-                                                        <h5 class="text-center">Datos de indentificación</h5>
+                                                        <h5 class="text-center">Datos de identificación</h5>
                                                     </div>
                                                 </div>
 
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="name">Nombre(s) del representante<span style="color:red;">(*)</span></label>
+                                                        <label for="name">Nombre(s) del Representante Legal<span style="color:red;">(*)</span></label>
                                                         <input type="text" name="nombre_representante_Moral" id="nombre_representante_Moral" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                         <div class="invalid-feedback">
                                                             El nombre es obligatorio.
@@ -764,7 +765,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="">CURP</label>
-                                                        <input type="text" class="form-control" placeholder="*CURP" aria-label="CURP" name="curp_moral" id="curp_moral" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" >
+                                                        <input type="text" class="form-control"  aria-label="CURP" name="curp_moral" id="curp_moral" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
                                                             La CURP es obligatoria.
                                                         </div>
@@ -793,16 +794,16 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="">Correo</label>
-                                                        <input type="email" class="form-control" placeholder="*Correo" name="correo_Moral" id="correo_Moral" >
+                                                        <label for="">Correo electrónico <span style="color:red;">(*)</label>
+                                                        <input type="email" class="form-control" name="correo_Moral" id="correo_Moral" >
                                                         <div class="invalid-feedback">
-                                                            El correo es obligatorio.
+                                                            El Correo electrónico es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="">Teléfono</label>
+                                                        <label for="">Teléfono <span style="color:red;">(*)</label>
                                                         <input type="text" class="form-control" placeholder="*Telefono"  name="telefono_Moral" id="telefono_Moral" maxlength="10" pattern="[0-9]+" >
                                                         <div class="invalid-feedback">
                                                             El telefono es obligatorio.
@@ -831,7 +832,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="">Fecha expedición</label>
+                                                        <label for="">Fecha expedición <span style="color:red;">(*)</span></label>
                                                         <input type="date" class="form-control" aria-describedby="basic-addon1" name="fecha_expedicicion_Moral" id="fecha_expedicicion_Moral" >
                                                         <div class="invalid-feedback">
                                                             La fecha es obligatoria.
@@ -849,9 +850,9 @@
                                                 </div>  
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
-                                                        <label for="">Descripción del poder</label>
+                                                        <label for="">Descripción del documento que acredite la personaria</label>
                                                         <textarea class="form-control" aria-describedby="basic-addon1" name="descripcion_Moral"  id="descripcion_Moral" 
-                                                        placeholder="Ejemplo: Carta poder simple de fecha:___, firmada ante dos testigos, suscrita a favor del compareciente por el (C. Lic. Ing. etc)_____, en cuanto ___ de la moral citada, ... "></textarea>
+                                                        placeholder="Ejemplo: Carta poder simple de fecha___, firmada ante dos testigos, suscrita a favor del compareciente por el (C., Lic., Ing., etc.,)_____, en cuanto ___ de la moral citada, personalidad que acredite en terminos de___ número(45 Cuarenta y Cinco), de fecha___, pasada ante la fe del(Lic., Mtro., etc.,)___, Notario Público Número ___, del Estado de ____, y cuyas facultades no han sido revocadas ni mofificadas a la fecha."></textarea>
                                                         <div class="invalid-feedback">
                                                             La descripción es obligatoria.
                                                         </div>
@@ -866,7 +867,7 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label>*Identificación del patrón</label><br>
+                                                        <label>*Acta Constitutiva</label><br>
                                                         <input type="file" name="documentoIne_Moral" id="documentoIne_Moral" class="form-control" accept=".pdf" >
                                                         <div class="invalid-feedback">
                                                             La Identificación es obligatoria.
@@ -876,7 +877,7 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label>*Identificación del representante legal</label><br>
+                                                        <label>*Identificación del Representante Legal</label><br>
                                                         <input type="file" name="documentoRepresentacion_Moral" id="documentoRepresentacion_Moral" class="form-control" accept=".pdf" >
                                                         <div class="invalid-feedback">
                                                             El documento de representación es obligatorio.
@@ -886,14 +887,14 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label>Documento que acredite la personería</label><br>
+                                                        <label>*Documento que acredite la personería</label><br>
                                                         <input type="file" name="documentoPoder" id="documentoPoder" class="form-control" accept=".pdf">
                                                     </div>
                                                 </div>
 
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label>Anexos 1 (en caso de que se requiera subir un documento complementario)</label><br>
+                                                        <label>Anexo (Documentos Complementarios)</label><br>
                                                         <input type="file" name="documentoAnexo" class="form-control" accept=".pdf">
                                                     </div>
                                                 </div>
@@ -978,7 +979,7 @@
                     document.getElementById('RFC_pF').setAttribute('required', 'true');
                     document.getElementById('sexo_pf').setAttribute('required', 'true');
                     document.getElementById('giro_pF').setAttribute('required', 'true');
-                    document.getElementById('correo_pF').setAttribute('required', 'true');
+                    document.getElementById('electrónico_pF').setAttribute('required', 'true');
                     document.getElementById('telefono_PF').setAttribute('required', 'true');
                     document.getElementById('estado_pF').setAttribute('required', 'true');
                     document.getElementById('municipio_pF').setAttribute('required', 'true');
@@ -1025,7 +1026,7 @@
                     document.getElementById('RFC_pF').removeAttribute('required');
                     document.getElementById('sexo_pf').removeAttribute('required');
                     document.getElementById('giro_pF').removeAttribute('required');
-                    document.getElementById('correo_pF').removeAttribute('required');
+                    document.getElementById('electrónico_pF').removeAttribute('required');
                     document.getElementById('telefono_PF').removeAttribute('required');
                     document.getElementById('estado_pF').removeAttribute('required');
                     document.getElementById('municipio_pF').removeAttribute('required');

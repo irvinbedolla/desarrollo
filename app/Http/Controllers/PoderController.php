@@ -36,7 +36,7 @@ class PoderController extends Controller
     public function registro()
     {
         $estados = Estados::all();
-        $municipios = Municipios::where('estado',"=",16)->get();
+        $municipios = Municipios::all();
         return view('poder', compact('municipios','estados'));
     }
 
@@ -714,7 +714,7 @@ class PoderController extends Controller
                 Poder::create($data_insertar);  
                 $data = Poder::latest('idAbogado')->first();
 
-                $mensaje = "Su registro fue guardado con éxito, tu número de folio es: ".$data["idAbogado"]. " \n
+                $mensaje = "Su registro fue guardado con éxito, tu número de folio es: ".$data["idAbogado"]. " 
                 *La validación del registro patronal quedará sujeta a la certificación de la documentación que realice la persona conciliadora, loanterior de conformidad con lo 
                 establecido en el artículo 684-I, fracción I y II, de la Ley Federal del Trabajo; por lo que se le solicita acudir a su siguiente audiencia de conciliación con la 
                 Documentación original en formato físico, a fin de realizar el cotejo correspondiente.";
@@ -792,7 +792,7 @@ class PoderController extends Controller
                 Poder::create($data_insertar);  
                 $data = Poder::latest('idAbogado')->first();
 
-                $mensaje = "Su registro fue guardado con éxito, tu número de folio es: ".$data["idAbogado"]. " \n
+                $mensaje = "Su registro fue guardado con éxito, tu número de folio es: ".$data["idAbogado"]. " 
                 *La validación del registro patronal quedará sujeta a la certificación de la documentación que realice la persona conciliadora, loanterior de conformidad con lo 
                 establecido en el artículo 684-I, fracción I y II, de la Ley Federal del Trabajo; por lo que se le solicita acudir a su siguiente audiencia de conciliación con la 
                 Documentación original en formato físico, a fin de realizar el cotejo correspondiente.";
@@ -866,7 +866,7 @@ class PoderController extends Controller
             Poder::create($data_insertar);  
             $data = Poder::latest('idAbogado')->first();
 
-            $mensaje = "Su registro fue guardado con éxito, tu número de folio es: ".$data["idAbogado"]. " \n
+            $mensaje = "Su registro fue guardado con éxito, tu número de folio es: ".$data["idAbogado"]. " 
             *La validación del registro patronal quedará sujeta a la certificación de la documentación que realice la persona conciliadora, loanterior de conformidad con lo 
             establecido en el artículo 684-I, fracción I y II, de la Ley Federal del Trabajo; por lo que se le solicita acudir a su siguiente audiencia de conciliación con la 
             Documentación original en formato físico, a fin de realizar el cotejo correspondiente.";

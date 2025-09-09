@@ -152,14 +152,12 @@
                                             <div class="row">
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
-                                                        <label>En caso de no cuentar con un Folio Interno, puede registrarse en la siguiente liga (Para tramites posteriores) <a href="{{ route('poder-crear'); }}">Registrar</a></label><br>
-                                                        <label for="btncheck1">¿Cuenta con Folio Interno de Registro de Representación Legal Patronal?
-                                                            Si <input name="labora" type="checkbox" class="btn-check" id="check_folio" autocomplete="off" style="width: 18px; height: 14px; border: 2px solid #CEA845; accent-color: #CEA845; border-radius: 4px;"/>  
-                                                        </label>
+                                                        <label>En caso de no contar con un Folio Interno, puede registrarse en la siguiente liga (Para tramites posteriores) 
+                                                        <a href="{{ route('poder-crear'); }}" target="_black" class="btn btn-primary">Registrar</a></label><br>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-12"></div>
-                                                <div id="folio" class="col-xs-12 col-sm-12 col-md-4">
+                                                
+                                                <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="folio_input">Folio Interno de Registro <span style="color:red;">(*)</span></label>
                                                         <input type="number" id="folio_input" name="folio" class="form-control"> 
@@ -169,147 +167,7 @@
                                                     </div>
                                                 </div>
                                                 <div id="abogado_info" class="mt-2"></div>
-                                                <div id="agregar_persona" class="col-md-12">
-                                                    <div class="row">
-                                                    <div class="col-xs-12 col-sm-12 col-md-2">
-                                                        <div class="form-group">
-                                                            <label for="name">Tipo de persona <span style="color:red;">(*)</span></label>
-                                                            <select name="tipo_persona" id="tipo_persona" class="form-control">
-                                                                <option value="">Seleccione</option>
-                                                                <option value="Fisica">Física</option>
-                                                                <option value="Moral">Moral</option>
-                                                            </select>
-                                                            <div class="invalid-feedback">
-                                                                El tipo de persona es obligatorio.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-12 col-sm-12 col-md-3" id="tipoPersona_razon" style="display:none;">
-                                                        <div class="form-group">
-                                                            <label for="name">Razón social <span style="color:red;">(*)</span></label>
-                                                            <input type="text" name="razon" id="razon" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
-                                                            <div class="invalid-feedback">
-                                                                La razón social es obligatorio.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-12 col-sm-12 col-md-12" id="tipoPersona_nombre" style="display:none;">
-                                                        <div class="row">
-                                                            <div class="col-xs-12 col-sm-12 col-md-4">
-                                                                <div class="form-group">
-                                                                    <label for="name">Nombre <span style="color:red;">(*)</span></label>
-                                                                    <input type="text" name="empresa" id="empresa" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
-                                                                    <div class="invalid-feedback">
-                                                                        El nombre es obligatorio.
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        
-                                                            <div class="col-xs-12 col-sm-12 col-md-4">
-                                                                <div class="form-group">
-                                                                    <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
-                                                                    <input type="text" name="primero_empresa" id="primero_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()"> 
-                                                                    <div class="invalid-feedback">
-                                                                        El primer apellido es obligatorio.
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-        
-                                                            <div class="col-xs-12 col-sm-12 col-md-4">
-                                                                <div class="form-group">
-                                                                    <label for="name">Segundo apellido</label>
-                                                                    <input type="text" name="segundo_empresa" id="segundo_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()">  
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <!--<div id="empresa" class="col-xs-12 col-sm-12 col-md-4">
-                                                        <div class="form-group">
-                                                            <label for="name">Nombre de la Empresa o Patrón <span style="color:red;">(*)</span></label>
-                                                            <input type="text" name="empresa" id="empresa" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
-                                                            <div class="invalid-feedback">
-                                                                El nombre es obligatorio.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div id="primero" class="col-xs-12 col-sm-12 col-md-4">
-                                                        <div class="form-group">
-                                                            <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
-                                                            <input type="text" name="primero_empresa" id="primero_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()"> 
-                                                            <div class="invalid-feedback">
-                                                                El campo es obligatorio.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div id="segundo" class="col-xs-12 col-sm-12 col-md-4">
-                                                        <div class="form-group">
-                                                            <label for="name">Segundo apellido <span style="color:red;">(*)</span></label>
-                                                            <input type="text" name="segundo_empresa" id="segundo_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()"> 
-                                                            <div class="invalid-feedback">
-                                                                El campo es obligatorio.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div  id="nombre" class="col-xs-12 col-sm-12 col-md-4">
-                                                        <div class="form-group">
-                                                            <label for="name">Nombre(s) <span style="color:red;">(*)</span></label>
-                                                            <input type="text" name="nombre_empresa" id="nombre_empresa" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()"> 
-                                                            <div class="invalid-feedback">
-                                                                El nombre es obligatorio.
-                                                            </div>
-                                                        </div>
-                                                    </div>-->
-
-                                                    <div id="edad" class="col-xs-12 col-sm-12 col-md-3">
-                                                        <div class="form-group">
-                                                            <label for="name">Email <span style="color:red;">(*)</span></label>
-                                                            <input type="email" name="email" id="email" class="form-control correoElectronico"> 
-                                                            <div class="invalid-feedback">
-                                                                El campo es obligatorio.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div id="sexo" class="col-xs-12 col-sm-12 col-md-2">
-                                                        <div class="form-group">
-                                                        <label for="name">Télefono <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="telefono" id="telefono" class="form-control numeroTelefonico" maxlength="10" minlength="10"> 
-                                                            <div class="invalid-feedback">
-                                                                El campo es obligatorio.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div id="curp_empresa" class="col-xs-12 col-sm-12 col-md-4">
-                                                        <div class="form-group">
-                                                            <label for="name">CURP <span style="color:red;">(*)</span></label>
-                                                            <input type="text" name="curp"  class="form-control" oninput="validarInput(this, 'resultado_curp_empresa')"> 
-                                                            <pre id="resultado_curp_empresa" class="resultado"></pre>
-                                                            <div class="invalid-feedback">
-                                                                El campo curp es obligatorio.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div id="ine" class="col-xs-12 col-sm-12 col-md-3">
-                                                        <div class="form-group">
-                                                            <label>Identificación oficial <span style="color:red;">*</span>(PDF)</label><br>
-                                                            <input type="file" name="documentoIne" class="form-control" accept=".pdf">
-                                                            <div class="invalid-feedback">
-                                                                La Identificación es obligatoria.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div id="acta" class="col-xs-12 col-sm-12 col-md-3">
-                                                        <div class="form-group">
-                                                            <label>Acta constitutiva (Si acude en representación <span style="color:red;">*</span>PDF) </label><br>
-                                                            <input type="file" name="documentoPoder" class="form-control" accept=".pdf">
-                                                            <div class="invalid-feedback">
-                                                                La Identificación es obligatoria.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                </div>
-
+                                                
                                                 <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:30px;">
                                                     <div class="form-group">
                                                         <h4 class="text-center">Datos del Trabajador</h4>

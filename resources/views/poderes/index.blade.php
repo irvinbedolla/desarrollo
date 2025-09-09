@@ -23,51 +23,74 @@
                                     <table id="example" class="table table-striped mt-2">
                                         <thead style="background-color: #4A001F;">
                                             <th style="color: #fff;">Folio</th>
-                                            <th style="color: #fff;">Nombre(s)</th>
-                                            <th style="color: #fff;">Primer apellido</th>
-                                            <th style="color: #fff;">Segundo apellido</th>
+                                            <th style="color: #fff;">Nombre/Razon</th>
                                             <th style="color: #fff;">Telefono</th>
-                                            <th style="color: #fff;">Poder</th>
+                                            <th style="color: #fff;">Email</th>
                                             <th style="color: #fff;">Fecha Vigencia</th>
                                             <th style="color: #fff;">Vigencia Representación</th>
-                                            <th style="color: #fff;">Estatus Abogado</th>
-                                            <th style="color: #fff;">INE/Cedula</th>
-                                            <th style="color: #fff;">Representacion</th>
+                                            <th style="color: #fff;">Estatus</th>
+                                            <th style="color: #fff;">Identificación del patrón</th>
+                                            <th style="color: #fff;">Identificacion representante</th>
+                                            <th style="color: #fff;">Poder/</th>
                                             <th style="color: #fff;">Anexo</th>
-                                            <th style="color: #fff;">Anexo 2</th>
                                             <th style="color: #fff;">Acciones</th>
                                         </thead>
                                         <tbody>
                                             @foreach($poderes as $persona)
                                                 <tr>
                                                     <td>{{$persona->idAbogado}}</td>
-                                                    <td>{{$persona->nombres}}</td>
-                                                    <td>{{$persona->primer_apellido}}</td>
-                                                    <td>{{$persona->segundo_apellido}}</td>
-                                                    <td>{{$persona->telefono}}</td>
-                                                    <td>{{$persona->empresa}}</td>
+                                                    <td>
+                                                        @if($persona->tipo == "Fisica")
+                                                            {{$persona->nombres_patronal." ".$persona->primer_apellido_patronal." ".$persona->segundo_apellido_patronal }}
+                                                        @elseif($persona->tipo == "Moral")
+                                                            {{$persona->nombres_patronal}}
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if($persona->tipo == "Fisica")
+                                                            {{$persona->telefono_patronal }}
+                                                        @elseif($persona->tipo == "Moral")
+                                                            {{$persona->numero_representante}}
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if($persona->tipo == "Fisica")
+                                                            {{$persona->email_patronal }}
+                                                        @elseif($persona->tipo == "Moral")
+                                                            {{$persona->correo_representante}}
+                                                        @endif
+                                                    </td>
                                                     <td>{{$persona->fechaVigencia}}</td>
-                                                    @php
-                                                    if($persona->fechaVigencia >= $fechaActual){
-                                                        echo'<td>Vigente</td>';
-                                                    }
-                                                    elseif($persona->fechaVigencia  < $fechaActual) {
-                                                        echo'<td style="background-color: red;">Vencido</td>';
-                                                    }
-                                                    @endphp
+                                                    <td>
+                                                        @if($persona->tipo == "Moral" || ($persona->tipo == "Fisica" && $persona->reprecentante == "Si"))
+                                                            @if($persona->fechaVigencia >= $fechaActual)
+                                                                Vigente
+                                                            @elseif($persona->fechaVigencia  < $fechaActual) 
+                                                                Vencido
+                                                            @endif
+                                                        @endif
+                                                    </td>
                                                     <td>{{$persona->estatus}}</td>
-                                                    <td><a target="_blank" href="../storage/app/documentos_abogados/{{$persona->ine}}">PDF</a></td>
-                                                    <td><a target="_blank" href="../storage/app/documentos_abogados/{{$persona->representacion}}">PDF</a></td>
-                                                    @php
-                                                    if($persona->anexo === "Sin anexo"){
-                                                        echo "<td>S/A</td>";
-                                                    }else{ 
-                                                        echo "<td><a target='_blank' href='../storage/app/documentos_abogados/$persona->anexo'>PDF</a></td>";
-                                                    }
+                                                    <td><a target="_blank" href="../storage/app/documentos_abogados/{{$persona->ineDocumento}}">PDF</a></td>
+                                                    <td>
+                                                        @if($persona->cedulaDocumento == NULL)
+                                                            S/D
+                                                        @else
+                                                            <a target="_blank" href="../storage/app/documentos_abogados/{{$persona->cedulaDocumento}}">PDF</a>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if($persona->representacionDocumento == NULL)
+                                                            S/D
+                                                        @else 
+                                                            <a target='_blank' href='../storage/app/documentos_abogados/$persona->representacionDocumento'>PDF</a>
+                                                        @endif
+                                                    </td>
+                                                    <td>
                                                     if($persona->cedula === "Sin carta poder"){
                                                         echo "<td>S/A</td>";
                                                     }else{
-                                                        echo "<td><a target='_blank' href='../storage/app/documentos_abogados/$persona->cedula'>PDF</a></td>";
+                                                        echo "<td><a target='_blank' href='../storage/app/documentos_abogados/$persona->cedulaDocumento'>PDF</a></td>";
                                                     }
                                                     @endphp
 
