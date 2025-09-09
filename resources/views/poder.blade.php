@@ -764,7 +764,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="">CURP</label>
-                                                        <input type="text" class="form-control" placeholder="*CURP" aria-label="CURP" name="curp_moral" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" >
+                                                        <input type="text" class="form-control" placeholder="*CURP" aria-label="CURP" name="curp_moral" id="curp_moral" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
                                                             La CURP es obligatoria.
                                                         </div>
@@ -988,51 +988,52 @@
                     document.getElementById('num_ext_pF').setAttribute('required', 'true');
                     document.getElementById('cp_pF').setAttribute('required', 'true');
                     //Quitar los campos requeridos
-                    document.removeAttribute('razon').setAttribute('required');
-                    document.removeAttribute('rfc_moral').setAttribute('required');
-                    document.removeAttribute('giro_moral').setAttribute('required');
-                    document.removeAttribute('estado_moral').setAttribute('required');
-                    document.removeAttribute('municipio_moral').setAttribute('required');
-                    document.removeAttribute('vialidad_Moral').setAttribute('required');
-                    document.removeAttribute('vialidad_calleMoral').setAttribute('required');
-                    document.removeAttribute('colonia_moral').setAttribute('required');
-                    document.removeAttribute('num_ext_moral').setAttribute('required');
-                    document.removeAttribute('cp_moral').setAttribute('required');
-                    document.removeAttribute('nombre_representante_Moral').setAttribute('required');
-                    document.removeAttribute('primer_Moral').setAttribute('required');
-                    document.removeAttribute('segundo_Moral').setAttribute('required');
-                    document.removeAttribute('curp_moral').setAttribute('required');
-                    document.removeAttribute('sexo_Moral').setAttribute('required');
-                    document.removeAttribute('correo_Moral').setAttribute('required');
-                    document.removeAttribute('telefono_Moral').setAttribute('required');
-                    document.removeAttribute('tipo_Moral').setAttribute('required');
-                    document.removeAttribute('fecha_expedicicion_Moral').setAttribute('required');
-                    document.removeAttribute('fecha_vigencia_Moral').setAttribute('required');
-                    document.removeAttribute('descripcion_Moral').setAttribute('required');
-                    document.removeAttribute('documentoIne_Moral').setAttribute('required');
-                    document.removeAttribute('documentoRepresentacion_Moral').setAttribute('required');
-                    document.removeAttribute('documentoPoder').setAttribute('required');
+                    document.getElementById('razon').removeAttribute('required');
+                    document.getElementById('rfc_moral').removeAttribute('required');
+                    document.getElementById('giro_moral').removeAttribute('required');
+                    document.getElementById('estado_moral').removeAttribute('required');
+                    document.getElementById('municipio_moral').removeAttribute('required');
+                    document.getElementById('vialidad_Moral').removeAttribute('required');
+                    document.getElementById('vialidad_calleMoral').removeAttribute('required');
+                    document.getElementById('colonia_moral').removeAttribute('required');
+                    document.getElementById('num_ext_moral').removeAttribute('required');
+                    document.getElementById('cp_moral').removeAttribute('required');
+                    document.getElementById('nombre_representante_Moral').removeAttribute('required');
+                    document.getElementById('primer_Moral').removeAttribute('required');
+                    document.getElementById('segundo_Moral').removeAttribute('required');
+                    document.getElementById('curp_moral').removeAttribute('required');
+                    document.getElementById('sexo_Moral').removeAttribute('required');
+                    document.getElementById('correo_Moral').removeAttribute('required');
+                    document.getElementById('telefono_Moral').removeAttribute('required');
+                    document.getElementById('tipo_Moral').removeAttribute('required');
+                    document.getElementById('fecha_expedicicion_Moral').removeAttribute('required');
+                    document.getElementById('fecha_vigencia_Moral').removeAttribute('required');
+                    document.getElementById('descripcion_Moral').removeAttribute('required');
+                    document.getElementById('documentoIne_Moral').removeAttribute('required');
+                    document.getElementById('documentoRepresentacion_Moral').removeAttribute('required');
+                    document.getElementById('documentoPoder').removeAttribute('required');
 
                 } else if (valor === 'Moral') {
                     empresaDiv.style.display = 'block';
                     nombreDiv.style.display = 'none';
                     //Las personas fisicas quitar requerido
-                    document.removeAttribute('nombre_pF').setAttribute('required');
-                    document.removeAttribute('primero_PF').setAttribute('required');
-                    document.removeAttribute('segundo_Pf').setAttribute('required');
-                    document.removeAttribute('curp_PF').setAttribute('required');
-                    document.removeAttribute('RFC_pF').setAttribute('required');
-                    document.removeAttribute('sexo_pf').setAttribute('required');
-                    document.removeAttribute('giro_pF').setAttribute('required');
-                    document.removeAttribute('correo_pF').setAttribute('required');
-                    document.removeAttribute('telefono_PF').setAttribute('required');
-                    document.removeAttribute('estado_pF').setAttribute('required');
-                    document.removeAttribute('municipio_pF').setAttribute('required');
-                    document.removeAttribute('vialidad_pF').setAttribute('required');
-                    document.removeAttribute('vialidad_calle_pF').setAttribute('required');
-                    document.removeAttribute('colonia_pF').setAttribute('required');
-                    document.removeAttribute('num_ext_pF').setAttribute('required');
-                    document.removeAttribute('cp_pF').setAttribute('required');
+                    document.getElementById('nombre_pF').removeAttribute('required');
+                    document.getElementById('nombre_pF').removeAttribute('required');
+                    document.getElementById('primero_PF').removeAttribute('required');
+                    document.getElementById('segundo_Pf').removeAttribute('required');
+                    document.getElementById('curp_PF').removeAttribute('required');
+                    document.getElementById('RFC_pF').removeAttribute('required');
+                    document.getElementById('sexo_pf').removeAttribute('required');
+                    document.getElementById('giro_pF').removeAttribute('required');
+                    document.getElementById('correo_pF').removeAttribute('required');
+                    document.getElementById('telefono_PF').removeAttribute('required');
+                    document.getElementById('estado_pF').removeAttribute('required');
+                    document.getElementById('municipio_pF').removeAttribute('required');
+                    document.getElementById('vialidad_pF').removeAttribute('required');
+                    document.getElementById('vialidad_calle_pF').removeAttribute('required');
+                    document.getElementById('colonia_pF').removeAttribute('required');
+                    document.getElementById('num_ext_pF').removeAttribute('required');
+                    document.getElementById('cp_pF').removeAttribute('required');
                     //Poner los campos requeridos
                     document.getElementById('razon').setAttribute('required', 'true');
                     document.getElementById('rfc_moral').setAttribute('required', 'true');
@@ -1100,7 +1101,7 @@
                     document.getElementById('documentoRepresentacion_pF').setAttribute('required', 'true');
                     document.getElementById('documentoPoder_pF').setAttribute('required', 'true');              
                     //Quitar requeridos los campos
-                    document.removeAttribute('documentoIne_pFSR').setAttribute('required');
+                    document.getElementById('documentoIne_pFSR').removeAttribute('required');
 
                 } else if (valor === 'No') {
                     razonDiv.style.display = 'none';
@@ -1108,20 +1109,20 @@
                     //Poner requeridos los campos
                     document.getElementById('documentoIne_pFSR').setAttribute('required', 'true');
                     //Poner requeridos los campos
-                    document.removeAttribute('nombre_representante_pF').setAttribute('required');
-                    document.removeAttribute('primer_representante_pF').setAttribute('required');
-                    document.removeAttribute('segundo_representante_pF').setAttribute('required');
-                    document.removeAttribute('curp_representante_pF').setAttribute('required');
-                    document.removeAttribute('sexo_representante_pF').setAttribute('required');
-                    document.removeAttribute('correo_representante_pF').setAttribute('required');
-                    document.removeAttribute('telefono_representante_pF').setAttribute('required');
-                    document.removeAttribute('tipo_documento_pF').setAttribute('required');
-                    document.removeAttribute('fecha_expedicion_pF').setAttribute('required');
-                    document.removeAttribute('fecha_vigencia_pF').setAttribute('required');
-                    document.removeAttribute('descripcion_pF').setAttribute('required');
-                    document.removeAttribute('documentoIne_pF').setAttribute('required');
-                    document.removeAttribute('documentoRepresentacion_pF').setAttribute('required');
-                    document.removeAttribute('documentoPoder_pF').setAttribute('required'); 
+                    document.getElementById('nombre_representante_pF').removeAttribute('required');
+                    document.getElementById('primer_representante_pF').removeAttribute('required');
+                    document.getElementById('segundo_representante_pF').removeAttribute('required');
+                    document.getElementById('curp_representante_pF').removeAttribute('required');
+                    document.getElementById('sexo_representante_pF').removeAttribute('required');
+                    document.getElementById('correo_representante_pF').removeAttribute('required');
+                    document.getElementById('telefono_representante_pF').removeAttribute('required');
+                    document.getElementById('tipo_documento_pF').removeAttribute('required');
+                    document.getElementById('fecha_expedicion_pF').removeAttribute('required');
+                    document.getElementById('fecha_vigencia_pF').removeAttribute('required');
+                    document.getElementById('descripcion_pF').removeAttribute('required');
+                    document.getElementById('documentoIne_pF').removeAttribute('required');
+                    document.getElementById('documentoRepresentacion_pF').removeAttribute('required');
+                    document.getElementById('documentoPoder_pF').removeAttribute('required'); 
                 }
             }
 
