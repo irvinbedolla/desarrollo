@@ -775,7 +775,8 @@ class SeerController extends Controller
             return $pdf->stream('archivo.pdf');
 
         }
-        else if($data["tipo_reporte"] == "Cuantificaciones"){
+        else if($data["tipo_reporte"] == "Detallado"){
+        /*
             //SOLICITUDES
                 $solicitudes  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
                 if($fecha_inicial != ""){
@@ -994,11 +995,6 @@ class SeerController extends Controller
                 if($fecha_final != ""){
                     $asesorias = $asesorias->where("fecha","<=",$data["fecha_final"]);
                 }
-                /*
-                if($delegacion != ""){
-                    $asesorias = $asesorias->where("delegacion",$data["delegacion"]);
-                }
-                */
                 $asesorias = $asesorias->selectRaw('count(seer_asesorias.id) as asesorias')
                 ->first();
             //El numero de convenios con contancias de no conciliacion
@@ -1039,9 +1035,14 @@ class SeerController extends Controller
             $porcenaje = ($convenios_total) / ($convenios_total + $no_conciliacion["audiencia"]);
              
             return view('estadisticas.ver_reporte_cuantitativo', compact('solicitudes','ratificaciones','montoratificaciones','audiencia','montoaudiencia','colectivas','convenios','porcenaje','total_pagos','asesorias'));
+        */
+            //dd("llego");
+            //$pdf = \PDF::loadView('PDF/estadisticas/Graficas');
+            return view('PDF/estadisticas/Graficas');
+            //return $pdf->stream('archivo.pdf');
         }
         else if($data["tipo_reporte"] == "Concentrado"){
-            /*
+        /*
             //SOLICITUDES
                 $solicitudes  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
                 $solicitudes = $solicitudes->join("users","users.id","=","seer_general.user_id");
@@ -1146,9 +1147,8 @@ class SeerController extends Controller
                 ->get();
             
                 $porcenaje=0;
-                */
-                $pdf = \PDF::loadView('PDF/Reporte_cuantitativo');
-    
+        */
+            $pdf = \PDF::loadView('PDF/estadisticas/Reporte_cuantitativo');
             return $pdf->stream('archivo.pdf');
             //return $pdf->download('archivo.pdf');
 
@@ -5880,4 +5880,5 @@ class SeerController extends Controller
             
         return $pdf->stream('archivo.pdf');
     }
+
 }

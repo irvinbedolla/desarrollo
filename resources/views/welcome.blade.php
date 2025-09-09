@@ -239,7 +239,7 @@
               </div>
             </div>
           </div>
-          <p><a class="boton" href="{{ route('poder-crear') }}" target="_blank">Ver más</a></p>
+          <p><a class="boton" href="{{ route('poder-crear') }}">Ver más</a></p>
         </div>    
       </div> <!-- Fin registro de rep. legales -->
       <div class="card"> <!-- Inicio cursos y capacitaciones -->
@@ -256,7 +256,7 @@
               </div>
             </div>
           </div>
-          <p><a class="boton" href="{{ route('login') }}" target="_blank">Ver más</a></p> 
+          <p><a class="boton" href="{{ route('login') }}">Ver más</a></p> 
         </div> 
       </div><!-- Inicio  cursos y capacitaciones -->
     </div>

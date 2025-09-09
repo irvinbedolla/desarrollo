@@ -58,7 +58,7 @@
                                 @if(session()->has('success'))
                                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                                         <strong>¡Registro correcto!</strong>
-                                        {{ session()->get('success') }}
+                                        {{ (session()->get('success')) }}
                                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
@@ -81,24 +81,41 @@
                                     </div>
                                 @endif
                                 <div style="background-color:#D2D3D5">
-                                    <h3 class="text-center" style="color:black">Registro de Representación Legal Patronal</h3>
+                                    <h3 class="text-center" style="color:black">Registro de Representación Patronal/Legal</h3>
                                 </div>    
+                                <br><br>
                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                     <div class="form-group">
-                                        <h4 class="text-center" style="color:#CEA845">Datos del representante legal</h4>
+                                        <h5 class="text-center">Bienvenido al Registro de Representación Patronal y Legal del Centro de Conciliación Laboral del 
+                                            Estado de Michoacán de Ocampo, el cual tiene como objetivo agilizar el proceso de conciliación prejudicial dentro de las 
+                                            audiencias de conciliación, así como para las ratificaciones de convenio. </h5><br><br>
+                                            Antes de iniciar el registro, asegúrate de tener cerca los siguientes requisitos: <br><br>
+                                            *Identificación oficial.<br>
+                                            *Identificación oficial del representante legal (en los casos que así se requiera).<br>
+                                            *Documento que acredite la personería (carta poder, instrumento notarial).<br>
+                                            *Correo electrónico.<br>
+                                            *Número de celular.<br>
+                                            *Domucilio de la fuente laboral.<br>
+                                            *** Será indispensable, que los requisitos con (*), se tengan en documento PDF, no mayor a 20 MB.
+                                        <br><br>
                                     </div>
                                 </div>
                                 <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                                 <form class="needs-validation novalidate" method="POST" action="{{route('poderes.publico')}}" enctype="multipart/form-data">
                                     @csrf
+                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                        <div class="form-group">
+                                            <h4 class="text-center" style="color:#CEA845">Iniciar Registro</h4>
+                                        </div>
+                                    </div>
+                                    
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-12 col-md-2">
                                             <div class="form-group">
                                                 <label for="name">Tipo de persona <span style="color:red;">(*)</span></label>
-                                                <select name="tipo" id="tipo" class="form-control">
+                                                <select name="tipoPersona" id="tipo_persona" class="form-control" required>
                                                     <option value="">Seleccione</option>
-                                                    <option value="FisicaR">Física, cuento con representante legal</option>
-                                                    <option value="FisicaD">Física, derecho propio</option>
+                                                    <option value="Fisica">Física</option>
                                                     <option value="Moral">Moral</option>
                                                 </select>
                                                 <div class="invalid-feedback">
@@ -106,293 +123,124 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
-                                        <div class="col-xs-12 col-sm-12 col-md-12" id="tipoPersona_razon" style="display:none;">
-                                            <div class="row">
-                                                <div class="col-xs-12 col-sm-12 col-md-10">
-                                                    <div class="form-group">
-                                                        <label for="name">Razón social <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="razon" id="razon" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
-                                                        <div class="invalid-feedback">
-                                                            La razón social es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="">Teléfono</label>
-                                                        <input type="text" class="form-control" placeholder="*Telefono"  name="telefono_moral" maxlength="10" pattern="[0-9]+" >
-                                                        <div class="invalid-feedback">
-                                                            El telefono es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="">Correo</label>
-                                                        <input type="email" class="form-control" placeholder="*Correo" name="correo_moral" id="correoAbogadoAlta" >
-                                                        <div class="invalid-feedback">
-                                                            El correo es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="">CURP</label>
-                                                        <input type="text" class="form-control" placeholder="*CURP" aria-label="CURP" name="curp_moral" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" >
-                                                        <div class="invalid-feedback">
-                                                            La CURP es obligatoria.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>  
+                                    </div>
 
-                                        <div class="col-xs-12 col-sm-12 col-md-12" id="tipoPersona_nombre" style="display:none;">
-                                            <div class="row">
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-12" id="persona_fisica" style="display:none;">
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <div class="form-group">
+                                                <h4 class="text-center" style="color:#CEA845">Información Patronal</h4>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <div class="form-group">
+                                                <h5 class="text-center">Datos de identificación</h5>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                                <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">Nombre(s) <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="nombresAbogadoAlta" id="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <label for="name">Nombre(s) del patron<span style="color:red;">(*)</span></label>
+                                                        <input type="text" name="nombre_pF" id="nombre_pF" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                         <div class="invalid-feedback">
                                                             El nombre es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
-                                                        
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" name="primero_PF" id="primero_PF" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                         <div class="invalid-feedback">
                                                             El primer apellido es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="name">Segundo apellido <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
-                                                        <div class="invalid-feedback">
-                                                            El segundo apellido es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>  
-                                                
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="">Teléfono</label>
-                                                        <input type="text" class="form-control" placeholder="*Telefono"  name="telefonoAbogadoAlta" maxlength="10" pattern="[0-9]+" >
-                                                        <div class="invalid-feedback">
-                                                            El telefono es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="">Correo</label>
-                                                        <input type="email" class="form-control" placeholder="*Correo" name="correoAbogadoAlta" id="correoAbogadoAlta" >
-                                                        <div class="invalid-feedback">
-                                                            El correo es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="">CURP</label>
-                                                        <input type="text" class="form-control" placeholder="*CURP" aria-label="CURP" name="curpAbogadoAlta" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" >
-                                                        <div class="invalid-feedback">
-                                                            La CURP es obligatoria.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>  
-
-                                        <div class="col-xs-12 col-sm-12 col-md-12" id="tipoPersona_propio" style="display:none;">
-                                            <div class="row">
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="name">Nombre(s) <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="nombre_derecho" id="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
-                                                        <div class="invalid-feedback">
-                                                            El nombre es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                    
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="primero_derecho" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
-                                                        <div class="invalid-feedback">
-                                                            El primer apellido es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Segundo apellido <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="segundo_derecho" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" name="segundo_Pf" id="segundo_Pf" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                         <div class="invalid-feedback">
                                                             El segundo apellido es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="">Teléfono</label>
-                                                        <input type="text" class="form-control" placeholder="*Telefono"  name="telefono_derecho" maxlength="10" pattern="[0-9]+" >
-                                                        <div class="invalid-feedback">
-                                                            El telefono es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="">Correo</label>
-                                                        <input type="email" class="form-control" placeholder="*Correo" name="correo_derecho" id="correoAbogadoAlta" >
-                                                        <div class="invalid-feedback">
-                                                            El correo es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="">CURP</label>
-                                                        <input type="text" class="form-control" placeholder="*CURP" aria-label="CURP" name="curp_derecha" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" >
+                                                        <input type="text" class="form-control" aria-label="CURP" name="curp_PF" id="curp_PF" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
                                                             La CURP es obligatoria.
                                                         </div>
                                                     </div>
                                                 </div>
-
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="name">Giro Comercial <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="giro_derecho" id="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
-                                                        <div class="invalid-feedback">
-                                                            El nombre es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="name">Vialidad (calle,avenida,etc.) <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="vialidad_derecho" id="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
-                                                        <div class="invalid-feedback">
-                                                            El nombre es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="name">Colonia <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="colonia_derecho" id="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
-                                                        <div class="invalid-feedback">
-                                                            El nombre es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="name">Num Int <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="num_int_derecho" id="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
-                                                        <div class="invalid-feedback">
-                                                            El nombre es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="name">Nun Ext</span></label>
-                                                        <input type="text" name="num_ext_derecho" id="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
-                                                        <div class="invalid-feedback">
-                                                            El nombre es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="name">C.P. <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="cp_derecho" id="nombre" class="form-control" minlength="5" maxlength="5" oninput="this.value = this.value.toUpperCase()" > 
-                                                        <div class="invalid-feedback">
-                                                            El nombre es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                                    <div class="form-group">
-                                                        <h4 class="text-center" style="color:#CEA845">Datos de la fuente laboral</h4>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">RFC <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="RFC_derecho" id="nombre" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" name="RFC_pF" id="RFC_pF" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <div class="invalid-feedback">
+                                                            El nombre es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="name">Sexo <span style="color:red;">(*)</span></label>
+                                                        <select name="sexo_pf" id="sexo_pf" class="form-control">
+                                                            <option value="">Seleccione</option>
+                                                            <option value="Femenino">Femenino</option>
+                                                            <option value="Masculino">Masculino</option>
+                                                            <option value="Prefiero no responder">Prefiero no responder</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El tipo de persona es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-9">
+                                                    <div class="form-group">
+                                                        <label for="name">Giro Comercial <span style="color:red;">(*)</span></label>
+                                                        <input type="text" name="giro_pF" id="giro_pF" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                         <div class="invalid-feedback">
                                                             El nombre es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <div class="col-xs-12 col-sm-12 col-md-8">
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                   <div class="form-group">
+                                                        <h5 class="text-center">Datos de contacto</h5>
+                                                    </div>
+                                                </div> 
+
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="">Giro Comercial</label>
-                                                        <input type="text" class="form-control" placeholder="Giro Comercial" name="industriaAlta" >
+                                                        <label for="">Correo</label>
+                                                        <input type="email" class="form-control" placeholder="*Correo" name="correo_pF" id="correo_pF" >
                                                         <div class="invalid-feedback">
-                                                            La industria es obligatoria.
+                                                            El correo es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>                                            
-                                        </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="">Teléfono</label>
+                                                            <input type="text" class="form-control" placeholder="*Telefono"  name="telefono_PF" id="telefono_PF" maxlength="10" pattern="[0-9]+" >
+                                                        <div class="invalid-feedback">
+                                                            El telefono es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-                                        
-
-                                        <div class="col-xs-12 col-sm-12 col-md-12" id="datos_empresa" style="display:none;">
-                                            <div class="row">
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
-                                                        <h4 class="text-center" style="color:#CEA845">Datos de la fuente laboral</h4>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="">Empresa</label>
-                                                        <input type="text" class="form-control" placeholder="*Empresa representación" name="empresaAbogadoAlta" oninput="this.value = this.value.toUpperCase()" >
-                                                        <div class="invalid-feedback">
-                                                            La empresa es obligatoria.
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="">RFC</label>
-                                                        <input type="text" class="form-control" placeholder="RFC Empresa" name="RFCAbogadoAlta" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()">
+                                                        <h5 class="text-center">Domicilio laboral</h5>
                                                     </div>
                                                 </div>
 
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="password">Entidad Federativa</label>
-                                                        <select id="estado_poder" class="form-control" name="estado_poder" placeholder="*Entidad Federativa" >
+                                                        <select id="estado_pF" class="form-control" name="estado_pF" placeholder="*Entidad Federativa" >
                                                             <option value="">Seleccione</option>
                                                             @foreach($estados as $est)
                                                                 <option value="{{$est['id']}}">{{$est['nombre']}}</option>
@@ -403,11 +251,10 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="name">Nombre del Municipio o Alcaldía (*)</label>
-                                                        <select id="municipio_poder" class="form-control" name="municipio_poder" placeholder="*Municipio" >
+                                                        <select id="municipio_pF" class="form-control" name="municipio_pF" placeholder="*Municipio" >
                                                             <option value="">Seleccione</option>
                                                             @foreach($municipios as $mun)
                                                                 <option value="{{$mun['id']}}">{{$mun['nombre']}}</option>
@@ -418,11 +265,10 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="name">Tipo de Vialidad (*)</label>
-                                                        <select name="vialidadPoder" id="vialidadPoder" class="form-control" placeholder="*Vialidad" >
+                                                        <select name="vialidad_pF" id="vialidad_pF" class="form-control" placeholder="*Vialidad" >
                                                             <option value="">SELECCIONE</option>
                                                             <option value="AMPLIACIÓN">Ampliación</option>
                                                             <option value="ANDADOR">Andador</option>
@@ -450,156 +296,618 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="name">Nombre de la Vialidad (*)</label>
-                                                        <input type="text" name="vialidad_callePoder" id="vialidad_callePoder" class="form-control" placeholder="*Nombre vialidad" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" name="vialidad_calle_pF" id="vialidad_calle_pF" class="form-control" placeholder="*Nombre vialidad" oninput="this.value = this.value.toUpperCase()" > 
                                                         <div class="invalid-feedback">
                                                             El campo vialidad o calle es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
-
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Colonia</label>
-                                                        <input type="text" class="form-control" placeholder="*Colonia" name="coloniaAbogadoAlta" id="coloniaAbogadoAlta" oninput="this.value = this.value.toUpperCase()" >
+                                                        <input type="text" class="form-control" placeholder="*Colonia" name="colonia_pF" id="colonia_pF" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
                                                             El domicilio es obligatoria.
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Núm. Ext.</label>
-                                                        <input type="text" class="form-control" placeholder="*Número exterior" name="NExtAbogadoAlta" id="NExtAbogadoAlta" oninput="this.value = this.value.toUpperCase()" >
+                                                        <input type="text" class="form-control" placeholder="*Número exterior" name="num_ext_pF" id="num_ext_pF" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
                                                             El domicilio es obligatoria.
                                                         </div>
                                                     </div>
                                                 </div>
-            
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Núm. Int.</label>
-                                                        <input type="text" class="form-control" placeholder="Número interior" name="NIntAbogadoAlta" id="NIntAbogadoAlta" oninput="this.value = this.value.toUpperCase()">
+                                                        <input type="text" class="form-control" placeholder="Número interior" name="num_int_pF"  oninput="this.value = this.value.toUpperCase()">
                                                         <div class="invalid-feedback">
                                                             El domicilio es obligatoria.
                                                         </div>
                                                     </div>
                                                 </div>
-            
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Código postal</label>
-                                                        <input type="text" class="form-control" placeholder="*Código postal" name="cpAbogadoAlta" id="cpAbogadoAlta" oninput="this.value = this.value.toUpperCase()" >
+                                                        <input type="text" class="form-control" placeholder="*Código postal" name="cp_pF" id="cp_pF" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
                                                             El domicilio es obligatoria.
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="col-xs-12 col-sm-12 col-md-2">
                                                     <div class="form-group">
-                                                        <label for="">Fecha vigencia</label>
-                                                        <input type="date" class="form-control" aria-describedby="basic-addon1" name="fechaVigenciaAlta" id="fechaVigenciaAlta" min="<?= date("Y-m-d") ?>" >
+                                                        <label for="name">¿Desea registrar representante legal? <span style="color:red;">(*)</span></label>
+                                                        <select name="representate" id="representate" class="form-control">
+                                                            <option value="">Seleccione</option>
+                                                            <option value="Si">Si</option>
+                                                            <option value="No">No</option>
+                                                        </select>
                                                         <div class="invalid-feedback">
-                                                            La fecha es obligatoria.
+                                                            El tipo de persona es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
-                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-12" id="Conrepresentante" style="display:none;">
+                                            <div class="row">
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
-                                                        <label for="">Giro Comercial</label>
-                                                        <input type="text" class="form-control" placeholder="Giro Comercial" name="industriaAlta" >
+                                                        <h5 class="text-center" style="color:#CEA845">Información del Representante Legal</h5>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div class="form-group">
+                                                        <h5 class="text-center">Datos de indentificación</h5>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="name">Nombre(s) del representante<span style="color:red;">(*)</span></label>
+                                                        <input type="text" name="nombre_representante_pF" id="nombre_representante_pF" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                         <div class="invalid-feedback">
-                                                            La industria es obligatoria.
+                                                            El nombre es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
+                                                        <input type="text" name="primer_representante_pF" id="primer_representante_pF" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <div class="invalid-feedback">
+                                                            El primer apellido es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="name">Segundo apellido <span style="color:red;">(*)</span></label>
+                                                        <input type="text" name="segundo_representante_pF" id="segundo_representante_pF" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <div class="invalid-feedback">
+                                                            El segundo apellido es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>  
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="">CURP</label>
+                                                        <input type="text" class="form-control" placeholder="*CURP" aria-label="CURP" name="curp_representante_pF" id="curp_representante_pF" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" >
+                                                        <div class="invalid-feedback">
+                                                            La CURP es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="name">Sexo <span style="color:red;">(*)</span></label>
+                                                        <select name="sexo_representante_pF" id="sexo_representante_pF" class="form-control">
+                                                            <option value="">Seleccione</option>
+                                                            <option value="Femenino">Femenino</option>
+                                                            <option value="Masculino">Masculino</option>
+                                                            <option value="Prefiero no responder">Prefiero no responder</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El tipo de persona es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                   <div class="form-group">
+                                                        <h5 class="text-center">Datos de contacto</h5>
+                                                    </div>
+                                                </div> 
+
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <span class="" id="basic-addon1">*Seleccione la región(nes).</i></i></span>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" name="moreliaSucursal" value="Si">
-                                                            <label class="form-check-label" for="flexCheckDefault">Morelia</label>
+                                                        <label for="">Correo</label>
+                                                        <input type="email" class="form-control" placeholder="*Correo" name="correo_representante_pF" id="correo_representante_pF" >
+                                                        <div class="invalid-feedback">
+                                                            El correo es obligatorio.
                                                         </div>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" name="uruapanSucursal" value="Si" >
-                                                            <label class="form-check-label" for="flexCheckChecked">Uruapan</label>
-                                                        </div>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" name="zamoraSucursal" value="Si">
-                                                            <label class="form-check-label" for="flexCheckDefault">Zamora</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="">Teléfono</label>
+                                                        <input type="text" class="form-control" placeholder="*Telefono"  name="telefono_representante_pF" id="telefono_representante_pF" maxlength="10" pattern="[0-9]+" >
+                                                        <div class="invalid-feedback">
+                                                            El telefono es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
+                                                        <h5 class="text-center" style="color:#CEA845">Datos de la documentación que acredie la personeria</h5>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-12 col-md-4">  
+                                                    <div class="form-group">
+                                                        <label for="name">Tipo de documento <span style="color:red;">(*)</span></label>
+                                                        <select name="tipo_documento_pF" id="tipo_documento_pF" class="form-control">
+                                                            <option value="">Seleccione</option>
+                                                            <option value="Carta Poder">Carta Poder</option>
+                                                                <option value="Instrumento Notarial">Instrumento Notarial</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="">Fecha expedición</label>
+                                                        <input type="date" class="form-control" aria-describedby="basic-addon1" name="fecha_expedicion_pF" id="fecha_expedicion_pF" >
+                                                        <div class="invalid-feedback">
+                                                            La fecha es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="">Fecha vigencia</label>
+                                                        <input type="date" class="form-control" aria-describedby="basic-addon1" name="fecha_vigencia_pF" id="fecha_vigencia_pF" min="<?= date("Y-m-d") ?>" >
+                                                        <div class="invalid-feedback">
+                                                            La fecha es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>  
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div class="form-group">
                                                         <label for="">Descripción del poder</label>
-                                                        <textarea class="form-control" aria-describedby="basic-addon1" name="descripcionpoderAlta" ></textarea>
+                                                        <textarea class="form-control" aria-describedby="basic-addon1" name="descripcion_pF" id="descripcion_pF" 
+                                                        placeholder="Ejemplo: Carta poder simple de fecha:___, firmada ante dos testigos, siscrita a favor del compareciente por el (C. Lic. Ing. etc)_____, en cuanto ___ de la moral citada, ... "></textarea>
                                                         <div class="invalid-feedback">
                                                             La descripción es obligatoria.
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div class="form-group">
+                                                        <h5 class="text-center" style="color:#CEA845">Cargar Documentos</h5>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label>*Identificación del patrón</label><br>
+                                                        <input type="file" name="documentoIne_pF" id="documentoIne_pF" class="form-control" accept=".pdf" >
+                                                        <div class="invalid-feedback">
+                                                            La Identificación es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label>*Identificación del representante legal</label><br>
+                                                        <input type="file" name="documentoRepresentacion_pF" id="documentoRepresentacion_pF" class="form-control" accept=".pdf" >
+                                                        <div class="invalid-feedback">
+                                                            El documento de representación es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label>*Documento que acredite la personería</label><br>
+                                                        <input type="file" name="documentoPoder_pF" id="documentoPoder_pF" class="form-control" accept=".pdf">
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Anexos 1 (en caso de que se requiera subir documentación complementaria)</label><br>
+                                                        <input type="file" name="documentoAnexo_pF" class="form-control" accept=".pdf">
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div align="center">
+                                                        <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
+                                                        <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845; border-color:#CEA845;">Regresar</a>    
+                                                    </div>
+                                                </div> 
                                             </div>
                                         </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-12" id="Sinrepresentante" style="display:none;">
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <h5 class="text-center" style="color:#CEA845">Cargar Documentos</h5>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label>*Identificación oficial del representante</label><br>
+                                                        <input type="file" name="documentoIne_pFSR" id="documentoIne_pFSR" class="form-control" accept=".pdf" >
+                                                        <div class="invalid-feedback">
+                                                            La Identificación es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Anexos (Opcional)</label><br>
+                                                        <input type="file" name="documentoAnexo_pFSR" class="form-control" accept=".pdf">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div align="center">
+                                                    <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
+                                                    <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845; border-color:#CEA845;">Regresar</a>    
+                                                </div>
+                                            </div> 
+                                        </div>
+                                    </div>
 
+
+                                    <div class="col-xs-12 col-sm-12 col-md-12" id="persona_moral" style="display:none;">
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div class="form-group">
-                                                <h4 class="text-center" style="color:#CEA845">Documentos</h4>
+                                                <h4 class="text-center" style="color:#CEA845">Información Patronal</h4>
                                             </div>
                                         </div>
-
-                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div class="form-group">
-                                                <label>*Identificación oficial del representante</label><br>
-                                                <input type="file" name="documentoIne" class="form-control" accept=".pdf" required>
-                                                <div class="invalid-feedback">
-                                                    La Identificación es obligatoria.
+                                                <h5 class="text-center">Datos de identificación</h5>
+                                            </div>
+                                        </div>
+                                            <div class="row">
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="name">Razón Social <span style="color:red;">(*)</span></label>
+                                                        <input type="text" name="razon" id="razon" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <div class="invalid-feedback">
+                                                            El nombre es obligatorio.
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-xs-12 col-sm-12 col-md-6">
-                                            <div class="form-group">
-                                                <label>*Identificación oficial del representado</label><br>
-                                                <input type="file" name="documentoRepresentacion" class="form-control" accept=".pdf" required>
-                                                <div class="invalid-feedback">
-                                                    El documento de representación es obligatorio.
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="name">RFC <span style="color:red;">(*)</span></label>
+                                                        <input type="text" name="rfc_moral" id="rfc_moral" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <div class="invalid-feedback">
+                                                            El nombre es obligatorio.
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="name">Giro Comercial <span style="color:red;">(*)</span></label>
+                                                        <input type="text" name="giro_moral" id="giro_moral" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <div class="invalid-feedback">
+                                                            El nombre es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-                                        <div class="col-xs-12 col-sm-12 col-md-6">
-                                            <div class="form-group">
-                                                <label>Anexos (Opcional)</label><br>
-                                                <input type="file" name="documentoAnexo" class="form-control" accept=".pdf">
-                                            </div>
-                                        </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div class="form-group">
+                                                        <h5 class="text-center">Domicilio laboral</h5>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="password">Entidad Federativa</label>
+                                                        <select id="estado_moral" class="form-control" name="estado_moral" placeholder="*Entidad Federativa" >
+                                                            <option value="">Seleccione</option>
+                                                            @foreach($estados as $est)
+                                                                <option value="{{$est['id']}}">{{$est['nombre']}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo Estado es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="name">Nombre del Municipio o Alcaldía (*)</label>
+                                                        <select id="municipio_moral" class="form-control" name="municipio_moral" placeholder="*Municipio" >
+                                                            <option value="">Seleccione</option>
+                                                            @foreach($municipios as $mun)
+                                                                <option value="{{$mun['id']}}">{{$mun['nombre']}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo municipio o alcaldía es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="name">Tipo de Vialidad (*)</label>
+                                                        <select name="vialidad_Moral" id="vialidad_Moral" class="form-control" placeholder="*Vialidad" >
+                                                            <option value="">SELECCIONE</option>
+                                                            <option value="AMPLIACIÓN">Ampliación</option>
+                                                            <option value="ANDADOR">Andador</option>
+                                                            <option value="AUTOPISTA">Autopista</option>
+                                                            <option value="AVENIDA">Avenida</option>
+                                                            <option value="BOULEVARD">Boulevard</option>
+                                                            <option value="CALLE">Calle</option>
+                                                            <option value="CALLEJÓN">Callejón</option>
+                                                            <option value="CALZADA">Calzada</option>
+                                                            <option value="CARRETERA">Carretera</option>
+                                                            <option value="CERRADA">Cerrada</option>
+                                                            <option value="CIRCUITO">Circuito</option>
+                                                            <option value="CIRCUNVALACIÓN">Circunvalación</option>
+                                                            <option value="CONTINUACIÓN">Continuación</option>
+                                                            <option value="CORREDOR">Corredor</option>
+                                                            <option value="DIAGONAL">Diagonal</option>
+                                                            <option value="EJE VIAL">Eje vial</option>
+                                                            <option value="PERIFÉRICO">Periférico</option>
+                                                            <option value="PROLONGACIÓN">Prolongación</option>
+                                                            <option value="RETORNO">Retorno</option>
+                                                            <option value="VIADUCTO">Viaducto</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo vialidad es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="name">Nombre de la Vialidad (*)</label>
+                                                        <input type="text" name="vialidad_calleMoral" id="vialidad_calleMoral" class="form-control" placeholder="*Nombre vialidad" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <div class="invalid-feedback">
+                                                            El campo vialidad o calle es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="">Colonia</label>
+                                                        <input type="text" class="form-control" placeholder="*Colonia" name="colonia_moral" id="colonia_moral" oninput="this.value = this.value.toUpperCase()" >
+                                                        <div class="invalid-feedback">
+                                                            El domicilio es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="">Núm. Ext.</label>
+                                                        <input type="text" class="form-control" placeholder="*Número exterior" name="num_ext_moral" id="num_ext_moral" oninput="this.value = this.value.toUpperCase()" >
+                                                        <div class="invalid-feedback">
+                                                            El domicilio es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="">Núm. Int.</label>
+                                                        <input type="text" class="form-control" placeholder="Número interior" name="num_int" oninput="this.value = this.value.toUpperCase()">
+                                                        <div class="invalid-feedback">
+                                                            El domicilio es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="">Código postal</label>
+                                                        <input type="text" class="form-control" placeholder="*Código postal" name="cp_moral" id="cp_moral" oninput="this.value = this.value.toUpperCase()" >
+                                                        <div class="invalid-feedback">
+                                                            El domicilio es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-                                        <div class="col-xs-12 col-sm-12 col-md-6">
-                                            <div class="form-group">
-                                                <label>Anexos 2 (Opcional)</label><br>
-                                                <input type="file" name="documentoPoder" class="form-control" accept=".pdf">
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div class="form-group">
+                                                        <h5 class="text-center" style="color:#CEA845">Información del Representante Legal</h5>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div class="form-group">
+                                                        <h5 class="text-center">Datos de indentificación</h5>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="name">Nombre(s) del representante<span style="color:red;">(*)</span></label>
+                                                        <input type="text" name="nombre_representante_Moral" id="nombre_representante_Moral" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <div class="invalid-feedback">
+                                                            El nombre es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
+                                                        <input type="text" name="primer_Moral" id="primer_Moral" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <div class="invalid-feedback">
+                                                            El primer apellido es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="name">Segundo apellido <span style="color:red;">(*)</span></label>
+                                                        <input type="text" name="segundo_Moral" id="segundo_Moral" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <div class="invalid-feedback">
+                                                            El segundo apellido es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>  
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="">CURP</label>
+                                                        <input type="text" class="form-control" placeholder="*CURP" aria-label="CURP" name="curp_moral" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" >
+                                                        <div class="invalid-feedback">
+                                                            La CURP es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="name">Sexo <span style="color:red;">(*)</span></label>
+                                                        <select name="sexo_Moral" id="sexo_Moral" class="form-control">
+                                                            <option value="">Seleccione</option>
+                                                            <option value="Femenino">Femenino</option>
+                                                            <option value="Masculino">Masculino</option>
+                                                            <option value="Prefiero no responder">Prefiero no responder</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El tipo de persona es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                   <div class="form-group">
+                                                        <h5 class="text-center">Datos de contacto</h5>
+                                                    </div>
+                                                </div> 
+
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="">Correo</label>
+                                                        <input type="email" class="form-control" placeholder="*Correo" name="correo_Moral" id="correo_Moral" >
+                                                        <div class="invalid-feedback">
+                                                            El correo es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="">Teléfono</label>
+                                                        <input type="text" class="form-control" placeholder="*Telefono"  name="telefono_Moral" id="telefono_Moral" maxlength="10" pattern="[0-9]+" >
+                                                        <div class="invalid-feedback">
+                                                            El telefono es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div class="form-group">
+                                                        <h5 class="text-center" style="color:#CEA845">Datos de la documentación que acredie la personeria</h5>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-12 col-md-4">  
+                                                    <div class="form-group">
+                                                        <label for="name">Tipo de documento <span style="color:red;">(*)</span></label>
+                                                        <select name="tipo_Moral" id="tipo_Moral" class="form-control">
+                                                            <option value="">Seleccione</option>
+                                                            <option value="Carta Poder">Carta Poder</option>
+                                                                <option value="Instrumento Notarial">Instrumento Notarial</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="">Fecha expedición</label>
+                                                        <input type="date" class="form-control" aria-describedby="basic-addon1" name="fecha_expedicicion_Moral" id="fecha_expedicicion_Moral" >
+                                                        <div class="invalid-feedback">
+                                                            La fecha es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="">Fecha vigencia</label>
+                                                        <input type="date" class="form-control" aria-describedby="basic-addon1" name="fecha_vigencia_Moral" id="fecha_vigencia_Moral" min="<?= date("Y-m-d") ?>" >
+                                                        <div class="invalid-feedback">
+                                                            La fecha es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>  
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="">Descripción del poder</label>
+                                                        <textarea class="form-control" aria-describedby="basic-addon1" name="descripcion_Moral"  id="descripcion_Moral" 
+                                                        placeholder="Ejemplo: Carta poder simple de fecha:___, firmada ante dos testigos, siscrita a favor del compareciente por el (C. Lic. Ing. etc)_____, en cuanto ___ de la moral citada, ... "></textarea>
+                                                        <div class="invalid-feedback">
+                                                            La descripción es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div class="form-group">
+                                                        <h4 class="text-center" style="color:#CEA845">Documentos</h4>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label>*Identificación del patrón</label><br>
+                                                        <input type="file" name="documentoIne_Moral" id="documentoIne_Moral" class="form-control" accept=".pdf" >
+                                                        <div class="invalid-feedback">
+                                                            La Identificación es obligatoria.
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label>*Identificación del representante legal</label><br>
+                                                        <input type="file" name="documentoRepresentacion_Moral" id="documentoRepresentacion_Moral" class="form-control" accept=".pdf" >
+                                                        <div class="invalid-feedback">
+                                                            El documento de representación es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Documento que acredite la personería</label><br>
+                                                        <input type="file" name="documentoPoder" id="documentoPoder" class="form-control" accept=".pdf">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Anexos 1 (en caso de que se requiera subir un documento complementario)</label><br>
+                                                        <input type="file" name="documentoAnexo" class="form-control" accept=".pdf">
+                                                    </div>
+                                                </div>
+
+                                    
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div align="center">
+                                                        <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
+                                                        <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845; border-color:#CEA845;">Regresar</a>    
+                                                    </div>
+                                                </div> 
                                             </div>
-                                        </div>
-                                        
-                                    </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-12">
-                                        <div align="center">
-                                            <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
-                                            <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845; border-color:#CEA845;">Regresar</a>    
-                                        </div>
-                                    </div>    
+                                    </div>   
                                 </form>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -647,32 +955,111 @@
 </div>
 
     <script>
-        document.getElementById('tipo').addEventListener('change', function() {
+        document.getElementById('tipo_persona').addEventListener('change', function() {
+            var selectTipo = document.getElementById('tipo_persona');
+            const nombreDiv = document.getElementById('persona_fisica');
+            const empresaDiv = document.getElementById('persona_moral');
             
-            const selectTipo = document.getElementById('tipo');
-            const nombreDiv = document.getElementById('tipoPersona_nombre');
-            const razonDiv = document.getElementById('tipoPersona_razon');
-            const propioDiv = document.getElementById('tipoPersona_propio')
-            const empresaDiv = document.getElementById('datos_empresa')
-            
-
             function actualizarTipoPersona() {
                 const valor = selectTipo.value;
 
                 // Oculta ambos inicialmente
                 nombreDiv.style.display = 'none';
-                razonDiv.style.display = 'none';
-                propioDiv.style.display = 'none';
                 empresaDiv.style.display = 'none';
 
-                if (valor === 'FisicaR') {
+                if (valor === 'Fisica') {
                     nombreDiv.style.display = 'block';
-                    empresaDiv.style.display = 'block';
-                } else if (valor === 'FisicaD') {
-                    propioDiv.style.display = 'block';
+                    empresaDiv.style.display = 'none';
+                    //Poner los campos requeridos
+                    document.getElementById('nombre_pF').setAttribute('required', 'true');
+                    document.getElementById('primero_PF').setAttribute('required', 'true');
+                    document.getElementById('segundo_Pf').setAttribute('required', 'true');
+                    document.getElementById('curp_PF').setAttribute('required', 'true');
+                    document.getElementById('RFC_pF').setAttribute('required', 'true');
+                    document.getElementById('sexo_pf').setAttribute('required', 'true');
+                    document.getElementById('giro_pF').setAttribute('required', 'true');
+                    document.getElementById('correo_pF').setAttribute('required', 'true');
+                    document.getElementById('telefono_PF').setAttribute('required', 'true');
+                    document.getElementById('estado_pF').setAttribute('required', 'true');
+                    document.getElementById('municipio_pF').setAttribute('required', 'true');
+                    document.getElementById('vialidad_pF').setAttribute('required', 'true');
+                    document.getElementById('vialidad_calle_pF').setAttribute('required', 'true');
+                    document.getElementById('colonia_pF').setAttribute('required', 'true');
+                    document.getElementById('num_ext_pF').setAttribute('required', 'true');
+                    document.getElementById('cp_pF').setAttribute('required', 'true');
+                    //Quitar los campos requeridos
+                    document.removeAttribute('razon').setAttribute('required');
+                    document.removeAttribute('rfc_moral').setAttribute('required');
+                    document.removeAttribute('giro_moral').setAttribute('required');
+                    document.removeAttribute('estado_moral').setAttribute('required');
+                    document.removeAttribute('municipio_moral').setAttribute('required');
+                    document.removeAttribute('vialidad_Moral').setAttribute('required');
+                    document.removeAttribute('vialidad_calleMoral').setAttribute('required');
+                    document.removeAttribute('colonia_moral').setAttribute('required');
+                    document.removeAttribute('num_ext_moral').setAttribute('required');
+                    document.removeAttribute('cp_moral').setAttribute('required');
+                    document.removeAttribute('nombre_representante_Moral').setAttribute('required');
+                    document.removeAttribute('primer_Moral').setAttribute('required');
+                    document.removeAttribute('segundo_Moral').setAttribute('required');
+                    document.removeAttribute('curp_moral').setAttribute('required');
+                    document.removeAttribute('sexo_Moral').setAttribute('required');
+                    document.removeAttribute('correo_Moral').setAttribute('required');
+                    document.removeAttribute('telefono_Moral').setAttribute('required');
+                    document.removeAttribute('tipo_Moral').setAttribute('required');
+                    document.removeAttribute('fecha_expedicicion_Moral').setAttribute('required');
+                    document.removeAttribute('fecha_vigencia_Moral').setAttribute('required');
+                    document.removeAttribute('descripcion_Moral').setAttribute('required');
+                    document.removeAttribute('documentoIne_Moral').setAttribute('required');
+                    document.removeAttribute('documentoRepresentacion_Moral').setAttribute('required');
+                    document.removeAttribute('documentoPoder').setAttribute('required');
+
                 } else if (valor === 'Moral') {
-                    razonDiv.style.display = 'block';
                     empresaDiv.style.display = 'block';
+                    nombreDiv.style.display = 'none';
+                    //Las personas fisicas quitar requerido
+                    document.removeAttribute('nombre_pF').setAttribute('required');
+                    document.removeAttribute('primero_PF').setAttribute('required');
+                    document.removeAttribute('segundo_Pf').setAttribute('required');
+                    document.removeAttribute('curp_PF').setAttribute('required');
+                    document.removeAttribute('RFC_pF').setAttribute('required');
+                    document.removeAttribute('sexo_pf').setAttribute('required');
+                    document.removeAttribute('giro_pF').setAttribute('required');
+                    document.removeAttribute('correo_pF').setAttribute('required');
+                    document.removeAttribute('telefono_PF').setAttribute('required');
+                    document.removeAttribute('estado_pF').setAttribute('required');
+                    document.removeAttribute('municipio_pF').setAttribute('required');
+                    document.removeAttribute('vialidad_pF').setAttribute('required');
+                    document.removeAttribute('vialidad_calle_pF').setAttribute('required');
+                    document.removeAttribute('colonia_pF').setAttribute('required');
+                    document.removeAttribute('num_ext_pF').setAttribute('required');
+                    document.removeAttribute('cp_pF').setAttribute('required');
+                    //Poner los campos requeridos
+                    document.getElementById('razon').setAttribute('required', 'true');
+                    document.getElementById('rfc_moral').setAttribute('required', 'true');
+                    document.getElementById('giro_moral').setAttribute('required', 'true');
+                    document.getElementById('estado_moral').setAttribute('required', 'true');
+                    document.getElementById('municipio_moral').setAttribute('required', 'true');
+                    document.getElementById('vialidad_Moral').setAttribute('required', 'true');
+                    document.getElementById('vialidad_calleMoral').setAttribute('required', 'true');
+                    document.getElementById('colonia_moral').setAttribute('required', 'true');
+                    document.getElementById('num_ext_moral').setAttribute('required', 'true');
+                    document.getElementById('cp_moral').setAttribute('required', 'true');
+                    document.getElementById('nombre_representante_Moral').setAttribute('required', 'true');
+                    document.getElementById('primer_Moral').setAttribute('required', 'true');
+                    document.getElementById('segundo_Moral').setAttribute('required', 'true');
+                    document.getElementById('curp_moral').setAttribute('required', 'true');
+                    document.getElementById('sexo_Moral').setAttribute('required', 'true');
+                    document.getElementById('correo_Moral').setAttribute('required', 'true');
+                    document.getElementById('telefono_Moral').setAttribute('required', 'true');
+                    document.getElementById('tipo_Moral').setAttribute('required', 'true');
+                    document.getElementById('fecha_expedicicion_Moral').setAttribute('required', 'true');
+                    document.getElementById('fecha_vigencia_Moral').setAttribute('required', 'true');
+                    document.getElementById('descripcion_Moral').setAttribute('required', 'true');
+                    document.getElementById('documentoIne_Moral').setAttribute('required', 'true');
+                    document.getElementById('documentoRepresentacion_Moral').setAttribute('required', 'true');
+                    document.getElementById('documentoPoder').setAttribute('required', 'true');
+
+                    
                 }
             }
 
@@ -680,6 +1067,68 @@
                 selectTipo.addEventListener('change', actualizarTipoPersona);
                 // Ejecutar al cargar por si ya tiene valor
                 actualizarTipoPersona();
+            }
+        });
+        document.getElementById('representate').addEventListener('change', function() {
+            var reprecentante = document.getElementById('representate');
+            const razonDiv = document.getElementById('Conrepresentante');
+            const propioDiv = document.getElementById('Sinrepresentante');
+
+            function actualizarRepresentante() {
+                const valor = reprecentante.value;
+
+                // Oculta ambos inicialmente
+                razonDiv.style.display = 'none';
+                propioDiv.style.display = 'none';
+
+                if (valor === 'Si') {
+                    razonDiv.style.display = 'block';
+                    propioDiv.style.display = 'none';
+                    //Poner requeridos los campos
+                    document.getElementById('nombre_representante_pF').setAttribute('required', 'true');
+                    document.getElementById('primer_representante_pF').setAttribute('required', 'true');
+                    document.getElementById('segundo_representante_pF').setAttribute('required', 'true');
+                    document.getElementById('curp_representante_pF').setAttribute('required', 'true');
+                    document.getElementById('sexo_representante_pF').setAttribute('required', 'true');
+                    document.getElementById('correo_representante_pF').setAttribute('required', 'true');
+                    document.getElementById('telefono_representante_pF').setAttribute('required', 'true');
+                    document.getElementById('tipo_documento_pF').setAttribute('required', 'true');
+                    document.getElementById('fecha_expedicion_pF').setAttribute('required', 'true');
+                    document.getElementById('fecha_vigencia_pF').setAttribute('required', 'true');
+                    document.getElementById('descripcion_pF').setAttribute('required', 'true');
+                    document.getElementById('documentoIne_pF').setAttribute('required', 'true');
+                    document.getElementById('documentoRepresentacion_pF').setAttribute('required', 'true');
+                    document.getElementById('documentoPoder_pF').setAttribute('required', 'true');              
+                    //Quitar requeridos los campos
+                    document.removeAttribute('documentoIne_pFSR').setAttribute('required');
+
+                } else if (valor === 'No') {
+                    razonDiv.style.display = 'none';
+                    propioDiv.style.display = 'block';
+                    //Poner requeridos los campos
+                    document.getElementById('documentoIne_pFSR').setAttribute('required', 'true');
+                    //Poner requeridos los campos
+                    document.removeAttribute('nombre_representante_pF').setAttribute('required');
+                    document.removeAttribute('primer_representante_pF').setAttribute('required');
+                    document.removeAttribute('segundo_representante_pF').setAttribute('required');
+                    document.removeAttribute('curp_representante_pF').setAttribute('required');
+                    document.removeAttribute('sexo_representante_pF').setAttribute('required');
+                    document.removeAttribute('correo_representante_pF').setAttribute('required');
+                    document.removeAttribute('telefono_representante_pF').setAttribute('required');
+                    document.removeAttribute('tipo_documento_pF').setAttribute('required');
+                    document.removeAttribute('fecha_expedicion_pF').setAttribute('required');
+                    document.removeAttribute('fecha_vigencia_pF').setAttribute('required');
+                    document.removeAttribute('descripcion_pF').setAttribute('required');
+                    document.removeAttribute('documentoIne_pF').setAttribute('required');
+                    document.removeAttribute('documentoRepresentacion_pF').setAttribute('required');
+                    document.removeAttribute('documentoPoder_pF').setAttribute('required'); 
+                }
+            }
+
+            if (reprecentante) {
+                reprecentante.addEventListener('change', actualizarRepresentante);
+                // Ejecutar al cargar por si ya tiene valor
+                actualizarRepresentante();
             }
         });
     </script>
