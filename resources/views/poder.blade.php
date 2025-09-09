@@ -95,7 +95,7 @@
                                             *Documento que acredite la personería (carta poder, instrumento notarial).<br>
                                             *Correo electrónico.<br>
                                             *Número de celular.<br>
-                                            *Domucilio de la fuente laboral.<br>
+                                            *Domicilio de la fuente laboral.<br>
                                             *** Será indispensable, que los requisitos con (*), se tengan en documento PDF, no mayor a 20 MB.
                                         <br><br>
                                     </div>
@@ -139,7 +139,7 @@
                                         <div class="row">
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">Nombre(s) del patron<span style="color:red;">(*)</span></label>
+                                                        <label for="name">Nombre(s) del Patrón<span style="color:red;">(*)</span></label>
                                                         <input type="text" name="nombre_pF" id="nombre_pF" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                         <div class="invalid-feedback">
                                                             El nombre es obligatorio.
@@ -364,7 +364,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
-                                                        <h5 class="text-center">Datos de indentificación</h5>
+                                                        <h5 class="text-center">Datos de identificación</h5>
                                                     </div>
                                                 </div>
 
@@ -446,7 +446,7 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
-                                                        <h5 class="text-center" style="color:#CEA845">Datos de la documentación que acredie la personeria</h5>
+                                                        <h5 class="text-center" style="color:#CEA845">Datos de la documentación que acredite la personeria</h5>
                                                     </div>
                                                 </div>
 
@@ -485,7 +485,7 @@
                                                     <div class="form-group">
                                                         <label for="">Descripción del poder</label>
                                                         <textarea class="form-control" aria-describedby="basic-addon1" name="descripcion_pF" id="descripcion_pF" 
-                                                        placeholder="Ejemplo: Carta poder simple de fecha:___, firmada ante dos testigos, siscrita a favor del compareciente por el (C. Lic. Ing. etc)_____, en cuanto ___ de la moral citada, ... "></textarea>
+                                                        placeholder="Ejemplo: Carta poder simple de fecha:___, firmada ante dos testigos, suscrita a favor del compareciente por el (C. Lic. Ing. etc)_____, en cuanto ___ de la moral citada, ... "></textarea>
                                                         <div class="invalid-feedback">
                                                             La descripción es obligatoria.
                                                         </div>
@@ -812,7 +812,7 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
-                                                        <h5 class="text-center" style="color:#CEA845">Datos de la documentación que acredie la personeria</h5>
+                                                        <h5 class="text-center" style="color:#CEA845">Datos de la documentación que acredite la personeria</h5>
                                                     </div>
                                                 </div>
 
@@ -851,7 +851,7 @@
                                                     <div class="form-group">
                                                         <label for="">Descripción del poder</label>
                                                         <textarea class="form-control" aria-describedby="basic-addon1" name="descripcion_Moral"  id="descripcion_Moral" 
-                                                        placeholder="Ejemplo: Carta poder simple de fecha:___, firmada ante dos testigos, siscrita a favor del compareciente por el (C. Lic. Ing. etc)_____, en cuanto ___ de la moral citada, ... "></textarea>
+                                                        placeholder="Ejemplo: Carta poder simple de fecha:___, firmada ante dos testigos, suscrita a favor del compareciente por el (C. Lic. Ing. etc)_____, en cuanto ___ de la moral citada, ... "></textarea>
                                                         <div class="invalid-feedback">
                                                             La descripción es obligatoria.
                                                         </div>
