@@ -491,7 +491,6 @@ class TurnosController extends Controller
     public function store_publico(Request $request)
     {
         $data = $request->all();
-        //dd($data);
         if(isset($data["folio"])){
             request()->validate([
                 'folio'             => 'required',
@@ -563,7 +562,6 @@ class TurnosController extends Controller
                 'colonia'           => 'required',
                 'N_Ext'             => 'required',
                 'cp'                => 'required',
-                'tipo_persona'      => 'required',
             ], $data);
         }
 
@@ -598,13 +596,12 @@ class TurnosController extends Controller
             if(!isset($representante)){
                 return back()->with('error', 'El representante legal no existe');
             }
-           
             $data_insertar= array(
                 'consecutivo'       => $numero_consecutivo,    
-                'empresa'           => $representante["empresa"],
-                'primero_empresa'   => $representante["primer_apellido"],
-                'segundo_empresa'   => $representante["segundo_apellido"],
-                'nombre_empresa'    => $representante["nombres"],
+                'empresa'           => $representante["nombres_patronal"],
+                'primero_empresa'   => $representante["primer_apellido_patronal"],
+                'segundo_empresa'   => $representante["segundo_apellido_patronal"],
+                'nombre_empresa'    => $representante["nombres_patronal"],
                 'primero_trabajador'=> $data["primero_trabajador"],
                 'segundo_trabajador'=> $data["segundo_trabajador"],
                 'trabajador'        => $data["trabajador"],
@@ -629,13 +626,13 @@ class TurnosController extends Controller
                 'delegacion'        => $data["sede"],
                 'estatus'           => 'Pendiente',
                 'exepcion'          => 'No',
-                'ine'               => $representante["ine"],
-                'representacion'    => $representante["representacion"],
-                'email'             => $representante["email"],
-                'telefono'          => $representante["telefono"],
+                'ine'               => $representante["ineDocumento	"],
+                'representacion'    => $representante["representacionDocumento"],
+                'email'             => $representante["email_patronal"],
+                'telefono'          => $representante["telefono_patronal"],
                 'JLCA'              => $data["JLCA"],
                 'motivo'            => $data["motivo"],
-                'curp_solicitante'  => $representante["curp"],
+                'curp_solicitante'  => $representante["curp_patronal"],
                 'salario'           => $data["salario"],
                 'municipio_rat'     => $data["municipio_rat"],
                 'tipo_vialidad'     => $data["tipo_vialidad"],
@@ -645,8 +642,8 @@ class TurnosController extends Controller
                 'codigo_postal'     => $data["cp"],
             ); 
             $nombre = $data["trabajador"];
-            $email  = $representante["email"];
-            $curp   = $representante["curp"];
+            $email  = $representante["email_patronal"];
+            $curp   = $representante["curp_patronal"];
         }
         else{
             $data_insertar= array(
@@ -701,17 +698,6 @@ class TurnosController extends Controller
             $nombre = $data["trabajador"];
             $email  = $data["email"];
             $curp   = $data["curp"];
-            if (isset($data["tipo_persona"])) {
-                $data_insert["tipo_persona"] = $data["tipo_persona"];
-            
-                if ($data["tipo_persona"] == "Moral" && isset($data["razon"])) {
-                    $data_insert["empresa"] = $data["razon"];
-                }
-            
-                if ($data["tipo_persona"] == "Fisica" && isset($data["empresa"])) {
-                    $data_insert["empresa"] = $data["empresa"];
-                }
-            }
         }
 
         //Variables opcionales
@@ -754,7 +740,7 @@ class TurnosController extends Controller
         //Documentos si cargaron el folio
         if(isset($data["folio"])){
             $nombre_ine             = $representante["nombres"]."".$representante["primer_apellido"]."".$representante["segundo_apellido"]."-".$representante["empresa"]."_IDENTIFICACION.pdf";
-            $nombre_representación  = $representante["nombres"]."".$representante["primer_apellido"]."".$representante["segundo_apellido"]."-".$representante["empresa"]."_REPRESENTACION.pdf";
+            //$nombre_representación  = $representante["nombres"]."".$representante["primer_apellido"]."".$representante["segundo_apellido"]."-".$representante["empresa"]."_REPRESENTACION.pdf";
         }
         else{
             //Se carga el INE del abogado
@@ -781,7 +767,7 @@ class TurnosController extends Controller
         );
 
         $data_insertar["ine"]                       = $nombre_ine;
-        $data_insertar["representacion"]            = $nombre_representación;   
+        $data_insertar["representacion"]            = "";   
         $data_insertar["documentoCurp"]             = $trabajador_curp;
         $data_insertar["documentoidentificacion"]   = $trabajador_identificacion;  
 
@@ -908,23 +894,28 @@ class TurnosController extends Controller
                     ->where('hora',str_pad($hora, 2, '0', STR_PAD_LEFT) . ':00:00')
                     ->where('delegacion', $sede) // FILTRO POR SEDE
                     ->count();
-                    $disponibles = 2 - $citasExistentes;
+                    //$disponibles = 2 - $citasExistentes;
+                    $disponibles = 1 - $citasExistentes;
                     $ocupado = $disponibles <= 0;
                     
                     if ($ocupado) {
                         $todosLosEventos[] = [
-                            'title' => 'Ocupado (2/2)',
+                            //'title' => 'Ocupado (2/2)',
+                            'title' => 'Ocupado',
                             'start' => $slotStart,
                             'color' => '#DA0909',
                             'extendedProps' => ['estado' => 'ocupado', 'espacios disponibles' => 0]
                         ];
                     } else {
                         $todosLosEventos[] = [
-                            'title' => 'Disponible (' . $disponibles . ' espacios)',
+                            //'title' => 'Disponible (' . $disponibles . ' espacios)',
+                            'title' => 'Disponible',
                             'start' => $slotStart,
-                            'color' => $disponibles == 2 ? '#00CE1C' : '#FFA500',
-                            'extendedProps' => ['estado' => 'disponible', 'espacios_disponibles' => $disponibles,
-                            'color' => $disponibles == 2 ? '#00CE1C' : '#FFA500']
+                            //'color' => $disponibles == 2 ? '#00CE1C' : '#FFA500',
+                            'color' => '#00CE1C',
+                            'extendedProps' => ['estado' => 'disponible', 'espacios disponibles' => 1]
+                            //'extendedProps' => ['estado' => 'disponible', 'espacios_disponibles' => $disponibles,
+                            //'color' => $disponibles == 2 ? '#00CE1C' : '#FFA500']
                         ];
                     }
                 }
@@ -1791,13 +1782,12 @@ class TurnosController extends Controller
             $representante = Poder::where('idAbogado', (int)$folio)->first();
     
             if ($representante) {
-                $nombre = trim("{$representante->nombres} {$representante->primer_apellido} {$representante->segundo_apellido}");
+                $nombre = trim("{$representante->nombres_patronal} {$representante->primer_apellido_patronal} {$representante->segundo_apellido_patronal}");
                 Log::info("Folio encontrado: " . $nombre);
     
                 return response()->json([
                     'success' => true,
                     'nombre'  => $nombre,
-                    'empresa' => $representante->empresa,
                 ]);
             }
             Log::warning("Folio no encontrado: " . $folio);

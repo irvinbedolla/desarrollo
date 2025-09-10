@@ -694,7 +694,7 @@
                     })
                     .then(data => {
                         abogadoInfoDiv.classList.remove('alert-danger');
-                        abogadoInfoDiv.textContent = `Representante: ${data.nombre} / Empresa: ${data.empresa}`;
+                        abogadoInfoDiv.textContent = `Representante: ${data.nombre}`;
                         abogadoInfoDiv.classList.add('alert', 'alert-success');
                     })
                     .catch(error => {
