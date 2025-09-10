@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use NumberToWords\NumberToWords; // para convertir números(cantidades) a letras
 use DateTime;
-use Illuminate\Support\Facades\Log; //ANA
+use Illuminate\Support\Facades\Log;
 class TurnosController extends Controller 
 {
     public function destroy($id)
@@ -563,6 +563,7 @@ class TurnosController extends Controller
                 'colonia'           => 'required',
                 'N_Ext'             => 'required',
                 'cp'                => 'required',
+                'tipo_persona'      => 'required',
             ], $data);
         }
 
@@ -700,6 +701,17 @@ class TurnosController extends Controller
             $nombre = $data["trabajador"];
             $email  = $data["email"];
             $curp   = $data["curp"];
+            if (isset($data["tipo_persona"])) {
+                $data_insert["tipo_persona"] = $data["tipo_persona"];
+            
+                if ($data["tipo_persona"] == "Moral" && isset($data["razon"])) {
+                    $data_insert["empresa"] = $data["razon"];
+                }
+            
+                if ($data["tipo_persona"] == "Fisica" && isset($data["empresa"])) {
+                    $data_insert["empresa"] = $data["empresa"];
+                }
+            }
         }
 
         //Variables opcionales
@@ -1739,23 +1751,36 @@ class TurnosController extends Controller
 
     //PDF INCOMPARECENCIA POR PARTE DEL TRABAJADOR
     public function VerPDFIncomTrabajador($id){
-        $solicitud = Turnos::find($id);
+        $pagos = Pagos::find($id);
 
-        $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
-        $conciliador = $conciliador->where("turnos.id", "=", $id)
-        ->select('users.name')
-        ->first();
-
-        //dd($conciliador);
-        $html = view('PDF/incomparecenciaTrabajador', 
-            compact('id', 'solicitud', 'conciliador'))
-            ->render();
+        if($pagos["id_solicitud"] == 0){
+            $solicitud = Pagos::find($id);
+            $conciliador  = User::join("pago_solicitud","pago_solicitud.id_conciliador","=","users.id");
+            $conciliador = $conciliador->where("pago_solicitud.id", "=", $id)
+            ->select('users.name')
+            ->first();
+            $html = view('PDF/cumplimientos/incomparecenciaTrabajador', compact('id', 'solicitud','conciliador','pagos'))->render();
+        }
+        else{
+            
+            $solicitud = Turnos::find($pagos->id_solicitud);
+            $pagos = Pagos::find($id);
+            
+            $conciliador = User::join('turnos', 'turnos.id_conciliador', '=', 'users.id')
+            ->where('turnos.id', $solicitud->id)
+            ->select('users.name')
+            ->first();
+            
+            $html = view('PDF/incomparecenciaTrabajador', compact('id','solicitud','conciliador','pagos'))->render();
+        }
+       
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
-            ->setOption('isPhpEnabled', true);
+            ->setOption('isPhpEnabled', true); 
 
-        return $pdf->stream('incomparecencia_Trabajador.pdf');                   
+        $nombreArchivo = 'constancia_de_incomparecencia_'  .'.pdf';
+        return $pdf->stream($nombreArchivo);                     
     }
 
     //Valida si existe el abogado en base al folio y muestra el nombre en Ratificaciones
@@ -1807,5 +1832,17 @@ class TurnosController extends Controller
         ->whereIn('estatus', ['Confirmado'])
         ->get();
         return view('/solicitudes/indexauxiliar',compact('solicitudes'));
+    }
+    
+    //Cumplimiento cuando no comparece el trabajador
+    public function incomparecencia_rati($id){
+        $pagos = Pagos::find($id);
+        
+        $id_solicitud = $pagos["id_solicitud"];
+        Pagos::find($id)->update(['estatus'  => "Incomparecencia trabajador"]);
+        Turnos::find($id_solicitud)->update(['estatus' => "Incumplimiento"]); //Revisar si se va a archivar, o q procede ANA
+
+        return redirect()->route('cumplimiento_actual');
+        //return redirect()->route('ratificacion_atender'); 
     }
 }

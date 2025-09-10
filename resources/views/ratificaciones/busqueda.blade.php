@@ -22,7 +22,6 @@
                                             <th style="color: #fff;">Correo</th>
                                             <th style="color: #fff;">Trabajador</th>
                                             <th style="color: #fff;">Estatus</th>
-                                            <th style="color: #fff;">Detalles</th>
                                             <th style="color: #fff;">Concluir</th>
                                             <th style="color: #fff;">Documentos</th>
                                         </thead>
@@ -36,7 +35,6 @@
                                                     <td>{{$solicitud->email}}</td>
                                                     <td>{{$solicitud->trabajador}} {{$solicitud->primero_trabajador}}  {{$solicitud->segundo_trabajador}}</td>
                                                     <td>{{$solicitud->estatus}}</td>
-                                                    <td>Pendiente</td>
                                                     <td>
                                                         @if($solicitud->estatus == "Confirmado")
                                                             <a class="btn btn-info" href="{{ route('ratificacion_concluir', $solicitud->id) }}">Concluir</a>
