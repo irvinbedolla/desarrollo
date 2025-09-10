@@ -15,7 +15,7 @@
                             
 
                             @can('crear-abogado')
-                                <a class="btn btn-warning" href="{{ route('poderes.create') }}"  onclick=nuevo_poder();> Nuevo</a>
+                                <a class="btn btn-warning" href="{{ route('poder-crear') }}" target="_blank"> Nuevo</a>
                             @endcan
                             
                             @can('ver-abogado')
@@ -23,6 +23,8 @@
                                     <table id="example" class="table table-striped mt-2">
                                         <thead style="background-color: #4A001F;">
                                             <th style="color: #fff;">Folio</th>
+                                            <th style="color: #fff;">Tipo Persona</th>
+                                            <th style="color: #fff;">Representante</th>
                                             <th style="color: #fff;">Nombre/Razon</th>
                                             <th style="color: #fff;">Telefono</th>
                                             <th style="color: #fff;">Email</th>
@@ -39,6 +41,8 @@
                                             @foreach($poderes as $persona)
                                                 <tr>
                                                     <td>{{$persona->idAbogado}}</td>
+                                                    <td>{{$persona->tipo}}</td>
+                                                    <td>{{$persona->reprecentante}}</td>
                                                     <td>
                                                         @if($persona->tipo == "Fisica")
                                                             {{$persona->nombres_patronal." ".$persona->primer_apellido_patronal." ".$persona->segundo_apellido_patronal }}
@@ -83,17 +87,16 @@
                                                         @if($persona->representacionDocumento == NULL)
                                                             S/D
                                                         @else 
-                                                            <a target='_blank' href='../storage/app/documentos_abogados/$persona->representacionDocumento'>PDF</a>
+                                                            <a target='_blank' href='../storage/app/documentos_abogados/{{$persona->representacionDocumento}}'>PDF</a>
                                                         @endif
                                                     </td>
                                                     <td>
-                                                    if($persona->cedula === "Sin carta poder"){
-                                                        echo "<td>S/A</td>";
-                                                    }else{
-                                                        echo "<td><a target='_blank' href='../storage/app/documentos_abogados/$persona->cedulaDocumento'>PDF</a></td>";
-                                                    }
-                                                    @endphp
-
+                                                        @if($persona->cedula === "Sin carta poder")
+                                                            S/A
+                                                        @else
+                                                            <a target='_blank' href='../storage/app/documentos_abogados/{{$persona->cedulaDocumento}}'>PDF</a>
+                                                        @endif
+                                                    </td>
                                                     <td>
                                                         @can('editar-abogado')
                                                             <a class="btn btn-info" href="{{ route('poderes.edit', $persona->idAbogado)}}" onclick=editar_poder();>Editar</a>

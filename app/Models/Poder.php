@@ -15,5 +15,5 @@ class Poder extends Model
     'vialidad_patronal', 'num_ext_patronal', 'mun_int_patronal', 'colonia_patronal', 'cp_patronal', 'vialidadPoder', 'nombre_representante', 
     'segundo_apellido_representante', 'curp_representante', 'sexo_representante', 'correo_representante', 'numero_representante', 'tipo_documento_representante', 
     'descipcion_poder','ineDocumento','cedulaDocumento','anexo_documeto','representacionDocumento','fechaRegistro','fechaVigencia','estatus','tipo','reprecentante',
-    'primer_apellido_representante'];
+    'primer_apellido_representante','idUsuario'];
 }

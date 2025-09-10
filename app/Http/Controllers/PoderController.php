@@ -393,169 +393,285 @@ class PoderController extends Controller
 
     public function update(Request $request, $id)
     {
+        $id_usuario = auth()->user()->id;
         $data = $request->all();
         $poder = Poder::find($id);
 
-
-
-        if(!isset($data['moreliaSucursal'])){
-            $regionmorelia = "No";
+        if($data["tipoPersona"] == "Fisica"){
+            if($data["representate"] == "No"){
+                request()->validate([
+                    'nombre_pF'     => 'required',
+                    'primero_PF'    => 'required',
+                    'segundo_Pf'    => 'required',
+                    'curp_PF'       => 'required',
+                    'RFC_pF'        => 'required',
+                    'sexo_pf'       => 'required',
+                    'giro_pF'       => 'required',
+                    'correo_pF'     => 'required',
+                    'telefono_PF'   => 'required',
+                    'estado_pF'     => 'required',
+                    'municipio_pF'  => 'required',
+                    'vialidad_pF'   => 'required',
+                    'vialidad_calle_pF'   => 'required',
+                    'colonia_pF'   => 'required',
+                    'num_ext_pF'   => 'required',
+                    'cp_pF'         => 'required',
+                ], $data);
+            }
+            else if($data["representate"] == "Si"){
+                request()->validate([
+                    'nombre_pF'                 => 'required',
+                    'primero_PF'                => 'required',
+                    'segundo_Pf'                => 'required',
+                    'curp_PF'                   => 'required',
+                    'RFC_pF'                    => 'required',
+                    'sexo_pf'                   => 'required',
+                    'giro_pF'                   => 'required',
+                    'correo_pF'                 => 'required',
+                    'telefono_PF'               => 'required',
+                    'estado_pF'                 => 'required',
+                    'municipio_pF'              => 'required',
+                    'vialidad_pF'               => 'required',
+                    'vialidad_calle_pF'         => 'required',
+                    'colonia_pF'                => 'required',
+                    'num_ext_pF'                => 'required',
+                    'cp_pF'                     => 'required',
+                    "nombre_representante_pF"   => 'required',
+                    "primer_representante_pF"   => 'required',
+                    "segundo_representante_pF"  => 'required',
+                    "curp_representante_pF"     => 'required',
+                    "sexo_representante_pF"     => 'required',
+                    "correo_representante_pF"   => 'required',
+                    "telefono_representante_pF" => 'required',
+                    "tipo_documento_pF"         => 'required',
+                    "fecha_expedicion_pF"       => 'required',
+                    "fecha_vigencia_pF"         => 'required',
+                    "descripcion_pF"            => 'required',
+                ], $data);
+            }
+        }   
+        else {
+            request()->validate([
+                "razon"                         => 'required',
+                "rfc_moral"                     => 'required',
+                "giro_moral"                    => 'required',
+                "estado_moral"                  => 'required',
+                "municipio_moral"               => 'required',
+                "vialidad_Moral"                => 'required',
+                "vialidad_calleMoral"           => 'required',
+                "colonia_moral"                 => 'required',
+                "num_ext_moral"                 => 'required',
+                "cp_moral"                      => 'required',
+                "nombre_representante_Moral"    => 'required',
+                "primer_Moral"                  => 'required',
+                "segundo_Moral"                 => 'required',
+                "curp_moral"                    => 'required',
+                "sexo_Moral"                    => 'required',
+                "correo_Moral"                  => 'required',
+                "telefono_Moral"                => 'required',
+                "tipo_Moral"                    => 'required',
+                "fecha_expedicicion_Moral"      => 'required',
+                "fecha_vigencia_Moral"          => 'required',
+            ], $data);
         }
-        else{
-            $regionmorelia = $data['moreliaSucursal'];
-        }
-        if(!isset($data['uruapanSucursal'])){
-            $regionuruapan = "No";
-        }
-        else{
-            $regionuruapan = $data['uruapanSucursal'];
-        }
-        if(!isset($data['zamoraSucursal'])){
-            $regionzamora = "No";
-        }
-        else{
-            $regionzamora = $data['zamoraSucursal'];
-        }
-
-
-        request()->validate([
-            'nombresAbogadoAlta'        => 'required',
-            'primer_apellido'           => 'required',
-            'segundo_apellido'          => 'required',
-            'telefonoAbogadoAlta'       => 'required|digits:10',
-            'correoAbogadoAlta'         => 'required',
-            'empresaAbogadoAlta'        => 'required',
-            'curpAbogadoAlta'           => 'required',
-            'estado_poder'              => 'required',
-            'municipio_poder'           => 'required',
-            'vialidadPoder'             => 'required',
-            'vialidad_callePoder'       => 'required',
-            'coloniaAbogadoAlta'        => 'required',
-            'NExtAbogadoAlta'           => 'required',
-            'cpAbogadoAlta'             => 'required',
-            'fechaVigenciaAlta'         => 'required',
-            'industriaAlta'             => 'required',
-            'descripcionpoderAlta'      => 'required',
-            'documentoIne'              => 'nullable',
-            'documentoRepresentacion'   => 'nullable',
-            'documentoPoder'            => 'nullable',
-            'documentoAnexo'            => 'nullable',
-            'estatus'                   => 'required',
-        ], $data);
         
+        if($data["tipoPersona"] == "Fisica"){
+            if($data["representate"] == "No"){
+                $data_insertar = array(
+                        'tipo'                      => $data["tipoPersona"],
+                        'nombres_patronal'          => $data["nombre_pF"],
+                        'primer_apellido_patronal'  => $data["primero_PF"],
+                        'segundo_apellido_patronal' => $data["segundo_Pf"],
+                        'curp_patronal'             => $data["curp_PF"],
+                        'rfc_patronal'              => $data["RFC_pF"],
+                        'sexo_patronal'             => $data["sexo_pf"],
+                        'giroComercial'             => $data["giro_pF"],
+                        'email_patronal'            => $data["correo_pF"],
+                        'telefono_patronal'         => $data["telefono_PF"],
+                        'estado_patronal'           => $data["estado_pF"],
+                        'municipio_patronal'        => $data["municipio_pF"],
+                        'tipo_vialidad_patronal'    => $data["vialidad_pF"],
+                        'vialidad_patronal'         => $data["vialidad_calle_pF"],
+                        'colonia_patronal'          => $data["colonia_pF"],
+                        'num_ext_patronal'          => $data["num_ext_pF"],
+                        'cp_patronal'               => $data["cp_pF"],
+                        'estatus'                   => $data["validacion"],
+                        'idUsuario'                 => $id_usuario,
+                );
 
-        //Validar las regiones
-        if($regionmorelia == "No" && $regionuruapan == "No" && $regionzamora == "No"){
-            return back()->withErrors('Debes seleccionar al menos una Región.');
-        }
-        
+                if(isset($data["documentoIne_pF"])){
+                    $nombre_ine = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_IDENTIFICACION.pdf";
+                    $path = Storage::putFileAs(
+                        'documentos_abogados', $request->file('documentoIne_pF'), $nombre_ine
+                    );
+                    $data_insertar["ineDocumento"] = $nombre_ine;
+                }
+                if(isset($data["documentoRepresentacion_pF"])){
+                    $nombre_reprecentacion = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_REPRESENTACION.pdf";
+                    $path = Storage::putFileAs(
+                        'documentos_abogados', $request->file('documentoRepresentacion_pF'), $nombre_reprecentacion
+                    );
+                    $data_insertar["representacionDocumento"] = $nombre_reprecentacion;
+                }
+                if(isset($data["documentoPoder_pF"])){
+                    $nombre_poder = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_PODER.pdf";
+                    $path = Storage::putFileAs(
+                        'documentos_abogados', $request->file('documentoPoder_pF'), $nombre_poder
+                    );
+                    $data_insertar["cedulaDocumento"] = $nombre_poder;
+                }
+                if(isset($data["documentoAnexo_pF"])){
+                    $nombre_anexo = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_ANEXO.pdf";
+                    $path = Storage::putFileAs(
+                        'documentos_abogados', $request->file('documentoAnexo_pF'), $nombre_anexo
+                    );
+                    $data_insertar["anexo_documeto"] = $nombre_anexo;
+                }                
+                if(isset($data["num_int_pF"])){
+                   $data_insertar["mun_int_patronal"] = $data["num_int_pF"];
+                }
 
-        //Vamos a revisar si cambiaron algun documento
-        if(!$request->file('documentoIne')){
-            $nombre_ine = $poder->ine;
-        }
-        else{
-            $nombre_ine = $data["nombresAbogadoAlta"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresaAbogadoAlta"]."_IDENTIFICACION.pdf";
-            //$Ine = $request->file('documentoIne')->getClientOriginalName();
-        }
-        if(!$request->file('documentoRepresentacion')){
-            $nombre_representación = $poder->representacion;
-        }
-        else{
-            $nombre_representación = $data["nombresAbogadoAlta"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresaAbogadoAlta"]."_REPRESENTACION.pdf";
-            //$Reprecentacion = $request->file('documentoRepresentacion')->getClientOriginalName();
-        }
-        if(!$request->file('documentoAnexo')){
-            if($poder->anexo === "Sin anexo"){
-                $nombre_anexo = "Sin anexo";
+                $poder->update($data_insertar);
+                return redirect()->route('poderes');
             }
-            else{
-                $nombre_anexo = $poder->anexo;
+            else if($data["representate"] == "Si"){
+                $data_insertar = array(
+                        'nombres_patronal'          => $data["nombre_pF"],
+                        'primer_apellido_patronal'  => $data["primero_PF"],
+                        'segundo_apellido_patronal' => $data["segundo_Pf"],
+                        'curp_patronal'             => $data["curp_PF"],
+                        'rfc_patronal'              => $data["RFC_pF"],
+                        'sexo_patronal'             => $data["sexo_pf"],
+                        'giroComercial'             => $data["giro_pF"],
+                        'email_patronal'            => $data["correo_pF"],
+                        'telefono_patronal'         => $data["telefono_PF"],
+                        'estado_patronal'           => $data["estado_pF"],
+                        'municipio_patronal'        => $data["municipio_pF"],
+                        'tipo_vialidad_patronal'    => $data["vialidad_pF"],
+                        'vialidad_patronal'         => $data["vialidad_calle_pF"],
+                        'colonia_patronal'          => $data["colonia_pF"],
+                        'num_ext_patronal'          => $data["num_ext_pF"],
+                        'cp_patronal'               => $data["cp_pF"],
+                        'nombre_representante'          => $data["nombre_representante_pF"],
+                        'primer_apellido_representante' => $data["primer_representante_pF"],
+                        'segundo_apellido_representante'=> $data["segundo_representante_pF"],
+                        'curp_representante'            => $data["curp_representante_pF"],
+                        'sexo_representante'            => $data["sexo_representante_pF"],
+                        'correo_representante'          => $data["correo_representante_pF"],
+                        'numero_representante'          => $data["telefono_representante_pF"],
+                        'tipo_documento_representante'  => $data["tipo_documento_pF"],
+                        'fechaRegistro'                 => $data["fecha_expedicion_pF"],
+                        'fechaVigencia'                 => $data["fecha_vigencia_pF"],
+                        'descipcion_poder'              => $data["descripcion_pF"],
+                        'estatus'                       => $data["validacion"],
+                        'idUsuario'                     => $id_usuario,
+                );
+
+
+                if(isset($data["documentoIne_pF"])){
+                    $nombre_ine = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_IDENTIFICACION.pdf";
+                    $path = Storage::putFileAs(
+                        'documentos_abogados', $request->file('documentoIne_pF'), $nombre_ine
+                    );
+                    $data_insertar["ineDocumento"] = $nombre_ine;
+                }
+                if(isset($data["documentoRepresentacion_pF"])){
+                    $nombre_reprecentacion = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_REPRESENTACION.pdf";
+                    $path = Storage::putFileAs(
+                        'documentos_abogados', $request->file('documentoRepresentacion_pF'), $nombre_reprecentacion
+                    );
+                    $data_insertar["representacionDocumento"] = $nombre_reprecentacion;
+                }
+                if(isset($data["documentoPoder_pF"])){
+                    $nombre_poder = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_PODER.pdf";
+                    $path = Storage::putFileAs(
+                        'documentos_abogados', $request->file('documentoPoder_pF'), $nombre_poder
+                    );
+                    $data_insertar["cedulaDocumento"] = $nombre_poder;
+                }
+                if(isset($data["documentoAnexo_pF"])){
+                    $nombre_anexo = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_ANEXO.pdf";
+                    $path = Storage::putFileAs(
+                        'documentos_abogados', $request->file('documentoAnexo_pF'), $nombre_anexo
+                    );
+                    $data_insertar["anexo_documeto"] = $nombre_anexo;
+                }                
+                if(isset($data["num_int_pF"])){
+                   $data_insertar["mun_int_patronal"] = $data["num_int_pF"];
+                }
+
+                $poder->update($data_insertar);
+                return redirect()->route('poderes');
+            }   
+        }
+        else if($data["tipoPersona"] == "Moral"){
+            $data_insertar = array(
+                'nombres_patronal'          => $data["razon"],
+                'primer_apellido_patronal'  => "",
+                'segundo_apellido_patronal' => "",
+                'rfc_patronal'              => $data["rfc_moral"],
+                'giroComercial'             => $data["giro_moral"],
+                'estado_patronal'           => $data["estado_moral"],
+                'municipio_patronal'        => $data["municipio_moral"],
+                'tipo_vialidad_patronal'    => $data["vialidad_Moral"],
+                'vialidad_patronal'         => $data["vialidad_calleMoral"],
+                'colonia_patronal'          => $data["colonia_moral"],
+                'num_ext_patronal'          => $data["num_ext_moral"],
+                'cp_patronal'               => $data["cp_moral"],
+                'nombre_representante'          => $data["nombre_representante_Moral"],
+                'primer_apellido_representante' => $data["primer_Moral"],
+                'segundo_apellido_representante'=> $data["segundo_Moral"],
+                'curp_representante'            => $data["curp_moral"],
+                'sexo_representante'            => $data["sexo_Moral"],
+                'correo_representante'          => $data["correo_Moral"],
+                'numero_representante'          => $data["telefono_Moral"],
+                'tipo_documento_representante'  => $data["tipo_Moral"],
+                'fechaRegistro'                 => $data["fecha_expedicicion_Moral"],
+                'fechaVigencia'                 => $data["fecha_vigencia_Moral"],
+                'descipcion_poder'              => $data["descripcion_Moral"],
+                'estatus'                       => $data["validacion"],
+                'idUsuario'                     => $id_usuario,
+                'reprecentante'                 => "Si",
+            );
+
+            if(isset($data["documentoIne_Moral"])){
+                $nombre_ine = $data["razon"]."-MORAL"."_IDENTIFICACION.pdf";
+                $path = Storage::putFileAs(
+                    'documentos_abogados', $request->file('documentoIne_Moral'), $nombre_ine
+                );
+                $data_insertar["ineDocumento"] = $nombre_ine;
             }
-        }
-        else{
-            $nombre_anexo = $data["nombresAbogadoAlta"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresaAbogadoAlta"]."_ANEXO.pdf";
-            //$Anexo = $request->file('documentoAnexo')->getClientOriginalName();
-        }
-        if(!$request->file('documentoPoder')){
-            if($poder->cedula === "Sin anexo"){
-                $nombre_poder = "Sin anexo";
+            if(isset($data["documentoRepresentacion_Moral"])){
+                $nombre_reprecentacion = $data["razon"]."-MORAL"."_REPRESENTACION.pdf";
+                $path = Storage::putFileAs(
+                    'documentos_abogados', $request->file('documentoRepresentacion_Moral'), $nombre_reprecentacion
+                );
+                $data_insertar["representacionDocumento"] = $nombre_reprecentacion;
             }
-            else{
-                $nombre_poder = $poder->poder;
+            if(isset($data["documentoPoder"])){
+                $nombre_poder = $data["razon"]."-MORAL"."_PODER.pdf";
+                $path = Storage::putFileAs(
+                    'documentos_abogados', $request->file('documentoPoder'), $nombre_poder
+                );
+                $data_insertar["cedulaDocumento"] = $nombre_poder;
             }
-        }
-        else{
-            $nombre_poder = $data["nombresAbogadoAlta"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresaAbogadoAlta"]."_PODER.pdf";
-            //$Poder = $request->file('documentoPoder')->getClientOriginalName();
-        }
+             if(isset($data["documentoAnexo"])){
+                $nombre_anexo = $data["razon"]."-MORAL"."_ANEXO.pdf";
+                $path = Storage::putFileAs(
+                    'documentos_abogados', $request->file('documentoAnexo'), $nombre_anexo
+                );
+                $data_insertar["anexo_documeto"] = $nombre_anexo;
+            }
 
-
-
-        if(isset($data["documentoIne"])){
-            //$nombre_ine = $data["nombresAbogadoAlta"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresaAbogadoAlta"]."_IDENTIFICACION.pdf";
-            $path = Storage::putFileAs(
-                'documentos_abogados', $request->file('documentoIne'), $nombre_ine
-            );
-        }
-
-        if(isset($data["documentoRepresentacion"])){
-            //$nombre_representación = $data["nombresAbogadoAlta"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresaAbogadoAlta"]."_REPRESENTACION.pdf";
-            $path = Storage::putFileAs(
-                'documentos_abogados', $request->file('documentoRepresentacion'), $nombre_representación
-            );
+            
+            if(isset($data["num_int"])){
+                $data_insertar["mun_int_patronal"] = $data["num_int"];
+            }
+                
+            $poder->update($data_insertar);
+            return redirect()->route('poderes');
         }
 
-        if(isset($data["documentoAnexo"])){
-            //$nombre_anexo = $data["nombresAbogadoAlta"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresaAbogadoAlta"]."_ANEXO.pdf";
-            $path = Storage::putFileAs(
-                'documentos_abogados', $request->file('documentoAnexo'), $nombre_anexo
-            );
-        }
-
-        if(isset($data["documentoPoder"])){
-            //$nombre_poder = $data["nombresAbogadoAlta"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresaAbogadoAlta"]."_PODER.pdf";
-            $path = Storage::putFileAs(
-                'documentos_abogados', $request->file('documentoPoder'), $nombre_poder
-            );
-        }
-
-        
-        $data_update= array(
-            'nombres'       => $data["nombresAbogadoAlta"],
-            'primer_apellido' => $data["primer_apellido"],
-            'segundo_apellido'=> $data["segundo_apellido"], 
-            'telefono'      => $data["telefonoAbogadoAlta"], 
-            'email'         => $data["correoAbogadoAlta"],
-            'ine'           => $nombre_ine,
-            'representacion'=> $nombre_representación,
-            'cedula'        => $nombre_poder,
-            'anexo'         => $nombre_anexo,
-            'fechaRegistro' => date('y-m-d'),
-            'fechaVigencia' => $data["fechaVigenciaAlta"],
-            'empresa'       => $data["empresaAbogadoAlta"],
-            'eliminado'     => 0,
-            'curp'          => $data["curpAbogadoAlta"],
-            'estado_poder'          => $data["estado_poder"],
-            'municipio_poder'       => $data["municipio_poder"],
-            'vialidadPoder'         => $data["vialidadPoder"],
-            'vialidad_callePoder'   => $data["vialidad_callePoder"],
-            'coloniaAbogadoAlta'    => $data["coloniaAbogadoAlta"],
-            'NExtAbogadoAlta'       => $data["NExtAbogadoAlta"],
-            'NIntAbogadoAlta'       => $data["NIntAbogadoAlta"],
-            'cpAbogadoAlta'         => $data["cpAbogadoAlta"],
-            'rfc'           => $data["RFCAbogadoAlta"],
-            'industria'     => $data["industriaAlta"],
-            'poder'         => $data["descripcionpoderAlta"],
-            'regionMorelia' => $regionmorelia,
-            'regionUruapan' => $regionuruapan,
-            'regionZamora'  => $regionuruapan,
-            'estatus'       => $data["estatus"]
-        );
-
-
-        $poder->update($data_update);
-        return redirect()->route('poderes');
     }
 
 
