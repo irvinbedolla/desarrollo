@@ -282,9 +282,23 @@
                                                         <h4 class="text-center">Datos de la Relación Laboral</h4>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-2">
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="name">Nombre del Municipio o Alcaldía <span style="color:red;">(*)</span></label>
+                                                        <label for="name">Estado <span style="color:red;">(*)</span></label>
+                                                        <select class="form-control" name="estado_rat" required>
+                                                            <option value="">Seleccione</option>
+                                                            @foreach($estados as $est)
+                                                                <option value="{{$est['id']}}">{{$est['nombre']}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo municipio o alcaldía es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="name">Municipio o Alcaldía <span style="color:red;">(*)</span></label>
                                                         <select id="municipio_rat" class="form-control" name="municipio_rat" placeholder="*Municipio" required>
                                                             <option value="">Seleccione</option>
                                                             @foreach($municipios as $mun)
@@ -296,7 +310,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-2">
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="name">Tipo de Vialidad <span style="color:red;">(*)</span></label>
                                                         <select name="tipo_vialidad" id="tipo_vialidad" class="form-control" placeholder="*Vialidad" required>
@@ -327,7 +341,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-2">
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="name">Nombre de la Vialidad <span style="color:red;">(*)</span></label>
                                                         <input type="text" name="vialidad_calle" id="vialidad_calle" class="form-control" placeholder="*Nombre vialidad" oninput="this.value = this.value.toUpperCase()" required> 
@@ -336,7 +350,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-2">
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Colonia <span style="color:red;">(*)</span></label>
                                                         <input type="text" class="form-control" placeholder="*Colonia" name="colonia" id="colonia" oninput="this.value = this.value.toUpperCase()" required>
@@ -346,7 +360,7 @@
                                                     </div>
                                                 </div>
                                                 
-                                                <div class="col-xs-12 col-sm-12 col-md-1">
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Núm. Ext. <span style="color:red;">(*)</span></label>
                                                         <input type="text" class="form-control" placeholder="*Núm. exterior" name="N_Ext" id="N_Ext" oninput="this.value = this.value.toUpperCase()" required>
@@ -356,7 +370,7 @@
                                                     </div>
                                                 </div>
             
-                                                <div class="col-xs-12 col-sm-12 col-md-2">
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Núm. Int.(Opcional)</label>
                                                         <input type="text" class="form-control" placeholder="Núm. interior" name="N_Int" id="N_Int" oninput="this.value = this.value.toUpperCase()">
@@ -366,7 +380,7 @@
                                                     </div>
                                                 </div>
             
-                                                <div class="col-xs-12 col-sm-12 col-md-1">
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Código postal <span style="color:red;">(*)</span></label>
                                                         <input type="text" class="form-control" placeholder="*Código postal" name="cp" id="cp" oninput="this.value = this.value.toUpperCase()" required>
@@ -409,7 +423,7 @@
                                                     </div>
                                                 </div>
                                                 <div  class="col-xs-12 col-sm-12 col-md-3">
-                                                    <div class="form-group">
+                                                    <div class="form-group"><br>
                                                         <label for="name">Categoria o Puesto que desempeña <span style="color:red;">(*)</span></label>
                                                         <input type="text" name="categoria" class="form-control" > 
                                                         <div class="invalid-feedback">

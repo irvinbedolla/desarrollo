@@ -30,43 +30,28 @@
                                             <td><a target='_blank' href="../storage/app/documentos_ratificacion/{{$documento_general->documentoidentificacion}}">PDF</a></td>
                                         </tr>
                                         <tr>
-                                            <td>Identificación de Solicitante</td>
-                                            <td>{{$documento_general->ine}}</td>
-                                            <td><a target='_blank' href="../storage/app/documentos_ratificacion/{{$documento_general->ine}}">PDF</a></td>
+                                            <td colspan="3" style="text-align: center; background-color:#7c7c7b">REPRESENTANTE LEGAL</td>
                                         </tr>
                                         <tr>
-                                            <td>Identificación de Solicitante</td>
-                                            <td>{{$documento_general->representacion}}</td>
-                                            <td><a target='_blank' href="../storage/app/documentos_ratificacion/{{$documento_general->representacion}}">PDF</a></td>
+                                            <td>Identificación de Citado:{{$documento_abogado->nombres_patronal}}</td>
+                                            <td>{{$documento_abogado->ineDocumento}}</td>
+                                            <td><a target='_blank' href="../storage/app/documentos_abogados/{{$documento_abogado->ineDocumento}}">PDF</a></td>
                                         </tr>
-
-                                        @if(count($documento_abogado) != 0)
-                                            @foreach($documento_abogado as $documento)
-                                                <tr>
-                                                    <td colspan="3" style="text-align: center; background-color:#7c7c7b">REPRESENTANTE LEGAL</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Identificación de Citado:{{$documento->empresa}}</td>
-                                                    <td>{{$documento->ine}}</td>
-                                                    <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->ine}}">PDF</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Poder de Citado:{{$documento->empresa}}</td>
-                                                    <td>{{$documento->representacion}}</td>
-                                                    <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->representacion}}">PDF</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Anexo de Citado:{{$documento->empresa}}</td>
-                                                    <td>{{$documento->anexo}}</td>
-                                                    <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->anexo}}">PDF</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Anexo de Citado:{{$documento->empresa}}</td>
-                                                    <td>{{$documento->cedula}}</td>
-                                                    <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->cedula}}">PDF</a></td>
-                                                </tr>
-                                            @endforeach
-                                        @endif
+                                        <tr>
+                                            <td>Poder de Citado:{{$documento_abogado->nombres_patronal}}</td>
+                                            <td>{{$documento_abogado->representacionDocumento}}</td>
+                                            <td><a target='_blank' href="../storage/app/documentos_abogados/{{$documento_abogado->representacionDocumento}}">PDF</a></td>
+                                        </tr>
+                                            <tr>
+                                            <td>Anexo de Citado:{{$documento_abogado->nombres_patronal}}</td>
+                                            <td>{{$documento_abogado->cedulaDocumento}}</td>
+                                            <td><a target='_blank' href="../storage/app/documentos_abogados/{{$documento_abogado->cedulaDocumento}}">PDF</a></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Anexo de Citado:{{$documento_abogado->nombres_patronal}}</td>
+                                            <td>{{$documento_abogado->anexo_documeto}}</td>
+                                            <td><a target='_blank' href="../storage/app/documentos_abogados/{{$documento_abogado->anexo_documeto}}">PDF</a></td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>

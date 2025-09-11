@@ -118,7 +118,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-1">
                                             <div class="form-group"><br>
                                                 <label for="name">Otros</label>
-                                                <input type="text" name="otros" class="form-control" required> 
+                                                <input type="text" name="otros" class="form-control"> 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -178,9 +178,10 @@
                                         <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div id="div_pagos_diferidos1"><br><br>
                                                 <button id="addPago" type="button" class="btn btn-info">Agregar Pago</button>
-                                                <div id="newRowaPago"></div>
                                             </div>
                                         </div>
+
+                                        <div id="newRowaPago"></div>
 
                                         <div id="div_pagos_diferidos"></div>
 
@@ -240,40 +241,40 @@
             // Agregar registro
             $("#addRow").click(function () {
                 var html = '';
-                html += '<div id="inputFormRow1" class="col-xs-12 col-sm-6 col-md-12">';
+                html += '<div id="inputFormRow1" class="col-xs-12 col-sm-12 col-md-12">';
 
-                // Tipo de pago
-                html +='<div class="col-xs-12 col-sm-12 col-md-12">';
-                    html +='<div class="form-group">';
-                    html +='<label for="confirm-password"><br>Prestación</label>';
-                    html +='<select class="form-control" name="tipo_pago[]" required>';
-                    html +='<option value="">Seleccione</option>';
-                    html +='<option value="Aguinaldo">Días de aguinaldo</option>';
-                    html +='<option value="DSueldo">Días de sueldo</option>';
-                    html +='<option value="Vacaciones">Días de vacaciones</option>';
-                    html +='<option value="PrimaVacacional">Prima vacacional</option>';
-                    html +='<option value="GratificaciónA">Graficación A (Con base al salario integrado)</option>';
-                    html +='<option value="GratificaciónB">Graficación B (20 Días por año cumplido)</option>';
-                    html +='<option value="GraficaciónC">Graficación C (Prima de antigüedad topada)</option>';
-                    html +='<option value="GratificaciónD">Graficación D (Incluye cualquier otra prestación)</option>';
-                    html +='<option value="GratificaciónE">Graficación E (Prestaciones en especie)</option>';
-                    html +='<option value="GratificaciónF">Graficación F (Reconocimiento de derechos)</option>';
-                    html +='<option value="Otras">Otros concepto de pago</option>';
-                    html +='</select>';
-                    html +='<div class="invalid-feedback">El tipo de pago es obligatorio.</div>';
+                    // Tipo de pago
+                    html +='<div class="col-xs-12 col-sm-12 col-md-12">';
+                        html +='<div class="form-group">';
+                        html +='<label for="confirm-password"><br>Prestación</label>';
+                        html +='<select class="form-control" name="tipo_pago[]" required>';
+                            html +='<option value="">Seleccione</option>';
+                            html +='<option value="Aguinaldo">Días de aguinaldo</option>';
+                            html +='<option value="DSueldo">Días de sueldo</option>';
+                            html +='<option value="Vacaciones">Días de vacaciones</option>';
+                            html +='<option value="PrimaVacacional">Prima vacacional</option>';
+                            html +='<option value="GratificaciónA">Graficación A (Con base al salario integrado)</option>';
+                            html +='<option value="GratificaciónB">Graficación B (20 Días por año cumplido)</option>';
+                            html +='<option value="GraficaciónC">Graficación C (Prima de antigüedad topada)</option>';
+                            html +='<option value="GratificaciónD">Graficación D (Incluye cualquier otra prestación)</option>';
+                            html +='<option value="GratificaciónE">Graficación E (Prestaciones en especie)</option>';
+                            html +='<option value="GratificaciónF">Graficación F (Reconocimiento de derechos)</option>';
+                            html +='<option value="Otras">Otros concepto de pago</option>';
+                        html +='</select>';
+                        html +='<div class="invalid-feedback">El tipo de pago es obligatorio.</div>';
+                        html += '</div> </div>';
+
+                    // Monto a pagar
+                    html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                    html += '<div class="form-group">';
+                    html += '<label for="password">Monto a pagar</label>';
+                    html +='<input type="text" class="form-control" name="monto_pago[]"  oninput="this.value = this.value.toUpperCase()" required>';
+                    html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>';
                     html += '</div> </div>';
 
-                // Monto a pagar
-                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
-                html += '<div class="form-group">';
-                html += '<label for="password">Monto a pagar</label>';
-                html +='<input type="text" class="form-control" name="monto_pago[]"  oninput="this.value = this.value.toUpperCase()" required>';
-                html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>';
-                html += '</div> </div>';
-
-                html += '<div class="input-group-append">';
-                html += '<button class="removeRow btn btn-danger" type="button">Borrar</button>';
-                html += '</div>';
+                    html += '<div class="input-group-append">';
+                    html += '<button class="removeRow btn btn-danger" type="button">Borrar</button>';
+                    html += '</div>';
                 html += '</div>';
 
             $('#newRow').append(html);
@@ -287,49 +288,49 @@
         // Agregar pago
         $("#addPago").click(function () {
                 var html = '';
-                html += '<div id="inputFormRow2" class="col-xs-12 col-sm-6 col-md-12">';
+                html += '<div id="inputFormRow2" class="row">';
                 
                 //TIPO DE PAGO
                 html +='<div class="col-xs-12 col-sm-12 col-md-12">';
-                html +='<div class="form-group">';
+                //html +='<div class="form-group">';
 
-                //DÍA A PAGAR
-                html +='<div class="col-xs-12 col-sm-12 col-md-12">';
-                html +='<div class="form-group">';
-                html +='<label for="confirm-password"><br>Días de pago</label>';
-                html +='<input type="date" class="form-control" name="dias_pagos[]" required>';
-                html +='</div> </div>';                                
-                
-                //HORARIO A PAGAR
-                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
-                html += '<div class="form-group">';
-                html += '<label for="password">Hora de pago</label>';
-                html +='<input type="text" class="form-control" name="hora_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
-                html += '<div class="invalid-feedback">';
-                html += 'La Dirección es obligatoria.';
-                html += '</div> </div> </div>';
+                    //DÍA A PAGAR
+                    html +='<div class="col-xs-12 col-sm-12 col-md-12">';
+                    html +='<div class="form-group">';
+                    html +='<label for="confirm-password"><br>Días de pago</label>';
+                    html +='<input type="date" class="form-control" name="dias_pagos[]" required>';
+                    html +='</div> </div>';                                
+                    
+                    //HORARIO A PAGAR
+                    html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                    html += '<div class="form-group">';
+                    html += '<label for="password">Hora de pago</label>';
+                    html +='<input type="time" class="form-control" name="hora_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
+                    html += '<div class="invalid-feedback">';
+                    html += 'La Dirección es obligatoria.';
+                    html += '</div> </div> </div>';
 
-                //MONTO A PAGAR
-                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
-                html += '<div class="form-group">';
-                html += '<label for="password">Monto a pagar</label>';
-                html +='<input type="text" class="form-control" name="monto_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
-                html += '<div class="invalid-feedback">';
-                html += 'La Dirección es obligatoria.';
-                html += '</div> </div> </div>';
+                    //MONTO A PAGAR
+                    html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                    html += '<div class="form-group">';
+                    html += '<label for="password">Monto a pagar</label>';
+                    html +='<input type="text" class="form-control" name="monto_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
+                    html += '<div class="invalid-feedback">';
+                    html += 'La Dirección es obligatoria.';
+                    html += '</div> </div> </div>';
 
-                //DESCRIPCIÓN DE PAGO
-                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
-                html += '<div class="form-group">';
-                html += '<label for="password">Descripción</label>';
-                html +='<input type="text" class="form-control" name="descripcion_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
-                html += '<div class="invalid-feedback">';
-                html += 'La Dirección es obligatoria.';
-                html += '</div> </div> </div>';
+                    //DESCRIPCIÓN DE PAGO
+                    html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                    html += '<div class="form-group">';
+                    html += '<label for="password">Descripción</label>';
+                    html +='<input type="text" class="form-control" name="descripcion_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
+                    html += '<div class="invalid-feedback">';
+                    html += 'La Dirección es obligatoria.';
+                    html += '</div> </div> </div>';
 
-                html += '<div class="input-group-append">';
-                html += '<button class="removeRow2 btn btn-danger" type="button">Borrar</button>';
-                html += '</div>';
+                    html += '<div class="input-group-append">';
+                    html += '<button class="removeRow2 btn btn-danger" type="button">Borrar</button>';
+                    html += '</div>';
                 html += '</div>';
 
             $('#newRowaPago').append(html);

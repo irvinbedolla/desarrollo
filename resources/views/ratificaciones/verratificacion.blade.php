@@ -11,7 +11,6 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <h3 class="text-center">Ratificación </h3>
                             
                             <!--Se realiza la validación de campos para ver si dejó alguno vacío-->
                             @if ($errors->any())
@@ -39,48 +38,52 @@
                                             <input type="text" class="form-control" value="<?=$folio["id"];?>"readonly>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-8">
+                                    <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
-                                            <label for="email">Nombre de la empresa</label>
-                                            <input type="text" class="form-control" name="empresa" value="<?=$folio["empresa"];?>">
+                                            <h4 class="text-center">Datos de identificación Empleador(a)</h4>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="col-xs-12 col-sm-6 col-md-4">
+                                        <div class="form-group">
+                                            <label for="email">Nombre Empleador</label>
+                                            <input type="text" class="form-control" name="empresa" value="<?=$representante["nombres_patronal"];?>">
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label for="email">Primer apellido</label>
-                                            <input type="text" class="form-control" name="primero_empresa" value="<?=$folio["primero_empresa"];?>">
+                                            <input type="text" class="form-control" name="primero_empresa" value="<?=$representante["primer_apellido_patronal"];?>">
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label for="email">Segundo apellido</label>
-                                            <input type="text" class="form-control" name="segundo_empresa" value="<?=$folio["segundo_empresa"];?>">
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-4">
-                                        <div class="form-group">
-                                            <label for="email">Nombre</label>
-                                            <input type="text" class="form-control" name="nombre_empresa"value="<?=$folio["nombre_empresa"];?>">
+                                            <input type="text" class="form-control" name="segundo_empresa" value="<?=$representante["segundo_apellido_patronal"];?>">
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label for="email">Email</label>
-                                            <input type="text" class="form-control" name="email"value="<?=$folio["email"];?>"readonly>
+                                            <input type="text" class="form-control" value="<?=$representante["email_patronal"];?>"readonly>
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label for="email">Telefono</label>
-                                            <input type="text" class="form-control" name="telefono" value="<?=$folio["telefono"];?>">
+                                            <input type="text" class="form-control" value="<?=$representante["telefono_patronal"];?>">
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label for="email">Curp</label>
-                                            <input type="text" class="form-control" name="curp_solicitante" value="<?=$folio["curp_solicitante"];?>">
+                                            <input type="text" class="form-control" name="curp_solicitante" value="<?=$representante["curp_patronal"];?>">
                                         </div>
                                     </div>
+
+
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <h4 class="text-center">Datos del trabajador</h4>
@@ -129,7 +132,7 @@
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label for="email">Email</label>
-                                            <input type="text" class="form-control" name="email" value="<?=$folio["email"];?>">
+                                            <input type="text" class="form-control" name="email_trabajador" value="<?=$folio["email"];?>">
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-4">
@@ -138,51 +141,7 @@
                                             <input type="text" class="form-control" name="telefono" value="<?=$folio["telefono"];?>">
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-12">
-                                        <div class="form-group">
-                                            <h4 class="text-center">Documentos del trabajador</h4>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-4">
-                                        <div class="form-group">
-                                            <label for="email">Tipo de Identificación</label>
-                                            <select class="form-control" name="tipo_identificacion" required>
-                                                <option value="Ine" @php if($folio->tipo_identificacion === "INE") echo "selected"  @endphp>INE</option>
-                                                <option value="Pasaporte" @php if($folio->tipo_identificacion === "Pasaporte") echo "selected"  @endphp>Pasaporte</option>
-                                                <option value="Cedula" @php if($folio->tipo_identificacion === "Cédula Profesional") echo "selected"  @endphp>Cédula Profesional</option>
-                                                <option value="Licencia" @php if($folio->tipo_identificacion === "Licencia para Conducir") echo "selected"  @endphp>Licencia para conducir</option>
-                                                <option value="Otros" @php if($folio->tipo_identificacion === "Otros") echo "selected"  @endphp>Otros</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-12">
-                                        <div class="form-group">
-                                            <label for="email">*INE</label><br>
-                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/{{$ruta_abogado}}/{{$folio->ine}}">Existente</a>
-                                            <input type="file" name="documentoIne" class="form-control-file" accept=".pdf">        
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-12">
-                                        <div class="form-group">
-                                            <label>*Documento que acredite la representación</label><br>
-                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/{{$ruta_abogado}}/{{$folio->representacion}}">Existente</a>
-                                            <input type="file" name="documentoRepresentacion" class="form-control-file" accept=".pdf">
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-12">
-                                        <div class="form-group">
-                                            <label for="email">*Documento curp</label><br>
-                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_ratificacion/{{$folio->documentoCurp}}">Existente</a>
-                                            <input type="file" name="documentoCurp" class="form-control-file" accept=".pdf">        
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-12">
-                                        <div class="form-group">
-                                            <label for="email">*Documento identificación</label><br>
-                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_ratificacion/{{$folio->documentoidentificacion}}">Existente</a>
-                                            <input type="file" name="documentoidentificacion" class="form-control-file" accept=".pdf">        
-                                        </div>
-                                    </div>
+                                    
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <h4 class="text-center">Datos de la relación laboral</h4>
@@ -305,6 +264,52 @@
                                             <input type="text" class="form-control" name="tipo_pago" value="<?=$folio["tipo_pago"];?>">
                                         </div>
                                     </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-4">
+                                        <div class="form-group">
+                                            <label for="email">Tipo de Identificación</label>
+                                            <select class="form-control" name="tipo_identificacion" required>
+                                                <option value="Ine" @php if($folio->tipo_identificacion === "INE") echo "selected"  @endphp>INE</option>
+                                                <option value="Pasaporte" @php if($folio->tipo_identificacion === "Pasaporte") echo "selected"  @endphp>Pasaporte</option>
+                                                <option value="Cedula" @php if($folio->tipo_identificacion === "Cédula Profesional") echo "selected"  @endphp>Cédula Profesional</option>
+                                                <option value="Licencia" @php if($folio->tipo_identificacion === "Licencia para Conducir") echo "selected"  @endphp>Licencia para conducir</option>
+                                                <option value="Otros" @php if($folio->tipo_identificacion === "Otros") echo "selected"  @endphp>Otros</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                        <div class="form-group">
+                                            <h4 class="text-center">Documentos</h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <label for="email">*INE</label><br>
+                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/{{$ruta_abogado}}/{{$folio->ine}}">Existente</a>
+                                            <input type="file" name="documentoIne" class="form-control-file" accept=".pdf">        
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <label>*Documento que acredite la representación</label><br>
+                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/{{$ruta_abogado}}/{{$folio->representacion}}">Existente</a>
+                                            <input type="file" name="documentoRepresentacion" class="form-control-file" accept=".pdf">
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <label for="email">*Documento curp</label><br>
+                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_ratificacion/{{$folio->documentoCurp}}">Existente</a>
+                                            <input type="file" name="documentoCurp" class="form-control-file" accept=".pdf">        
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <label for="email">*Documento identificación</label><br>
+                                            <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_ratificacion/{{$folio->documentoidentificacion}}">Existente</a>
+                                            <input type="file" name="documentoidentificacion" class="form-control-file" accept=".pdf">        
+                                        </div>
+                                    </div>
+
                                     @if($userRole[0] == "Auxiliar" || $userRole[0] == "Administrador Solicitante")
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div class="form-group">
@@ -314,19 +319,19 @@
                                         <div class="col-xs-12 col-sm-6 col-md-4">
                                             <div class="form-group">
                                                 <label for="email">Sede</label>
-                                                <input type="text" class="form-control" name="delegacion" value="<?=$folio["delegacion"];?>">
+                                                <input type="text" class="form-control" name="delegacion" value="<?=$folio["delegacion"];?>" readonly>
                                             </div>
                                         </div>
                                         <div class="col-xs-12 col-sm-6 col-md-4">
                                             <div class="form-group">
                                                 <label for="email">Fecha</label>
-                                                <input type="text" class="form-control" name="fecha_pago" value="<?=$folio["fecha"];?>">
+                                                <input type="text" class="form-control" name="fecha_pago" value="<?=$folio["fecha"];?>" readonly>
                                         </div>
                                         </div>
                                         <div class="col-xs-12 col-sm-6 col-md-4">
                                             <div class="form-group">
                                                 <label for="email">Hora inicio</label>
-                                                <input type="text" class="form-control" name="hora_pago" value="<?=$folio["hora"];?>">
+                                                <input type="text" class="form-control" name="hora_pago" value="<?=$folio["hora"];?>" readonly>
                                             </div>
                                         </div> 
                                     @endif
@@ -346,7 +351,7 @@
                                         @endif
                                         
                                         @if($userRole[0] == "Auxiliar")
-                                            @if($folio->estatus == "Confirmado")
+                                            @if($folio->estatus == "Confirmado" || $folio->estatus == "Pendiente")
                                                 <button type="submit" class="btn btn-primary">Guardar</button>
                                             @endif
                                         @elseif($userRole[0] == "Solicitante")

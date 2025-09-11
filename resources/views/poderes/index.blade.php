@@ -35,7 +35,9 @@
                                             <th style="color: #fff;">Identificacion representante</th>
                                             <th style="color: #fff;">Poder/</th>
                                             <th style="color: #fff;">Anexo</th>
-                                            <th style="color: #fff;">Acciones</th>
+                                            <th style="color: #fff;"></th>
+                                            <th style="color: #fff;"></th>
+                                            <th style="color: #fff;"></th>
                                         </thead>
                                         <tbody>
                                             @foreach($poderes as $persona)
@@ -98,9 +100,16 @@
                                                         @endif
                                                     </td>
                                                     <td>
+                                                         @if($persona->estatus === "Validado")
+                                                            <a class="btn btn-info" href="{{ route('PDFregistroAbogado', $persona->idAbogado)}}" target="_blank">Documento</a>
+                                                        @endif
+                                                    </td>
+                                                    <td>
                                                         @can('editar-abogado')
                                                             <a class="btn btn-info" href="{{ route('poderes.edit', $persona->idAbogado)}}" onclick=editar_poder();>Editar</a>
                                                         @endcan
+                                                    </td>
+                                                    <td>
                                                         @can('borrar-abogado')
                                                             <form method="POST" action="{{ route('poderes.destroy', $persona->idAbogado) }} ">
                                                                 @csrf

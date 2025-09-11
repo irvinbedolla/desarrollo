@@ -5720,7 +5720,7 @@ class SeerController extends Controller
     public function obtenerCumplimientos(Request $request)
     {
         $fecha_inicio = now()->subDays(20)->format('Y-m-d');
-        $fecha_fin = now()->addDays(120)->format('Y-m-d');
+        $fecha_fin = now()->addDays(700)->format('Y-m-d');
         $sede = $request->input('sede'); // Obtener sede de la solicitud
 
         // 1. Obtener turnos ocupados filtrando por sede

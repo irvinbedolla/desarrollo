@@ -484,8 +484,9 @@ class TurnosController extends Controller
     }
 
     public function create_publico(){
-        $municipios = Municipios::where('estado',16)->get();
-        return view('citas', compact('municipios'));
+        $estados = Municipios::all();
+        $municipios = Municipios::all();
+        return view('citas', compact('estados','municipios'));
     }
 
     public function store_publico(Request $request)
@@ -640,6 +641,7 @@ class TurnosController extends Controller
                 'colonia'           => $data["colonia"],
                 'num_ext'           => $data["N_Ext"],
                 'codigo_postal'     => $data["cp"],
+                'idAbogado'         => $data["folio"]
             ); 
             $nombre = $data["trabajador"];
             $email  = $representante["email_patronal"];
@@ -735,7 +737,6 @@ class TurnosController extends Controller
         if(isset($data["N_Int"])){
             $data_insert["num_int"] =  $data["N_Int"];
         }
-        //dd($data_insertar);
 
         //Documentos si cargaron el folio
         if(isset($data["folio"])){
@@ -1208,7 +1209,7 @@ class TurnosController extends Controller
         $solicitudes = Turnos::where('tipo','Ratificación')
         ->whereIn('estatus', ['Pendiente', 'Prevencion'])
         ->get();
-        return view('/solicitudes/indexr',compact('solicitudes'));
+        return view('/ratificaciones/indexr',compact('solicitudes'));
     }
 
     public function aceptacion($id){
@@ -1249,14 +1250,16 @@ class TurnosController extends Controller
         $fecha_actual = date('Y-m-d');
 
         $solicitudes = Turnos::where('tipo','Ratificación')
-        //->where('auxiliar',$user["id"])
-        /*->where('estatus','Confirmado')
+        /*->where('auxiliar',$user["id"])
+        ->where('estatus','Confirmado')
         ->orwhere('estatus','Conluida')
         ->orwhere('estatus','Concluida Pagos')
         ->orwhere('estatus','Incumplimiento')
-        ->orwhere('estatus','Archivada')*/
+        ->orwhere('estatus','Archivada')
+        */
         ->where('fecha',$fecha_actual)
         ->get();
+        
         return view('/solicitudes/indexauxiliar',compact('solicitudes'));
     }
 
@@ -1273,7 +1276,7 @@ class TurnosController extends Controller
         ->where('delegacion', $user["delegacion"])
         ->get();
 
-        return view('/solicitudes/concluir',compact('id','conciliadores'));
+        return view('/ratificaciones/concluir',compact('id','conciliadores'));
     }
 
     public function consultar_ratificaciones($id){
@@ -1283,17 +1286,16 @@ class TurnosController extends Controller
         $user = User::find($id_usuario);
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
-
-        $valida = Poder::where('curp',$folio["curp_solicitante"])->get();
-        //dd($valida);
-        if(count($valida) != 0){
+        
+        $representante = Poder::find($folio["idAbogado"]);
+        if(isset($representante)){
             $ruta_abogado = 'documentos_abogados';
         }
         else{
             $ruta_abogado = 'documentos_ratificacion';
         }
         //dd($ruta_abogado);
-        return view('/solicitudes/verratificacion',compact('folio','ruta_abogado','userRole'));
+        return view('/ratificaciones/verratificacion',compact('folio','ruta_abogado','userRole','representante'));
     }
 
     public function editar_ratificaciones(Request $request){
@@ -1422,7 +1424,7 @@ class TurnosController extends Controller
                 'empresa'                       => $data["empresa"],
                 'primero_empresa'               => $data["primero_empresa"],
                 'segundo_empresa'               => $data["segundo_empresa"],
-                'nombre_empresa'                => $data["nombre_empresa"],
+                //'nombre_empresa'                => $data["nombre_empresa"],
                 'curp_solicitante'              => $data["curp_solicitante"],
                 'telefono'                      => $data["telefono"],
                 'trabajador'                    => $data["nombre_trabajador"],
@@ -1431,8 +1433,7 @@ class TurnosController extends Controller
                 'edad'                          => $data["edad"],
                 'sexo'                          => $data["sexo"],
                 'trabajador_curp'               => $data["trabajador_curp"],
-                'email'                         => $data["email"],
-                'telefono'                      => $data["telefono"],
+                'email'                         => $data["email_trabajador"],
                 'tipo_identificacion'           => $data["tipo_identificacion"],
                 'fecha_inicio'                  => $data["fecha_inicio"],
                 'fecha_termino'                 => $data["fecha_termino"],
@@ -1451,14 +1452,9 @@ class TurnosController extends Controller
                 'Especifique'                   => $Especifique,
                 'monto'                         => $data["monto"],
                 'tipo_pago'                     => $data["tipo_pago"],
-                'delegacion'                    => $data["delegacion"],
-                'fecha'                         => $data["fecha_pago"],
-                'hora'                          => $data["hora_pago"],
                 'observaciones'                 => $data["observaciones"],
-                'estatus'                       => 'Pendiente',
             ]);
         }
-
 
         if($userRole[0] == "Auxiliar")
             return redirect()->route('ratificacion_atender');
@@ -1531,7 +1527,6 @@ class TurnosController extends Controller
         /*'domicilio'                     => $data["domicilio"],*/
         'NUE'                           => $expediente,
         'id_conciliador'                => $data["conciliador_id"],
-
         'estatus'                       => $estatus]);
         
         return redirect()->route('ratificacion_atender');
@@ -1541,7 +1536,7 @@ class TurnosController extends Controller
         //Revisar todos los pagos
         $pagos = Pagos::where('id_solicitud',$id)->get();
 
-        return view('/solicitudes/pagos',compact('id','pagos'));
+        return view('/ratificaciones/pagos',compact('id','pagos'));
     }
 
     public function pagoA_ratificacion(Request $request){
@@ -1808,11 +1803,7 @@ class TurnosController extends Controller
     public function VerDocumentosRatificacion($id){
         $documento_general = Turnos::find($id); 
         //Documentos del abogado y citados
-        $documento_abogado = Poder::
-        join('turnos','turnos.curp_solicitante','abogados.curp')
-        ->where('id',$id)
-        ->select('abogados.empresa','abogados.ine','abogados.representacion','abogados.anexo','abogados.cedula')
-        ->get();
+        $documento_abogado = Poder::find($documento_general["idAbogado"]);
         
        return view('ratificaciones/verDocumentos',compact('documento_general','documento_abogado'));
     }
