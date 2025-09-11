@@ -90,14 +90,14 @@
                                             Estado de Michoacán de Ocampo, el cual tiene como objetivo agilizar el proceso de conciliación prejudicial dentro de las 
                                             audiencias de conciliación, así como para las ratificaciones de convenio. </h5><br><br>
                                             Antes de iniciar el registro, asegúrate de contar con los siguientes requisitos: <br><br>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;**Identificación Oficial.<br>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;**Identificación Oficial del Representante Legal (en los casos que así se requiera).<br>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;**Documento que acredite la personería (Carta Poder, Instrumento Notarial).<br>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;**Constancia de Situación Fiscal (Obligatorio en caso de ser Persona Moral).<br>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*Correo electrónico electrónico.<br>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*Número de celular.<br>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*Domicilio de la fuente laboral.<br><br>
-                                            Será indispensable, que los requisitos con (**), se tengan en documento PDF, no mayor a 20 MB.
+                                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red;">(**) </span>Identificación Oficial.<br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red;">(**)</span> Identificación Oficial del Representante Legal (en los casos que así se requiera).<br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red;">(**)</span> Documento que acredite la personería (Carta Poder, Instrumento Notarial).<br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Constancia de Situación Fiscal (Obligatorio en caso de ser Persona Moral).<br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Correo electrónico.<br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Número de celular.<br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Domicilio de la fuente fiscal.<br><br>
+                                            Será indispensable, que los requisitos con <span style="color:red;">(**)</span>, se tengan en documento PDF, no mayor a 20 MB.
                                         <br><br>
                                     </div>
                                 </div>
@@ -140,7 +140,7 @@
                                         <div class="row">
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">Nombre(s) del Empleador<span style="color:red;">(*)</span></label>
+                                                        <label for="name">Nombre(s) del Empleador(a) <span style="color:red;">(*)</span></label>
                                                         <input type="text" name="nombre_pF" id="nombre_pF" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                         <div class="invalid-feedback">
                                                             El nombre es obligatorio.
@@ -215,7 +215,7 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="">Correo electrónico</label>
+                                                        <label for="">Correo electrónico <span style="color:red;">(*)</span></label>
                                                         <input type="email" class="form-control"  name="correo_pF" id="electrónico_pF" >
                                                         <div class="invalid-feedback">
                                                             El Correo electrónico es obligatorio.
@@ -224,7 +224,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="">Teléfono</label>
+                                                        <label for="">Teléfono <span style="color:red;">(*)</span></label>
                                                             <input type="text" class="form-control"  name="telefono_PF" id="telefono_PF" maxlength="10" pattern="[0-9]+" >
                                                         <div class="invalid-feedback">
                                                             El telefono es obligatorio.
@@ -234,13 +234,13 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
-                                                        <h5 class="text-center">Domicilio laboral</h5>
+                                                        <h5 class="text-center">Domicilio fiscal</h5>
                                                     </div>
                                                 </div>
 
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Entidad Federativa</label>
+                                                        <label for="password">Entidad Federativa <span style="color:red;">(*)</span></label>
                                                         <select id="estado_pF" class="form-control" name="estado_pF" placeholder="*Entidad Federativa" >
                                                             <option value="">Seleccione</option>
                                                             @foreach($estados as $est)
@@ -254,7 +254,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="name">Nombre del Municipio o Alcaldía (*)</label>
+                                                        <label for="name">Nombre del Municipio o Alcaldía <span style="color:red;">(*)</span></label>
                                                         <select id="municipio_pF" class="form-control" name="municipio_pF" placeholder="*Municipio" >
                                                             <option value="">Seleccione</option>
                                                             @foreach($municipios as $mun)
@@ -268,9 +268,9 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="name">Tipo de Vialidad (*)</label>
+                                                        <label for="name">Tipo de Vialidad <span style="color:red;">(*)</span></label>
                                                         <select name="vialidad_pF" id="vialidad_pF" class="form-control" placeholder="*Vialidad" >
-                                                            <option value="">SELECCIONE</option>
+                                                            <option value="">Seleccione</option>
                                                             <option value="AMPLIACIÓN">Ampliación</option>
                                                             <option value="ANDADOR">Andador</option>
                                                             <option value="AUTOPISTA">Autopista</option>
@@ -311,7 +311,7 @@
                                                         <label for="">Colonia <span style="color:red;">(*)</span></label>
                                                         <input type="text" class="form-control" name="colonia_pF" id="colonia_pF" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
-                                                            El domicilio es obligatoria.
+                                                            La colonia es obligatoria.
                                                         </div>
                                                     </div>
                                                 </div>
@@ -320,7 +320,7 @@
                                                         <label for="">Núm. Ext. <span style="color:red;">(*)</span></label>
                                                         <input type="text" class="form-control" placeholder="*Número exterior" name="num_ext_pF" id="num_ext_pF" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
-                                                            El domicilio es obligatoria.
+                                                            El Núm. ext. es obligatoria.
                                                         </div>
                                                     </div>
                                                 </div>
@@ -328,9 +328,6 @@
                                                     <div class="form-group">
                                                         <label for="">Núm. Int.</label>
                                                         <input type="text" class="form-control" placeholder="Número interior" name="num_int_pF"  oninput="this.value = this.value.toUpperCase()">
-                                                        <div class="invalid-feedback">
-                                                            El domicilio es obligatoria.
-                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
@@ -338,7 +335,7 @@
                                                         <label for="">Código Postal <span style="color:red;">(*)</span></label>
                                                         <input type="text" class="form-control" placeholder="*Código Postal" name="cp_pF" id="cp_pF" minlength="5" maxlength="5" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
-                                                            El domicilio es obligatoria.
+                                                            El código postal es obligatoria.
                                                         </div>
                                                     </div>
                                                 </div>
@@ -371,7 +368,7 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="name">Nombre(s) del representante<span style="color:red;">(*)</span></label>
+                                                        <label for="name">Nombre(s) del representante <span style="color:red;">(*)</span></label>
                                                         <input type="text" name="nombre_representante_pF" id="nombre_representante_pF" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                         <div class="invalid-feedback">
                                                             El nombre es obligatorio.
@@ -464,7 +461,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Fecha expedición <span style="color:red;">(*)</span></label>
                                                         <input type="date" class="form-control" aria-describedby="basic-addon1" name="fecha_expedicion_pF" id="fecha_expedicion_pF" >
@@ -473,9 +470,12 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="col-xs-12 col-sm-12 col-md-2"><br><label for="btncheck1">Sin fecha de vigencia</label>
+                                                    <input name="fecha_vigencia_pF" type="checkbox" class="btn-check" id="check_vigencia" autocomplete="off"/>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-3" id="fecha_vigencia_pF">
                                                     <div class="form-group">
-                                                        <label for="">Fecha vigencia</label>
+                                                        <label for="fecha_vigencia_pF">Fecha vigencia</label>
                                                         <input type="date" class="form-control" aria-describedby="basic-addon1" name="fecha_vigencia_pF" id="fecha_vigencia_pF" min="<?= date("Y-m-d") ?>" >
                                                         <div class="invalid-feedback">
                                                             La fecha es obligatoria.
@@ -484,7 +484,7 @@
                                                 </div>  
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
-                                                        <label for="">Descripción del documento que acredite la personaria</label>
+                                                        <label for="">Descripción del documento que acredite la personaria <span style="color:red;">(*)</span></label>
                                                         <textarea class="form-control" aria-describedby="basic-addon1" name="descripcion_pF" id="descripcion_pF" 
                                                         placeholder="Ejemplo: Carta poder simple de fecha___, firmada ante dos testigos, suscrita a favor del compareciente por el (C., Lic., Ing., etc.,)_____, en cuanto ___ de la moral citada, personalidad que acredite en terminos de___ número(45 Cuarenta y Cinco), de fecha___, pasada ante la fe del(Lic., Mtro., etc.,)___, Notario Público Número ___, del Estado de ____, y cuyas facultades no han sido revocadas ni mofificadas a la fecha."></textarea>
                                                         <div class="invalid-feedback">
@@ -501,7 +501,7 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label>*Identificación del Empleador</label><br>
+                                                        <label><span style="color:red;">*</span>Identificación del Empleador</label><br>
                                                         <input type="file" name="documentoIne_pF" id="documentoIne_pF" class="form-control" accept=".pdf" >
                                                         <div class="invalid-feedback">
                                                             La Identificación es obligatoria.
@@ -510,7 +510,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label>*Identificación del Representante Legal</label><br>
+                                                        <label><span style="color:red;">*</span>Identificación del Representante Legal</label><br>
                                                         <input type="file" name="documentoRepresentacion_pF" id="documentoRepresentacion_pF" class="form-control" accept=".pdf" >
                                                         <div class="invalid-feedback">
                                                             El documento de representación es obligatorio.
@@ -519,7 +519,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label>*Documento que acredite la personería</label><br>
+                                                        <label><span style="color:red;">*</span>Documento que acredite la personería</label><br>
                                                         <input type="file" name="documentoPoder_pF" id="documentoPoder_pF" class="form-control" accept=".pdf">
                                                     </div>
                                                 </div>
@@ -547,7 +547,7 @@
                                             <div class="row">
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label>*Identificación Oficial</label><br>
+                                                        <label><span style="color:red;">*</span>Identificación Oficial</label><br>
                                                         <input type="file" name="documentoIne_pFSR" id="documentoIne_pFSR" class="form-control" accept=".pdf" >
                                                         <div class="invalid-feedback">
                                                             La Identificación es obligatoria.
@@ -614,13 +614,13 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
-                                                        <h5 class="text-center">Domicilio laboral</h5>
+                                                        <h5 class="text-center">Domicilio fiscal</h5>
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Entidad Federativa</label>
+                                                        <label for="password">Entidad Federativa <span style="color:red;">(*)</span></label>
                                                         <select id="estado_moral" class="form-control" name="estado_moral" placeholder="*Entidad Federativa" >
                                                             <option value="">Seleccione</option>
                                                             @foreach($estados as $est)
@@ -634,7 +634,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="name">Nombre del Municipio o Alcaldía (*)</label>
+                                                        <label for="name">Nombre del Municipio o Alcaldía <span style="color:red;">(*)</span></label>
                                                         <select id="municipio_moral" class="form-control" name="municipio_moral" placeholder="*Municipio" >
                                                             <option value="">Seleccione</option>
                                                             @foreach($municipios as $mun)
@@ -648,9 +648,9 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="name">Tipo de Vialidad (*)</label>
+                                                        <label for="name">Tipo de Vialidad <span style="color:red;">(*)</span></label>
                                                         <select name="vialidad_Moral" id="vialidad_Moral" class="form-control" placeholder="*Vialidad" >
-                                                            <option value="">SELECCIONE</option>
+                                                            <option value="">Seleccione</option>
                                                             <option value="AMPLIACIÓN">Ampliación</option>
                                                             <option value="ANDADOR">Andador</option>
                                                             <option value="AUTOPISTA">Autopista</option>
@@ -679,7 +679,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="name">Nombre de la Vialidad (*)</label>
+                                                        <label for="name">Nombre de la Vialidad <span style="color:red;">(*)</span></label>
                                                         <input type="text" name="vialidad_calleMoral" id="vialidad_calleMoral" class="form-control" placeholder="*Nombre vialidad" oninput="this.value = this.value.toUpperCase()" > 
                                                         <div class="invalid-feedback">
                                                             El campo vialidad o calle es obligatorio.
@@ -691,7 +691,7 @@
                                                         <label for="">Colonia <span style="color:red;">(*)</span></label>
                                                         <input type="text" class="form-control" name="colonia_moral" id="colonia_moral" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
-                                                            El domicilio es obligatoria.
+                                                            La colonia es obligatoria.
                                                         </div>
                                                     </div>
                                                 </div>
@@ -700,7 +700,7 @@
                                                         <label for="">Núm. Ext. <span style="color:red;">(*)</span></label>
                                                         <input type="text" class="form-control" placeholder="*Número exterior" name="num_ext_moral" id="num_ext_moral" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
-                                                            El domicilio es obligatoria.
+                                                            El Núm. ext. es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
@@ -708,9 +708,6 @@
                                                     <div class="form-group">
                                                         <label for="">Núm. Int.</label>
                                                         <input type="text" class="form-control" placeholder="Número interior" name="num_int" oninput="this.value = this.value.toUpperCase()">
-                                                        <div class="invalid-feedback">
-                                                            El domicilio es obligatoria.
-                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
@@ -718,7 +715,7 @@
                                                         <label for="">Código Postal <span style="color:red;">(*)</span></label>
                                                         <input type="text" class="form-control" name="cp_moral" id="cp_moral"  minlength="5" maxlength="5" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
-                                                            El domicilio es obligatoria.
+                                                            El código postal es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
@@ -839,18 +836,21 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="col-xs-12 col-sm-12 col-md-2"><br><label for="btncheck1">Sin fecha de vigencia</label>
+                                                    <input name="fecha_vigencia_Moral" type="checkbox" class="btn-check" id="check_vigenciaM" autocomplete="off"/>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-3" id="fecha_vigencia_Moral">
                                                     <div class="form-group">
-                                                        <label for="">Fecha vigencia</label>
+                                                        <label for="fecha_vigencia_Moral">Fecha vigencia</label>
                                                         <input type="date" class="form-control" aria-describedby="basic-addon1" name="fecha_vigencia_Moral" id="fecha_vigencia_Moral" min="<?= date("Y-m-d") ?>" >
                                                         <div class="invalid-feedback">
                                                             La fecha es obligatoria.
                                                         </div>
                                                     </div>
-                                                </div>  
+                                                </div>   
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
-                                                        <label for="">Descripción del documento que acredite la personaria</label>
+                                                        <label for="">Descripción del documento que acredite la personaria <span style="color:red;">(*)</span></label>
                                                         <textarea class="form-control" aria-describedby="basic-addon1" name="descripcion_Moral"  id="descripcion_Moral" 
                                                         placeholder="Ejemplo: Carta poder simple de fecha___, firmada ante dos testigos, suscrita a favor del compareciente por el (C., Lic., Ing., etc.,)_____, en cuanto ___ de la moral citada, personalidad que acredite en terminos de___ número(45 Cuarenta y Cinco), de fecha___, pasada ante la fe del(Lic., Mtro., etc.,)___, Notario Público Número ___, del Estado de ____, y cuyas facultades no han sido revocadas ni mofificadas a la fecha."></textarea>
                                                         <div class="invalid-feedback">
@@ -867,7 +867,7 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label>*Acta Constitutiva</label><br>
+                                                        <label><span style="color:red;">*</span>Acta Constitutiva</label><br>
                                                         <input type="file" name="documentoIne_Moral" id="documentoIne_Moral" class="form-control" accept=".pdf" >
                                                         <div class="invalid-feedback">
                                                             La Identificación es obligatoria.
@@ -877,7 +877,7 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label>*Identificación del Representante Legal</label><br>
+                                                        <label><span style="color:red;">*</span>Identificación del Representante Legal</label><br>
                                                         <input type="file" name="documentoRepresentacion_Moral" id="documentoRepresentacion_Moral" class="form-control" accept=".pdf" >
                                                         <div class="invalid-feedback">
                                                             El documento de representación es obligatorio.
@@ -887,7 +887,7 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label>*Documento que acredite la personería</label><br>
+                                                        <label><span style="color:red;">*</span>Documento que acredite la personería</label><br>
                                                         <input type="file" name="documentoPoder" id="documentoPoder" class="form-control" accept=".pdf">
                                                     </div>
                                                 </div>
@@ -1055,7 +1055,7 @@
                     document.getElementById('telefono_Moral').setAttribute('required', 'true');
                     document.getElementById('tipo_Moral').setAttribute('required', 'true');
                     document.getElementById('fecha_expedicicion_Moral').setAttribute('required', 'true');
-                    document.getElementById('fecha_vigencia_Moral').setAttribute('required', 'true');
+                    //document.getElementById('fecha_vigencia_Moral').setAttribute('required', 'true');
                     document.getElementById('descripcion_Moral').setAttribute('required', 'true');
                     document.getElementById('documentoIne_Moral').setAttribute('required', 'true');
                     document.getElementById('documentoRepresentacion_Moral').setAttribute('required', 'true');
@@ -1096,7 +1096,7 @@
                     document.getElementById('telefono_representante_pF').setAttribute('required', 'true');
                     document.getElementById('tipo_documento_pF').setAttribute('required', 'true');
                     document.getElementById('fecha_expedicion_pF').setAttribute('required', 'true');
-                    document.getElementById('fecha_vigencia_pF').setAttribute('required', 'true');
+                    //document.getElementById('fecha_vigencia_pF').setAttribute('required', 'true');
                     document.getElementById('descripcion_pF').setAttribute('required', 'true');
                     document.getElementById('documentoIne_pF').setAttribute('required', 'true');
                     document.getElementById('documentoRepresentacion_pF').setAttribute('required', 'true');
@@ -1133,6 +1133,37 @@
                 actualizarRepresentante();
             }
         });
+
+         //PERSONA FÍSICA
+        document.getElementById("fecha_vigencia_pF").style.display = "block";
+        $(function(){
+            $('#check_vigencia').on('change', validarcheckvigencia);
+        })
+        function validarcheckvigencia(){
+            vigencia = document.getElementById("fecha_vigencia_pF").style.display;
+            if (vigencia == "none") {
+                document.getElementById("fecha_vigencia_pF").style.display = "block";
+            }
+            else{
+                document.getElementById("fecha_vigencia_pF").style.display = "none";
+            }
+        }
+
+        //PERSONA MORAL
+        document.getElementById("fecha_vigencia_Moral").style.display = "block";
+        $(function(){
+            $('#check_vigenciaM').on('change', validarcheckvigenciaM);
+        })
+        function validarcheckvigenciaM(){
+            vigenciaM = document.getElementById("fecha_vigencia_Moral").style.display;
+            if (vigenciaM == "none") {
+                document.getElementById("fecha_vigencia_Moral").style.display = "block";
+            }
+            else{
+                document.getElementById("fecha_vigencia_Moral").style.display = "none";
+            }
+        }
+
     </script>
 
 @section('scripts')

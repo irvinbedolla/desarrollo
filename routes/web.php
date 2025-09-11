@@ -314,6 +314,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/ratificaciones/pendientes',            [TurnosController::class, 'ratificacion_confirmadas'])->name('ratificacion_confirmadas'); 
         Route::get('/ratificaciones/pagoIncom/{id}',        [TurnosController::class, 'incomparecencia_rati'])->name('ratificacion_pagoIncom'); //No comparece el trabajador al pago
     //Fin de Ratificaciones
+    //PDF ABOGADOS
+        Route::get('/PDF/acuseRegistro/{idAbogado}',        [PoderController::class, 'VerPDFregistroAbogado'])->name('PDFregistroAbogado'); //Acuse de registro exitoso para abogados
+    //Fin de PDF
     //Enlace
         Route::get('/notificaciones/consultar/{id}',        [SeerController::class, 'mostrar_citados'])->name('editar_citado');
         Route::post('/notificaciones/editar',               [SeerController::class, 'editar_citados'])->name('editar_citado_enlace');   

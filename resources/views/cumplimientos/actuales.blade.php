@@ -121,8 +121,8 @@
                                             <tbody>
                                                 @foreach($complimientos_ratificacion as $ratificacion)
                                                     <tr>
-                                                        <td>{{$ratificacion->fecha}}</td> 
-                                                        <td>{{$ratificacion->hora}}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($ratificacion->fecha)->format('d/m/Y') }}</td>
+                                                        <td>{{\Carbon\Carbon::parse($ratificacion->hora)->translatedFormat('h:i')}} Hrs.</td>
                                                         <td>{{$ratificacion->NUE}}</td>
                                                         <td>{{$ratificacion->empresa}}</td>
                                                         <td>{{$ratificacion->trabajador}}</td>
@@ -137,7 +137,7 @@
                                                             @elseif($ratificacion->estatus == "No pagado")
                                                                 <a class="btn btn-info" href="{{ route('PDFincumplimiento', $ratificacion->id_solicitud) }}" target="_blank">PDF</a>
                                                             @elseif($ratificacion->estatus == "Incomparecencia trabajador")
-                                                                <a class="btn btn-info" href="{{ route('PDFincomparecenciaT', $ratificacion->id_solicitud) }}" target="_blank">PDF</a>
+                                                                <a class="btn btn-info" href="{{ route('PDFincomparecenciaT', $ratificacion->id) }}" target="_blank">PDF</a>
                                                             @endif
                                                         </td>
                                                     </tr>

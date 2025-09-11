@@ -745,7 +745,7 @@ class PoderController extends Controller
                     "telefono_representante_pF" => 'required',
                     "tipo_documento_pF"         => 'required',
                     "fecha_expedicion_pF"       => 'required',
-                    "fecha_vigencia_pF"         => 'required',
+                    //"fecha_vigencia_pF"         => 'required',
                     "descripcion_pF"            => 'required',
                     "documentoIne_pF"           => 'required',
                     'documentoRepresentacion_pF'=> 'required',
@@ -774,7 +774,7 @@ class PoderController extends Controller
                 "telefono_Moral"                => 'required',
                 "tipo_Moral"                    => 'required',
                 "fecha_expedicicion_Moral"      => 'required',
-                "fecha_vigencia_Moral"          => 'required',
+                //"fecha_vigencia_Moral"          => 'required',
                 "descripcion_Moral"             => 'required',
                 "documentoIne_Moral"            => 'required',
                 "documentoRepresentacion_Moral" => 'required',
@@ -831,7 +831,7 @@ class PoderController extends Controller
                 $data = Poder::latest('idAbogado')->first();
 
                 $mensaje = "Su registro fue guardado con éxito, tu número de folio es: ".$data["idAbogado"]. " 
-                *La validación del registro patronal quedará sujeta a la certificación de la documentación que realice la persona conciliadora, loanterior de conformidad con lo 
+                *La validación del registro patronal quedará sujeta a la certificación de la documentación que realice la persona conciliadora, lo anterior de conformidad con lo 
                 establecido en el artículo 684-I, fracción I y II, de la Ley Federal del Trabajo; por lo que se le solicita acudir a su siguiente audiencia de conciliación con la 
                 Documentación original en formato físico, a fin de realizar el cotejo correspondiente.";
                     
@@ -865,7 +865,7 @@ class PoderController extends Controller
                         'numero_representante'          => $data["telefono_representante_pF"],
                         'tipo_documento_representante'  => $data["tipo_documento_pF"],
                         'fechaRegistro'                 => $data["fecha_expedicion_pF"],
-                        'fechaVigencia'                 => $data["fecha_vigencia_pF"],
+                        //'fechaVigencia'                 => $data["fecha_vigencia_pF"],
                         'descipcion_poder'              => $data["descripcion_pF"],
                         'representacionDocumento'       => $data['documentoRepresentacion_pF'],
                         'ineDocumento'                  => $data['documentoIne_pF'],
@@ -904,6 +904,9 @@ class PoderController extends Controller
                 if(isset($data["num_int_pF"])){
                    $data_insertar["mun_int_patronal"] = $data["num_int_pF"];
                 }
+                if(isset($data["fecha_vigencia_pF"])){
+                    $data_insertar["fechaVigencia"] = $data["fecha_vigencia_pF"];
+                }
                 
                 Poder::create($data_insertar);  
                 $data = Poder::latest('idAbogado')->first();
@@ -939,7 +942,7 @@ class PoderController extends Controller
                     'numero_representante'          => $data["telefono_Moral"],
                     'tipo_documento_representante'  => $data["tipo_Moral"],
                     'fechaRegistro'                 => $data["fecha_expedicicion_Moral"],
-                    'fechaVigencia'                 => $data["fecha_vigencia_Moral"],
+                    //'fechaVigencia'                 => $data["fecha_vigencia_Moral"],
                     'descipcion_poder'              => $data["descripcion_Moral"],
                     'representacionDocumento'       => $data['documentoRepresentacion_Moral'],
                     'ineDocumento'                  => $data['documentoIne_Moral'],
@@ -978,18 +981,40 @@ class PoderController extends Controller
             if(isset($data["num_int"])){
                 $data_insertar["mun_int_patronal"] = $data["num_int"];
             }
-                    
+            if(isset($data["fecha_vigencia_Moral"])){
+                $data_insertar["fechaVigencia"] = $data["fecha_vigencia_Moral"];
+            }
+
             Poder::create($data_insertar);  
             $data = Poder::latest('idAbogado')->first();
 
             $mensaje = "Su registro fue guardado con éxito, tu número de folio es: ".$data["idAbogado"]. " 
-            *La validación del registro patronal quedará sujeta a la certificación de la documentación que realice la persona conciliadora, loanterior de conformidad con lo 
+            *La validación del registro patronal quedará sujeta a la certificación de la documentación que realice la persona conciliadora, lo anterior de conformidad con lo 
             establecido en el artículo 684-I, fracción I y II, de la Ley Federal del Trabajo; por lo que se le solicita acudir a su siguiente audiencia de conciliación con la 
             Documentación original en formato físico, a fin de realizar el cotejo correspondiente.";
                     
                     
             return redirect()->back()->with('success', $mensaje);
         }
+    }
+     //PDF Acuse de confirmación de registro de abogados
+     public function VerPDFregistroAbogado($idAbogado){
+        $abogado = Poder::find($idAbogado);
+        //dd($abogado);
+        /*$solicitud = SeerPerGeneral::find($id);
+        $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
+        $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
+        ->first();
+
+        $citados = SeerCitados::where('id_solicitud', $id)->get();*/
+       
+        $pdf = \PDF::loadView('PDF/Abogados/acuseAbogado', compact('idAbogado','abogado'))
+        ->setPaper('a4', 'portrait')
+        ->setOption('isHtml5ParserEnabled', true)
+        ->setOption('isPhpEnabled', true);
+
+        $nombreArchivo = 'acuse_abogado_' . $abogado->idAbogado .'.pdf';
+        return $pdf->stream($nombreArchivo);               
     }
 
 }
