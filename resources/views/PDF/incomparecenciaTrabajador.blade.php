@@ -66,47 +66,50 @@
             <div class="content">
                 <div class="table-responsive">
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
-                            <tr>    
-                                <td><b>Número de identificación único: </b></td>
-                                <td>{{ $solicitud->NUE }} </td>
-                            </tr> 
-                            <tr>   
-                                <td><b>Centro de conciliación: </b></td>
-                                <td>{{ $solicitud->delegacion }} </td>
-                            </tr>
+                        <tr>   
+                            <td><b>Oficina: </b></td>
+                            <td>{{ strtoupper($solicitud->delegacion) }} </td>
+                        </tr>
+                        <tr>    
+                            <td><b>Número de identificación único: </b></td>
+                            <td>{{ $solicitud->NUE }} </td>
+                        </tr>    
                     </table>
                 </div><br><br><br>
                 <p><b>
-                    Solicitante: {{$solicitud->nombre_empresa}} {{$solicitud->primero_empresa}} {{$solicitud->segundo_empresa}}<br> 
-                    Citado: {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}<br>
-                </b></p>  
+                    Trabajador(a): {{ strtoupper($solicitud->trabajador) }} {{ strtoupper($solicitud->primero_trabajador) }} {{ strtoupper($solicitud->segundo_trabajador) }}<br> 
+                    Empleador(a): {{ strtoupper($solicitud->empresa) }}<br>
+                </b></p>
+                <p><center><b>CONSTANCIA DE INCOMPARECENCIA DE LA PARTE TRABAJADORA AL INCUMPLIMIENTO DE CONVENIO</b></center></p><br>  
                 <p>
-                    En la Ciudad de <b>{{ $solicitud->delegacion }}</b>, Michoacán, siendo las <b>{{ \Carbon\Carbon::now()->format('H:i') }}</b> horas, del día 
-                    <b>{{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}</b>, fecha y hora señalada para EL 
-                    Cumplimiento de Pago establecido en la Clausula ________ del Convenio de Conciliación celebrado en Audiencia 
+                    En la Ciudad de <b>{{ $solicitud->delegacion }}</b>, Michoacán, siendo las <b>{{\Carbon\Carbon::parse($pagos->hora)->translatedFormat('h:i')}}</b> horas, del día 
+                    <b>{{\Carbon\Carbon::parse($pagos->fecha)->translatedFormat('d \d\e F \d\e\l Y')}}</b>, fecha y hora señalada para EL 
+                    Cumplimiento de Pago establecido en las Cláusulas quinta y sexta del Convenio de Conciliación celebrado en Audiencia el día  
                     <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las
-                    <b>{{$solicitud->hora}}</b> horas, dentro del número único de registro citado al rubro; ante la fe pública de la persona Conciliadora de nombre <b>{{$conciliador->name}}</b>, 
+                    <b>{{ \Carbon\Carbon::parse($solicitud->hora)->translatedFormat('h:i') }}</b> horas, dentro del número único de registro citado al rubro; ante la fe pública de 
+                    la persona Conciliadora de nombre <b>{{$conciliador->name}}</b>, 
                     adscrita a la Delegación Regional <b>{{ $solicitud->delegacion }}</b> del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, en ejercicio de mis facultades 
                     establecidas en el artículo 684-E fracción XIII y XIV  párrafo cuarto de la Ley Federal del Trabajo y 20 fracción I, VI y XIII del Reglamento Interior del Centro de 
                     Conciliación Laboral del Estado de Michoacán de Ocampo, hago constar la siguiente:
                 </p>
                 <p><center><b>CERTIFICACIÓN:</b></center></p><br>
                 <p>
-                    Que comparece la persona de nombre <b>C. {{$solicitud->nombre_empresa}} {{$solicitud->primero_empresa}} {{$solicitud->segundo_empresa}}</b>, en su carácter de representante 
-                    legal de la parte patronal <b>{{$solicitud->empresa}}</b> a dar cumplimiento al Convenio celebrado entre las partes ante este Centro el día 
-                    <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{$solicitud->hora}}</b> hrs., 
-                    haciendo constar la inasistencia de la parte trabajadora, no obstante de encontrarse legal y debidamente notificada de la fecha y hora del cumplimiento de pago de convenio, 
-                    sin que exista causa justificada, motivo por el cual se EMITE CONSTANCIA DE INCUMPLIMIENTO dejando a salvo los derechos de la parte compareciente para hacerlos valer ante 
+                    Que comparece ante está autoridad conciliadora la persona de nombre <b>{{strtoupper($solicitud->nombre_empresa)}} {{strtoupper($solicitud->primero_empresa)}} {{strtoupper($solicitud->segundo_empresa)}}</b>, en su carácter de representante 
+                    legal de la parte patronal, y quien se identifica con __________ misma que cuenta con foto y coincide con los rasgos físicos del ______ <b>{{$solicitud->empresa}}</b> a dar cumplimiento al Convenio celebrado entre las partes ante este Centro el día 
+                    <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{ \Carbon\Carbon::parse($solicitud->hora)->translatedFormat('h:i') }}</b> hrs., 
+                    ante este Centro de Conciliación, se hace constar la incomparecencia de la parte trabajadora, no obstante de encontrarse legal y debidamente notificada de la fecha y hora del cumplimiento de pago de convenio, 
+                    sin que exista causa justificada, motivo por el cual se EMITE CONSTANCIA DE INCOMPARECENCIA dejando a salvo los derechos de la parte compareciente para hacerlos valer ante 
                     la autoridad competente, para los efectos legales y administrativos a los que haya lugar.- Archívese el presente asunto y Notifíquese.- 
                     <br><br>
 
-                    Así y con fundamento en los artículos 684-E fracción, X, XVI, 684-F, 684-H, 684-I, 939, y Título Quince de la Ley Federal del Trabajo; artículo 8, 27 de la Ley Orgánica del 
+                    Así y con fundamento en los artículos 684-E fracción, XIII, XVI, 684-F, 684-H, 684-I, 939, y Título Quince de la Ley Federal del Trabajo; artículo 8, 27 de la Ley Orgánica del 
                     Centro de Conciliación Laboral del Estado de Michoacán de Ocampo; y artículo 20 fracciones I, VI, XIII del Reglamento Interior del Centro de Conciliación Laboral del Estado 
                     de Michoacán de Ocampo. <b>Doy fe.</b> 
                     
                 </p>
                 <br><br><br><br><br>     
-                <center><br><br> <p><b>___________________________________<br>{{$conciliador->name}}<br>FUNCIONARIO/A CONCILIADOR/A</b></p></center>           
+                <center><br><br> <p><b>___________________________________<br>{{$conciliador->name}}<br>FUNCIONARIO/A CONCILIADOR/A<br>
+                    DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>           
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

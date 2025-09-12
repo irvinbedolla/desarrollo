@@ -70,25 +70,25 @@
             <div class="content">
                 <div class="table-responsive">
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
-                            <tr>    
-                                <td><b>Número de identificación único: </b></td>
-                                <td>{{ $solicitud->NUE }} </td>
-                            </tr> 
-                            <tr>   
-                                <td><b>Centro de conciliación: </b></td>
-                                <td>{{ $solicitud->delegacion }} </td>
-                            </tr>
+                        <tr>   
+                            <td><b>Oficina: </b></td>
+                            <td>{{ strtoupper($solicitud->delegacion) }} </td>
+                        </tr>
+                        <tr>    
+                            <td><b>Número de identificación único: </b></td>
+                            <td>{{ $solicitud->NUE }} </td>
+                        </tr>   
                     </table>
                 </div><br><br><br><br><br>
-                <p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br>
-                    SOLICITUD RATIFICACIÓN DE CONVENIO TERMINACIÓN VOLUNTARIA <br><br>
-        
+                <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</center><br>
+                   <!-- SOLICITUD RATIFICACIÓN DE CONVENIO TERMINACIÓN VOLUNTARIA <br><br>
                     SOLICITANTES:<br>
-                    {{ $solicitud->empresa }}<br>
+                    {{ $solicitud->empresa }}<br>-->
                 </b></p>  
                 <p><center><b>CONVENIO DE CONCILIACIÓN</b></center></p><br>
                 <p>Con fundamento en los artículos 123, apartado A, fracción XXVII, inciso h) párrafo segundo, de la Constitución Política de los Estados Unidos Mexicanos; 
-                    artículos 33, 53 fracción I y 684-E de la Ley Federal del Trabajo; artículo 20, fracción V y X del Reglamento Interior del Centro de Conciliación Laboral de Michoacán de Ocampo, 
+                    artículos 33, 53 fracción I y 684-E de la Ley Federal del Trabajo, artículo 27 de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, 
+                    y artículo 20, fracción V y X del Reglamento Interior del Centro de Conciliación Laboral de Michoacán de Ocampo, 
                     se celebra el presente convenio por una parte <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> quién en lo 
                     subsecuente se denominará la parte <b>“TRABAJADORA”</b> y, por otro <b>{{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}</b> 
                     a quién en lo subsecuente se le denominará la parte <b>“EMPLEADORA”</b>, 
@@ -97,11 +97,12 @@
 
                 <p><center><b>D E C L A R A C I O N E S:</b></center></p><br>
 
-                <p><b>PRIMERA</b>. {{ $solicitud->resolucion_primera }}.</p> 
+                <p><b>PRIMERA.</b> La parte <b>TRABAJADORA</b> se identifica con {{ $solicitud->identificacion }} expedida a su favor por <b>Instituto Nacional Electoral</b> y declara ser una persona 
+                    mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p> 
 
-                <p><b>SEGUNDA</b>. {{ $solicitud->resolucion_segunda }}</p>.  
+                <p><b>SEGUNDA.</b> Declara ---NOMBRE DE REPRESENTANTE LEGAL--- quien se identifica con {{ $solicitud->identificacion }} expedida a su favor por <b>Instituto Nacional Electoral</b>, así como con ---descripción del documento---.</p>  
 
-                <b>TERCERA</b>. Declara la parte <b>TRABAJADORA</b>:
+                <b>TERCERA.</b> Declara la parte <b>TRABAJADORA</b>:
                     <p class="sangria">
                         a) Que fue contratada por la parte <b>EMPLEADORA</b> desde el <b>{{ \Carbon\Carbon::parse($solicitud->fecha_inicio)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, para prestar sus 
                         servicios como <b>{{ $solicitud->categoria}}</b>, puesto en el que se desempeñó 
@@ -117,9 +118,13 @@
                     </p>
                     <p class="sangria">
                         c) Que desempeñaba sus actividades laborales en las siguientes condiciones: <br>
-                            - Horario: <b>{{ $solicitud->horario }}</b>.<br>
-                            - Horario de comida: <b>{{ $solicitud->comida }}</b>.<br>
-                            - Domicilio donde prestaba sus servicios: <b>{{ $solicitud->domicilio }}</b>.
+                            - Horario: <b>{{ $solicitud->horario }}</b> Hrs.<br>
+                            - Horario de comida: <b>{{ $solicitud->comida }}</b> Hrs.<br>
+                            - Domicilio donde prestaba sus servicios: <b>{{ $solicitud->tipo_vialidad }} {{ $solicitud->calle }} {{ $solicitud->num_ext }}
+                                @if(!empty($citado->n_int))
+                                    int. {{ $citado->n_int }}
+                                @endif
+                                COLONIA {{ $solicitud->colonia }}, {{ $solicitud->codigo_postal }}</b>.
                     </p>
                         <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
                     <p class="sangria">
@@ -137,8 +142,8 @@
                                    
                     <b>QUINTA</b>. Declaran las <b>PARTES</b>:  
                         <p class="sangria">
-                            a)  Que el presente convenio se celebra con la finalidad de dar por concluida la relación laboral de manera voluntaria para ambas partes, seguido ante el Centro de Conciliación 
-                            Laboral del Estado de Michoacán de Ocampo, bajo el número de identificación único <b>{{ $solicitud->NUE }}</b>.
+                            a)  Que el presente convenio se celebra con la finalidad de ratificar el acuerdo de voluntades de ambas partes, ante el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, 
+                            bajo el Número de Identificación Único <b>{{ $solicitud->NUE }}.</b>
                         </p>
                         <p class="sangria">        
                             b) Que el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, se celebro la audiencia de conciliación y que, por así convenir a sus 
@@ -166,49 +171,101 @@
 
                         <b>QUINTA</b>. La <b>TRABAJADORA</b> recibirá por parte de la <b>EMPLEADORA</b> la cantidad de <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }} M.N</b>, 
                             conforme a los siguientes conceptos:</p>
-                            <p class="sangria">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Concepto</th>
+                                    <th>Monto</th>
+                                    <th>Descripción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <!--<p class="sangria">-->
                                 @foreach($prestaciones as $concepto)
                                     @switch($concepto->descripcion)                                   
                                         @case('Vacaciones')
-                                            - Vacaciones: <b>${{ number_format($concepto->monto, 2) }} {{ $vacacionesTexto }} M.N</b>.<br>
+                                            <tr>
+                                                <td>Vacaciones</td>
+                                                <td><b>${{ number_format($concepto->monto, 2) }} </td>
+                                                <td>{{ $vacacionesTexto }} M.N.</b></td>
+                                            </tr>
                                             @break
                                         @case('PrimaVacacional')
-                                            - Prima vacacional: <b>${{ number_format($concepto->monto, 2) }} {{ $primaTexto }} M.N</b>.<br>
+                                            <tr>
+                                                <td>Prima vacacional</td>
+                                                <td><b>${{ number_format($concepto->monto, 2) }}</td>
+                                                <td>{{ $primaTexto }} M.N.</b></td>
+                                            </tr>
                                             @break
                                         @case('Aguinaldo')
-                                            - Aguinaldo: <b>${{ number_format($concepto->monto, 2) }} {{ $aguinaldoTexto }} M.N</b>.<br>
+                                            <tr>
+                                                <td>Aguinaldo</td> 
+                                                <td><b>${{ number_format($concepto->monto, 2) }}</td> 
+                                                <td>{{ $aguinaldoTexto }} M.N.</b></td>
+                                            </tr>
                                             @break
                                         @case('DSueldo')
-                                            - Días de sueldo: <b>${{ number_format($concepto->monto, 2) }} {{ $DSueldoTexto }} M.N</b>.<br>
+                                            <tr>
+                                                <td>Días de sueldo</td>
+                                                <td><b>${{ number_format($concepto->monto, 2) }}</td> 
+                                                <td>{{ $DSueldoTexto }} M.N.</b></td>
+                                            </tr>
                                             @break
                                         @case('GraficaciónA')
-                                            - Graficación A (Con base al salario integrado): <b>${{ number_format($concepto->monto, 2) }} {{ $gratificacionATexto }} M.N</b>.<br>
+                                            <tr>
+                                                <td>Graficación A (Con base al salario integrado)</td> 
+                                                <td><b>${{ number_format($concepto->monto, 2) }}</td> 
+                                                <td>{{ $gratificacionATexto }} M.N.</b></td>
+                                            </tr>
                                             @break
                                         @case('GraficaciónB')
-                                            - Graficación B (20 Días por año cumplido): <b>${{ number_format($concepto->monto, 2) }} {{ $gratificacionBTexto }} M.N</b>.<br>
+                                            <tr>
+                                                <td>Graficación B (20 Días por año cumplido)</td> 
+                                                <td><b>${{ number_format($concepto->monto, 2) }}</td>
+                                                <td>{{ $gratificacionBTexto }} M.N.</b></td>
+                                            </tr>
                                             @break
                                         @case('GratificaciónC')
-                                            - Graficación C (Prima de antigüedad topada): <b>${{ number_format($concepto->monto, 2) }} {{ $gratificacionCTexto }} M.N</b>.<br>
+                                            <tr>
+                                                <td>Graficación C (Prima de antigüedad topada)</td> 
+                                                <td><b>${{ number_format($concepto->monto, 2) }}</td> 
+                                                <td>{{ $gratificacionCTexto }} M.N.</b></td>
+                                            </tr>
                                             @break
                                         @case('GratificaciónD')
-                                            - Graficación D (Incluye cualquier otra prestación): <b>${{ number_format($concepto->monto, 2) }} {{ $gratificacionDTexto }} M.N</b>.<br>
+                                            <tr>
+                                                <td>Graficación D (Incluye cualquier otra prestación)</td>
+                                                <td><b>${{ number_format($concepto->monto, 2) }}</td>
+                                                <td>{{ $gratificacionDTexto }} M.N.</b></td>
+                                            </tr>
                                             @break
                                         @case('GratificaciónE')
-                                            - Graficación E (Prestaciones en especie): <b>${{ number_format($concepto->monto, 2) }} {{ $gratificacionETexto }} M.N</b>.<br>
+                                            <tr>
+                                                <td>Graficación E (Prestaciones en especie)</td>
+                                                <td><b>${{ number_format($concepto->monto, 2) }}</td>
+                                                <td>{{ $gratificacionETexto }} M.N.</b></td>
+                                            </tr>
                                             @break
                                         @case('GratificaciónF')
-                                            - Graficación F (Reconocimiento de derechos): <b>${{ number_format($concepto->monto, 2) }} {{ $gratificacionFTexto }} M.N</b>.<br>
+                                            <tr>
+                                                <td>Graficación F (Reconocimiento de derechos)</td>
+                                                <td><b>${{ number_format($concepto->monto, 2) }}</td>
+                                                <td>{{ $gratificacionFTexto }} M.N.</b></td>
+                                            </tr>
                                             @break 
                                         @case('Otras')
-                                            - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>${{ number_format($concepto->monto, 2) }} {{ $otrasTexto }} M.N</b>. {{ $solicitud->Especifique }}<br>
+                                            <tr>
+                                                <td>Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc)</td>
+                                                <td><b>${{ number_format($concepto->monto, 2) }} {{ $otrasTexto }} M.N.</b></td>
+                                                <td>{{ $solicitud->Especifique }}<br></td>
+                                            </tr>
                                             @break
                                         @default    
                                     @endswitch
                                 @endforeach
-                            </p>
-
-                    
-                            
+                            <!--</p>-->
+                            </tbody>
+                        </table>        
                     <!-- CON PAGOS DIFERIDOS-->       
                     @if($pagosDif>'1')            
                         <p><b>SEXTA</b>. La <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará en <b>{{ $pagosDif->C_pagos}}</b> 
@@ -268,8 +325,8 @@
                                     
                         <b>DÉCIMA PRIMERA</b>. En caso de que no se cumplan los términos de lo convenido en el presente instrumento, las <b>PARTES</b> deberán acudir a los juzgados Laborales del fuero común a 
                         efecto de que se realice el procedimiento de ejecución que la Ley Federal del Trabajo contempla. <br>
-                        <br>Enteradas las <b>PARTES</b> del alcance legal del presente convenio que se eleva a la categoria de cosa juzgada, conforme al artículo 684-E fracción XIII, mismo que se firma en <b>{{ $solicitud->delegacion }}</b> 
-                        de Michoacán de Ocampo a los <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\í\a\s \d\e F \d\e\l Y') }}</b>, ante la fe de <b>{{ $conciliador->name }}</b>, funcionario(a) conciliador(a), quien 
+                        <br>Enteradas las <b>PARTES</b> del alcance legal del presente convenio que se eleva a la categoria de cosa juzgada, conforme al artículo 684-E fracción XIII, mismo que se firma en <b>{{ $solicitud->delegacion }},</b> 
+                        Michoacán de Ocampo a los <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\í\a\s \d\e F \d\e\l Y') }}</b>, ante la fe de <b>{{ $conciliador->name }}</b>, funcionario(a) conciliador(a), quien 
                         lo sanciona en este mismo acto. <b>Doy fe</b>.
                     </p>
                                     
@@ -286,7 +343,8 @@
                         </div>
                     </div>
                     <br><br>
-                    <p><center><b>___________________________________<br> {{ $conciliador->name }} <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>     
+                    <p><center><b>___________________________________<br> {{ $conciliador->name }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
+                        DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>     
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

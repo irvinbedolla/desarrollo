@@ -77,7 +77,7 @@
                     </table>
                 </div><br><br><br><br><br>
                 <p><b>
-                    Trbajador: {{$solicitud->nombre_trabajador}} <br> 
+                    Trabajador: {{$solicitud->nombre_trabajador}} <br> 
                     Empresa/Patrón: {{ $solicitud->empresa_representante }} <br>
                 </b></p><br>  
                 <p>

@@ -65,26 +65,27 @@
             <div class="content">
                 <div class="table-responsive">
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
-                            <tr>    
-                                <td><b>Número de identificación único: </b></td>
-                                <td>{{ $solicitud->NUE }} </td>
-                            </tr> 
-                            <tr>   
-                                <td><b>Centro de conciliación: </b></td>
-                                <td>{{ $solicitud->delegacion }} </td>
-                            </tr>
+                        <tr>   
+                            <td><b>Oficina: </b></td>
+                            <td>{{ strtoupper($solicitud->delegacion) }} </td>
+                        </tr>
+                        <tr>    
+                            <td><b>Número de identificación único: </b></td>
+                            <td>{{ $solicitud->NUE }} </td>
+                        </tr> 
                     </table>
                 </div><br><br><br><br>
-                <p><center><b>ACTA DE AUDIENCIA DE CONCILIACIÓN</b></center></p><br>
-                <p><b>
-                    CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO            
-                </b></p>  
+                <p><center><b>
+                    CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br><br>
+                    ACTA DE AUDIENCIA DE CONCILIACIÓN     
+                </b></center></p>  
+
                 <p>
                     En el <b>Centro de Conciliación Laboral del Estado de Michoacán de Ocampo con sede en {{ $solicitud->delegacion }}</b>, siendo las <b>{{ $solicitud->hora }} horas del
                     {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, hora y día señalados para la celebración de la Audiencia de Conciliación 
-                    Prejudicial, relativa al número de expediente electrónico con Número de Identificación Único <b>{{ $solicitud->NUE }}</b>, misma que se celebra ante  
+                    Prejudicial, relativa al expediente electrónico con Número de Identificación Único <b>{{ $solicitud->NUE }}</b>, misma que se celebra ante  
                     <b>{{ $conciliador->name }}</b>, Funcionario/a Conciliador/a adscrito al Centro de Conciliación 
-                    Laboral del Estado de Michoacán de Ocampo,  con fundamento en los artículos 33, 590-E, 590-F, 684-A, 684-B, 684-C, 684-D, 684-E, fracción V, 684-F, 684-G y 684-I, de la 
+                    Laboral del Estado de Michoacán de Ocampo,  con fundamento en los artículos 33, 590-E, 590-F, 684-A, 684-B, 684-C, 684-D, 684-E, 684-F, 684-G y 684-I, de la 
                     Ley Federal del Trabajo, artículo 27 de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, y artículo 20 del Reglamento Interior del 
                     Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, <b>declara abierta</b> la Audiencia de Conciliación Prejudicial en la que comparecen: <br><br>
 
@@ -116,7 +117,103 @@
                     que, en el caso de estar conformes con dicho acuerdo, se procederá a realizar el convenio por escrito, mismo que deberá ratificarse en el presente acto y, posteriormente, se les 
                     entregará copia certificada del mismo en el que conste su cumplimiento en términos de los artículos 684-E fracción XIV y 684-I, de la ley Federal del Trabajo.<br><br>
 
-                    La propuesta referida, se encuentra formulada en los términos siguientes:
+                    La propuesta referida, se encuentra formulada en los términos siguientes:<br><br>
+
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Concepto</th>
+                                <th>Monto</th>
+                                <th>Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <!--<p class="sangria">-->
+                            @foreach($prestaciones as $concepto)
+                                @switch($concepto->descripcion)                                   
+                                    @case('Vacaciones')
+                                        <tr>
+                                            <td>Vacaciones</td>
+                                            <td><b>${{ number_format($concepto->monto, 2) }} </td>
+                                            <td>{{ $vacacionesTexto }} M.N.</b></td>
+                                        </tr>
+                                        @break
+                                    @case('PrimaVacacional')
+                                        <tr>
+                                            <td>Prima vacacional</td>
+                                            <td><b>${{ number_format($concepto->monto, 2) }}</td>
+                                            <td>{{ $primaTexto }} M.N.</b></td>
+                                        </tr>
+                                        @break
+                                    @case('Aguinaldo')
+                                        <tr>
+                                            <td>Aguinaldo</td> 
+                                            <td><b>${{ number_format($concepto->monto, 2) }}</td> 
+                                            <td>{{ $aguinaldoTexto }} M.N.</b></td>
+                                        </tr>
+                                        @break
+                                    @case('DSueldo')
+                                        <tr>
+                                            <td>Días de sueldo</td>
+                                            <td><b>${{ number_format($concepto->monto, 2) }}</td> 
+                                            <td>{{ $DSueldoTexto }} M.N.</b></td>
+                                        </tr>
+                                        @break
+                                    @case('GraficaciónA')
+                                        <tr>
+                                            <td>Graficación A (Con base al salario integrado)</td> 
+                                            <td><b>${{ number_format($concepto->monto, 2) }}</td> 
+                                            <td>{{ $gratificacionATexto }} M.N.</b></td>
+                                        </tr>
+                                        @break
+                                    @case('GraficaciónB')
+                                        <tr>
+                                            <td>Graficación B (20 Días por año cumplido)</td> 
+                                            <td><b>${{ number_format($concepto->monto, 2) }}</td>
+                                            <td>{{ $gratificacionBTexto }} M.N.</b></td>
+                                        </tr>
+                                        @break
+                                    @case('GratificaciónC')
+                                        <tr>
+                                            <td>Graficación C (Prima de antigüedad topada)</td> 
+                                            <td><b>${{ number_format($concepto->monto, 2) }}</td> 
+                                            <td>{{ $gratificacionCTexto }} M.N.</b></td>
+                                        </tr>
+                                        @break
+                                    @case('GratificaciónD')
+                                        <tr>
+                                            <td>Graficación D (Incluye cualquier otra prestación)</td>
+                                            <td><b>${{ number_format($concepto->monto, 2) }}</td>
+                                            <td>{{ $gratificacionDTexto }} M.N.</b></td>
+                                        </tr>
+                                        @break
+                                    @case('GratificaciónE')
+                                        <tr>
+                                            <td>Graficación E (Prestaciones en especie)</td>
+                                            <td><b>${{ number_format($concepto->monto, 2) }}</td>
+                                            <td>{{ $gratificacionETexto }} M.N.</b></td>
+                                        </tr>
+                                        @break
+                                    @case('GratificaciónF')
+                                        <tr>
+                                            <td>Graficación F (Reconocimiento de derechos)</td>
+                                            <td><b>${{ number_format($concepto->monto, 2) }}</td>
+                                            <td>{{ $gratificacionFTexto }} M.N.</b></td>
+                                        </tr>
+                                        @break 
+                                    @case('Otras')
+                                        <tr>
+                                            <td>Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc)</td>
+                                            <td><b>${{ number_format($concepto->monto, 2) }} {{ $otrasTexto }} M.N.</b></td>
+                                            <td>{{ $solicitud->Especifique }}<br></td>
+                                        </tr>
+                                        @break
+                                    @default    
+                                @endswitch
+                            @endforeach
+                        <!--</p>-->
+                        </tbody>
+                    </table>
                     
                     <!--[RESOLUCION_PROPUESTAS_TRABAJADORES] -->
                     <b>{{ $solicitud->resolucion_trabajadores }}<br><br></b>
@@ -165,7 +262,8 @@
                         </div>
                     </div>
                     <br><br><br>
-                    <p><center><b>___________________________________<br> {{ $conciliador->name }} <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>            
+                    <p><center><b>___________________________________<br> {{ $conciliador->name }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
+                        DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>                    
             </div>
             <script type="text/php">
                 if (isset($pdf)) {
