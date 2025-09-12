@@ -90,7 +90,7 @@
                                             Estado de Michoacán de Ocampo, el cual tiene como objetivo agilizar el proceso de conciliación prejudicial dentro de las 
                                             audiencias de conciliación, así como para las ratificaciones de convenio. </h5><br><br>
                                             Antes de iniciar el registro, asegúrate de contar con los siguientes requisitos: <br><br>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red;">(**) </span>Identificación Oficial.<br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red;">(**) </span>Identificación Oficial del empleador.<br>
                                             &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red;">(**)</span> Identificación Oficial del Representante Legal (en los casos que así se requiera).<br>
                                             &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red;">(**)</span> Documento que acredite la personería (Carta Poder, Instrumento Notarial).<br>
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Constancia de Situación Fiscal (Obligatorio en caso de ser Persona Moral).<br>

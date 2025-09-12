@@ -685,7 +685,7 @@
 
                             <div class="col-xs-12 col-sm-12 col-md-6">
                                 <div class="form-group">
-                                    <label for="name">Núm ext. del citado *</label>
+                                    <label for="name">Núm. ext. del citado *</label>
                                     <input type="text" name="exterior" class="form-control" required> 
                                     <div class="invalid-feedback">
                                         El campo c
@@ -695,7 +695,7 @@
 
                             <div class="col-xs-12 col-sm-12 col-md-6">
                                 <div class="form-group">
-                                    <label for="name">Núm int. del citado</label>
+                                    <label for="name">Núm. int. del citado</label>
                                     <input type="text" name="interior" class="form-control" > 
                                     <div class="invalid-feedback">
                                         El campo calle es obligatorio.
@@ -750,7 +750,7 @@
                                     <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control"> 
                                     <pre id="resultado"></pre>
                                     <div class="invalid-feedback">
-                                        El nombre es obligatorio.
+                                        La CURP es obligatorio.
                                     </div>
                                 </div>
                             </div>
@@ -770,7 +770,7 @@
                                     <label for="name">Primer apellido *</label>
                                     <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                     <div class="invalid-feedback">
-                                        El nombre es obligatorio.
+                                        El Primer apellido es obligatorio.
                                     </div>
                                 </div>
                             </div>
@@ -779,7 +779,7 @@
                                     <label for="name">Segundo apellido *</label>
                                     <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                     <div class="invalid-feedback">
-                                        El nombre es obligatorio.
+                                        El Segundo apellido es obligatorio.
                                     </div>
                                 </div>
                             </div>

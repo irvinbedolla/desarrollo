@@ -17,6 +17,7 @@ use App\Models\Poder;
 use App\Models\Pagos; 
 use App\Models\Concepto; 
 use App\Models\Municipios;
+use App\Models\Estados;
 use App\Models\Deducciones;
 
 use Spatie\Permission\Models\Role;
@@ -487,7 +488,7 @@ class TurnosController extends Controller
     }
 
     public function create_publico(){
-        $estados = Municipios::all();
+        $estados = Estados::all();
         $municipios = Municipios::all();
         return view('citas', compact('estados','municipios'));
     }
@@ -495,6 +496,7 @@ class TurnosController extends Controller
     public function store_publico(Request $request)
     {
         $data = $request->all();
+        //dd($data);
         if(isset($data["folio"])){
             request()->validate([
                 'folio'             => 'required',
@@ -504,7 +506,7 @@ class TurnosController extends Controller
                 'trabajador_edad'   => 'required',
                 'trabajador_sexo'   => 'required',
                 'trabajador_curp'   => 'required',
-                'documentoCurp'     => 'required',
+                //'documentoCurp'     => 'required',
                 'tipo_identificacion'=> 'required',
                 'documentoidentificacion'=> 'required',
                 'fecha_inicio'      => 'required',
@@ -545,7 +547,7 @@ class TurnosController extends Controller
                 'trabajador_edad'   => 'required',
                 'trabajador_sexo'   => 'required',
                 'trabajador_curp'   => 'required',
-                'documentoCurp'     => 'required',
+                //'documentoCurp'     => 'required',
                 'tipo_identificacion'=> 'required',
                 'documentoidentificacion'=> 'required',
                 'fecha_inicio'      => 'required',
@@ -786,10 +788,11 @@ class TurnosController extends Controller
         if(isset($data["N_Int"])){
             $data_insert["num_int"] =  $data["N_Int"];
         }
-
+       // dd($data_insert);
+        $data_insertar['fecha'] = now()->toDateString();
+        $data_insertar['hora']  = now()->format('H:i:s');
         //Se van insetar todos los datos
         Turnos::create($data_insertar);
-
        
         //Revisar si ya existe el correo
         $usuario = User::where('email',$email)->first();

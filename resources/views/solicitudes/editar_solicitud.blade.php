@@ -118,7 +118,7 @@ body {font-family: Arial;}
                                 </div>
                             @endif
 
-                             <form class="needs-validation novalidate" method="POST" action="{{route('confirmar_solicitud')}}" enctype='multipart/form-data'>
+                             <form class="needs-validation novalidate" method="POST" action="{{route('confirmar_solicitud')}}" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" name="id" value="{{$id}}">
                                     <div class="tab">
@@ -602,19 +602,19 @@ body {font-family: Arial;}
                                                         <input type="text" class="form-control" name="calle2_citado[]" value="<?=$citado["calle2"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-2">
+                                                <div class="col-xs-12 col-sm-6 col-md-1">
                                                     <div class="form-group">
                                                         <label for="password">N° Ext.</label>
                                                         <input type="text" class="form-control" name="n_ext_citado[]" value="<?=$citado["n_ext"];?>" required>   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-2">
+                                                <div class="col-xs-12 col-sm-6 col-md-1">
                                                     <div class="form-group">
                                                         <label for="password">N° Int.</label>
                                                         <input type="text" class="form-control" name="n_int_citado[]" value="<?=$citado["n_int"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                <div class="col-xs-12 col-sm-6 col-md-2">
                                                     <div class="form-group">
                                                         <label for="password">Municipio del citado</label>
                                                         <select class="form-control" name="municipio_citado[]">
@@ -627,32 +627,51 @@ body {font-family: Arial;}
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-5">
-                                                <div class="form-group">
-                                                    <label for="name">¿Quién entregará las Notificaciones?</label>
-                                                    <select name="notificacion[]" class="form-control">
-                                                        <option value="Trabajador"  {{ $citado['notificacion'] == 'Trabajador' ? "selected" : '' }}>Trabajador</option>
-                                                        <option value="Centro"      {{ $citado['notificacion'] == 'Centro' ? "selected" : '' }}>Centro de conciliación Laboral</option>
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        El campo es obligatorio.
+                                                <div class="col-xs-12 col-sm-12 col-md-2">
+                                                    <div class="form-group">
+                                                        <label for="name">¿Quién entregará las Notificaciones?</label>
+                                                        <select name="notificacion[]" class="form-control">
+                                                            <option value="Trabajador"  {{ $citado['notificacion'] == 'Trabajador' ? "selected" : '' }}>Trabajador</option>
+                                                            <option value="Centro"      {{ $citado['notificacion'] == 'Centro' ? "selected" : '' }}>Centro de conciliación Laboral</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo es obligatorio.
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-12">
+                                                <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label for="password">Referencia</label>
                                                         <input type="text" class="form-control" name="referencia_citado[]" value="<?=$citado["referencia"];?>" required>   
                                                     </div>
                                                 </div>
-                                               
-                                                
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <label for="password">Imagen 1</label><br>
+                                                    @if (!empty($citado->imagen_domicilio1) && $citado->imagen_domicilio1 !== 'Sin documento')
+                                                        <a target='_blank' href="../storage/app/documentosSolicitud/{{$citado->imagen_domicilio1}}">VER IMAGEN</a><br>
+                                                    @else
+                                                        <span class="text-muted">No se subió imagen</span>
+                                                    @endif
+                                                    <input type="file" name="foto1[]" accept="image/*" class="form-control">
+                                                    <input type="hidden" name="imagen_domicilio1[]" value="{{ $citado->imagen_domicilio1 }}">
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <label for="password">Imagen 2</label><br>
+                                                    @if (!empty($citado->imagen_domicilio2) && $citado->imagen_domicilio2 !== 'Sin documento')
+                                                        <a target='_blank' href="../storage/app/documentosSolicitud/{{$citado->imagen_domicilio2}}">VER IMAGEN</a><br>
+                                                    @else
+                                                        <span class="text-muted">No se subió imagen</span>
+                                                    @endif
+                                                    <input type="file" name="foto2[]" accept="image/*" class="form-control">
+                                                    <input type="hidden" name="imagen_domicilio2[]" value="{{ $citado->imagen_domicilio2 }}">
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-12"><br></div>
                                             @endforeach
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
-                                                data-bs-target="#exampleModal1" data-id="{{ $id }}">Agregar Citado</a>
+                                                    data-bs-target="#exampleModal1" data-id="{{ $id }}">Agregar Citado</a>
                                                 <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
-                                                data-bs-target="#exampleModal2" data-id="{{ $id }}">Borrar Citado</a>
+                                                    data-bs-target="#exampleModal2" data-id="{{ $id }}">Borrar Citado</a>
                                             </div>
                                         </div>
                                     </div>
@@ -665,11 +684,11 @@ body {font-family: Arial;}
                                                 </div>
                                             </div><br>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <!--<div class="col-xs-12 col-sm-12 col-md-6">
                                                 <label for="password">CURP</label><br>
                                                 <a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoCurp}}">PDF</a><br>
                                                 <input type="file" name="documentoCurp" accept=".pdf" class="form-control">
-                                            </div>
+                                            </div>-->
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <label for="password">Identificación Oficial</label><br>
@@ -721,7 +740,7 @@ body {font-family: Arial;}
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <form class='needs-validation novalidate'  method='POST' action="{{route('agregar_citado_edicion')}}">
+    <form class='needs-validation novalidate'  method='POST' action="{{route('agregar_citado_edicion')}}" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="id" value="{{$id}}">
         <div class="modal-dialog modal-xl">
@@ -732,15 +751,15 @@ body {font-family: Arial;}
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#cea845 ; width:100%; height:30px;">
                             <div class="form-group">
-                                <h4 class="text-center">Dirección del citado</h4>
+                                <h4 class="text-center" style="color:#fff;">Dirección del citado</h4>
                             </div>
                         </div>                                        
 
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
-                                <label for="name">Agregar "Quien resulte responsable"</label>
+                                <label for="name">Agregar "Quien resulte responsable" <span style="color:red;">(*)</span></label>
                                 <select name="responsable" class="form-control" required>
                                     <option value="">SELECCIONE</option>
                                     <option value="Si">Si</option>
@@ -753,7 +772,7 @@ body {font-family: Arial;}
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
-                                <label for="name">¿Quién entregará las Notificaciones? *</label>
+                                <label for="name">¿Quién entregará las Notificaciones? <span style="color:red;">(*)</span></label>
                                 <select name="notificacion" class="form-control" required>
                                     <option value="">SELECCIONE</option>
                                     <option value="Trabajador">Trabajador</option>
@@ -764,9 +783,9 @@ body {font-family: Arial;}
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-3">
                             <div class="form-group">
-                                <label for="name">Tipo de Vialidad del citado *</label>
+                                <label for="name">Tipo de Vialidad <span style="color:red;">(*)</span></label>
                                 <select name="vialidad" class="form-control" required>
                                     <option value="">SELECCIONE</option>
                                     <option value="AMPLIACIÓN">Ampliación</option>
@@ -796,9 +815,9 @@ body {font-family: Arial;}
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-3">
                             <div class="form-group">
-                                <label for="name">Calle del citado *</label>
+                                <label for="name">Nombre de la vialidad <span style="color:red;">(*)</span></label>
                                 <input type="text" name="calle" class="form-control" required> 
                                 <div class="invalid-feedback">
                                     El campo calle es obligatorio.
@@ -806,29 +825,18 @@ body {font-family: Arial;}
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-3">
                             <div class="form-group">
-                                <label for="name">Colonia del citado *</label>
+                                <label for="name">Colonia <span style="color:red;">(*)</span></label>
                                 <input type="text" name="colonia" class="form-control" required> 
                                 <div class="invalid-feedback">
                                     El campo colonia es obligatorio.
                                 </div>
                             </div>
                         </div>
-
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-3">
                             <div class="form-group">
-                                <label for="name">Código Postal del citado *</label>
-                                <input type="text" name="cp" class="form-control" minlength="5" maxlength="5" required> 
-                                <div class="invalid-feedback">
-                                    El campo Código Postal es obligatorio.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-xs-12 col-sm-12 col-md-6">
-                            <div class="form-group">
-                                <label for="name">Entre calle del domicilio del citado *</label>
+                                <label for="name">Entre calle del domicilio (Opcional)</label>
                                 <input type="text" name="calle1" class="form-control"> 
                                 <div class="invalid-feedback">
                                     El campo calle es obligatorio.
@@ -836,19 +844,18 @@ body {font-family: Arial;}
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-3">
                             <div class="form-group">
-                                <label for="name">y calle del domicilio del citado *</label>
+                                <label for="name">y calle del domicilio (Opcional)</label>
                                 <input type="text" name="calle2" class="form-control"> 
                                 <div class="invalid-feedback">
                                     El campo calle es obligatorio.
                                 </div>
                             </div>
                         </div>
-
-                        <div class="col-xs-12 col-sm-12 col-md-4">
+                        <div class="col-xs-12 col-sm-12 col-md-2">
                             <div class="form-group">
-                                <label for="name">Núm ext. del citado *</label>
+                                <label for="name">Núm. ext. <span style="color:red;">(*)</span></label>
                                 <input type="text" name="exterior" class="form-control" required> 
                                 <div class="invalid-feedback">
                                     El campo c
@@ -856,20 +863,29 @@ body {font-family: Arial;}
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-4">
+                        <div class="col-xs-12 col-sm-12 col-md-2">
                             <div class="form-group">
-                                <label for="name">Núm int. del citado</label>
+                                <label for="name">Núm. int. (Opcional)</label>
                                 <input type="text" name="interior" class="form-control" > 
                                 <div class="invalid-feedback">
                                     El campo calle es obligatorio.
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-4">
+                        <div class="col-xs-12 col-sm-12 col-md-2">
                             <div class="form-group">
-                                <label for="name">Municipio o Alcaldía del citado *</label>
+                                <label for="name">Código Postal <span style="color:red;">(*)</span></label>
+                                <input type="text" name="cp" class="form-control" minlength="5" maxlength="5" required> 
+                                <div class="invalid-feedback">
+                                    El campo Código Postal es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-3">
+                            <div class="form-group">
+                                <label for="name">Municipio o Alcaldía <span style="color:red;">(*)</span></label>
                                 <select id="municipio_citado" class="form-control" name="municipio_citado" required>
-                                    <option value="">Seleccione</option>
+                                    <option value="">SELECCIONE</option>
                                     @foreach($municipios as $mun)
                                         <option value="{{$mun['id']}}">{{$mun['nombre']}}</option>
                                     @endforeach
@@ -881,7 +897,7 @@ body {font-family: Arial;}
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12">
                             <div class="form-group">
-                            <label for="floatingTextarea">Referencias del domicilio del citado *</label>
+                            <label for="floatingTextarea">Referencias del domicilio <span style="color:red;">(*)</span></label>
                                 <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencia"></textarea>
                                 <div class="invalid-feedback">
                                     El campo referencias es obligatorio.
@@ -891,9 +907,9 @@ body {font-family: Arial;}
                     </div>
 
                     <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-2">
                             <div class="form-group">
-                                <label for="name">Tipo de persona *</label>
+                                <label for="name">Tipo de persona <span style="color:red;">(*)</span></label>
                                 <select name="tipo" id="tipo" class="form-control">
                                     <option value="">Seleccione</option>
                                     <option value="Fisica">Física</option>
@@ -905,9 +921,9 @@ body {font-family: Arial;}
                             </div>
                         </div>
 
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-3">
                             <div class="form-group">
-                                <label for="name">CURP</label>
+                                <label for="name">CURP (Opcional)</label>
                                 <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control"> 
                                 <pre id="resultado"></pre>
                                 <div class="invalid-feedback">
@@ -915,9 +931,9 @@ body {font-family: Arial;}
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12" id="tipoPersona_razon" style="display:none;">
+                        <div class="col-xs-12 col-sm-12 col-md-3" id="tipoPersona_razon" style="display:none;">
                             <div class="form-group">
-                                <label for="name">Razón social *</label>
+                                <label for="name">Razón social <span style="color:red;">(*)</span></label>
                                 <input type="text" name="razon" id="razon" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                 <div class="invalid-feedback">
                                     La razón social es obligatorio.
@@ -928,7 +944,7 @@ body {font-family: Arial;}
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                     <div class="form-group">
-                                        <label for="name">Nombre(s) *</label>
+                                        <label for="name">Nombre(s) <span style="color:red;">(*)</span></label>
                                         <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                         <div class="invalid-feedback">
                                             El nombre es obligatorio.
@@ -938,7 +954,7 @@ body {font-family: Arial;}
                                 
                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                     <div class="form-group">
-                                        <label for="name">Primer apellido *</label>
+                                        <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
                                         <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                         <div class="invalid-feedback">
                                             El nombre es obligatorio.
@@ -947,7 +963,7 @@ body {font-family: Arial;}
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                     <div class="form-group">
-                                        <label for="name">Segundo apellido *</label>
+                                        <label for="name">Segundo apellido <span style="color:red;">(*)</span></label>
                                         <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                         <div class="invalid-feedback">
                                             El nombre es obligatorio.
@@ -957,9 +973,9 @@ body {font-family: Arial;}
                             </div>
                         </div>    
 
-                        <div class="col-xs-12 col-sm-12 col-md-6">
+                        <div class="col-xs-12 col-sm-12 col-md-3">
                             <div class="form-group">
-                                <label for="name">RFC</label>
+                                <label for="name">RFC (Opcional)</label>
                                 <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" > 
                                 <div class="invalid-feedback">
                                      El campo conflicto es obligatorio.
@@ -968,14 +984,13 @@ body {font-family: Arial;}
                         </div>
 
                         <div class="col-xs-12 col-sm-12 col-md-3">
-                            <label for="name">¿Requiere algún traductor? *</label>
+                            <label for="name">¿Requiere algún traductor? <span style="color:red;">(*)</span></label>
                             <select name="lenguaje" class="form-control" required>
                                 <option value="">SELECCIONE</option>
                                 <option value=" ">Si</option>
                                 <option value="No">No</option>
                             </select>
                         </div>
-
                         <div class="col-xs-12 col-sm-12 col-md-3" id="lenguaje_señas">
                             <div class="form-group">
                                 <label for="name">¿Qué tipo de lenguaje require?</label>
@@ -983,6 +998,21 @@ body {font-family: Arial;}
                                 <div class="invalid-feedback">
                                     La nacionalidad es obligatoria.
                                 </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-4">
+                            <div class="form-group">
+                                <label for="name">Imagen 1 <span style="color:red;">(*)</span></label>
+                                <input type="file" class="form-control" name="foto1" accept="image/*" required>
+                                <div class="invalid-feedback">
+                                    El campo imagen 1 es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-4">
+                            <div class="form-group">
+                                <label for="name">Imagen 2 (Opcional)</label>
+                                <input type="file" class="form-control" name="foto2" accept="image/*">
                             </div>
                         </div>
                     </div>

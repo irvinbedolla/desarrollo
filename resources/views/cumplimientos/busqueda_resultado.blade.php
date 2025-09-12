@@ -121,8 +121,8 @@
                                             <tbody>
                                                 @foreach($solicitudes as $ratificacion)
                                                     <tr>
-                                                        <td>{{$ratificacion->fecha}}</td> 
-                                                        <td>{{$ratificacion->hora}}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($ratificacion->fecha)->format('d/m/Y') }}</td>
+                                                        <td>{{\Carbon\Carbon::parse($ratificacion->hora)->translatedFormat('h:i')}} Hrs.</td>
                                                         <td>{{$ratificacion->NUE}}</td>
                                                         <td>{{$ratificacion->empresa}}</td>
                                                         <td>{{$ratificacion->trabajador}}</td>
@@ -164,8 +164,8 @@
                                             <tbody>
                                                 @foreach($solicitudes as $audiencia)
                                                     <tr>
-                                                        <td>{{$audiencia->fecha}}</td> 
-                                                        <td>{{$audiencia->hora}}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($audiencia->fecha)->format('d/m/Y') }}</td>
+                                                        <td>{{\Carbon\Carbon::parse($audiencia->hora)->translatedFormat('h:i')}} Hrs.</td>
                                                         <td>{{$audiencia->NUE}}</td>
                                                         <td>{{$audiencia->trabajador}}</td>
                                                         <td>{{$audiencia->descripcion}}</td>

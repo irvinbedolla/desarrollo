@@ -159,8 +159,8 @@
                                                 
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="folio_input">Folio Interno de Registro <span style="color:red;">(*)</span></label>
-                                                        <input type="number" id="folio_input" name="folio" class="form-control"> 
+                                                        <label for="">Folio Interno de Registro <span style="color:red;">(*)</span></label>
+                                                        <input type="number"  name="folio" class="form-control" required> 
                                                         <div class="invalid-feedback">
                                                             El folio es obligatorio.
                                                         </div>
@@ -235,8 +235,8 @@
                                                 </div>
                                                 <div  class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">Documento de la CURP</span></label>
-                                                        <input type="file" name="documentoCurp" class="form-control" accept=".pdf" required> 
+                                                        <label for="name">Documento de la CURP (Opcional)</span></label>
+                                                        <input type="file" name="documentoCurp" class="form-control" accept=".pdf"> 
                                                         <div class="invalid-feedback">
                                                             El campo edad es obligatorio.
                                                         </div>
@@ -585,7 +585,7 @@
                                                     </div>
                                                 </div>
                                              
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <!--<div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Sedes <span style="color:red;">(*)</span></label>
                                                         <select id="sede" name="sede" class="form-control" onchange="modalCalendar();" required>
@@ -598,7 +598,7 @@
                                                             La sede es obligatoria.
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div>-->
                                                 <!--div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Día</label>
@@ -620,12 +620,12 @@
                                                     </div>
                                                 </div-->
 
-                                                <input type="hidden" name="fecha" id="fechaSeleccionada" required>
-                                                <input type="hidden" name="hora" id="horaSeleccionada" required>
+                                                <!--<input type="hidden" name="fecha" id="fechaSeleccionada" required>
+                                                <input type="hidden" name="hora" id="horaSeleccionada" required>-->
                                                     
                                                 <!-- Botón para abrir el modal -->
                                                    
-                                                <div style="display: flex; align-items: center; justify-content: center;">
+                                                <!--<div style="display: flex; align-items: center; justify-content: center;">
                                                     <button type="button" id="botonCalendar" class="btn btn-lg btn-custom-morado" data-toggle="modal" data-target="#calendarModal" disabled>
                                                         Seleccionar Fecha y Horario
                                                     </button>
@@ -648,14 +648,14 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div>-->
                                             </div>
 
-                                            <div id="resumenCita" class="col-xs-12 col-sm-12 col-md-12" style="margin-top: 10px; display: none;">
+                                            <!--<div id="resumenCita" class="col-xs-12 col-sm-12 col-md-12" style="margin-top: 10px; display: none;">
                                                 <div class="alert alert-info">
                                                     <strong>Cita seleccionada:</strong> <span id="fechaResumen"></span> a las <span id="horaResumen"></span>
                                                 </div>
-                                            </div>
+                                            </div>-->
 
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div align="center">
@@ -788,9 +788,9 @@
             });
         }*/
 
-        $(function(){
+       /* $(function(){
             $('#check_folio').on('change', validarcheckfolio);
-        })
+        })*/
 
         function validarcheckfolio(){
             tipo = document.getElementById("folio").style.display;
@@ -806,7 +806,7 @@
             
             if (tipo == "none") {
                 document.getElementById("folio").style.display = "block";
-                document.getElementById("agregar_persona").style.display = "none";
+                //document.getElementById("agregar_persona").style.display = "none";
                 /*document.getElementById("razon").style.display = "none";
                 document.getElementById("empresa").style.display = "none";
                 document.getElementById("primero").style.display = "none";

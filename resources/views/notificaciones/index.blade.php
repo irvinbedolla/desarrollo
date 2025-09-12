@@ -31,7 +31,7 @@
                                                         <td style="display: none;">{{$notificacion->id_solicitud}}</td>
                                                         <td>{{$notificacion->NUE}}</td>
                                                         <td>{{$notificacion->nombre}} {{$notificacion->primer_apellido}} {{$notificacion->segundo_apellido}}</td>
-                                                        <td>{{$notificacion->colonia}} {{$notificacion->calle}} {{$notificacion->n_ext}}</td>
+                                                        <td>Colonia {{$notificacion->colonia}} {{$notificacion->tipo_vialidad}} {{$notificacion->calle}} {{$notificacion->n_ext}} {{$notificacion->municipio_citado}}</td>
                                                         <td>{{$notificacion->estatus}}</td>
                                                         <td>{{$notificacion->tipo_notificacion}}</td>
                                                         @if($notificacion->estatus == "Pendiente" || $notificacion->estatus == "Sin asignar")
@@ -45,11 +45,11 @@
                                                                         <option value="{{$persona->id}}">{{$persona->name}}</option>
                                                                     @endforeach
                                                                 </select> 
-                                                            <td>    
-                                                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                                                    <button type="submit" class="btn btn-primary">Asignar</button>  
-                                                                </div> 
-                                                            </td>    
+                                                                <td>    
+                                                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                                                        <button type="submit" class="btn btn-primary">Asignar</button>  
+                                                                    </div> 
+                                                                </td>    
                                                             </form>
                                                         </td>
                                                         @else

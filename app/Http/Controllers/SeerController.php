@@ -38,6 +38,7 @@ use App\Models\SeerPerConciliador_old;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str; //Se utiliza en la imágenes que se suben en los citados
 use App\Models\Sedes;
 use App\Models\Usuarios;
 use Illuminate\Support\Facades\DB;
@@ -57,18 +58,20 @@ class SeerController extends Controller
         //Si es delegado le va salir todo lo de su delegacion de todos los roles
         if($userRole[0] == "Notificador"){
             $personas = null;
-            $estadisticas = SeerPerGeneral_old::where('seer_citados.id_notificador', $id)
-            ->join('seer_citados','seer_citados.id_solicitud','=','seer_general_old.id')
-            ->join('seer_solicitante','seer_solicitante.id_solicitud','=','seer_general_old.id')
+            $estadisticas = SeerPerGeneral::where('seer_citados.id_notificador', $id)
+            ->join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+            ->join('seer_solicitante','seer_solicitante.id_solicitud','=','seer_general.id')
+            ->join('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
             ->where('seer_citados.estatus', 'Pendiente')
-            ->select('seer_citados.id','seer_general_old.NUE','seer_solicitante.nombre as nombre_solicitado','seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido','seer_citados.colonia','seer_citados.estatus')
+            ->select('seer_citados.id','seer_general.NUE','seer_solicitante.nombre as nombre_solicitado','seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido',
+            'municipios.nombre as municipio_citado','seer_citados.colonia','seer_citados.calle','seer_citados.n_ext','seer_citados.estatus')
             ->get();
         }
         //Si es otro usuario le va mostrar unicamente las del ese usuario
         else if($userRole[0] == "Auxiliar" || $userRole[0] == "Excepcion"){
-            $personas     = SeerPerGeneral_old::where('fecha', $fecha_actual)->where('user_id', $id)
-            ->join('seer_auxiliares','seer_auxiliares.id_solicitud',"=",'seer_general_old.id')
-            ->select("seer_general_old.id","seer_general_old.fecha","seer_general_old.NUE","seer_general_old.solicitante","seer_auxiliares.tipo_solicitud","seer_general_old.validado_conciliador")
+            $personas     = SeerPerGeneral::where('fecha', $fecha_actual)->where('user_id', $id)
+            ->join('seer_auxiliares','seer_auxiliares.id_solicitud',"=",'seer_general.id')
+            ->select("seer_general.id","seer_general.fecha","seer_general.NUE","seer_general.solicitante","seer_auxiliares.tipo_solicitud","seer_general.validado_conciliador")
             ->get();
             $estadisticas = null;
             $asesorias    = SeerAsesoria::where('fecha', $fecha_actual)->where('id_usuario', $id)
@@ -78,10 +81,10 @@ class SeerController extends Controller
         }
         else if($userRole[0] == "Conciliador"){
             //solo le van aparecer solicitudes
-            $personas     = SeerPerGeneral_old::where('conciliador_id', $id)
-            ->join('seer_auxiliares','seer_auxiliares.id_solicitud',"=",'seer_general_old.id')
+            $personas = SeerPerGeneral::where('conciliador_id', $id)
+            ->join('seer_auxiliares','seer_auxiliares.id_solicitud',"=",'seer_general.id')
             ->where('seer_auxiliares.tipo_solicitud','Solicitud')
-            ->where('seer_general_old.validado_conciliador','Pendiente')
+            ->where('seer_general.validado_conciliador','Pendiente')
             ->get();
             $estadisticas = null;
         }
@@ -95,10 +98,10 @@ class SeerController extends Controller
             ->where('delegacion', $user["delegacion"])
             ->get();
 
-            $estadisticas = SeerPerGeneral_old::join('seer_citados','seer_citados.id_solicitud','=','seer_general_old.id')
-            ->join('seer_auxiliares','seer_auxiliares.id_solicitud','=','seer_general_old.id')
-            ->select('seer_citados.id','seer_general_old.NUE','seer_general_old.solicitante','seer_citados.nombre','seer_citados.direccion','seer_citados.estatus')
-            ->where('seer_general_old.delegacion', $user["delegacion"])
+            $estadisticas = SeerPerGeneral_old::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+            ->join('seer_auxiliares','seer_auxiliares.id_solicitud','=','seer_general.id')
+            ->select('seer_citados.id','seer_general.NUE','seer_general.solicitante','seer_citados.nombre','seer_citados.direccion','seer_citados.estatus')
+            ->where('seer_general.delegacion', $user["delegacion"])
             ->where('seer_citados.id_notificador', 0)
             ->where('seer_auxiliares.notificacion',"!=", "Trabajador")
             ->get();
@@ -2065,7 +2068,7 @@ class SeerController extends Controller
             'fecha_ingreso'             => 'required',
             'jornada'                   => 'required',
             'identificacion'            => 'required',
-            'documentoCurp'             => 'required',
+            //'documentoCurp'             => 'required',
             'documentoIdentificacion'   => 'required',
         ]);
         
@@ -2139,9 +2142,9 @@ class SeerController extends Controller
         //CURP
         $documento = $data["curp"]."_CURP.pdf";
         //dd($documento);
-        $path = Storage::putFileAs(
+        /*$path = Storage::putFileAs(
             'documentosSolicitud', $request->file('documentoCurp'), $documento
-        );
+        );*/
         //Acta de nacimiento
         if(isset($data["documentoIdentificacion"])){
             $documentoidentificacion = $data["curp"]."_Identificacion.pdf";
@@ -2156,7 +2159,7 @@ class SeerController extends Controller
             );
         }
 
-        $data_insert["documentoCurp"] = $documento;
+        //$data_insert["documentoCurp"] = $documento;
         $data_insert["documentoIdentificacion"] = $documentoidentificacion;
        
         SeerSolicitante::create($data_insert);
@@ -2168,7 +2171,20 @@ class SeerController extends Controller
 
     public function guardar_citado(Request $request){
         $data = $request->all();
+        $imagen_domicilio1 = "Sin documento";
+        $imagen_domicilio2 = "Sin documento";
 
+        if ($request->hasFile('foto1')) {
+            $imagen_domicilio1 = $data["id"] . "-domicilio_Citado1.jpg" . Str::random(8) . ".jpg";
+            Storage::putFileAs('documentosSolicitud', $request->file('foto1'), $imagen_domicilio1);
+        }
+        
+        if ($request->hasFile('foto2')) {
+            $imagen_domicilio2 = $data["id"] . "-domicilio_Citado2.jpg" . Str::random(8) . ".jpg";
+            Storage::putFileAs('documentosSolicitud', $request->file('foto2'), $imagen_domicilio2);
+        }
+        $foto1 = $imagen_domicilio1;
+        $foto2 = $imagen_domicilio2;
         //validando información
         $request->validate([
             'id'                => 'required',
@@ -2190,6 +2206,8 @@ class SeerController extends Controller
             'tipo_vialidad'     => $data["vialidad"],
             'referencia'        => $data["referencia"],
             'municipio_citado'  => $data["municipio_citado"],
+            'imagen_domicilio1' => $foto1,
+            'imagen_domicilio2' => $foto2, 
         );
         $data_insert["notificacion"] =  $data["notificacion"];
 
@@ -2449,7 +2467,21 @@ class SeerController extends Controller
         SeerCitados::where('id_solicitud',$data["id"])->delete();
         $cont = count($data["colonia_citado"]);
         for($i = 0; $i < $cont; $i++) {
-            
+
+            $foto1 = $data["imagen_domicilio1"][$i] ?? 'Sin documento';
+            $foto2 = $data["imagen_domicilio2"][$i] ?? 'Sin documento';
+        
+            if ($request->hasFile("foto1.$i")) {
+                $file = $request->file("foto1")[$i];
+                $foto1 = $data["id"] . "-citado_foto1_" . Str::random(8) . "." . $file->getClientOriginalExtension();
+                Storage::putFileAs('documentosSolicitud', $file, $foto1);
+            }
+        
+            if ($request->hasFile("foto2.$i")) {
+                $file = $request->file("foto2")[$i];
+                $foto2 = $data["id"] . "-citado_foto2_" . Str::random(8) . "." . $file->getClientOriginalExtension();
+                Storage::putFileAs('documentosSolicitud', $file, $foto2);
+            }
             $data_insert=array(
                 'id_solicitud'      => $data["id"],
                 'colonia'           => $data["colonia_citado"][$i],
@@ -2469,11 +2501,19 @@ class SeerController extends Controller
                 'calle2'            => $data["calle2_citado"][$i],
                 'curp'              => $data["curp_citado"][$i],
                 'rfc'               => $data["rfc_citado"][$i],
+                'imagen_domicilio1' => $foto1,
+                'imagen_domicilio2' => $foto2,
             );
             
             if(isset($data["traductor"])){
                 $data_insert["traductor"] =  1;
                 $data_insert["lenguaje"]  =  $data["lenguaje"];
+            }
+            if(isset($data["calle1"])){
+                SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle1' => $data["calle1_citado"] ]);
+            }
+            if(isset($data["calle2"])){
+                SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle2' => $data["calle2_citado"] ]);
             }
             SeerCitados::create($data_insert);
         }
@@ -2576,6 +2616,20 @@ class SeerController extends Controller
 
     public function agregar_citado_edicion(Request $request){
         $data = $request->all();
+        $imagen_domicilio1 = "Sin documento";
+        $imagen_domicilio2 = "Sin documento";
+
+        if ($request->hasFile('foto1')) {
+            $imagen_domicilio1 = $data["id"] . "-domicilio_Citado1.jpg";
+            Storage::putFileAs('documentosSolicitud', $request->file('foto1'), $imagen_domicilio1);
+        }
+        
+        if ($request->hasFile('foto2')) {
+            $imagen_domicilio2 = $data["id"] . "-domicilio_Citado2.jpg";
+            Storage::putFileAs('documentosSolicitud', $request->file('foto2'), $imagen_domicilio2);
+        }
+        $foto1 = $imagen_domicilio1;
+        $foto2 = $imagen_domicilio2;
 
         $data_insert=array(
             'id_solicitud'      => $data["id"],
@@ -2585,7 +2639,9 @@ class SeerController extends Controller
             'calle'             => $data["calle"],
             'tipo_vialidad'     => $data["vialidad"],
             'referencia'        => $data["referencia"],
-            'municipio_citado'  => $data["municipio_citado"]
+            'municipio_citado'  => $data["municipio_citado"],
+            'imagen_domicilio1' => $foto1,
+            'imagen_domicilio2' => $foto2,
         );
         $data_insert["notificacion"] =  $data["notificacion"];
 
@@ -2941,7 +2997,23 @@ class SeerController extends Controller
         $user = User::find($id_usuario);
         $roles = Role::pluck('name', 'name')->all();
         $userRole = $user->roles->pluck('name')->all();
-
+        $folio = SeerCitados::find($data["id"]);
+        
+        if ($request->hasFile('foto1')) {
+            $imagen_domicilio1 = $data["id"] . "-domicilio_Citado1.jpg";
+            Storage::putFileAs('documentosSolicitud', $request->file('foto1'), $imagen_domicilio1);
+            $foto1 = $imagen_domicilio1;
+        } else {
+            $foto1 = $folio->imagen_domicilio1;
+        }
+        
+        if ($request->hasFile('foto2')) {
+            $imagen_domicilio2 = $data["id"] . "-domicilio_Citado2.jpg";
+            Storage::putFileAs('documentosSolicitud', $request->file('foto2'), $imagen_domicilio2);
+            $foto2 = $imagen_domicilio2;
+        } else {
+            $foto2 = $folio->imagen_domicilio2;
+        }
         $data_update = SeerCitados::find($data["id"])
         ->update([
             'tipo_persona'             => $data["tipo"],
@@ -2960,6 +3032,8 @@ class SeerController extends Controller
             'calle'                    => $data["calle"],
             'municipio_citado'         => $data["municipio_citado"],
             'referencia'               => $data["referencia"],
+            'imagen_domicilio1'        => $foto1,
+            'imagen_domicilio2'        => $foto2,
         ]);
 
        
@@ -4503,19 +4577,19 @@ class SeerController extends Controller
     }
 
     public function cumplimiento_pagar_rati(Request $request){
-        /*$request->validate([
+        $request->validate([
             'id'              => 'required|exists:pago_solicitud,id',
             'observaciones'   => 'nullable|string',
             'forma_pago'      => 'required|string',
             'fecha_audiencia' => 'required|date',
             'hora_audiencia'  => 'required',
-        ]);*/
+        ]);
         $data = $request->all();
 
         Pagos::find($data["id"])->update(['estatus'  => "Pagado", 'observaciones' => $data["observaciones"],
-                                        /*'forma_pago'      => $data["forma_pago"],
+                                        'forma_pago'      => $data["forma_pago"],
                                         'fecha_audiencia' => $data["fecha_audiencia"],
-                                        'hora_audiencia'  => $data["hora_audiencia"]*/]);
+                                        'hora_audiencia'  => $data["hora_audiencia"]]);
 
         $pagos = Pagos::find($data["id"]);
         $id_solicitud = $pagos["id_solicitud"];
@@ -4875,6 +4949,15 @@ class SeerController extends Controller
                 'calle'             => $data["calle_citado"][$i],
                 'tipo_vialidad'     => $data["vialidad_citado"][$i],
                 'referencia'        => $data["referencia_citado"][$i],
+                'municipio_citado'  => $data["municipio_citado"][$i],
+                'tipo_persona'      => $data["tipo_persona_citado"][$i],
+                'nombre'            => $data["nombre_citado"][$i],
+                'primer_apellido'   => $data["primer_apellido"][$i],
+                'segundo_apellido'  => $data["segundo_apellido"][$i],
+                'curp'              => $data["curp_citado"][$i],
+                'rfc'               => $data["rfc_citado"][$i],
+                'imagen_domicilio1' => $foto1,
+                'imagen_domicilio2' => $foto2,
             );
             
             if(isset($data["rfc"])){

@@ -123,9 +123,9 @@
                                                     <tr>
                                                         <td style="display: none;">{{$estadistica->id}}</td>
                                                         <td>{{$estadistica->NUE}}</td>
-                                                        <td>{{$estadistica->solicitante}}</td>
+                                                        <td>{{$estadistica->nombre_solicitado}}</td>
                                                         <td>{{$estadistica->nombre}}</td>
-                                                        <td>{{$estadistica->direccion}}</td>
+                                                        <td>{{$estadistica->municipio_citado}} colonia {{$estadistica->colonia}}, {{$estadistica->calle}} {{$estadistica->n_ext}}</td>
                                                         <td>{{$estadistica->estatus}}</td>
                                                         <td><a class="btn btn-info" href="{{ route('seer.notificador', $estadistica->id) }}" onclick=nuevo_estadistica();>Atender</a></td>
                                                     </tr>

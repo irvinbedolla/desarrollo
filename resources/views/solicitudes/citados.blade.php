@@ -103,7 +103,7 @@
                                     </div>    
 
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                    <form class="needs-validation" novalidate method="POST" action="{{route('seer.citados')}}">
+                                    <form class="needs-validation" novalidate method="POST" action="{{route('seer.citados')}}" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $id }}">
                                         <div class="row" id="div_datos_citado">
@@ -247,7 +247,7 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Calle del citado <span style="color:red;">(*)</span></label>
+                                                    <label for="name">Nombre de la vialidad <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="calle" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo calle es obligatorio.
@@ -277,8 +277,8 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
-                                                    <label for="name">Entre calle del domicilio del citado <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="calle1" class="form-control" required> 
+                                                    <label for="name">Entre calle del domicilio (Opcional)</label>
+                                                    <input type="text" name="calle1" class="form-control"> 
                                                     <div class="invalid-feedback">
                                                         El campo entre calle es obligatorio.
                                                     </div>
@@ -287,8 +287,8 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
-                                                    <label for="name">y calle del domicilio del citado <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="calle2" class="form-control" required> 
+                                                    <label for="name">y calle del domicilio (Opcional)</label>
+                                                    <input type="text" name="calle2" class="form-control"> 
                                                     <div class="invalid-feedback">
                                                         El campo y calle es obligatorio.
                                                     </div>
@@ -330,10 +330,32 @@
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
                                                 <label for="floatingTextarea">Referencias del domicilio del citado <span style="color:red;">(*)</span></label>
-                                                    <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencia" required></textarea>
+                                                    <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencia" style="height: 100px;" required></textarea>
                                                     <div class="invalid-feedback">
                                                         El campo referencias es obligatorio.
                                                     </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-6 col-md-4">
+                                                <div class="form-group">
+                                                    <a href="https://www.google.com.mx/maps/@19.6837376,-101.1712,14z?entry=ttu&g_ep=EgoyMDI1MDgzMC4wIKXMDSoASAFQAw%3D%3D" target="_blank">
+                                                        <img src="{{ asset('public/assets/images/Google-Maps.png') }}" alt="Mi Imagen" width="150">
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-6 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Imagen 1 <span style="color:red;">(*)</span></label>
+                                                    <input type="file" class="form-control" name="foto1" accept="image/*" required>
+                                                    <div class="invalid-feedback">
+                                                        El campo imagen 1 es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-6 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Imagen 2 (Opcional)</label>
+                                                    <input type="file" class="form-control" name="foto2" accept="image/*">
                                                 </div>
                                             </div>
                                         </div>

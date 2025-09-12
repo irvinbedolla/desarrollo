@@ -28,14 +28,14 @@
                                     </button>
                                 </div>
                             @endif
-                            <form class="needs-validation novalidate" method="POST" action="{{route('actualizar_enlace')}}" enctype='multipart/form-data'>
+                            <form class="needs-validation novalidate" method="POST" action="{{route('actualizar_enlace')}}" enctype="multipart/form-data">
                                 @csrf    
                                 <input type="hidden" name="id" value="{{ $folio->id }}">
                                 
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
-                                            <label for="name">Nombre(s) del citado *</label>
+                                            <label for="name">Nombre(s)</label>
                                             <input type="text" name="nombre" class="form-control" value="<?=$folio["nombre"];?>" oninput="this.value = this.value.toUpperCase()" > 
                                             <div class="invalid-feedback">
                                                 El nombre es obligatorio.
@@ -45,7 +45,7 @@
                                             
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
-                                            <label for="name">Primer apellido *</label>
+                                            <label for="name">Primer apellido</label>
                                             <input type="text" name="primer_apellido" class="form-control" value="<?=$folio["primer_apellido"];?>" oninput="this.value = this.value.toUpperCase()" > 
                                             <div class="invalid-feedback">
                                                 El primer apellido es obligatorio.
@@ -55,7 +55,7 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
-                                            <label for="name">Segundo apellido *</label>
+                                            <label for="name">Segundo apellido</label>
                                             <input type="text" name="segundo_apellido" class="form-control" value="<?=$folio["segundo_apellido"];?>"oninput="this.value = this.value.toUpperCase()" > 
                                             <div class="invalid-feedback">
                                                 El segundo apellido es obligatorio.
@@ -75,13 +75,29 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
-                                            <label for="name">Tipo de Vialidad del citado *</label>
+                                            <label for="name">Tipo de Vialidad del citado</label>
                                             <select name="vialidad" class="form-control" required>
                                                 <option value="">SELECCIONE</option>
-                                                <option value="Calle" @php if($folio->tipo_vialidad === "Calle") echo "selected"  @endphp>CALLE</option>
-                                                    <option value="Avenida" @php if($folio->tipo_vialidad === "Avenida") echo "selected"  @endphp>AVENIDA</option>
-                                                    <option value="Calzada" @php if($folio->tipo_vialidad === "Calzada") echo "selected"  @endphp>CALZADA</option>
-                                                    <option value="Boulevard" @php if($folio->tipo_vialidad === "Boulevard") echo "selected"  @endphp>BOULEVARD</option>
+                                                <option value="CALLE"          @php if($folio->tipo_vialidad === "CALLE") echo "selected"  @endphp>Calle</option>
+                                                <option value="AVENIDA"        @php if($folio->tipo_vialidad === "AVENIDA") echo "selected"  @endphp>Avenida</option>
+                                                <option value="CALZADA"        @php if($folio->tipo_vialidad === "CALZADA") echo "selected"  @endphp>Calzada</option>
+                                                <option value="BOULEVARD"      @php if($folio->tipo_vialidad === "BOULEVARD") echo "selected"  @endphp>Boulevard</option>
+                                                <option value="AMPLIACIÓN"     @php if($folio->tipo_vialidad === 'AMPLIACIÓN') echo "selected"  @endphp >Ampliación</option>
+                                                <option value="ANDADOR"        @php if($folio->tipo_vialidad === 'ANDADOR') echo "selected"  @endphp >Andador</option>
+                                                <option value="AUTOPISTA"      @php if($folio->tipo_vialidad === 'AUTOPISTA') echo "selected"  @endphp >Autopista</option>
+                                                <option value="CALLEJÓN"       @php if($folio->tipo_vialidad === 'CALLEJÓN') echo "selected"  @endphp>Callejón</option>
+                                                <option value="CARRETERA"      @php if($folio->tipo_vialidad === 'CARRETERA') echo "selected"  @endphp>Carretera</option>
+                                                <option value="CERRADA"        @php if($folio->tipo_vialidad === 'CERRADA') echo "selected"  @endphp>Cerrada</option>
+                                                <option value="CIRCUITO"       @php if($folio->tipo_vialidad === 'CIRCUITO') echo "selected"  @endphp>Circuito</option>
+                                                <option value="CIRCUNVALACIÓN" @php if($folio->tipo_vialidad === 'CIRCUNVALACIÓN') echo "selected"  @endphp>Circunvalación</option>
+                                                <option value="CONTINUACIÓN"   @php if($folio->tipo_vialidad === 'CONTINUACIÓN') echo "selected"  @endphp>Continuación</option>
+                                                <option value="CORREDOR"       @php if($folio->tipo_vialidad === 'CORREDOR') echo "selected"  @endphp>Corredor</option>
+                                                <option value="DIAGONAL"       @php if($folio->tipo_vialidad === 'DIAGONAL') echo "selected"  @endphp>Diagonal</option>
+                                                <option value="EJE VIAL"       @php if($folio->tipo_vialidad === 'EJE VIAL') echo "selected"  @endphp>Eje vial</option>
+                                                <option value="PERIFÉRICO"     @php if($folio->tipo_vialidad === 'PERIFÉRICO') echo "selected"  @endphp>Periférico</option>
+                                                <option value="PROLONGACIÓN"   @php if($folio->tipo_vialidad === 'PROLONGACIÓN') echo "selected"  @endphp>Prolongación</option>
+                                                <option value="RETORNO"        @php if($folio->tipo_vialidad === 'RETORNO') echo "selected"  @endphp>Retorno</option>
+                                                <option value="VIADUCTO"       @php if($folio->tipo_vialidad === 'VIADUCTO') echo "selected"  @endphp>Viaducto</option>
                                                 </select>
                                             <div class="invalid-feedback">
                                                 El campo vialidad es obligatorio.
@@ -91,7 +107,7 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
-                                            <label for="name">Calle del citado *</label>
+                                            <label for="name">Nombre de la vialidad</label>
                                             <input type="text" name="calle" class="form-control" value="<?=$folio["calle"];?>"required> 
                                             <div class="invalid-feedback">
                                                 El campo calle es obligatorio.
@@ -101,7 +117,7 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
-                                            <label for="name">Colonia del citado *</label>
+                                            <label for="name">Colonia</label>
                                             <input type="text" name="colonia" class="form-control" value="<?=$folio["colonia"];?>"required> 
                                             <div class="invalid-feedback">
                                                 El campo colonia es obligatorio.
@@ -111,7 +127,7 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
-                                            <label for="name">Código Postal del citado *</label>
+                                            <label for="name">Código Postal</label>
                                             <input type="text" name="cp" class="form-control" value="<?=$folio["cp"];?>" minlength="5" maxlength="5" required> 
                                             <div class="invalid-feedback">
                                                 El campo Código Postal es obligatorio.
@@ -121,7 +137,7 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
-                                            <label for="name">Entre calle del domicilio del citado</label>
+                                            <label for="name">Entre calle del domicilio</label>
                                             <input type="text" name="calle1" class="form-control" value="<?=$folio["calle1"];?>">
                                             <div class="invalid-feedback">
                                                 El campo calle es obligatorio.
@@ -131,7 +147,7 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
-                                            <label for="name">y calle del domicilio del citado</label>
+                                            <label for="name">y calle del domicilio</label>
                                             <input type="text" name="calle2" class="form-control" value="<?=$folio["calle2"];?>"> 
                                             <div class="invalid-feedback">
                                                 El campo calle es obligatorio.
@@ -141,7 +157,7 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
-                                            <label for="name">Núm ext. del citado</label>
+                                            <label for="name">Núm. ext.</label>
                                             <input type="text" name="exterior" class="form-control" value="<?=$folio["n_ext"];?>" required> 
                                             <div class="invalid-feedback">
                                                 El campo núm. ext. es obligatorio.
@@ -151,7 +167,7 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
-                                            <label for="name">Núm int. del citado</label>
+                                            <label for="name">Núm. int.</label>
                                             <input type="text" name="interior" class="form-control" value="<?=$folio["n_int"];?>" > 
                                             <div class="invalid-feedback">
                                                 El campo núm. int. es obligatorio.
@@ -160,7 +176,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-3">
                                         <div class="form-group">
-                                            <label for="password">Municipio del citado</label>
+                                            <label for="password">Municipio</label>
                                             <select class="form-control" name="municipio_citado" id="municipio_citado">
                                                 @foreach($municipios as $mun)
                                                     <option value="{{$mun['id']}}" {{ $folio['municipio_citado'] == $mun['id'] ? "selected" : '' }}>{{$mun['nombre']}}</option>
@@ -198,13 +214,34 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
-                                            <label for="floatingTextarea">Referencias del domicilio del citado</label>
+                                            <label for="floatingTextarea">Referencias del domicilio</label>
                                             <textarea class="form-control" placeholder="" name="referencia"><?=$folio["referencia"];?></textarea>
                                             <div class="invalid-feedback">
                                                 El campo referencias es obligatorio.
                                             </div>
                                         </div>
-                                    </div>  
+                                    </div> 
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <label for="password">Imagen 1</label><br>
+                                        @if (!empty($folio->imagen_domicilio1) && $folio->imagen_domicilio1 !== 'Sin documento')
+                                            <a target='_blank' href="{{ asset('storage/app/documentosSolicitud/'.$folio->imagen_domicilio1) }}">VER IMAGEN</a>
+                                        @else
+                                            <span class="text-muted">No se subió imagen</span>
+                                        @endif
+                                        <input type="file" name="foto1" accept="image/*" class="form-control">
+                                        <input type="hidden" name="imagen_domicilio1" value="{{ $folio->imagen_domicilio1 }}">
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <label for="password">Imagen 2</label><br>
+                                        @if (!empty($folio->imagen_domicilio2) && $folio->imagen_domicilio2 !== 'Sin documento')
+                                            <a target='_blank' href="{{ asset('storage/app/documentosSolicitud/'.$folio->imagen_domicilio2) }}">VER IMAGEN</a><br>
+                                        @else
+                                            <span class="text-muted">No se subió imagen</span>
+                                        @endif
+                                        <input type="file" name="foto2" accept="image/*" class="form-control">
+                                        <input type="hidden" name="imagen_domicilio2" value="{{ $folio->imagen_domicilio2 }}">
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-12"><br></div>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <button type="submit" class="btn btn-info">Guardar</button>
                                         <a class="btn btn-info" href="{{ route('notificaciones')}}" onclick=consultar_estadistica();>Regresar</a>

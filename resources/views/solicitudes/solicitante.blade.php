@@ -461,7 +461,7 @@
                                                 <h3 class="text-center" style="color:black">Documentos</h3>
                                             </div>
                                             
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <!--<div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label>CURP/No. de Migración <span style="color:red;">(*)</span></label>
                                                     <input type="file" name="documentoCurp" class="form-control" accept=".pdf" required>
@@ -469,7 +469,7 @@
                                                         El campo curp es obligatorio.
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div>-->
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
                                                     <h4 class="text-center">En caso de ser mayor de edad subir su identificación y en caso de ser menor su identificación es su Acta de Nacimiento</h4>
