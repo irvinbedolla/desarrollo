@@ -17,6 +17,7 @@ use App\Models\Poder;
 use App\Models\Pagos; 
 use App\Models\Concepto; 
 use App\Models\Municipios;
+use App\Models\Deducciones;
 
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
@@ -27,6 +28,8 @@ use Illuminate\Support\Facades\Storage;
 use NumberToWords\NumberToWords; // para convertir números(cantidades) a letras
 use DateTime;
 use Illuminate\Support\Facades\Log;
+
+
 class TurnosController extends Controller 
 {
     public function destroy($id)
@@ -1502,6 +1505,18 @@ class TurnosController extends Controller
         else{
             return back()->withErrors('Debes agregar por lo menos un concepto de pago.');
         }
+        if(isset($data["descripcion_deduccion"])){
+            $cont = count($data["descripcion_deduccion"]);
+            for($i = 0; $i < $cont; $i++) {
+                $data_deduccion = [
+                    'id_solicitud'  => $data["id"], 
+                    'monto'         => $data["monto_deduccion"][$i], 
+                    'descripcion'   => $data["descripcion_deduccion"][$i],
+                    'tipo_pago'     => "Ratificacion"
+                ];
+                Deducciones::create($data_citado);
+            }
+        }
 
         if($conteo >= 2){
             $estatus = "Concluida Pagos";
@@ -1804,7 +1819,7 @@ class TurnosController extends Controller
         $documento_general = Turnos::find($id); 
         //Documentos del abogado y citados
         $documento_abogado = Poder::find($documento_general["idAbogado"]);
-        
+
        return view('ratificaciones/verDocumentos',compact('documento_general','documento_abogado'));
     }
 

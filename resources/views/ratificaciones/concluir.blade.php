@@ -175,15 +175,21 @@
                                         
                                         <div id="newRow"></div>
 
+
+                                        <div class="col-xs-12 col-sm-6 col-md-12"><br>
+                                            <button id="addRetencion" type="button" class="btn btn-info">Agregar deducción</button>
+                                        </div>
+                                        
+                                        <div id="newRowDeduccion"></div>
+
                                         <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div id="div_pagos_diferidos1"><br><br>
                                                 <button id="addPago" type="button" class="btn btn-info">Agregar Pago</button>
                                             </div>
                                         </div>
-
                                         <div id="newRowaPago"></div>
 
-                                        <div id="div_pagos_diferidos"></div>
+                                       
 
                                         
                                         <div class="col-xs-12 col-sm-12 col-md-12">
@@ -234,7 +240,7 @@
 
 
     <script>
-       document.getElementById("div_pagos_diferidos").style.display = "none";
+       //document.getElementById("div_pagos_diferidos").style.display = "none";
        document.getElementById("dias").style.display = "none";
        
         $( document ).ready(function() {
@@ -340,7 +346,55 @@
         $(document).on('click', '.removeRow2', function () {
             $(this).closest('.col-xs-12').remove();
         });
+
+
+        // Agregar pago
+        $("#addRetencion").click(function () {
+                var html = '';
+                html += '<div id="inputFormRow2" class="row">';
+                
+                //TIPO DE PAGO
+                html +='<div class="col-xs-12 col-sm-12 col-md-12">';
+                //html +='<div class="form-group">';
+
+                    //DESCRIPCIÓN DE PAGO
+                    html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                    html += '<div class="form-group">';
+                    html += '<label for="password">Descripción</label>';
+                    html +='<input type="text" class="form-control" name="descripcion_deduccion[]"  oninput="this.value = this.value.toUpperCase()" >';
+                    html += '<div class="invalid-feedback">';
+                    html += 'La Dirección es obligatoria.';
+                    html += '</div> </div> </div>';
+
+                    
+
+                    //MONTO A PAGAR
+                    html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                    html += '<div class="form-group">';
+                    html += '<label for="password">Monto a pagar</label>';
+                    html +='<input type="text" class="form-control" name="monto_deduccion[]"  oninput="this.value = this.value.toUpperCase()" >';
+                    html += '<div class="invalid-feedback">';
+                    html += 'La Dirección es obligatoria.';
+                    html += '</div> </div> </div>';
+
+                    html += '<div class="input-group-append">';
+                    html += '<button class="removeRow3 btn btn-danger" type="button">Borrar</button>';
+                    html += '</div>';
+
+                    
+                html += '</div>';
+
+            $('#newRowDeduccion').append(html);
         });
+
+        // Borrar pago
+        $(document).on('click', '.removeRow3', function () {
+            $(this).closest('.col-xs-12').remove();
+        });
+
+        });
+
+        
 
         function mostrar_resolicion() {
             document.getElementById("justificacion").style.display = "block";
