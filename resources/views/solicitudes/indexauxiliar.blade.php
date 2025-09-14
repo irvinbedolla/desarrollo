@@ -46,8 +46,8 @@
                                                         @endif
                                                     </td>
                                                     <td>
+                                                        <button type="button" class="btn btn-warning open-expediente-modal" data-bs-toggle="modal" data-bs-target="#expediente" data-id="{{ $solicitud->id }}">Subir Documento</button>
                                                         @if($solicitud->estatus == "Conluida")
-                                                            <div class="dropdown">
                                                             <div class="dropdown">
                                                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                                                     Documentos
@@ -140,6 +140,36 @@
         </div>
     </form>
 </div>
+<!-- Modal Expediente -->
+<div class="modal fade" id="expediente" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <form  class='needs-validation novalidate' method='POST' action="{{ route('subir_expediente_ratificacion') }}" enctype="multipart/form-data">
+        @csrf
+        <input type="hidden" name="audiencia_id" id="expediente_audiencia_id">
+        <div class="modal-dialog modal-l">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Subir expediente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label>Documento en PDF</label>
+                            <input type="file" name="documentoExpediente" class="form-control" accept=".pdf" required>
+                            <div class="invalid-feedback">
+                                El doceumento es obligatorio.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar</button> 
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 <div id="nuevo_poder" style ="display: none;">
     <div>.</div>
     <div class="loader"></div>
@@ -151,6 +181,12 @@
             const id = $(this).data('id'); // Obtiene el valor de data-id
             document.getElementById('modal-id').value = id;
         });
+        $('.open-expediente-modal').click(function () {
+                console.log("modal");
+                const id = $(this).data('id');
+                
+                $('#expediente_audiencia_id').val(id);
+            });
     </script>
     <script src="../public/assets/js/poderes/general.js"></script>
 @endsection

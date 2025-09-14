@@ -4546,7 +4546,7 @@ class SeerController extends Controller
             ->where('pago_solicitud.id',$id)
             ->select('pago_solicitud.id','turnos.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
             ->get();
-            return view('/cumplimientos/pagar',compact('solicitudes'));
+            return view('/cumplimientos/pagar_ratificacion',compact('solicitudes'));
         }
         else if($tipo == 2){
             $solicitudes = Pagos::join('seer_general','seer_general.id',"=",'pago_solicitud.id_solicitud')
@@ -4576,6 +4576,13 @@ class SeerController extends Controller
         }
     }
 
+    public function consulta_cumplimiento_ratificacion($id){
+        $solicitudes = Pagos::join('turnos','turnos.id',"=",'pago_solicitud.id_solicitud')
+            ->where('pago_solicitud.id',$id)
+            ->select('pago_solicitud.id','turnos.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
+            ->get();
+            return view('/cumplimientos/pagarratificacion',compact('solicitudes'));
+    }
     public function cumplimiento_pagar_rati(Request $request){
         $request->validate([
             'id'              => 'required|exists:pago_solicitud,id',

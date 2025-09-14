@@ -52,6 +52,17 @@
                                             <td>{{$documento_abogado->anexo_documeto}}</td>
                                             <td><a target='_blank' href="../storage/app/documentos_abogados/{{$documento_abogado->anexo_documeto}}">PDF</a></td>
                                         </tr>
+                                        @if(count($documento_subidos) != 0)
+                                            @foreach($documento_subidos as $solicitud)
+                                                <tr>
+                                                    <td colspan="3" style="text-align: center; background-color:#7c7c7b">DOCUMENTOS CARGADOS</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">{{$solicitud->nombre_documento}}</td> 
+                                                    <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitud->nombre_documento}}">PDF</a></td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
                                     </tbody>
                                 </table>
                             </div>

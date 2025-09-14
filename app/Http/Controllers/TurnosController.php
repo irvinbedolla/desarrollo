@@ -19,6 +19,7 @@ use App\Models\Concepto;
 use App\Models\Municipios;
 use App\Models\Estados;
 use App\Models\Deducciones;
+use App\Models\DocumentosSolicitud;
 
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +30,6 @@ use Illuminate\Support\Facades\Storage;
 use NumberToWords\NumberToWords; // para convertir números(cantidades) a letras
 use DateTime;
 use Illuminate\Support\Facades\Log;
-
 
 class TurnosController extends Controller 
 {
@@ -496,7 +496,9 @@ class TurnosController extends Controller
     public function store_publico(Request $request)
     {
         $data = $request->all();
-        //dd($data);
+        //dd("llego");
+        $fecha_actual = date('Y-m-d');
+        $hora_actual =  date("H:i:s");
         if(isset($data["folio"])){
             request()->validate([
                 'folio'             => 'required',
@@ -506,7 +508,6 @@ class TurnosController extends Controller
                 'trabajador_edad'   => 'required',
                 'trabajador_sexo'   => 'required',
                 'trabajador_curp'   => 'required',
-                //'documentoCurp'     => 'required',
                 'tipo_identificacion'=> 'required',
                 'documentoidentificacion'=> 'required',
                 'fecha_inicio'      => 'required',
@@ -515,10 +516,10 @@ class TurnosController extends Controller
                 'monto'             => 'required',
                 'frecuencia'        => 'required',
                 'tipo_pago'         => 'required',
-                'sede'              => 'required',
+                //'sede'              => 'required',
                 'dias'              => 'required',
-                'fecha'             => 'required',
-                'hora'              => 'required',
+                //'fecha'             => 'required',
+                //'hora'              => 'required',
                 'JLCA'              => 'required',
                 'motivo'            => 'required',
                 'salario'           => 'required',
@@ -530,47 +531,7 @@ class TurnosController extends Controller
                 'cp'                => 'required',
             ], $data);
         }
-        else{
-            request()->validate([
-                'empresa'           => 'required',
-                'primero_empresa'   => 'required',
-                'segundo_empresa'   => 'required',
-                'nombre_empresa'    => 'required',
-                'curp'              => 'required',
-                'email'             => 'required',
-                'telefono'          => 'required',
-                'documentoIne'      => 'required',
-                'documentoPoder'    => 'required',
-                'primero_trabajador'=> 'required',
-                'segundo_trabajador'=> 'required',
-                'trabajador'        => 'required',
-                'trabajador_edad'   => 'required',
-                'trabajador_sexo'   => 'required',
-                'trabajador_curp'   => 'required',
-                //'documentoCurp'     => 'required',
-                'tipo_identificacion'=> 'required',
-                'documentoidentificacion'=> 'required',
-                'fecha_inicio'      => 'required',
-                'fecha_termino'     => 'required',
-                'categoria'         => 'required',
-                'monto'             => 'required',
-                'frecuencia'        => 'required',
-                'tipo_pago'         => 'required',
-                'sede'              => 'required',
-                'dias'              => 'required',
-                'hora'              => 'required',
-                'JLCA'              => 'required',
-                'motivo'            => 'required',
-                'salario'           => 'required',
-                'municipio_rat'     => 'required',
-                'tipo_vialidad'     => 'required',
-                'vialidad_calle'    => 'required',
-                'colonia'           => 'required',
-                'N_Ext'             => 'required',
-                'cp'                => 'required',
-            ], $data);
-        }
-
+        /*
         // Validar que no se excedan las 2 citas por hora
         $citasExistentes = Turnos::where('fecha', $data["fecha"])
             ->where('hora', $data["hora"])
@@ -582,13 +543,14 @@ class TurnosController extends Controller
                 ->with('error', 'Ya se han agendado las 2 citas máximas para este horario. Por favor selecciona otro.')
                 ->withInput();
         }
-
+        */
         //Buscar la proxima fecha disponible de la sede
         $numero_consecutivo = 0;
         $consecutivo  = Turnos::latest('id')
-        ->where('fecha', $data["fecha"])
+        ->where('fecha', $fecha_actual)
         ->first();
         
+
         if(empty($consecutivo)){
             $numero_consecutivo = 1;
         }
@@ -602,6 +564,16 @@ class TurnosController extends Controller
             if(!isset($representante)){
                 return back()->with('error', 'El representante legal no existe');
             }
+            if($representante["tipo"] == "Fisica"){
+                $email  = $representante["email_patronal"];
+                $telefono = $representante["telefono_patronal"];
+                $curp   = $representante["curp_patronal"];
+            }
+            else{
+                $email  = $representante["correo_representante"];
+                $telefono = $representante["numero_representante"];
+                $curp   = $representante["curp_representante"];
+            }
             $data_insertar= array(
                 'consecutivo'       => $numero_consecutivo,    
                 'empresa'           => $representante["nombres_patronal"],
@@ -614,7 +586,7 @@ class TurnosController extends Controller
                 'edad'              => $data["trabajador_edad"],
                 'sexo'              => $data["trabajador_sexo"],
                 'trabajador_curp'   => $data["trabajador_curp"],
-                'documentoCurp'     => $data["documentoCurp"],
+                //'documentoCurp'     => $data["documentoCurp"],
                 'tipo_identificacion'=> $data["tipo_identificacion"],
                 'documentoidentificacion'=> $data["documentoidentificacion"],
                 'fecha_inicio'      => $data["fecha_inicio"],
@@ -624,21 +596,19 @@ class TurnosController extends Controller
                 'monto'             => $data["monto"],
                 'frecuencia'        => $data["frecuencia"],
                 'dias'              => $data["dias"],
-                'fecha'             => $data["fecha"],
-                'hora'              => $data["hora"],
-                'hora_fin'          => $data["hora"],
                 'auxiliar'          => 0,
                 'lugar_auxiliar'    => "Recepción",
-                'delegacion'        => $data["sede"],
-                'estatus'           => 'Pendiente',
+                //'delegacion'        => $data["sede"],
+                'delegacion'        => 'Morelia',
+                'estatus'           => 'Confirmado',
                 'exepcion'          => 'No',
                 'ine'               => $representante["ineDocumento	"],
                 'representacion'    => $representante["representacionDocumento"],
-                'email'             => $representante["email_patronal"],
-                'telefono'          => $representante["telefono_patronal"],
+                'email'             => $email,
+                'telefono'          => $telefono,
                 'JLCA'              => $data["JLCA"],
                 'motivo'            => $data["motivo"],
-                'curp_solicitante'  => $representante["curp_patronal"],
+                'curp_solicitante'  => $curp,
                 'salario'           => $data["salario"],
                 'municipio_rat'     => $data["municipio_rat"],
                 'tipo_vialidad'     => $data["tipo_vialidad"],
@@ -646,11 +616,13 @@ class TurnosController extends Controller
                 'colonia'           => $data["colonia"],
                 'num_ext'           => $data["N_Ext"],
                 'codigo_postal'     => $data["cp"],
-                'idAbogado'         => $data["folio"]
+                'idAbogado'         => $data["folio"],
+                'fecha'             => $fecha_actual,
+                'hora'              => $hora_actual,
+                'hora_fin'          => $hora_actual,
             ); 
             $nombre = $data["trabajador"];
-            $email  = $representante["email_patronal"];
-            $curp   = $representante["curp_patronal"];
+            
         }
         else{
             $data_insertar= array(
@@ -762,11 +734,12 @@ class TurnosController extends Controller
             );
         }
         
+        /*
         $trabajador_curp = $data["trabajador_curp"].".pdf";
         $path = Storage::putFileAs(
             'documentos_ratificacion', $request->file('documentoCurp'), $trabajador_curp
         );
-
+        */
         $trabajador_identificacion  = $data["trabajador_curp"]."_IDENTIFICACION.pdf";
         $path = Storage::putFileAs(
             'documentos_ratificacion', $request->file('documentoidentificacion'), $trabajador_identificacion
@@ -774,7 +747,7 @@ class TurnosController extends Controller
 
         $data_insertar["ine"]                       = $nombre_ine;
         $data_insertar["representacion"]            = "";   
-        $data_insertar["documentoCurp"]             = $trabajador_curp;
+        //$data_insertar["documentoCurp"]             = $trabajador_curp;
         $data_insertar["documentoidentificacion"]   = $trabajador_identificacion;  
 
 
@@ -788,9 +761,7 @@ class TurnosController extends Controller
         if(isset($data["N_Int"])){
             $data_insert["num_int"] =  $data["N_Int"];
         }
-       // dd($data_insert);
-        $data_insertar['fecha'] = now()->toDateString();
-        $data_insertar['hora']  = now()->format('H:i:s');
+        
         //Se van insetar todos los datos
         Turnos::create($data_insertar);
        
@@ -822,6 +793,23 @@ class TurnosController extends Controller
 
         return back()->with('success', 'Debes ingresar a '. 
         ' http://siconcilio.cclmichoacan.gob.mx/ en el apartado de buzón electrónico con'.$mensaje  ); 
+    }
+
+    public function pagoA_ratificacion(Request $request){
+        $data = $request->all();
+        Pagos::find($data["id"])
+        ->update(['estatus'  => "Pagado", 'observaciones' => $data["observaciones"]]);
+
+        $pagos = Pagos::find($data["id"]);
+        $id_solicitud = $pagos["id_solicitud"];
+        $faltantes =  Pagos::where('id_solicitud',$id_solicitud)->where('estatus',"Pendiente")->get();
+
+        if(count($faltantes) == 0){
+            Turnos::find($id_solicitud)
+            ->update(['estatus' => "Conluida"]);
+        }
+
+        return redirect()->route('cumplimiento_actual');
     }
 
     public function obtenerHorario($fecha_revisar,$sede){
@@ -1616,24 +1604,6 @@ class TurnosController extends Controller
         return view('/ratificaciones/pagos',compact('id','pagos'));
     }
 
-    public function pagoA_ratificacion(Request $request){
-        $data = $request->all();
-
-        Pagos::find($data["id"])
-        ->update(['estatus'  => "Pagado", 'observaciones' => $data["observaciones"]]);
-
-        $pagos = Pagos::find($data["id"]);
-        $id_solicitud = $pagos["id_solicitud"];
-        $faltantes =  Pagos::where('id_solicitud',$id_solicitud)->where('estatus',"Pendiente")->get();
-
-        if(count($faltantes) == 0){
-            Turnos::find($id_solicitud)
-            ->update(['estatus' => "Conluida"]);
-        }
-
-        return redirect()->route('ratificacion_atender');
-    }
-
     public function pagoR_ratificacion($id){
         $pagos = Pagos::find($id);
         
@@ -1881,8 +1851,9 @@ class TurnosController extends Controller
         $documento_general = Turnos::find($id); 
         //Documentos del abogado y citados
         $documento_abogado = Poder::find($documento_general["idAbogado"]);
+        $documento_subidos = DocumentosSolicitud::where('id_solicitud',$id)->get();
 
-       return view('ratificaciones/verDocumentos',compact('documento_general','documento_abogado'));
+       return view('ratificaciones/verDocumentos',compact('documento_general','documento_abogado','documento_subidos'));
     }
 
     public function ratificacion_confirmadas(){
@@ -1902,5 +1873,40 @@ class TurnosController extends Controller
 
         return redirect()->route('cumplimiento_actual');
         //return redirect()->route('ratificacion_atender'); 
+    }
+
+    //Guarda el expediente
+    public function guardar_expediente(Request $request){
+        $data = $request->all();
+        $id = auth()->user()->id;
+        $user = User::find($id);
+
+        $audienciaId = $data['audiencia_id']; 
+        $solicitud = Turnos::find($audienciaId);
+
+        if ($request->hasFile('documentoExpediente')) {
+            $file = $request->file('documentoExpediente');
+            //dd($file->getClientOriginalName());
+            if ($file->isValid()) {
+                $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $documentoExpediente = $filename . "_Expediente." . $file->getClientOriginalExtension();
+        
+                $path = Storage::putFileAs(
+                    'documentosSolicitud', $file, $documentoExpediente
+                );
+
+                $data_insertar= array(
+                    'id_solicitud'      => $data["audiencia_id"],
+                    'nombre_documento'  => $documentoExpediente,
+                    'tipo_documentos'   => $file->getClientOriginalName(),
+                    'tramite'           => "Ratificacion", 
+                );
+                DocumentosSolicitud::create($data_insertar);
+
+            } else {
+                return back()->withErrors(['documentoExpediente' => 'Archivo no válido.']);
+            }
+        }
+        return back()->with('success', 'Expediente cargado correctamente.');
     }
 }

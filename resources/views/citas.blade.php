@@ -755,9 +755,9 @@
 
     @yield('scripts')
     <script>
-        document.getElementById("folio").style.display = "none";
+        /*document.getElementById("folio").style.display = "none";
         document.getElementById("agregar_persona").style.display = "block";
-        /*document.getElementById("empresa").style.display = "block";
+        document.getElementById("empresa").style.display = "block";
         document.getElementById("primero").style.display = "block";
         document.getElementById("segundo").style.display = "block";
         document.getElementById("nombre").style.display = "block";
@@ -805,7 +805,7 @@
             };
             
             if (tipo == "none") {
-                document.getElementById("folio").style.display = "block";
+                //document.getElementById("folio").style.display = "block";
                 //document.getElementById("agregar_persona").style.display = "none";
                 /*document.getElementById("razon").style.display = "none";
                 document.getElementById("empresa").style.display = "none";
@@ -828,8 +828,8 @@
                 }
             }
             else{
-                document.getElementById("folio").style.display = "none";
-                document.getElementById("agregar_persona").style.display = "block";
+                //document.getElementById("folio").style.display = "none";
+                //document.getElementById("agregar_persona").style.display = "block";
                 /*document.getElementById("empresa").style.display = "block";
                 document.getElementById("primero").style.display = "block";
                 document.getElementById("segundo").style.display = "block";
