@@ -76,9 +76,9 @@
                     </table>
                 </div><br><br><br><br>
                 <p><center><b>
-                    CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br><br>
+                    CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br><br><br>
                     ACTA DE AUDIENCIA DE CONCILIACIÓN     
-                </b></center></p>  
+                </b></center></p> <br><br> 
 
                 <p>
                     En el <b>Centro de Conciliación Laboral del Estado de Michoacán de Ocampo con sede en {{ $solicitud->delegacion }}</b>, siendo las <b>{{ $solicitud->hora }} horas del
@@ -216,7 +216,7 @@
                     </table>
                     
                     <!--[RESOLUCION_PROPUESTAS_TRABAJADORES] -->
-                    <b>{{ $solicitud->resolucion_trabajadores }}<br><br></b>
+                    <b>{{ $solicitud->resolucion_trabajadores }}</b>
 
                     <!--[RESOLUCION_JUSTIFICACION_PROPUESTA]-->
                     <b>{{ $solicitud->resolucion_justificacion }}</b><br><br>

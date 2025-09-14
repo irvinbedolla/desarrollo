@@ -79,7 +79,7 @@
                             <td>{{ $solicitud->NUE }} </td>
                         </tr>   
                     </table>
-                </div><br><br><br><br><br>
+                </div><br><br><br><br>
                 <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</center><br>
                    <!-- SOLICITUD RATIFICACIÓN DE CONVENIO TERMINACIÓN VOLUNTARIA <br><br>
                     SOLICITANTES:<br>
@@ -97,11 +97,16 @@
 
                 <p><center><b>D E C L A R A C I O N E S:</b></center></p><br>
 
-                <p><b>PRIMERA.</b> La parte <b>TRABAJADORA</b> se identifica con {{ $solicitud->identificacion }} expedida a su favor por <b>Instituto Nacional Electoral</b> y declara ser una persona 
+                <p><b>PRIMERA.</b> La parte <b>TRABAJADORA</b> se identifica con <b>INE{{ $solicitud->identificacion }}</b> expedida a su favor por <b>Instituto Nacional Electoral</b> y declara ser una persona 
                     mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p> 
 
-                <p><b>SEGUNDA.</b> Declara ---NOMBRE DE REPRESENTANTE LEGAL--- quien se identifica con {{ $solicitud->identificacion }} expedida a su favor por <b>Instituto Nacional Electoral</b>, así como con ---descripción del documento---.</p>  
-
+                <p><b>SEGUNDA.</b> 
+                @if(is_null($abogado->nombre_representante) && is_null($abogado->primer_apellido_representante) && is_null($abogado->segundo_apellido_representante))
+                    Declara a <b>{{$abogado->nombres_patronal}} {{$abogado->primer_apellido_patronal}} {{$abogado->segundo_apellido_patronal}}</b> quien se identifica con 
+                    <b>INE{{ $solicitud->identificacion }}</b> expedida a su favor por <b>Instituto Nacional Electoral</b>, y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p>  
+                @else Declara a <b>{{$abogado->nombre_representante}} {{$abogado->primer_apellido_representante}} {{$abogado->segundo_apellido_representante}}</b> quien se identifica con 
+                    <b>INE{{ $solicitud->identificacion }}</b> expedida a su favor por <b>Instituto Nacional Electoral</b>, así como con <b>{{$abogado->descipcion_poder}}</b>.</p>  
+                @endif
                 <b>TERCERA.</b> Declara la parte <b>TRABAJADORA</b>:
                     <p class="sangria">
                         a) Que fue contratada por la parte <b>EMPLEADORA</b> desde el <b>{{ \Carbon\Carbon::parse($solicitud->fecha_inicio)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, para prestar sus 
@@ -160,16 +165,16 @@
                             expresa que no existió relación laboral alguna con otras personas, incluido el personal que fungía como superior jerárquico en el centro de trabajo donde la parte <b>TRABAJADORA</b> 
                             desempeñaba sus labores.<br><br>
                                     
-                        <b>TERCERA</b>. La <b>EMPLEADORA</b> otorgará en favor de la <b>TRABAJADORA</b> el pago acordado conforme a las disposiciones de la Ley Federal del Trabajo y respetando los derechos 
+                        <b>TERCERA</b>. La parte <b>EMPLEADORA</b> otorgará en favor de la parte <b>TRABAJADORA</b> el pago acordado conforme a las disposiciones de la Ley Federal del Trabajo y respetando los derechos 
                             consagrados en el mismo ordenamiento legal. <br>
 
-                        Asimismo, la <b>TRABAJADORA</b> manifiesta su entera conformidad y la aceptación de éste, así como la forma en que se obtuvieron los conceptos que se describen en la cláusula <b>QUINTA</b>.<br><br>
+                        Asimismo, la parte <b>TRABAJADORA</b> manifiesta su entera conformidad y la aceptación de éste, así como la forma en que se obtuvieron los conceptos que se describen en la cláusula <b>QUINTA</b>.<br><br>
                         
                         <b>CUARTA</b>. La parte <b>TRABAJADORA</b> manifiesta que durante el tiempo que laboró para la parte <b>EMPLEADORA</b>, se cubrió en tiempo y forma el pago su salario; cada una de las 
                             prestaciones ordinarias y extraordinarias y en especie que conforme a derecho le corresponden, así mismo como cualquier riesgo o accidente de trabajo que haya sufrido. Por lo anterior, 
                             la parte <b>EMPLEADORA</b> no adeuda pago de concepto alguno.<br><br>
 
-                        <b>QUINTA</b>. La <b>TRABAJADORA</b> recibirá por parte de la <b>EMPLEADORA</b> la cantidad de <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }} M.N</b>, 
+                        <b>QUINTA</b>. La parte <b>TRABAJADORA</b> recibirá de la parte <b>EMPLEADORA</b> la cantidad de <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }} M.N</b>, 
                             conforme a los siguientes conceptos:</p>
                         <table class="table table-bordered">
                             <thead>

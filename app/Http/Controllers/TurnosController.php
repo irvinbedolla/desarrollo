@@ -112,7 +112,7 @@ class TurnosController extends Controller
             ->orderBy('id', 'asc')->first();
             //Si hay fila se va asiganar el primero de la fila al axulilar libre
             if(!empty($ocupados)){
-                $id_turno = $ocupados["id"];
+                $id_turno = $ocupados["id"]; 
 
                 //Relacion auxiliar con usuario
                 switch($IDauxiliar){
@@ -951,6 +951,12 @@ class TurnosController extends Controller
     public function VerPDFConvenio($id){
         $solicitud = Turnos::find($id);
         $pagos = Pagos::where('id_solicitud', $id)->get();
+        $abogado  = Poder::join("turnos","turnos.idAbogado","=","abogados.idAbogado");
+        $abogado = $abogado->where("turnos.id", "=", $id)
+        //->select('users.name')
+        ->first();
+       // $abogado = Poder::where('idAbogado', $id)->get();
+        //dd($abogado);
         //$prestacionesLab = Concepto::where('id_solicitud', $id)->first();
         //dd($prestaciones);
         $prestaciones = Concepto::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
@@ -1024,7 +1030,7 @@ class TurnosController extends Controller
         $html = view('PDF/convenioRatificacion', 
             compact('id', 'solicitud', 'dias_descanso', 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','vacacionesTexto',
             'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
-            'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones'))
+            'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones','abogado'))
             ->render();
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -1118,13 +1124,66 @@ class TurnosController extends Controller
     //PDF Acta de Audiencia
     public function VerPDFAudiencia($id){
         $solicitud = Turnos::find($id);
-
+        //$solicitud = Turnos::find($id);
+        $pagos = Pagos::where('id_solicitud', $id)->get();
+        //$prestacionesLab = Concepto::where('id_solicitud', $id)->first();
+        //dd($prestaciones);
+        $prestaciones = Concepto::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
+        // Inicializa las variables de texto
+        $vacacionesTexto = '';
+        $primaTexto = '';
+        $aguinaldoTexto = '';
+        $DSueldoTexto = '';
+        $antiguedadTexto = '';
+        $gratificacionATexto = ''; $gratificacionBTexto = ''; $gratificacionCTexto = ''; $gratificacionDTexto = ''; $gratificacionETexto = ''; $gratificacionFTexto = '';
+        $otrasTexto = '';
+        foreach ($prestaciones as $concepto) {
+            switch ($concepto->descripcion) {
+                case 'Vacaciones':
+                    $vacacionesTexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                case 'PrimaVacacional':
+                    $primaTexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                case 'Aguinaldo':
+                    $aguinaldoTexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                case 'DSueldo':
+                    $DSueldoTexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                case 'GratificaciónA':
+                    $gratificacionATexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                case 'GratificaciónB':
+                    $gratificacionBTexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                case 'GratificaciónC':
+                    $gratificacionCTexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                case 'GratificaciónD':
+                    $gratificacionDTexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                case 'GratificaciónE':
+                    $gratificacionETexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                case 'GratificaciónF':
+                    $gratificacionFTexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                case 'Otras':
+                    $otrasTexto = $this->convertirNumerosALetras($concepto->monto);
+                    break;
+                default:
+                    break;
+            }
+        }
         $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
         $conciliador = $conciliador->where("turnos.id", "=", $id)
         ->select('users.name')
         ->first();
 
-        $html = view('PDF/ActaAudiencia', compact('id', 'solicitud','conciliador'))->render();
+        $html = view('PDF/ActaAudiencia', compact('id','solicitud','conciliador','vacacionesTexto',
+        'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
+        'gratificacionETexto','gratificacionFTexto','otrasTexto','prestaciones'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')

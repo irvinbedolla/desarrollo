@@ -118,7 +118,7 @@
                     </b></p>
                     
                     <p> Por este conducto se notifica a la parte solicitante que se ha generado exitosamente su cita para la <b>Ratificación de Convenio</b>, misma que tendrá lugar 
-                        el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>  a las <b>{{ $solicitud->hora }}</b> horas, en la Delegación Regional/Oficina de Apoyo de 
+                        el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{ $solicitud->hora }}</b> horas, en la Delegación Regional/Oficina de Apoyo de 
                         <b>{{ $solicitud->delegacion }}</b> del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con domicilio en <b>{{$direccion_sede}}</b>, apercibiéndolo que de no presentarse 
                         cualquiera de las partes en la fecha y hora señalada, su solicitud quedará <b>ARCHIVADA</b>, dejando a salvo el derecho de cualquiera de las partes para iniciar su solicitud de conciliación. 
                     </p>

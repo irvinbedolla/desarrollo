@@ -160,7 +160,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="">Folio Interno de Registro <span style="color:red;">(*)</span></label>
-                                                        <input type="number"  name="folio" class="form-control" required> 
+                                                        <input type="number"  name="folio" id="folio_input" class="form-control" required> 
                                                         <div class="invalid-feedback">
                                                             El folio es obligatorio.
                                                         </div>

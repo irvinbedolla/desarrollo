@@ -79,7 +79,7 @@
                 <p><b>
                     Trabajador(a): {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}<br> 
                     Empleador(a): {{ $solicitud->empresa }}<br>
-                    Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha_audiencia)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora_audiencia }} horas.<br> 
+                    Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
                     Fecha en que se emite la constancia de incumplimiento: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}<br>
                     Pena Convencional: Si<br>
                     Salario diario: ${{ number_format($salario_diario, 2) }} M.N.
@@ -89,7 +89,7 @@
 
                 <p>
                     Cenrtificación. Ante la falta de pago pactado en las cláusulas <b>QUINTA</b> y <b>SEXTA</b> del <b>CONVENIO DE CONCILIACIÓN</b>, relacionadas con el expediente de Número de Identificación Único <b>{{ $solicitud->NUE }}</b> 
-                    de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha_audiencia)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, entre las partes <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> y <b>{{ $solicitud->empresa }}</b>, 
+                    de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, entre las partes <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> y <b>{{ $solicitud->empresa }}</b>, 
                     ante esta autoridad conciliatoria, y en atención a los principios de legalidad, imparcialidad, confiabilidad, eficacia, objetividad, profesionalismo, y transparencia se emite <b>CONSTANCIA DE INCUMPLIMIENTO DE CONVENIO</b> 
                     a favor de la <b>PARTE TRABAJADORA {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b>; dejando a salvo sus derechos para ejercer las 
                     acciones pertinentes ante el Tribunal Laboral que corresponda.<br><br>

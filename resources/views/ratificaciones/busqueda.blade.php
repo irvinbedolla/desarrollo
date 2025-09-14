@@ -111,12 +111,12 @@
                                                         <div class="dropdown">
                                                             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                                                 Documentos
-                                                            </button>
+                                                            </button> 
                                                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                 <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosRatificacion', $solicitud->id) }}"  target="_blank">Identificaciones</a></li>
                                                                 <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFaudiencia', $solicitud->id) }}"  target="_blank">Acta de Audiencia</a></li><br>
                                                                 <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}" target="_blank">Convenio</a></li><br>
-                                                                <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFcumplimiento', $solicitud->id) }}" target="_blank">Constancia de cumplimiento</a></li>
+                                                                <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFcumplimientoR', $solicitud->id) }}" target="_blank">Constancia de cumplimiento</a></li>
                                                             </ul>
                                                         </div>
                                                     @elseif($solicitud->estatus == "Concluida Pagos")
