@@ -717,8 +717,13 @@ class TurnosController extends Controller
 
         //Documentos si cargaron el folio
         if(isset($data["folio"])){
-            $nombre_ine             = $representante["nombres"]."".$representante["primer_apellido"]."".$representante["segundo_apellido"]."-".$representante["empresa"]."_IDENTIFICACION.pdf";
-            //$nombre_representación  = $representante["nombres"]."".$representante["primer_apellido"]."".$representante["segundo_apellido"]."-".$representante["empresa"]."_REPRESENTACION.pdf";
+            $representante  = Poder::find($data["folio"]);
+            if($representante["tipo"] == "Fisica"){
+                $nombre_ine             = $representante["nombre_patronal"]."".$representante["primer_apellido_patronal"]."".$representante["segundo_apellido_patronal"]."-".$representante["empresa"]."_IDENTIFICACION.pdf";
+            }
+            else{
+               $nombre_ine             = $representante["nombres_patronal"]."_IDENTIFICACION.pdf";
+            }
         }
         else{
             //Se carga el INE del abogado
@@ -948,6 +953,7 @@ class TurnosController extends Controller
         //$prestacionesLab = Concepto::where('id_solicitud', $id)->first();
         //dd($prestaciones);
         $prestaciones = Concepto::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
+        $deducciones  = Deducciones::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
         // Inicializa las variables de texto
         $vacacionesTexto = '';
         $primaTexto = '';
@@ -1014,18 +1020,17 @@ class TurnosController extends Controller
         ->select('users.name')
         ->first();
 
-        //dd($conciliador);
         $html = view('PDF/convenioRatificacion', 
             compact('id', 'solicitud', 'dias_descanso', 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','vacacionesTexto',
             'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
-            'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones','abogado'))
+            'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones','abogado','deducciones'))
             ->render();
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true);
 
-        return $pdf->stream('Convenio_terminacion.pdf');                   
+        return $pdf->stream('Convenio_terminacion_'. $solicitud->trabajador .'.pdf');                   
     }
 
     public function calcularSalarioDiario($salario, $frecuencia) {
@@ -1117,6 +1122,7 @@ class TurnosController extends Controller
         //$prestacionesLab = Concepto::where('id_solicitud', $id)->first();
         //dd($prestaciones);
         $prestaciones = Concepto::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
+        $deducciones  = Deducciones::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
         // Inicializa las variables de texto
         $vacacionesTexto = '';
         $primaTexto = '';
@@ -1171,7 +1177,7 @@ class TurnosController extends Controller
 
         $html = view('PDF/ActaAudiencia', compact('id','solicitud','conciliador','vacacionesTexto',
         'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
-        'gratificacionETexto','gratificacionFTexto','otrasTexto','prestaciones'))->render();
+        'gratificacionETexto','gratificacionFTexto','otrasTexto','prestaciones','deducciones'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -1548,6 +1554,7 @@ class TurnosController extends Controller
                     'descripcion'   => $data["tipo_pago"][$i],
                     'tipo_pago'     => "Ratificacion"
                 ];
+                //Sdd($data_citado);
                 Concepto::create($data_citado);
             }
         }
@@ -1564,7 +1571,7 @@ class TurnosController extends Controller
                     'descripcion'   => $data["descripcion_deduccion"][$i],
                     'tipo_pago'     => "Ratificacion"
                 ];
-                Deducciones::create($data_citado);
+                Deducciones::create($data_deduccion);
             }
         }
 

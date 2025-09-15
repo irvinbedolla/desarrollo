@@ -176,6 +176,8 @@
 
                         <b>QUINTA</b>. La parte <b>TRABAJADORA</b> recibirá de la parte <b>EMPLEADORA</b> la cantidad de <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }} M.N</b>, 
                             conforme a los siguientes conceptos:</p>
+
+                        <b>Prestaciones</b>
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
@@ -268,9 +270,35 @@
                                         @default    
                                     @endswitch
                                 @endforeach
+
+
+                                
                             <!--</p>-->
                             </tbody>
-                        </table>        
+                        </table>      
+
+                        @if(isset($deducciones))
+                            <b>Deducciones</b>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Descripción</th>
+                                        <th>Monto</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <!--<p class="sangria">-->
+                                    @foreach($deducciones as $deduccion)
+                                        <tr>
+                                            <td>{{ $deduccion->descripcion }}</td>
+                                            <td><b>${{ number_format($deduccion->monto, 2) }} M.N.</b></td>
+                                        </tr>
+                                    @endforeach  
+                                <!--</p>-->
+                                </tbody>
+                            </table> 
+                        @endif     
+
                     <!-- CON PAGOS DIFERIDOS-->       
                     @if($pagosDif>'1')            
                         <p><b>SEXTA</b>. La <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará en <b>{{ $pagosDif->C_pagos}}</b> 

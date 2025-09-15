@@ -54,6 +54,8 @@ class SeerController extends Controller
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
         $fecha_actual = date('y-m-d');
+        $estadisticas = "";
+        $personas = "";
         
         //Si es delegado le va salir todo lo de su delegacion de todos los roles
         if($userRole[0] == "Notificador"){
