@@ -1525,6 +1525,8 @@ class TurnosController extends Controller
     
     public function guardar_manifestacion(Request $request){
         $data = $request->all();
+        $id_usuario = auth()->user()->id;
+        
         //Revisar si existe
         if(isset($data["dias_pagos"])){
             $conteo = count($data["dias_pagos"]);
@@ -1599,6 +1601,7 @@ class TurnosController extends Controller
         /*'domicilio'                     => $data["domicilio"],*/
         'NUE'                           => $expediente,
         'id_conciliador'                => $data["conciliador_id"],
+        'user_id'                       => $id_usuario,
         'estatus'                       => $estatus]);
         
         return redirect()->route('ratificacion_atender');

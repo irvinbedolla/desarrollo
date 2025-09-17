@@ -40,7 +40,9 @@
                                                 <label multiple for="name">Tipo de reporte</label>
                                                 <select id="reporte" class="form-control" name="tipo_reporte" required>
                                                     <option value="">Seleccione</option>
-                                                    <!--<option value="UERSJL">UERSJL</option>-->
+                                                    <option value="Cumplimientos">Cumplimientos Detallado</option>
+                                                    <option value="CumplimientosResumen">Cumplimientos Resumen</option>
+                                                    <option value="Ratificaciones">Ratificaciones</option>
                                                     <option value="Detallado">Eficiencia</option>
                                                     <option value="Concentrado">Concentrado</option>
                                                 </select>
@@ -53,7 +55,7 @@
                                         <div class="col-xs-12 col-sm-6 col-md-4">
                                             <div class="form-group">
                                                 <label for="name">Fecha Inicial</label>
-                                                <input type="date" class="form-control" name="fecha_inicial" >
+                                                <input type="date" class="form-control" name="fecha_inicial" required>
                                                 <div class="invalid-feedback">
                                                     La fecha inicial es obligatorio.
                                                 </div>
@@ -63,7 +65,7 @@
                                         <div class="col-xs-12 col-sm-6 col-md-4">
                                             <div class="form-group">
                                                 <label for="name">Fecha Final</label>
-                                                <input type="date" class="form-control" name="fecha_final" >
+                                                <input type="date" class="form-control" name="fecha_final" required>
                                                 <div class="invalid-feedback">
                                                     La fecha final es obligatorio.
                                                 </div>
@@ -79,8 +81,9 @@
                                         <div class="col-xs-12 col-sm-6 col-md-4">
                                             <div class="form-group">
                                                 <label for="name">Sede</label>
-                                                <select class="form-control" name="sede">
-                                                    <option value="">Todos</option>
+                                                <select class="form-control" name="sede" required>
+                                                    <option value="">Seleccione</option>
+                                                    <option value="Todos">Todos</option>
                                                     @foreach($estadisticas as $aSport)
                                                         <option value="{{$aSport['nombre']}}">{{$aSport['nombre']}}</option>
                                                     @endforeach
