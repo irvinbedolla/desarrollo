@@ -60,20 +60,21 @@ class SeerController extends Controller
         //Si es delegado le va salir todo lo de su delegacion de todos los roles
         if($userRole[0] == "Notificador"){
             $personas = null;
-            $estadisticas = SeerPerGeneral::where('seer_citados.id_notificador', $id)
-            ->join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
-            ->join('seer_solicitante','seer_solicitante.id_solicitud','=','seer_general.id')
-            ->join('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
-            ->where('seer_citados.estatus', 'Pendiente')
-            ->select('seer_citados.id','seer_general.NUE','seer_solicitante.nombre as nombre_solicitado','seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido',
-            'municipios.nombre as municipio_citado','seer_citados.colonia','seer_citados.calle','seer_citados.n_ext','seer_citados.estatus')
+            $estadisticas = SeerPerGeneral_old::where('seer_citados_old.id_notificador', $id)
+            ->join('seer_citados_old','seer_citados_old.id_solicitud','=','seer_general_old.id')
+            ->join('seer_solicitante','seer_solicitante.id_solicitud','=','seer_general_old.id')
+            ->join('municipios', 'seer_citados_old.municipio_citado', '=', 'municipios.id')
+            ->where('seer_citados_old.estatus', 'Pendiente')
+            ->select('seer_citados_old.id','seer_general_old.NUE','seer_solicitante.nombre as nombre_solicitado','seer_citados_old.nombre','seer_citados_old.primer_apellido','seer_citados_old.segundo_apellido',
+            'municipios.nombre as municipio_citado','seer_citados_old.colonia','seer_citados_old.calle',
+            'seer_citados_old.n_ext','seer_citados_old.estatus')
             ->get();
         }
         //Si es otro usuario le va mostrar unicamente las del ese usuario
         else if($userRole[0] == "Auxiliar" || $userRole[0] == "Excepcion"){
-            $personas     = SeerPerGeneral::where('fecha', $fecha_actual)->where('user_id', $id)
-            ->join('seer_auxiliares','seer_auxiliares.id_solicitud',"=",'seer_general.id')
-            ->select("seer_general.id","seer_general.fecha","seer_general.NUE","seer_general.solicitante","seer_auxiliares.tipo_solicitud","seer_general.validado_conciliador")
+            $personas     = SeerPerGeneral_old::where('fecha', $fecha_actual)->where('user_id', $id)
+            ->join('seer_auxiliares','seer_auxiliares.id_solicitud',"=",'seer_general_old.id')
+            ->select("seer_general_old.id","seer_general_old.fecha","seer_general_old.NUE","seer_general_old.solicitante","seer_auxiliares.tipo_solicitud","seer_general_old.validado_conciliador")
             ->get();
             $estadisticas = null;
             $asesorias    = SeerAsesoria::where('fecha', $fecha_actual)->where('id_usuario', $id)
@@ -83,10 +84,10 @@ class SeerController extends Controller
         }
         else if($userRole[0] == "Conciliador"){
             //solo le van aparecer solicitudes
-            $personas = SeerPerGeneral::where('conciliador_id', $id)
-            ->join('seer_auxiliares','seer_auxiliares.id_solicitud',"=",'seer_general.id')
+            $personas = SeerPerGeneral_old::where('conciliador_id', $id)
+            ->join('seer_auxiliares','seer_auxiliares.id_solicitud',"=",'seer_general_old.id')
             ->where('seer_auxiliares.tipo_solicitud','Solicitud')
-            ->where('seer_general.validado_conciliador','Pendiente')
+            ->where('seer_general_old.validado_conciliador','Pendiente')
             ->get();
             $estadisticas = null;
         }
@@ -100,11 +101,12 @@ class SeerController extends Controller
             ->where('delegacion', $user["delegacion"])
             ->get();
 
-            $estadisticas = SeerPerGeneral_old::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
-            ->join('seer_auxiliares','seer_auxiliares.id_solicitud','=','seer_general.id')
-            ->select('seer_citados.id','seer_general.NUE','seer_general.solicitante','seer_citados.nombre','seer_citados.direccion','seer_citados.estatus')
-            ->where('seer_general.delegacion', $user["delegacion"])
-            ->where('seer_citados.id_notificador', 0)
+            $estadisticas = SeerPerGeneral_old::join('seer_citados_old','seer_citados_old.id_solicitud','=','seer_general_old.id')
+            ->join('seer_auxiliares','seer_auxiliares.id_solicitud','=','seer_general_old.id')
+            ->select('seer_citados_old.id','seer_general_old.NUE','seer_general_old.solicitante','seer_citados_old.nombre',
+                'seer_citados_old.direccion','seer_citados_old.estatus')
+            ->where('seer_general_old.delegacion', $user["delegacion"])
+            ->where('seer_citados_old.id_notificador', 0)
             ->where('seer_auxiliares.notificacion',"!=", "Trabajador")
             ->get();
         }
@@ -1802,9 +1804,9 @@ class SeerController extends Controller
         //Borrar de la tabla Seer Auxiliares
         SeerPerAuxiliar::where('id_solicitud',$id)->delete();
         //Borrar de la tabla Seer Auxiliares
-        SeerCitados::where('id_solicitud',$id)->delete();
+        SeerCitados_old::where('id_solicitud',$id)->delete();
         //Borrar de la tabla Seer General
-        SeerPerGeneral::find($id)->delete();
+        SeerPerGeneral_old::find($id)->delete();
        
         return redirect()->route('seer');
     }
