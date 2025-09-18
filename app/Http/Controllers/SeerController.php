@@ -5435,21 +5435,47 @@ class SeerController extends Controller
         $user = User::find($id);
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
+        dd($userRole);
         $fecha_inicial = $data["fecha_inicial"];
         $fecha_final = $data["fecha_final"];
 
+        if($userRole[0] == "Auxiliar"){
+            $Ratificacion = Turnos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
+            ->join('users','users.id','turnos.id_conciliador')
+            ->join('users as user_usuario','user_usuario.id','turnos.user_id')
+            ->where('turnos.delegacion',$user["delegacion"])
+            ->where('turnos.user_id',$user["id"])
+            ->select('turnos.*','users.name','user_usuario.name as auxiliar')
+            ->get();
+            
+            $pdf = \PDF::loadView('PDF/Estadisticas/Ratificaciones',compact('fecha_inicial','fecha_final','Ratificacion'));
+            $pdf->setPaper('a4', 'landscape');
+            return $pdf->stream('archivo.pdf');
+        }
+        else if($userRole[0] == "Cumplimientos"){+
+            $pagosAudiencias = Pagos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
+            ->join('users','users.id','pago_solicitud.id_conciliador')
+            ->where('pago_solicitud.tipo_pago',"Audiencia")
+            ->selectRaw('count(pago_solicitud.id) as audiencias')
+            ->first();
+            $pagosAudienciasMonto = Pagos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
+            ->join('users','users.id','pago_solicitud.id_conciliador')
+            ->where('pago_solicitud.tipo_pago',"Audiencia")
+            ->selectRaw('sum(pago_solicitud.monto) as audienciasMonto')
+            ->first();
 
-        $Ratificacion = Turnos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
-        ->join('users','users.id','turnos.id_conciliador')
-        ->join('users as user_usuario','user_usuario.id','turnos.user_id')
-        ->where('turnos.delegacion',$user["delegacion"])
-        ->where('turnos.user_id',$user["id"])
-        ->select('turnos.*','users.name','user_usuario.name as auxiliar')
-        ->get();
+            $Audiencias = Pagos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
+            ->where('sede',$sede)
+            ->join('users','users.id','pago_solicitud.id_conciliador')
+            ->where('pago_solicitud.tipo_pago',"Audiencia")
+            ->get(); 
+            
 
+            $pdf = \PDF::loadView('PDF/Estadisticas/reporte-miscumplimientos', compact('fecha_inicial','fecha_final','pagosAudienciasMonto','pagosAudiencias','Audiencias'));
+            $pdf->setPaper('a4', 'landscape');
+            return $pdf->stream('archivo.pdf');
+        }
 
-        $pdf = \PDF::loadView('PDF/Estadisticas/Ratificaciones',compact('fecha_inicial','fecha_final','Ratificacion'));
-        $pdf->setPaper('a4', 'landscape');
-        return $pdf->stream('archivo.pdf');
+        
     }
 }

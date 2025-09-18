@@ -311,6 +311,9 @@
             <a class="nav-link" href="{{ route('poderes') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
+            <a class="nav-link" href="{{ route('misestadisticas') }}">
+                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadisticas</span>
+            </a>
         @endrole
     @endauth
 </li>
