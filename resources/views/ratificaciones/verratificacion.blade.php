@@ -72,7 +72,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
-                                            <label for="email">Telefono</label>
+                                            <label for="email">Teléfono</label>
                                             <input type="text" class="form-control" value="<?=$representante["telefono_patronal"];?>">
                                         </div>
                                     </div>
@@ -137,7 +137,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
-                                            <label for="email">Telefono</label>
+                                            <label for="email">Teléfono</label>
                                             <input type="text" class="form-control" name="telefono" value="<?=$folio["telefono"];?>">
                                         </div>
                                     </div>
@@ -161,7 +161,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
-                                            <label for="email">Categoria o puesto que desempeña</label>
+                                            <label for="email">Categoría o puesto que desempeña</label>
                                             <input type="text" class="form-control" name="categoria" value="<?=$folio["categoria"];?>">
                                         </div>
                                     </div>
@@ -184,7 +184,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
-                                            <label for="email">Dias a la semana trabajados </label>
+                                            <label for="email">Días a la semana trabajados </label>
                                             <input type="text" class="form-control" name="dias" value="<?=$folio["dias"];?>">
                                         </div>
                                     </div>

@@ -260,19 +260,14 @@
                                                 <td>{{ $gratificacionFTexto }} M.N.</b></td>
                                             </tr>
                                             @break 
-                                        @case('Otras')
+                                        @default 
                                             <tr>
-                                                <td>Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc)</td>
-                                                <td><b>${{ number_format($concepto->monto, 2) }} {{ $otrasTexto }} M.N.</b></td>
-                                                <td>{{ $solicitud->Especifique }}<br></td>
+                                                <td>Otra prestación: {{ $concepto->descripcion }}</td>
+                                                <td><b>${{ number_format($concepto->monto, 2) }}</td>
+                                                <td>{{ $otrasTexto }} M.N.</b></td>
                                             </tr>
-                                            @break
-                                        @default    
                                     @endswitch
                                 @endforeach
-
-
-                                
                             <!--</p>-->
                             </tbody>
                         </table>      

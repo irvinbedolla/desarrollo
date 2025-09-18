@@ -995,10 +995,8 @@ class TurnosController extends Controller
                 case 'GratificaciónF':
                     $gratificacionFTexto = $this->convertirNumerosALetras($concepto->monto);
                     break;
-                case 'Otras':
-                    $otrasTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
                 default:
+                    $otrasTexto = $this->convertirNumerosALetras($concepto->monto);
                     break;
             }
         }
@@ -1164,10 +1162,8 @@ class TurnosController extends Controller
                 case 'GratificaciónF':
                     $gratificacionFTexto = $this->convertirNumerosALetras($concepto->monto);
                     break;
-                case 'Otras':
-                    $otrasTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
                 default:
+                    $otrasTexto = $this->convertirNumerosALetras($concepto->monto);
                     break;
             }
         }
@@ -1237,12 +1233,12 @@ class TurnosController extends Controller
     public function VerPDFPagos($id){
         $pagos = Pagos::find($id);
         $solicitud = Turnos::find($pagos["id_solicitud"]);
-    
+        $pagosDif = Pagos::where('id_solicitud', $pagos->id_solicitud)->count();
         $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
         $conciliador = $conciliador->where("turnos.id_conciliador", "=", $solicitud["id_conciliador"])
         ->select('users.name')
         ->first();
-        $html = view('PDF/pagosParciales', compact('id','solicitud','conciliador','pagos'))->render();
+        $html = view('PDF/pagosParciales', compact('id','solicitud','conciliador','pagos','pagosDif'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -1549,15 +1545,23 @@ class TurnosController extends Controller
             return back()->withErrors('Debes agregar por lo menos una fecha de pago.');
         }
         if(isset($data["tipo_pago"])){
+            $tiposPago = $data["tipo_pago"];
             $cont = count($data["monto_pago"]);
+            $otrasPrestaciones = $data["otra_prestacion"] ?? [];
+        
             for($i = 0; $i < $cont; $i++) {
+                $descripcion = $tiposPago[$i];
+                if ($descripcion === "Otras" && isset($otrasPrestaciones[$i]) && !empty(trim($otrasPrestaciones[$i]))) {
+                    $descripcion = trim($otrasPrestaciones[$i]);
+                }
+                
                 $data_citado = [
                     'id_solicitud'  => $data["id"], 
                     'monto'         => $data["monto_pago"][$i], 
-                    'descripcion'   => $data["tipo_pago"][$i],
+                    'descripcion'   => $descripcion,
                     'tipo_pago'     => "Ratificacion"
                 ];
-                //Sdd($data_citado);
+                //dd($data_citado);
                 Concepto::create($data_citado);
             }
         }

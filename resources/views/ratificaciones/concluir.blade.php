@@ -253,7 +253,7 @@
                     html +='<div class="col-xs-12 col-sm-12 col-md-12">';
                         html +='<div class="form-group">';
                         html +='<label for="confirm-password"><br>Prestación</label>';
-                        html +='<select class="form-control" name="tipo_pago[]" required>';
+                        html +='<select class="form-control tipo-pago-select" name="tipo_pago[]" required>';
                             html +='<option value="">Seleccione</option>';
                             html +='<option value="Aguinaldo">Días de aguinaldo</option>';
                             html +='<option value="DSueldo">Días de sueldo</option>';
@@ -267,6 +267,10 @@
                             html +='<option value="GratificaciónF">Graficación F (Reconocimiento de derechos)</option>';
                             html +='<option value="Otras">Otros concepto de pago</option>';
                         html +='</select>';
+                        // Campo para escribir otra prestación (solo si se selecciona "Otras")
+                        html += '<div class="otra-prestacion-input" style="display: none; margin-top: 10px;">';
+                        html += '<input type="text" class="form-control" name="otra_prestacion[]" placeholder="Especifique la prestación" />';
+                        html += '</div>';
                         html +='<div class="invalid-feedback">El tipo de pago es obligatorio.</div>';
                         html += '</div> </div>';
 
@@ -424,6 +428,19 @@
          $('.open-modal').click(function() {
             const id = $(this).data('id'); // Obtiene el valor de data-id
             document.getElementById('modal-id').value = id;
+        });
+        //Muestra un input cuando en prestaciones se selecciona la opción Otros concepto de pago
+        $(document).on('change', '.tipo-pago-select', function () {
+            var selected = $(this).val();
+            var container = $(this).closest('.form-group').find('.otra-prestacion-input');
+
+            if (selected === 'Otras') {
+                container.show();
+                container.find('input').attr('required', true);
+            } else {
+                container.hide();
+                container.find('input').val('').removeAttr('required');
+            }
         });
     </script>
 @endsection
