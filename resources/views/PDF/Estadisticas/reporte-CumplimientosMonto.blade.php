@@ -85,9 +85,19 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td style=" text-align: center;">Ratificación</td>
+                                <td style=" text-align: center;">Ratificaciones Totales</td>
                                 <td style=" text-align: center;">{{ $pagosRatificacion->ratificaciones }}</td>
                                 <td style=" text-align: center;">${{ number_format($pagosRatificacionMonto->ratificacionesMonto,2) }}</td>
+                            </tr>
+                            <tr>
+                                <td style=" text-align: center;">Ratificaciones Pagadas</td>
+                                <td style=" text-align: center;">{{ $pagosRatificacionPagado->ratificaciones }}</td>
+                                <td style=" text-align: center;">${{ number_format($pagosRatificacionMontoPagado->ratificacionesMonto,2) }}</td>
+                            </tr>
+                            <tr>
+                                <td style=" text-align: center;">Ratificaciones Pendientes</td>
+                                <td style=" text-align: center;">{{ $pagosRatificacionPendiente->ratificaciones }}</td>
+                                <td style=" text-align: center;">${{ number_format($pagosRatificacionMontoPendiente->ratificacionesMonto,2) }}</td>
                             </tr>
                         </tbody>
                     </table>

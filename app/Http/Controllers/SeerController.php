@@ -377,6 +377,7 @@ class SeerController extends Controller
                 ,'pago_solicitud.estatus','pago_solicitud.tipo_pago','turnos.delegacion','turnos.NUE',
                 'turnos.empresa','turnos.primero_empresa','turnos.segundo_empresa','turnos.trabajador','turnos.primero_trabajador','turnos.segundo_trabajador'
                 ,'users.name')
+                ->orderby('users.name')
                 ->get();
             }else{
                 $pagosRatificacion = Pagos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
@@ -388,6 +389,7 @@ class SeerController extends Controller
                 ,'pago_solicitud.estatus','pago_solicitud.tipo_pago','pago_solicitud.delegacion','turnos.NUE',
                 'turnos.empresa','turnos.primero_empresa','turnos.segundo_empresa','turnos.trabajador','turnos.primero_trabajador','turnos.segundo_trabajador'
                 ,'users.name')
+                ->orderby('users.name')
                 ->get(); 
             }
 
@@ -423,6 +425,36 @@ class SeerController extends Controller
                 ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
                 ->join('users','users.id','turnos.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Ratificacion")
+                ->selectRaw('sum(pago_solicitud.monto) as ratificacionesMonto')
+                ->first();
+
+                $pagosRatificacionPagado = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
+                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
+                ->join('users','users.id','turnos.id_conciliador')
+                ->where('pago_solicitud.tipo_pago',"Ratificacion")
+                ->where('pago_solicitud.estatus',"Pagado")
+                ->selectRaw('count(pago_solicitud.id) as ratificaciones')
+                ->first();
+                $pagosRatificacionMontoPagado = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
+                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
+                ->join('users','users.id','turnos.id_conciliador')
+                ->where('pago_solicitud.tipo_pago',"Ratificacion")
+                ->where('pago_solicitud.estatus',"Pagado")
+                ->selectRaw('sum(pago_solicitud.monto) as ratificacionesMonto')
+                ->first();
+
+                $pagosRatificacionPendiente = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
+                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
+                ->join('users','users.id','turnos.id_conciliador')
+                ->where('pago_solicitud.tipo_pago',"Ratificacion")
+                ->where('pago_solicitud.estatus',"Pendiente")
+                ->selectRaw('count(pago_solicitud.id) as ratificaciones')
+                ->first();
+                $pagosRatificacionMontoPendiente = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
+                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
+                ->join('users','users.id','turnos.id_conciliador')
+                ->where('pago_solicitud.tipo_pago',"Ratificacion")
+                ->where('pago_solicitud.estatus',"Pendiente")
                 ->selectRaw('sum(pago_solicitud.monto) as ratificacionesMonto')
                 ->first();
             }else{
@@ -468,8 +500,10 @@ class SeerController extends Controller
                 ->first();
             }
 
-            $pdf = \PDF::loadView('PDF/Estadisticas/reporte-CumplimientosMonto', compact('fecha_inicial','fecha_final','pagosRatificacion','pagosRatificacionMonto',
-            'pagosAudiencias','pagosAudienciasMonto'));
+            $pdf = \PDF::loadView('PDF/Estadisticas/reporte-CumplimientosMonto', 
+            compact('fecha_inicial','fecha_final','pagosRatificacion','pagosRatificacionMonto',
+            'pagosAudiencias','pagosAudienciasMonto','pagosRatificacionPagado','pagosRatificacionMontoPagado',
+        'pagosRatificacionPendiente','pagosRatificacionMontoPendiente'));
             return $pdf->stream('archivo.pdf');
         }
         if($data["tipo_reporte"] == "Cumplimientos"){
@@ -481,6 +515,7 @@ class SeerController extends Controller
                 ->join('users','users.id','turnos.id_conciliador')
                 ->join('users as user_usuario','user_usuario.id','turnos.user_id')
                 ->select('turnos.*','users.name','user_usuario.name as auxiliar')
+                ->orderby('user_usuario.name')
                 ->get();
             }else{
                 $Ratificacion = Turnos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
@@ -488,6 +523,7 @@ class SeerController extends Controller
                 ->join('users','users.id','turnos.id_conciliador')
                 ->join('users as user_usuario','user_usuario.id','turnos.user_id')
                 ->select('turnos.*','users.name','user_usuario.name as auxiliar')
+                ->orderby('user_usuario.name')
                 ->get();
             }
 
