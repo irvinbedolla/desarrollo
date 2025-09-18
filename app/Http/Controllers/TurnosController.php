@@ -776,7 +776,8 @@ class TurnosController extends Controller
             $data_insertar_user= array(
                 'name'              => $nombre,
                 'email'             => $email,
-                'delegacion'        => $data["sede"],
+                //'delegacion'        => $data["sede"],
+                'delegacion'        => "Morelia",
                 'type'              => "Seer",
                 'remember_token'    => $curp,
                 'profile_photo_path'=> $curp
@@ -1359,7 +1360,7 @@ class TurnosController extends Controller
 
     public function editar_ratificaciones(Request $request){
         $data = $request->all();
-        $id_usuario = auth()->user()->id;
+        //$id_usuario = auth()->user()->id;
         $user = User::find($id_usuario);
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();

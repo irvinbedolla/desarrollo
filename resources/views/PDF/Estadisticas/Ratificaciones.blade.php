@@ -90,7 +90,7 @@
                             <th style="color: #fff;  text-align: center;">Usuario</th>
                             <th style="color: #fff;  text-align: center;">Estatus</th>
                         </thead>
-                        <tbody>
+                        <tbody> 
                             @foreach($Ratificacion as $estadistica)
                                 <tr>
                                     <td style=" text-align: center;">{{ $estadistica->fecha }}</td>
