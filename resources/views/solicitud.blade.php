@@ -91,28 +91,28 @@
             <center><div class="card-group">
                 <div class="card">   <!-- Inicio Seer -->
                     <div style="display: block; text-align: center;">
-                        <a href="{{ route('solicitud.industria', ['tipo_solicitud' =>1]) }}" class="button-link">
+                        <a href="https://michoacan.cencolab.mx/solicitudes/create-public?solicitud=1" class="button-link">
                             SOY <br>TRABAJADOR(A)
                         </a> 
                     </div> 
                 </div>   <!-- fin Seer -->
                 <div class="card">   <!-- Inicio Seer -->
                     <div style="display: block; text-align: center;">
-                        <a href="{{ route('solicitud.industria', ['tipo_solicitud' =>2]) }}" class="button-link">
+                        <a href="https://michoacan.cencolab.mx/solicitudes/create-public?solicitud=2" class="button-link">
                             SOY <br>PATRONAL INDIVIDUAL   
                         </a>
                     </div>  
                 </div>   <!-- fin Seer -->
                 <div class="card">   <!-- Inicio Seer -->
                     <div style="display: block; text-align: center;">
-                        <a href="{{ route('solicitud.industria', ['tipo_solicitud' =>3]) }}" class="button-link">
+                        <a href="https://michoacan.cencolab.mx/solicitudes/create-public?solicitud=3" class="button-link">
                             SOY <br>PATRONAL COLECTIVA    
                         </a>
                     </div>  
                 </div> 
                 <div class="card">   <!-- Inicio Seer -->
                     <div style="display: block; text-align: center;">
-                        <a href="{{ route('solicitud.industria', ['tipo_solicitud' =>4]) }}" class="button-link">
+                        <a href="https://michoacan.cencolab.mx/solicitudes/create-public?solicitud=4" class="button-link">
                             SOY<br> SINDICATO
                         </a>
                     </div>  
