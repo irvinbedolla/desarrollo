@@ -5425,4 +5425,31 @@ class SeerController extends Controller
         return $pdf->stream('archivo.pdf');
     }
 
+    public function misestadisticas(){
+        return view('estadisticas.mis_estadisticas');
+    }
+
+    public function estadisticasPDF(Request $request){
+        $data = $request->all();
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+        $fecha_inicial = $data["fecha_inicial"];
+        $fecha_final = $data["fecha_final"];
+
+
+        $Ratificacion = Turnos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
+        ->join('users','users.id','turnos.id_conciliador')
+        ->join('users as user_usuario','user_usuario.id','turnos.user_id')
+        ->where('turnos.delegacion',$user["delegacion"])
+        ->where('turnos.user_id',$user["id"])
+        ->select('turnos.*','users.name','user_usuario.name as auxiliar')
+        ->get();
+
+
+        $pdf = \PDF::loadView('PDF/Estadisticas/Ratificaciones',compact('fecha_inicial','fecha_final','Ratificacion'));
+        $pdf->setPaper('a4', 'landscape');
+        return $pdf->stream('archivo.pdf');
+    }
 }

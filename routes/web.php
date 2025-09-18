@@ -48,17 +48,17 @@ use App\Http\Controllers\RecepcionController;
    
     
     //Rutas para el chat
-    Route::post('/chat/crear',      [Controller::class, 'store_chat'])->name('RespuestasChat.store');
-    Route::get('chat',              [Controller::class, 'chats'])->name('chat');
-    Route::post('/chat/crearUno/',  [Controller::class, 'storeUno'])->name('RespuestasChat.storeUno');
+        Route::post('/chat/crear',      [Controller::class, 'store_chat'])->name('RespuestasChat.store');
+        Route::get('chat',              [Controller::class, 'chats'])->name('chat');
+        Route::post('/chat/crearUno/',  [Controller::class, 'storeUno'])->name('RespuestasChat.storeUno');
 
     //Ruta calendario
-    Route::get('/calendario', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendario.index');
-    Route::get('/citas/eventos', [App\Http\Controllers\CitaController::class, 'citas'])->name('citas.eventos');
-    Route::get('/pagos/eventos', [App\Http\Controllers\CitaController::class, 'pagos'])->name('pagos.eventos');
-    Route::get('/audiencias/eventos', [App\Http\Controllers\AudienciasController::class, 'audiencias'])->name('audiencias.eventos');
-    Route::get('/ratificaciones/eventos', [App\Http\Controllers\AudienciasController::class, 'ratificaciones'])->name('ratificaciones.eventos');
-    Route::get('citas/exportar-excel', [CitaController::class, 'exportarExcel']);
+        Route::get('/calendario', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendario.index');
+        Route::get('/citas/eventos', [App\Http\Controllers\CitaController::class, 'citas'])->name('citas.eventos');
+        Route::get('/pagos/eventos', [App\Http\Controllers\CitaController::class, 'pagos'])->name('pagos.eventos');
+        Route::get('/audiencias/eventos', [App\Http\Controllers\AudienciasController::class, 'audiencias'])->name('audiencias.eventos');
+        Route::get('/ratificaciones/eventos', [App\Http\Controllers\AudienciasController::class, 'ratificaciones'])->name('ratificaciones.eventos');
+        Route::get('citas/exportar-excel', [CitaController::class, 'exportarExcel']);
 
     //Rutas fuera del login
     Route::get('/pantalla', function () {
@@ -415,6 +415,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/VerDcocumentosRatificacion/{id}',  [TurnosController::class, 'VerDocumentosRatificacion'])->name('VerDocumentosRatificacion');
         Route::get('/VerDcocumentos/{id}',              [SeerController::class, 'VerDocumentosAudiencia'])->name('VerDocumentosAudiencia');
     //Fin de Documentos
+    //Estadisticas
+        Route::get('/misestadisticas/index',    [SeerController::class, 'misestadisticas'])->name('misestadisticas');
+        Route::post('/misestadisticas/reporte', [SeerController::class, 'estadisticasPDF'])->name('mis_reportes');
+    //Fin estadisticas
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);
         Route::resource('/user-management/roles', RoleManagementController::class);
