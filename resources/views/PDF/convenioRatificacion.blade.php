@@ -97,15 +97,15 @@
 
                 <p><center><b>D E C L A R A C I O N E S:</b></center></p><br>
 
-                <p><b>PRIMERA.</b> La parte <b>TRABAJADORA</b> se identifica con <b>INE{{ $solicitud->identificacion }}</b> expedida a su favor por <b>Instituto Nacional Electoral</b> y declara ser una persona 
+                <p><b>PRIMERA.</b> La parte <b>TRABAJADORA</b> se identifica con <b>CREDENCIAL DE ELECTOR{{ $solicitud->identificacion }}</b> expedida a su favor por <b>Instituto Nacional Electoral</b> y declara ser una persona 
                     mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p> 
 
                 <p><b>SEGUNDA.</b> 
                 @if(is_null($abogado->nombre_representante) && is_null($abogado->primer_apellido_representante) && is_null($abogado->segundo_apellido_representante))
                     Declara a <b>{{$abogado->nombres_patronal}} {{$abogado->primer_apellido_patronal}} {{$abogado->segundo_apellido_patronal}}</b> quien se identifica con 
-                    <b>INE{{ $solicitud->identificacion }}</b> expedida a su favor por <b>Instituto Nacional Electoral</b>, y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p>  
+                    <b>CREDENCIAL DE ELECTOR{{ $solicitud->identificacion }}</b> expedida a su favor por <b>Instituto Nacional Electoral</b>, y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p>  
                 @else Declara a <b>{{$abogado->nombre_representante}} {{$abogado->primer_apellido_representante}} {{$abogado->segundo_apellido_representante}}</b> quien se identifica con 
-                    <b>INE{{ $solicitud->identificacion }}</b> expedida a su favor por <b>Instituto Nacional Electoral</b>, así como con <b>{{$abogado->descipcion_poder}}</b>.</p>  
+                    <b>CREDENCIAL DE ELECTOR{{ $solicitud->identificacion }}</b> expedida a su favor por <b>Instituto Nacional Electoral</b>, así como con <b>{{$abogado->descipcion_poder}}</b>.</p>  
                 @endif
                 <b>TERCERA.</b> Declara la parte <b>TRABAJADORA</b>:
                     <p class="sangria">

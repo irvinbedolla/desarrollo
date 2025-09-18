@@ -261,7 +261,7 @@
                             html +='<option value="PrimaVacacional">Prima vacacional</option>';
                             html +='<option value="GratificaciónA">Graficación A (Con base al salario integrado)</option>';
                             html +='<option value="GratificaciónB">Graficación B (20 Días por año cumplido)</option>';
-                            html +='<option value="GraficaciónC">Graficación C (Prima de antigüedad topada)</option>';
+                            html +='<option value="GratificaciónC">Graficación C (Prima de antigüedad topada)</option>';
                             html +='<option value="GratificaciónD">Graficación D (Incluye cualquier otra prestación)</option>';
                             html +='<option value="GratificaciónE">Graficación E (Prestaciones en especie)</option>';
                             html +='<option value="GratificaciónF">Graficación F (Reconocimiento de derechos)</option>';
