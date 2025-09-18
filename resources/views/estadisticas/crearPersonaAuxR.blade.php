@@ -104,8 +104,11 @@
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
                                                     <label for="password">Municipio del solicitante</label>
-                                                    <select id="municipio_solicitante" name="mun_solicitante" class="form-control" disabled>
-                                                        <option value=""> --Primero selecciona un estado --</option>
+                                                    <select id="municipio_solicitante" name="mun_solicitante" class="form-control">
+                                                        <option value="">Seleccione</option>
+                                                        @foreach($municipios as $mun)
+                                                            <option value="{{$mun['id']}}">{{$mun['nombre']}}</option>
+                                                        @endforeach
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El Municipio es obligatorio.
