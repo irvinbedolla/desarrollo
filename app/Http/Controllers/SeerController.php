@@ -4438,6 +4438,21 @@ class SeerController extends Controller
         SeerCitados::where('id_solicitud',$data["id"])->delete();
         $cont = count($data["colonia_citado"]);
         for($i = 0; $i < $cont; $i++) {
+            $foto1 = $data["imagen_domicilio1"][$i] ?? 'Sin documento';
+            $foto2 = $data["imagen_domicilio2"][$i] ?? 'Sin documento';
+        
+            if ($request->hasFile("foto1.$i")) {
+                $file = $request->file("foto1")[$i];
+                $foto1 = $data["id"] . "-citado_foto1_" . Str::random(8) . "." . $file->getClientOriginalExtension();
+                Storage::putFileAs('documentosSolicitud', $file, $foto1);
+            }
+        
+            if ($request->hasFile("foto2.$i")) {
+                $file = $request->file("foto2")[$i];
+                $foto2 = $data["id"] . "-citado_foto2_" . Str::random(8) . "." . $file->getClientOriginalExtension();
+                Storage::putFileAs('documentosSolicitud', $file, $foto2);
+            }
+            
             $data_insert=array(
                 'id_solicitud'      => $data["id"],
                 'colonia'           => $data["colonia_citado"][$i],
