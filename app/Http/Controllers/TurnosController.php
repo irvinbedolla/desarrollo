@@ -496,7 +496,7 @@ class TurnosController extends Controller
     public function store_publico(Request $request)
     {
         $data = $request->all();
-        //dd("llego");
+        $id_user = auth()->user()->id;
         $fecha_actual = date('Y-m-d');
         $hora_actual =  date("H:i:s");
         if(isset($data["folio"])){
@@ -617,6 +617,7 @@ class TurnosController extends Controller
                 'num_ext'           => $data["N_Ext"],
                 'codigo_postal'     => $data["cp"],
                 'idAbogado'         => $data["folio"],
+                'user_id'           => $id_user,
                 'fecha'             => $fecha_actual,
                 'hora'              => $hora_actual,
                 'hora_fin'          => $hora_actual,

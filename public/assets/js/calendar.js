@@ -241,14 +241,15 @@ function handleEventClick(info, calendarType) {
     
     else if (calendarType === 'citas') {
         modalContent = `
-            <strong>Solicitante:</strong> ${info.event.title}<br>
-            <strong>ID:</strong> ${info.event.id}<br>
+            <strong>Descripción:</strong> ${props.descripcion}<br>
             <strong>Fecha:</strong> ${props.fecha}<br>
             <strong>Hora:</strong> ${props.hora}<br>
             <strong>Estatus:</strong> ${props.estatus}<br>
+            <strong>Monto:</strong> ${props.monto}<br>
+            <strong>Observaciones:</strong> ${props.observaciones}<br>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <a href="/sistema-integral/cita/consulta/${info.event.id}/${props.tipo}" class="btn btn-info">Ver detalle</a>
+                <a href="cumplimiento/consulta/${info.event.id}/${props.tipo}" class="btn btn-info">Ver detalle</a>
             </div>
         `;
     }
