@@ -90,10 +90,16 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        
-                                        <div class="col-xs-12 col-sm-12 col-md-12">
-                                            <button type="submit" name="tipo" value="1" class="btn btn-primary">PDF</button>
-                                            <button type="submit" name="tipo" value="2" class="btn btn-success">Excel</button>
+                                        <div id="Excel-PDF" style="display:none">
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <button type="submit" name="tipo" value="1" class="btn btn-primary">PDF</button>
+                                                <button type="submit" name="tipo" value="2" class="btn btn-success">Excel</button>
+                                            </div>
+                                        </div>
+                                        <div id="PDF" style="display:none">
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <button type="submit" name="tipo" value="1" class="btn btn-primary">PDF</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
@@ -118,13 +124,17 @@
     <script>
         $('#reporte').change(function(){
             var valorCambiado =$(this).val();
-            if((valorCambiado == 'Concentrado')){
-                $('#resu_detallado').css('display','none');
-                $('#concentrado').css('display','block');
+            if((valorCambiado == 'Cumplimientos')){
+                $('#PDF').css('display','none');
+                $('#Excel-PDF').css('display','block');
             }
-            else{
-                $('#resu_detallado').css('display','block');
-                $('#concentrado').css('display','none');
+            else if(valorCambiado == "CumplimientosResumen"){
+                $('#PDF').css('display','block');
+                $('#Excel-PDF').css('display','none');
+            }
+            else if(valorCambiado == "Ratificaciones"){
+                $('#PDF').css('display','none');
+                $('#Excel-PDF').css('display','block');
             }
         });
     </script>

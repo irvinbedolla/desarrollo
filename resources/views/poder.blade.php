@@ -291,6 +291,7 @@
                                                             <option value="DIAGONAL">Diagonal</option>
                                                             <option value="EJE VIAL">Eje vial</option>
                                                             <option value="PERIFÉRICO">Periférico</option>
+                                                            <option value="PRIVADA">Privada</option>
                                                             <option value="PROLONGACIÓN">Prolongación</option>
                                                             <option value="RETORNO">Retorno</option>
                                                             <option value="VIADUCTO">Viaducto</option>

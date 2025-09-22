@@ -44,6 +44,7 @@ use App\Models\Usuarios;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\PDF;
 use App\Exports\ProductsFromViewExport;
+use App\Exports\RatificacionesFromViewExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 
@@ -418,10 +419,6 @@ class SeerController extends Controller
                 $pdf->setPaper('a4', 'landscape');
                 return $pdf->stream('archivo.pdf');
             }
-            
-
-            
-
         }
         else if($data["tipo_reporte"] == "CumplimientosResumen"){
             //Pagos de ratificacion
@@ -550,27 +547,33 @@ class SeerController extends Controller
         if($data["tipo_reporte"] == "Cumplimientos"){
         }
         else if($data["tipo_reporte"] == "Ratificaciones"){
-            //Pagos de ratificacion(Turnos)
-            if($sede === "Todos"){
-                $Ratificacion = Turnos::whereBetween('turnos.fecha',[$fecha_inicial,$fecha_final])
-                ->join('users','users.id','turnos.id_conciliador')
-                ->join('users as user_usuario','user_usuario.id','turnos.user_id')
-                ->select('turnos.*','users.name','user_usuario.name as auxiliar')
-                ->orderby('user_usuario.name')
-                ->get();
-            }else{
-                $Ratificacion = Turnos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
-                ->where('turnos.delegacion',$sede)
-                ->join('users','users.id','turnos.id_conciliador')
-                ->join('users as user_usuario','user_usuario.id','turnos.user_id')
-                ->select('turnos.*','users.name','user_usuario.name as auxiliar')
-                ->orderby('user_usuario.name')
-                ->get();
+            if($data["tipo"] == "2"){
+                return Excel::download(new RatificacionesFromViewExport($fecha_inicial, $fecha_final,$sede), 'productos.xlsx');
             }
+            //Para el PDF
+            else{
+                //Pagos de ratificacion(Turnos)
+                if($sede === "Todos"){
+                    $Ratificacion = Turnos::whereBetween('turnos.fecha',[$fecha_inicial,$fecha_final])
+                    ->join('users','users.id','turnos.id_conciliador')
+                    ->join('users as user_usuario','user_usuario.id','turnos.user_id')
+                    ->select('turnos.*','users.name','user_usuario.name as auxiliar')
+                    ->orderby('user_usuario.name')
+                    ->get();
+                }else{
+                    $Ratificacion = Turnos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
+                    ->where('turnos.delegacion',$sede)
+                    ->join('users','users.id','turnos.id_conciliador')
+                    ->join('users as user_usuario','user_usuario.id','turnos.user_id')
+                    ->select('turnos.*','users.name','user_usuario.name as auxiliar')
+                    ->orderby('user_usuario.name')
+                    ->get();
+                }
 
-            $pdf = \PDF::loadView('PDF/Estadisticas/Ratificaciones',compact('fecha_inicial','fecha_final','Ratificacion'));
-            $pdf->setPaper('a4', 'landscape');
-            return $pdf->stream('archivo.pdf');
+                $pdf = \PDF::loadView('PDF/Estadisticas/Ratificaciones',compact('fecha_inicial','fecha_final','Ratificacion'));
+                $pdf->setPaper('a4', 'landscape');
+                return $pdf->stream('archivo.pdf');
+            }
         }
         else if($data["tipo_reporte"] == "Graficas"){
             return view('PDF/Estadisticas/Graficas');

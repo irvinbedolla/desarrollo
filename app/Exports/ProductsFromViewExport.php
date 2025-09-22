@@ -27,11 +27,12 @@ class ProductsFromViewExport implements FromView
             $pagosRatificacion = Pagos::whereBetween('pago_solicitud.fecha',[$this->fecha_inicial,$this->fecha_final])
             ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
             ->join('users','users.id','turnos.id_conciliador')
+            ->join('abogados','abogados.idAbogado','turnos.idAbogado')
             ->where('pago_solicitud.tipo_pago',"Ratificacion")
             ->select('pago_solicitud.id_solicitud','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion'
              ,'pago_solicitud.estatus','pago_solicitud.tipo_pago','turnos.delegacion','turnos.NUE',
             'turnos.empresa','turnos.primero_empresa','turnos.segundo_empresa','turnos.trabajador','turnos.primero_trabajador','turnos.segundo_trabajador'
-            ,'users.name')
+            ,'users.name','abogados.giroComercial')
             ->orderby('users.name')
             ->get();
         }else{
