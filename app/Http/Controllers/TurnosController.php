@@ -1356,7 +1356,7 @@ class TurnosController extends Controller
 
     public function editar_ratificaciones(Request $request){
         $data = $request->all();
-        //$id_usuario = auth()->user()->id;
+        $id_usuario = auth()->user()->id;
         $user = User::find($id_usuario);
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
@@ -1439,12 +1439,12 @@ class TurnosController extends Controller
         if($userRole[0] == "Solicitante"){
             $data_update = Turnos::find($data["id"])
             ->update([
-                'empresa'                       => $data["empresa"],
-                'primero_empresa'               => $data["primero_empresa"],
-                'segundo_empresa'               => $data["segundo_empresa"],
-                'nombre_empresa'                => $data["nombre_empresa"],
-                'curp_solicitante'              => $data["curp_solicitante"],
-                'telefono'                      => $data["telefono"],
+                //'empresa'                       => $data["empresa"],
+                //'primero_empresa'               => $data["primero_empresa"],
+                //'segundo_empresa'               => $data["segundo_empresa"],
+                //'nombre_empresa'                => $data["nombre_empresa"],
+                //'curp_solicitante'              => $data["curp_solicitante"],
+                //'telefono'                      => $data["telefono"],
                 'trabajador'                    => $data["nombre_trabajador"],
                 'primero_trabajador'            => $data["primer_apellidot"],
                 'segundo_trabajador'            => $data["segundo_apellidot"],
@@ -1477,12 +1477,12 @@ class TurnosController extends Controller
         else{
             $data_update = Turnos::find($data["id"])
             ->update([
-                'empresa'                       => $data["empresa"],
-                'primero_empresa'               => $data["primero_empresa"],
-                'segundo_empresa'               => $data["segundo_empresa"],
+                //'empresa'                       => $data["empresa"],
+                //'primero_empresa'               => $data["primero_empresa"],
+                //'segundo_empresa'               => $data["segundo_empresa"],
                 //'nombre_empresa'                => $data["nombre_empresa"],
-                'curp_solicitante'              => $data["curp_solicitante"],
-                'telefono'                      => $data["telefono"],
+                //'curp_solicitante'              => $data["curp_solicitante"],
+                //'telefono'                      => $data["telefono"],
                 'trabajador'                    => $data["nombre_trabajador"],
                 'primero_trabajador'            => $data["primer_apellidot"],
                 'segundo_trabajador'            => $data["segundo_apellidot"],
@@ -1606,7 +1606,7 @@ class TurnosController extends Controller
         /*'domicilio'                     => $data["domicilio"],*/
         'NUE'                           => $expediente,
         'id_conciliador'                => $data["conciliador_id"],
-        'user_id'                       => $id_usuario,
+        //'user_id'                       => $id_usuario,
         'estatus'                       => $estatus]);
         
         return redirect()->route('ratificacion_atender');

@@ -118,7 +118,7 @@ body {font-family: Arial;}
                                 </div>
                             @endif
 
-                             <form class="needs-validation novalidate" method="POST" action="{{route('confirmar_solicitud')}}" enctype="multipart/form-data">
+                                <form class="needs-validation novalidate" method="POST" action="{{route('confirmar_solicitud')}}" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" name="id" value="{{$id}}">
                                     <div class="tab">
@@ -140,7 +140,7 @@ body {font-family: Arial;}
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-9">
                                                 <div class="form-group">
-                                                    <label for="password">Actividad</label>
+                                                    <label for="password">Actividad económica</label>
                                                     <input type="text" name="actividad_economica" class="form-control" value="<?=$general["actividad"];?>">
                                                 </div>
                                             </div>

@@ -49,19 +49,19 @@
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label for="email">Nombre Empleador</label>
-                                            <input type="text" class="form-control" name="empresa" value="<?=$representante["nombres_patronal"];?>">
+                                            <input type="text" class="form-control" name="empresa" value="<?=$representante["nombres_patronal"];?>" readonly>
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label for="email">Primer apellido</label>
-                                            <input type="text" class="form-control" name="primero_empresa" value="<?=$representante["primer_apellido_patronal"];?>">
+                                            <input type="text" class="form-control" name="primero_empresa" value="<?=$representante["primer_apellido_patronal"];?>" readonly>
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label for="email">Segundo apellido</label>
-                                            <input type="text" class="form-control" name="segundo_empresa" value="<?=$representante["segundo_apellido_patronal"];?>">
+                                            <input type="text" class="form-control" name="segundo_empresa" value="<?=$representante["segundo_apellido_patronal"];?>" readonly>
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-4">
@@ -73,13 +73,13 @@
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label for="email">Teléfono</label>
-                                            <input type="text" class="form-control" value="<?=$representante["telefono_patronal"];?>">
+                                            <input type="text" class="form-control" value="<?=$representante["telefono_patronal"];?>" readonly>
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label for="email">Curp</label>
-                                            <input type="text" class="form-control" name="curp_solicitante" value="<?=$representante["curp_patronal"];?>">
+                                            <input type="text" class="form-control" name="curp_solicitante" value="<?=$representante["curp_patronal"];?>" readonly>
                                         </div>
                                     </div>
 
