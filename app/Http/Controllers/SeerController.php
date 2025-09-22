@@ -43,6 +43,8 @@ use App\Models\Sedes;
 use App\Models\Usuarios;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\PDF;
+use App\Exports\ProductsFromViewExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class SeerController extends Controller
@@ -367,49 +369,58 @@ class SeerController extends Controller
 
         //Primeramente reporte detallado
         if($data["tipo_reporte"] == "Cumplimientos"){
-            //Pagos de ratificacion
-            if($sede === "Todos"){
-                $pagosRatificacion = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                ->join('users','users.id','turnos.id_conciliador')
-                ->where('pago_solicitud.tipo_pago',"Ratificacion")
-                ->select('pago_solicitud.id_solicitud','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion'
-                ,'pago_solicitud.estatus','pago_solicitud.tipo_pago','turnos.delegacion','turnos.NUE',
-                'turnos.empresa','turnos.primero_empresa','turnos.segundo_empresa','turnos.trabajador','turnos.primero_trabajador','turnos.segundo_trabajador'
-                ,'users.name')
-                ->orderby('users.name')
-                ->get();
-            }else{
-                $pagosRatificacion = Pagos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
-                ->where('sede',$sede)
-                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                ->join('users','users.id','turnos.id_conciliador')
-                ->where('pago_solicitud.tipo_pago',"Ratificacion")
-                ->select('pago_solicitud.id_solicitud','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion'
-                ,'pago_solicitud.estatus','pago_solicitud.tipo_pago','pago_solicitud.delegacion','turnos.NUE',
-                'turnos.empresa','turnos.primero_empresa','turnos.segundo_empresa','turnos.trabajador','turnos.primero_trabajador','turnos.segundo_trabajador'
-                ,'users.name')
-                ->orderby('users.name')
-                ->get(); 
+            //Para los excel
+            if($data["tipo"] == "2"){
+                return Excel::download(new ProductsFromViewExport($fecha_inicial, $fecha_final,$sede), 'productos.xlsx');
             }
+            //Para el PDF
+            else{
+                //Pagos de ratificacion
+                if($sede === "Todos"){
+                    $pagosRatificacion = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
+                    ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
+                    ->join('users','users.id','turnos.id_conciliador')
+                    ->where('pago_solicitud.tipo_pago',"Ratificacion")
+                    ->select('pago_solicitud.id_solicitud','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion'
+                    ,'pago_solicitud.estatus','pago_solicitud.tipo_pago','turnos.delegacion','turnos.NUE',
+                    'turnos.empresa','turnos.primero_empresa','turnos.segundo_empresa','turnos.trabajador','turnos.primero_trabajador','turnos.segundo_trabajador'
+                    ,'users.name')
+                    ->orderby('users.name')
+                    ->get();
+                }else{
+                    $pagosRatificacion = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
+                    ->where('pago_solicitud.delegacion',$sede)
+                    ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
+                    ->join('users','users.id','turnos.id_conciliador')
+                    ->where('pago_solicitud.tipo_pago',"Ratificacion")
+                    ->select('pago_solicitud.id_solicitud','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion'
+                    ,'pago_solicitud.estatus','pago_solicitud.tipo_pago','pago_solicitud.delegacion','turnos.NUE',
+                    'turnos.empresa','turnos.primero_empresa','turnos.segundo_empresa','turnos.trabajador','turnos.primero_trabajador','turnos.segundo_trabajador'
+                    ,'users.name')
+                    ->orderby('users.name')
+                    ->get(); 
+                }
+                //Pagos de audiencias
+                if($sede === "Todos"){
+                    $pagosAudiencias = Pagos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
+                    ->join('users','users.id','pago_solicitud.id_conciliador')
+                    ->where('pago_solicitud.tipo_pago',"Audiencia")
+                    ->get();
+                }else{
+                    $pagosAudiencias = Pagos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
+                    ->where('pago_solicitud.delegacion',$sede)
+                    ->join('users','users.id','pago_solicitud.id_conciliador')
+                    ->where('pago_solicitud.tipo_pago',"Audiencia")
+                    ->get(); 
+                }
 
-            //Pagos de audiencias
-            if($sede === "Todos"){
-                $pagosAudiencias = Pagos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
-                ->join('users','users.id','pago_solicitud.id_conciliador')
-                ->where('pago_solicitud.tipo_pago',"Audiencia")
-                ->get();
-            }else{
-                $pagosAudiencias = Pagos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
-                ->where('sede',$sede)
-                ->join('users','users.id','pago_solicitud.id_conciliador')
-                ->where('pago_solicitud.tipo_pago',"Audiencia")
-                ->get(); 
+                $pdf = \PDF::loadView('PDF/Estadisticas/reporte-Cumplimientos', compact('fecha_inicial','fecha_final','pagosRatificacion','pagosAudiencias'));
+                $pdf->setPaper('a4', 'landscape');
+                return $pdf->stream('archivo.pdf');
             }
+            
 
-            $pdf = \PDF::loadView('PDF/Estadisticas/reporte-Cumplimientos', compact('fecha_inicial','fecha_final','pagosRatificacion','pagosAudiencias'));
-            $pdf->setPaper('a4', 'landscape');
-            return $pdf->stream('archivo.pdf');
+            
 
         }
         else if($data["tipo_reporte"] == "CumplimientosResumen"){
@@ -458,42 +469,72 @@ class SeerController extends Controller
                 ->selectRaw('sum(pago_solicitud.monto) as ratificacionesMonto')
                 ->first();
             }else{
-                $pagosRatificacion = Pagos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
-                ->where('sede',$sede)
+                $pagosRatificacion = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
+                ->where('pago_solicitud.delegacion',$sede)
                 ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
                 ->join('users','users.id','turnos.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Ratificacion")
                 ->selectRaw('count(pago_solicitud.id) as ratificaciones')
                 ->first();
-                $pagosRatificacionMonto = Pagos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
-                ->where('sede',$sede)
+                $pagosRatificacionMonto = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
+                ->where('pago_solicitud.delegacion',$sede)
                 ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
                 ->join('users','users.id','turnos.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Ratificacion")
+                ->selectRaw('sum(pago_solicitud.monto) as ratificacionesMonto')
+                ->first();
+
+                $pagosRatificacionPagado = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
+                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
+                ->join('users','users.id','turnos.id_conciliador')
+                ->where('pago_solicitud.tipo_pago',"Ratificacion")
+                ->where('pago_solicitud.estatus',"Pagado")
+                ->selectRaw('count(pago_solicitud.id) as ratificaciones')
+                ->first();
+                $pagosRatificacionMontoPagado = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
+                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
+                ->join('users','users.id','turnos.id_conciliador')
+                ->where('pago_solicitud.tipo_pago',"Ratificacion")
+                ->where('pago_solicitud.estatus',"Pagado")
+                ->selectRaw('sum(pago_solicitud.monto) as ratificacionesMonto')
+                ->first();
+
+                $pagosRatificacionPendiente = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
+                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
+                ->join('users','users.id','turnos.id_conciliador')
+                ->where('pago_solicitud.tipo_pago',"Ratificacion")
+                ->where('pago_solicitud.estatus',"Pendiente")
+                ->selectRaw('count(pago_solicitud.id) as ratificaciones')
+                ->first();
+                $pagosRatificacionMontoPendiente = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
+                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
+                ->join('users','users.id','turnos.id_conciliador')
+                ->where('pago_solicitud.tipo_pago',"Ratificacion")
+                ->where('pago_solicitud.estatus',"Pendiente")
                 ->selectRaw('sum(pago_solicitud.monto) as ratificacionesMonto')
                 ->first();
             }
 
             //Pagos de audiencias
             if($sede === "Todos"){
-                $pagosAudiencias = Pagos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
+                $pagosAudiencias = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
                 ->join('users','users.id','pago_solicitud.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Audiencia")
                 ->selectRaw('count(pago_solicitud.id) as audiencias')
                 ->first();
-                $pagosAudienciasMonto = Pagos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
+                $pagosAudienciasMonto = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
                 ->join('users','users.id','pago_solicitud.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Audiencia")
                 ->selectRaw('sum(pago_solicitud.monto) as audienciasMonto')
                 ->first();
             }else{
-                $pagosAudiencias = Pagos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
-                ->where('sede',$sede)
+                $pagosAudiencias = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
+                ->where('pago_solicitud.delegacion',$sede)
                 ->join('users','users.id','pago_solicitud.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Audiencia")
                 ->selectRaw('count(pago_solicitud.id) as audiencias')
                 ->first();
-                $pagosAudienciasMonto = Pagos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
+                $pagosAudienciasMonto = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
                 ->join('users','users.id','pago_solicitud.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Audiencia")
                 ->selectRaw('sum(pago_solicitud.monto) as audienciasMonto')
@@ -503,7 +544,7 @@ class SeerController extends Controller
             $pdf = \PDF::loadView('PDF/Estadisticas/reporte-CumplimientosMonto', 
             compact('fecha_inicial','fecha_final','pagosRatificacion','pagosRatificacionMonto',
             'pagosAudiencias','pagosAudienciasMonto','pagosRatificacionPagado','pagosRatificacionMontoPagado',
-        'pagosRatificacionPendiente','pagosRatificacionMontoPendiente'));
+            'pagosRatificacionPendiente','pagosRatificacionMontoPendiente'));
             return $pdf->stream('archivo.pdf');
         }
         if($data["tipo_reporte"] == "Cumplimientos"){
@@ -2280,7 +2321,7 @@ class SeerController extends Controller
         ->leftJoin('persona_fisica', 'persona_fisica.id', '=', 'seer_citados.id_fisica')
         ->where('seer_citados.id_solicitud', $id)
         ->select('seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido','seer_citados.rfc',
-        'abogados.nombres as nombre_abogado','abogados.primer_apellido as primero_abogado','abogados.segundo_apellido as segundo_abogado',
+        'abogados.nombres_patronal as nombre_abogado','abogados.primer_apellido_patronal as primero_abogado','abogados.segundo_apellido_patronal as segundo_abogado',
         'persona_fisica.nombre as nombre_fisica','persona_fisica.primer_apellido as primer_fisica','persona_fisica.segundo_apellido as segundo_fisica',
         'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus')
         ->get();
@@ -2721,59 +2762,15 @@ class SeerController extends Controller
         else{
             if($citados->notificacion == "Trabajador"){
                 //Voy a insertar nuevos citadorios pero como multa
-                $citados = SeerCitados::where("id_solicitud",$data["id"])->get();
-                $cont = count($citados);
+                $citado_notificacion = SeerCitados::where("id_solicitud",$data["id"])->get();
+                $cont = count($citado_notificacion);
                 for($i = 0; $i < $cont; $i++) {
-                
-                    $data_insert=array(
-                        'id_solicitud'      => $id,
-                        'colonia'           => $citados[$i]["colonia"],
-                        'cp'                => $citados[$i]["cp"],
-                        'n_ext'             => $citados[$i]["n_ext"],
-                        'calle'             => $citados[$i]["calle"],
-                        'tipo_vialidad'     => $citados[$i]["tipo_vialidad"],
-                        'referencia'        => $citados[$i]["referencia"],
-                        'notificacion'      => "Centro",
-                        'tipo_notificacion' => "Citatorio",
-                    );
-
-                    if(isset($citados[$i]["rfc"])){
-                        $data_insert["rfc"] =  $citados[$i]["rfc"];
-                    }
-                    if(isset($citados[$i]["curp"])){
-                        $data_insert["curp"] =  $citados[$i]["curp"];
-                    }
-                    if(isset($citados[$i]["traductor"])){
-                        $data_insert["traductor"] =  1;
-                        $data_insert["lenguaje"]  =  $citados[$i]["lenguaje"];
-                    }
-                    if(isset($citados[$i]["n_int"])){
-                        $data_insert["n_int"] =  $citados[$i]["n_int"];
-                    }
-                    if(isset($citados[$i]["calle1"])){
-                        $data_insert["calle1"] =  $citados[$i]["calle1"];
-                    }
-                    if(isset($citados[$i]["calle2"])){
-                        $data_insert["calle2"] =  $citados[$i]["calle2"];
-                    }
-                    if(isset($citados[$i]["tipo"])){
-                        $data_insert["tipo_persona"] = $citados[$i]["tipo_persona"];
-                    }
-                    if(isset($citados[$i]["nombre"])){
-                        $data_insert["nombre"] = $citados[$i]["nombre"];
-                    }
-                    if(isset($citados[$i]["primer_apellido"])){
-                        $data_insert["primer_apellido"] = $citados[$i]["primer_apellido"];
-                    }
-                    if(isset($citados[$i]["segundo_apellido"])){
-                        $data_insert["segundo_apellido"] = $citados[$i]["segundo_apellido"];
-                    }
-                    if(isset($citados[$i]["estado_solicitante"])){
-                        $data_insert["estado_solicitante"] = $citados[$i]["estado_solicitante"];
-                    }
-                    
-                    SeerCitados::create($data_insert);
+                    $citado_copiar = SeerCitados::find($citado_notificacion[$i]["id"]);
+                    $nuevo_citado = $citado_copiar->replicate();
+                    $nuevo_citado->notificacion = 'Centro';
+                    $nuevo_citado->save();
                 }
+                
             }
             else if($citados->notificacion == "Centro"){
                 //Si va por el centro se van a generar las multas
@@ -5526,7 +5523,9 @@ class SeerController extends Controller
             $pdf->setPaper('a4', 'landscape');
             return $pdf->stream('archivo.pdf');
         }
+    }
 
-        
+    public function exportarExcel(){
+        return Excel::download(new CitasExport, 'pagos.xlsx');
     }
 }

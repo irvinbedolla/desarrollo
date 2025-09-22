@@ -13,6 +13,9 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
+                            <a href="" type="button" class="btn btn-success">
+                                Actualizar Representantes
+                            </button>
                             <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#ModalArchivar" data-id="{{ $id }}">
                                 Archivar
                             </button>
@@ -245,16 +248,16 @@
                             <th style="color: #fff;">Folio</th>
                             <th style="color: #fff;">Nombre</th>
                             <th style="color: #fff;">RFC</th>
-                            <th style="color: #fff;">Empresa</th>
+                            <th style="color: #fff;">Reprecentante</th>
                             <th style="color: #fff;">Acciones</th>
                         </thead>
                         <tbody class="contenidobusqueda">
                             @foreach($abogados as $abogado)
                                 <tr>
                                     <td>{{$abogado->idAbogado}}</td>
-                                    <td>{{$abogado->nombres}} {{$abogado->primer_apellido}} {{$abogado->segundo_apellido}}</td>
-                                    <td>{{$abogado->rfc}}</td>
-                                    <td>{{$abogado->empresa}}</td>
+                                    <td>{{$abogado->nombres_patronal}} {{$abogado->primer_apellido_patronal}} {{$abogado->segundo_apellido_patronal}}</td>
+                                    <td>{{$abogado->rfc_patronal}}</td>
+                                    <td>{{$abogado->nombre_representante}} {{$abogado->primer_apellido_representante}} {{$abogado->segundo_apellido_representante}}</td>
                                     <td>
                                         <button class="btn btn-info" onclick=editar_rol(); type="submit" name="abogado" value="{{$abogado->idAbogado}}">Seleccionar</button>
                                     </td>

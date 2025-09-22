@@ -92,7 +92,8 @@
                                         </div>
                                         
                                         <div class="col-xs-12 col-sm-12 col-md-12">
-                                            <button type="submit" class="btn btn-primary">PDF</button>
+                                            <button type="submit" name="tipo" value="1" class="btn btn-primary">PDF</button>
+                                            <button type="submit" name="tipo" value="2" class="btn btn-success">Excel</button>
                                         </div>
                                     </div>
                                 </form>

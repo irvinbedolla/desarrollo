@@ -13,7 +13,7 @@ class CitasExport implements FromCollection
     */
     public function collection()
     {
-        //return Cita::all();
-        return Pagos::all();
+        $products = Pagos::all();
+        return view('excel.cumplimientos', ['pagosRatificacion' => $products]);
     }
 }
