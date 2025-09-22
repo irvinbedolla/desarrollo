@@ -43,6 +43,7 @@
                                                     <option value="Cumplimientos">Cumplimientos Detallado</option>
                                                     <option value="CumplimientosResumen">Cumplimientos Resumen</option>
                                                     <option value="Ratificaciones">Ratificaciones</option>
+                                                    <option value="RatificacionesUsuario">Ratificaciones Por Usuario</option>
                                                     <option value="Detallado">Eficiencia</option>
                                                     <option value="Concentrado">Concentrado</option>
                                                 </select>
@@ -135,6 +136,10 @@
             else if(valorCambiado == "Ratificaciones"){
                 $('#PDF').css('display','none');
                 $('#Excel-PDF').css('display','block');
+            }
+            else if(valorCambiado == "RatificacionesUsuario"){
+                $('#PDF').css('display','block');
+                $('#Excel-PDF').css('display','none');
             }
         });
     </script>

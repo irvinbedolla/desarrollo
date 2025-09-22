@@ -355,7 +355,7 @@ class SeerController extends Controller
         //Validar documentacion
         request()->validate([
             //General
-            'tipo_reporte'  => 'required|in:Cumplimientos,CumplimientosResumen,Ratificaciones,RatificacionesResumen,Detallado,Concentrado',
+            'tipo_reporte'  => 'required|in:Cumplimientos,CumplimientosResumen,Ratificaciones,RatificacionesResumen,Detallado,Concentrado,RatificacionesUsuario',
         ], $data);
         if(isset($data["sede"]))
             $sede = $data["sede"];
@@ -574,6 +574,30 @@ class SeerController extends Controller
                 $pdf->setPaper('a4', 'landscape');
                 return $pdf->stream('archivo.pdf');
             }
+        }
+        else if($data["tipo_reporte"] == "RatificacionesUsuario"){
+            //Pagos de ratificacion(Turnos)
+            if($sede === "Todos"){
+                $usuarios = Turnos::whereBetween('turnos.fecha',[$fecha_inicial,$fecha_final])
+                ->join('users','users.id','turnos.user_id')
+                ->select('users.name', DB::raw('count(turnos.id) as ratificacion'), DB::raw('sum(turnos.monto) as ratificacionesMonto') )
+                ->groupBy('users.id', 'users.name')
+                ->get();
+
+            } else {
+                $usuarios = Turnos::whereBetween('turnos.fecha',[$fecha_inicial,$fecha_final])
+                ->where('turnos.delegacion',$sede)
+                ->join('users','users.id','turnos.user_id')
+                ->select('users.name', DB::raw('count(turnos.id) as ratificacion'), DB::raw('sum(turnos.monto) as ratificacionesMonto') )
+                ->groupBy('users.id', 'users.name')
+                ->get();
+            }
+            
+            $pdf = \PDF::loadView('PDF/Estadisticas/RatificacionUsuario',compact('fecha_inicial','fecha_final','usuarios'));
+            //$pdf->setPaper('a4', 'landscape');
+            return $pdf->stream('archivo.pdf');
+        
+            
         }
         else if($data["tipo_reporte"] == "Graficas"){
             return view('PDF/Estadisticas/Graficas');

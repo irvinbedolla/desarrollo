@@ -5,7 +5,7 @@
     </head>
     <body>
         
-
+    <div>Cumplimiento en Ratificación</div>
     <table>
         <thead style="background-color: #869b9c;">
             <th style="color: #fff;  text-align: center;">Fecha</th>
@@ -52,11 +52,12 @@
                 <td></td>
                 <td></td>
                 <td style="font-weight: bold;">Total :</td>
-                <td style="font-weight: bold;">{{ number_format($totalPrice, 2) }}</td>
+                <td style="font-weight: bold;">${{ number_format($totalPrice, 2) }}</td>
             </tr>
         </tfoot>
     </table>
 
+    <div>Cumplimiento en Audiencia</div>
     <table>
         <thead style="background-color: #869b9c;">
             <th style="color: #fff;  text-align: center;">Fecha</th>
@@ -101,7 +102,7 @@
                 <td></td>
                 <td></td>
                 <td style="font-weight: bold;">Total :</td>
-                <td style="font-weight: bold;">{{ number_format($totalPrice, 2) }}</td>
+                <td style="font-weight: bold;">${{ number_format($totalPrice, 2) }}</td>
             </tr>
         </tfoot>
     </table>
