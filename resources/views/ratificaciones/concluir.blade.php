@@ -298,7 +298,7 @@
         // Agregar pago
         $("#addPago").click(function () {
                 var html = '';
-                html += '<div id="inputFormRow2" class="row">';
+                html += '<div id="inputFormRow2" class="col-xs-12 col-sm-12 col-md-12">';
                 
                 //TIPO DE PAGO
                 html +='<div class="col-xs-12 col-sm-12 col-md-12">';
@@ -329,6 +329,18 @@
                     html += 'El monto es obligatorio.';
                     html += '</div> </div> </div>';
 
+                    //DESCRIPCIÓN DE PAGO
+                    html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                    html += '<div class="form-group">';
+                    html += '<label for="password">Descripción</label>';
+                    html +='<input type="text" class="form-control" name="descripcion_pagos[]"  oninput="this.value = this.value.toUpperCase()" placeholder="Ejemplo: Unico Pago, Primer Pago, Ultimo Pago" required>';
+                    html += '<div class="invalid-feedback">';
+                    html += 'La Dirección es obligatoria.';
+                    html += '</div> </div> </div>';
+
+                    html += '<div class="input-group-append">';
+                    html += '<button class="removeRow2 btn btn-danger" type="button">Borrar</button>';
+                    html += '</div>';
                     
                 html += '</div>';
 
@@ -344,7 +356,7 @@
         // Agregar pago
         $("#addRetencion").click(function () {
                 var html = '';
-                html += '<div id="inputFormRow2" class="row">';
+                html += '<div id="inputFormRow3" class="row">';
                 
                 //TIPO DE PAGO
                 html +='<div class="col-xs-12 col-sm-12 col-md-12">';
@@ -358,8 +370,6 @@
                     html += '<div class="invalid-feedback">';
                     html += 'La Descripción es obligatoria.';
                     html += '</div> </div> </div>';
-
-                    
 
                     //MONTO A PAGAR
                     html += '<div class="col-xs-12 col-sm-12 col-md-12">';
