@@ -47,7 +47,7 @@
                                                     </td>
                                                     <td>
                                                         <button type="button" class="btn btn-warning open-expediente-modal" data-bs-toggle="modal" data-bs-target="#expediente" data-id="{{ $solicitud->id }}">Subir Documento</button>
-                                                        @if($solicitud->estatus == "Conluida")
+                                                        @if($solicitud->estatus == "Concluida")
                                                             <div class="dropdown">
                                                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                                                     Documentos

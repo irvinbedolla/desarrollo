@@ -268,10 +268,14 @@
                                         <div class="form-group">
                                             <label for="email">Tipo de Identificación</label>
                                             <select class="form-control" name="tipo_identificacion" required>
-                                                <option value="Ine" @php if($folio->tipo_identificacion === "INE") echo "selected"  @endphp>INE</option>
+                                                <option value="Credencial de elector" @php if($folio->tipo_identificacion === "Credencial de elector") echo "selected"  @endphp>Credencial de elector</option>
                                                 <option value="Pasaporte" @php if($folio->tipo_identificacion === "Pasaporte") echo "selected"  @endphp>Pasaporte</option>
-                                                <option value="Cedula" @php if($folio->tipo_identificacion === "Cédula Profesional") echo "selected"  @endphp>Cédula Profesional</option>
-                                                <option value="Licencia" @php if($folio->tipo_identificacion === "Licencia para Conducir") echo "selected"  @endphp>Licencia para conducir</option>
+                                                <option value="Cédula profesional" @php if($folio->tipo_identificacion === "Cédula Profesional") echo "selected"  @endphp>Cédula Profesional</option>
+                                                <option value="Licencia para conducir" @php if($folio->tipo_identificacion === "Licencia para Conducir") echo "selected"  @endphp>Licencia para conducir</option>
+                                                <option value="Credencial de inapam" @php if($folio->tipo_identificacion === "Credencial de inapam") echo "selected"  @endphp>Credencial de INAPAM</option>
+                                                <option value="Cartilla militar" @php if($folio->tipo_identificacion === "Cartilla militar") echo "selected"  @endphp>Cartilla Militar</option>
+                                                <option value="Documento migratorio" @php if($folio->tipo_identificacion === "Documento migratorio") echo "selected"  @endphp>Documento Migratorio</option>
+                                                <option value="Constancia de identidad" @php if($folio->tipo_identificacion === "Constancia de identidad") echo "selected"  @endphp>Constancia de Identidad</option>
                                                 <option value="Otros" @php if($folio->tipo_identificacion === "Otros") echo "selected"  @endphp>Otros</option>
                                             </select>
                                         </div>

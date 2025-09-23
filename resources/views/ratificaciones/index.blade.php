@@ -18,7 +18,7 @@
                                         <a href="{{ route('Ratificacion') }}" class="btn btn-primary">Ratificación por validar</a>
                                     </div>
                                 </div>
-                                <div class="col-xs-4 col-sm-4 col-md-3">
+                                <div class="col-xs-4 col-sm-4 col-md-2">
                                     <div align="center">
                                         <a href="{{ route('ratificacion_atender') }}" class="btn btn-primary">Ratificaciones hoy</a>
                                     </div>
@@ -28,7 +28,12 @@
                                         <a href="{{ route('ratificacion_confirmadas') }}" class="btn btn-primary">Ratificaciones confirmadas</a>
                                     </div>
                                 </div>
-                                <div class="col-xs-4 col-sm-4 col-md-3">
+                                <div class="col-xs-4 col-sm-4 col-md-2">
+                                    <div align="center">
+                                        <a href="{{ route('create_cita') }}" class="btn btn-primary" target="_blank">Nueva Ratificación</a>
+                                    </div>
+                                </div>
+                                <div class="col-xs-4 col-sm-4 col-md-2">
                                     <div align="center">
                                        <button type="button" class="btn btn-primary open-modal" data-bs-toggle="modal" data-bs-target="#ModalArchivar">
                                             Buscar

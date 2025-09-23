@@ -47,7 +47,7 @@
                                                                     <li class="dropdown-divider"></li>
                                                                 </ul>
                                                             </div>
-                                                        @elseif($solicitud->estatus === "Conluida")
+                                                        @elseif($solicitud->estatus === "Concluida")
                                                             <div class="dropdown  mt-2">
                                                                 <button class="btn btn-warning dropdown-toggle load-pdfs" type="button" id="dropdownCitatoriosBtn-{{ $solicitud->id }}" data-id="{{ $solicitud->id }}" data-bs-toggle="dropdown" aria-expanded="false">
                                                                     Documentos

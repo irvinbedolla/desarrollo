@@ -201,7 +201,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div  class="col-xs-12 col-sm-12 col-md-3">
+                                                <div  class="col-xs-12 col-sm-12 col-md-1">
                                                     <div class="form-group">
                                                         <label for="name">Edad <span style="color:red;">(*)</span></label>
                                                         <input type="number" name="trabajador_edad" class="form-control soloNumeros" required> 
@@ -210,7 +210,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div   class="col-xs-12 col-sm-12 col-md-3">
+                                                <div   class="col-xs-12 col-sm-12 col-md-2">
                                                     <div class="form-group">
                                                     <label for="name">Sexo <span style="color:red;">(*)</span></label>
                                                         <select name="trabajador_sexo" class="form-control" required>
@@ -223,7 +223,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                <div class="col-xs-12 col-sm-12 col-md-5">
                                                     <div class="form-group">
                                                         <label for="name">CURP del trabajador <span style="color:red;">(*)</span></span></label>
                                                         <input type="text" name="trabajador_curp"  oninput="validarInput(this, 'resultado_curp_trabajador')" class="form-control" required> 
@@ -247,14 +247,18 @@
                                                         <label for="name">Identificación Oficial <span style="color:red;">(*)</span></label>
                                                         <select id="tipo_identificacion" name="tipo_identificacion" class="form-control"  required>
                                                             <option value="">Seleccione el tipo de indentificación</option>
-                                                            <option value="INE">INE</option>
+                                                            <option value="Credencial de elector">Credencial de Elector</option>
                                                             <option value="Pasaporte">Pasaporte</option>
-                                                            <option value="CédulaProfesional">Cédula Profesional</option>
-                                                            <option value="Licencia">Licencia para Conducir</option>
+                                                            <option value="Cédula profesional">Cédula Profesional</option>
+                                                            <option value="Licencia de conducir">Licencia de Conducir</option>
+                                                            <option value="Credencial de inapam">Credencial de INAPAM</option>
+                                                            <option value="Cartilla militar">Cartilla Militar</option>
+                                                            <option value="Documento migratorio">Documento Migratorio</option>
+                                                            <option value="Constancia de identidad">Constancia de Identidad</option>
                                                             <option value="Otro">Otros</option>
                                                         </select>
                                                         <div class="invalid-feedback">
-                                                            Este campo es obligatorio.
+                                                            Este campo identificación es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
@@ -264,6 +268,15 @@
                                                         <input type="text" name="tipo_otros" class="form-control" > 
                                                         <div class="invalid-feedback">
                                                             El campo es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="name">Núm de identificación</label>
+                                                        <input type="text" name="num_identificacion" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                        <div class="invalid-feedback">
+                                                            El campo núm. de identificación es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
@@ -425,10 +438,10 @@
                                                 </div>
                                                 <div  class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group"><br>
-                                                        <label for="name">Categoria o Puesto que desempeña <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="categoria" class="form-control" > 
+                                                        <label for="name">Categoría o Puesto que desempeña <span style="color:red;">(*)</span></label>
+                                                        <input type="text" name="categoria" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                         <div class="invalid-feedback">
-                                                            El campo edad es obligatorio.
+                                                            El campo categoría es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
@@ -444,7 +457,7 @@
                                                             <option value="Mensual">Mensual</option>
                                                         </select>
                                                         <div class="invalid-feedback">
-                                                            Este campo es obligatorio.
+                                                            Este campo frecuencia es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
@@ -454,17 +467,17 @@
                                                         <label for="name">Salario <span style="color:red;">(*)</span></label><br>
                                                         <input type="text" name="salario" placeholder="$" class="form-control soloMontos" class="myInput" required> 
                                                         <div class="invalid-feedback">
-                                                            Este campo es obligatorio.
+                                                            Este campo salario es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="name">Dias a la semana trabajados <span style="color:red;">(*)</span></label>
+                                                        <label for="name">Días a la semana trabajados <span style="color:red;">(*)</span></label>
                                                         <input type="number" name="dias" class="form-control soloNumeros" required> 
                                                         <div class="invalid-feedback">
-                                                            Este campo es obligatorio.
+                                                            Este campo días a la semana trabajados es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
@@ -478,7 +491,7 @@
                                                             <option value="Terminación voluntaria de la relación de trabajo">Terminación voluntaria de la relación de trabajo</option>
                                                         </select>
                                                         <div class="invalid-feedback">
-                                                            El campo es obligatorio.
+                                                            El campo motivo de la conciliación es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>

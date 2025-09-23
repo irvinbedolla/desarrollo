@@ -529,6 +529,7 @@ class TurnosController extends Controller
                 'colonia'           => 'required',
                 'N_Ext'             => 'required',
                 'cp'                => 'required',
+                'num_identificacion'=> 'required',
             ], $data);
         }
         /*
@@ -621,6 +622,7 @@ class TurnosController extends Controller
                 'fecha'             => $fecha_actual,
                 'hora'              => $hora_actual,
                 'hora_fin'          => $hora_actual,
+                'num_identificacion'=> 'required',
             ); 
             $nombre = $data["trabajador"];
             
@@ -813,7 +815,7 @@ class TurnosController extends Controller
 
         if(count($faltantes) == 0){
             Turnos::find($id_solicitud)
-            ->update(['estatus' => "Conluida"]);
+            ->update(['estatus' => "Concluida"]);
         }
 
         return redirect()->route('cumplimiento_actual');
@@ -957,6 +959,7 @@ class TurnosController extends Controller
         $prestaciones = Concepto::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
         $deducciones  = Deducciones::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
         // Inicializa las variables de texto
+        $deduccionesTexto = '';
         $vacacionesTexto = '';
         $primaTexto = '';
         $aguinaldoTexto = '';
@@ -1001,6 +1004,10 @@ class TurnosController extends Controller
                     break;
             }
         }
+        //DEDUCCIONES
+        foreach ($deducciones as $deduccion) {
+            $deduccionesTexto = $this->convertirNumerosALetras($deduccion->monto);
+        }
         //
         $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
 
@@ -1023,7 +1030,7 @@ class TurnosController extends Controller
         $html = view('PDF/convenioRatificacion', 
             compact('id', 'solicitud', 'dias_descanso', 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','vacacionesTexto',
             'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
-            'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones','abogado','deducciones'))
+            'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones','abogado','deducciones','deduccionesTexto'))
             ->render();
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -1124,6 +1131,7 @@ class TurnosController extends Controller
         $prestaciones = Concepto::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
         $deducciones  = Deducciones::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
         // Inicializa las variables de texto
+        $deduccionesTexto = '';
         $vacacionesTexto = '';
         $primaTexto = '';
         $aguinaldoTexto = '';
@@ -1168,6 +1176,10 @@ class TurnosController extends Controller
                     break;
             }
         }
+        //DEDUCCIONES
+        foreach ($deducciones as $deduccion) {
+            $deduccionesTexto = $this->convertirNumerosALetras($deduccion->monto);
+        }
         $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
         $conciliador = $conciliador->where("turnos.id", "=", $id)
         ->select('users.name')
@@ -1175,7 +1187,7 @@ class TurnosController extends Controller
 
         $html = view('PDF/ActaAudiencia', compact('id','solicitud','conciliador','vacacionesTexto',
         'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
-        'gratificacionETexto','gratificacionFTexto','otrasTexto','prestaciones','deducciones'))->render();
+        'gratificacionETexto','gratificacionFTexto','otrasTexto','prestaciones','deducciones','deduccionesTexto'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -1309,7 +1321,7 @@ class TurnosController extends Controller
         $solicitudes = Turnos::where('tipo','Ratificación')
         /*->where('auxiliar',$user["id"])
         ->where('estatus','Confirmado')
-        ->orwhere('estatus','Conluida')
+        ->orwhere('estatus','Concluida')
         ->orwhere('estatus','Concluida Pagos')
         ->orwhere('estatus','Incumplimiento')
         ->orwhere('estatus','Archivada')
@@ -1587,7 +1599,7 @@ class TurnosController extends Controller
             $estatus = "Concluida Pagos";
         }
         else{
-            $estatus = "Conluida";
+            $estatus = "Concluida";
         }
 
         //Generar numero de expediente

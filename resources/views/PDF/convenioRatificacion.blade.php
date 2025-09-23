@@ -97,15 +97,15 @@
 
                 <p><center><b>D E C L A R A C I O N E S:</b></center></p><br>
 
-                <p><b>PRIMERA.</b> La parte <b>TRABAJADORA</b> se identifica con <b>CREDENCIAL DE ELECTOR{{ $solicitud->identificacion }}</b> expedida a su favor por <b>Instituto Nacional Electoral</b> y declara ser una persona 
-                    mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p> 
+                <p><b>PRIMERA.</b> La parte <b>TRABAJADORA {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> se identifica con <b>{{ strtoupper($solicitud->tipo_identificacion) }}</b>, de número <b>{{ $solicitud->num_identificacion }}</b> 
+                    expedida a su favor por <b>Instituto Nacional Electoral</b> y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p> 
 
                 <p><b>SEGUNDA.</b> 
                 @if(is_null($abogado->nombre_representante) && is_null($abogado->primer_apellido_representante) && is_null($abogado->segundo_apellido_representante))
                     Declara a <b>{{$abogado->nombres_patronal}} {{$abogado->primer_apellido_patronal}} {{$abogado->segundo_apellido_patronal}}</b> quien se identifica con 
-                    <b>CREDENCIAL DE ELECTOR{{ $solicitud->identificacion }}</b> expedida a su favor por <b>Instituto Nacional Electoral</b>, y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p>  
+                    <b>{{ strtoupper($solicitud->tipo_identificacion) }}</b> expedida a su favor por <b>Instituto Nacional Electoral</b>, y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p>  
                 @else Declara a <b>{{$abogado->nombre_representante}} {{$abogado->primer_apellido_representante}} {{$abogado->segundo_apellido_representante}}</b> quien se identifica con 
-                    <b>CREDENCIAL DE ELECTOR{{ $solicitud->identificacion }}</b> expedida a su favor por <b>Instituto Nacional Electoral</b>, así como con <b>{{$abogado->descipcion_poder}}</b>.</p>  
+                    <b>{{ strtoupper($solicitud->tipo_identificacion) }}</b> expedida a su favor por <b>Instituto Nacional Electoral</b>, así como con <b>{{$abogado->descipcion_poder}}</b>.</p>  
                 @endif
                 <b>TERCERA.</b> Declara la parte <b>TRABAJADORA</b>:
                     <p class="sangria">
@@ -192,77 +192,77 @@
                                     @switch($concepto->descripcion)                                   
                                         @case('Vacaciones')
                                             <tr>
-                                                <td>Vacaciones</td>
+                                                <td>VACACIONES</td>
                                                 <td><b>${{ number_format($concepto->monto, 2) }} </td>
                                                 <td>{{ $vacacionesTexto }} M.N.</b></td>
                                             </tr>
                                             @break
                                         @case('PrimaVacacional')
                                             <tr>
-                                                <td>Prima vacacional</td>
+                                                <td>PRIMA VACACIONAL</td>
                                                 <td><b>${{ number_format($concepto->monto, 2) }}</td>
                                                 <td>{{ $primaTexto }} M.N.</b></td>
                                             </tr>
                                             @break
                                         @case('Aguinaldo')
                                             <tr>
-                                                <td>Aguinaldo</td> 
+                                                <td>AGUINALDO</td> 
                                                 <td><b>${{ number_format($concepto->monto, 2) }}</td> 
                                                 <td>{{ $aguinaldoTexto }} M.N.</b></td>
                                             </tr>
                                             @break
                                         @case('DSueldo')
                                             <tr>
-                                                <td>Días de sueldo</td>
+                                                <td>DÍAS DE SUELDO</td>
                                                 <td><b>${{ number_format($concepto->monto, 2) }}</td> 
                                                 <td>{{ $DSueldoTexto }} M.N.</b></td>
                                             </tr>
                                             @break
                                         @case('GraficaciónA')
                                             <tr>
-                                                <td>Graficación A (Con base al salario integrado)</td> 
+                                                <td>GRATIFICACIÓN A (CON BASE AL SALARIO INTEGRADO)</td> 
                                                 <td><b>${{ number_format($concepto->monto, 2) }}</td> 
                                                 <td>{{ $gratificacionATexto }} M.N.</b></td>
                                             </tr>
                                             @break
                                         @case('GraficaciónB')
                                             <tr>
-                                                <td>Graficación B (20 Días por año cumplido)</td> 
+                                                <td>GRATIFICACIÓN B (20 DÍAS POR AÑO CUMPLIDO)</td> 
                                                 <td><b>${{ number_format($concepto->monto, 2) }}</td>
                                                 <td>{{ $gratificacionBTexto }} M.N.</b></td>
                                             </tr>
                                             @break
                                         @case('GratificaciónC')
                                             <tr>
-                                                <td>Graficación C (Prima de antigüedad topada)</td> 
+                                                <td>GRATIFICACIÓN C (PRIMA DE ANTIGÜEDAD TOPADA)</td> 
                                                 <td><b>${{ number_format($concepto->monto, 2) }}</td> 
                                                 <td>{{ $gratificacionCTexto }} M.N.</b></td>
                                             </tr>
                                             @break
                                         @case('GratificaciónD')
                                             <tr>
-                                                <td>Graficación D (Incluye cualquier otra prestación)</td>
+                                                <td>GRATIFICACIÓN D (INCLUYE CUALQUIER OTRA PRESTACIÓN)</td>
                                                 <td><b>${{ number_format($concepto->monto, 2) }}</td>
                                                 <td>{{ $gratificacionDTexto }} M.N.</b></td>
                                             </tr>
                                             @break
                                         @case('GratificaciónE')
                                             <tr>
-                                                <td>Graficación E (Prestaciones en especie)</td>
+                                                <td>GRATIFICACIÓN E (PRESTACIONES EN ESPECIE)</td>
                                                 <td><b>${{ number_format($concepto->monto, 2) }}</td>
                                                 <td>{{ $gratificacionETexto }} M.N.</b></td>
                                             </tr>
                                             @break
                                         @case('GratificaciónF')
                                             <tr>
-                                                <td>Graficación F (Reconocimiento de derechos)</td>
+                                                <td>GRATIFICACIÓN F (RECONOCIMIENTO DE DERECHOS)</td>
                                                 <td><b>${{ number_format($concepto->monto, 2) }}</td>
                                                 <td>{{ $gratificacionFTexto }} M.N.</b></td>
                                             </tr>
                                             @break 
                                         @default 
                                             <tr>
-                                                <td>Otra prestación: {{ $concepto->descripcion }}</td>
+                                                <td>OTRA PRESTACIÓN: {{ strtoupper($concepto->descripcion) }}</td>
                                                 <td><b>${{ number_format($concepto->monto, 2) }}</td>
                                                 <td>{{ $otrasTexto }} M.N.</b></td>
                                             </tr>
@@ -272,13 +272,14 @@
                             </tbody>
                         </table>      
 
-                        @if(isset($deducciones))
+                        @if(!empty($deducciones) && count($deducciones) > 0)
                             <b>Deducciones</b>
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th>Descripción</th>
+                                        <th>Concepto</th>
                                         <th>Monto</th>
+                                        <th>Descripción</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -286,7 +287,8 @@
                                     @foreach($deducciones as $deduccion)
                                         <tr>
                                             <td>{{ $deduccion->descripcion }}</td>
-                                            <td><b>${{ number_format($deduccion->monto, 2) }} M.N.</b></td>
+                                            <td><b>${{ number_format($deduccion->monto, 2) }}</b></td>
+                                            <td>{{ $deduccionesTexto }} M.N.</b></td>
                                         </tr>
                                     @endforeach  
                                 <!--</p>-->

@@ -131,7 +131,7 @@ class AudienciasController extends Controller
                     $color = '#DA0909';
                 } elseif ($rati->estatus === 'Archivada') {
                     $color = '#EAE300';
-                } elseif ($rati->estatus === 'Conluida') {
+                } elseif ($rati->estatus === 'Concluida') {
                     $color = '#00CE1C';
                 } elseif ($rati->estatus === 'Concluida Pagos') {
                     $color = '#00CE1C';
@@ -173,7 +173,7 @@ class AudienciasController extends Controller
                     $color = '#DA0909';
                 } elseif ($rati->estatus === 'Archivada') {
                     $color = '#EAE300';
-                } elseif ($rati->estatus === 'Conluida') {
+                } elseif ($rati->estatus === 'Concluida') {
                     $color = '#00CE1C';
                 } elseif ($rati->estatus === 'Concluida Pagos') {
                     $color = '#00CE1C';
