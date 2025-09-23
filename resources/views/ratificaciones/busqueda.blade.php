@@ -205,7 +205,7 @@
     </form>
 </div>
 <!-- Modal Documentos -->
-<div class="modal fade" id="documentos" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+{{--<div class="modal fade" id="documentos" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
@@ -235,9 +235,9 @@
         </div>
       </div>
     </div>
-</div>
+</div>--}}
 <!-- Modal Documentos 2-->
-<div class="modal fade" id="documentos2" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+{{--<div class="modal fade" id="documentos2" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
@@ -263,7 +263,7 @@
         </div>
       </div>
     </div>
-</div>
+</div>--}}
 <div id="nuevo_poder" style ="display: none;">
     <div>.</div>
     <div class="loader"></div>

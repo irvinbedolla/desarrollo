@@ -1817,6 +1817,10 @@ class SeerController extends Controller
         //dd($data_insert);
         //Se van a generar el citatorio
         SeerCitados::create($data_insert); 
+        // Si es persona física, elimina los apellidos para este citado
+        if (isset($data["tipo"]) && $data["tipo"] === "Fisica") {
+            unset($data_insert["primer_apellido"], $data_insert["segundo_apellido"]);
+        }
         //Se van a generar quien resulte responsable
         $data_insert["nombre"] = "QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O
         USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN ".$data["calle1"].", NÚMERO ".$data["exterior"]." COLONIA ".$data["colonia"].", ".$data["municipio_citado"].", MICHOACÁN.";
@@ -1902,7 +1906,8 @@ class SeerController extends Controller
         $conciliadores  = User::find($general["conciliador_id"]);
         $audiencia      = SeerPerConciliador::where("id_solicitud",$id)->get();
         //Catalogo de motivos
-        $mostrarMotivos = SolicitudMotivo::all();
+        //$mostrarMotivos = SolicitudMotivo::all();
+        $mostrarMotivos = SolicitudMotivo::where('tipo_solicitud', $general->tipo_solicitud)->get();
         //Motivos capturados
         $motivos        = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
         ->where('id_solicitud',$id)
@@ -1926,7 +1931,8 @@ class SeerController extends Controller
         $municipios     = Municipios::where('estado',16)->get();
         
         //Catalogo de motivos
-        $mostrarMotivos = SolicitudMotivo::all();
+        //$mostrarMotivos = SolicitudMotivo::all();
+        $mostrarMotivos = SolicitudMotivo::where('tipo_solicitud', $general->tipo_solicitud)->get();
         //Motivos capturados
         $motivos        = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
         ->where('id_solicitud',$id)
@@ -3214,7 +3220,7 @@ class SeerController extends Controller
                 $estatus = "Concluida Pagos";
             }
             else{
-                $estatus = "Conluida";
+                $estatus = "Concluida";
             }
             
             $solicitante = SeerSolicitante::where('id_solicitud',$data["id"])->first();
@@ -3788,7 +3794,8 @@ class SeerController extends Controller
         ->where('delegacion', $user["delegacion"])
         ->get();
         //Catalogo de motivos
-        $mostrarMotivos = SolicitudMotivo::all();
+        //$mostrarMotivos = SolicitudMotivo::all();
+        $mostrarMotivos = SolicitudMotivo::where('tipo_solicitud', $general->tipo_solicitud)->get();
         //Motivos capturados
         $motivos        = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
         ->where('id_solicitud',$id)
@@ -3973,7 +3980,8 @@ class SeerController extends Controller
         ->where('delegacion', $user["delegacion"])
         ->get();
         //Catalogo de motivos
-        $mostrarMotivos = SolicitudMotivo::all();
+        //$mostrarMotivos = SolicitudMotivo::all();
+        $mostrarMotivos = SolicitudMotivo::where('tipo_solicitud', $general->tipo_solicitud)->get();
         //Motivos capturados
         $motivos        = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
         ->where('id_solicitud',$id)
@@ -4117,7 +4125,7 @@ class SeerController extends Controller
         $faltantes =  Pagos::where('id_solicitud',$id_solicitud)->where('estatus',"Pendiente")->get();
 
         if(count($faltantes) == 0){
-            Turnos::find($id_solicitud)->update(['estatus' => "Conluida"]);
+            Turnos::find($id_solicitud)->update(['estatus' => "Concluida"]);
         }
 
         return redirect()->route('cumplimiento_actual');
@@ -4142,7 +4150,7 @@ class SeerController extends Controller
         $faltantes =  Pagos::where('id_solicitud',$id_solicitud)->where('estatus',"Pendiente")->get();
 
         if(count($faltantes) == 0){
-            SeerPerGeneral::find($id_solicitud)->update(['estatus' => "Conluida"]);
+            SeerPerGeneral::find($id_solicitud)->update(['estatus' => "Concluida"]);
         }
 
         return redirect()->route('cumplimiento_actual');
@@ -4249,7 +4257,7 @@ class SeerController extends Controller
         $faltantes =  Pagos::where('id_solicitud',$id_solicitud)->where('estatus',"Pendiente")->get();
         if($pagos["id_solicitud"] != 0){
             if(count($faltantes) == 0){
-                Turnos::find($id_solicitud)->update(['estatus' => "Conluida"]);
+                Turnos::find($id_solicitud)->update(['estatus' => "Concluida"]);
             }
         }
 
@@ -4301,7 +4309,7 @@ class SeerController extends Controller
         $faltantes =  Pagos::where('id_solicitud',$id_solicitud)->where('estatus',"Pendiente")->get();
 
         if(count($faltantes) == 0){
-            SeerPerGeneral::find($id_solicitud)->update(['estatus' => "Conluida"]);
+            SeerPerGeneral::find($id_solicitud)->update(['estatus' => "Concluida"]);
         }
 
         return redirect()->route('agenda');
@@ -4374,7 +4382,8 @@ class SeerController extends Controller
         ->where('delegacion', $user["delegacion"])
         ->get();
         //Catalogo de motivos
-        $mostrarMotivos = SolicitudMotivo::all();
+        //$mostrarMotivos = SolicitudMotivo::all();
+        $mostrarMotivos = SolicitudMotivo::where('tipo_solicitud', $general->tipo_solicitud)->get();
         //Motivos capturados
         $motivos        = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
         ->where('id_solicitud',$id)

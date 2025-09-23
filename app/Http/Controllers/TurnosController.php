@@ -1785,10 +1785,15 @@ class TurnosController extends Controller
             $solicitudes = $solicitudes->where("turnos.NUE",$data["nue"]);
         }
         if($bandera_curp == 1){
-            $solicitudes = $solicitudes->where("turnos.curp_solicitante",$data["curp"]);
+            $solicitudes = $solicitudes->where("turnos.trabajador_curp",$data["curp"]);
         }
         if($bandera_solicitante == 1){
-            $solicitudes = $solicitudes->where("turnos.nombre",'like',$data["solicitante"]);
+            //$solicitudes = $solicitudes->where("turnos.trabajador",'like',$data["solicitante"]);
+            $solicitudes = $solicitudes->where(function ($query) use ($data) {
+                $query->where('turnos.trabajador', 'like', '%' . $data["solicitante"] . '%')
+                      ->orWhere('turnos.primero_trabajador', 'like', '%' . $data["solicitante"] . '%')
+                      ->orWhere('turnos.segundo_trabajador', 'like', '%' . $data["solicitante"] . '%');
+            });
         }
         if($bandera_citado == 1){
             $solicitudes = $solicitudes->where("turnos.empresa",'like',$data["citado"]);
@@ -1916,9 +1921,12 @@ class TurnosController extends Controller
             $file = $request->file('documentoExpediente');
             //dd($file->getClientOriginalName());
             if ($file->isValid()) {
-                $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-                $documentoExpediente = $filename . "_Expediente." . $file->getClientOriginalExtension();
-        
+                //$filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                //$documentoExpediente = $filename . "_Expediente." . $file->getClientOriginalExtension();
+                $nombreInput = $data["nombreExpediente"];
+                $filename = \Illuminate\Support\Str::slug($nombreInput);
+                $documentoExpediente = $filename . '_Expediente.' . $file->getClientOriginalExtension();
+                
                 $path = Storage::putFileAs(
                     'documentosSolicitud', $file, $documentoExpediente
                 );

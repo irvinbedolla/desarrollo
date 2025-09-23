@@ -164,7 +164,7 @@
                                                     <tbody></tbody>
                                                 </table>
                                             </div>
-                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-6">
+                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-5">
                                                 <p>Rama Industrial del Negocio</p>
                                                 <div class="form-group">
                                                     <label for="name">Paso 1. Rama Industrial <span style="color:red;">(*)</span></label>
@@ -179,7 +179,7 @@
                                                     </div>
                                                 </div>
                                             </div>                  
-                                            <div id="div2"  class="col-xs-12 col-sm-12 col-md-6">
+                                            <div id="div2"  class="col-xs-12 col-sm-12 col-md-7">
                                                 <p style="color: white">.</p>
                                                 <div class="form-group">  
                                                     <label for="name">Paso 2: Actividad Económica del Patrón(a)/Empresa <span style="color:red;">(*)</span>   <em>Ejemplos: comercio de productos al por menor, construcción, servicios médicos...</em></label>
