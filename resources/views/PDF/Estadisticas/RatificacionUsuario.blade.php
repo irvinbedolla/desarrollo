@@ -88,7 +88,7 @@
                                 <tr>
                                     <td style=" text-align: center;">{{ $usuario->name }}</td>
                                     <td style=" text-align: center;">{{ $usuario->ratificacion }}</td>
-                                    <td style=" text-align: center;">${{ number_format($usuario->monto, 2) }}</td>
+                                    <td style=" text-align: center;">${{ number_format($usuario->ratificacionesMonto, 2) }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
