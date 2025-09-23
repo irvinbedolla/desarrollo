@@ -124,25 +124,25 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-2">
+                                        <div class="col-xs-12 col-sm-12 col-md-7">
                                             <div class="form-group"><br>
                                                 <label for="name">Horario laboral</label>
-                                                <input type="text" name="horario" class="form-control" required> 
+                                                <input type="text" name="horario" class="form-control" placeholder="Ejemplo: De lunes a viernes de 9Am a 5PM y Sábados de 9 Am a 2 PM" required> 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
                                             </div>
                                         </div>                                       
-                                        <div class="col-xs-12 col-sm-12 col-md-2">
+                                        <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div class="form-group"><br>
                                                 <label for="name">Horario de comida</label>
-                                                <input type="text" name="comida" class="form-control" required> 
+                                                <input type="text" name="comida" class="form-control" placeholder="De 2PM a 3 PM o 13:30 a 15:00" required> 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
                                             </div>
                                         </div>                                       
-                                        <div class="col-xs-12 col-sm-6 col-md-3">
+                                        <div class="col-xs-12 col-sm-6 col-md-4">
                                             <div class="form-group"><br>
                                                 <label for="password">Conciliador</label>
                                                 <select class="form-control" name="conciliador_id" required>
@@ -156,7 +156,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-2 col-sm-2 col-md-2">
+                                        <div class="col-xs-2 col-sm-2 col-md-2"><br><br>
                                             <a class="btn btn-primary" onclick="mostrar_pagos()">Continuar</a>
                                         </div>
                                     </div>
@@ -278,8 +278,8 @@
                     html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                     html += '<div class="form-group">';
                     html += '<label for="password">Monto a pagar</label>';
-                    html +='<input type="text" class="form-control" name="monto_pago[]" oninput="validarNumero(this)" placeholder="Solo números y puntos" required>';
-                    html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>';
+                    html +='<input type="text" class="form-control" name="monto_pago[]" oninput="validarNumero(this)" placeholder="Solo números y punto para decimales." required>';
+                    html += '<div class="invalid-feedback">El monto es obligatorio.</div>';
                     html += '</div> </div>';
 
                     html += '<div class="input-group-append">';
@@ -317,7 +317,7 @@
                     html += '<label for="password">Hora de pago</label>';
                     html +='<input type="time" class="form-control" name="hora_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
                     html += '<div class="invalid-feedback">';
-                    html += 'La Dirección es obligatoria.';
+                    html += 'La Hora es obligatoria.';
                     html += '</div> </div> </div>';
 
                     //MONTO A PAGAR
@@ -326,21 +326,10 @@
                     html += '<label for="password">Monto a pagar</label>';
                     html +='<input type="text" class="form-control" name="monto_pagos[]"  oninput="validarNumero(this)" placeholder="Solo números y puntos" required';
                     html += '<div class="invalid-feedback">';
-                    html += 'La Dirección es obligatoria.';
+                    html += 'El monto es obligatorio.';
                     html += '</div> </div> </div>';
 
-                    //DESCRIPCIÓN DE PAGO
-                    html += '<div class="col-xs-12 col-sm-12 col-md-12">';
-                    html += '<div class="form-group">';
-                    html += '<label for="password">Descripción</label>';
-                    html +='<input type="text" class="form-control" name="descripcion_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
-                    html += '<div class="invalid-feedback">';
-                    html += 'La Dirección es obligatoria.';
-                    html += '</div> </div> </div>';
-
-                    html += '<div class="input-group-append">';
-                    html += '<button class="removeRow2 btn btn-danger" type="button">Borrar</button>';
-                    html += '</div>';
+                    
                 html += '</div>';
 
             $('#newRowaPago').append(html);
@@ -367,7 +356,7 @@
                     html += '<label for="password">Descripción</label>';
                     html +='<input type="text" class="form-control" name="descripcion_deduccion[]"  oninput="this.value = this.value.toUpperCase()" >';
                     html += '<div class="invalid-feedback">';
-                    html += 'La Dirección es obligatoria.';
+                    html += 'La Descripción es obligatoria.';
                     html += '</div> </div> </div>';
 
                     
@@ -378,7 +367,7 @@
                     html += '<label for="password">Monto a pagar</label>';
                     html +='<input type="text" class="form-control" name="monto_deduccion[]"  oninput="validarNumero(this)" placeholder="Solo números y puntos" >';
                     html += '<div class="invalid-feedback">';
-                    html += 'La Dirección es obligatoria.';
+                    html += 'El monto es obligatorio.';
                     html += '</div> </div> </div>';
 
                     html += '<div class="input-group-append">';
