@@ -2401,8 +2401,8 @@ class SeerController extends Controller
             'observaciones'     => $data["observaciones"], 
             'conciliador_id'    => $user->id
         ]);
-    
-        return redirect()->route('audiencias.conciliador');
+
+        return redirect()->route('audiencia_index');
     }
 
     public function editar_solicitud_con(Request $request) {
@@ -5035,11 +5035,7 @@ class SeerController extends Controller
         ->select('documentoCurp','documentoIdentificacion')
         ->first(); 
         //Documentos del abogado y citados
-        $documento_abogado = Poder::
-        join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
-        ->where('id_solicitud',$id)
-        ->select('abogados.empresa','abogados.ine','abogados.representacion','abogados.anexo','abogados.cedula')
-        ->get();
+        $documento_abogado = Poder::find($documento_general["idAbogado"]);
         //Documentos perdona fisica
         $documento_fisica = PersonaFisica::
         join('seer_citados','seer_citados.id_fisica','persona_fisica.id')
@@ -5048,7 +5044,8 @@ class SeerController extends Controller
         ->get();
         
          //Documentos subidos
-         $documento_subidos = DocumentosSolicitud::where('id_solicitud',$id)->get(); 
+        $documento_subidos = DocumentosSolicitud::where('id_solicitud',$id)->get();
+
  
         return view('solicitudes.verDocumentos',compact('documento_general','documento_solicitante','documento_abogado','documento_fisica','documento_subidos'));
      }
@@ -5781,5 +5778,38 @@ class SeerController extends Controller
 
     public function exportarExcel(){
         return Excel::download(new CitasExport, 'pagos.xlsx');
+    }
+    
+    public function todas_audiencias(){
+        $audiencias = Audiencias::orderBy('created_at', 'desc')->limit(500)->get();
+        foreach ($audiencias as $audiencia) {
+            $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
+            $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+            $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
+            $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
+            $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Algo';
+            $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
+            $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
+            $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
+            $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
+        }
+
+        return view('audiencias.todas_audiencias',compact('audiencias'));
+    }
+
+    public function todas_solicitudes(){
+        $solicitudes = SeerPerGeneral::orderBy('created_at', 'desc')->limit(500)->get();
+        foreach ($solicitudes as $solicitud) {
+            $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+            $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+        }
+        return view('solicitudes.solicitudes_todas',compact('solicitudes'));
+    }
+
+    public function todas_ratificaciones(){
+        $solicitudes = Turnos::where('tipo','Ratificación')
+        ->orderBy('created_at', 'desc')->limit(500)->get();
+
+        return view('ratificaciones.ratificaciones_todas',compact('solicitudes'));
     }
 }

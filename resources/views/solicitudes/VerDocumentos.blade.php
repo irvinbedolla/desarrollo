@@ -29,55 +29,62 @@
                                             <td>{{$documento_solicitante->documentoIdentificacion}}</td>
                                             <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento_solicitante->documentoIdentificacion}}">PDF</a></td>
                                         </tr>
-                                        @if(count($documento_abogado) != 0)
-                                            @foreach($documento_abogado as $documento)
-                                                <tr>
-                                                    <td colspan="3" style="text-align: center; background-color:#7c7c7b">REPRESENTANTE LEGAL</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Identificación de Citado:{{$documento->empresa}}</td>
-                                                    <td>{{$documento->ine}}</td>
-                                                    <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->ine}}">PDF</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Poder de Citado:{{$documento->empresa}}</td>
-                                                    <td>{{$documento->representacion}}</td>
-                                                    <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->representacion}}">PDF</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Anexo de Citado:{{$documento->empresa}}</td>
-                                                    <td>{{$documento->anexo}}</td>
-                                                    <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->anexo}}">PDF</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Anexo de Citado:{{$documento->empresa}}</td>
-                                                    <td>{{$documento->cedula}}</td>
-                                                    <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->cedula}}">PDF</a></td>
-                                                </tr>
-                                            @endforeach
+                                        @if(isset($documento_abogado))
+                                            @if(count($documento_abogado) != 0)
+                                                @foreach($documento_abogado as $documento)
+                                                    <tr>
+                                                        <td colspan="3" style="text-align: center; background-color:#7c7c7b">REPRESENTANTE LEGAL</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Identificación de Citado:{{$documento->empresa}}</td>
+                                                        <td>{{$documento->ine}}</td>
+                                                        <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->ine}}">PDF</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Poder de Citado:{{$documento->empresa}}</td>
+                                                        <td>{{$documento->representacion}}</td>
+                                                        <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->representacion}}">PDF</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Anexo de Citado:{{$documento->empresa}}</td>
+                                                        <td>{{$documento->anexo}}</td>
+                                                        <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->anexo}}">PDF</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Anexo de Citado:{{$documento->empresa}}</td>
+                                                        <td>{{$documento->cedula}}</td>
+                                                        <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->cedula}}">PDF</a></td>
+                                                    </tr>
+                                                @endforeach
+                                            @endif
                                         @endif
-                                        @if(count($documento_fisica) != 0)
-                                            @foreach($documento_fisica as $documento)
-                                                <tr>
-                                                    <td colspan="3" style="text-align: center; background-color:#7c7c7b">PERSONA FISICA</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Identificación de Citado(Persona Fisica)</td>
-                                                    <td>{{$documento->documentoIdentificacion}}</td>
-                                                    <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->documentoIdentificacion}}">PDF</a></td>
-                                                </tr>
-                                            @endforeach
+                                        @if(isset($documento_fisica))
+                                            @if(count($documento_fisica) != 0)
+                                                @foreach($documento_fisica as $documento)
+                                                    <tr>
+                                                        <td colspan="3" style="text-align: center; background-color:#7c7c7b">PERSONA FISICA</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Identificación de Citado(Persona Fisica)</td>
+                                                        <td>{{$documento->documentoIdentificacion}}</td>
+                                                        <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->documentoIdentificacion}}">PDF</a></td>
+                                                    </tr>
+                                                @endforeach
+                                            @endif
                                         @endif
-                                        @if(count($documento_subidos) != 0)
-                                            @foreach($documento_subidos as $solicitud)
+                                        @if(isset($documento_subidos))
+                                            @if(count($documento_subidos) != 0)
                                                 <tr>
-                                                    <td colspan="3" style="text-align: center; background-color:#7c7c7b">DOCUMENTOS CARGADOS</td>
+                                                    <td colspan="5" style="text-align: center; background-color:#7c7c7b">DOCUMENTOS CARGADOS</td>
                                                 </tr>
-                                                <tr>
-                                                    <td colspan="2">{{$solicitud->nombre_documento}}</td> 
-                                                    <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitud->nombre_documento}}">PDF</a></td>
-                                                </tr>
-                                            @endforeach
+                                                @foreach($documento_subidos as $solicitud)
+                                                    
+                                                    <tr>
+                                                        <td colspan="4">{{$solicitud->nombre_documento}}</td> 
+                                                        <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitud->nombre_documento}}">PDF</a></td>
+                                                    </tr>
+                                                @endforeach
+                                            @endif
                                         @endif
                                     </tbody>
                                 </table>

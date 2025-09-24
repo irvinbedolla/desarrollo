@@ -419,6 +419,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/misestadisticas/index',    [SeerController::class, 'misestadisticas'])->name('misestadisticas');
         Route::post('/misestadisticas/reporte', [SeerController::class, 'estadisticasPDF'])->name('mis_reportes');
     //Fin estadisticas
+    //Rutas Generales
+        Route::get('/revisar/indexAudiencia',           [SeerController::class, 'todas_audiencias'])->name('todas_audiencias');
+        Route::get('/revisar/indexSolictudes',          [SeerController::class, 'todas_solicitudes'])->name('todas_solicitudes');
+        Route::get('/revisar/indexRatificaciones',      [SeerController::class, 'todas_ratificaciones'])->name('todas_ratificaciones');
+    //Fin de rutas Generales
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);
         Route::resource('/user-management/roles', RoleManagementController::class);
