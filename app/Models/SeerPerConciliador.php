@@ -12,5 +12,5 @@ class SeerPerConciliador extends Model
     protected $primaryKey = 'id';
     protected $fillable = ['id_solicitud','numero_audiencia', 'estatus_conciliacion','numero_audiencias', 'monto', 
     'rfc','NSS','multa','monto_multa','tipo','motivo_archivo','fecha_reprogracion','fecha_conclucion','consecutivo','fecha','hora',
-    'resolicion_primera','resolicion_justificacion','resolicion_segunda','vacaciones','conclucion','aguinaldo','horario','otros','comida','tipo_audiencia'];
+    'resolicion_primera','resolicion_justificacion','resolicion_segunda','vacaciones','conclucion','aguinaldo','horario','otros','comida'];
 }

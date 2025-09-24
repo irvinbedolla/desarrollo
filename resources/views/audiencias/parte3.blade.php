@@ -95,7 +95,7 @@
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-6"><br>
                                             <label for="name">Conclución de audiencia</label>
-                                            <select id="conclucion" name="conclucion" class="form-control">
+                                            <select id="tipo_de_conclucion" name="conclucion" class="form-control">
                                                 <option>Seleccione</option>
                                                 <option value="Conciliacion">Hubo Convenio</option>
                                                 <option value="No conciliacion">No hubo Convenio</option>
@@ -104,7 +104,7 @@
                                         </div>
                                     </div>
 
-                                    <div id="dias" class="row home-shape">
+                                    <div id="dias" style="display:none">
                                         <div class="col-xs-12 col-sm-12 col-md-2"><br>
                                             <div class="form-group">
                                                 <label for="name">Días de vacaciones</label>
@@ -152,7 +152,7 @@
                                         </div>
                                     </div>
 
-                                    <div id="pagos" class="row home-shape">
+                                    <div id="pagos" style="display:none">
                                         <div class="col-xs-12 col-sm-12 col-md-12"></div>
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div class="form-group">
@@ -190,13 +190,13 @@
                                         </div>
                                     </div>
 
-                                    <div id="no_conciliacion" class="row home-shape">
+                                    <div id="no_conciliacion" style="display:none">
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <br><button type="submit" class="btn btn-primary">Guardar</button>
                                         </div>
                                     </div>
 
-                                    <div id="archivada" class="row home-shape">
+                                    <div id="archivada" style="display:none">
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <br><button type="submit" class="btn btn-primary">Guardar</button>
                                         </div>
@@ -382,7 +382,7 @@
             document.getElementById("segunda").style.display = "block";
         }
 
-        const tipo_iden = document.getElementById('conclucion');
+        const tipo_iden = document.getElementById('tipo_de_conclucion');
         tipo_iden.addEventListener('change', function() {
             const valorSeleccionado = this.value;
             // Realiza la validación o acciones necesarias
@@ -391,14 +391,14 @@
                 document.getElementById('archivada').style.display = "none";
                 document.getElementById("pagos").style.display = "block";
                 document.getElementById('dias').style.display = "block";
-            } if (valorSeleccionado === 'No conciliacion'){
+            }
+            else if (valorSeleccionado === 'No conciliacion'){
                 document.getElementById('no_conciliacion').style.display = "block";
-                document.getElementById('conciliacion').style.display = "none"
                 document.getElementById('archivada').style.display = "none"
                 document.getElementById("pagos").style.display = "none";
                 document.getElementById('dias').style.display = "none";
             } 
-            if (valorSeleccionado === 'Archivada por incomparecencia') {
+            else if (valorSeleccionado === 'Archivada por incomparecencia') {
                 const confirmar = confirm("¿Estás seguro de que deseas archivar esta audiencia?");
                 if (confirmar) {
                     $('#ModalArchivar').modal('show');
