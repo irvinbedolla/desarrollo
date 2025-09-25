@@ -44,6 +44,7 @@
                                                     <option value="CumplimientosResumen">Cumplimientos Resumen</option>
                                                     <option value="Ratificaciones">Ratificaciones</option>
                                                     <option value="RatificacionesUsuario">Ratificaciones Por Usuario</option>
+                                                    <option value="Notificaciones">Notificaciones Detallado</option>
                                                     <option value="Detallado">Eficiencia</option>
                                                     <option value="Concentrado">Concentrado</option>
                                                 </select>
@@ -91,6 +92,31 @@
                                                 </select>
                                             </div>
                                         </div>
+
+                                        <div id="reporte-notificador" class="row home-shape">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                <label for="name">Auxiliar</label>
+                                                <select class="form-control" name="auxilair">
+                                                    <option value="">Seleccione</option>
+                                                    <option value="Todos">Todos</option>
+                                                    @foreach($usuariosauxiliares as $aux)
+                                                        <option value="{{$aux['id']}}">{{$aux['name']}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                <label for="name">Notificador</label>
+                                                <select class="form-control" name="notificador">
+                                                    <option value="">Seleccione</option>
+                                                    <option value="Todos">Todos</option>
+                                                    @foreach($usuariosnotificadores as $not)
+                                                        <option value="{{$not['id']}}">{{$not['name']}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
                                         <div id="Excel-PDF" style="display:none">
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <button type="submit" name="tipo" value="1" class="btn btn-primary">PDF</button>
@@ -121,26 +147,36 @@
 
 
 @section('scripts')
-    <script src="../public/js/estadistica/estadistica.js"></script>
+    <script src="../public/assets/js/estadistica/estadistica.js"></script>
     <script>
         $('#reporte').change(function(){
             var valorCambiado =$(this).val();
             if((valorCambiado == 'Cumplimientos')){
                 $('#PDF').css('display','none');
                 $('#Excel-PDF').css('display','block');
+                $('#reporte-notificador').css('display','none');
             }
             else if(valorCambiado == "CumplimientosResumen"){
                 $('#PDF').css('display','block');
                 $('#Excel-PDF').css('display','none');
+                $('#reporte-notificador').css('display','none');
             }
             else if(valorCambiado == "Ratificaciones"){
                 $('#PDF').css('display','none');
                 $('#Excel-PDF').css('display','block');
+                $('#reporte-notificador').css('display','none');
             }
             else if(valorCambiado == "RatificacionesUsuario"){
                 $('#PDF').css('display','block');
                 $('#Excel-PDF').css('display','none');
+                $('#reporte-notificador').css('display','none');
             }
+            else if(valorCambiado == "Notificaciones"){
+                $('#PDF').css('display','block');
+                $('#Excel-PDF').css('display','none');
+                document.getElementById("reporte-notificado").style.display = "block";
+            }
+            
         });
     </script>
 @endsection

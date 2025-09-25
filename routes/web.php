@@ -222,6 +222,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/seer/persona',                    [SeerController::class, 'auxiliar_persona'])->name('seer.auxiliar_persona');
         Route::get('/seer/persona/{id}',                [SeerController::class, 'ver_auxiliar'])->name('seer.estadistica_consultar');
         Route::get('reporte',                           [SeerController::class, 'reporte_diario'])->name('reporte_diario');
+        Route::post('/notificacion/editar',             [SeerController::class, 'mostrar_citado'])->name('editar_citado_historial');
+        Route::post('notificaciones/actualizar',        [SeerController::class, 'editar_citados_historial'])->name('actualizar_enlace_hitorial');  
     //Fin Seer
     //Expedientes
         Route::get('/expedientes/index',                        [ExpedienteController::class, 'index'])->name('expedientes.index');

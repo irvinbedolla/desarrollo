@@ -111,8 +111,6 @@
     <script src="public/js/general/menu.js"></script>
 @endsection
 
-@include('profile.change_password')
-@include('profile.edit_profile')
 
 </body>
 

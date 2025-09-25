@@ -279,7 +279,10 @@
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Por notificar</span>
             </a>
             <a class="nav-link" href="{{ route('notificaciones_consultar') }}">
-                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Busqueda</span>
+            </a>
+            <a class="nav-link" href="{{ route('index_ratificacion') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Ratificaciones</span>
             </a>
         @endrole
     @endauth

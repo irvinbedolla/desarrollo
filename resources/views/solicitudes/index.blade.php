@@ -39,19 +39,34 @@
                             @endif
 
                             <div class="row">
-                                <div class="col-xs-4 col-sm-4 col-md-4">
+                                <div class="col-xs-4 col-sm-4 col-md-2">
                                     <div align="center">
-                                        <a href="{{ route('solicitudes_pendientes') }}" class="btn btn-primary">Pendientes por validar</a>
+                                        <a href="{{ route('solicitudes_pendientes') }}" class="btn btn-primary" style="width: 100%">Pendientes por validar</a>
                                     </div>
                                 </div>
-                                <div class="col-xs-4 col-sm-4 col-md-4">
+                                <div class="col-xs-4 col-sm-4 col-md-2">
                                     <div align="center">
-                                        <a href="{{ route('solicitud') }}" class="btn btn-primary" target="_blank">Nueva Solicitud</a>
+                                        <a href="{{ route('solicitud') }}" class="btn btn-primary" target="_blank" style="width: 100%">Nueva Solicitud</a>
                                     </div>
                                 </div>
-                                <div class="col-xs-4 col-sm-4 col-md-4">
+                                <div class="col-xs-12 col-sm-4 col-md-2">
                                     <div align="center">
-                                       <button type="button" class="btn btn-primary open-modal" data-bs-toggle="modal" data-bs-target="#ModalArchivar">
+                                        <a href="{{ route('todas_audiencias') }}" class="btn btn-primary"  style="width: 100%">Audieniecias</a>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-sm-4 col-md-2">
+                                    <div align="center">
+                                        <a href="{{ route('todas_solicitudes') }}" class="btn btn-primary"  style="width: 100%">Solicitudes</a>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-sm-4 col-md-2">
+                                    <div align="center">
+                                        <a href="{{ route('todas_ratificaciones') }}" class="btn btn-primary"  style="width: 100%">Ratificaciones</a>
+                                    </div>
+                                </div>
+                                <div class="col-xs-4 col-sm-4 col-md-2">
+                                    <div align="center">
+                                       <button type="button" class="btn btn-primary open-modal" data-bs-toggle="modal" data-bs-target="#ModalArchivar" style="width: 100%">
                                             Buscar
                                         </button>
                                     </div>
