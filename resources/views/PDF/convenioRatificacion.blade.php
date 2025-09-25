@@ -127,7 +127,7 @@
                             - Horario de comida: <b>{{ $solicitud->comida }}</b> Hrs.<br>
                             - Domicilio donde prestaba sus servicios: <b>{{ $solicitud->tipo_vialidad }} {{ $solicitud->calle }} {{ $solicitud->num_ext }} @if(!empty($citado->n_int))
                                     int. {{ $citado->n_int }}
-                                @endif COLONIA {{ $solicitud->colonia }}, {{ mb_strtoupper($municipioEmpresa, 'UTF-8') }} C.P. {{ $solicitud->codigo_postal }}</b>.
+                                @endif COLONIA {{ $solicitud->colonia }}, {{ mb_strtoupper($municipioEmpresa, 'UTF-8') }}, {{ mb_strtoupper($estadoEmpresa, 'UTF-8') }} C.P. {{ $solicitud->codigo_postal }}</b>.
                     </p>
                         <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
                     <p class="sangria">

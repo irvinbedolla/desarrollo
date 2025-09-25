@@ -529,6 +529,7 @@ class TurnosController extends Controller
                 'N_Ext'             => 'required',
                 'cp'                => 'required',
                 'num_identificacion'=> 'required',
+                'estado_rat'        => 'required',
             ], $data);
         }
         /*
@@ -622,6 +623,7 @@ class TurnosController extends Controller
                 'hora'              => $hora_actual,
                 'hora_fin'          => $hora_actual,
                 'num_identificacion'=> 'required',
+                'estado_rat'        => $data["estado_rat"],
             ); 
             $nombre = $data["trabajador"];
             
@@ -675,6 +677,7 @@ class TurnosController extends Controller
                 'colonia'                   => $data["colonia"],
                 'num_ext'                   => $data["N_Ext"],
                 'codigo_postal'             => $data["cp"],
+                'estado_rat'                => $data["estado_rat"],
             ); 
             $nombre = $data["trabajador"];
             $email  = $data["email"];
@@ -955,6 +958,10 @@ class TurnosController extends Controller
         //dd($abogado);
         //$prestacionesLab = Concepto::where('id_solicitud', $id)->first();
         //dd($prestaciones);
+        $municipio = Municipios::find($solicitud->municipio_rat);
+        $municipioEmpresa = $municipio ? $municipio->nombre : 'No definido';
+        $estado = Estados::find($solicitud->estado_rat);
+        $estadoEmpresa = $estado ? $estado->nombre : 'No definido';
         $prestaciones = Concepto::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
         $deducciones  = Deducciones::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
         // Inicializa las variables de texto
@@ -1029,7 +1036,7 @@ class TurnosController extends Controller
         $html = view('PDF/convenioRatificacion', 
             compact('id', 'solicitud', 'dias_descanso', 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','vacacionesTexto',
             'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
-            'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones','abogado','deducciones','deduccionesTexto'))
+            'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones','abogado','deducciones','deduccionesTexto','municipioEmpresa','estadoEmpresa'))
             ->render();
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -1925,7 +1932,7 @@ class TurnosController extends Controller
                 $nombreInput = $data["nombreExpediente"];
                 $filename = \Illuminate\Support\Str::slug($nombreInput);
                 $documentoExpediente = $filename . '_Expediente.' . $file->getClientOriginalExtension();
-                
+
                 $path = Storage::putFileAs(
                     'documentosSolicitud', $file, $documentoExpediente
                 );

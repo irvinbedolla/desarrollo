@@ -332,8 +332,8 @@
                     //DESCRIPCIÓN DE PAGO
                     html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                     html += '<div class="form-group">';
-                    html += '<label for="password">Descripción</label>';
-                    html +='<input type="text" class="form-control" name="descripcion_pagos[]"  oninput="this.value = this.value.toUpperCase()" placeholder="Ejemplo: Unico Pago, Primer Pago, Ultimo Pago" required>';
+                    html += '<label for="password">Número de pago</label>';
+                    html +='<input type="text" class="form-control" name="descripcion_pagos[]"  oninput="this.value = this.value.toUpperCase()" placeholder="Ejemplo: Único Pago, Primer Pago, Último Pago" required>';
                     html += '<div class="invalid-feedback">';
                     html += 'La Dirección es obligatoria.';
                     html += '</div> </div> </div>';

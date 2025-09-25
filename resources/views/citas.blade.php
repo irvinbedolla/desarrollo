@@ -146,7 +146,7 @@
                                             <h3 class="text-center" style="color:black">Genera tu cita para ratificación</h3>
                                         </div>    
                                         <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                        <form class="needs-validation novalidate" method="POST" action="{{route('turnos.publico')}}" enctype="multipart/form-data" onsubmit="return validacionCamposInput()">
+                                        <form class="needs-validation" novalidate method="POST" action="{{route('turnos.publico')}}" enctype="multipart/form-data" onsubmit="return validacionCamposInput()">
                                             @csrf
                                             <br><br>
                                             <div class="row">
@@ -273,7 +273,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">Núm de identificación</label>
+                                                        <label for="name">Núm de identificación <span style="color:red;">(*)</span> <span data-bs-toggle="modal" data-bs-target="#helpModal" style="cursor: pointer;">❓</span></label>
                                                         <input type="text" name="num_identificacion" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                         <div class="invalid-feedback">
                                                             El campo núm. de identificación es obligatorio.
@@ -305,10 +305,11 @@
                                                             @endforeach
                                                         </select>
                                                         <div class="invalid-feedback">
-                                                            El campo municipio o alcaldía es obligatorio.
+                                                            El campo estado es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
+                                                
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="name">Municipio o Alcaldía <span style="color:red;">(*)</span></label>
@@ -416,7 +417,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
                                                 <div class="col-xs-12 col-sm-12 col-md-2"> 
                                                     <div class="form-group">
                                                         <label for="fecha_inicio">Fecha de inicio de la relación laboral <span style="color:red;">(*)</span></label>
@@ -437,7 +437,7 @@
                                                     </div>
                                                 </div>
                                                 <div  class="col-xs-12 col-sm-12 col-md-3">
-                                                    <div class="form-group"><br>
+                                                    <div class="form-group">
                                                         <label for="name">Categoría o Puesto que desempeña <span style="color:red;">(*)</span></label>
                                                         <input type="text" name="categoria" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                         <div class="invalid-feedback">
@@ -684,6 +684,20 @@
                         </div>
                     </div>
                 </div>
+                <!-- Modal para la captura de la ine-->
+                <div class="modal fade" id="helpModal" aria-labelledby="helpModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" style="max-height: 80vh;">
+                      <div class="modal-content" style="height: 100%;">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="helpModalLabel">Ubicación de núm. de identificación</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                          <img src="./public/assets/images/capturaIne.png" alt="Instrucciones" class="img-fluid">
+                        </div>
+                      </div>
+                    </div>
+                </div>
             </section>
         </div>
     </main>
@@ -737,6 +751,7 @@
             });
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 <div id="crear_poder" style ="display: none;">
     <div>.</div>
