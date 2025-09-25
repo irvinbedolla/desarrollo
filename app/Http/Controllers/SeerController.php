@@ -61,16 +61,16 @@ class SeerController extends Controller
         $personas = "";
         
         //Si es delegado le va salir todo lo de su delegacion de todos los roles
-        if($userRole[0] == "Notificador"){
+       if($userRole[0] == "Notificador"){
             $personas = null;
-            $estadisticas = SeerPerGeneral_old::where('seer_citados_old.id_notificador', $id)
-            ->join('seer_citados_old','seer_citados_old.id_solicitud','=','seer_general_old.id')
-            ->join('seer_solicitante','seer_solicitante.id_solicitud','=','seer_general_old.id')
-            ->join('municipios', 'seer_citados_old.municipio_citado', '=', 'municipios.id')
-            ->where('seer_citados_old.estatus', 'Pendiente')
-            ->select('seer_citados_old.id','seer_general_old.NUE','seer_solicitante.nombre as nombre_solicitado','seer_citados_old.nombre','seer_citados_old.primer_apellido','seer_citados_old.segundo_apellido',
-            'municipios.nombre as municipio_citado','seer_citados_old.colonia','seer_citados_old.calle',
-            'seer_citados_old.n_ext','seer_citados_old.estatus')
+            $estadisticas = SeerPerGeneral::where('seer_citados.id_notificador', $id)
+            ->join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+            ->join('seer_solicitante','seer_solicitante.id_solicitud','=','seer_general.id')
+            ->join('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
+            ->where('seer_citados.estatus', 'Pendiente')
+            ->select('seer_citados.id','seer_general.NUE','seer_solicitante.nombre as nombre_solicitado','seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido',
+            'municipios.nombre as municipio_citado','seer_citados.colonia','seer_citados.calle',
+            'seer_citados.n_ext','seer_citados.estatus')
             ->get();
         }
         //Si es otro usuario le va mostrar unicamente las del ese usuario
