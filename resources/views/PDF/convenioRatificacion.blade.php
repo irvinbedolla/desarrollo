@@ -125,11 +125,9 @@
                         c) Que desempeñaba sus actividades laborales en las siguientes condiciones: <br>
                             - Horario: <b>{{ $solicitud->horario }}</b> Hrs.<br>
                             - Horario de comida: <b>{{ $solicitud->comida }}</b> Hrs.<br>
-                            - Domicilio donde prestaba sus servicios: <b>{{ $solicitud->tipo_vialidad }} {{ $solicitud->calle }} {{ $solicitud->num_ext }}
-                                @if(!empty($citado->n_int))
+                            - Domicilio donde prestaba sus servicios: <b>{{ $solicitud->tipo_vialidad }} {{ $solicitud->calle }} {{ $solicitud->num_ext }} @if(!empty($citado->n_int))
                                     int. {{ $citado->n_int }}
-                                @endif
-                                COLONIA {{ $solicitud->colonia }}, {{ $solicitud->codigo_postal }}</b>.
+                                @endif COLONIA {{ $solicitud->colonia }}, {{ mb_strtoupper($municipioEmpresa, 'UTF-8') }} C.P. {{ $solicitud->codigo_postal }}</b>.
                     </p>
                         <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
                     <p class="sangria">
@@ -295,7 +293,7 @@
                                 </tbody>
                             </table> 
                         @endif     
-
+                        <b>{{ $solicitud->resolucion_justificacion }}</b><br><br>
                     <!-- CON PAGOS DIFERIDOS-->       
                     @if($pagosDif>'1')            
                         <p><b>SEXTA</b>. La <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará en <b>{{ $pagosDif->C_pagos}}</b> 
@@ -309,7 +307,7 @@
                                     <th>Fecha</th>
                                     <th>Hora</th>
                                     <th>Monto</th>
-                                    <th>Descripción</th>
+                                    <th>Número de pago</th>
                                 </thead>
                                 <tbody>
                                     @foreach($pagos as $pago)
@@ -329,6 +327,9 @@
                             el equivalente a un día de salario diario, el cual se fijará en razón del salario que percibía dicha parte antes de finalizar la relación de trabajo correspondiente a la cantidad de 
                             <b>${{ number_format($salario_diario, 2) }} {{ $diarioTexto }} M.N</b>. Esa cantidad se sumará a la previamente pactada, por cada día que 
                             transcurra, sin que se dé cabal cumplimiento al convenio, con fundamento en el artículo 684-E, fracción XIV, último párrafo, de la Ley Federal del Trabajo.</p>
+                        
+                        <p>Asimismo, manifiestan estar de acuerdo que de no pagarse el primero de los pagos convenidos en la fecha de su vencimiento, quedará a salvo el derecho de cualquiera de las partes para 
+                            exigir el cumplimiento del pago total de la cantidad pactada ante la autoridad competente, a parte de los días que transcurran de pena convencional.</p>
                     @endif  
                     <!-- CONDICIONAL 1 SOLO PAGO(EN UNA SOLA EXIBICIÓN)--> 
                     @if($pagosDif=='1')            
@@ -336,9 +337,6 @@
                             de <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }} M.N</b>, en el domicilio que ocupa el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con lo que se certifica el cumplimiento de su 
                             obligación bajo el presente convenio, de conformidad con lo establecido en el artículo 684-E, fracción XIV, de la Ley Federal dek Trabajo.</p> 
                     @endif        
-
-                        <p>Asimismo, manifiestan estar de acuerdo que de no pagarse el primero de los pagos convenidos en la fecha de su vencimiento, quedará a salvo el derecho de cualquiera de las partes para 
-                            exigir el cumplimiento del pago total de la cantidad pactada ante la autoridad competente, a parte de los días que transcurran de pena convencional. <br><br>
 
                         <b>SÉPTIMA</b>. Las <b>PARTES</b> solicitan se apruebe y sancione este convenio, toda vez que se elaboró conforme a las disposiciones aplicables de la Ley Federal del Trabajo como 
                         resultado del diálogo de la conciliación entre la parte <b>TRABAJADORA</b> y la parte <b>EMPLEADORA</b>. Así mismo, manifiestan que se encuentran conformes con el presente acuerdo 
@@ -360,7 +358,7 @@
                         lo sanciona en este mismo acto. <b>Doy fe</b>.
                     </p>
                                     
-                    <br><br>
+                    <br><br><br>
                     <div class="row">
                         <div class="col-12 text-center">
                             <div style="display: inline-block; margin-right: 50px;">
