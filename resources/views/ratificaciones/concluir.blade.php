@@ -278,7 +278,7 @@
                     html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                     html += '<div class="form-group">';
                     html += '<label for="password">Monto a pagar</label>';
-                    html +='<input type="text" class="form-control" name="monto_pago[]" oninput="validarNumero(this)" placeholder="Solo números y punto para decimales." required>';
+                    html +='<input type="text" class="form-control" name="monto_pago[]" oninput="validarNumero(this)" placeholder="$ Solo números y punto para decimales." required>';
                     html += '<div class="invalid-feedback">El monto es obligatorio.</div>';
                     html += '</div> </div>';
 
@@ -324,7 +324,7 @@
                     html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                     html += '<div class="form-group">';
                     html += '<label for="password">Monto a pagar</label>';
-                    html +='<input type="text" class="form-control" name="monto_pagos[]"  oninput="validarNumero(this)" placeholder="Solo números y puntos" required';
+                    html +='<input type="text" class="form-control" name="monto_pagos[]"  oninput="validarNumero(this)" placeholder="$ Solo números y puntos" required>';
                     html += '<div class="invalid-feedback">';
                     html += 'El monto es obligatorio.';
                     html += '</div> </div> </div>';
@@ -375,7 +375,7 @@
                     html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                     html += '<div class="form-group">';
                     html += '<label for="password">Monto a pagar</label>';
-                    html +='<input type="text" class="form-control" name="monto_deduccion[]"  oninput="validarNumero(this)" placeholder="Solo números y puntos" >';
+                    html +='<input type="text" class="form-control" name="monto_deduccion[]"  oninput="validarNumero(this)" placeholder="$ Solo números y puntos" >';
                     html += '<div class="invalid-feedback">';
                     html += 'El monto es obligatorio.';
                     html += '</div> </div> </div>';

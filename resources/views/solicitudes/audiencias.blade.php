@@ -104,7 +104,7 @@
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-8">
                             <div class="form-group">
-                                <label for="name">Nombre(s) y Apellidos del Solicitante (*) </label>
+                                <label for="name">Nombre(s) y Apellidos del Solicitante</label>
                                 <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" value="<?=$solicitante["nombre"];?>" required> 
                                 <div class="invalid-feedback">
                                     El campo nombre es obligatorio.
@@ -113,7 +113,7 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
-                                <label for="name">CURP del Solicitante (*)</label>
+                                <label for="name">CURP del Solicitante</label>
                                 <input type="text" name="curp" id="curp_input" oninput="validarInput(this)"class="form-control" value="<?=$solicitante["curp"];?>" required> 
                                 <pre id="resultado"></pre>
                                 <div class="invalid-feedback">
@@ -123,7 +123,7 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
-                                <label for="name">RFC del Solicitante (*)</label>
+                                <label for="name">RFC del Solicitante</label>
                                 <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()" value="<?=$solicitante["rfc"];?>" required> 
                                 <div class="invalid-feedback">
                                     El campo RFC es obligatorio.
@@ -140,7 +140,7 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
-                                <label for="name">Puesto (*)</label>
+                                <label for="name">Puesto</label>
                                 <input type="text" class="form-control" name="puesto" value="<?=$solicitante["puesto"];?>" oninput="this.value = this.value.toUpperCase()" required> 
                                 <div class="invalid-feedback">
                                     El campo puesto es obligatorio.
@@ -149,7 +149,7 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
-                                <label for="name">Frecuencia de Pago (*)</label>
+                                <label for="name">Frecuencia de Pago</label>
                                 <select name="periodo_pago" class="form-control" value="<?=$solicitante["periodo_pago"];?>" required>
                                     <option value="">SELECCIONE</option>
                                     <option value="Diario" {{ $solicitante['periodo_pago'] == 'Diario' ? "selected" : '' }}>DIARIO</option>
@@ -158,13 +158,13 @@
                                     <option value="Mensual" {{ $solicitante['periodo_pago'] == 'Mensual' ? "selected" : '' }}>MENSUAL</option>
                                 </select>
                                 <div class="invalid-feedback">
-                                    El campo frecuencia de pagos es obligatorio.
+                                    El campo frecuencia de pago es obligatorio.
                                 </div>
                             </div>
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
-                                <label for="name">Salario (*)</label>
+                                <label for="name">Salario</label>
                                 <input type="text" name="pago" class="form-control" value="<?=$solicitante["pago"];?>" required> 
                                 <div class="invalid-feedback">
                                     El campo salario es obligatorio.
@@ -173,7 +173,7 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
-                                <label for="name">Cantidad total de horas trabajadas por semana (*)</label>
+                                <label for="name">Cantidad total de horas trabajadas por semana</label>
                                 <input type="number" name="horas" class="form-control" value="<?=$solicitante["horas_semana"];?>" required> 
                                 <div class="invalid-feedback">
                                     El campo cantidad de horas trabajadas es obligatorio.
@@ -182,13 +182,13 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12">
                             <div class="form-group">
-                                <label for="check_fecha">¿Laboras actualmente?</label>
-                                <input type="checkbox" id="check_fecha" name="labora" {{ $solicitante['labora'] == 'Si' ? 'checked' : '' }} />
+                                <label for="password">¿Laboras actualmente?</label>
+                                <input type="text" class="form-control" name="labora" value="<?=$solicitante["labora"];?>">   
                             </div>  
                         </div>    
                         <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
-                                <label for="name">Fecha de Ingreso (*)</label>
+                                <label for="name">Fecha de Ingreso</label>
                                 <input type="date" name="fecha_ingreso" class="form-control" value="<?=$solicitante["fecha_ingreso"];?>" required> 
                                 <div class="invalid-feedback">
                                     El campo fecha de ingreso es obligatoria.
@@ -197,13 +197,13 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
-                                <label for="name">Jornada (*)</label>
-                                <select name="jornada" class="form-control" value="<?=$solicitante["jornada"];?>" required>
-                                    <option value="">SELECCIONE</option>
+                                <label for="name">Jornada</label>
+                                <input name="jornada" class="form-control" value="<?=$solicitante["jornada"];?>" required>
+                                   {{-- <option value="">SELECCIONE</option>
                                     <option value="Diurna" {{ $solicitante['jornada'] == 'Diurna' ? "selected" : '' }}>DIURNA</option>
                                     <option value="Nocturna" {{ $solicitante['jornada'] == 'Nocturna' ? "selected" : '' }}>NOCTURNA</option>
                                     <option value="Mixta" {{ $solicitante['jornada'] == 'Mixta' ? "selected" : '' }}>MIXTA</option>
-                                </select>
+                                </select>--}}
                                 <div class="invalid-feedback">
                                     El campo jornada laboral es obligatoria.
                                 </div>
@@ -1200,7 +1200,7 @@
     @endif
 </div>
 <div class="modal fade" id="modalAgregarDerecho" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <form class='needs-validation novalidate'  method='POST' enctype="multipart/form-data" name="AgregarPersonaFisica" id="AgregarPersonaFisica" action="{{route('insertar_citado_PF')}}">
+    <form class='needs-validation' novalidate method='POST' enctype="multipart/form-data" name="AgregarPersonaFisica" id="AgregarPersonaFisica" action="{{route('insertar_citado_PF')}}">
         @csrf
         <input type="hidden" name="id" value="{{$id}}">
         <input type="hidden" name="id_citado_pf" id="id_citado_pf" value="">
@@ -1214,8 +1214,8 @@
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
-                                <label>Nombre del citado</label>
-                                <input type="text" name="nombre" class="form-control" required>
+                                <label>Nombre del citado <span style="color:red;">(*)</span></label>
+                                <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                                 <div class="invalid-feedback">
                                     La Identificación es obligatoria.
                                 </div>
@@ -1223,8 +1223,8 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
-                                <label>Primer apellido</label>
-                                <input type="text" name="primer_apellido" class="form-control" required>
+                                <label>Primer apellido <span style="color:red;">(*)</span></label>
+                                <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                                 <div class="invalid-feedback">
                                     La Identificación es obligatoria.
                                 </div>
@@ -1232,8 +1232,8 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
-                                <label>Segundo apellido</label>
-                                <input type="text" name="segundo_apellido" class="form-control" required>
+                                <label>Segundo apellido <span style="color:red;">(*)</span></label>
+                                <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" required>
                                 <div class="invalid-feedback">
                                     La Identificación es obligatoria.
                                 </div>
@@ -1241,14 +1241,18 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
-                                <label for="name">Tipo de identificación (*)</label>
+                                <label for="name">Tipo de identificación <span style="color:red;">(*)</span></label>
                                 <select name="identificacionAlta" class="form-control" required>
                                     <option value="">SELECCIONE</option>
-                                    <option value="ine">INE</option>
-                                    <option value="pasaporte">PASAPORTE</option>
-                                    <option value="cedula">CÉDULA PROFESIONAL</option>
-                                    <option value="licencia">LICENCIA PARA CONDUCIR</option>
-                                    <option value="otros">OTROS</option>
+                                    <option value="Credencial de elector">CREDENCIAL DE ELECTOR</option>
+                                    <option value="Pasaporte">PASAPORTE</option>
+                                    <option value="Cédula profesional">CÉDULA PROFESIONAL</option>
+                                    <option value="Licencia de conducir">LICENCIA DE CONDUCIR</option>
+                                    <option value="Credencial de inapam">CREDENCIAL DE INAPAM</option>
+                                    <option value="Cartilla militar">CARTILLA MILITAR</option>
+                                    <option value="Documento migratorio">DOCUMENTO MIGRATORIO</option>
+                                    <option value="Constancia de identidad">CONSTANCIA DE IDENTIDAD</option>
+                                    <option value="Otro">OTROS</option>
                                 </select>
                                 <div class="invalid-feedback">
                                     El tipo de identificaión es obligatorio.
@@ -1257,7 +1261,7 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
-                                <label>Identificación oficial</label>
+                                <label>Subir Identificación oficial <span style="color:red;">(*)</span></label>
                                 <input type="file" name="documentoIdentificacion" class="form-control" accept=".pdf" required>
                                 <div class="invalid-feedback">
                                     La Identificación es obligatoria.

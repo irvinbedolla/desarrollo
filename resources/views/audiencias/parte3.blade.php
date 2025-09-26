@@ -104,7 +104,7 @@
                                         </div>
                                     </div>
 
-                                    <div id="dias" style="display:none">
+                                    <div id="dias" class="row gx-2 align-items-end" style="display:none">
                                         <div class="col-xs-12 col-sm-12 col-md-2"><br>
                                             <div class="form-group">
                                                 <label for="name">Días de vacaciones</label>
@@ -123,7 +123,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-2"><br>
+                                        <div class="col-xs-12 col-sm-12 col-md-1">
                                             <div class="form-group">
                                                 <label for="name">Otros</label>
                                                 <input type="text" name="otros" class="form-control" > 
@@ -132,19 +132,19 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-3"><br>
+                                        <div class="col-xs-12 col-sm-12 col-md-4">
                                             <div class="form-group">
                                                 <label for="name">Horario laboral</label>
-                                                <input type="text" name="horario" class="form-control" > 
+                                                <input type="text" name="horario" class="form-control" placeholder="Ejemplo: De lunes a viernes de 9Am a 5PM y Sábados de 9 Am a 2 PM" > 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-3"><br>
+                                        <div class="col-xs-12 col-sm-12 col-md-3">
                                             <div class="form-group">
                                                 <label for="name">Horario de comida</label>
-                                                <input type="text" name="comida" class="form-control" > 
+                                                <input type="text" name="comida" class="form-control" placeholder="De 2PM a 3 PM o 13:30 a 15:00" > 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -153,7 +153,6 @@
                                     </div>
 
                                     <div id="pagos" style="display:none">
-                                        <div class="col-xs-12 col-sm-12 col-md-12"></div>
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div class="form-group">
                                                 <h4 class="text-center">Montos</h4>
@@ -165,6 +164,12 @@
                                         </div>
                                         
                                         <div id="newRow"></div>
+
+                                        <div class="col-xs-12 col-sm-6 col-md-12"><br>
+                                            <button id="addRetencion" type="button" class="btn btn-info">Agregar deducción</button>
+                                        </div>
+                                        
+                                        <div id="newRowDeduccion"></div>
 
                                         <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div id="div_pagos_diferidos1"><br>
@@ -201,7 +206,6 @@
                                             <br><button type="submit" class="btn btn-primary">Guardar</button>
                                         </div>
                                     </div>
-
                                 </div>
                             </forms>
                         </div>
@@ -274,10 +278,10 @@
             // Agregar registro
             $("#addRow").click(function () {
                 var html = '';
-                html += '<div id="inputFormRow1" class="col-xs-12 col-sm-6 col-md-12">';
+                html += '<div id="inputFormRow1" class="row mb-2 align-items-end">';
 
                 // Tipo de pago
-                html +='<div class="col-xs-12 col-sm-12 col-md-12">';
+                html +='<div class="col-xs-12 col-sm-12 col-md-6">';
                     html +='<div class="form-group">';
                     html +='<label for="confirm-password"><br>Prestación</label>';
                     html +='<select class="form-control" name="tipo_pago[]" >';
@@ -298,11 +302,11 @@
                     html += '</div> </div>';
 
                 // Monto a pagar
-                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                html += '<div class="col-xs-12 col-sm-12 col-md-6">';
                 html += '<div class="form-group">';
                 html += '<label for="password">Monto a pagar</label>';
-                html +='<input type="text" class="form-control" name="monto_pago[]"  oninput="this.value = this.value.toUpperCase()" >';
-                html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>';
+                html +='<input type="text" class="form-control" name="monto_pago[]"  oninput="this.value = this.value.toUpperCase()" placeholder="$">';
+                html += '<div class="invalid-feedback">El monto es obligatorio.</div>';
                 html += '</div> </div>';
 
                 html += '<div class="input-group-append">';
@@ -310,13 +314,13 @@
                 html += '</div>';
                 html += '</div>';
 
-            $('#newRow').append(html);
-        });
+                $('#newRow').append(html);
+            });
 
-        // Borrar concepto
-        $(document).on('click', '.removeRow', function () {
-            $(this).closest('.col-xs-12').remove();
-        });
+            // Borrar concepto
+            $(document).on('click', '.removeRow', function () {
+                $(this).closest('.col-xs-12').remove();
+            });
 
         // Agregar pago
         $("#addPago").click(function () {
@@ -373,7 +377,48 @@
         $(document).on('click', '.removeRow2', function () {
             $(this).closest('.col-xs-12').remove();
         });
+
+        // Agregar deducción
+        $("#addRetencion").click(function () {
+                var html = '';
+                html += '<div id="inputFormRow3" class="row">';
+                
+                //TIPO DE PAGO
+                html +='<div class="col-xs-12 col-sm-12 col-md-12"><br>';
+                //html +='<div class="form-group">';
+
+                    //DESCRIPCIÓN DE PAGO
+                    html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                    html += '<div class="form-group">';
+                    html += '<label for="password">Descripción</label>';
+                    html +='<input type="text" class="form-control" name="descripcion_deduccion[]"  oninput="this.value = this.value.toUpperCase()" >';
+                    html += '<div class="invalid-feedback">';
+                    html += 'La Descripción es obligatoria.';
+                    html += '</div> </div> </div>';
+
+                    //MONTO A PAGAR
+                    html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                    html += '<div class="form-group">';
+                    html += '<label for="password">Monto a pagar</label>';
+                    html +='<input type="text" class="form-control" name="monto_deduccion[]"  oninput="validarNumero(this)" placeholder="$ Solo números y puntos" >';
+                    html += '<div class="invalid-feedback">';
+                    html += 'El monto es obligatorio.';
+                    html += '</div> </div> </div>';
+
+                    html += '<div class="input-group-append">';
+                    html += '<button class="removeRow3 btn btn-danger" type="button">Borrar</button>';
+                    html += '</div>';
+
+                html += '</div>';
+
+            $('#newRowDeduccion').append(html);
         });
+
+        // Borrar pago
+        $(document).on('click', '.removeRow3', function () {
+            $(this).closest('.col-xs-12').remove();
+        });
+    });
 
         function mostrar_resolicion() {
             document.getElementById("justificacion").style.display = "block";
@@ -417,4 +462,20 @@
             document.getElementById('modal-id').value = id;
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const select = document.getElementById('tipo_de_conclucion');
+            const dias = document.getElementById('dias');
+        
+            // Escuchar cuando se cambie la opción del select
+            select.addEventListener('change', function () {
+                if (select.value === 'Conciliacion') {
+                    dias.style.display = 'flex'; // o 'block' si quieres que sea vertical
+                } else {
+                    dias.style.display = 'none';
+                }
+            });
+        });
+        </script>
+        
 @endsection
