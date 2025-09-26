@@ -2354,7 +2354,7 @@ class SeerController extends Controller
         ->where('delegacion', $user["delegacion"])
         ->get();
 
-        $notificaciones = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+        $mis_notificaciones = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
         ->select('seer_general.id as id_solicitud','seer_citados.id as id_citado','seer_general.NUE',
             'seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido',
             'seer_citados.colonia','seer_citados.calle','seer_citados.n_ext','seer_citados.n_int','seer_citados.estatus','seer_citados.tipo_notificacion')
@@ -2363,7 +2363,7 @@ class SeerController extends Controller
         ->where('seer_citados.notificacion',"!=", "Trabajador")
         ->get();
 
-        return view('notificaciones.index',compact('personas','notificaciones','userRole'));
+        return view('notificaciones.index',compact('personas','mis_notificaciones','userRole'));
     }
 
     //Conciliadores en solicitudes audiencias
