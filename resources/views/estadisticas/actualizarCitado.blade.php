@@ -36,6 +36,19 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
+                                            <label for="name">Tipo de guardado</label>
+                                            <select class="form-control" name="tipo_llenado" required>
+                                                <option value="">Seleccione</option>
+                                                <option value="1">Actualizar unicamente esta notificicación</option>
+                                                <option value="2">Actualizar todo el Expediente</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El campo es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
                                             <label for="name">Nombre del Municipio o Alcaldía</label>
                                             <select id="municipio_citado" class="form-control" name="municipio_citado" required>
                                                 <option value="">Seleccione</option>
@@ -191,7 +204,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
-                                            <label for="name">Motivo de identificación</label>
+                                            <label for="name">Motivo de la no identificación</label>
                                             <input type="text" name="motivo_identificacion" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                         </div>
                                     </div>
@@ -306,6 +319,7 @@
                                                 <option value="No exitosa se constituye">No exitoso, se constituye</option>
                                                 <option value="No exitosa no se constituye">No exitoso, no se constituye (amparo)</option>
                                                 <option value="Notificada">Notificado</option>
+                                                <option value="Recibe pero no firma">Recibe pero no firma</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
@@ -364,7 +378,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-12">
                                         <div class="form-group">
-                                            <label for="name">Especificar</label>
+                                            <label for="name">Especificar en caso de que tenga un problema</label>
                                             <input type="text" class="form-control" name="especificar" oninput="this.value = this.value.toUpperCase()">
                                         </div>
                                     </div>

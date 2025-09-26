@@ -1227,7 +1227,7 @@ class SeerController extends Controller
     public function seer_estatus($id){
         $citados  = SeerCitados::find($id);
         $id = $citados->id;
-        $municipios = Municipios::where('estado',16)->get();
+        $municipios = Municipios::all();
 
         return view('estadisticas.actualizarCitado', compact('id','municipios'));
     }
@@ -1301,37 +1301,77 @@ class SeerController extends Controller
             'municipio_citado'            => 'nullable',
         ]);
 
-        SeerCitados::find($data["id"])
-        ->update([
-            'estatus'                    => $data["estatus"],
-            'observaciones'              => $data["observaciones"],
-            'documento'                  => $documento,
-            'documento1'                 => $documento1,
-            'documento2'                 => $documento2,
-            'fecha'                      => $fecha_actual,
-            'quien_atiende'              => $data["quien_atiende"],
-            'medio'                      => $data["medio"],
-            'vialidad_notificacion'      => $data["vialidad_notificacion"],
-            'abundar_area'               => $data["abundar_area"],
-            'abundar_inmueble'           => $data["abundar_inmueble"],
-            'nombre_notificacion'        => $data["nombre_notificacion"],
-            'relacion_notificacion'      => $data["relacion_notificacion"],
-            'puesto'                     => $data["puesto"],
-            'identificacion_notificacion'=> $data["identificacion_notificacion"],
-            'motivo_identificacion'      => $data["motivo_identificacion"],
-            'firma'                      => $data["firma"],
-            'problema_diligencia'        => $data["problema_diligencia"],
-            'genero'                     => $data["genero"],
-            'tez'                        => $data["tez"],
-            'edad_filiacion'             => $data["edad_filiacion"],
-            'altura'                     => $data["altura"],
-            'complexion'                 => $data["complexion"],
-            'cabello'                    => $data["cabello"],
-            'ojos'                       => $data["ojos"],
-            'particulares'               => $data["particulares"],
-            'especificar'                => $data["especificar"],
-            'municipio_citado'           => $data["municipio_citado"],
-        ]);
+
+        if($data["tipo_llenado"] == 1){
+            SeerCitados::find($data["id"])
+                ->update([
+                    'estatus'                    => $data["estatus"],
+                    'observaciones'              => $data["observaciones"],
+                    'documento'                  => $documento,
+                    'documento1'                 => $documento1,
+                    'documento2'                 => $documento2,
+                    'fecha'                      => $fecha_actual,
+                    'quien_atiende'              => $data["quien_atiende"],
+                    'medio'                      => $data["medio"],
+                    'vialidad_notificacion'      => $data["vialidad_notificacion"],
+                    'abundar_area'               => $data["abundar_area"],
+                    'abundar_inmueble'           => $data["abundar_inmueble"],
+                    'nombre_notificacion'        => $data["nombre_notificacion"],
+                    'relacion_notificacion'      => $data["relacion_notificacion"],
+                    'puesto'                     => $data["puesto"],
+                    'identificacion_notificacion'=> $data["identificacion_notificacion"],
+                    'motivo_identificacion'      => $data["motivo_identificacion"],
+                    'firma'                      => $data["firma"],
+                    'problema_diligencia'        => $data["problema_diligencia"],
+                    'genero'                     => $data["genero"],
+                    'tez'                        => $data["tez"],
+                    'edad_filiacion'             => $data["edad_filiacion"],
+                    'altura'                     => $data["altura"],
+                    'complexion'                 => $data["complexion"],
+                    'cabello'                    => $data["cabello"],
+                    'ojos'                       => $data["ojos"],
+                    'particulares'               => $data["particulares"],
+                    'especificar'                => $data["especificar"],
+                    'municipio_citado'           => $data["municipio_citado"],
+                ]);
+        }
+        else{
+            $solicitud = SeerCitados::find($data["id"]);
+            $citados = SeerCitados::where('id_solicitud',$solicitud["id_solicitud"])->get();
+            foreach($citados as $citado){
+                SeerCitados::find($citado["id"])
+                ->update([
+                    'estatus'                    => $data["estatus"],
+                    'observaciones'              => $data["observaciones"],
+                    'documento'                  => $documento,
+                    'documento1'                 => $documento1,
+                    'documento2'                 => $documento2,
+                    'fecha'                      => $fecha_actual,
+                    'quien_atiende'              => $data["quien_atiende"],
+                    'medio'                      => $data["medio"],
+                    'vialidad_notificacion'      => $data["vialidad_notificacion"],
+                    'abundar_area'               => $data["abundar_area"],
+                    'abundar_inmueble'           => $data["abundar_inmueble"],
+                    'nombre_notificacion'        => $data["nombre_notificacion"],
+                    'relacion_notificacion'      => $data["relacion_notificacion"],
+                    'puesto'                     => $data["puesto"],
+                    'identificacion_notificacion'=> $data["identificacion_notificacion"],
+                    'motivo_identificacion'      => $data["motivo_identificacion"],
+                    'firma'                      => $data["firma"],
+                    'problema_diligencia'        => $data["problema_diligencia"],
+                    'genero'                     => $data["genero"],
+                    'tez'                        => $data["tez"],
+                    'edad_filiacion'             => $data["edad_filiacion"],
+                    'altura'                     => $data["altura"],
+                    'complexion'                 => $data["complexion"],
+                    'cabello'                    => $data["cabello"],
+                    'ojos'                       => $data["ojos"],
+                    'particulares'               => $data["particulares"],
+                    'especificar'                => $data["especificar"],
+                    'municipio_citado'           => $data["municipio_citado"],
+                ]);
+            }
+        }
 
         return redirect()->route('seer');  
     }
