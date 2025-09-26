@@ -46,6 +46,7 @@ use Barryvdh\DomPDF\PDF;
 use App\Exports\ProductsFromViewExport;
 use App\Exports\RatificacionesFromViewExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\NotificacionesExport;
 
 
 class SeerController extends Controller
@@ -355,12 +356,20 @@ class SeerController extends Controller
         //Validar documentacion
         request()->validate([
             //General
-            'tipo_reporte'  => 'required|in:Cumplimientos,CumplimientosResumen,Ratificaciones,RatificacionesResumen,Detallado,Concentrado,RatificacionesUsuario',
+            'tipo_reporte'  => 'required|in:Cumplimientos,CumplimientosResumen,Ratificaciones,RatificacionesResumen,Detallado,Concentrado,RatificacionesUsuario,Notificaciones',
         ], $data);
         if(isset($data["sede"]))
             $sede = $data["sede"];
         else
             $sede = "";
+        if(isset($data["auxiliar"]))
+            $auxiliar = $data["auxiliar"];
+        else
+            $auxiliar = "";
+        if(isset($data["notificador"]))
+            $notificador = $data["notificador"];
+        else
+            $notificador = "";
 
         $fecha_inicial = $data["fecha_inicial"];
         $fecha_final   = $data["fecha_final"];
@@ -598,6 +607,10 @@ class SeerController extends Controller
             return $pdf->stream('archivo.pdf');
         
             
+        }
+        else if($data["tipo_reporte"] == "Notificaciones"){
+            //Notificaciones
+            return Excel::download(new NotificacionesExport($fecha_inicial, $fecha_final, $sede, $auxiliar , $notificador), 'notificaciones.xlsx');
         }
         else if($data["tipo_reporte"] == "Graficas"){
             return view('PDF/Estadisticas/Graficas');
@@ -5910,5 +5923,26 @@ class SeerController extends Controller
         ->get();
 
         return view('notificaciones.index_busqueda',compact('notificaciones','personas','userRole','fecha_inicio','fecha_fin'));
+    }
+
+    public function hitorialnotificacador(){
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+
+        $mis_notificaciones  = SeerPerGeneral::where('seer_citados.id_notificador', $id)
+        ->join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+        ->join('seer_solicitante','seer_solicitante.id_solicitud','=','seer_general.id')
+        ->join('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
+        ->where('seer_citados.estatus', "!=", 'Pendiente')
+        ->select('seer_citados.id as id_citado','seer_general.NUE','seer_solicitante.nombre as nombre_solicitado','seer_citados.nombre','seer_citados.primer_apellido',
+        'seer_citados.segundo_apellido','municipios.nombre as municipio_citado','seer_citados.colonia','seer_citados.calle',
+        'seer_citados.n_ext','seer_citados.estatus','seer_citados.tipo_notificacion','seer_general.id as id_solicitud')
+        ->orderBy('seer_citados.created_at', 'desc')
+        ->limit(500)
+        ->get();
+
+        return view('notificaciones.indexHitorial',compact('mis_notificaciones'));
     }
 }

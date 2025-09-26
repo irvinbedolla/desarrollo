@@ -12,9 +12,11 @@
                     form.classList.add('was-validated');
                 } else {
                     $('#crear_poder').show();
-                    //alert("alert");
-                    //$('#agregarseguimiento').modal('hide');
                     loading();
+                    setTimeout(function() {
+                        $('#menu_carga').hide();
+
+                    }, 3000);
                 }
             }, false);
         });

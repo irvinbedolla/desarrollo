@@ -21,7 +21,6 @@
                                                 <th style="color: #fff;">Dirección</th>
                                                 <th style="color: #fff;">Estatus</th>
                                                 <th style="color: #fff;">Tipo</th>
-                                                <th style="color: #fff;">Asignar</th>
                                                 <th style="color: #fff;"></th>
                                                 <th style="color: #fff;">Acciones</th>
                                             </thead>
@@ -34,33 +33,13 @@
                                                         <td>Colonia {{$notificacion->colonia}} {{$notificacion->tipo_vialidad}} {{$notificacion->calle}} {{$notificacion->n_ext}} {{$notificacion->municipio_citado}}</td>
                                                         <td>{{$notificacion->estatus}}</td>
                                                         <td>{{$notificacion->tipo_notificacion}}</td>
-                                                        @if($notificacion->estatus == "Pendiente" || $notificacion->estatus == "Sin asignar")
-                                                        <td>
-                                                            <form method="POST" action="{{ route('seer.store_enlace') }}" class="needs-validation novalidate">
-                                                                @csrf
-                                                                <input type="hidden" name="id" value="{{$notificacion->id_citado}}">
-                                                                <select class="form-control" name="notificador">
-                                                                    <option value="">Seleccione</option>
-                                                                    @foreach($personas as $persona)
-                                                                        <option value="{{$persona->id}}">{{$persona->name}}</option>
-                                                                    @endforeach
-                                                                </select> 
-                                                                <td>    
-                                                                    <div class="col-xs-12 col-sm-12 col-md-6">
-                                                                        <button type="submit" class="btn btn-primary">Asignar</button>  
-                                                                    </div> 
-                                                                </td>    
-                                                            </form>
-                                                        </td>
-                                                        @else
-                                                            <td>{{$notificacion->notificador_nombre}}</td>
-                                                            <td></td>
-                                                        @endif
+                                                        <td>{{$notificacion->notificador_nombre}}</td>
                                                         <td>
                                                             <div class="col-xs-12 col-sm-12 col-md-12"> 
                                                                 @if($notificacion->estatus == "Pendiente" || $notificacion->estatus == "Sin asignar")
-                                                                    <a class="btn btn-primary" href="{{ route('editar_citado', $notificacion->id_citado) }}" onclick="consultar_estadistica();">Editar</a>
+                                                                    <a class="btn btn-primary" href="{{ route('editar_citado', $notificacion->id) }}" onclick="consultar_estadistica();">Editar</a>
                                                                 @endif
+
                                                                 @if($notificacion->estatus === "Finalizado exitosamente")
                                                                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                                                         Documentos
@@ -69,7 +48,7 @@
                                                                         <li class="mb-2"><a class="btn btn-info" style="width: 100%" href="{{ route('PDFRazonNoticacion', [$notificacion->id_citado, $notificacion->id_solicitud]) }}"  target="_blank">Notificación</a></li>
                                                                         <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFmulta', [$notificacion->id_citado, $notificacion->id_solicitud]) }}" target="_blank">Multa</a></li>
                                                                     </ul>
-                                                                @endif     
+                                                                @endif    
                                                                 @if($notificacion->estatus === "No notificada")
                                                                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                                                         Documentos

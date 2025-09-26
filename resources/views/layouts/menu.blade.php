@@ -172,7 +172,7 @@
             <a class="nav-link" href="{{ route('seer') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Por notificar</span>
             </a>
-            <a class="nav-link" href="{{ route('persona.historial') }}">
+            <a class="nav-link" href="{{ route('Historial_Notificacador') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Mis notificaciones</span>
             </a>
             <a class="nav-link" href="{{ route('seer') }}">

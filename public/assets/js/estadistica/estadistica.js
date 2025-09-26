@@ -12,6 +12,10 @@
                     form.classList.add('was-validated');
                 } else {
                     $('#menu_carga').show();
+                    setTimeout(function() {
+                        $('#menu_carga').hide();
+
+                    }, 3000);
                 }
             }, false);
         });

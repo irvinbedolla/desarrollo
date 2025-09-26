@@ -12,9 +12,10 @@
                     form.classList.add('was-validated');
                 } else {
                     $('#nuevo_turno').show();
-                    //alert("alert");
-                    //$('#agregarseguimiento').modal('hide');
-                    //loading();
+                    setTimeout(function() {
+                        $('#menu_carga').hide();
+
+                    }, 3000);
                 }
             }, false);
         });
