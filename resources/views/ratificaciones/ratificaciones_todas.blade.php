@@ -144,7 +144,7 @@
 <div class="modal fade" id="expediente" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
     <form  class='needs-validation novalidate' method='POST' action="{{ route('subir_expediente_ratificacion') }}" enctype="multipart/form-data">
         @csrf
-        <input type="hidden" name="audiencia_id" id="expediente_audiencia_id">
+        <input type="hidden" name="audiencia_id" id="expediente_audiencia_id" value="">
         <div class="modal-dialog modal-l">
             <div class="modal-content">
                 <div class="modal-header">
