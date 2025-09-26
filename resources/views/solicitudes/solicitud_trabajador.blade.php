@@ -94,14 +94,14 @@
                                     <h6 class="text-center" style="color: #828282"><b>Requisitos para realizar tu solicitud:</b></h6> 
                                     <h6 class="text-center" style="color: #828282"><b>Teléfono, correo electrónico, identificación oficial(INE, PASAPORTE, LICENCIA DE CONDUCIR, CÉDULA PROFESIONAL), en caso de ser menor de edad tu identificación son tu CURP o Acta de Nacimiento.</b></h6> 
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                    <form class="needs-validation novalidate" method="POST" action="{{route('parte1')}}">
+                                    <form class="needs-validation" novalidate method="POST" action="{{route('parte1')}}">
                                         @csrf
                                         <input type="hidden" name="tipo_solicitud" value="{{ $tipo_solicitud }}">
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Municipio de la Fuente de Empleo <span style="color:red;">(*)</span></label>
-                                                    <select id="dSolicitud" class="form-control" name="dSolicitud">
+                                                    <select id="dSolicitud" class="form-control" name="dSolicitud" required>
                                                         <option value="">Seleccione</option>
                                                         @foreach($municipios as $municipio)
                                                             <option value="{{$municipio['id']}}" data-delegacion-id="{{ $municipio['delegacion_id'] }}">
@@ -109,7 +109,7 @@
                                                         @endforeach
                                                     </select>
                                                     <div class="invalid-feedback">
-                                                        El municipio es obligatoria.
+                                                        El municipio es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
@@ -133,7 +133,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="delegacion">Delegación <span style="color:red;">(*)</span></label>
-                                                    <select class="form-control" id="delegacion" name="delegacion">
+                                                    <select class="form-control" id="delegacion" name="delegacion" required>
                                                         <option value="">Seleccione</option>
                                                     </select>
                                                     <div class="invalid-feedback">
@@ -151,7 +151,7 @@
                                                         @endforeach
                                                     </select>
                                                     <div class="invalid-feedback">
-                                                        El objeto de solicitud es obligatoria.
+                                                        El objeto de solicitud es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>

@@ -1628,6 +1628,7 @@ class SeerController extends Controller
             'identificacion'            => 'required',
             //'documentoCurp'             => 'required',
             'documentoIdentificacion'   => 'required',
+            'num_identificacion'        => 'required',
         ]);
         
         $data_insert=array(
@@ -1659,6 +1660,7 @@ class SeerController extends Controller
             'fecha_ingreso'        => $data["fecha_ingreso"],
             'jornada'              => $data["jornada"],
             'identificacion'       => $data["identificacion"],
+            'num_identificacion'   => $data["num_identificacion"],
         ); 
 
         if(isset($data["rfc"])){

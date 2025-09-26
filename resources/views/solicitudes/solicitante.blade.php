@@ -480,11 +480,15 @@
                                                     <label for="name">Tipo de identificación <span style="color:red;">(*)</span></label>
                                                     <select name="identificacion" class="form-control" required>
                                                         <option value="">SELECCIONE</option>
-                                                        <option value="ine">INE</option>
-                                                        <option value="pasaporte">PASAPORTE</option>
-                                                        <option value="cedula">CÉDULA PROFESIONAL</option>
-                                                        <option value="licencia">LICENCIA PARA CONDUCIR</option>
-                                                        <option value="otros">ACTA DE NACIMIENTO</option>
+                                                        <option value="Credencial de elector">CREDENCIAL DE ELECTOR</option>
+                                                        <option value="Pasaporte">PASAPORTE</option>
+                                                        <option value="Cédula profesional">CÉDULA PROFESIONAL</option>
+                                                        <option value="Licencia de conducir">LICENCIA DE CONDUCIR</option>
+                                                        <option value="Credencial de inapam">CREDENCIAL DE INAPAM</option>
+                                                        <option value="Cartilla militar">CARTILLA MILITAR</option>
+                                                        <option value="Documento migratorio">DOCUMENTO MIGRATORIO</option>
+                                                        <option value="Constancia de identidad">CONSTANCIA DE IDENTIDAD</option>
+                                                        <option value="Otro">OTROS</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El tipo de identificaión es obligatorio.
@@ -493,7 +497,16 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label>Identificación oficial <span style="color:red;">(*)</span></label>
+                                                    <label for="name">Núm de identificación <span style="color:red;">(*)</span> <span data-bs-toggle="modal" data-bs-target="#helpModal" style="cursor: pointer;">❓</span></label>
+                                                    <input type="text" name="num_identificacion" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo núm. de identificación es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label>Subir Identificación oficial <span style="color:red;">(*)</span></label>
                                                     <input type="file" name="documentoIdentificacion" class="form-control" accept=".pdf" required>
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
@@ -527,9 +540,23 @@
                     </div>
                 </div>
             </div>
+            <!-- Modal para la captura de la ine-->
+            <div class="modal fade" id="helpModal" aria-labelledby="helpModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" style="max-height: 80vh;">
+                  <div class="modal-content" style="height: 100%;">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="helpModalLabel">Ubicación de núm. de identificación</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                      <img src="./public/assets/images/capturaIne.png" alt="Instrucciones" class="img-fluid">
+                    </div>
+                  </div>
+                </div>
+            </div>
         </section>
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <div id="crear_poder" style ="display: none;">
         <div>.</div>
