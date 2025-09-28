@@ -159,14 +159,14 @@
                                             <td>{{ $DSueldoTexto }} M.N.</b></td>
                                         </tr>
                                         @break
-                                    @case('GraficaciónA')
+                                    @case('GratificaciónA')
                                         <tr>
                                             <td>GRATIFICACIÓN A (CON BASE AL SALARIO INTEGRADO)</td> 
                                             <td><b>${{ number_format($concepto->monto, 2) }}</td> 
                                             <td>{{ $gratificacionATexto }} M.N.</b></td>
                                         </tr>
                                         @break
-                                    @case('GraficaciónB')
+                                    @case('GratificaciónB')
                                         <tr>
                                             <td>GRATIFICACIÓN B (20 DÍAS POR AÑO CUMPLIDO)</td> 
                                             <td><b>${{ number_format($concepto->monto, 2) }}</td>
@@ -236,7 +236,14 @@
                             </tbody>
                         </table> 
                     @endif  
-                    
+                    <table class="table table-bordered" style="width:100%; float: right;">
+                        <thead>
+                            <tr style="background-color: #f0f0f0;">
+                                <td class="text-right"><strong>Neto a pagar: </strong>
+                                <td><strong>${{ number_format($pagoTotal, 2) }} M.N.</strong></td>
+                            </tr>
+                        </thead>   
+                    </table>    
                     <!--[RESOLUCION_PROPUESTAS_TRABAJADORES] -->
                     <b>{{ $solicitud->resolucion_trabajadores }}</b>
 

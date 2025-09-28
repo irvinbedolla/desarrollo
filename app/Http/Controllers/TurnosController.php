@@ -1010,10 +1010,15 @@ class TurnosController extends Controller
                     break;
             }
         }
+        $totalPrestaciones = $prestaciones->sum('monto');
+
         //DEDUCCIONES
         foreach ($deducciones as $deduccion) {
             $deduccionesTexto = $this->convertirNumerosALetras($deduccion->monto);
         }
+        $totalDeducciones = $deducciones->sum('monto');
+        //Total a pagar
+        $pagoTotal= $totalPrestaciones-$totalDeducciones;
         //
         $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
 
@@ -1036,7 +1041,8 @@ class TurnosController extends Controller
         $html = view('PDF/convenioRatificacion', 
             compact('id', 'solicitud', 'dias_descanso', 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','vacacionesTexto',
             'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
-            'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones','abogado','deducciones','deduccionesTexto','municipioEmpresa','estadoEmpresa'))
+            'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones','abogado','deducciones','deduccionesTexto',
+            'municipioEmpresa','estadoEmpresa','pagoTotal'))
             ->render();
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -1182,10 +1188,14 @@ class TurnosController extends Controller
                     break;
             }
         }
+        $totalPrestaciones = $prestaciones->sum('monto');
         //DEDUCCIONES
         foreach ($deducciones as $deduccion) {
             $deduccionesTexto = $this->convertirNumerosALetras($deduccion->monto);
         }
+        $totalDeducciones = $deducciones->sum('monto');
+        //Total a pagar
+        $pagoTotal= $totalPrestaciones-$totalDeducciones;
         $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
         $conciliador = $conciliador->where("turnos.id", "=", $id)
         ->select('users.name')
@@ -1193,7 +1203,7 @@ class TurnosController extends Controller
 
         $html = view('PDF/ActaAudiencia', compact('id','solicitud','conciliador','vacacionesTexto',
         'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
-        'gratificacionETexto','gratificacionFTexto','otrasTexto','prestaciones','deducciones','deduccionesTexto'))->render();
+        'gratificacionETexto','gratificacionFTexto','otrasTexto','prestaciones','deducciones','deduccionesTexto','pagoTotal'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')

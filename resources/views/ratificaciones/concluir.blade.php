@@ -259,13 +259,13 @@
                             html +='<option value="DSueldo">Días de sueldo</option>';
                             html +='<option value="Vacaciones">Días de vacaciones</option>';
                             html +='<option value="PrimaVacacional">Prima vacacional</option>';
-                            html +='<option value="GratificaciónA">Graficación A (Con base al salario integrado)</option>';
-                            html +='<option value="GratificaciónB">Graficación B (20 Días por año cumplido)</option>';
-                            html +='<option value="GratificaciónC">Graficación C (Prima de antigüedad topada)</option>';
-                            html +='<option value="GratificaciónD">Graficación D (Incluye cualquier otra prestación)</option>';
-                            html +='<option value="GratificaciónE">Graficación E (Prestaciones en especie)</option>';
-                            html +='<option value="GratificaciónF">Graficación F (Reconocimiento de derechos)</option>';
-                            html +='<option value="Otras">Otros concepto de pago</option>';
+                            html +='<option value="GratificaciónA">Gratificación A (Con base al salario integrado)</option>';
+                            html +='<option value="GratificaciónB">Gratificación B (20 Días por año cumplido)</option>';
+                            html +='<option value="GratificaciónC">Gratificación C (Prima de antigüedad topada)</option>';
+                            html +='<option value="GratificaciónD">Gratificación D (Incluye cualquier otra prestación)</option>';
+                            html +='<option value="GratificaciónE">Gratificación E (Prestaciones en especie)</option>';
+                            html +='<option value="GratificaciónF">Gratificación F (Reconocimiento de derechos)</option>';
+                            html +='<option value="Otras">Otro concepto de pago</option>';
                         html +='</select>';
                         // Campo para escribir otra prestación (solo si se selecciona "Otras")
                         html += '<div class="otra-prestacion-input" style="display: none; margin-top: 10px;">';
@@ -332,8 +332,8 @@
                     //DESCRIPCIÓN DE PAGO
                     html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                     html += '<div class="form-group">';
-                    html += '<label for="password">Número de pago</label>';
-                    html +='<input type="text" class="form-control" name="descripcion_pagos[]"  oninput="this.value = this.value.toUpperCase()" placeholder="Ejemplo: Único Pago, Primer Pago, Último Pago" required>';
+                    html += '<label for="password">Número de parcialidad</label>';
+                    html +='<input type="text" class="form-control numero_pago" name="descripcion_pagos[]" readonly required>';
                     html += '<div class="invalid-feedback">';
                     html += 'La Dirección es obligatoria.';
                     html += '</div> </div> </div>';
@@ -345,15 +345,23 @@
                 html += '</div>';
 
             $('#newRowaPago').append(html);
+            actualizaNumeroPago();
         });
 
         // Borrar pago
         $(document).on('click', '.removeRow2', function () {
             $(this).closest('.col-xs-12').remove();
+            actualizaNumeroPago();
         });
+        //Actualiza los números de pago
+        function actualizaNumeroPago() {
+            $('.numero_pago').each(function (index){
+                $(this).val("Parcialidad " + (index + 1));
+            });
+        }
 
 
-        // Agregar pago
+        // Agregar deducción
         $("#addRetencion").click(function () {
                 var html = '';
                 html += '<div id="inputFormRow3" class="row">';
@@ -424,7 +432,7 @@
             document.getElementById("pagos").style.display = "block";
         }
 
-         $('.open-modal').click(function() {
+        $('.open-modal').click(function() {
             const id = $(this).data('id'); // Obtiene el valor de data-id
             document.getElementById('modal-id').value = id;
         });

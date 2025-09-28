@@ -97,15 +97,16 @@
 
                 <p><center><b>D E C L A R A C I O N E S:</b></center></p><br>
 
-                <p><b>PRIMERA.</b> La parte <b>TRABAJADORA {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> se identifica con <b>{{ strtoupper($solicitud->tipo_identificacion) }}</b>, de número <b>{{ $solicitud->num_identificacion }}</b> 
+                <p><b>PRIMERA.</b> La parte <b>TRABAJADORA {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> se identifica con <b>{{ strtoupper($solicitud->tipo_identificacion) }}</b>, de Número <b>{{ $solicitud->num_identificacion }}</b> 
                     expedida a su favor por <b>Instituto Nacional Electoral</b> y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p> 
 
                 <p><b>SEGUNDA.</b> 
                 @if(is_null($abogado->nombre_representante) && is_null($abogado->primer_apellido_representante) && is_null($abogado->segundo_apellido_representante))
-                    Declara a <b>{{$abogado->nombres_patronal}} {{$abogado->primer_apellido_patronal}} {{$abogado->segundo_apellido_patronal}}</b> quien se identifica con 
-                    <b>{{ strtoupper($solicitud->tipo_identificacion) }}</b> expedida a su favor por <b>Instituto Nacional Electoral</b>, y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p>  
-                @else Declara a <b>{{$abogado->nombre_representante}} {{$abogado->primer_apellido_representante}} {{$abogado->segundo_apellido_representante}}</b> quien se identifica con 
-                    <b>{{ strtoupper($solicitud->tipo_identificacion) }}</b> expedida a su favor por <b>Instituto Nacional Electoral</b>, así como con <b>{{$abogado->descipcion_poder}}</b>.</p>  
+                    La parte EMPLEADORA <b>{{$abogado->nombres_patronal}} {{$abogado->primer_apellido_patronal}} {{$abogado->segundo_apellido_patronal}}</b> se identifica con 
+                    <b>{{ strtoupper($solicitud->tipo_identificacion) }}, de Número <b>{{ $solicitud->num_identificacion }}</b> expedida a su favor por <b>Instituto Nacional Electoral</b>, 
+                    y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p>  
+                @else Declara <b>{{$abogado->nombre_representante}} {{$abogado->primer_apellido_representante}} {{$abogado->segundo_apellido_representante}}</b> quien se identifica con 
+                    <b>{{ strtoupper($solicitud->tipo_identificacion) }}</b> expedida a su favor por <b>Instituto Nacional Electoral</b>, así como con <b>{{$abogado->descipcion_poder}}</b></p>  
                 @endif
                 <b>TERCERA.</b> Declara la parte <b>TRABAJADORA</b>:
                     <p class="sangria">
@@ -124,7 +125,7 @@
                     <p class="sangria">
                         c) Que desempeñaba sus actividades laborales en las siguientes condiciones: <br>
                             - Horario: <b>{{ $solicitud->horario }}</b> Hrs.<br>
-                            - Horario de comida: <b>{{ $solicitud->comida }}</b> Hrs.<br>
+                            - Horario de comida: <b>{{ $solicitud->comida }}.</b><br>
                             - Domicilio donde prestaba sus servicios: <b>{{ $solicitud->tipo_vialidad }} {{ $solicitud->calle }} {{ $solicitud->num_ext }} @if(!empty($citado->n_int))
                                     int. {{ $citado->n_int }}
                                 @endif COLONIA {{ $solicitud->colonia }}, {{ mb_strtoupper($municipioEmpresa, 'UTF-8') }}, {{ mb_strtoupper($estadoEmpresa, 'UTF-8') }} C.P. {{ $solicitud->codigo_postal }}</b>.
@@ -216,14 +217,14 @@
                                                 <td>{{ $DSueldoTexto }} M.N.</b></td>
                                             </tr>
                                             @break
-                                        @case('GraficaciónA')
+                                        @case('GratificaciónA')
                                             <tr>
                                                 <td>GRATIFICACIÓN A (CON BASE AL SALARIO INTEGRADO)</td> 
                                                 <td><b>${{ number_format($concepto->monto, 2) }}</td> 
                                                 <td>{{ $gratificacionATexto }} M.N.</b></td>
                                             </tr>
                                             @break
-                                        @case('GraficaciónB')
+                                        @case('GratificaciónB')
                                             <tr>
                                                 <td>GRATIFICACIÓN B (20 DÍAS POR AÑO CUMPLIDO)</td> 
                                                 <td><b>${{ number_format($concepto->monto, 2) }}</td>
@@ -292,7 +293,15 @@
                                 <!--</p>-->
                                 </tbody>
                             </table> 
-                        @endif     
+                        @endif
+                        <table class="table table-bordered" style="width:100%; float: right;">
+                            <thead>
+                            <tr style="background-color: #f0f0f0;">
+                                <td class="text-right"><strong>Neto a pagar: </strong>
+                                <td><strong>${{ number_format($pagoTotal, 2) }} M.N.</strong></td>
+                            </tr>
+                            </thead>   
+                        </table>
                         <b>{{ $solicitud->resolucion_justificacion }}</b><br><br>
                     <!-- CON PAGOS DIFERIDOS-->       
                     @if($pagosDif>'1')            
@@ -304,19 +313,19 @@
                             <table id="pagos" class="table-striped" style="width:100%;">
                                 <thead>
                                     <th style="display: none;">ID</th>
+                                    <th>Núm. parcialidad</th>
                                     <th>Fecha</th>
                                     <th>Hora</th>
                                     <th>Monto</th>
-                                    <th>Número de pago</th>
                                 </thead>
                                 <tbody>
                                     @foreach($pagos as $pago)
                                         <tr>
                                             <td style="display: none;">{{$pago->id_solicitud}}</td>
+                                            <td>{{$pago->descripcion}}</td>
                                             <td>{{ \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d/m/y') }}</td> 
                                             <td>{{ \Carbon\Carbon::parse(str_replace(' HORAS', '', $pago->hora))->format('H:i') }} HRS</td>
                                             <td>${{ number_format($pago->monto, 2) }}</td>
-                                            <td>{{$pago->descripcion}}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
