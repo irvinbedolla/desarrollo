@@ -62,6 +62,9 @@
             <a class="nav-link" href="{{ route('index_ratificacion') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Ratificaciones</span>
             </a>
+            <a class="nav-link" href="{{ route('audiencia_index') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" >Audiencias</span>
+            </a>
             <a class="nav-link" href="{{ route('seer') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">SEER</span>
             </a>

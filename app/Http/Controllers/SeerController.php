@@ -2457,6 +2457,21 @@ class SeerController extends Controller
             'conciliador_id'    => $user->id
         ]);
 
+        $audiencias = Audiencias::orderBy('created_at', 'desc')->limit(500)->get();
+        foreach ($audiencias as $audiencia) {
+            $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
+            $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+            $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
+            $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
+            $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Algo';
+            $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
+            $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
+            $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
+            $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
+        }
+
+        return view('audiencias.todas_audiencias',compact('audiencias'));
+        
         return redirect()->route('audiencia_index');
     }
 
