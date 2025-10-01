@@ -2457,22 +2457,8 @@ class SeerController extends Controller
             'conciliador_id'    => $user->id
         ]);
 
-        $audiencias = Audiencias::orderBy('created_at', 'desc')->limit(500)->get();
-        foreach ($audiencias as $audiencia) {
-            $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
-            $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-            $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
-            $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
-            $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Algo';
-            $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
-            $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
-            $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
-            $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
-        }
-
-        return view('audiencias.todas_audiencias',compact('audiencias'));
         
-        return redirect()->route('audiencia_index');
+        return redirect()->route('todas_audiencias');
     }
 
     public function editar_solicitud_con(Request $request) {
@@ -2955,7 +2941,7 @@ class SeerController extends Controller
             'estatus'               => 'Incompetencia'
         ]);
 
-        return redirect()->route('audiencias.conciliador');
+        return redirect()->route('todas_audiencias');
     }
     
     public function GeneraAudiencia($id){
@@ -3017,7 +3003,7 @@ class SeerController extends Controller
             'conciliador_id'    => $user->id
         ]);
     
-        return redirect()->route('audiencias.conciliador');
+        return redirect()->route('todas_audiencias');
     }
 
     //PDF Acta por falta de interés
@@ -5882,6 +5868,19 @@ class SeerController extends Controller
     public function todas_ratificaciones(){
         $solicitudes = Turnos::where('tipo','Ratificación')
         ->orderBy('created_at', 'desc')->limit(500)->get();
+        foreach ($solicitudes as $audiencia) {
+            $pendientes = Pagos::where('id_solicitud',$audiencia["id"])
+            ->where('estatus',"Pendiente")
+            ->where('tipo_pago',"Ratificacion")
+            ->get();
+            if(count($pendientes) == 0){
+                //Si la contancia es 0 no tiene pagos pendientes
+                $audiencia->constancia = 0;
+            }
+            else{
+                $audiencia->constancia = 1;
+            }
+        }
 
         return view('ratificaciones.ratificaciones_todas',compact('solicitudes'));
     }

@@ -24,6 +24,7 @@
                                             <th style="color: #fff;">Estatus</th>
                                             <th style="color: #fff;">Detalles</th>
                                             <th style="color: #fff;">Concluir</th>
+                                            <th style="color: #fff;">Cumplimeintos</th>
                                             <th style="color: #fff;">Documentos</th>
                                         </thead>
                                         <tbody>
@@ -46,6 +47,11 @@
                                                         @endif
                                                     </td>
                                                     <td>
+                                                        @if($solicitud->estatus == "Concluida" || $solicitud->estatus == "Concluida Pagos")
+                                                            <a class="btn btn-primary" href="{{ route('ratificacion_cumplimientos', $solicitud->id) }}">Cumplimientos</a>
+                                                        @endif
+                                                    </td>
+                                                    <td>
                                                         <button type="button" class="btn btn-warning open-expediente-modal" data-bs-toggle="modal" data-bs-target="#expediente" data-id="{{ $solicitud->id }}">Subir Documento</button>
                                                         @if($solicitud->estatus == "Concluida")
                                                             <div class="dropdown">
@@ -56,7 +62,9 @@
                                                                     <li><a class="dropdown-item" href="{{ route('VerDocumentosRatificacion', $solicitud->id) }}"  target="_blank">Identificaciones</a></li>
                                                                     <li><a class="dropdown-item" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}"  target="_blank">Convenio</a></li>
                                                                     <li><a class="dropdown-item" href="{{ route('PDFaudiencia', $solicitud->id) }}"  target="_blank">Acta de audiencia</a></li>
-                                                                    <li><a class="dropdown-item" href="{{ route('PDFcumplimientoR', $solicitud->id) }}"  target="_blank">Constancia de cumplimiento</a></li>
+                                                                    @if($solicitud->constancia == 0)
+                                                                        <li><a class="dropdown-item" href="{{ route('PDFcumplimientoR', $solicitud->id) }}"  target="_blank">Constancia de cumplimiento</a></li>
+                                                                    @endif
                                                                 </ul>
                                                             </div>
                                                         @elseif($solicitud->estatus == "Concluida Pagos")

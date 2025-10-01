@@ -820,7 +820,7 @@ class TurnosController extends Controller
             ->update(['estatus' => "Concluida"]);
         }
 
-        return redirect()->route('cumplimiento_actual');
+        return redirect()->route('todas_ratificaciones');
     }
 
     public function obtenerHorario($fecha_revisar,$sede){
@@ -1960,5 +1960,14 @@ class TurnosController extends Controller
             }
         }
         return back()->with('success', 'Expediente cargado correctamente.');
+    }
+
+    public function ver_pagos_rati($id){
+        $solicitudes = Pagos::join('turnos','turnos.id',"=",'pago_solicitud.id_solicitud')
+        ->where('pago_solicitud.id_solicitud',$id)
+        ->select('pago_solicitud.id','pago_solicitud.id_solicitud','turnos.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
+        ->get();
+
+        return view('/cumplimientos/pagar_ratificacion',compact('solicitudes'));
     }
 }
