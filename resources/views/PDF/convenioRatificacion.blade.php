@@ -296,13 +296,14 @@
                         @endif
                         <table class="table table-bordered" style="width:100%; float: right;">
                             <thead>
-                            <tr style="background-color: #f0f0f0;">
+                            <tr>
                                 <td class="text-right"><strong>Neto a pagar: </strong>
                                 <td><strong>${{ number_format($pagoTotal, 2) }} M.N.</strong></td>
                             </tr>
                             </thead>   
                         </table>
-                        <b>{{ $solicitud->resolucion_justificacion }}</b><br><br>
+                    </p>
+                    <p><b>{{ $solicitud->resolucion_justificacion }}</b></p><br>
                     <!-- CON PAGOS DIFERIDOS-->       
                     @if($pagosDif>'1')            
                         <p><b>SEXTA</b>. La <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará en <b>{{ $pagosDif->C_pagos}}</b> 
