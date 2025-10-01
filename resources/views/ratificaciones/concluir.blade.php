@@ -191,9 +191,13 @@
 
                                        
 
-                                        
-                                        <div class="col-xs-12 col-sm-12 col-md-12">
-                                            <br><button type="submit" class="btn btn-primary">Guardar</button>
+                                        <div class="row">
+                                            <div class="col-xs-12 col-sm-12 col-md-2">
+                                                <br><button type="submit" class="btn btn-primary" name="valor" value="2">Guardar</button>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-2">
+                                                <br><button type="submit" class="btn btn-primary" name="valor" value="1">Vista Previa</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

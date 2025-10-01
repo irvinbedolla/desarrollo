@@ -622,7 +622,7 @@ class TurnosController extends Controller
                 'fecha'             => $fecha_actual,
                 'hora'              => $hora_actual,
                 'hora_fin'          => $hora_actual,
-                'num_identificacion'=> $data["num_identificacion"],
+                'num_identificacion'=> 'required',
                 'estado_rat'        => $data["estado_rat"],
             ); 
             $nombre = $data["trabajador"];
@@ -1037,19 +1037,12 @@ class TurnosController extends Controller
         $conciliador = $conciliador->where("turnos.id", "=", $id)
         ->select('users.name')
         ->first();
-        //Descripción del tipo de identificación para los solicitantes
-        $identificacionSolicitante = $solicitud->tipo_identificacion;
-        $descripcionIdentificacionS = $this->descripcionIdentificacion($identificacionSolicitante);
- 
-        //Descripción del tipo de identificación para los poderes
-        $identificacionPoder = $abogado->tipo_identificacion;
-        $descripcionIdentificacionP = $this->descripcionIdentificacion($identificacionPoder);
 
         $html = view('PDF/convenioRatificacion', 
             compact('id', 'solicitud', 'dias_descanso', 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','vacacionesTexto',
             'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
             'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones','abogado','deducciones','deduccionesTexto',
-            'municipioEmpresa','estadoEmpresa','pagoTotal','descripcionIdentificacionS','descripcionIdentificacionP'))
+            'municipioEmpresa','estadoEmpresa','pagoTotal'))
             ->render();
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -1207,18 +1200,10 @@ class TurnosController extends Controller
         $conciliador = $conciliador->where("turnos.id", "=", $id)
         ->select('users.name')
         ->first();
-        
-        //Descripción del tipo de identificación para los solicitantes
-        $identificacionSolicitante = $solicitud->tipo_identificacion;
-        $descripcionIdentificacionS = $this->descripcionIdentificacion($identificacionSolicitante);
-
-        //Descripción del tipo de identificación para los poderes
-        /*$identificacionPoder = $abogado->tipo_identificacion;
-        $descripcionIdentificacionP = $this->descripcionIdentificacion($identificacionPoder);*/
 
         $html = view('PDF/ActaAudiencia', compact('id','solicitud','conciliador','vacacionesTexto',
         'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
-        'gratificacionETexto','gratificacionFTexto','otrasTexto','prestaciones','deducciones','deduccionesTexto','pagoTotal','descripcionIdentificacionS'/*,'descripcionIdentificacionP'*/))->render();
+        'gratificacionETexto','gratificacionFTexto','otrasTexto','prestaciones','deducciones','deduccionesTexto','pagoTotal'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -1653,7 +1638,17 @@ class TurnosController extends Controller
         'user_id'                       => $id_usuario,
         'estatus'                       => $estatus]);
         
-        return redirect()->route('ratificacion_atender');
+        $id_solicitud =  $data["id"];
+        if($data["valor"] == 1){
+            //session()->flash('show_modal', true);
+            return redirect()->route('vista_previa_ratificacion',compact('id_solicitud'));
+        }
+        else if($data["valor"] == 2){
+            return redirect()->route('todas_ratificaciones');
+            //return redirect()->route('audiencias.conciliador');
+        }
+
+        
     }
 
     public function pagar_ratificacion($id){
@@ -1985,20 +1980,68 @@ class TurnosController extends Controller
 
         return view('/cumplimientos/pagar_ratificacion',compact('solicitudes'));
     }
-    //Muestra quien emite el tipo de identificación seleccionado para usar en PDF convenio y acta de audiencia
-    private function descripcionIdentificacion($tipo) {
-        $descripciones = [
-            'Credencial de elector'   => 'Instituto Nacional Electoral',
-            'Pasaporte'               => 'Secretaria de Relaciones Exteriores',
-            'Cédula profesional'      => 'Autoridad Correspondiente',
-            'Licencia de conducir'    => 'Autoridad Correspondiente',
-            'Credencial de inapam'    => 'Instituto Nacional de las Personas Adultas Mayores',
-            'Cartilla militar'        => 'Secretaria de la Defensa Nacional',
-            'Documento migratorio'    => 'Instituto Nacional de Migración',
-            'Constancia de identidad' => 'Autoridad Correspondiente',
-            'Otro'                    => 'Autoridad Correspondiente',
-        ];
+
+    public function vista_previa_ratificacion($id){
+        $idSolicitud = $id;
+        $id_usuario = auth()->user()->id;
+        $user = User::find($id_usuario);           
+        //$conciliadores  = SeerPerConciliador::where('id_solicitud',$id)->first();
+        $solicitud      = Turnos::find($id);
+        $conciliador    = User::select('name')->where('id', $solicitud->id_conciliador)->first();
+
+        $representantes = Poder::find($solicitud["idAbogado"]);
+        
+        //$solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
+        $abogados = Poder::all();
+        //SeerPerGeneral::find($id)->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
+        $estados        = Estados::all();
+        $municipios     = Municipios::where('estado',16)->get();
+        $conceptos      = Concepto::where('id_solicitud',$id)->where('tipo_pago','Ratificacion')->get();
+        $pagos          = Pagos::where('id_solicitud',$id)->where('tipo_pago','Ratificacion')->get();
+
+        return view('/ratificaciones/vista_previa',compact('idSolicitud','representantes','conciliador','solicitud','abogados','estados','municipios','conceptos','pagos'));
+
+    }
+
+    public function editar_ratificacion_revisar(Request $request) {
+        $data = $request->all();
+        dd($data);
+        $id_solicitud = $data["id"];
+        $id_usuario = auth()->user()->id;
+        $user = User::find($id_usuario);
+        $roles = Role::pluck('name', 'name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+
+        $solicitante = Turnos::find($data['id'])->update([
+
+        ]);
     
-        return $descripciones[$tipo];
+        //Actualizar Solicitante
+        SeerSolicitante::where('id_solicitud', $data["id"])
+        ->update([
+            'trabajador'            => $data["nombre"],
+            'primero_trabajador'    => $data["rfc"],
+            'segundo_trabajador'    => $data["nombre"],
+            'trabajador_curp'       => $data["curp"],
+        ]);
+
+        if(isset($data["seguro"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['nss' => $data["seguro"] ]);
+        }
+            
+        return redirect()->route('vista_previa', compact('id_solicitud'));
+    }
+
+    public function seleccionar_abogado_ratificacion(Request $request){
+        $data = $request->all();
+        dd($data);
+        $id_solicitud = $data["solicitud"];
+
+        Turnos::find($data["citado"])
+        ->update([
+            'id_abogado'  => $data["abogado"],
+        ]);
+
+        return redirect()->route('vista_previa',compact('id_solicitud'));
     }
 }

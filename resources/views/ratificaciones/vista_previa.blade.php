@@ -1,0 +1,468 @@
+@extends('layouts.app_editar')
+@php
+    $fechaActual = date('Y-m-d');
+    $contador = 0;
+@endphp
+@section('content')
+    <section class="section">
+        <div class="section-header">
+            <h3 class="page__heading">Revisar Ratificación</h3>
+        </div>
+        @if(session()->has('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Correcto</strong>
+                {{ session()->get('success') }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        @endif
+
+        <div class="section-body">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped mt-1">
+                                    <thead style="background-color: #4A001F;">
+                                        <tr> 
+                                            <th style="display:none">ID</th>
+                                            <th style="color: #ffff;">Tipo parte</th>
+                                            <th style="color: #ffff;">Nombre(s)</th>
+                                            <th style="color: #ffff;">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="display:none">{{$solicitud->id}}</td>
+                                            <td style="color: #000000;"><b>Trabajador</b></td>
+                                            <td>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</td>
+                                            <td>
+                                                <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal1" data-id="{{ $idSolicitud }}">Editar</a>
+                                            </td>
+                                        </tr>
+                                       <tr>
+                                            <td style="display:none">{{$solicitud->id}}</td>
+                                            <td style="color: #000000;"><b>Solicitante</b></td>
+                                            <td>{{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }} {{ $solicitud->nombre_empresa }}</td>
+                                            <td>
+                                                <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#modalCitados" data-id="{{ $idSolicitud }}">Cambiar</a>
+                                            </td>
+                                        </tr>     
+                                    </tbody> 
+                                </table>
+                            </div>
+                            <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('terminar_audiencia')}}">
+                                @csrf
+                                <input type="hidden" name="id" value="{{ $idSolicitud }}">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-12"  style="border:1px solid black;">
+                                        <div class="form-group">
+                                            <label for="name">RESOLUCIÓN PRIMERA MANIFESTACIÓN</label>
+                                            <textarea name="primera" class="form-control">{{$solicitud->resolicion_primera}}</textarea>
+                                            <div class="invalid-feedback">
+                                                El campo es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div id="justificacion"><br>
+                                        <div class="col-xs-12 col-sm-12 col-md-12" style="border:1px solid black;">
+                                            <div class="form-group">
+                                                <label for="name">RESOLUCIÓN JUSTIFICACIÓN PROPUESTA</label>
+                                                <textarea name="justificacion" class="form-control" >{{$solicitud->resolicion_justificacion}}</textarea>
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div><br>
+                                    <div id="segunda" ><br>
+                                        <div class="col-xs-12 col-sm-12 col-md-12" style="border:1px solid black;">
+                                            <div class="form-group">
+                                                <label for="name">RESOLUCIÓN SEGUNDA MANIFESTACIÓN</label>
+                                                <textarea name="segunda" class="form-control" >{{$solicitud->resolicion_segunda}}</textarea>
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-6"><br>
+                                            <label for="name">Conclución de audiencia</label>
+                                            <select id="conclucion" name="conclucion" class="form-control">
+                                                <option>Seleccione</option>
+                                                <option value="Conciliacion" {{ $solicitud["conclucion"] == "Conciliacion" ? "selected" : '' }}>Hubo Convenio</option>
+                                                <option value="No conciliacion" {{ $solicitud["conclucion"] == "No conciliacion" ? "selected" : '' }}>No hubo Convenio</option>
+                                                <option value="Archivada por incomparecencia" {{ $solicitud["conclucion"] == "Archivada por incomparecencia" ? "selected" : '' }}>Archivar</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div id="dias" class="row home-shape">
+                                        <div class="col-xs-12 col-sm-12 col-md-2"><br>
+                                            <div class="form-group">
+                                                <label for="name">Días de vacaciones</label>
+                                                <input type="number" name="vacaciones" class="form-control" value="{{ $solicitud["vacaciones"] }}"> 
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-2"><br>
+                                            <div class="form-group">
+                                                <label for="name">Días de Aguinaldo</label>
+                                                <input type="number" name="aguinaldo" class="form-control" value="{{ $solicitud["aguinaldo"] }}"> 
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-2"><br>
+                                            <div class="form-group">
+                                                <label for="name">Otros</label>
+                                                <input type="text" name="otros" class="form-control" value="{{ $solicitud["otros"] }}"> 
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-3"><br>
+                                            <div class="form-group">
+                                                <label for="name">Horario laboral</label>
+                                                <input type="text" name="horario" class="form-control" value="{{ $solicitud["horario"] }}"> 
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-3"><br>
+                                            <div class="form-group">
+                                                <label for="name">Horario de comida</label>
+                                                <input type="text" name="comida" class="form-control" value="{{ $solicitud["comida"] }}"> 
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="pagos" class="row home-shape">
+                                        <div class="col-xs-12 col-sm-12 col-md-12"></div>
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <div class="form-group">
+                                                <h4 class="text-center">Concepto de Pago</h4>
+                                            </div>
+                                            </div>
+                                        <div class="col-xs-12 col-sm-6 col-md-12">
+                                            <button id="addRow" type="button" class="btn btn-info">Agregar Concepto de Pago</button>
+                                        </div>                                        
+                                        <div id="newRow"></div>
+                                        <table class="table table-striped mt-1">
+                                            <thead style="background-color: #4A001F;">
+                                                <tr> 
+                                                    <th style="display:none">ID</th>
+                                                    <th style="color: #ffff;">Tipo pago</th>
+                                                    <th style="color: #ffff;">Monto</th>
+                                                    <th style="color: #ffff;">Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($conceptos as $concepto)
+                                                    <tr>
+                                                    <td  style="display:none">{{$concepto->id}}</td>
+                                                        <td>{{ $concepto->descripcion}}</td>
+                                                        <td>${{ number_format($concepto->monto,2) }}</td>
+                                                        <td>
+                                                            <a hfer="{{ route('concepto_eliminar_pago', $concepto->id) }}" class="btn btn-danger" onclick=editar_rol();>Eliminar</a>
+                                                        </td>
+                                                    </tr>
+                                                    @php $contador++; @endphp
+                                                @endforeach       
+                                            </tbody> 
+                                        </table>
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <div class="form-group">
+                                                <h4 class="text-center">Pagos</h4>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div id="div_pagos_diferidos1"><br>
+                                                <button id="addPago" type="button" class="btn btn-info">Agregar Pago</button>
+                                                <div id="newRowaPago"></div>
+                                            </div>
+                                        </div>
+                                        <table class="table table-striped mt-1">
+                                            <thead style="background-color: #4A001F;">
+                                                <tr> 
+                                                    <th style="display:none">ID</th>
+                                                    <th style="color: #ffff;">Fecha y Hora</th>
+                                                    <th style="color: #ffff;">Descripción</th>
+                                                    <th style="color: #ffff;">Monto</th>
+                                                    <th style="color: #ffff;">Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($pagos as $pago)
+                                                    <tr>
+                                                        <td  style="display:none">{{$pago->id}}</td>
+                                                        <td>{{ $pago->hora }}</td>
+                                                        <td>{{ $pago->descripcion}}</td>
+                                                        <td>${{ number_format($pago->monto,2) }}</td>
+                                                        <td>
+                                                            <a hfer="{{ route('pago_eliminar_pago', $pago->id) }}" class="btn btn-danger" onclick=editar_rol();>Eliminar</a>
+                                                        </td>
+                                                    </tr>
+                                                    @php $contador++; @endphp
+                                                @endforeach       
+                                            </tbody> 
+                                        </table>
+                                        <div id="div_pagos_diferidos"></div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                    <br><button type="submit" class="btn btn-success">Terminar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+@endsection
+
+<div id="nuevo_poder" style ="display: none;">
+    <div>.</div>
+    <div class="loader"></div>
+</div>
+<!-- Modal Solicitantes -->
+<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <form class='needs-validation novalidate'  method='POST' action="{{route('editar_ratificacion_revisar')}}">
+        @csrf
+        <input type="hidden" name="id" value="{{$idSolicitud}}">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Editar Solicitante</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label for="name">Nombre(s)</label>
+                                <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" value="<?=$solicitud["trabajador"];?>" required> 
+                                <div class="invalid-feedback">
+                                    El campo nombre es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label for="name">Primer Apellido</label>
+                                <input type="text" name="primero" class="form-control" oninput="this.value = this.value.toUpperCase()" value="<?=$solicitud["primero_trabajador"];?>" required> 
+                                <div class="invalid-feedback">
+                                    El campo nombre es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label for="name">Segundo Apellido</label>
+                                <input type="text" name="segundo" class="form-control" oninput="this.value = this.value.toUpperCase()" value="<?=$solicitud["segundo_trabajador"];?>" required> 
+                                <div class="invalid-feedback">
+                                    El campo nombre es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label for="name">CURP del Solicitante (*)</label>
+                                <input type="text" name="curp" id="curp_input" oninput="validarInput(this)"class="form-control" value="<?=$solicitud["trabajador_curp"];?>" required> 
+                                <pre id="resultado"></pre>
+                                <div class="invalid-feedback">
+                                    El campo curp es obligatorio.
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- Modal Citados -->
+<div class="modal fade" id="modalCitados" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Representantes Legales</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                <form method="POST" action="{{ route('seleccionar_abogado_ratificacion') }} ">
+                    @csrf
+                    <input type="hidden" id="modal-id" name="citado" value="">
+                    <input type="hidden" name="solicitud" value="{{$solicitud->id}}">
+                    <table id="tabla1" class="table-striped" style="width:100%">
+                        <thead style="background-color: #4A001F;">   
+                            <!--<th style="display: none;">ID</th>-->
+                            <th style="color: #fff;">Folio</th>
+                            <th style="color: #fff;">Nombre</th>
+                            <th style="color: #fff;">RFC</th>
+                            <th style="color: #fff;">Representante</th>
+                            <th style="color: #fff;">Acciones</th>
+                        </thead>
+                        <tbody class="contenidobusqueda">
+                            @foreach($abogados as $abogado)
+                                <tr>
+                                    <td>{{$abogado->idAbogado}}</td>
+                                    <td>{{$abogado->nombres_patronal}} {{$abogado->primer_apellido_patronal}} {{$abogado->segundo_apellido_patronal}}</td>
+                                    <td>{{$abogado->rfc_patronal}}</td>
+                                    <td>{{$abogado->nombre_representante}} {{$abogado->primer_apellido_representante}} {{$abogado->segundo_apellido_representante}}</td>
+                                    <td>
+                                        <button class="btn btn-info" onclick=editar_rol(); type="submit" name="abogado" value="{{$abogado->idAbogado}}">Seleccionar</button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section('scripts')
+    <script>
+         $('.open-modal').click(function() {
+            const id = $(this).data('id'); // Obtiene el valor de data-id
+
+            document.getElementById('modal-id').value = id;
+            document.getElementById('modal-id-reagendar').value = id;
+            document.getElementById('id_citado_2').value = id;
+            document.getElementById('id_citado_pf').value = id;
+            document.getElementById('modal-id-archivar').value = id;
+            document.getElementById('modal-id-reagendar').value = id;
+            document.getElementById('modal-id-incopentencia').value = id;
+            document.getElementById('modal-id-citado').value = id;
+        });
+
+        $( document ).ready(function() {
+            // Agregar registro
+            $("#addRow").click(function () {
+                var html = '';
+                html += '<div id="inputFormRow1" class="col-xs-12 col-sm-6 col-md-12">';
+
+                // Tipo de pago
+                html +='<div class="col-xs-12 col-sm-12 col-md-12">';
+                    html +='<div class="form-group">';
+                    html +='<label for="confirm-password"><br>Prestación</label>';
+                    html +='<select class="form-control" name="tipo_pago[]" >';
+                    html +='<option value="">Seleccione</option>';
+                    html +='<option value="Aguinaldo">Días de aguinaldo</option>';
+                    html +='<option value="DSueldo">Días de sueldo</option>';
+                    html +='<option value="Vacaciones">Días de vacaciones</option>';
+                    html +='<option value="PrimaVacacional">Prima vacacional</option>';
+                    html +='<option value="GratificaciónA">Graficación A (Con base al salario integrado)</option>';
+                    html +='<option value="GratificaciónB">Graficación B (20 Días por año cumplido)</option>';
+                    html +='<option value="GraficaciónC">Graficación C (Prima de antigüedad topada)</option>';
+                    html +='<option value="GratificaciónD">Graficación D (Incluye cualquier otra prestación)</option>';
+                    html +='<option value="GratificaciónE">Graficación E (Prestaciones en especie)</option>';
+                    html +='<option value="GratificaciónF">Graficación F (Reconocimiento de derechos)</option>';
+                    html +='<option value="Otras">Otros concepto de pago</option>';
+                    html +='</select>';
+                    html +='<div class="invalid-feedback">El tipo de pago es obligatorio.</div>';
+                    html += '</div> </div>';
+
+                // Monto a pagar
+                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                html += '<div class="form-group">';
+                html += '<label for="password">Monto a pagar</label>';
+                html +='<input type="text" class="form-control" name="monto_pago[]"  oninput="this.value = this.value.toUpperCase()" >';
+                html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>';
+                html += '</div> </div>';
+
+                html += '<div class="input-group-append">';
+                html += '<button class="removeRow btn btn-danger" type="button">Borrar</button>';
+                html += '</div>';
+                html += '</div>';
+
+            $('#newRow').append(html);
+        });
+
+        // Borrar concepto
+        $(document).on('click', '.removeRow', function () {
+            $(this).closest('.col-xs-12').remove();
+        });
+
+        // Agregar pago
+        $("#addPago").click(function () {
+                var html = '';
+                html += '<div id="inputFormRow2" class="col-xs-12 col-sm-6 col-md-12">';
+                
+                //TIPO DE PAGO
+                html +='<div class="col-xs-12 col-sm-12 col-md-12">';
+                html +='<div class="form-group">';
+
+                //DÍA A PAGAR
+                html +='<div class="col-xs-12 col-sm-12 col-md-12">';
+                html +='<div class="form-group">';
+                html +='<label for="confirm-password"><br>Días de pago</label>';
+                html +='<input type="date" class="form-control" name="dias_pagos[]" >';
+                html +='</div> </div>';                                
+                
+                //HORARIO A PAGAR
+                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                html += '<div class="form-group">';
+                html += '<label for="password">Hora de pago</label>';
+                html +='<input type="text" class="form-control" name="hora_pagos[]"  oninput="this.value = this.value.toUpperCase()" >';
+                html += '<div class="invalid-feedback">';
+                html += 'La Dirección es obligatoria.';
+                html += '</div> </div> </div>';
+
+                //MONTO A PAGAR
+                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                html += '<div class="form-group">';
+                html += '<label for="password">Monto a pagar</label>';
+                html +='<input type="text" class="form-control" name="monto_pagos[]"  oninput="this.value = this.value.toUpperCase()" >';
+                html += '<div class="invalid-feedback">';
+                html += 'La Dirección es obligatoria.';
+                html += '</div> </div> </div>';
+
+                //DESCRIPCIÓN DE PAGO
+                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                html += '<div class="form-group">';
+                html += '<label for="password">Descripción</label>';
+                html +='<input type="text" class="form-control" name="descripcion_pagos[]"  oninput="this.value = this.value.toUpperCase()" >';
+                html += '<div class="invalid-feedback">';
+                html += 'La Dirección es obligatoria.';
+                html += '</div> </div> </div>';
+
+                html += '<div class="input-group-append">';
+                html += '<button class="removeRow2 btn btn-danger" type="button">Borrar</button>';
+                html += '</div>';
+                html += '</div>';
+
+            $('#newRowaPago').append(html);
+        });
+
+        // Borrar pago
+        $(document).on('click', '.removeRow2', function () {
+            $(this).closest('.col-xs-12').remove();
+        });
+        });
+
+
+    </script>
+    <script src="../../public/assets/js/validaciones.js"></script> 
+    <script src="../../public/assets/js/poderes/general.js"></script>
+@endsection
