@@ -79,7 +79,11 @@
                
                 <p><b>
                     Trabajador(a): {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
-                    Empleador(a): {{ $solicitud->empresa }}<br>
+                    Empleador(a): @if(is_null($solicitud->nombre_empresa) && is_null($solicitud->primero_empresa))
+                             {{ $solicitud->empresa }}
+                        @else
+                             {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}
+                    @endif <br>
                     Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha_audiencia)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora_audiencia }} horas.<br> 
                     Asistencia de los interesados: Si. <br>
                     <!--Fecha del conflicto: [SOLICITUD_FECHA_CONFLICTO]  <br>
@@ -119,7 +123,7 @@
                                         <td>{{ \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d/m/y') }}</td> 
                                         <td>{{ \Carbon\Carbon::parse(str_replace(' HORAS', '', $pago->hora))->format('H:i') }} HORAS</td>
                                         <td>${{ number_format($pago->monto, 2) }}</td>
-                                        <td>{{$pago->descripcion}}</td>
+                                        <td>{{$pago->observaciones}}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
