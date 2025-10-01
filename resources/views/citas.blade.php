@@ -271,7 +271,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="col-xs-12 col-sm-12 col-md-4"> 
                                                     <div class="form-group">
                                                         <label for="name">Núm de identificación <span style="color:red;">(*)</span> <span data-bs-toggle="modal" data-bs-target="#helpModal" style="cursor: pointer;">❓</span></label>
                                                         <input type="text" name="num_identificacion" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
