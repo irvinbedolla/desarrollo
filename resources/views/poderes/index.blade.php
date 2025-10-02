@@ -31,9 +31,9 @@
                                             <th style="color: #fff;">Fecha Vigencia</th>
                                             <th style="color: #fff;">Vigencia Representación</th>
                                             <th style="color: #fff;">Estatus</th>
-                                            <th style="color: #fff;">Identificación del patrón</th>
+                                            <th style="color: #fff;">Identificación del patrón/Acta Constitutiva</th>
                                             <th style="color: #fff;">Identificacion representante</th>
-                                            <th style="color: #fff;">Poder/</th>
+                                            <th style="color: #fff;">Documento que acredite la personería</th>
                                             <th style="color: #fff;">Anexo</th>
                                             <th style="color: #fff;"></th>
                                             <th style="color: #fff;"></th>
