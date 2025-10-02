@@ -2055,7 +2055,6 @@ class TurnosController extends Controller
 
     public function editar_ratificacion_revisar(Request $request) {
         $data = $request->all();
-        dd($data);
         $id_solicitud = $data["id"];
         $id_usuario = auth()->user()->id;
         $user = User::find($id_usuario);
@@ -2063,23 +2062,13 @@ class TurnosController extends Controller
         $userRole = $user->roles->pluck('name')->all();
 
         $solicitante = Turnos::find($data['id'])->update([
-
-        ]);
-    
-        //Actualizar Solicitante
-        SeerSolicitante::where('id_solicitud', $data["id"])
-        ->update([
             'trabajador'            => $data["nombre"],
-            'primero_trabajador'    => $data["rfc"],
-            'segundo_trabajador'    => $data["nombre"],
+            'primero_trabajador'    => $data["primero"],
+            'segundo_trabajador'    => $data["segundo"],
             'trabajador_curp'       => $data["curp"],
         ]);
-
-        if(isset($data["seguro"])){
-            SeerSolicitante::where('id_solicitud', $data["id"])->update(['nss' => $data["seguro"] ]);
-        }
-            
-        return redirect()->route('vista_previa', compact('id_solicitud'));
+    
+        return redirect()->route('vista_previa_ratificacion', compact('id_solicitud'));
     }
 
     public function seleccionar_abogado_ratificacion(Request $request){
@@ -2152,6 +2141,19 @@ class TurnosController extends Controller
                 Concepto::create($data_citado);
             }
         }
+        //Validar si existe un pago extra
+        if(isset($data["descripcion_deduccion"])){
+            $cont = count($data["descripcion_deduccion"]);
+            for($i = 0; $i < $cont; $i++) {
+                $data_deduccion = [
+                    'id_solicitud'  => $data["id"], 
+                    'monto'         => $data["monto_deduccion"][$i], 
+                    'descripcion'   => $data["descripcion_deduccion"][$i],
+                    'tipo_pago'     => "Ratificacion"
+                ];
+                Deducciones::create($data_deduccion);
+            }
+        }
             
         //Actualizar Audiecia
         Turnos::find($data["id"])
@@ -2167,6 +2169,5 @@ class TurnosController extends Controller
         ]);
 
         return redirect()->route('todas_ratificaciones');
-        
     }
 }
