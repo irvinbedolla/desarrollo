@@ -57,12 +57,30 @@
         }
 
         .fc-event-disponible {
+            color: #ffff !important;
             background-color: #00CE1C !important;
             border-color: #00CE1C !important;
             cursor: pointer;
         }
 
+        .fc-event-expirado {
+            color: #ffff !important;
+            /*background-color: #F0DF24 !important;
+            border-color: #F0DF24 !important;*/
+            background-color: #F59727 !important;
+            border-color: #F59727 !important;
+            cursor: not-allowed;
+        }
+
+        .fc-event-inhabil {
+            color: #ffff !important;
+            background-color: #3B78DB !important;
+            border-color: #3B78DB !important;
+            cursor: not-allowed;
+        }
+
         .fc-event-ocupado {
+            color: #ffff !important;
             background-color: #DA0909 !important;
             border-color: #DA0909 !important;
             cursor: not-allowed;
@@ -1001,7 +1019,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'timeGridWeek',
+                initialView: 'dayGridWeek',
                 locale: 'es',
                 headerToolbar: {
                     left: 'prev,next today',
@@ -1039,6 +1057,12 @@
                     });
                 },
 
+                eventTimeFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    //second: '2-digit',
+                    //hour12: false
+                },
 
                 eventClick: function(info) {
                     // Solo permitir selección de horarios disponibles
@@ -1062,6 +1086,10 @@
                     // Añade clases CSS según el tipo de evento
                     if (info.event.extendedProps.estado === 'disponible') {
                         info.el.classList.add('fc-event-disponible');
+                    } else if (info.event.extendedProps.estado === 'expirado') {
+                        info.el.classList.add('fc-event-expirado');
+                    } else if (info.event.extendedProps.estado === 'inhabil') {
+                        info.el.classList.add('fc-event-inhabil');
                     } else {
                         info.el.classList.add('fc-event-ocupado');
                     }
