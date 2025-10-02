@@ -617,7 +617,7 @@
                                                     </div>
                                                 </div>
                                              
-                                                <!--<div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Sedes <span style="color:red;">(*)</span></label>
                                                         <select id="sede" name="sede" class="form-control" onchange="modalCalendar();" required>
@@ -630,7 +630,7 @@
                                                             La sede es obligatoria.
                                                         </div>
                                                     </div>
-                                                </div>-->
+                                                </div>
                                                 <!--div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Día</label>
@@ -652,13 +652,13 @@
                                                     </div>
                                                 </div-->
 
-                                                <!--<input type="hidden" name="fecha" id="fechaSeleccionada" required>
-                                                <input type="hidden" name="hora" id="horaSeleccionada" required>-->
+                                                <input type="hidden" name="fecha" id="fechaSeleccionada" required>
+                                                <input type="hidden" name="hora" id="horaSeleccionada" required>
                                                     
                                                 <!-- Botón para abrir el modal -->
                                                    
-                                                <!--<div style="display: flex; align-items: center; justify-content: center;">
-                                                    <button type="button" id="botonCalendar" class="btn btn-lg btn-custom-morado" data-toggle="modal" data-target="#calendarModal" disabled>
+                                                <div style="display: flex; align-items: center; justify-content: center;">
+                                                    <button type="button" id="botonCalendar" class="btn btn-lg btn-custom-morado" data-bs-toggle="modal" data-bs-target="#calendarModal" disabled>
                                                         Seleccionar Fecha y Horario
                                                     </button>
                                                 </div>
@@ -669,25 +669,25 @@
                                                         <div class="modal-content">
                                                             <div class="modal-header">
                                                                 <h5 class="modal-title">Seleccionar Fecha y Horario</h5>
-                                                                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
                                                             <div class="modal-body">
                                                                 <div id="calendar"></div>
                                                             </div>
                                                             <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                                                                 <button type="button" class="btn btn-primary" id="confirmarSeleccion">Confirmar</button>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>-->
+                                                </div>
                                             </div>
 
-                                            <!--<div id="resumenCita" class="col-xs-12 col-sm-12 col-md-12" style="margin-top: 10px; display: none;">
+                                            <div id="resumenCita" class="col-xs-12 col-sm-12 col-md-12" style="margin-top: 10px; display: none;">
                                                 <div class="alert alert-info">
                                                     <strong>Cita seleccionada:</strong> <span id="fechaResumen"></span> a las <span id="horaResumen"></span>
                                                 </div>
-                                            </div>-->
+                                            </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div align="center">
@@ -796,7 +796,7 @@
     <script src="public/assets/js/custom.js"></script>
 
     <script src="https://cdn.datatables.net/2.1.5/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.1.5/js/dataTables.bootstrap4.js"></script>
+    <!--script src="https://cdn.datatables.net/2.1.5/js/dataTables.bootstrap4.js"></script-->
     @yield('page_js')
 
 
