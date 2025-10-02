@@ -44,8 +44,8 @@
                                         </tr>
                                        <tr>
                                             <td style="display:none">{{$solicitud->id}}</td>
-                                            <td style="color: #000000;"><b>Solicitante</b></td>
-                                            <td>{{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }} {{ $solicitud->nombre_empresa }}</td>
+                                            <td style="color: #000000;"><b>Solicitante(Patronal)</b></td>
+                                            <td>{{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}</td>
                                             <td>
                                                 <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#modalCitados" data-id="{{ $idSolicitud }}">Cambiar</a>
                                             </td>
@@ -53,14 +53,112 @@
                                     </tbody> 
                                 </table>
                             </div>
-                            <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('terminar_audiencia')}}">
+                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                <div class="form-group">
+                                    <h4 class="text-center">Concepto de Pago</h4>
+                                </div>
+                            </div>
+                            <table class="table table-striped mt-1">
+                                            <thead style="background-color: #4A001F;">
+                                                <tr> 
+                                                    <th style="display:none">ID</th>
+                                                    <th style="color: #ffff;">Tipo pago</th>
+                                                    <th style="color: #ffff;">Monto</th>
+                                                    <th style="color: #ffff;">Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($conceptos as $concepto)
+                                                    <tr>
+                                                    <td  style="display:none">{{$concepto->id}}</td>
+                                                        <td>{{ $concepto->descripcion}}</td>
+                                                        <td>${{ number_format($concepto->monto,2) }}</td>
+                                                        <td>
+                                                            <form method="POST" action="{{ route('concepto_eliminar_pago_ratificacion', $concepto->id) }} ">
+                                                                @csrf
+                                                                <input type="hidden" name="_method" value="DELETE">
+                                                                <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                    @php $contador++; @endphp
+                                                @endforeach       
+                                            </tbody> 
+                            </table>
+                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                <div class="form-group">
+                                    <h4 class="text-center">Deducciones</h4>
+                                </div>
+                            </div>
+                            <table class="table table-striped mt-1">
+                                            <thead style="background-color: #4A001F;">
+                                                <tr> 
+                                                    <th style="display:none">ID</th>
+                                                    <th style="color: #ffff;">Tipo pago</th>
+                                                    <th style="color: #ffff;">Monto</th>
+                                                    <th style="color: #ffff;">Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($deducciones as $concepto)
+                                                    <tr>
+                                                    <td  style="display:none">{{$concepto->id}}</td>
+                                                        <td>{{ $concepto->descripcion}}</td>
+                                                        <td>${{ number_format($concepto->monto,2) }}</td>
+                                                        <td>
+                                                            <form method="POST" action="{{ route('concepto_eliminar_deduccion_ratificacion', $concepto->id) }} ">
+                                                                @csrf
+                                                                <input type="hidden" name="_method" value="DELETE">
+                                                                <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                    @php $contador++; @endphp
+                                                @endforeach       
+                                            </tbody> 
+                            </table>
+                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                    <div class="form-group">
+                                        <h4 class="text-center">Pagos</h4>
+                                    </div>
+                                </div>
+                            <table class="table table-striped mt-1">
+                                            <thead style="background-color: #4A001F;">
+                                                <tr> 
+                                                    <th style="display:none">ID</th>
+                                                    <th style="color: #ffff;">Fecha y Hora</th>
+                                                    <th style="color: #ffff;">Descripción</th>
+                                                    <th style="color: #ffff;">Monto</th>
+                                                    <th style="color: #ffff;">Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($pagos as $pago)
+                                                    <tr>
+                                                        <td  style="display:none">{{$pago->id}}</td>
+                                                        <td>{{ $pago->hora }}</td>
+                                                        <td>{{ $pago->descripcion}}</td>
+                                                        <td>${{ number_format($pago->monto,2) }}</td>
+                                                        <td>
+                                                            <form method="POST" action="{{ route('pago_eliminar_pago', $pago->id) }} ">
+                                                                @csrf
+                                                                <input type="hidden" name="_method" value="DELETE">
+                                                                <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                    @php $contador++; @endphp
+                                                @endforeach       
+                                            </tbody> 
+                            </table>
+                            <form class='needs-validation novalidate' method='POST' action="{{route('terminar_ratificacion')}}">
                                 @csrf
                                 <input type="hidden" name="id" value="{{ $idSolicitud }}">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12"  style="border:1px solid black;">
                                         <div class="form-group">
                                             <label for="name">RESOLUCIÓN PRIMERA MANIFESTACIÓN</label>
-                                            <textarea name="primera" class="form-control">{{$solicitud->resolicion_primera}}</textarea>
+                                            <textarea name="primera" class="form-control">{{$solicitud->resolucion_primera}}</textarea>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
                                             </div>
@@ -71,7 +169,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-12" style="border:1px solid black;">
                                             <div class="form-group">
                                                 <label for="name">RESOLUCIÓN JUSTIFICACIÓN PROPUESTA</label>
-                                                <textarea name="justificacion" class="form-control" >{{$solicitud->resolicion_justificacion}}</textarea>
+                                                <textarea name="justificacion" class="form-control" >{{$solicitud->resolucion_justificacion}}</textarea>
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -82,27 +180,18 @@
                                         <div class="col-xs-12 col-sm-12 col-md-12" style="border:1px solid black;">
                                             <div class="form-group">
                                                 <label for="name">RESOLUCIÓN SEGUNDA MANIFESTACIÓN</label>
-                                                <textarea name="segunda" class="form-control" >{{$solicitud->resolicion_segunda}}</textarea>
+                                                <textarea name="segunda" class="form-control" >{{$solicitud->resolucion_segunda}}</textarea>
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-6"><br>
-                                            <label for="name">Conclución de audiencia</label>
-                                            <select id="conclucion" name="conclucion" class="form-control">
-                                                <option>Seleccione</option>
-                                                <option value="Conciliacion" {{ $solicitud["conclucion"] == "Conciliacion" ? "selected" : '' }}>Hubo Convenio</option>
-                                                <option value="No conciliacion" {{ $solicitud["conclucion"] == "No conciliacion" ? "selected" : '' }}>No hubo Convenio</option>
-                                                <option value="Archivada por incomparecencia" {{ $solicitud["conclucion"] == "Archivada por incomparecencia" ? "selected" : '' }}>Archivar</option>
-                                            </select>
                                         </div>
                                     </div>
                                     <div id="dias" class="row home-shape">
                                         <div class="col-xs-12 col-sm-12 col-md-2"><br>
                                             <div class="form-group">
                                                 <label for="name">Días de vacaciones</label>
-                                                <input type="number" name="vacaciones" class="form-control" value="{{ $solicitud["vacaciones"] }}"> 
+                                                <input type="number" name="vacaciones" class="form-control" value="{{ $solicitud["vacaciones_dias"] }}"> 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -111,7 +200,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-2"><br>
                                             <div class="form-group">
                                                 <label for="name">Días de Aguinaldo</label>
-                                                <input type="number" name="aguinaldo" class="form-control" value="{{ $solicitud["aguinaldo"] }}"> 
+                                                <input type="number" name="aguinaldo" class="form-control" value="{{ $solicitud["aguinaldo_dias"] }}"> 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -120,7 +209,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-2"><br>
                                             <div class="form-group">
                                                 <label for="name">Otros</label>
-                                                <input type="text" name="otros" class="form-control" value="{{ $solicitud["otros"] }}"> 
+                                                <input type="text" name="otros" class="form-control" value="{{ $solicitud["otros_dias"] }}"> 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -147,74 +236,20 @@
                                     </div>
                                     <div id="pagos" class="row home-shape">
                                         <div class="col-xs-12 col-sm-12 col-md-12"></div>
-                                        <div class="col-xs-12 col-sm-12 col-md-12">
-                                            <div class="form-group">
-                                                <h4 class="text-center">Concepto de Pago</h4>
-                                            </div>
-                                            </div>
                                         <div class="col-xs-12 col-sm-6 col-md-12">
                                             <button id="addRow" type="button" class="btn btn-info">Agregar Concepto de Pago</button>
                                         </div>                                        
                                         <div id="newRow"></div>
-                                        <table class="table table-striped mt-1">
-                                            <thead style="background-color: #4A001F;">
-                                                <tr> 
-                                                    <th style="display:none">ID</th>
-                                                    <th style="color: #ffff;">Tipo pago</th>
-                                                    <th style="color: #ffff;">Monto</th>
-                                                    <th style="color: #ffff;">Acciones</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($conceptos as $concepto)
-                                                    <tr>
-                                                    <td  style="display:none">{{$concepto->id}}</td>
-                                                        <td>{{ $concepto->descripcion}}</td>
-                                                        <td>${{ number_format($concepto->monto,2) }}</td>
-                                                        <td>
-                                                            <a hfer="{{ route('concepto_eliminar_pago', $concepto->id) }}" class="btn btn-danger" onclick=editar_rol();>Eliminar</a>
-                                                        </td>
-                                                    </tr>
-                                                    @php $contador++; @endphp
-                                                @endforeach       
-                                            </tbody> 
-                                        </table>
                                         <div class="col-xs-12 col-sm-12 col-md-12">
-                                            <div class="form-group">
-                                                <h4 class="text-center">Pagos</h4>
-                                            </div>
+                                            <button id="addRetencion" type="button" class="btn btn-info">Agregar deducción</button>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div id="newRowDeduccion"></div>
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div id="div_pagos_diferidos1"><br>
                                                 <button id="addPago" type="button" class="btn btn-info">Agregar Pago</button>
                                                 <div id="newRowaPago"></div>
                                             </div>
                                         </div>
-                                        <table class="table table-striped mt-1">
-                                            <thead style="background-color: #4A001F;">
-                                                <tr> 
-                                                    <th style="display:none">ID</th>
-                                                    <th style="color: #ffff;">Fecha y Hora</th>
-                                                    <th style="color: #ffff;">Descripción</th>
-                                                    <th style="color: #ffff;">Monto</th>
-                                                    <th style="color: #ffff;">Acciones</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($pagos as $pago)
-                                                    <tr>
-                                                        <td  style="display:none">{{$pago->id}}</td>
-                                                        <td>{{ $pago->hora }}</td>
-                                                        <td>{{ $pago->descripcion}}</td>
-                                                        <td>${{ number_format($pago->monto,2) }}</td>
-                                                        <td>
-                                                            <a hfer="{{ route('pago_eliminar_pago', $pago->id) }}" class="btn btn-danger" onclick=editar_rol();>Eliminar</a>
-                                                        </td>
-                                                    </tr>
-                                                    @php $contador++; @endphp
-                                                @endforeach       
-                                            </tbody> 
-                                        </table>
                                         <div id="div_pagos_diferidos"></div>
                                     </div>
                                 </div>
@@ -347,13 +382,6 @@
             const id = $(this).data('id'); // Obtiene el valor de data-id
 
             document.getElementById('modal-id').value = id;
-            document.getElementById('modal-id-reagendar').value = id;
-            document.getElementById('id_citado_2').value = id;
-            document.getElementById('id_citado_pf').value = id;
-            document.getElementById('modal-id-archivar').value = id;
-            document.getElementById('modal-id-reagendar').value = id;
-            document.getElementById('modal-id-incopentencia').value = id;
-            document.getElementById('modal-id-citado').value = id;
         });
 
         $( document ).ready(function() {
@@ -424,7 +452,7 @@
                 html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                 html += '<div class="form-group">';
                 html += '<label for="password">Hora de pago</label>';
-                html +='<input type="text" class="form-control" name="hora_pagos[]"  oninput="this.value = this.value.toUpperCase()" >';
+                html +='<input type="time" class="form-control" name="hora_pagos[]"  oninput="this.value = this.value.toUpperCase()" >';
                 html += '<div class="invalid-feedback">';
                 html += 'La Dirección es obligatoria.';
                 html += '</div> </div> </div>';
@@ -434,15 +462,6 @@
                 html += '<div class="form-group">';
                 html += '<label for="password">Monto a pagar</label>';
                 html +='<input type="text" class="form-control" name="monto_pagos[]"  oninput="this.value = this.value.toUpperCase()" >';
-                html += '<div class="invalid-feedback">';
-                html += 'La Dirección es obligatoria.';
-                html += '</div> </div> </div>';
-
-                //DESCRIPCIÓN DE PAGO
-                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
-                html += '<div class="form-group">';
-                html += '<label for="password">Descripción</label>';
-                html +='<input type="text" class="form-control" name="descripcion_pagos[]"  oninput="this.value = this.value.toUpperCase()" >';
                 html += '<div class="invalid-feedback">';
                 html += 'La Dirección es obligatoria.';
                 html += '</div> </div> </div>';
@@ -459,10 +478,52 @@
         $(document).on('click', '.removeRow2', function () {
             $(this).closest('.col-xs-12').remove();
         });
+
+        // Agregar deducción
+        $("#addRetencion").click(function () {
+                var html = '';
+                html += '<div id="inputFormRow3" class="row">';
+                
+                //TIPO DE PAGO
+                html +='<div class="col-xs-12 col-sm-12 col-md-12">';
+                //html +='<div class="form-group">';
+
+                    //DESCRIPCIÓN DE PAGO
+                    html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                    html += '<div class="form-group">';
+                    html += '<label for="password">Descripción</label>';
+                    html +='<input type="text" class="form-control" name="descripcion_deduccion[]"  oninput="this.value = this.value.toUpperCase()" >';
+                    html += '<div class="invalid-feedback">';
+                    html += 'La Descripción es obligatoria.';
+                    html += '</div> </div> </div>';
+
+                    //MONTO A PAGAR
+                    html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                    html += '<div class="form-group">';
+                    html += '<label for="password">Monto a pagar</label>';
+                    html +='<input type="text" class="form-control" name="monto_deduccion[]"  oninput="validarNumero(this)" placeholder="$ Solo números y puntos" >';
+                    html += '<div class="invalid-feedback">';
+                    html += 'El monto es obligatorio.';
+                    html += '</div> </div> </div>';
+
+                    html += '<div class="input-group-append">';
+                    html += '<button class="removeRow3 btn btn-danger" type="button">Borrar</button>';
+                    html += '</div>';
+
+                    
+                html += '</div>';
+
+            $('#newRowDeduccion').append(html);
+        });
+
+        // Borrar pago
+        $(document).on('click', '.removeRow3', function () {
+            $(this).closest('.col-xs-12').remove();
+        });
+
         });
 
 
     </script>
-    <script src="../../public/assets/js/validaciones.js"></script> 
-    <script src="../../public/assets/js/poderes/general.js"></script>
+    <script src="../public/assets/js/poderes/general.js"></script>
 @endsection

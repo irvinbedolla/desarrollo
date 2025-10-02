@@ -2040,7 +2040,6 @@ class TurnosController extends Controller
         $conciliador    = User::select('name')->where('id', $solicitud->id_conciliador)->first();
 
         $representantes = Poder::find($solicitud["idAbogado"]);
-        
         //$solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
         $abogados = Poder::all();
         //SeerPerGeneral::find($id)->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
@@ -2048,8 +2047,9 @@ class TurnosController extends Controller
         $municipios     = Municipios::where('estado',16)->get();
         $conceptos      = Concepto::where('id_solicitud',$id)->where('tipo_pago','Ratificacion')->get();
         $pagos          = Pagos::where('id_solicitud',$id)->where('tipo_pago','Ratificacion')->get();
+        $deducciones    = Deducciones::where('id_solicitud',$id)->where('tipo_pago','Ratificacion')->get();
 
-        return view('/ratificaciones/vista_previa',compact('idSolicitud','representantes','conciliador','solicitud','abogados','estados','municipios','conceptos','pagos'));
+        return view('/ratificaciones/vista_previa',compact('idSolicitud','representantes','conciliador','solicitud','abogados','estados','municipios','conceptos','pagos','deducciones'));
 
     }
 
@@ -2084,14 +2084,89 @@ class TurnosController extends Controller
 
     public function seleccionar_abogado_ratificacion(Request $request){
         $data = $request->all();
-        dd($data);
         $id_solicitud = $data["solicitud"];
 
-        Turnos::find($data["citado"])
+        $abogado = Poder::find($data["abogado"]);
+        Turnos::find($data["solicitud"])
         ->update([
-            'id_abogado'  => $data["abogado"],
+            'primero_empresa'   => $abogado["primer_apellido_patronal"],
+            'segundo_empresa'   => $abogado["segundo_apellido_patronal"],
+            'nombre_empresa'    => $abogado["nombres_patronal"],
+            'idAbogado'         => $data["abogado"],
         ]);
 
-        return redirect()->route('vista_previa',compact('id_solicitud'));
+        return redirect()->route('vista_previa_ratificacion',compact('id_solicitud'));
+    }
+
+    public function concepto_eliminar_pago_ratificacion($id_solicitud){
+        Concepto::find($id_solicitud)->delete();
+        return back()->with('success', 'Pago Borrado Correctamente.');
+    }
+
+    public function concepto_eliminar_deduccion_ratificacion($id_solicitud){
+        Deducciones::find($id_solicitud)->delete();
+        return back()->with('success', 'Pago Deducción Correctamente.');
+    }
+    
+    public function pago_eliminar_pago_ratificacion($id_solicitud){
+        Pagos::find($id_solicitud)->delete();
+        return back()->with('success', 'Pago Borrado Correctamente.');
+    }
+    
+    public function terminar_ratificacion(Request $request){
+        $data = $request->all();
+        $id_solicitud = $data["id"];
+        $monto = 0;
+        $fecha_actual = date('y-m-d');
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        
+
+        //Revisar si existe
+        if(isset($data["dias_pagos"])){
+            $conteo = count($data["dias_pagos"]);
+           for($i = 0; $i < $conteo; $i++) {
+                $data_pagos = [
+                    'id_solicitud'  => $data["id"],
+                    'fecha'         => $data["dias_pagos"][$i],
+                    'hora'          => $data["hora_pagos"][$i], 
+                    'monto'         => $data["monto_pagos"][$i], 
+                    'descripcion'   => "Pago Parcial ".$i,
+                    'estatus'       => "Pendiente", 
+                    'tipo_pago'     => "Ratificacion"
+                ];
+                $monto = $monto + $data["monto_pagos"][$i];
+                Pagos::create($data_pagos);
+            }
+        }
+        //Validar si existe un pago extra
+        if(isset($data["tipo_pago"])){
+            $cont = count($data["monto_pago"]);
+            for($i = 0; $i < $cont; $i++) {
+                $data_citado = [
+                    'id_solicitud'  => $data["id"], 
+                    'monto'         => $data["monto_pago"][$i], 
+                    'descripcion'   => $data["tipo_pago"][$i],
+                    'tipo_pago'     => "Audiencia"
+                ];
+                Concepto::create($data_citado);
+            }
+        }
+            
+        //Actualizar Audiecia
+        Turnos::find($data["id"])
+        ->update([
+            'resolucion_primera'        =>  $data["primera"],
+            'resolucion_justificacion'  =>  $data["justificacion"],
+            'resolucion_segunda'        =>  $data["segunda"],
+            'vacaciones_dias'           =>  $data["vacaciones"],
+            'aguinaldo_dias'            =>  $data["aguinaldo"],
+            'otros_dias'                =>  $data["otros"],
+            'horario'                   =>  $data["horario"],
+            'comida'                    =>  $data["comida"],
+        ]);
+
+        return redirect()->route('todas_ratificaciones');
+        
     }
 }

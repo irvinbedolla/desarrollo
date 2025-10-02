@@ -320,7 +320,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/ratificaciones/vista_previa/{id_solicitud}',  [TurnosController::class, 'vista_previa_ratificacion'])->name('vista_previa_ratificacion');
         Route::post('/ratificaciones/editar',               [TurnosController::class, 'editar_ratificacion_revisar'])->name('editar_ratificacion_revisar');
         Route::post('/seleccionar_abogado_ratificacion',    [TurnosController::class, 'seleccionar_abogado_ratificacion'])->name('seleccionar_abogado_ratificacion');
-
+        Route::delete('/ratificaciones/concepto_eliminar_pago/{id_solicitud}',      [TurnosController::class, 'concepto_eliminar_pago_ratificacion'])->name('concepto_eliminar_pago_ratificacion');
+        Route::delete('/ratificaciones/deduccion_eliminar_pago/{id_solicitud}',     [TurnosController::class, 'concepto_eliminar_deduccion_ratificacion'])->name('concepto_eliminar_deduccion_ratificacion');
+        Route::delete('/ratificaciones/pago_eliminar_pago/{id_solicitud}',          [TurnosController::class, 'pago_eliminar_pago_ratificacion'])->name('pago_eliminar_pago_ratificacion');
+        Route::post('/ratificaciones/terminar_audiencia',   [TurnosController::class, 'terminar_ratificacion'])->name('terminar_ratificacion');
     //Fin de Ratificaciones
     //PDF ABOGADOS
         Route::get('/PDF/acuseRegistro/{idAbogado}',        [PoderController::class, 'VerPDFregistroAbogado'])->name('PDFregistroAbogado'); //Acuse de registro exitoso para abogados

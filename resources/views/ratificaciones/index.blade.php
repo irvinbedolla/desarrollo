@@ -25,12 +25,12 @@
                                         <a href="{{ route('ratificacion_confirmadas') }}" class="btn btn-primary" style="width: 100%">Ratificaciones confirmadas</a>
                                     </div>
                                 </div>
--->
                                 <div class="col-xs-4 col-sm-4 col-md-2">
                                     <div align="center">
                                         <a href="{{ route('ratificacion_atender') }}" class="btn btn-primary" style="width: 100%">Ratificaciones hoy</a>
                                     </div>
                                 </div>
+-->
                                 <div class="col-xs-12 col-sm-4 col-md-2">
                                     <div align="center">
                                         <a href="{{ route('todas_ratificaciones') }}" class="btn btn-primary"  style="width: 100%">Ratificaciones</a>
