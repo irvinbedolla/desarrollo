@@ -47,7 +47,7 @@ use App\Exports\ProductsFromViewExport;
 use App\Exports\RatificacionesFromViewExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\NotificacionesExport;
-
+use App\Models\Deducciones;
 
 class SeerController extends Controller
 {   
@@ -3476,6 +3476,18 @@ class SeerController extends Controller
                 return back()->withErrors('Debes agregar por lo menos un concepto de pago.');
             }
 
+            if(isset($data["descripcion_deduccion"])){
+            $cont = count($data["descripcion_deduccion"]);
+            for($i = 0; $i < $cont; $i++) {
+                $data_deduccion = [
+                    'id_solicitud'  => $data["id"], 
+                    'monto'         => $data["monto_deduccion"][$i], 
+                    'descripcion'   => $data["descripcion_deduccion"][$i],
+                    'tipo_pago'     => "Audiencia"
+                ];
+                Deducciones::create($data_deduccion);
+            }
+        }
             if($conteo >= 2){
                 $estatus = "Concluida Pagos";
             }
@@ -5246,7 +5258,7 @@ class SeerController extends Controller
         ->leftJoin('persona_fisica', 'persona_fisica.id', '=', 'seer_citados.id_fisica')
         ->where('seer_citados.id_solicitud', $id)
         ->select('seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido','seer_citados.rfc',
-        'abogados.nombres as nombre_abogado','abogados.primer_apellido as primero_abogado','abogados.segundo_apellido as segundo_abogado',
+        'abogados.nombres_patronal as nombre_abogado','abogados.primer_apellido_patronal as primero_abogado','abogados.segundo_apellido_patronal as segundo_abogado',
         'persona_fisica.nombre as nombre_fisica','persona_fisica.primer_apellido as primer_fisica','persona_fisica.segundo_apellido as segundo_fisica',
         'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus')
         ->get();
@@ -5257,8 +5269,9 @@ class SeerController extends Controller
         $municipios     = Municipios::where('estado',16)->get();
         $conceptos      = Concepto::where('id_solicitud',$id)->where('tipo_pago','Audiencia')->get();
         $pagos          = Pagos::where('id_solicitud',$id)->where('tipo_pago','Audiencia')->get();
+        $deducciones    = Deducciones::where('id_solicitud',$id)->where('tipo_pago','Audiencia')->get();
 
-        return view('/audiencias/audiencia_revisar',compact('id','conciliadores','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios','conceptos','pagos'));
+        return view('/audiencias/audiencia_revisar',compact('id','conciliadores','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios','conceptos','pagos','deducciones'));
     }
 
     public function editar_solicitud_audiencia(Request $request) {
@@ -5418,7 +5431,6 @@ class SeerController extends Controller
         }    
          
         $A_citado=SeerCitados::find($data['id_citado_2'])->update(['id_abogado' => $nuevoAbogado->idAbogado]);
-        //return redirect()->route('vista_previa',compact('id_solicitud'));
         return back()->with('success', 'Representante legal registrado y asignado correctamente al citado.');
     }
 
@@ -5570,7 +5582,7 @@ class SeerController extends Controller
             ]);
         }
 
-        return redirect()->route('audiencias.conciliador');
+        return redirect()->route('todas_audiencias');
         
     }
 
@@ -5626,6 +5638,7 @@ class SeerController extends Controller
         $sede = $request->input('sede'); // Obtener sede de la solicitud
 
         // 1. Obtener turnos ocupados filtrando por sede
+        $pagos = Pagos::where('tipo_pago','Audiencia')->get();
         $ocupados = Pagos::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
             ->where('delegacion', $sede) // FILTRO POR SEDE
             ->get()
@@ -5674,7 +5687,7 @@ class SeerController extends Controller
                     }
         
                     // Avanzar 20 minutos
-                    $slot->modify('+20 minutes');
+                    $slot->modify('+30 minutes');
                 }
             }
         
@@ -5955,9 +5968,9 @@ class SeerController extends Controller
         $fecha_inicio = $data["fecha_inicio"];
         $fecha_fin = $data["fecha_final"];
         $id = auth()->user()->id;
-        $user = User::find($id);
-        $roles = Role::pluck('name','name')->all();
-        $userRole = $user->roles->pluck('name')->all();
+        //$user = User::find($id);
+        //$roles = Role::pluck('name','name')->all();
+        //$userRole = $user->roles->pluck('name')->all();
         //$fecha_actual = date('y-m-d');
         $personas = User::whereHas('roles', function ($query) {
             return $query->where('name', '=', 'Notificador');
@@ -5998,5 +6011,89 @@ class SeerController extends Controller
         ->get();
 
         return view('notificaciones.indexHitorial',compact('mis_notificaciones'));
+    }
+
+    public function genera_cumplimiento(){
+         return view('cumplimientos.crear');
+    }
+
+    public function guardar_cumplimiento_cumplimientos(Request $request){
+        $data = $request->all();
+        $id = auth()->user()->id;
+
+        $request->validate([
+            'NUE'           => 'required',
+            'empresa'       => 'required',
+            'trabajador'    => 'required',
+            'monto'         => 'required|numeric',
+            'forma_pago'    => 'required',
+            'sede'          => 'required',
+            'fecha'         => 'required',
+            'hora'          => 'required',
+            'descripcion'   => 'required'
+        ]);
+            
+        $data_insert=array(
+            'id_solicitud'          => 0,
+            'fecha'                 => $data["fecha"],
+            'hora'                  => $data["hora"],
+            'monto'                 => $data["monto"],
+            'descripcion'           => $data["descripcion"],
+            'estatus'               => "Pendiente",
+            'tipo_pago'             => "Audiencia",
+            'delegacion'            => $data["sede"],
+            'id_conciliador'        => $id,
+            'NUE'                   => $data["NUE"],
+            'empresa_representante' => $data["empresa"],
+            'nombre_trabajador'     => $data["trabajador"],
+            'forma_pago'            => $data["forma_pago"],
+        );
+
+        Pagos::create($data_insert);
+
+        return back()->with('success', 'Poder registrado correctamente.'); 
+        //return view('cumplimientos/index')->with('success', 'Poder registrado correctamente.'); 
+    }
+
+    public function cumplimientos_conciliadores(){
+         return view('cumplimientos.crearConciliador');
+    }
+
+    public function guardar_cumplimiento_conciliadores(Request $request){
+        $data = $request->all();
+        $id = auth()->user()->id;
+
+        $request->validate([
+            'NUE'           => 'required',
+            'empresa'       => 'required',
+            'trabajador'    => 'required',
+            'monto'         => 'required|numeric',
+            'forma_pago'    => 'required',
+            'sede'          => 'required',
+            'fecha'         => 'required',
+            'hora'          => 'required',
+            'descripcion'   => 'required'
+        ]);
+            
+        $data_insert=array(
+            'id_solicitud'          => 0,
+            'fecha'                 => $data["fecha"],
+            'hora'                  => $data["hora"],
+            'monto'                 => $data["monto"],
+            'descripcion'           => $data["descripcion"],
+            'estatus'               => "Pendiente",
+            'tipo_pago'             => "Conciliador",
+            'delegacion'            => $data["sede"],
+            'id_conciliador'        => $id,
+            'NUE'                   => $data["NUE"],
+            'empresa_representante' => $data["empresa"],
+            'nombre_trabajador'     => $data["trabajador"],
+            'forma_pago'            => $data["forma_pago"],
+        );
+
+        Pagos::create($data_insert);
+
+        return back()->with('success', 'Poder registrado correctamente.'); 
+        //return view('cumplimientos/index')->with('success', 'Poder registrado correctamente.'); 
     }
 }

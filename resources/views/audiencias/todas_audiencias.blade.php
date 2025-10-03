@@ -41,6 +41,7 @@
                                             <th style="color: #fff;">Estatus</th>
                                             <th style="color: #fff;">Detalles</th>
                                             <th style="color: #fff;">Acciones</th>
+                                            <th style="color: #fff;">Cumplimeintos</th>
                                             <th style="color: #fff;">Documentos</th>
                                         </thead>
                                         <tbody>
@@ -55,6 +56,11 @@
                                                 <td>
                                                     @if($audiencia->estatus == "Confirmado")
                                                         <a class="btn btn-success" href="{{ route('inicioAudiencia', $audiencia->id_solicitud, 'Confirmado') }}">Iniciar</a><br>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if($audiencia->estatus == "Conciliacion" || $audiencia->estatus == "Concluida" || $audiencia->estatus == "Concluida Pagos")
+                                                        <a class="btn btn-primary" href="{{ route('ratificacion_cumplimientos', $audiencia->id) }}">Cumplimientos</a>
                                                     @endif
                                                 </td>
                                                 <td>

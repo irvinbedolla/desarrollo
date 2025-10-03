@@ -56,6 +56,7 @@ use App\Http\Controllers\RecepcionController;
         Route::get('/calendario', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendario.index');
         Route::get('/citas/eventos', [App\Http\Controllers\CitaController::class, 'citas'])->name('citas.eventos');
         Route::get('/pagos/eventos', [App\Http\Controllers\CitaController::class, 'pagos'])->name('pagos.eventos');
+        Route::get('/pagos/conciliadores', [App\Http\Controllers\CitaController::class, 'conciliadores'])->name('conciliador.eventos');
         Route::get('/audiencias/eventos', [App\Http\Controllers\AudienciasController::class, 'audiencias'])->name('audiencias.eventos');
         Route::get('/ratificaciones/eventos', [App\Http\Controllers\AudienciasController::class, 'ratificaciones'])->name('ratificaciones.eventos');
         Route::get('citas/exportar-excel', [CitaController::class, 'exportarExcel']);
@@ -323,7 +324,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/ratificaciones/concepto_eliminar_pago/{id_solicitud}',      [TurnosController::class, 'concepto_eliminar_pago_ratificacion'])->name('concepto_eliminar_pago_ratificacion');
         Route::delete('/ratificaciones/deduccion_eliminar_pago/{id_solicitud}',     [TurnosController::class, 'concepto_eliminar_deduccion_ratificacion'])->name('concepto_eliminar_deduccion_ratificacion');
         Route::delete('/ratificaciones/pago_eliminar_pago/{id_solicitud}',          [TurnosController::class, 'pago_eliminar_pago_ratificacion'])->name('pago_eliminar_pago_ratificacion');
-        Route::post('/ratificaciones/terminar_audiencia',   [TurnosController::class, 'terminar_ratificacion'])->name('terminar_ratificacion');
+        Route::post('/ratificaciones/terminar_ratificacion',   [TurnosController::class, 'terminar_ratificacion'])->name('terminar_ratificacion');
     //Fin de Ratificaciones
     //PDF ABOGADOS
         Route::get('/PDF/acuseRegistro/{idAbogado}',        [PoderController::class, 'VerPDFregistroAbogado'])->name('PDFregistroAbogado'); //Acuse de registro exitoso para abogados
@@ -401,6 +402,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/cumplimiento/guardar',                [SeerController::class, 'guardar_cumplimiento'])->name('guardar_cumplimiento');
         Route::get('/cumplimiento/incomparecencia/{id}',    [SeerController::class, 'PDFIncomparecenciaCumplimiento'])->name('PDFIncomparecenciaCumplimiento');
         Route::post('/cumplimiento/no_comparece/{id}',      [SeerController::class, 'cumplimiento_incomparecencia'])->name('cumplimiento_incomparecencia');
+        Route::get('/cumplimiento/generar',                 [SeerController::class, 'genera_cumplimiento'])->name('genera_cumplimiento');
+        Route::post('/cumplimiento/guardar_cumplimiento',   [SeerController::class, 'guardar_cumplimiento_cumplimientos'])->name('guardar_cumplimiento_cumplimientos');
+        Route::get('/cumplimiento/guardarC',                [SeerController::class, 'cumplimientos_conciliadores'])->name('cumplimientos_conciliadores');        
+        Route::post('/cumplimiento/guardar_CC',             [SeerController::class, 'guardar_cumplimiento_conciliadores'])->name('guardar_cumplimiento_conciliadores');
     //Fin de cumplimientos
     //Recepcion
         Route::get('/turnos/create',             [RecepcionController::class, 'create'])->name('turnos.create');

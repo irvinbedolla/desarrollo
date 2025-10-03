@@ -142,8 +142,9 @@
                                                 <div class="mt-3 mb-3 text-left">
                                                         <button id="btn-actualizar" class="btn btn-lg btn-custom-morado">Actualizar</button>   
 
-                                                        <button id="btn-citas" class="btn btn-lg btn-custom-morado float-right">Cumplimientos Ratificación</button>
-                                                        <button id="btn-pagos" class="btn btn-lg btn-custom-morado float-right">Cumplimientos Audiencia</button>
+                                                        <button id="btn-citas" class="btn btn-lg btn-custom-morado float-right">C. Ratificación</button>
+                                                        <button id="btn-pagos" class="btn btn-lg btn-custom-morado float-right">C. Audiencia</button>
+                                                        <button id="btn-conciliador" class="btn btn-lg btn-custom-morado float-right">C. Conciliador</button>
                                                         <button id="btn-ratificaciones" class="btn btn-lg btn-custom-morado float-right">Ratificaciones</button>
                                                         <button id="btn-audiencias" class="btn btn-lg btn-custom-morado  float-right">Audiencias</button>
                                                 </div>

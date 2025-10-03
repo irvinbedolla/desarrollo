@@ -466,6 +466,15 @@
                 html += 'La Dirección es obligatoria.';
                 html += '</div> </div> </div>';
 
+                //DESCRIPCIÓN DE PAGO
+                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                html += '<div class="form-group">';
+                html += '<label for="password">Núm. Parcialidad</label>';
+                html +='<input type="text" class="form-control numero_pago" name="descripcion_pagos[]"  readonly >';
+                html += '<div class="invalid-feedback">';
+                html += 'El número de parcialidad es obligatorio.';
+                html += '</div> </div> </div>';
+
                 html += '<div class="input-group-append">';
                 html += '<button class="removeRow2 btn btn-danger" type="button">Borrar</button>';
                 html += '</div>';
@@ -479,6 +488,17 @@
             $(this).closest('.col-xs-12').remove();
         });
 
+        //Actualiza los números de pago
+        function actualizaNumeroPago() {
+            let pagos = $('.numero_pago');
+            if (pagos.length === 1) {
+                pagos.eq(0).val("Pago único");
+            } else {
+                pagos.each(function(index) {
+                   $(this).val("Parcialidad " + (index + 1));
+                });
+            }
+        }
         // Agregar deducción
         $("#addRetencion").click(function () {
                 var html = '';

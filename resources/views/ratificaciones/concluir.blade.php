@@ -337,7 +337,7 @@
                     html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                     html += '<div class="form-group">';
                     html += '<label for="password">Núm. Parcialidad</label>';
-                    html +='<input type="text" class="form-control numero_pago" name="descripcion_pagos[]"  required>';
+                    html +='<input type="text" class="form-control numero_pago" name="descripcion_pagos[]"  readonly >';
                     html += '<div class="invalid-feedback">';
                     html += 'El número de parcialidad es obligatorio.';
                     html += '</div> </div> </div>';

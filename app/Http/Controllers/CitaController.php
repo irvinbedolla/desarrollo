@@ -58,7 +58,12 @@ class CitaController extends Controller
 
     public function citas() {
         //$recepciones = Recepcion::all();
-        $recepciones = Pagos::where('tipo_pago','Ratificacion')->get();
+        $id_usuario = auth()->user()->id;
+        $user = User::find($id_usuario);
+
+        $recepciones = Pagos::where('tipo_pago','Ratificacion')
+        ->where('delegacion', $user["delegacion"])
+        ->get();
         $tipo = 8;
 
         $eventos = [];
@@ -106,7 +111,63 @@ class CitaController extends Controller
     }
 
     public function pagos() {
-        $pagos = Pagos::where('tipo_pago','Audiencia')->get();
+        $id_usuario = auth()->user()->id;
+        $user = User::find($id_usuario);
+        
+        $pagos = Pagos::where('tipo_pago','Audiencia')
+        ->where('delegacion', $user["delegacion"])
+        ->get();
+
+        $eventos = [];
+        foreach ($pagos as $pago) {
+            $turno = $pago->turno;
+            $empresa_turno = $turno ? $turno->empresa : null;
+            $nombre_turno = $turno ? $turno->trabajador : null;
+            $primer_apellido_turno = $turno ? $turno->primero_trabajador : null;
+            $segundo_apellido_turno = $turno ? $turno->segundo_trabajador : null;
+
+            $tipo = 6;
+
+
+            if ($pago->estatus === 'Pendiente') {
+                $color = '#EAE300';
+            } elseif ($pago->estatus === 'Pagado') {
+                $color = '#00CE1C';
+            } elseif ($pago->estatus === 'Incomparecencia trabajador') {
+                $color = '#FF2C2C';
+            } else {
+                $color = '#CCCCCC';
+            }
+
+            $eventos[] = [
+                'id' => $pago->id,
+                'title' => $pago->nombre_trabajador,
+                'start' => $pago->fecha->format('Y-m-d') . 'T' . $pago->hora->format('H:i:s'),
+                'extendedProps' => [
+                    'descripcion' => $pago->descripcion,
+                    'hora' => $pago->hora->format('h:i A'),
+                    'color' => $color,
+                    'fecha' => $pago->fecha->format('d/m/Y'),
+                    'empresa' => $pago->empresa_representante,
+                    'trabajador' => $pago->nombre_trabajador,
+                    'estatus' => $pago->estatus,
+                    'monto' => $pago->monto,
+                    'observaciones' => $pago->observaciones,
+                    'tipo' => $tipo
+                ]
+            ];
+        }
+
+        return response()->json($eventos);
+    }
+
+    public function conciliadores() {
+        $id_usuario = auth()->user()->id;
+        $user = User::find($id_usuario);
+        
+        $pagos = Pagos::where('tipo_pago','Conciliador')
+        ->where('delegacion', $user["delegacion"])
+        ->get();
 
         $eventos = [];
         foreach ($pagos as $pago) {

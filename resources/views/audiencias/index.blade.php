@@ -13,11 +13,13 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
+                                <!--
                                 <div class="col-xs-12 col-sm-4 col-md-2">
                                     <div align="center">
                                         <a href="{{ route('audiencias.conciliador') }}" class="btn btn-primary" style="width: 100%">Audieniecias hoy</a>
                                     </div>
                                 </div>
+                                -->
                                 <div class="col-xs-12 col-sm-4 col-md-2">
                                     <div align="center">
                                         <a href="{{ route('todas_audiencias') }}" class="btn btn-primary"  style="width: 100%">Audieniecias</a>

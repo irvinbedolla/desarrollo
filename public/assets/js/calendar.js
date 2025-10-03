@@ -1,4 +1,4 @@
-var calendarPagos, calendarAudiencias, currentCalendar, calendarRatificaciones;
+var calendarPagos, calendarAudiencias, currentCalendar, calendarRatificaciones, calendarConciliador;
 
 document.addEventListener('DOMContentLoaded', function () {
     var calendarEl = document.getElementById('calendar');
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Configuración del calendario de audiencias
-    calendarAudiencias = new FullCalendar.Calendar(calendarEl, {
+    calendarConciliador = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridWeek',
         locale: 'es',
         events: 'audiencias/eventos',
@@ -154,8 +154,51 @@ document.addEventListener('DOMContentLoaded', function () {
         },
     });
 
+    calendarConciliador = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridWeek',
+        locale: 'es',
+        events: 'pagos/conciliadores',
+        eventSourceSuccess: function (events) {
+            console.log(events); // Verifica los datos que se están cargando
+            return events;
+        },
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,dayGridWeek'
+        },
+        buttonText: {
+            today: 'Hoy',
+            month: 'Mensual',
+            week: 'Semanal'
+        },
+        eventClick: function (info) {
+            handleEventClick(info, 'pagos');
+        },
+        eventDidMount: function (info) {
+            styleEvent(info);
+        },
+        eventContent: function (info) {
+            return {
+                html: `
+                    <div class="fc-event-content">
+                        <div class="fc-event-title">${info.event.title}</div>
+                        <div class="fc-event-time">
+                            <div class="color-indicator" style="background:${info.event.extendedProps.color}"></div>
+                            ${info.event.extendedProps.hora}
+                        </div>
+                    </div>
+                `
+            };
+        },
+    });
+
     currentCalendar = calendarPagos;
     currentCalendar.render();
+
+    document.getElementById('btn-conciliador').addEventListener('click', function () {
+        switchCalendar(calendarConciliador);
+    });
 
     document.getElementById('btn-pagos').addEventListener('click', function () {
         switchCalendar(calendarPagos);
@@ -193,6 +236,22 @@ function handleEventClick(info, calendarType) {
     let modalContent = '';
 
     if (calendarType === 'pagos') {
+        modalContent = `
+            <strong>Descripción:</strong> ${props.descripcion}<br>
+            <strong>Fecha:</strong> ${props.fecha}<br>
+            <strong>Hora:</strong> ${props.hora}<br>
+            <strong>Trabajador:</strong> ${props.trabajador}<br>
+            <strong>Patronal:</strong> ${props.empresa}<br>
+            <strong>Estatus:</strong> ${props.estatus}<br>
+            <strong>Monto:</strong> ${props.monto}<br>
+            <strong>Observaciones:</strong> ${props.observaciones}<br>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <a href="cumplimiento/consulta/${info.event.id}/${props.tipo}" class="btn btn-info">Ver detalle</a>
+            </div>
+        `;
+    }
+    else if (calendarType === 'conciliador') {
         modalContent = `
             <strong>Descripción:</strong> ${props.descripcion}<br>
             <strong>Fecha:</strong> ${props.fecha}<br>

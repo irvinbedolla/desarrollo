@@ -240,7 +240,7 @@
 <div class="modal fade" id="ModalArchivar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <form class='needs-validation novalidate'  method='POST' action="{{route('archivar_audiencia')}}">
         @csrf
-        <input type="hidden" id="solicitud-id" value="{{ $id }}">
+        <input type="text" id="solicitud-id" name="id" value="{{ $id }}">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
