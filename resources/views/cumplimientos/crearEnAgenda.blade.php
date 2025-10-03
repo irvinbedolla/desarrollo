@@ -11,6 +11,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h3 class="text-center">Agregar Cumplimiento</h3>
+                            <h6 class="text-left">*En este apartado se agregan los cumplimientos parciales o totales que realizará el Auxiliar de Conciliador(a), derivado de audiencia.</h6>
                                 @if(session()->has('success'))
                                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                                         <strong>¡Registro correcto!</strong>

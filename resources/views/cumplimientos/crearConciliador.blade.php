@@ -11,7 +11,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h3 class="text-center">Agregar Cumplimiento</h3>
-                            <h6 class="text-left">*En este aparado se agregan los cumplimientos que realizará el Funcioanrio(a) Conciliador(a).</h6>
+                            <h6 class="text-left">*En este apartado se agregan los cumplimientos que realizará el Funcionario(a) Conciliador(a), que deriven exclusivamente de la audiencia en turno.</h6>
                                 @if(session()->has('success'))
                                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                                         <strong>¡Registro correcto!</strong>

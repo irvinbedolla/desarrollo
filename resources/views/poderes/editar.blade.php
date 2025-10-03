@@ -309,6 +309,35 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="name">Identificación Oficial  <span style="color:red;">(*)</span></label>
+                                                        <select name="tipo_identificacion_Moral" class="form-control">
+                                                            <option value="">Seleccione el tipo de indentificación</option>
+                                                            <option value="Credencial de elector" {{ $poder["tipo_identificacion"] == "Credencial de elector" ? "selected" : '' }} >Credencial de Elector</option>
+                                                            <option value="Pasaporte" {{ $poder["tipo_identificacion"] == "Pasaporte" ? "selected" : '' }}>Pasaporte</option>
+                                                            <option value="Cédula profesional" {{ $poder["tipo_identificacion"] == "Cédula profesional" ? "selected" : '' }}>Cédula Profesional</option>
+                                                            <option value="Licencia de conducir" {{ $poder["tipo_identificacion"] == "Licencia de conducir" ? "selected" : '' }}>Licencia de Conducir</option>
+                                                            <option value="Credencial de inapam" {{ $poder["tipo_identificacion"] == "Credencial de inapam" ? "selected" : '' }}>Credencial de INAPAM</option>
+                                                            <option value="Cartilla militar" {{ $poder["tipo_identificacion"] == "Cartilla militar" ? "selected" : '' }}>Cartilla Militar</option>
+                                                            <option value="Documento migratorio" {{ $poder["tipo_identificacion"] == "Documento migratorio" ? "selected" : '' }}>Documento Migratorio</option>
+                                                            <option value="Constancia de identidad" {{ $poder["tipo_identificacion"] == "Constancia de identidad" ? "selected" : '' }}>Constancia de Identidad</option>
+                                                            <option value="Otro" {{ $poder["tipo_identificacion"] == "Otro" ? "selected" : '' }}>Otros</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            Este campo identificación es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6"> 
+                                                    <div class="form-group">
+                                                        <label for="name">Núm de identificación <span style="color:red;">(*)</span> <span data-bs-toggle="modal" data-bs-target="#helpModal" style="cursor: pointer;">❓</span></label>
+                                                        <input type="text" name="num_identificacion_Moral" class="form-control" value="{{$poder->num_identificacion}}" oninput="this.value = this.value.toUpperCase()"> 
+                                                        <div class="invalid-feedback">
+                                                            El campo núm. de identificación es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
 
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
@@ -667,6 +696,35 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="name">Identificación Oficial<span style="color:red;">(*)</span></label>
+                                                            <select  name="tipo_identificacion_pFCR" class="form-control">
+                                                                <option value="">Seleccione el tipo de indentificación</option>
+                                                                <option value="Credencial de elector" {{ $poder["tipo_identificacion"] == "Credencial de elector" ? "selected" : '' }} >Credencial de Elector</option>
+                                                                <option value="Pasaporte" {{ $poder["tipo_identificacion"] == "Pasaporte" ? "selected" : '' }}>Pasaporte</option>
+                                                                <option value="Cédula profesional" {{ $poder["tipo_identificacion"] == "Cédula profesional" ? "selected" : '' }}>Cédula Profesional</option>
+                                                                <option value="Licencia de conducir" {{ $poder["tipo_identificacion"] == "Licencia de conducir" ? "selected" : '' }}>Licencia de Conducir</option>
+                                                                <option value="Credencial de inapam" {{ $poder["tipo_identificacion"] == "Credencial de inapam" ? "selected" : '' }}>Credencial de INAPAM</option>
+                                                                <option value="Cartilla militar" {{ $poder["tipo_identificacion"] == "Cartilla militar" ? "selected" : '' }}>Cartilla Militar</option>
+                                                                <option value="Documento migratorio" {{ $poder["tipo_identificacion"] == "Documento migratorio" ? "selected" : '' }}>Documento Migratorio</option>
+                                                                <option value="Constancia de identidad" {{ $poder["tipo_identificacion"] == "Constancia de identidad" ? "selected" : '' }}>Constancia de Identidad</option>
+                                                                <option value="Otro" {{ $poder["tipo_identificacion"] == "Otro" ? "selected" : '' }}>Otros</option>
+                                                            </select>
+                                                            <div class="invalid-feedback">
+                                                                Este campo identificación es obligatorio.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-6"> 
+                                                        <div class="form-group">
+                                                            <label for="name">Núm de identificación <span style="color:red;">(*)</span> <span data-bs-toggle="modal" data-bs-target="#helpModal" style="cursor: pointer;">❓</span></label>
+                                                            <input type="text" name="num_identificacion_pFCR" class="form-control" oninput="this.value = this.value.toUpperCase()"  value="{{$poder->num_identificacion }}"> 
+                                                            <div class="invalid-feedback">
+                                                                El campo núm. de identificación es obligatorio.
+                                                            </div>
+                                                        </div>
+                                                    </div>
 
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
@@ -785,6 +843,35 @@
                                                 <div class="row">
                                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                                         <div class="form-group">
+                                                            <label for="name">Identificación Oficial <span style="color:red;">(*)</span></label>
+                                                            <select  name="tipo_identificacion_pF" class="form-control">
+                                                                <option value="">Seleccione el tipo de indentificación</option>
+                                                                <option value="Credencial de elector" {{ $poder["tipo_identificacion"] == "Credencial de elector" ? "selected" : '' }} >Credencial de Elector</option>
+                                                                <option value="Pasaporte" {{ $poder["tipo_identificacion"] == "Pasaporte" ? "selected" : '' }}>Pasaporte</option>
+                                                                <option value="Cédula profesional" {{ $poder["tipo_identificacion"] == "Cédula profesional" ? "selected" : '' }}>Cédula Profesional</option>
+                                                                <option value="Licencia de conducir" {{ $poder["tipo_identificacion"] == "Licencia de conducir" ? "selected" : '' }}>Licencia de Conducir</option>
+                                                                <option value="Credencial de inapam" {{ $poder["tipo_identificacion"] == "Credencial de inapam" ? "selected" : '' }}>Credencial de INAPAM</option>
+                                                                <option value="Cartilla militar" {{ $poder["tipo_identificacion"] == "Cartilla militar" ? "selected" : '' }}>Cartilla Militar</option>
+                                                                <option value="Documento migratorio" {{ $poder["tipo_identificacion"] == "Documento migratorio" ? "selected" : '' }}>Documento Migratorio</option>
+                                                                <option value="Constancia de identidad" {{ $poder["tipo_identificacion"] == "Constancia de identidad" ? "selected" : '' }}>Constancia de Identidad</option>
+                                                                <option value="Otro" {{ $poder["tipo_identificacion"] == "Otro" ? "selected" : '' }}>Otros</option>
+                                                            </select>
+                                                            <div class="invalid-feedback">
+                                                                Este campo identificación es obligatorio.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-6"> 
+                                                        <div class="form-group">
+                                                            <label for="name">Núm de identificación <span style="color:red;">(*)</span> <span data-bs-toggle="modal" data-bs-target="#helpModal" style="cursor: pointer;">❓</span></label>
+                                                            <input type="text" name="num_identificacion_pF" class="form-control" oninput="this.value = this.value.toUpperCase()" value="{{$poder->num_identificacion }}"> 
+                                                            <div class="invalid-feedback">
+                                                                El campo núm. de identificación es obligatorio.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                                        <div class="form-group">
                                                             <label>*Identificación Oficial</label><br>
                                                             <input type="file" name="documentoIne_pFSR" id="documentoIne_pFSR" class="form-control" accept=".pdf" >
                                                             <a target="_blank" class="btn btn-primary" href="../../storage/app/documentos_abogados/{{$poder->ineDocumento}}">Existente</a>
@@ -816,6 +903,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    
                                                 </div>
                                             @endif
 

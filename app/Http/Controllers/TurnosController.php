@@ -1002,7 +1002,6 @@ class TurnosController extends Controller
         $pagos = Pagos::where('id_solicitud', $id)->get();
         $abogado  = Poder::join("turnos","turnos.idAbogado","=","abogados.idAbogado");
         $abogado = $abogado->where("turnos.id", "=", $id)
-        //->select('users.name')
         ->first();
        // $abogado = Poder::where('idAbogado', $id)->get();
         //dd($abogado);
@@ -1088,18 +1087,26 @@ class TurnosController extends Controller
         ->select('users.name')
         ->first();
 
+        //Descripción del tipo de identificación para los solicitantes
+        $identificacionSolicitante = $solicitud->tipo_identificacion;
+        $descripcionIdentificacionS = $this->descripcionIdentificacion($identificacionSolicitante);
+
+        //Descripción del tipo de identificación para los poderes
+        //$identificacionPoder = $abogado->tipo_identificacion;
+        //$descripcionIdentificacionP = $this->descripcionIdentificacion($identificacionPoder);
+
         $html = view('PDF/convenioRatificacion', 
             compact('id', 'solicitud', 'dias_descanso', 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','vacacionesTexto',
             'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
             'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones','abogado','deducciones','deduccionesTexto',
-            'municipioEmpresa','estadoEmpresa','pagoTotal'))
+            'municipioEmpresa','estadoEmpresa','pagoTotal','descripcionIdentificacionS'))
             ->render();
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true);
 
-        return $pdf->stream('Convenio_terminacion_'. $solicitud->trabajador .'.pdf');                   
+        return $pdf->stream('Convenio_terminacion_'. $solicitud->trabajador .'.pdf');        
     }
 
     public function calcularSalarioDiario($salario, $frecuencia) {
@@ -2169,5 +2176,22 @@ class TurnosController extends Controller
         ]);
 
         return redirect()->route('todas_ratificaciones');
+    }
+
+    //Muestra quien emite el tipo de identificación seleccionado para usar en PDF convenio y acta de audiencia
+    private function descripcionIdentificacion($tipo) {
+        $descripciones = [
+            'Credencial de elector'   => 'Instituto Nacional Electoral',
+            'Pasaporte'               => 'Secretaria de Relaciones Exteriores',
+            'Cédula profesional'      => 'Autoridad Correspondiente',
+            'Licencia de conducir'    => 'Autoridad Correspondiente',
+            'Credencial de inapam'    => 'Instituto Nacional de las Personas Adultas Mayores',
+            'Cartilla militar'        => 'Secretaria de la Defensa Nacional',
+            'Documento migratorio'    => 'Instituto Nacional de Migración',
+            'Constancia de identidad' => 'Autoridad Correspondiente',
+            'Otro'                    => 'Autoridad Correspondiente',
+        ];
+    
+        return $descripciones[$tipo];
     }
 }

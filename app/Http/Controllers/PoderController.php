@@ -416,6 +416,8 @@ class PoderController extends Controller
                     'colonia_pF'   => 'required',
                     'num_ext_pF'   => 'required',
                     'cp_pF'         => 'required',
+                    'tipo_identificacion_pF'   => 'required',
+                    'num_identificacion_pF'=>'required'
                 ], $data);
             }
             else if($data["representate"] == "Si"){
@@ -445,8 +447,10 @@ class PoderController extends Controller
                     "telefono_representante_pF" => 'required',
                     "tipo_documento_pF"         => 'required',
                     "fecha_expedicion_pF"       => 'required',
-                    "fecha_vigencia_pF"         => 'required',
                     "descripcion_pF"            => 'required',
+                    'tipo_identificacion_pFCR'  => 'required',
+                    'num_identificacion_pFCR'   => 'required',
+                    'validacion'                => 'required',
                 ], $data);
             }
         }   
@@ -471,7 +475,10 @@ class PoderController extends Controller
                 "telefono_Moral"                => 'required',
                 "tipo_Moral"                    => 'required',
                 "fecha_expedicicion_Moral"      => 'required',
-                "fecha_vigencia_Moral"          => 'required',
+                "descripcion_Moral"             => 'required',
+                "tipo_identificacion_Moral"     => 'required',
+                "num_identificacion_Moral"      => 'required',
+                'validacion'                    => 'required',
             ], $data);
         }
         
@@ -497,6 +504,8 @@ class PoderController extends Controller
                         'cp_patronal'               => $data["cp_pF"],
                         'estatus'                   => $data["validacion"],
                         'idUsuario'                 => $id_usuario,
+                        'tipo_identificacion'       => $data["tipo_identificacion_pF"],
+                        'num_identificacion'        => $data["num_identificacion_pF"],
                 );
 
                 if(isset($data["documentoIne_pF"])){
@@ -565,6 +574,8 @@ class PoderController extends Controller
                         'descipcion_poder'              => $data["descripcion_pF"],
                         'estatus'                       => $data["validacion"],
                         'idUsuario'                     => $id_usuario,
+                        'tipo_identificacion'       => $data["tipo_identificacion_pFCR"],
+                        'num_identificacion'        => $data["num_identificacion_pFCR"],
                 );
 
 
@@ -632,6 +643,8 @@ class PoderController extends Controller
                 'estatus'                       => $data["validacion"],
                 'idUsuario'                     => $id_usuario,
                 'reprecentante'                 => "Si",
+                'tipo_identificacion'           => $data["tipo_identificacion_Moral"],
+                'num_identificacion'            => $data["num_identificacion_Moral"]
             );
 
             if(isset($data["documentoIne_Moral"])){
@@ -715,7 +728,9 @@ class PoderController extends Controller
                     'colonia_pF'   => 'required',
                     'num_ext_pF'   => 'required',
                     'cp_pF'         => 'required',
-                    'documentoIne_pFSR' => 'required'
+                    'documentoIne_pFSR' => 'required',
+                    'tipo_identificacion_pF'   => 'required',
+                    'num_identificacion_pF'=>'required'
                 ], $data);
             }
             else if($data["representate"] == "Si"){
@@ -749,7 +764,9 @@ class PoderController extends Controller
                     "descripcion_pF"            => 'required',
                     "documentoIne_pF"           => 'required',
                     'documentoRepresentacion_pF'=> 'required',
-                    'documentoPoder_pF'         => 'required'
+                    'documentoPoder_pF'         => 'required',
+                    'tipo_identificacion_pFCR'  => 'required',
+                    'num_identificacion_pFCR'   => 'required',
                 ], $data);
             }
         }   
@@ -774,11 +791,12 @@ class PoderController extends Controller
                 "telefono_Moral"                => 'required',
                 "tipo_Moral"                    => 'required',
                 "fecha_expedicicion_Moral"      => 'required',
-                //"fecha_vigencia_Moral"          => 'required',
                 "descripcion_Moral"             => 'required',
                 "documentoIne_Moral"            => 'required',
                 "documentoRepresentacion_Moral" => 'required',
-                "documentoPoder"                => 'required'
+                "documentoPoder"                => 'required',
+                "tipo_identificacion_Moral"     => 'required',
+                "num_identificacion_Moral"      => 'required',
             ], $data);
         }
         
@@ -805,7 +823,9 @@ class PoderController extends Controller
                         'num_ext_patronal'          => $data["num_ext_pF"],
                         'cp_patronal'               => $data["cp_pF"],
                         'estatus'                   => "Pendiente",
-                        'reprecentante'             => "No"
+                        'reprecentante'             => "No",
+                        'tipo_identificacion'       => $data["tipo_identificacion_pF"],
+                        'num_identificacion'        => $data["num_identificacion_pF"]
                 );
 
                 $nombre_ine = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_IDENTIFICACION.pdf";
@@ -872,7 +892,9 @@ class PoderController extends Controller
                         'documentoPoder_pF'             => $data["documentoPoder_pF"],
                         'tipo'                          => $data["tipoPersona"],
                         'estatus'                       => "Pendiente",
-                        'reprecentante'                 => "Si"
+                        'reprecentante'                 => "Si",
+                        'tipo_identificacion'           => $data["tipo_identificacion_pFCR"],
+                        'num_identificacion'            => $data["num_identificacion_pFCR"]
                 );
 
                 $nombre_ine = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_IDENTIFICACION.pdf";
@@ -949,7 +971,9 @@ class PoderController extends Controller
                     'cedulaDocumento'               => $data["documentoPoder"],
                     'tipo'                          => $data["tipoPersona"],
                     'estatus'                       => "Pendiente",
-                    'reprecentante'                 => "Si"
+                    'reprecentante'                 => "Si",
+                    'tipo_identificacion'           => $data["tipo_identificacion_Moral"],
+                    'num_identificacion'            => $data["num_identificacion_Moral"]
             );
 
             $nombre_ine = $data["razon"]."-MORAL"."_IDENTIFICACION.pdf";

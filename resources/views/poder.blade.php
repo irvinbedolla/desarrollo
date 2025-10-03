@@ -497,6 +497,36 @@
                                                     </div>
                                                 </div>
 
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="name">Identificación Oficial  <span style="color:red;">(*)</span></label>
+                                                        <select id="tipo_identificacion_pFCR" name="tipo_identificacion_pFCR" class="form-control">
+                                                            <option value="">Seleccione el tipo de indentificación</option>
+                                                            <option value="Credencial de elector">Credencial de Elector</option>
+                                                            <option value="Pasaporte">Pasaporte</option>
+                                                            <option value="Cédula profesional">Cédula Profesional</option>
+                                                            <option value="Licencia de conducir">Licencia de Conducir</option>
+                                                            <option value="Credencial de inapam">Credencial de INAPAM</option>
+                                                            <option value="Cartilla militar">Cartilla Militar</option>
+                                                            <option value="Documento migratorio">Documento Migratorio</option>
+                                                            <option value="Constancia de identidad">Constancia de Identidad</option>
+                                                            <option value="Otro">Otros</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            Este campo identificación es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6"> 
+                                                    <div class="form-group">
+                                                        <label for="name">Núm de identificación <span style="color:red;">(*)</span> <span data-bs-toggle="modal" data-bs-target="#helpModal" style="cursor: pointer;">❓</span></label>
+                                                        <input type="text" name="num_identificacion_pFCR" id="num_identificacion_pFCR" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                        <div class="invalid-feedback">
+                                                            El campo núm. de identificación es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
                                                         <h5 class="text-center" style="color:#CEA845">Cargar Documentos</h5>
@@ -549,6 +579,35 @@
                                                 </div>
                                             </div>
                                             <div class="row">
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="name">Identificación Oficial <span style="color:red;">(*)</span></label>
+                                                        <select id="tipo_identificacion_pF" name="tipo_identificacion_pF" class="form-control">
+                                                            <option value="">Seleccione el tipo de indentificación</option>
+                                                            <option value="Credencial de elector">Credencial de Elector</option>
+                                                            <option value="Pasaporte">Pasaporte</option>
+                                                            <option value="Cédula profesional">Cédula Profesional</option>
+                                                            <option value="Licencia de conducir">Licencia de Conducir</option>
+                                                            <option value="Credencial de inapam">Credencial de INAPAM</option>
+                                                            <option value="Cartilla militar">Cartilla Militar</option>
+                                                            <option value="Documento migratorio">Documento Migratorio</option>
+                                                            <option value="Constancia de identidad">Constancia de Identidad</option>
+                                                            <option value="Otro">Otros</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            Este campo identificación es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6"> 
+                                                    <div class="form-group">
+                                                        <label for="name">Núm de identificación <span style="color:red;">(*)</span> <span data-bs-toggle="modal" data-bs-target="#helpModal" style="cursor: pointer;">❓</span></label>
+                                                        <input type="text" name="num_identificacion_pF" id="num_identificacion_pF" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                        <div class="invalid-feedback">
+                                                            El campo núm. de identificación es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label><span style="color:red;">*</span>Identificación Oficial</label><br>
@@ -863,6 +922,36 @@
                                                     </div>
                                                 </div>
 
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="name">Identificación Oficial  <span style="color:red;">(*)</span></label>
+                                                        <select id="tipo_identificacion_Moral" name="tipo_identificacion_Moral" class="form-control">
+                                                            <option value="">Seleccione el tipo de indentificación</option>
+                                                            <option value="Credencial de elector">Credencial de Elector</option>
+                                                            <option value="Pasaporte">Pasaporte</option>
+                                                            <option value="Cédula profesional">Cédula Profesional</option>
+                                                            <option value="Licencia de conducir">Licencia de Conducir</option>
+                                                            <option value="Credencial de inapam">Credencial de INAPAM</option>
+                                                            <option value="Cartilla militar">Cartilla Militar</option>
+                                                            <option value="Documento migratorio">Documento Migratorio</option>
+                                                            <option value="Constancia de identidad">Constancia de Identidad</option>
+                                                            <option value="Otro">Otros</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            Este campo identificación es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6"> 
+                                                    <div class="form-group">
+                                                        <label for="name">Núm de identificación <span style="color:red;">(*)</span> <span data-bs-toggle="modal" data-bs-target="#helpModal" style="cursor: pointer;">❓</span></label>
+                                                        <input type="text" name="num_identificacion_Moral" id="num_identificacion_Moral" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                        <div class="invalid-feedback">
+                                                            El campo núm. de identificación es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
                                                         <h4 class="text-center" style="color:#CEA845">Documentos</h4>
@@ -958,7 +1047,22 @@
     <div>.</div>
     <div class="loader"></div>
 </div>
-
+        <!-- Modal para la captura de la ine-->
+            <div class="modal fade" id="helpModal" aria-labelledby="helpModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" style="max-height: 80vh;">
+                  <div class="modal-content" style="height: 100%;">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="helpModalLabel">Ubicación de núm. de identificación</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                      <img src="./public/assets/images/capturaIne.png" alt="Instrucciones" class="img-fluid">
+                    </div>
+                  </div>
+                </div>
+            </div>
+            
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.getElementById('tipo_persona').addEventListener('change', function() {
             var selectTipo = document.getElementById('tipo_persona');
@@ -992,6 +1096,10 @@
                     document.getElementById('colonia_pF').setAttribute('required', 'true');
                     document.getElementById('num_ext_pF').setAttribute('required', 'true');
                     document.getElementById('cp_pF').setAttribute('required', 'true');
+                    document.getElementById('documentoRepresentacion_pF').setAttribute('required', 'true');
+                    document.getElementById('documentoIne_pF').setAttribute('required', 'true');
+                                   
+                         
                     //Quitar los campos requeridos
                     document.getElementById('razon').removeAttribute('required');
                     document.getElementById('rfc_moral').removeAttribute('required');
@@ -1017,6 +1125,8 @@
                     document.getElementById('documentoIne_Moral').removeAttribute('required');
                     document.getElementById('documentoRepresentacion_Moral').removeAttribute('required');
                     document.getElementById('documentoPoder').removeAttribute('required');
+                    document.getElementById('tipo_identificacion_Moral').removeAttribute('required');
+                    document.getElementById('num_identificacion_Moral').removeAttribute('required');  
 
                 } else if (valor === 'Moral') {
                     empresaDiv.style.display = 'block';
@@ -1039,6 +1149,12 @@
                     document.getElementById('colonia_pF').removeAttribute('required');
                     document.getElementById('num_ext_pF').removeAttribute('required');
                     document.getElementById('cp_pF').removeAttribute('required');
+                    document.getElementById('tipo_identificacion_pF').removeAttribute('required');
+                    document.getElementById('num_identificacion_pF').removeAttribute('required');
+                    document.getElementById('tipo_identificacion_pF').removeAttribute('required');
+                    document.getElementById('num_identificacion_pF').removeAttribute('required'); 
+                    document.getElementById('tipo_identificacion_pFCR').removeAttribute('required');
+                    document.getElementById('num_identificacion_pFCR').removeAttribute('required'); 
                     //Poner los campos requeridos
                     document.getElementById('razon').setAttribute('required', 'true');
                     document.getElementById('rfc_moral').setAttribute('required', 'true');
@@ -1059,13 +1175,12 @@
                     document.getElementById('telefono_Moral').setAttribute('required', 'true');
                     document.getElementById('tipo_Moral').setAttribute('required', 'true');
                     document.getElementById('fecha_expedicicion_Moral').setAttribute('required', 'true');
-                    //document.getElementById('fecha_vigencia_Moral').setAttribute('required', 'true');
                     document.getElementById('descripcion_Moral').setAttribute('required', 'true');
                     document.getElementById('documentoIne_Moral').setAttribute('required', 'true');
                     document.getElementById('documentoRepresentacion_Moral').setAttribute('required', 'true');
                     document.getElementById('documentoPoder').setAttribute('required', 'true');
-
-                    
+                    document.getElementById('tipo_identificacion_Moral').setAttribute('required', 'true');
+                    document.getElementById('num_identificacion_Moral').setAttribute('required', 'true');  
                 }
             }
 
@@ -1107,7 +1222,8 @@
                     document.getElementById('documentoPoder_pF').setAttribute('required', 'true');              
                     //Quitar requeridos los campos
                     document.getElementById('documentoIne_pFSR').removeAttribute('required');
-
+                    document.getElementById('tipo_identificacion_pFCR').setAttribute('required', 'true');
+                    document.getElementById('num_identificacion_pFCR').setAttribute('required', 'true'); 
                 } else if (valor === 'No') {
                     razonDiv.style.display = 'none';
                     propioDiv.style.display = 'block';
@@ -1128,6 +1244,8 @@
                     document.getElementById('documentoIne_pF').removeAttribute('required');
                     document.getElementById('documentoRepresentacion_pF').removeAttribute('required');
                     document.getElementById('documentoPoder_pF').removeAttribute('required'); 
+                    document.getElementById('tipo_identificacion_pF').setAttribute('required', 'true');
+                    document.getElementById('num_identificacion_pF').setAttribute('required', 'true'); 
                 }
             }
 
