@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Configuración del calendario de audiencias
-    calendarConciliador = new FullCalendar.Calendar(calendarEl, {
+    calendarAudiencias = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridWeek',
         locale: 'es',
         events: 'audiencias/eventos',
@@ -297,7 +297,6 @@ function handleEventClick(info, calendarType) {
             </div>
         `;
     }
-    
     else if (calendarType === 'citas') {
         modalContent = `
             <strong>Descripción:</strong> ${props.descripcion}<br>

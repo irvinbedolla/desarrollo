@@ -66,13 +66,13 @@
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">SEER</span>
             </a>
             <a class="nav-link" href="{{ route('genera_cumplimiento') }}">
-                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Cumplimientos K</span>
+                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Registro de Cumplimientos</span>
             </a>
             <a class="nav-link" href="{{ route('audiencias.cumplimiento') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" >Cumplimientos</span>
             </a>
             <a class="nav-link" href="{{ route('cumplimientos_conciliadores') }}">
-                <i class="bi bi-file-person"></i><span class="text-dark" >Cumplimientos C</span>
+                <i class="bi bi-file-person"></i><span class="text-dark" >Cumplimientos en Audiencia</span>
             </a>
         @endrole
     @endauth
@@ -166,6 +166,9 @@
             </a>
             <a class="nav-link" href="{{ route('index_ratificacion') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Ratificaciones</span>
+            </a>
+            <a class="nav-link" href="{{ route('cumplimientos_conciliadores') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" >Cumplimientos en Audiencia</span>
             </a>
             <a class="nav-link" href="{{ route('seer') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">SEER</span>
@@ -327,7 +330,7 @@
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadisticas</span>
             </a>
             <a class="nav-link" href="{{ route('genera_cumplimiento') }}">
-                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Genera Cumplimiento</span>
+                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Registro de Cumplimientos</span>
             </a>
         @endrole
     @endauth

@@ -10,7 +10,8 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <h3 class="text-center">Agregar Cumplimiento</h3>
+                            <h3 class="text-center">Registrar Cumplimiento</h3>
+                            <h6 class="text-left">*En este aparado unicamente se registrarán los cumplimientos que no se visualicen en la agenda de complimientos(empalmados o no registrados).</h6>
                                 @if(session()->has('success'))
                                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                                         <strong>¡Registro correcto!</strong>
