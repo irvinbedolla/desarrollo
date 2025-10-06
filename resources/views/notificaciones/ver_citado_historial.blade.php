@@ -28,12 +28,8 @@
                                     </button>
                                 </div>
                             @endif
-                            <form class='needs-validation novalidate' method='POST' action="{{route('notificaciones_busqueda')}}">
-                                @csrf
-                                <input type="hidden" name="fecha_inicio" value="{{ $fecha_inicio}}">
-                                <input type="hidden" name="fecha_final" value="{{ $fecha_fin}}">
-                                <button type="submit" class="btn btn-primary">Regresar</button>
-                            </form>
+                            
+                            <a href="{{ route('notificaciones_consultar') }}"  class="btn btn-primary">Regresar</a>
 
                             <form class="needs-validation novalidate" method="POST" action="{{route('actualizar_enlace_hitorial')}}" enctype="multipart/form-data">
                                 @csrf    
@@ -278,8 +274,6 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-12"><br></div>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
-                                        <input type="hidden" name="fecha_inicio" value="{{ $fecha_inicio}}">
-                                        <input type="hidden" name="fecha_final" value="{{ $fecha_fin}}">
                                         <button type="submit" class="btn btn-info">Guardar</button>
                                     </div>          
                                 </div>

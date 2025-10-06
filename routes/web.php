@@ -211,6 +211,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/seer/estatus/{id}',                [SeerController::class, 'seer_estatus'])->name('seer.notificador');
         Route::post('/seer/updateNotificador',          [SeerController::class, 'update_notificador'])->name('seer.cambioEstatus');
         Route::get('/notificador/historial',            [SeerController::class, 'hitorialnotificacador'])->name('Historial_Notificacador');
+        Route::get('/notificador/historial',            [SeerController::class, 'todas_notificaciones'])->name('todas_notificaciones');
         //Ruta de enlace
         Route::post('/seer/store_enlace',               [SeerController::class, 'store_enlace'])->name('seer.store_enlace');
         Route::get('/notificaciones/consultar/{id}',    [SeerController::class, 'mostrar_citados'])->name('editar_citado');
@@ -225,7 +226,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/seer/persona/{id}',                [SeerController::class, 'ver_auxiliar'])->name('seer.estadistica_consultar');
         Route::get('reporte',                           [SeerController::class, 'reporte_diario'])->name('reporte_diario');
         Route::post('/notificacion/editar',             [SeerController::class, 'mostrar_citado'])->name('editar_citado_historial');
-        Route::post('notificaciones/actualizar',        [SeerController::class, 'editar_citados_historial'])->name('actualizar_enlace_hitorial');  
+        Route::post('notificaciones/actualizarH',       [SeerController::class, 'editar_citados_historial'])->name('actualizar_enlace_hitorial');  
     //Fin Seer
     //Expedientes
         Route::get('/expedientes/index',                        [ExpedienteController::class, 'index'])->name('expedientes.index');

@@ -1229,7 +1229,7 @@ class SeerController extends Controller
         $id = $citados->id;
         $municipios = Municipios::all();
 
-        return view('estadisticas.actualizarCitado', compact('id','municipios'));
+        return view('notificaciones.actualizarCitado', compact('id','municipios'));
     }
 
     public function update_notificador(Request $request){
@@ -5117,7 +5117,18 @@ class SeerController extends Controller
     }
 
     public function notificaciones_consultar(){
-        return view('/notificaciones/consultar');
+        //return view('/notificaciones/consultar');
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+        
+        $notificaciones = SeerCitados::join('seer_general','seer_general.id','seer_citados.id_solicitud')
+        ->select('seer_citados.*','seer_general.NUE')
+        ->orderBy('created_at', 'desc')->limit(500)->get();
+
+       
+        return view('/notificaciones.index_busqueda',compact('notificaciones'));
     }
 
     public function notificaciones_busqueda(Request $request){
@@ -5864,13 +5875,12 @@ class SeerController extends Controller
 
     public function mostrar_citado(Request $request){
         $data = $request->all();
-        $fecha_inicio = $data["fecha_inicio"];
-        $fecha_fin = $data["fecha_fin"];
         $id = $data["id"];
 
         $municipios = Municipios::all();
+        $estados = Estados::all();
         $folio = SeerCitados::find($id);
-        return view('/notificaciones/ver_citado_historial',compact('folio','municipios','fecha_inicio','fecha_fin'));
+        return view('/notificaciones/ver_citado_historial',compact('folio','estados','municipios'));
     }
 
 
@@ -5928,7 +5938,7 @@ class SeerController extends Controller
             $data_update = SeerCitados::find($data["id"])
             ->update(['estatus' => $data["estatus"]]);
         }
-        
+        /*
         $fecha_inicio = $data["fecha_inicio"];
         $fecha_fin = $data["fecha_final"];
         $id = auth()->user()->id;
@@ -5952,8 +5962,9 @@ class SeerController extends Controller
         ->where('seer_citados.notificacion',"!=", "Trabajador")
         ->whereBetween('seer_general.fecha', [$data["fecha_inicio"], $data["fecha_final"]])
         ->get();
-
-        return view('notificaciones.index_busqueda',compact('notificaciones','personas','userRole','fecha_inicio','fecha_fin'));
+        */
+        return redirect()->route('notificaciones_consultar');   
+        //return view('notificaciones.index_busqueda',compact('notificaciones','personas','userRole','fecha_inicio','fecha_fin'));
     }
 
     public function hitorialnotificacador(){
@@ -5969,7 +5980,28 @@ class SeerController extends Controller
         ->where('seer_citados.estatus', "!=", 'Pendiente')
         ->select('seer_citados.id as id_citado','seer_general.NUE','seer_solicitante.nombre as nombre_solicitado','seer_citados.nombre','seer_citados.primer_apellido',
         'seer_citados.segundo_apellido','municipios.nombre as municipio_citado','seer_citados.colonia','seer_citados.calle',
-        'seer_citados.n_ext','seer_citados.estatus','seer_citados.tipo_notificacion','seer_general.id as id_solicitud')
+        'seer_citados.n_ext','seer_citados.estatus','seer_citados.tipo_notificacion','seer_citados.id_solicitud as id_solicitud')
+        ->orderBy('seer_citados.created_at', 'desc')
+        ->limit(500)
+        ->get();
+
+        return view('notificaciones.indexHitorial',compact('mis_notificaciones'));
+    }
+
+        public function todas_notificaciones(){
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+
+        $mis_notificaciones  = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+        ->leftJoin('users', 'seer_citados.id_notificador', '=', 'users.id')
+        ->join('seer_solicitante','seer_solicitante.id_solicitud','=','seer_general.id')
+        ->join('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
+        ->where('seer_citados.estatus', "!=", 'Pendiente')
+        ->select('seer_citados.id as id_citado','seer_general.NUE','seer_solicitante.nombre as nombre_solicitado','seer_citados.nombre','seer_citados.primer_apellido',
+        'seer_citados.segundo_apellido','municipios.nombre as municipio_citado','seer_citados.colonia','seer_citados.calle',
+        'seer_citados.n_ext','seer_citados.estatus','seer_citados.tipo_notificacion','seer_citados.id_solicitud as id_solicitud','seer_general.id as id','users.name as notificador_nombre')
         ->orderBy('seer_citados.created_at', 'desc')
         ->limit(500)
         ->get();

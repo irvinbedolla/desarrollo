@@ -13,7 +13,6 @@
                             
                             
                             @can('ver-seer')
-                                @if($userRole[0] == "Enlace")
                                     <div class="table-responsive">
                                         <table id="example" class="table table-striped mt-1" style="text-align:center">
                                             <thead style="background-color: #4A001F;">
@@ -28,7 +27,7 @@
                                             <tbody>
                                                 @foreach($notificaciones as $notificacion)
                                                     <tr>
-                                                        <td>{{$notificacion->id_citado}}</td>
+                                                        <td>{{$notificacion->id}}</td>
                                                         <td>{{$notificacion->NUE}}</td>
                                                         <td>{{$notificacion->nombre}} {{$notificacion->primer_apellido}} {{$notificacion->segundo_apellido}}</td>
                                                         <td>Colonia:{{$notificacion->colonia}}, Calle:{{$notificacion->calle}} #{{$notificacion->n_ext}} Int:{{$notificacion->n_int}}</td>
@@ -36,10 +35,9 @@
                                                         <td>
                                                             <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('editar_citado_historial')}}">
                                                                 @csrf
-                                                                <input type="hidden" name="fecha_inicio" value="{{ $fecha_inicio}}">
-                                                                <input type="hidden" name="fecha_fin" value="{{ $fecha_fin}}">
-                                                                <input type="hidden" name="id" value="{{ $notificacion->id_citado}}">
-                                                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                                                <input type="hidden" name="id_solicitud" value="{{ $notificacion->id_solicitud}}">
+                                                                <input type="hidden" name="id" value="{{ $notificacion->id}}">
+                                                                <button type="submit" class="btn btn-primary">Editar</button>
                                                             </form>
                                                         </td>
                                                         <td>
@@ -49,7 +47,7 @@
                                                                         Documentos
                                                                     </button>
                                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                                        <li class="mb-2"><a class="btn btn-info" style="width: 100%" href="{{ route('PDFRazonNoticacion', [$notificacion->id_citado, $notificacion->id_solicitud]) }}"  target="_blank">Notificación</a></li>
+                                                                        <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFRazonNoticacion', [$notificacion->id_citado, $notificacion->id_solicitud]) }}"  target="_blank">Notificación</a></li>
                                                                         <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFmulta', [$notificacion->id_citado, $notificacion->id_solicitud]) }}" target="_blank">Multa</a></li>
                                                                     </ul>
                                                                 @endif     
@@ -58,7 +56,7 @@
                                                                         Documentos
                                                                     </button>
                                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                                        <li class="mb-2"><a class="btn btn-info" style="width: 100%" href="{{ route('PDFInstructivo', [$notificacion->id_citado, $notificacion->id_solicitud]) }}" target="_blank">Notificación</a></li>
+                                                                        <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFInstructivo', [$notificacion->id_citado, $notificacion->id_solicitud]) }}" target="_blank">Notificación</a></li>
                                                                         <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFmulta', [$notificacion->id_citado, $notificacion->id_solicitud]) }}" target="_blank">Multa</a></li>
                                                                     </ul>
                                                                 @endif      
@@ -82,7 +80,6 @@
                                         </table>
                                     </div>
                                 @endif
-                            @endcan
                             <!-- Centramos la paginación a la derecha-->
                             <div class="pagination justify-content-end">
                             </div>                        

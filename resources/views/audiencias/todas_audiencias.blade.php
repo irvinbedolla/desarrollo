@@ -294,13 +294,19 @@
                 });
             });
 
+            $(document).on('click', '.open-expediente-modal', function() {
+                // 2. Capturar el 'data-id'
+                var idRegistro = $(this).data('id');            
+                document.getElementById('expediente_audiencia_id').value = idRegistro;
+            });
+            /*
             $('.open-expediente-modal').click(function () {
                 console.log("modal");
                 const id = $(this).data('id');
                 
                 $('#expediente_audiencia_id').val(id);
             });
-            
+            */
             // Limpiar backdrop y modal-open cuando modal se oculta
             $('#documentos').on('hidden.bs.modal', function () {
                 $('.modal-backdrop').remove();
