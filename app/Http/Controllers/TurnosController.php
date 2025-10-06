@@ -623,7 +623,7 @@ class TurnosController extends Controller
                 'fecha'             => $fecha_actual,
                 'hora'              => $hora_actual,
                 'hora_fin'          => $hora_actual,
-                'num_identificacion'=> 'required',
+                'num_identificacion'=> $data["num_identificacion"],
                 'estado_rat'        => $data["estado_rat"],
             ); 
             $nombre = $data["trabajador"];
