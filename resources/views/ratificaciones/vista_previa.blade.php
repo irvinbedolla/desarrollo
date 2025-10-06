@@ -388,40 +388,44 @@
             // Agregar registro
             $("#addRow").click(function () {
                 var html = '';
-                html += '<div id="inputFormRow1" class="col-xs-12 col-sm-6 col-md-12">';
+                html += '<div id="inputFormRow1" class="col-xs-12 col-sm-12 col-md-12">';
 
-                // Tipo de pago
-                html +='<div class="col-xs-12 col-sm-12 col-md-12">';
-                    html +='<div class="form-group">';
-                    html +='<label for="confirm-password"><br>Prestación</label>';
-                    html +='<select class="form-control" name="tipo_pago[]" >';
-                    html +='<option value="">Seleccione</option>';
-                    html +='<option value="Aguinaldo">Días de aguinaldo</option>';
-                    html +='<option value="DSueldo">Días de sueldo</option>';
-                    html +='<option value="Vacaciones">Días de vacaciones</option>';
-                    html +='<option value="PrimaVacacional">Prima vacacional</option>';
-                    html +='<option value="GratificaciónA">Graficación A (Con base al salario integrado)</option>';
-                    html +='<option value="GratificaciónB">Graficación B (20 Días por año cumplido)</option>';
-                    html +='<option value="GraficaciónC">Graficación C (Prima de antigüedad topada)</option>';
-                    html +='<option value="GratificaciónD">Graficación D (Incluye cualquier otra prestación)</option>';
-                    html +='<option value="GratificaciónE">Graficación E (Prestaciones en especie)</option>';
-                    html +='<option value="GratificaciónF">Graficación F (Reconocimiento de derechos)</option>';
-                    html +='<option value="Otras">Otros concepto de pago</option>';
-                    html +='</select>';
-                    html +='<div class="invalid-feedback">El tipo de pago es obligatorio.</div>';
+                    // Tipo de pago
+                    html +='<div class="col-xs-12 col-sm-12 col-md-12">';
+                        html +='<div class="form-group">';
+                        html +='<label for="confirm-password"><br>Prestación</label>';
+                        html +='<select class="form-control tipo-pago-select" name="tipo_pago[]" required>';
+                            html +='<option value="">Seleccione</option>';
+                            html +='<option value="Aguinaldo">Días de aguinaldo</option>';
+                            html +='<option value="DSueldo">Días de sueldo</option>';
+                            html +='<option value="Vacaciones">Días de vacaciones</option>';
+                            html +='<option value="PrimaVacacional">Prima vacacional</option>';
+                            html +='<option value="GratificaciónA">Gratificación A (Con base al salario integrado)</option>';
+                            html +='<option value="GratificaciónB">Gratificación B (20 Días por año cumplido)</option>';
+                            html +='<option value="GratificaciónC">Gratificación C (Prima de antigüedad topada)</option>';
+                            html +='<option value="GratificaciónD">Gratificación D (Incluye cualquier otra prestación)</option>';
+                            html +='<option value="GratificaciónE">Gratificación E (Prestaciones en especie)</option>';
+                            html +='<option value="GratificaciónF">Gratificación F (Reconocimiento de derechos)</option>';
+                            html +='<option value="Otras">Otro concepto de pago</option>';
+                        html +='</select>';
+                        // Campo para escribir otra prestación (solo si se selecciona "Otras")
+                        html += '<div class="otra-prestacion-input" style="display: none; margin-top: 10px;">';
+                        html += '<input type="text" class="form-control" name="otra_prestacion[]" placeholder="Especifique la prestación" />';
+                        html += '</div>';
+                        html +='<div class="invalid-feedback">El tipo de pago es obligatorio.</div>';
+                        html += '</div> </div>';
+
+                    // Monto a pagar
+                    html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                    html += '<div class="form-group">';
+                    html += '<label for="password">Monto a pagar</label>';
+                    html +='<input type="text" class="form-control" name="monto_pago[]" oninput="validarNumero(this)" placeholder="$ Solo números y punto para decimales." required>';
+                    html += '<div class="invalid-feedback">El monto es obligatorio.</div>';
                     html += '</div> </div>';
 
-                // Monto a pagar
-                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
-                html += '<div class="form-group">';
-                html += '<label for="password">Monto a pagar</label>';
-                html +='<input type="text" class="form-control" name="monto_pago[]"  oninput="this.value = this.value.toUpperCase()" >';
-                html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>';
-                html += '</div> </div>';
-
-                html += '<div class="input-group-append">';
-                html += '<button class="removeRow btn btn-danger" type="button">Borrar</button>';
-                html += '</div>';
+                    html += '<div class="input-group-append">';
+                    html += '<button class="removeRow btn btn-danger" type="button">Borrar</button>';
+                    html += '</div>';
                 html += '</div>';
 
             $('#newRow').append(html);
@@ -435,59 +439,61 @@
         // Agregar pago
         $("#addPago").click(function () {
                 var html = '';
-                html += '<div id="inputFormRow2" class="col-xs-12 col-sm-6 col-md-12">';
+                html += '<div id="inputFormRow2" class="col-xs-12 col-sm-12 col-md-12">';
                 
                 //TIPO DE PAGO
                 html +='<div class="col-xs-12 col-sm-12 col-md-12">';
-                html +='<div class="form-group">';
+                //html +='<div class="form-group">';
 
-                //DÍA A PAGAR
-                html +='<div class="col-xs-12 col-sm-12 col-md-12">';
-                html +='<div class="form-group">';
-                html +='<label for="confirm-password"><br>Días de pago</label>';
-                html +='<input type="date" class="form-control" name="dias_pagos[]" >';
-                html +='</div> </div>';                                
-                
-                //HORARIO A PAGAR
-                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
-                html += '<div class="form-group">';
-                html += '<label for="password">Hora de pago</label>';
-                html +='<input type="time" class="form-control" name="hora_pagos[]"  oninput="this.value = this.value.toUpperCase()" >';
-                html += '<div class="invalid-feedback">';
-                html += 'La Dirección es obligatoria.';
-                html += '</div> </div> </div>';
+                    //DÍA A PAGAR
+                    html +='<div class="col-xs-12 col-sm-12 col-md-12">';
+                    html +='<div class="form-group">';
+                    html +='<label for="confirm-password"><br>Días de pago</label>';
+                    html +='<input type="date" class="form-control" name="dias_pagos[]" required>';
+                    html +='</div> </div>';                                
+                    
+                    //HORARIO A PAGAR
+                    html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                    html += '<div class="form-group">';
+                    html += '<label for="password">Hora de pago</label>';
+                    html +='<input type="time" class="form-control" name="hora_pagos[]"  oninput="this.value = this.value.toUpperCase()" required>';
+                    html += '<div class="invalid-feedback">';
+                    html += 'La Hora es obligatoria.';
+                    html += '</div> </div> </div>';
 
-                //MONTO A PAGAR
-                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
-                html += '<div class="form-group">';
-                html += '<label for="password">Monto a pagar</label>';
-                html +='<input type="text" class="form-control" name="monto_pagos[]"  oninput="this.value = this.value.toUpperCase()" >';
-                html += '<div class="invalid-feedback">';
-                html += 'La Dirección es obligatoria.';
-                html += '</div> </div> </div>';
+                    //MONTO A PAGAR
+                    html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                    html += '<div class="form-group">';
+                    html += '<label for="password">Monto a pagar</label>';
+                    html +='<input type="text" class="form-control" name="monto_pagos[]"  oninput="validarNumero(this)" placeholder="$ Solo números y puntos" required>';
+                    html += '<div class="invalid-feedback">';
+                    html += 'El monto es obligatorio.';
+                    html += '</div> </div> </div>';
 
-                //DESCRIPCIÓN DE PAGO
-                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
-                html += '<div class="form-group">';
-                html += '<label for="password">Núm. Parcialidad</label>';
-                html +='<input type="text" class="form-control numero_pago" name="descripcion_pagos[]"  readonly >';
-                html += '<div class="invalid-feedback">';
-                html += 'El número de parcialidad es obligatorio.';
-                html += '</div> </div> </div>';
+                    //DESCRIPCIÓN DE PAGO
+                    html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+                    html += '<div class="form-group">';
+                    html += '<label for="password">Núm. Parcialidad</label>';
+                    html +='<input type="text" class="form-control numero_pago" name="descripcion_pagos[]"  readonly >';
+                    html += '<div class="invalid-feedback">';
+                    html += 'El número de parcialidad es obligatorio.';
+                    html += '</div> </div> </div>';
 
-                html += '<div class="input-group-append">';
-                html += '<button class="removeRow2 btn btn-danger" type="button">Borrar</button>';
-                html += '</div>';
+                    html += '<div class="input-group-append">';
+                    html += '<button class="removeRow2 btn btn-danger" type="button">Borrar</button>';
+                    html += '</div>';
+                    
                 html += '</div>';
 
             $('#newRowaPago').append(html);
+            actualizaNumeroPago();
         });
 
         // Borrar pago
         $(document).on('click', '.removeRow2', function () {
             $(this).closest('.col-xs-12').remove();
+            actualizaNumeroPago();
         });
-
         //Actualiza los números de pago
         function actualizaNumeroPago() {
             let pagos = $('.numero_pago');
@@ -499,6 +505,8 @@
                 });
             }
         }
+
+
         // Agregar deducción
         $("#addRetencion").click(function () {
                 var html = '';
@@ -543,7 +551,19 @@
 
         });
 
+        
+        function validarNumero(input) {
+            // La expresión regular permite cualquier número (0-9) y un solo punto (.)
+            // El 'g' al final asegura que se reemplace globalmente
+            let valor = input.value;
+            input.value = valor.replace(/[^0-9.]/g, '');
 
+            // Esta parte se encarga de que solo haya un punto en el valor
+            let partes = input.value.split('.');
+            if (partes.length > 2) {
+                input.value = partes[0] + '.' + partes.slice(1).join('');
+            }
+        }
     </script>
-    <script src="../public/assets/js/poderes/general.js"></script>
+    <script src="../../public/assets/js/poderes/general.js"></script>
 @endsection

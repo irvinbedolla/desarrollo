@@ -194,16 +194,11 @@
 
 @section('scripts')
     <script>
-        $('.open-modal').click(function() {
-            const id = $(this).data('id'); // Obtiene el valor de data-id
-            document.getElementById('modal-id').value = id;
+        $(document).on('click', '.open-expediente-modal', function() {
+            // 2. Capturar el 'data-id'
+            var idRegistro = $(this).data('id');            
+            document.getElementById('expediente_audiencia_id').value = idRegistro;
         });
-        $('.open-expediente-modal').click(function () {
-                console.log("modal");
-                const id = $(this).data('id');
-                
-                $('#expediente_audiencia_id').val(id);
-            });
     </script>
     <script src="../public/assets/js/poderes/general.js"></script>
 @endsection
