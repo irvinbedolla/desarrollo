@@ -1000,8 +1000,16 @@ class TurnosController extends Controller
     public function VerPDFConvenio($id){
         $solicitud = Turnos::find($id);
         $pagos = Pagos::where('id_solicitud', $id)->get();
-        $abogado  = Poder::join("turnos","turnos.idAbogado","=","abogados.idAbogado");
+        /*$abogado  = Poder::join("turnos","turnos.idAbogado","=","abogados.idAbogado");
         $abogado = $abogado->where("turnos.id", "=", $id)
+        ->first();*/
+        $abogado = Poder::join("turnos", "turnos.idAbogado", "=", "abogados.idAbogado")
+          ->where("turnos.id", "=", $id)
+          ->select(
+          "abogados.*",
+          "turnos.tipo_identificacion as tipo_identificacion_turno",
+          "turnos.num_identificacion as num_identificacion_turno"
+        )
         ->first();
        // $abogado = Poder::where('idAbogado', $id)->get();
         //dd($abogado);
@@ -1195,8 +1203,13 @@ class TurnosController extends Controller
         $solicitud = Turnos::find($id);
         //$solicitud = Turnos::find($id);
         $pagos = Pagos::where('id_solicitud', $id)->get();
-        $abogado  = Poder::join("turnos","turnos.idAbogado","=","abogados.idAbogado");
-        $abogado = $abogado->where("turnos.id", "=", $id)
+        $abogado = Poder::join("turnos", "turnos.idAbogado", "=", "abogados.idAbogado")
+           ->where("turnos.id", "=", $id)
+           ->select(
+           "abogados.*",
+           "turnos.tipo_identificacion as tipo_identificacion_turno",
+           "turnos.num_identificacion as num_identificacion_turno"
+        )
         ->first();
         //$prestacionesLab = Concepto::where('id_solicitud', $id)->first();
         //dd($prestaciones);
@@ -1271,7 +1284,7 @@ class TurnosController extends Controller
 
         $html = view('PDF/ActaAudiencia', compact('id','solicitud','conciliador','vacacionesTexto',
         'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
-        'gratificacionETexto','gratificacionFTexto','otrasTexto','prestaciones','deducciones','deduccionesTexto','pagoTotal','descripcionIdentificacionS','descripcionIdentificacionP'))->render();
+        'gratificacionETexto','gratificacionFTexto','otrasTexto','prestaciones','deducciones','deduccionesTexto','pagoTotal','descripcionIdentificacionS','descripcionIdentificacionP','abogado'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')

@@ -103,10 +103,10 @@
                 <p><b>SEGUNDA.</b> 
                 @if(is_null($abogado->nombre_representante) && is_null($abogado->primer_apellido_representante) && is_null($abogado->segundo_apellido_representante))
                     La parte EMPLEADORA <b>{{$abogado->nombres_patronal}} {{$abogado->primer_apellido_patronal}} {{$abogado->segundo_apellido_patronal}}</b> se identifica con 
-                    <b>{{ strtoupper($solicitud->tipo_identificacion) }}, de Número <b>{{ $solicitud->num_identificacion }}</b> expedida a su favor por <b>{{ $descripcionIdentificacionP }}</b>, 
+                    <b>{{ strtoupper($abogado->tipo_identificacion) }}, de Número <b>{{ $abogado->num_identificacion }}</b> expedida a su favor por <b>{{ $descripcionIdentificacionP }}</b>, 
                     y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
                 @else Declara <b>{{$abogado->nombre_representante}} {{$abogado->primer_apellido_representante}} {{$abogado->segundo_apellido_representante}}</b> quien se identifica con 
-                    <b>{{ strtoupper($solicitud->tipo_identificacion) }}</b>, de Número <b>{{ $solicitud->num_identificacion }}</b> expedida a su favor por <b>{{ $descripcionIdentificacionP }}</b>, así como <b>{{$abogado->descipcion_poder}}</b></p>  
+                    <b>{{ strtoupper($abogado->tipo_identificacion) }}</b>, de Número <b>{{ $abogado->num_identificacion }}</b> expedida a su favor por <b>{{ $descripcionIdentificacionP }}</b>, así como <b>{{$abogado->descipcion_poder}}</b></p>  
                 @endif
                 <b>TERCERA.</b> Declara la parte <b>TRABAJADORA</b>:
                     <p class="sangria">

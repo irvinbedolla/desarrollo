@@ -94,7 +94,7 @@
                     <b>@if(is_null($solicitud->nombre_empresa) && is_null($solicitud->primero_empresa))
                            {{ $solicitud->empresa }}
                        @else {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }} @endif</b>se identifica con 
-                    <b>{{ strtoupper($solicitud->tipo_identificacion) }}</b>, de Número <b>{{ $solicitud->num_identificacion }}</b> expedida a su favor por 
+                    <b>{{ strtoupper($abogado->tipo_identificacion) }}</b>, de Número <b>{{ $abogado->num_identificacion }}</b> expedida a su favor por 
                     <b>{{ $descripcionIdentificacionP }}</b>, identificaciones que concuerdan fisionómicamente con las partes y, que, en este acto, se agrega copia cotejada al 
                     expediente electrónico para que conste como corresponda; documentos que les son devueltos por ser innecesaria su retención. <br><br>
 

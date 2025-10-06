@@ -32,7 +32,9 @@
                                                 <tr>
                                                     <td>{{$solicitud->id}}</td>
                                                     <td>{{$solicitud->fecha}}</td> 
-                                                    <td>{{$solicitud->empresa}}</td>
+                                                    <td>@if(is_null($solicitud->nombre_empresa) && is_null($solicitud->primero_empresa) && is_null($solicitud->segundo_empresa))
+                                                        {{$solicitud->empresa}}
+                                                       @else {{$solicitud->nombre_empresa}} {{$solicitud->primero_empresa}} {{$solicitud->segundo_empresa}}@endif</td>
                                                     <td>{{$solicitud->telefono}}</td>
                                                     <td>{{$solicitud->email}}</td>
                                                     <td>{{$solicitud->trabajador}} {{$solicitud->primero_trabajador}}  {{$solicitud->segundo_trabajador}}</td>
