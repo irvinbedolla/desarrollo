@@ -93,7 +93,7 @@
                                             &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red;">(**) </span>Identificación Oficial del empleador.<br>
                                             &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red;">(**)</span> Identificación Oficial del Representante Legal (en los casos que así se requiera).<br>
                                             &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red;">(**)</span> Documento que acredite la personería (Carta Poder, Instrumento Notarial).<br>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Constancia de Situación Fiscal (Obligatorio en caso de ser Persona Moral).<br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Constancia de Situación Fiscal (obligatorio en caso de ser Persona Moral).<br>
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Correo electrónico.<br>
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Número de celular.<br>
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Domicilio de la fuente fiscal.<br><br>

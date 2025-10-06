@@ -83,7 +83,7 @@
                 <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</center><br>
                    <!-- SOLICITUD RATIFICACIÓN DE CONVENIO TERMINACIÓN VOLUNTARIA <br><br>
                     SOLICITANTES:<br>
-                    {{ $solicitud->empresa }}<br>-->
+                    {{--{{ $solicitud->empresa }}<br>--}}-->
                 </b></p>  
                 <p><center><b>CONVENIO DE CONCILIACIÓN</b></center></p><br>
                 <p>Con fundamento en los artículos 123, apartado A, fracción XXVII, inciso h) párrafo segundo, de la Constitución Política de los Estados Unidos Mexicanos; 
@@ -98,15 +98,15 @@
                 <p><center><b>D E C L A R A C I O N E S:</b></center></p><br>
 
                 <p><b>PRIMERA.</b> La parte <b>TRABAJADORA {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> se identifica con <b>{{ strtoupper($solicitud->tipo_identificacion) }}</b>, de Número <b>{{ $solicitud->num_identificacion }}</b> 
-                    expedida a su favor por <b>Instituto Nacional Electoral</b> y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p> 
+                    expedida a su favor por <b>{{ $descripcionIdentificacionS }}</b> y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p> 
 
                 <p><b>SEGUNDA.</b> 
                 @if(is_null($abogado->nombre_representante) && is_null($abogado->primer_apellido_representante) && is_null($abogado->segundo_apellido_representante))
                     La parte EMPLEADORA <b>{{$abogado->nombres_patronal}} {{$abogado->primer_apellido_patronal}} {{$abogado->segundo_apellido_patronal}}</b> se identifica con 
-                    <b>{{ strtoupper($solicitud->tipo_identificacion) }}, de Número <b>{{ $solicitud->num_identificacion }}</b> expedida a su favor por <b>{{ $descripcionIdentificacionS }}</b>, 
-                    y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p>  
+                    <b>{{ strtoupper($solicitud->tipo_identificacion) }}, de Número <b>{{ $solicitud->num_identificacion }}</b> expedida a su favor por <b>{{ $descripcionIdentificacionP }}</b>, 
+                    y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
                 @else Declara <b>{{$abogado->nombre_representante}} {{$abogado->primer_apellido_representante}} {{$abogado->segundo_apellido_representante}}</b> quien se identifica con 
-                    <b>{{ strtoupper($solicitud->tipo_identificacion) }}</b> expedida a su favor por <b>Instituto Nacional Electoral</b>, así como con <b>{{$abogado->descipcion_poder}}</b></p>  
+                    <b>{{ strtoupper($solicitud->tipo_identificacion) }}</b>, de Número <b>{{ $solicitud->num_identificacion }}</b> expedida a su favor por <b>{{ $descripcionIdentificacionP }}</b>, así como <b>{{$abogado->descipcion_poder}}</b></p>  
                 @endif
                 <b>TERCERA.</b> Declara la parte <b>TRABAJADORA</b>:
                     <p class="sangria">
@@ -182,7 +182,7 @@
                                 <tr>
                                     <th>Concepto</th>
                                     <th>Monto</th>
-                                    <th>Descripción</th>
+                                    <th>Monto en letra</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -278,7 +278,7 @@
                                     <tr>
                                         <th>Concepto</th>
                                         <th>Monto</th>
-                                        <th>Descripción</th>
+                                        <th>Monto en letra</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -305,7 +305,7 @@
                     </p>
                     <p><b>{{ $solicitud->resolucion_justificacion }}</b></p><br>
                     <!-- CON PAGOS DIFERIDOS-->       
-                    @if($pagosDif>'1')            
+                    @if($pagosDif->C_pagos>'1')            
                         <p><b>SEXTA</b>. La <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará en <b>{{ $pagosDif->C_pagos}}</b> 
                             exhibiciones, hasta culminar la cantidad de 
                             <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }} M.N</b>, tal como se muestra:
@@ -314,7 +314,7 @@
                             <table id="pagos" class="table-striped" style="width:100%;">
                                 <thead>
                                     <th style="display: none;">ID</th>
-                                    <th>Núm. parcialidad</th>
+                                    <th>Exhibiciones</th>
                                     <th>Fecha</th>
                                     <th>Hora</th>
                                     <th>Monto</th>
@@ -340,14 +340,42 @@
                         
                         <p>Asimismo, manifiestan estar de acuerdo que de no pagarse el primero de los pagos convenidos en la fecha de su vencimiento, quedará a salvo el derecho de cualquiera de las partes para 
                             exigir el cumplimiento del pago total de la cantidad pactada ante la autoridad competente, a parte de los días que transcurran de pena convencional.</p>
-                    @endif  
-                    <!-- CONDICIONAL 1 SOLO PAGO(EN UNA SOLA EXIBICIÓN)--> 
-                    @if($pagosDif=='1')            
-                        <p><b>SEXTA</b>. La <b>EMPLEADORA</b> manifiesta que en este acto en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> le paga a la <b>TRABAJADORA en una exibición</b> la cantidad 
-                            de <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }} M.N</b>, en el domicilio que ocupa el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con lo que se certifica el cumplimiento de su 
-                            obligación bajo el presente convenio, de conformidad con lo establecido en el artículo 684-E, fracción XIV, de la Ley Federal dek Trabajo.</p> 
-                    @endif        
 
+                    <!-- CONDICIONAL 1 SOLO PAGO(EN UNA SOLA EXIBICIÓN)--> 
+                    @elseif($pagosDif->C_pagos=='1')            
+                    <p><b>SEXTA</b>. La <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará en <b>{{ $pagosDif->C_pagos}}</b> 
+                        exhibición, la cantidad de 
+                        <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }} M.N</b>, tal como se muestra:
+                    </p>
+                    <div class="table-responsive">
+                        <table id="pagos" class="table-striped" style="width:100%;">
+                            <thead>
+                                <th style="display: none;">ID</th>
+                                <th>Exhibición</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Monto</th>
+                            </thead>
+                            <tbody>
+                                @foreach($pagos as $pago)
+                                    <tr>
+                                        <td style="display: none;">{{$pago->id_solicitud}}</td>
+                                        <td>{{$pago->descripcion}}</td>
+                                        <td>{{ \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d/m/y') }}</td> 
+                                        <td>{{ \Carbon\Carbon::parse(str_replace(' HORAS', '', $pago->hora))->format('H:i') }} HRS</td>
+                                        <td>${{ number_format($pago->monto, 2) }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>      
+                    </div><br>
+
+                    <p>En caso de que la parte <b>EMPLEADORA</b> no cubra el pago de la cantidad estipulada y dentro del plazo determinado en esta cláusula, deberá pagar a la parte <b>TRABAJADORA</b> 
+                        el equivalente a un día de salario diario, el cual se fijará en razón del salario que percibía dicha parte antes de finalizar la relación de trabajo correspondiente a la cantidad de 
+                        <b>${{ number_format($salario_diario, 2) }} {{ $diarioTexto }} M.N</b>. Esa cantidad se sumará a la previamente pactada, por cada día que 
+                        transcurra, sin que se dé cabal cumplimiento al convenio, con fundamento en el artículo 684-E, fracción XIV, último párrafo, de la Ley Federal del Trabajo.</p>
+                    @endif  
+                    <p>      
                         <b>SÉPTIMA</b>. Las <b>PARTES</b> solicitan se apruebe y sancione este convenio, toda vez que se elaboró conforme a las disposiciones aplicables de la Ley Federal del Trabajo como 
                         resultado del diálogo de la conciliación entre la parte <b>TRABAJADORA</b> y la parte <b>EMPLEADORA</b>. Así mismo, manifiestan que se encuentran conformes con el presente acuerdo 
                         por no contener cláusula contraria a la costumbre, a la moral, ni renuncia a los derechos de las <b>PARTES</b>.<br><br>
@@ -355,14 +383,14 @@
                         <b>OCTAVA</b>. Las <b>PARTES</b> manifiestan que es su voluntad ratificar el presente convenio en todas y cada una de sus partes y la aprobación de su contenido, por lo que no se 
                         reservan acción legal o derecho alguno para ejercitar con posterioridad a la firma del presente convenio.<br><br>
                                     
-                        <b>NOVENA</b>. Las <b>PARTES</b> solicitan ante el Centro Estatal de Conciliación Laboral que les sean expedidas las copias autorizadas del convenio, y en el momento en que se haya 
+                        <b>NOVENA</b>. Las <b>PARTES</b> solicitan ante el Centro Estatal de Conciliación Laboral que se les expida un tanto original del convenio, y en el momento en que se haya 
                         cumplido totalmente, se les expida acta en la que conste el cumplimiento de éste, en términos del artículo 684-E, fracción XIV, primer párrafo, de la Ley Federal del Trabajo.<br><br>
                                     
                         <b>DÉCIMA</b>. Las <b>PARTES</b> manifiestan que en la celebración del presente convenio no existió violencia, mala fe, dolo, lesión o cualquier otro tipo de vicio del consentimiento 
                         que pudiera nulificarlo.<br><br>
                                     
-                        <b>DÉCIMA PRIMERA</b>. En caso de que no se cumplan los términos de lo convenido en el presente instrumento, las <b>PARTES</b> deberán acudir a los juzgados Laborales del fuero común a 
-                        efecto de que se realice el procedimiento de ejecución que la Ley Federal del Trabajo contempla. <br>
+                        <b>DÉCIMA PRIMERA</b>. En caso de que no se cumplan los términos de lo convenido en el presente instrumento, las <b>PARTES</b> deberán acudir al Juzgado Laboral competente a 
+                        efecto de que se realice el Procedimiento de Ejecución que la Ley Federal del Trabajo contempla. <br>
                         <br>Enteradas las <b>PARTES</b> del alcance legal del presente convenio que se eleva a la categoria de cosa juzgada, conforme al artículo 684-E fracción XIII, mismo que se firma en <b>{{ $solicitud->delegacion }},</b> 
                         Michoacán de Ocampo a los <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\í\a\s \d\e F \d\e\l Y') }}</b>, ante la fe de <b>{{ $conciliador->name }}</b>, funcionario(a) conciliador(a), quien 
                         lo sanciona en este mismo acto. <b>Doy fe</b>.

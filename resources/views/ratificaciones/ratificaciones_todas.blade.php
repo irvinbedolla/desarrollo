@@ -48,7 +48,7 @@
                                                     </td>
                                                     <td>
                                                         @if($solicitud->estatus == "Concluida" || $solicitud->estatus == "Concluida Pagos")
-                                                            <a class="btn btn-primary" href="{{ route('ratificacion_cumplimientos', $solicitud->id) }}">Cumplimientos</a>
+                                                            <a class="btn btn-primary" href="{{ route('ratificacion_cumplimientos', $solicitud->id) }}">Generar cumplimiento</a>
                                                         @endif
                                                     </td>
                                                     <td>

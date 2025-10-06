@@ -245,7 +245,7 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">Num Int <span style="color:red;">(*)</span></label>
+                                                        <label for="name">Núm. Int. <span style="color:red;">(*)</span></label>
                                                         <input type="text" name="num_int_derecho" id="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                         <div class="invalid-feedback">
                                                             El nombre es obligatorio.
@@ -255,7 +255,7 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">Nun Ext</span></label>
+                                                        <label for="name">Núm. Ext.</span></label>
                                                         <input type="text" name="num_ext_derecho" id="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                         <div class="invalid-feedback">
                                                             El nombre es obligatorio.

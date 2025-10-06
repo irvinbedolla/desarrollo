@@ -78,13 +78,15 @@
                 </div><br><br><br><br><br>
                 <p><b>
                     Trabajador(a): {{ strtoupper($solicitud->trabajador) }} {{ strtoupper($solicitud->primero_trabajador) }} {{ strtoupper($solicitud->segundo_trabajador) }} <br> 
-                    Empleador(a): {{ strtoupper($solicitud->empresa) }}<br>
+                    Empleador(a): @if(is_null($solicitud->nombre_empresa) && is_null($solicitud->primero_empresa))
+                                      {{ $solicitud->empresa }}
+                                 @else {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }} @endif<br>
                     Funcionario/a Conciliador/a Responsable: {{$conciliador->name}}<br>
                     Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
                     Asistencia de los interesados: Si<br>
                     Convenio conciliatorio: Si
                 </b></p>  
-                <p><center><b>@if($pagosDif>1)CONSTANCIA DE PAGO PARCIAL DE CONVENIO @endif
+                <p><center><b>@if($pagosDif>1)CONSTANCIA DE CUMPLIMIENTO PARCIAL DE CONVENIO @endif
                     @if($pagosDif==1)CONSTANCIA DE PAGO DE CONVENIO @endif</b></center></p><br>
                 <p>
                     <b>Fundamentación:</b> Artículos 33 párrafo segundo, 590-E, 590-F y 684-E fracciones XIII y XIV, 684-F fracción VII de la Ley Federal del Trabajo, artículo 8 fracción I, II y III 
@@ -93,8 +95,8 @@
 
                     <b>Motivación:</b> Conforme a la determinación de dar por terminado el conflicto laboral, la parte <b>TRABAJADORA</b> y la parte <b>EMPLEADORA</b>, celebraron el Convenio de Conciliación 
                     de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> ante esta Autoridad Conciliadora como resultado de la audiencia de conciliación 
-                    celebrada <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> de 
-                    <b>{{$solicitud->hora}}</b> a <b>{{$solicitud->hora_fin}}</b> hrs.<br><br>
+                    celebrada <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las 
+                    <b>{{$solicitud->hora}}</b> hrs.<br><br>
 
                     @if($pagosDif==1)Las <b>PARTES</b> acordaron el pago en el convenio referido, en este sentido, la parte <b>EMPLEADORA</b> da cumplimiento ante esta Autoridad 
                     Conciliadora al siguiente concepto:<br>@endif
@@ -105,7 +107,7 @@
 
                     Quien suscribe da fe del cumplimiento del concepto anteriormente descrito por parte del <b>EMPLEADOR. Doy fe.</b><br><br>
 
-                    <b>Con fecha {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }} se emite la presente Constancia de @if($pagosDif>1) Pago Parcial @elseif($pagosDif == 1) Pago @endif del Convenio de Conciliación, con 
+                    <b>Con fecha {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }} se emite la presente Constancia de @if($pagosDif>1) Cumplimiento Parcial @elseif($pagosDif == 1) Pago @endif del Convenio de Conciliación, con 
                     fundamento en la fracción XIV del artículo 684-E y fracción VIII del artículo 684-F de la Ley Federal del Trabajo.</b>
                 </p>
 

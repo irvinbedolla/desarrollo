@@ -1092,14 +1092,14 @@ class TurnosController extends Controller
         $descripcionIdentificacionS = $this->descripcionIdentificacion($identificacionSolicitante);
 
         //Descripción del tipo de identificación para los poderes
-        //$identificacionPoder = $abogado->tipo_identificacion;
-        //$descripcionIdentificacionP = $this->descripcionIdentificacion($identificacionPoder);
+        $identificacionPoder = $abogado->tipo_identificacion;
+        $descripcionIdentificacionP = $this->descripcionIdentificacion($identificacionPoder);
 
         $html = view('PDF/convenioRatificacion', 
             compact('id', 'solicitud', 'dias_descanso', 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','vacacionesTexto',
             'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
             'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones','abogado','deducciones','deduccionesTexto',
-            'municipioEmpresa','estadoEmpresa','pagoTotal','descripcionIdentificacionS'))
+            'municipioEmpresa','estadoEmpresa','pagoTotal','descripcionIdentificacionS','descripcionIdentificacionP'))
             ->render();
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -1195,6 +1195,9 @@ class TurnosController extends Controller
         $solicitud = Turnos::find($id);
         //$solicitud = Turnos::find($id);
         $pagos = Pagos::where('id_solicitud', $id)->get();
+        $abogado  = Poder::join("turnos","turnos.idAbogado","=","abogados.idAbogado");
+        $abogado = $abogado->where("turnos.id", "=", $id)
+        ->first();
         //$prestacionesLab = Concepto::where('id_solicitud', $id)->first();
         //dd($prestaciones);
         $prestaciones = Concepto::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
@@ -1257,10 +1260,18 @@ class TurnosController extends Controller
         $conciliador = $conciliador->where("turnos.id", "=", $id)
         ->select('users.name')
         ->first();
+        
+        //Descripción del tipo de identificación para los solicitantes
+        $identificacionSolicitante = $solicitud->tipo_identificacion;
+        $descripcionIdentificacionS = $this->descripcionIdentificacion($identificacionSolicitante);
+
+        //Descripción del tipo de identificación para los poderes
+        $identificacionPoder = $abogado->tipo_identificacion;
+        $descripcionIdentificacionP = $this->descripcionIdentificacion($identificacionPoder);
 
         $html = view('PDF/ActaAudiencia', compact('id','solicitud','conciliador','vacacionesTexto',
         'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
-        'gratificacionETexto','gratificacionFTexto','otrasTexto','prestaciones','deducciones','deduccionesTexto','pagoTotal'))->render();
+        'gratificacionETexto','gratificacionFTexto','otrasTexto','prestaciones','deducciones','deduccionesTexto','pagoTotal','descripcionIdentificacionS','descripcionIdentificacionP'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')

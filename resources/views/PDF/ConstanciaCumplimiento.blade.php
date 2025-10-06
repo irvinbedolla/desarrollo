@@ -75,7 +75,7 @@
                             <td>{{ $solicitud->NUE }} </td>
                         </tr>  
                     </table>
-                </div><br><br><br><br><br><br>
+                </div><br><br><br><br><br>
                
                 <p><b>
                     Trabajador(a): {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
@@ -84,7 +84,7 @@
                         @else
                              {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}
                     @endif <br>
-                    Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha_audiencia)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora_audiencia }} horas.<br> 
+                    Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha_audiencia)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
                     Asistencia de los interesados: Si. <br>
                     <!--Fecha del conflicto: [SOLICITUD_FECHA_CONFLICTO]  <br>
                     Posible prescripción de derechos: [SOLICITUD_PRESCRIPCION] <br> -->
@@ -92,7 +92,7 @@
                 </b></p> 
 
                 <p>
-                    <center><b>CONSTANCIA DE CUMPLIMIENTO DE CONVENIO</b></center>
+                    <center><b>CONSTANCIA DE CUMPLIMIENTO TOTAL DE CONVENIO</b></center>
                 </p><br>
 
                 <p>
@@ -102,8 +102,8 @@
                     <b>Motivación:</b> Conforme a la determinación de dar por terminado el conflicto laboral, la parte <b>TRABAJADORA</b> y la parte <b>EMPLEADORA</b>, 
                     celebraron el Convenio de Conciliación de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> ante esta 
                     Autoridad Conciliadora como resultado de la audiencia 
-                    de conciliación celebrada <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> de 
-                    <b>{{ $solicitud->hora }}</b> a <b>{{ $solicitud->hora_fin }}</b> hrs.<br><br>
+                    de conciliación celebrada <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las  
+                    <b>{{ $solicitud->hora }}</b> hrs.<br><br>
                                 
                     De acuerdo con lo establecido en el convenio referido el <b>EMPLEADOR</b> se obligó al pago de los siguientes conceptos: <br>
               
@@ -123,7 +123,7 @@
                                         <td>{{ \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d/m/y') }}</td> 
                                         <td>{{ \Carbon\Carbon::parse(str_replace(' HORAS', '', $pago->hora))->format('H:i') }} HORAS</td>
                                         <td>${{ number_format($pago->monto, 2) }}</td>
-                                        <td>{{$pago->observaciones}}</td>
+                                        <td><p>{{$pago->observaciones}}</p></td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -131,7 +131,7 @@
                     </div><br>
                                 
                     En este sentido, el <b>EMPLEADOR</b> ha dado cumplimiento a la <b>totalidad</b> de los conceptos contenidos en el Convenio de Conciliación 
-                    celebrado entre las <b>PARTES.  Doy fe.</b><br><br>
+                    celebrado entre las <b>PARTES. Doy fe.</b><br><br>
                                 
                     <b> Con fecha {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}
                     se emite la presente Constancia de Cumplimiento del Convenio de Conciliación, con fundamento en la fracción XIV del 
