@@ -1426,13 +1426,10 @@ class SeerController extends Controller
         $relacionEloquent = "roles";
         
         $general    = SeerPerGeneral_old::find($id);
-        dd($general);
         $auxiliar   = SeerPerAuxiliar::where("id_solicitud",$id)->first();
-        //dd($auxiliar);
         $estados    = Estados::all();
         $municipios = Municipios::where('estado',16)->get();
         $citados    = SeerCitados_old::where("id_solicitud",$id)->get();
-        //dd($citados);
         $conciliador= User::find($general["conciliador_id"]);
         $conciliadores = User::whereHas($relacionEloquent, function ($query) {
             return $query->where('name', '=', 'Conciliador');
@@ -1537,13 +1534,11 @@ class SeerController extends Controller
     }
 
     public function Industrias($tipo_solicitud){
-       // dd($tipo_solicitud);
         return view('solicitudes.tipoIndustria', compact('tipo_solicitud'));
     } 
     
     //Pre registro para solicitudes
     public function RTemportal(){
-        // dd($tipo_solicitud);
         return view('solicitudes.solicitud_trabajador');
     }
 
@@ -1569,7 +1564,6 @@ class SeerController extends Controller
     
     //Solicitud en línea trabajador
     public function trabajador($tipo_solicitud){  
-        //dd($tipo_solicitud);
         if ($tipo_solicitud == "1") {
             $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '1') ->get();
         }
@@ -1601,7 +1595,6 @@ class SeerController extends Controller
 
     public function solicitud_parte1(Request $request){
         $data = $request->all();
-        //dd($data);
 
         if($data["delegacion"] == "Lázaro Cárdenas"){
             $data["delegacion"] = "Uruapan";
@@ -1647,7 +1640,6 @@ class SeerController extends Controller
     
     public function solicitud_parte2(Request $request){
         $data = $request->all();
-        //dd($data);
         $id = $data['id'];
 
         //validando información
@@ -1754,7 +1746,6 @@ class SeerController extends Controller
         } 
         //CURP
         $documento = $data["curp"]."_CURP.pdf";
-        //dd($documento);
         /*$path = Storage::putFileAs(
             'documentosSolicitud', $request->file('documentoCurp'), $documento
         );*/
@@ -1869,7 +1860,6 @@ class SeerController extends Controller
                 $data_insert["nombre"] = $data["nombre"];
             }
         }
-        //dd($data_insert);
         //Se van a generar el citatorio
         SeerCitados::create($data_insert); 
         // Si es persona física, elimina los apellidos para este citado
@@ -3173,6 +3163,7 @@ class SeerController extends Controller
         $user = User::find($id);
         $bandera = 0;
 
+
         //Vamos a contar cuandos auxiliares existen en el CCL
         $conciliadores = User::whereHas($relacionEloquent, function ($query) {
             return $query->where('name', '=', 'Conciliador');
@@ -3587,7 +3578,6 @@ class SeerController extends Controller
         $solicitud = SeerPerGeneral::find($id); 
         $pagos = Pagos::where('id_solicitud', $id)->get();
         //$prestacionesLab = Concepto::where('id_solicitud', $id)->first();
-        //dd($prestaciones);
         $prestaciones = Concepto::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
         // Inicializa las variables de texto
         $vacacionesTexto = '';
@@ -3739,7 +3729,6 @@ class SeerController extends Controller
         $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
         $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
         ->first();
-        //dd($audiencia);
         $pdf = \PDF::loadView('PDF/Solicitudes/notificacionSolicitante', compact('id','solicitud','solicitante','citados','conciliador','audiencia'))
         ->setPaper('a4', 'portrait')
         ->setOption('isHtml5ParserEnabled', true)
@@ -3753,18 +3742,14 @@ class SeerController extends Controller
     public function VerPDFMulta($id, $id_solicitud){
         $solicitud = SeerPerGeneral::find($id_solicitud);
         //$solicitud = SeerPerGeneral::find($id);
-        //dd($solicitud);
         $conciliador = User::join("seer_general", "seer_general.conciliador_id", "=", "users.id")
         ->where("seer_general.id", "=", $id_solicitud)
         ->select("users.name")
         ->first();
-        //dd($conciliador);
         $citado = SeerCitados::find($id);
-        // dd($citado);
         $audiencia = Audiencias::where('id_solicitud', $id_solicitud)
         ->orderBy('fecha', 'desc')
         ->first();
-       // dd($audiencia);
         $pdf = \PDF::loadView('PDF/Solicitudes/ActaMulta', compact('id','solicitud','citado','conciliador','audiencia'))
         ->setPaper('a4', 'portrait')
         ->setOption('isHtml5ParserEnabled', true)
@@ -3827,7 +3812,6 @@ class SeerController extends Controller
         $solicitud  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
         $solicitud = $solicitud->where("seer_solicitante.id_solicitud", "=", $id) ->first();
         
-        //dd($solicitud);
         //Validar si existe el abogado
         $id_usuario = auth()->user()->id;
         $user = User::find($id_usuario);
@@ -4029,7 +4013,6 @@ class SeerController extends Controller
         $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
         ->first();
 
-        //dd($citado);
         $html = view('PDF/Solicitudes/NoConciliacion', compact('id', 'solicitud','conciliador','citado','audiencia','solicitante'))->render();
 
         $pdf = \PDF::loadHTML($html)
@@ -4303,7 +4286,6 @@ class SeerController extends Controller
     //PDF NOTIFICADORES Razón de notificación
     public function VerPDFRNotificacion($id, $id_solicitud){
         $solicitud = SeerPerGeneral::find($id_solicitud);
-       // dd($solicitud);
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
         ->first();
@@ -4317,7 +4299,6 @@ class SeerController extends Controller
             $municipio = \App\Models\Municipios::find($citado->municipio_citado);
             $municipioCitado = $municipio ? $municipio->nombre : null;
         }
-        //dd($citado);
         $id_notificador = $citado->id_notificador;
 
         $notificador = User::where('id', $id_notificador)
@@ -4335,7 +4316,6 @@ class SeerController extends Controller
                 $imagenes[] = null;
             }
         }
-        //dd($citado);
         $html = view('PDF/Solicitudes/razonNotificacion', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado'))->render();
 
         $pdf = \PDF::loadHTML($html)
@@ -4379,7 +4359,6 @@ class SeerController extends Controller
         }
         else if($tipo == 6){
             $solicitudes = Pagos::where('id',$id)->get();
-            //dd($solicitudes);
             return view('/cumplimientos/pagar_busqueda',compact('solicitudes'));
         }
     }
@@ -4646,7 +4625,6 @@ class SeerController extends Controller
 //Rechazo de solicitud
     public function guardar_rechazo(Request $request){
         $data = $request->all();
-       // dd($data);
         SeerPerGeneral::find($data["id"])->update(['estatus' => 'Prevencion','observaciones' => $data["observaciones"]]);
         
         return redirect()->route('solicitudes_pendientes');
@@ -4851,7 +4829,6 @@ class SeerController extends Controller
     //PDF Notificación Por instructivo
     public function PDFnotificadoInstructivo($id, $id_solicitud){
         $solicitud = SeerPerGeneral::find($id_solicitud);
-       // dd($solicitud);
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
         ->first();
@@ -4867,7 +4844,6 @@ class SeerController extends Controller
             $municipio = \App\Models\Municipios::find($citado->municipio_citado);
             $municipioCitado = $municipio ? $municipio->nombre : null;
         }
-        //dd($citado);
         $id_notificador = $citado->id_notificador;
 
         $notificador = User::where('id', $id_notificador)
@@ -4886,7 +4862,6 @@ class SeerController extends Controller
             }
         }
             
-        //dd($citado);
         $html = view('PDF/Solicitudes/razonPorInstructivo', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado'))->render();
 
         $pdf = \PDF::loadHTML($html)
@@ -4901,7 +4876,6 @@ class SeerController extends Controller
     //PDF Notificación No exitosa SE CONSTITUYE, CERRADO
     public function PDFnotificadoNoexitosa($id, $id_solicitud){
         $solicitud = SeerPerGeneral::find($id_solicitud);
-       // dd($solicitud);
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
         ->first();
@@ -4917,7 +4891,6 @@ class SeerController extends Controller
             $municipio = \App\Models\Municipios::find($citado->municipio_citado);
             $municipioCitado = $municipio ? $municipio->nombre : null;
         }
-        //dd($citado);
         $id_notificador = $citado->id_notificador;
 
         $notificador = User::where('id', $id_notificador)
@@ -4936,7 +4909,6 @@ class SeerController extends Controller
             }
         }
             
-        //dd($citado);
         $html = view('PDF/Solicitudes/razonNoExitosa', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado'))->render();
 
         $pdf = \PDF::loadHTML($html)
@@ -4951,7 +4923,6 @@ class SeerController extends Controller
     //PDF Notificación No exitosa NO SE LOCALIZA INTERIOR
     public function PDFnotificadoNoexitosaInt($id, $id_solicitud){
         $solicitud = SeerPerGeneral::find($id_solicitud);
-        // dd($solicitud);
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
         ->first();
@@ -4967,7 +4938,6 @@ class SeerController extends Controller
             $municipio = \App\Models\Municipios::find($citado->municipio_citado);
             $municipioCitado = $municipio ? $municipio->nombre : null;
         }
-         //dd($citado);
          $id_notificador = $citado->id_notificador;
  
          $notificador = User::where('id', $id_notificador)
@@ -4986,7 +4956,6 @@ class SeerController extends Controller
              }
          }
              
-         //dd($citado);
          $html = view('PDF/Solicitudes/razonNumInt', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado'))->render();
  
          $pdf = \PDF::loadHTML($html)
@@ -5009,7 +4978,6 @@ class SeerController extends Controller
 
         if ($request->hasFile('documentoExpediente')) {
             $file = $request->file('documentoExpediente');
-            //dd($file->getClientOriginalName());
             if ($file->isValid()) {
                 $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
                 $documentoExpediente = $filename . "_Expediente." . $file->getClientOriginalExtension();
@@ -5198,9 +5166,7 @@ class SeerController extends Controller
         $solicitante = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
         ->first();
-        //dd($solicitante);
         $citado = SeerCitados::where('id_solicitud', $id)->first();
-        //dd($citado);
         $abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
         ->where('id_solicitud',$id)
         ->select('abogados.nombres_patronal','abogados.primer_apellido_patronal','abogados.segundo_apellido_patronal','abogados.descipcion_poder')
@@ -5393,7 +5359,6 @@ class SeerController extends Controller
                 'regionZamora'      => $regionzamora,
             );
             $nombre_ine = $data["nombresAbogadoAlta"]."".$data["primer_apellido"]."".$data["segundo_apellido"]."-".$data["empresaAbogadoAlta"]."_IDENTIFICACION.pdf";
-            //dd($request->hasFile('documentoIne'), $request->file('documentoIne'));
             $path = Storage::putFileAs(
                 'documentos_abogados', $request->file('documentoIne'), $nombre_ine
             );
@@ -5806,7 +5771,6 @@ class SeerController extends Controller
         $user = User::find($id);
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
-        dd($userRole);
         $fecha_inicial = $data["fecha_inicial"];
         $fecha_final = $data["fecha_final"];
 
