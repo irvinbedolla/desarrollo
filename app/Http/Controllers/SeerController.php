@@ -5629,6 +5629,8 @@ class SeerController extends Controller
         $fecha_fin = now()->addDays(700)->format('Y-m-d');
         $sede = $request->input('sede'); // Obtener sede de la solicitud
 
+        $inhabiles = DiasInhabiles::where('centro', $sede)->get(); //Obtenemos días inhabiles
+
         // 1. Obtener turnos ocupados filtrando por sede
         $ocupados = Pagos::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
             ->where('delegacion', $sede) // FILTRO POR SEDE
@@ -5657,9 +5659,20 @@ class SeerController extends Controller
                 $slot = clone $inicioJornada;
                 while ($slot < $finJornada) {
                     $slotStart = $slot->format('Y-m-d\TH:i:s');
+                    $ahora = new \DateTime();
+                    $currentCita = new \DateTime($slotStart);
                     
                     // Verificar si está ocupado
                     $ocupado = collect($ocupados)->contains('start', $slotStart);
+
+                    $esInhabil = false;
+                    foreach($inhabiles as $dia){
+                        $fechaInhabilInicio = $dia->fecha_inicio . 'T' . $dia->horario_inicio;
+                        $fechaInhabilFinal = $dia->fecha_final . 'T' . $dia->horario_final;
+                        if($slotStart >= $fechaInhabilInicio && $slotStart <= $fechaInhabilFinal){
+                            $esInhabil = true;
+                        }
+                    }
         
                     if ($ocupado) {
                         $todosLosEventos[] = [
@@ -5667,6 +5680,20 @@ class SeerController extends Controller
                             'start' => $slotStart,
                             'color' => '#DA0909',
                             'extendedProps' => ['estado' => 'ocupado']
+                        ];
+                    } else if ($esInhabil){
+                        $todosLosEventos[] = [
+                            'title' => 'Inhábil',
+                            'start' => $slotStart,
+                            'color' => '#3B78DB',
+                            'extendedProps' => ['estado' => 'inhabil', 'espacios_disponibles' => 0]
+                        ];
+                    } else if ($ahora > $currentCita){
+                        $todosLosEventos[] = [
+                            'title' => 'Expirado',
+                            'start' => $slotStart,
+                            'color' => '#F59727',
+                            'extendedProps' => ['estado' => 'expirado', 'espacios_disponibles' => 0]
                         ];
                     } else {
                         $todosLosEventos[] = [

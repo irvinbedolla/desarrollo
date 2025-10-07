@@ -264,6 +264,55 @@
     <div class="loader"></div>
 </div>
 
+<style>
+    .fc-event {
+            padding: 3px 6px !important;
+            border-radius: 4px !important;
+            font-size: 12px !important;
+            cursor: pointer;
+        }
+
+        #calendar {
+            width: 100%;
+            min-height: 500px;
+        }
+
+        .fc-event-disponible {
+            color: #ffff !important;
+            background-color: #00CE1C !important;
+            border-color: #00CE1C !important;
+            cursor: pointer;
+        }
+
+        .fc-event-expirado {
+            color: #ffff !important;
+            /*background-color: #F0DF24 !important;
+            border-color: #F0DF24 !important;*/
+            background-color: #F59727 !important;
+            border-color: #F59727 !important;
+            cursor: not-allowed;
+        }
+
+        .fc-event-inhabil {
+            color: #ffff !important;
+            background-color: #3B78DB !important;
+            border-color: #3B78DB !important;
+            cursor: not-allowed;
+        }
+
+        .fc-event-ocupado {
+            color: #ffff !important;
+            background-color: #DA0909 !important;
+            border-color: #DA0909 !important;
+            cursor: not-allowed;
+        }
+
+        .fc-event-selected {
+            border: 2px solid #FFD700 !important;
+            box-shadow: 0 0 8px #FFD700;
+        }
+</style>
+
 @section('scripts')
     <script src="../../public/assets/js/turnos/turnos.js"></script>
     <!-- FullCalendar CSS -->
@@ -491,7 +540,7 @@
                     var sede = document.getElementById('sede').value;
                     // Hacer petición AJAX con parámetro sede
                     $.ajax({
-                        url: 'api/obtenerEventos',
+                        url: '/sistema-integral/api/obtenerCumplimientos',
                         method: 'GET',
                         data: {
                             sede: sede,
