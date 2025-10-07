@@ -40,6 +40,8 @@
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                             <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('concluir_audiencia_conciliador')}}">
                                 @csrf
+                                <input type="hidden" name="dias_pagos[]" id="fechaSeleccionada" required>
+                                <input type="hidden" name="hora_pagos[]" id="horaSeleccionada" required>
                                 <input type="hidden" name="id" value="{{ $id }}">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12"  style="border:1px solid black;">
@@ -603,11 +605,9 @@
                     // Guardar en campos ocultos
                     document.getElementById('fechaSeleccionada').value = fecha;
                     document.getElementById('horaSeleccionada').value = hora;
-                    // Mostrar resumen al usuario
-                    document.getElementById('fechaResumen').textContent = fecha;
-                    document.getElementById('horaResumen').textContent = hora;
-                    document.getElementById('resumenCita').style.display = 'block';
+
                     // Cerrar modal
+                    //console.log('Fecha:', fecha, 'Hora:', hora);
                     $('#calendarModal').modal('hide');
                 } else {
                     alert('Por favor selecciona un horario disponible');
