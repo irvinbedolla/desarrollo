@@ -40,6 +40,8 @@
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                             <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('concluir_audiencia_conciliador')}}">
                                 @csrf
+                                <input type="hidden" name="dias_pagos[]" id="fechaSeleccionada" required>
+                                <input type="hidden" name="hora_pagos[]" id="horaSeleccionada" required>
                                 <input type="hidden" name="id" value="{{ $id }}">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12"  style="border:1px solid black;">
@@ -264,10 +266,61 @@
     <div class="loader"></div>
 </div>
 
+<style>
+    .fc-event {
+            padding: 3px 6px !important;
+            border-radius: 4px !important;
+            font-size: 12px !important;
+            cursor: pointer;
+        }
+
+        #calendar {
+            width: 100%;
+            min-height: 500px;
+        }
+
+        .fc-event-disponible {
+            color: #ffff !important;
+            background-color: #00CE1C !important;
+            border-color: #00CE1C !important;
+            cursor: pointer;
+        }
+
+        .fc-event-expirado {
+            color: #ffff !important;
+            /*background-color: #F0DF24 !important;
+            border-color: #F0DF24 !important;*/
+            background-color: #F59727 !important;
+            border-color: #F59727 !important;
+            cursor: not-allowed;
+        }
+
+        .fc-event-inhabil {
+            color: #ffff !important;
+            background-color: #3B78DB !important;
+            border-color: #3B78DB !important;
+            cursor: not-allowed;
+        }
+
+        .fc-event-ocupado {
+            color: #ffff !important;
+            background-color: #DA0909 !important;
+            border-color: #DA0909 !important;
+            cursor: not-allowed;
+        }
+
+        .fc-event-selected {
+            border: 2px solid #FFD700 !important;
+            box-shadow: 0 0 8px #FFD700;
+        }
+</style>
+
 @section('scripts')
     <script src="../../public/assets/js/turnos/turnos.js"></script>
-
-
+    <!-- FullCalendar CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.css">
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js"></script>
     <script>
        document.getElementById("no_conciliacion").style.display = "none";
        document.getElementById("archivada").style.display = "none";
@@ -324,52 +377,33 @@
 
         // Agregar pago
         $("#addPago").click(function () {
-                var html = '';
-                html += '<div id="inputFormRow2" class="col-xs-12 col-sm-6 col-md-12">';
-                
-                //TIPO DE PAGO
-                html +='<div class="col-xs-12 col-sm-12 col-md-12">';
-                html +='<div class="form-group">';
-
-                //DÍA A PAGAR
-                html +='<div class="col-xs-12 col-sm-12 col-md-12">';
-                html +='<div class="form-group">';
-                html +='<label for="confirm-password"><br>Días de pago</label>';
-                html +='<input type="date" class="form-control" name="dias_pagos[]" >';
-                html +='</div> </div>';                                
-                
-                //HORARIO A PAGAR
-                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
-                html += '<div class="form-group">';
-                html += '<label for="password">Hora de pago</label>';
-                html +='<input type="text" class="form-control" name="hora_pagos[]"  oninput="this.value = this.value.toUpperCase()" >';
-                html += '<div class="invalid-feedback">';
-                html += 'La Dirección es obligatoria.';
-                html += '</div> </div> </div>';
-
-                //MONTO A PAGAR
-                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
-                html += '<div class="form-group">';
-                html += '<label for="password">Monto a pagar</label>';
-                html +='<input type="text" class="form-control" name="monto_pagos[]"  oninput="this.value = this.value.toUpperCase()" >';
-                html += '<div class="invalid-feedback">';
-                html += 'La Dirección es obligatoria.';
-                html += '</div> </div> </div>';
-
-                //DESCRIPCIÓN DE PAGO
-                html += '<div class="col-xs-12 col-sm-12 col-md-12">';
-                html += '<div class="form-group">';
-                html += '<label for="password">Descripción</label>';
-                html +='<input type="text" class="form-control" name="descripcion_pagos[]"  oninput="this.value = this.value.toUpperCase()" >';
-                html += '<div class="invalid-feedback">';
-                html += 'La Dirección es obligatoria.';
-                html += '</div> </div> </div>';
-
-                html += '<div class="input-group-append">';
-                html += '<button class="removeRow2 btn btn-danger" type="button">Borrar</button>';
-                html += '</div>';
-                html += '</div>';
-
+            var html = '';
+            html += '<div id="inputFormRow2" class="col-xs-12 col-sm-6 col-md-12">';
+            html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+            html += '<div class="form-group">';
+            html += '<label for="confirm-password"><br>Fecha y hora de pago</label>';
+            html += '<div style="display: flex; align-items: center;">';
+            html += '<button type="button" class="btn btn-lg btn-custom-morado" data-bs-toggle="modal" data-bs-target="#calendarModal"> Seleccionar Fecha y Horario</button>';
+            html += '</div>';
+            html += '</div></div>';
+            // Monto a pagar
+            html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+            html += '<div class="form-group">';
+            html += '<label for="password">Monto a pagar</label>';
+            html += '<input type="text" class="form-control" name="monto_pagos[]"  oninput="this.value = this.value.toUpperCase()" >';
+            html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>';
+            html += '</div></div>';
+            // Descripción de pago
+            html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+            html += '<div class="form-group">';
+            html += '<label for="password">Descripción</label>';
+            html += '<input type="text" class="form-control" name="descripcion_pagos[]"  oninput="this.value = this.value.toUpperCase()" >';
+            html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>';
+            html += '</div></div>';
+            html += '<div class="input-group-append">';
+            html += '<button class="removeRow2 btn btn-danger" type="button">Borrar</button>';
+            html += '</div>';
+            html += '</div>';
             $('#newRowaPago').append(html);
         });
 
@@ -476,6 +510,130 @@
                 }
             });
         });
-        </script>
-        
+    </script>
+
+    <script>
+        let calendar;
+        $('#calendarModal').on('shown.bs.modal', function () {
+            if (calendar) {
+                calendar.destroy();
+            }
+            var calendarEl = document.getElementById('calendar');
+            
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridWeek',
+                locale: 'es',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                },
+                validRange: {
+                    start: (() => {
+                        const now = new Date();
+                        return new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().split('T')[0];
+                    })(),
+                    end: (() => {
+                        const now = new Date();
+                        return new Date(now.getFullYear(), now.getMonth() + 3, 0).toISOString().split('T')[0];
+                    })()
+                },
+                events: function(fetchInfo, successCallback, failureCallback) {
+                    // Obtener sede seleccionada
+                    var sede = document.getElementById('sede').value;
+                    // Hacer petición AJAX con parámetro sede
+                    $.ajax({
+                        url: '/sistema-integral/api/obtenerCumplimientos',
+                        method: 'GET',
+                        data: {
+                            sede: sede,
+                            start: fetchInfo.startStr,
+                            end: fetchInfo.endStr
+                        },
+                        success: function(data) {
+                            successCallback(data);
+                        },
+                        error: function() {
+                            failureCallback('Error al cargar eventos');
+                        }
+                    });
+                },
+                eventTimeFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    //second: '2-digit',
+                    //hour12: false
+                },
+                eventClick: function(info) {
+                    // Solo permitir selección de horarios disponibles
+                    let ahora = new Date();
+                    let slotDate = new Date(info.event.start);
+                    if (info.event.extendedProps.estado === 'disponible' && slotDate > ahora) {
+                        // Deseleccionar evento anterior
+                        document.querySelectorAll('.fc-event-selected').forEach(el => {
+                            el.classList.remove('fc-event-selected');
+                        });
+                        // Seleccionar este evento
+                        info.el.classList.add('fc-event-selected');
+                        window.selectedEvent = info.event;
+                    } else {
+                        alert('Este horario no está disponible. Por favor seleccione otro.');
+                    }
+                },
+                eventDidMount: function(info) {
+                    // Añade clases CSS según el tipo de evento
+                    if (info.event.extendedProps.estado === 'disponible') {
+                        info.el.classList.add('fc-event-disponible');
+                    } else if (info.event.extendedProps.estado === 'expirado') {
+                        info.el.classList.add('fc-event-expirado');
+                    } else if (info.event.extendedProps.estado === 'inhabil') {
+                        info.el.classList.add('fc-event-inhabil');
+                    } else {
+                        info.el.classList.add('fc-event-ocupado');
+                    }
+                },
+            });
+            calendar.render();
+        });
+
+        // Confirmar selección
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('confirmarSeleccion').addEventListener('click', function() {
+                if (window.selectedEvent) {
+                    const fechaHora = new Date(window.selectedEvent.start);
+                    const fecha = fechaHora.toISOString().split('T')[0];
+                    const hora = fechaHora.toTimeString().substring(0, 8);
+                    // Guardar en campos ocultos
+                    document.getElementById('fechaSeleccionada').value = fecha;
+                    document.getElementById('horaSeleccionada').value = hora;
+
+                    // Cerrar modal
+                    //console.log('Fecha:', fecha, 'Hora:', hora);
+                    $('#calendarModal').modal('hide');
+                } else {
+                    alert('Por favor selecciona un horario disponible');
+                }
+            });
+        });
+    </script>
 @endsection
+
+<!-- Modal para seleccionar fecha y horario -->
+<input type="hidden" id="sede" value="{{ $sede }}">
+
+<div class="modal fade" id="calendarModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Seleccionar Fecha y Horario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="calendar"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="confirmarSeleccion">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
