@@ -313,6 +313,32 @@
             border: 2px solid #FFD700 !important;
             box-shadow: 0 0 8px #FFD700;
         }
+        
+        #resumenCita .alert-info {
+            background-color: #e0e7ff;
+            color: #1e293b;              
+            border: 1px solid #6366f1;   
+            border-radius: 8px;
+            font-size: 14px;
+            padding: 8px 16px;
+            margin-bottom: 0;
+            box-shadow: 0 2px 8px rgba(99,102,241,0.08);
+        }
+
+        .btn-custom-morado {
+            height: 50px;
+            width: 280px;
+            font-size: 12px;
+            padding: 5px 10px;
+            background-color: #6A0F49 !important;
+            color: #fff !important;
+            border: none;
+        }
+        
+        .btn-custom-morado:hover, .btn-custom-morado:focus {
+            background-color: #530c3a !important;
+            color: #fff !important;
+        }
 </style>
 
 @section('scripts')
@@ -382,8 +408,17 @@
             html += '<div class="col-xs-12 col-sm-12 col-md-12">';
             html += '<div class="form-group">';
             html += '<label for="confirm-password"><br>Fecha y hora de pago</label>';
-            html += '<div style="display: flex; align-items: center;">';
+            html += '<div class="row">';
+            html += '<div class="col-5">';
             html += '<button type="button" class="btn btn-lg btn-custom-morado" data-bs-toggle="modal" data-bs-target="#calendarModal"> Seleccionar Fecha y Horario</button>';
+            html += '</div>';
+            html += '<div class="col-7">';
+            html += '<div id="resumenCita" style="display:none;">';
+            html += '<div class="alert alert-info">';
+            html += '<strong>Cita seleccionada:</strong> <span id="fechaResumen"></span> a las <span id="horaResumen"></span>';
+            html += '</div>';
+            html += '</div>';
+            html += '</div>';
             html += '</div>';
             html += '</div></div>';
             // Monto a pagar
@@ -542,7 +577,7 @@
                     var sede = document.getElementById('sede').value;
                     // Hacer petición AJAX con parámetro sede
                     $.ajax({
-                        url: '/sistema-integral/api/obtenerCumplimientos',
+                        url: '../../api/obtenerCumplimientos',
                         method: 'GET',
                         data: {
                             sede: sede,
@@ -605,9 +640,13 @@
                     // Guardar en campos ocultos
                     document.getElementById('fechaSeleccionada').value = fecha;
                     document.getElementById('horaSeleccionada').value = hora;
+                    
+                    //Resumen de la cita
+                    document.getElementById('fechaResumen').textContent = fecha;
+                    document.getElementById('horaResumen').textContent = hora;
+                    document.getElementById('resumenCita').style.display = 'block';
 
                     // Cerrar modal
-                    //console.log('Fecha:', fecha, 'Hora:', hora);
                     $('#calendarModal').modal('hide');
                 } else {
                     alert('Por favor selecciona un horario disponible');
