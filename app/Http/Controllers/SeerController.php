@@ -60,6 +60,7 @@ class SeerController extends Controller
         $fecha_actual = date('y-m-d');
         $estadisticas = "";
         $personas = "";
+        $sede = $user->delegacion;
         
         //Si es delegado le va salir todo lo de su delegacion de todos los roles
        if($userRole[0] == "Notificador"){
@@ -3109,7 +3110,10 @@ class SeerController extends Controller
     }
 
     public function audienciaParte3($id){
-        return view('/audiencias/parte3',compact('id'));
+
+        $sede = Auth::user()->delegacion;
+
+        return view('/audiencias/parte3',compact('id', 'sede'));
     }
 
     public function historial_notificador(Request $request){
