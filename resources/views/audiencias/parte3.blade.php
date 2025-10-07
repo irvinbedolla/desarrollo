@@ -384,7 +384,7 @@
                 html += '<div class="col-xs-12 col-sm-12 col-md-6">';
                 html += '<div class="form-group">';
                 html += '<label for="password">Monto a pagar</label>';
-                html +='<input type="text" class="form-control" name="monto_pago[]"  o oninput="validarNumero(this)" placeholder="$">';
+                html +='<input type="text" class="form-control" name="monto_pago[]"  oninput="validarNumero(this)" placeholder="$">';
                 html += '<div class="invalid-feedback">El monto es obligatorio.</div>';
                 html += '</div> </div>';
 
@@ -443,7 +443,7 @@
             actualizaNumeroPago();
         });
 
-         function actualizaNumeroPago() {
+        function actualizaNumeroPago() {
             let pagos = $('.numero_pago');
             if (pagos.length === 1) {
                 pagos.eq(0).val("Pago único");

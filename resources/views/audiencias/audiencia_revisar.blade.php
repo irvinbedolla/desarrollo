@@ -1042,7 +1042,7 @@
                 html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                 html += '<div class="form-group">';
                 html += '<label for="password">Monto a pagar</label>';
-                html +='<input type="text" class="form-control" name="monto_pago[]"  oninput="this.value = this.value.toUpperCase()" >';
+                html +='<input type="text" class="form-control" name="monto_pago[]" oninput="validarNumero(this)" placeholder="$"  placeholder="$ Solo números y puntos">';
                 html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>';
                 html += '</div> </div>';
 
@@ -1088,7 +1088,7 @@
                 html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                 html += '<div class="form-group">';
                 html += '<label for="password">Monto a pagar</label>';
-                html +='<input type="text" class="form-control" name="monto_pagos[]"  oninput="this.value = this.value.toUpperCase()" >';
+                html +='<input type="text" class="form-control" name="monto_pagos[]"  oninput="validarNumero(this)" placeholder="$"  placeholder="$ Solo números y puntos" >';
                 html += '<div class="invalid-feedback">';
                 html += 'La Dirección es obligatoria.';
                 html += '</div> </div> </div>';
@@ -1097,7 +1097,7 @@
                 html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                 html += '<div class="form-group">';
                 html += '<label for="password">Descripción</label>';
-                html +='<input type="text" class="form-control" name="descripcion_pagos[]"  oninput="this.value = this.value.toUpperCase()" >';
+                html +='<input type="text" class="form-control numero_pago" name="descripcion_pagos[]"  readonly >';
                 html += '<div class="invalid-feedback">';
                 html += 'La Dirección es obligatoria.';
                 html += '</div> </div> </div>';
@@ -1108,7 +1108,19 @@
                 html += '</div>';
 
             $('#newRowaPago').append(html);
+            actualizaNumeroPago();
         });
+
+        function actualizaNumeroPago() {
+            let pagos = $('.numero_pago');
+            if (pagos.length === 1) {
+                pagos.eq(0).val("Pago único");
+            } else {
+                pagos.each(function(index) {
+                   $(this).val("Parcialidad " + (index + 1));
+                });
+            }
+        }
 
         // Borrar pago
         $(document).on('click', '.removeRow2', function () {
@@ -1137,7 +1149,7 @@
                     html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                     html += '<div class="form-group">';
                     html += '<label for="password">Monto a pagar</label>';
-                    html +='<input type="text" class="form-control" name="monto_deduccion[]"  oninput="validarNumero(this)" placeholder="$ Solo números y puntos" >';
+                    html +='<input type="text" class="form-control" name="monto_deduccion[]"  oninput="validarNumero(this)" placeholder="$"  placeholder="$ Solo números y puntos" >';
                     html += '<div class="invalid-feedback">';
                     html += 'El monto es obligatorio.';
                     html += '</div> </div> </div>';
@@ -1158,6 +1170,18 @@
 
     });
 
+        function validarNumero(input) {
+            // La expresión regular permite cualquier número (0-9) y un solo punto (.)
+            // El 'g' al final asegura que se reemplace globalmente
+            let valor = input.value;
+            input.value = valor.replace(/[^0-9.]/g, '');
+
+            // Esta parte se encarga de que solo haya un punto en el valor
+            let partes = input.value.split('.');
+            if (partes.length > 2) {
+                input.value = partes[0] + '.' + partes.slice(1).join('');
+            }
+        }
 
     </script>
     <script src="../../public/assets/js/validaciones.js"></script> 
