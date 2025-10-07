@@ -384,7 +384,7 @@
                 html += '<div class="col-xs-12 col-sm-12 col-md-6">';
                 html += '<div class="form-group">';
                 html += '<label for="password">Monto a pagar</label>';
-                html +='<input type="text" class="form-control" name="monto_pago[]"  oninput="this.value = this.value.toUpperCase()" placeholder="$">';
+                html +='<input type="text" class="form-control" name="monto_pago[]"  o oninput="validarNumero(this)" placeholder="$">';
                 html += '<div class="invalid-feedback">El monto es obligatorio.</div>';
                 html += '</div> </div>';
 
@@ -425,14 +425,14 @@
             html += '<div class="col-xs-12 col-sm-12 col-md-12">';
             html += '<div class="form-group">';
             html += '<label for="password">Monto a pagar</label>';
-            html += '<input type="text" class="form-control" name="monto_pagos[]"  oninput="this.value = this.value.toUpperCase()" >';
+            html += '<input type="text" class="form-control" name="monto_pagos[]"   oninput="validarNumero(this)" >';
             html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>';
             html += '</div></div>';
             // Descripción de pago
             html += '<div class="col-xs-12 col-sm-12 col-md-12">';
             html += '<div class="form-group">';
             html += '<label for="password">Descripción</label>';
-            html += '<input type="text" class="form-control" name="descripcion_pagos[]"  oninput="this.value = this.value.toUpperCase()" >';
+            html += '<input type="text" class="form-control numero_pago" name="descripcion_pagos[]" readonly >';
             html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>';
             html += '</div></div>';
             html += '<div class="input-group-append">';
@@ -440,7 +440,19 @@
             html += '</div>';
             html += '</div>';
             $('#newRowaPago').append(html);
+            actualizaNumeroPago();
         });
+
+         function actualizaNumeroPago() {
+            let pagos = $('.numero_pago');
+            if (pagos.length === 1) {
+                pagos.eq(0).val("Pago único");
+            } else {
+                pagos.each(function(index) {
+                   $(this).val("Parcialidad " + (index + 1));
+                });
+            }
+        }
 
         // Borrar pago
         $(document).on('click', '.removeRow2', function () {
@@ -489,6 +501,19 @@
         });
     });
 
+        function validarNumero(input) {
+            // La expresión regular permite cualquier número (0-9) y un solo punto (.)
+            // El 'g' al final asegura que se reemplace globalmente
+            let valor = input.value;
+            input.value = valor.replace(/[^0-9.]/g, '');
+
+            // Esta parte se encarga de que solo haya un punto en el valor
+            let partes = input.value.split('.');
+            if (partes.length > 2) {
+                input.value = partes[0] + '.' + partes.slice(1).join('');
+            }
+        }
+        
         function mostrar_resolicion() {
             document.getElementById("justificacion").style.display = "block";
         }
