@@ -5,14 +5,14 @@
 @section('content')
     <section class="section">
         <div class="section-header">
-            <h3 class="page__heading">Cumplimiento en Ratificaciones</h3>
+            <h3 class="page__heading">Cumplimiento en Audiencias</h3>
         </div>
         <div class="section-body">
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <a class="btn btn-warning" href="{{ route('todas_ratificaciones') }}"  onclick=nuevo_poder();> Regresar</a>
+                            <a class="btn btn-warning" href="{{ route('todas_audiencias') }}"  onclick=nuevo_poder();> Regresar</a>
                                 <div class="table-responsive">
                                     <table id="example" class="table table-striped mt-2">
                                         <thead style="background-color: #4A001F;">
@@ -24,7 +24,7 @@
                                             <th style="color: #fff;">Documentos</th>
                                         </thead>
                                         <tbody>
-                                            @foreach($solicitudes as $pago)
+                                            @foreach($cumplimientos as $pago)
                                                 <tr>
                                                     <td>{{date_format($pago->fecha,"d-m-Y")}}</td> 
                                                     <td>{{date_format($pago->hora,"h:m:s")}}</td>
@@ -41,9 +41,9 @@
                                                     </td>
                                                     <td>
                                                         @if($pago->estatus == "Pagado")
-                                                            <a class="btn btn-success" href="{{ route('PDFpagos', $pago->id) }}" target="_blank">PDF</a>
+                                                            <a class="btn btn-success" href="{{ route('PDFcumplimientoParcial', $pago->id) }}" target="_blank">PDF</a>
                                                         @elseif($pago->estatus == "No pagado")
-                                                            <a class="btn btn-info" href="{{ route('PDFincumplimientoRatificacion', $pago->id) }}" target="_blank">PDF</a>
+                                                            <a class="btn btn-info" href="{{ route('PDFincumplimientoAudiencia', $pago->id) }}" target="_blank">PDF</a>
                                                         @elseif($pago->estatus == "Incomparecencia trabajador")
                                                             <a class="btn btn-info" href="{{ route('PDFIncomparecenciaCumplimiento', $pago->id) }}" target="_blank">PDF</a>
                                                         @endif

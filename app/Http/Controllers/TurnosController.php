@@ -2218,4 +2218,38 @@ class TurnosController extends Controller
     
         return $descripciones[$tipo];
     }
+
+    public function PDFincumplimientoRatificacion($id){
+        $pagos = Pagos::find($id);
+
+        if($pagos["id_solicitud"] == 0){
+            $solicitud = Pagos::find($id);
+            $salario_diario = 0;
+            $conciliador  = User::join("pago_solicitud","pago_solicitud.id_conciliador","=","users.id");
+            $conciliador = $conciliador->where("pago_solicitud.id", "=", $id)
+            ->select('users.name')
+            ->first();
+            $html = view('PDF/cumplimientos/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
+        }
+        else{
+            $solicitud  = Turnos::where('id',$pagos["id_solicitud"])->first();
+            $pagos      = Pagos::find($id);
+            //$general    = SeerPerGeneral::find($pagos["id_solicitud"]);
+            $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
+
+            $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
+            $conciliador = $conciliador->where("seer_general.id", "=", $general["id"])
+            ->select('users.name')
+            ->first();
+            $html = view('PDF/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
+        }
+       
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'constancia_de_incumplimiento_'  .'.pdf';
+        return $pdf->stream($nombreArchivo);                  
+    }
 }

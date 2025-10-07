@@ -42,7 +42,7 @@
                                                 @endif
                                                 <td>{{$solicitud->estatus}}</td>
                                                 <td>
-                                                    <a class="btn btn-info" href="{{ route('solicitud_revisar', $solicitud->id)}}" target="_blank">Revisar</a>
+                                                    <a class="btn btn-info" href="{{ route('solicitud_revisar', $solicitud->id)}}">Revisar</a>
                                                 </td>
                                                 <td>
                                                     <button type="button" class="btn btn-warning open-expediente-modal" data-bs-toggle="modal" data-bs-target="#expediente" data-id="{{ $solicitud->id }}">Subir Documento</button><br>

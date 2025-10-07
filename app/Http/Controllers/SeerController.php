@@ -2409,7 +2409,7 @@ class SeerController extends Controller
         SeerPerGeneral::find($id)->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
         $estados        = Estados::all();
         $municipios     = Municipios::where('estado',16)->get();
-        return view('/solicitudes/audiencias',compact('id','solicitudes','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios'));
+        return view('/audiencias/audiencias',compact('id','solicitudes','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios'));
     }
 
     public function guardar_audiencia_archivo(Request $request){
@@ -4488,12 +4488,13 @@ class SeerController extends Controller
             $html = view('PDF/cumplimientos/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
         }
         else{
-            $solicitud = SeerSolicitante::where('id_solicitud',$id)->first();
-            $pagos = Pagos::find($id);
+            $solicitud = SeerSolicitante::where('id_solicitud',$pagos["id_solicitud"])->first();
+            $pagos      = Pagos::find($id);
+            $general    = SeerPerGeneral::find($pagos["id_solicitud"]);
             $salario_diario = $this->calcularSalarioDiario($solicitud->pago, $solicitud->periodo_pago);
 
             $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
-            $conciliador = $conciliador->where("seer_general.id", "=", $id)
+            $conciliador = $conciliador->where("seer_general.id", "=", $general["id"])
             ->select('users.name')
             ->first();
             $html = view('PDF/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
@@ -4659,7 +4660,8 @@ class SeerController extends Controller
 
         return view('solicitudes.correccion_solicitantes', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores'));
     }
-//Guardar cambios realizados por el solicitante en su solicitud una vez que fue rechazada
+
+    //Guardar cambios realizados por el solicitante en su solicitud una vez que fue rechazada
     public function correccion_solicitante(Request $request){
         $data = $request->all();
 
@@ -4826,7 +4828,7 @@ class SeerController extends Controller
         //Actualizar el estatus
         SeerPerGeneral::find($data["id"])->update(['estatus' => "Pendiente" ]);
 
-        return redirect()->route('mis_solicitudes'); 
+        return redirect()->route('todas_solicitudes'); 
     }
 
     //PDF NOTIFICADORES NOTIFICACION
@@ -6122,5 +6124,43 @@ class SeerController extends Controller
 
         return back()->with('success', 'Poder registrado correctamente.'); 
         //return view('cumplimientos/index')->with('success', 'Poder registrado correctamente.'); 
+    }
+
+    //PDF Constancia de cumplimiento
+    public function PDFcumplimientoParcial($id){
+        $pagos = Pagos::find($id);
+
+        if($pagos["id_solicitud"] == 0){
+            $solicitud = Pagos::find($id);
+            $conciliador  = User::join("pago_solicitud","pago_solicitud.id_conciliador","=","users.id");
+            $conciliador = $conciliador->where("pago_solicitud.id", "=", $pagos["id"])
+            ->select('users.name')
+            ->first();
+            $html = view('PDF/Cumplimientos/pagosParciales', compact('id', 'solicitud','conciliador','pagos'))->render();
+        }else{
+            $solicitud = SeerPerGeneral::find($pagos["id_solicitud"]);
+            $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id")
+            ->where("seer_general.id", "=", $solicitud["id"])
+            ->select('users.name')
+            ->first();
+            $html = view('PDF/Solicitudes/pagosParciales', compact('id', 'solicitud','conciliador','pagos'))->render();
+        }
+
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'constancia_de_cumplimiento_' . $solicitud->trabajador .'.pdf';
+        return $pdf->stream($nombreArchivo);                  
+    }
+
+    public function ver_pagos_audiencia($id){
+        $cumplimientos = Pagos::join('seer_general','seer_general.id',"=",'pago_solicitud.id_solicitud')
+        ->where('pago_solicitud.id_solicitud',$id)
+        ->select('pago_solicitud.id','pago_solicitud.id_solicitud','seer_general.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
+        ->get();
+
+        return view('/cumplimientos/pagar_audiencia',compact('cumplimientos'));
     }
 }

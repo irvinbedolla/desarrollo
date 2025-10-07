@@ -446,11 +446,19 @@ class RecepcionController extends Controller
         })
         ->where('delegacion', $user["delegacion"])
         ->get();
-        
-        foreach($usuariosauxiliares as $token ){
-            //Validar que solo sea morelia
-            array_push($listado_auxiliares, $token["id"]);
+
+        if($user["delegacion"] == "Morelia"){
+            array_push($listado_auxiliares, 3);
+            array_push($listado_auxiliares, 4);
+            array_push($listado_auxiliares, 5);
+            array_push($listado_auxiliares, 66);
         }
+        else{
+            foreach($usuariosauxiliares as $token ){
+                array_push($listado_auxiliares, $token["id"]);
+            }
+        }
+
         //validar si hay disponibles
         $random = array_rand($listado_auxiliares);
         $nombre_usuario = User::find($listado_auxiliares[$random]);
