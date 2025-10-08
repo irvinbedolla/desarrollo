@@ -5622,18 +5622,16 @@ class SeerController extends Controller
         $inhabiles = DiasInhabiles::where('centro', $sede)->get(); //Obtenemos días inhabiles
 
         // 1. Obtener turnos ocupados filtrando por sede
+
         $pagos = Pagos::where('tipo_pago','Audiencia')->get();
         $ocupados = Pagos::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
-            ->where('delegacion', $sede) // FILTRO POR SEDE
-            ->get()
-            ->map(function ($cumplimiento) {
-                return [
-                    'title' => 'Ocupado',
-                    'start' => date_format($cumplimiento->fecha, 'Y-m-d') . 'T' . date_format($cumplimiento->hora,'H:i:s'),
-                    'color' => '#DA0909',
-                    'extendedProps' => ['estado' => 'ocupado']
-                ];
-            });
+            ->where('delegacion', $sede)
+            ->get();
+        $ocupadosMap = [];
+        foreach ($ocupados as $cumplimiento) {
+            $slotKey = date_format($cumplimiento->fecha, 'Y-m-d') . 'T' . date_format($cumplimiento->hora,'H:i:s');
+            $ocupadosMap[$slotKey] = true;
+        }
 
         // 2. Crear slots disponibles
         $todosLosEventos = [];
@@ -5645,16 +5643,17 @@ class SeerController extends Controller
                 // Definir inicio y fin de la jornada
                 $inicioJornada = (clone $fecha)->setTime(9, 0, 0);
                 $finJornada    = (clone $fecha)->setTime(15, 0, 0);
-        
-                // Recorremos cada 20 minutos
+
+                // Recorremos cada 30 minutos
                 $slot = clone $inicioJornada;
                 while ($slot < $finJornada) {
                     $slotStart = $slot->format('Y-m-d\TH:i:s');
                     $ahora = new \DateTime();
                     $currentCita = new \DateTime($slotStart);
-                    
+
+
                     // Verificar si está ocupado
-                    $ocupado = collect($ocupados)->contains('start', $slotStart);
+                    $ocupado = isset($ocupadosMap[$slotStart]);
 
                     $esInhabil = false;
                     foreach($inhabiles as $dia){
@@ -5664,42 +5663,60 @@ class SeerController extends Controller
                             $esInhabil = true;
                         }
                     }
-        
+
+                    // Determinar el estado
+                    $estado = '';
                     if ($ocupado) {
-                        $todosLosEventos[] = [
-                            'title' => 'Ocupado',
-                            'start' => $slotStart,
-                            'color' => '#DA0909',
-                            'extendedProps' => ['estado' => 'ocupado']
-                        ];
-                    } else if ($esInhabil){
-                        $todosLosEventos[] = [
-                            'title' => 'Inhábil',
-                            'start' => $slotStart,
-                            'color' => '#3B78DB',
-                            'extendedProps' => ['estado' => 'inhabil', 'espacios_disponibles' => 0]
-                        ];
-                    } else if ($ahora > $currentCita){
-                        $todosLosEventos[] = [
-                            'title' => 'Expirado',
-                            'start' => $slotStart,
-                            'color' => '#F59727',
-                            'extendedProps' => ['estado' => 'expirado', 'espacios_disponibles' => 0]
-                        ];
+                        $estado = 'ocupado';
+                    } elseif ($esInhabil) {
+                        $estado = 'inhabil';
+                    } elseif ($ahora > $currentCita) {
+                        $estado = 'expirado';
                     } else {
-                        $todosLosEventos[] = [
-                            'title' => 'Disponible',
-                            'start' => $slotStart,
-                            'color' => '#00CE1C',
-                            'extendedProps' => ['estado' => 'disponible']
-                        ];
+                        $estado = 'disponible';
                     }
-        
-                    // Avanzar 20 minutos
+
+                    switch ($estado) {
+                        case 'ocupado':
+                            $todosLosEventos[] = [
+                                'title' => 'Ocupado',
+                                'start' => $slotStart,
+                                'color' => '#DA0909',
+                                'extendedProps' => ['estado' => 'ocupado']
+                            ];
+                            break;
+                        case 'inhabil':
+                            $todosLosEventos[] = [
+                                'title' => 'Inhábil',
+                                'start' => $slotStart,
+                                'color' => '#3B78DB',
+                                'extendedProps' => ['estado' => 'inhabil']
+                            ];
+                            break;
+                        case 'expirado':
+                            $todosLosEventos[] = [
+                                'title' => 'Expirado',
+                                'start' => $slotStart,
+                                'color' => '#F59727',
+                                'extendedProps' => ['estado' => 'expirado']
+                            ];
+                            break;
+                        case 'disponible':
+                        default:
+                            $todosLosEventos[] = [
+                                'title' => 'Disponible',
+                                'start' => $slotStart,
+                                'color' => '#00CE1C',
+                                'extendedProps' => ['estado' => 'disponible']
+                            ];
+                            break;
+                    }
+
+                    // Avanzar 30 minutos
                     $slot->modify('+30 minutes');
                 }
             }
-        
+
             // Avanzar al siguiente día
             $fecha->modify('+1 day');
         }
