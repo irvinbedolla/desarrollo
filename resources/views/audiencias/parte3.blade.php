@@ -37,6 +37,14 @@
 
                             @endif
 
+                            <div class="card p-4 shadow-sm">
+                                <h5 class="text-muted">Tiempo Restante:</h5>
+                                <h1 id="temporizador" class="text-danger font-weight-bold">
+                                    --:-- 
+                                </h1>
+                                <p id="mensaje-estado" class="mt-2"></p>
+                            </div>
+
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                             <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('concluir_audiencia_conciliador')}}">
                                 @csrf
@@ -175,14 +183,7 @@
 
                                         <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div id="div_pagos_diferidos1"><br>
-                                                <button id="addPago" type="button" class="btn btn-info">Agregar Pago</button>
-                                                <div id="newRowaPago"></div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-xs-12 col-sm-12 col-md-6">
-                                            <div id="div_pagos_diferidos1"><br>
-                                                <button id="addPago" type="button" class="btn btn-info">Agregar Pago En Audiencia</button>
+                                                <button id="addPago" type="button" class="btn btn-info">Agregar Cumplimiento</button>
                                                 <div id="newRowaPago"></div>
                                             </div>
                                         </div>
@@ -439,6 +440,17 @@
             html += '<input type="text" class="form-control" name="monto_pagos[]"   oninput="validarNumero(this)" >';
             html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>';
             html += '</div></div>';
+            // Tipo de Agenda
+            html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+            html += '<div class="form-group">';
+            html += '<label for="password">Tipo De Agenda</label>';
+                html +='<select class="form-control" name="tipo_pago[]" >';
+                html +='<option value="">Seleccione</option>';
+                html +='<option value="Por el Conciliador">Por el Conciliador</option>';
+                html +='<option value="Agendar en calendario">Agendar en calendario de Cumpliemientos</option>';
+                html +='</select>';
+            html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>';
+            html += '</div></div>';
             // Descripción de pago
             html += '<div class="col-xs-12 col-sm-12 col-md-12">';
             html += '<div class="form-group">';
@@ -510,7 +522,7 @@
         $(document).on('click', '.removeRow3', function () {
             $(this).closest('.col-xs-12').remove();
         });
-    });
+        });
 
         function validarNumero(input) {
             // La expresión regular permite cualquier número (0-9) y un solo punto (.)
@@ -689,6 +701,44 @@
                 }
             });
         });
+    </script>
+    <script>
+        const TIEMPO_FINAL_KEY = 'tiempoFinalTemporizador';
+
+        // 1. Recuperar el Tiempo Final Guardado
+        let tiempoFinalGuardado = localStorage.getItem(TIEMPO_FINAL_KEY);
+        console.log(tiempoFinalGuardado);
+        /*
+        if (!tiempoFinalGuardado) {
+            // Si no hay tiempo guardado (ej. la sesión expiró o se acabó el tiempo)
+            document.getElementById('temporizador').innerHTML = "No hay temporizador activo.";
+            return; 
+        }
+        */
+        const tiempoFinal = parseInt(tiempoFinalGuardado);
+
+        // 2. Iniciar el Intervalo de Actualización (¡Es la misma función!)
+        function actualizarTemporizador() {
+            const tiempoRestante = tiempoFinal - Date.now();
+            const segundosRestantes = Math.max(0, Math.floor(tiempoRestante / 1000));
+            
+            // ... (resto del cálculo y display es exactamente igual a la Vista A) ...
+
+            const minutos = Math.floor(segundosRestantes / 60);
+            const segundos = segundosRestantes % 60;
+            
+            const display = `${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
+            document.getElementById('temporizador').innerHTML = display;
+
+            if (segundosRestantes <= 0) {
+                clearInterval(intervalo);
+                document.getElementById('temporizador').innerHTML = "¡Tiempo terminado!";
+                localStorage.removeItem(TIEMPO_FINAL_KEY);
+            }
+        }
+
+        const intervalo = setInterval(actualizarTemporizador, 1000);
+        actualizarTemporizador();
     </script>
 @endsection
 

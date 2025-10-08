@@ -687,7 +687,7 @@
                                                 @if(($general->estatus !== "Conciliacion") || ($general->estatus !== "No conciliacion") || ($general->estatus !== "Archivada"))
                                                     <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
                                                 @endif
-                                                <a href="{{ route('audiencias.conciliador') }}" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Regresar</a>
+                                                <a href="{{ route('todas_audiencias') }}" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Regresar</a>
                                             </div>
                                         </div>
                                     </div>                                  
@@ -1021,7 +1021,7 @@
 @section('scripts')
 
     <script src="../public/assets/js/estadistica/estadistica.js"></script>
-        <script>
+    <script>
             $(function(){
                 $('#motivo_solicitud').on('change', validarcheckfolio);
             })
@@ -1074,6 +1074,44 @@
             $('#tabla_solicitante').sow();
             $('#tabla_citados').show();
             $('#tabla_documentos').show();
+    </script>
+    <script>
+        const DURACION_SEGUNDOS = 300; // 5 minutos
+        const TIEMPO_FINAL_KEY = 'tiempoFinalTemporizador';
+
+        // 1. Cargar o Calcular el Tiempo Final
+        let tiempoFinal;
+        let tiempoFinalGuardado = localStorage.getItem(TIEMPO_FINAL_KEY);
+
+        if (tiempoFinalGuardado) {
+            // Si ya existe, usa el tiempo guardado (útil si la página se recarga)
+            tiempoFinal = parseInt(tiempoFinalGuardado);
+        } else {
+            // Si no existe, calcula el tiempo final y guárdalo
+            tiempoFinal = Date.now() + DURACION_SEGUNDOS * 1000;
+            localStorage.setItem(TIEMPO_FINAL_KEY, tiempoFinal);
+        }
+
+        // 2. Iniciar el Intervalo de Actualización
+        function actualizarTemporizador() {
+            const tiempoRestante = tiempoFinal - Date.now();
+            const segundosRestantes = Math.max(0, Math.floor(tiempoRestante / 1000));
+
+            const minutos = Math.floor(segundosRestantes / 60);
+            const segundos = segundosRestantes % 60;
+            
+            const display = `${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
+            document.getElementById('temporizador').innerHTML = display;
+
+            if (segundosRestantes <= 0) {
+                clearInterval(intervalo);
+                document.getElementById('temporizador').innerHTML = "¡Tiempo terminado!";
+                localStorage.removeItem(TIEMPO_FINAL_KEY); // Limpiar la clave
+            }
+        }
+
+        const intervalo = setInterval(actualizarTemporizador, 1000);
+        actualizarTemporizador();
     </script>
 @endsection
 

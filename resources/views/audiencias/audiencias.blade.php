@@ -13,6 +13,13 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
+                            <div class="card p-4 shadow-sm">
+                                <h5 class="text-muted">Tiempo Restante:</h5>
+                                <h1 id="temporizador" class="text-danger font-weight-bold">
+                                    --:-- 
+                                </h1>
+                                <p id="mensaje-estado" class="mt-2"></p>
+                            </div>
                             <a href="" type="button" class="btn btn-info">
                                 Actualizar representantes
                             </a>
@@ -270,8 +277,10 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarCitados">Agregar en representación</button>
+                <!--
                 <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarDerecho">Agregar por propio derecho</button>
                 <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalActualizaCitados">Actualizar citado</button>
+                -->
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
@@ -291,6 +300,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="row">
+                        <div class="row">
                                         <div class="col-xs-12 col-sm-12 col-md-4">
                                             <div class="form-group">
                                                 <label for="name">Tipo de persona <span style="color:red;">(*)</span></label>
@@ -303,6 +313,9 @@
                                                     El tipo de persona es obligatorio.
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-2">
+                                            <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845; border-color: #CEA845">Regresar</a>    
                                         </div>
                                     </div>
 
@@ -674,6 +687,36 @@
                                                     </div>
                                                 </div>
 
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="name">Identificación Oficial  <span style="color:red;">(*)</span></label>
+                                                        <select id="tipo_identificacion_pFCR" name="tipo_identificacion_pFCR" class="form-control">
+                                                            <option value="">Seleccione el tipo de indentificación</option>
+                                                            <option value="Credencial de elector">Credencial de Elector</option>
+                                                            <option value="Pasaporte">Pasaporte</option>
+                                                            <option value="Cédula profesional">Cédula Profesional</option>
+                                                            <option value="Licencia de conducir">Licencia de Conducir</option>
+                                                            <option value="Credencial de inapam">Credencial de INAPAM</option>
+                                                            <option value="Cartilla militar">Cartilla Militar</option>
+                                                            <option value="Documento migratorio">Documento Migratorio</option>
+                                                            <option value="Constancia de identidad">Constancia de Identidad</option>
+                                                            <option value="Otro">Otros</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            Este campo identificación es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6"> 
+                                                    <div class="form-group">
+                                                        <label for="name">Núm de identificación <span style="color:red;">(*)</span> <span data-bs-toggle="modal" data-bs-target="#helpModal" style="cursor: pointer;">❓</span></label>
+                                                        <input type="text" name="num_identificacion_pFCR" id="num_identificacion_pFCR" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                        <div class="invalid-feedback">
+                                                            El campo núm. de identificación es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
                                                         <h5 class="text-center" style="color:#CEA845">Cargar Documentos</h5>
@@ -710,7 +753,13 @@
                                                         <input type="file" name="documentoAnexo_pF" class="form-control" accept=".pdf">
                                                     </div>
                                                 </div>
-                                                 
+                                                
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div align="center">
+                                                        <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
+                                                        <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845; border-color:#CEA845;">Regresar</a>    
+                                                    </div>
+                                                </div> 
                                             </div>
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12" id="Sinrepresentante" style="display:none;">
@@ -720,6 +769,35 @@
                                                 </div>
                                             </div>
                                             <div class="row">
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="name">Identificación Oficial <span style="color:red;">(*)</span></label>
+                                                        <select id="tipo_identificacion_pF" name="tipo_identificacion_pF" class="form-control">
+                                                            <option value="">Seleccione el tipo de indentificación</option>
+                                                            <option value="Credencial de elector">Credencial de Elector</option>
+                                                            <option value="Pasaporte">Pasaporte</option>
+                                                            <option value="Cédula profesional">Cédula Profesional</option>
+                                                            <option value="Licencia de conducir">Licencia de Conducir</option>
+                                                            <option value="Credencial de inapam">Credencial de INAPAM</option>
+                                                            <option value="Cartilla militar">Cartilla Militar</option>
+                                                            <option value="Documento migratorio">Documento Migratorio</option>
+                                                            <option value="Constancia de identidad">Constancia de Identidad</option>
+                                                            <option value="Otro">Otros</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            Este campo identificación es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6"> 
+                                                    <div class="form-group">
+                                                        <label for="name">Núm de identificación <span style="color:red;">(*)</span> <span data-bs-toggle="modal" data-bs-target="#helpModal" style="cursor: pointer;">❓</span></label>
+                                                        <input type="text" name="num_identificacion_pF" id="num_identificacion_pF" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                        <div class="invalid-feedback">
+                                                            El campo núm. de identificación es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label><span style="color:red;">*</span>Identificación Oficial</label><br>
@@ -737,6 +815,12 @@
                                                 </div>
                                             </div>
                                             
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div align="center">
+                                                    <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
+                                                    <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845; border-color:#CEA845;">Regresar</a>    
+                                                </div>
+                                            </div> 
                                         </div>
                                     </div>
 
@@ -1028,6 +1112,36 @@
                                                     </div>
                                                 </div>
 
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="name">Identificación Oficial  <span style="color:red;">(*)</span></label>
+                                                        <select id="tipo_identificacion_Moral" name="tipo_identificacion_Moral" class="form-control">
+                                                            <option value="">Seleccione el tipo de indentificación</option>
+                                                            <option value="Credencial de elector">Credencial de Elector</option>
+                                                            <option value="Pasaporte">Pasaporte</option>
+                                                            <option value="Cédula profesional">Cédula Profesional</option>
+                                                            <option value="Licencia de conducir">Licencia de Conducir</option>
+                                                            <option value="Credencial de inapam">Credencial de INAPAM</option>
+                                                            <option value="Cartilla militar">Cartilla Militar</option>
+                                                            <option value="Documento migratorio">Documento Migratorio</option>
+                                                            <option value="Constancia de identidad">Constancia de Identidad</option>
+                                                            <option value="Otro">Otros</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            Este campo identificación es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6"> 
+                                                    <div class="form-group">
+                                                        <label for="name">Núm de identificación <span style="color:red;">(*)</span> <span data-bs-toggle="modal" data-bs-target="#helpModal" style="cursor: pointer;">❓</span></label>
+                                                        <input type="text" name="num_identificacion_Moral" id="num_identificacion_Moral" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                        <div class="invalid-feedback">
+                                                            El campo núm. de identificación es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
                                                         <h4 class="text-center" style="color:#CEA845">Documentos</h4>
@@ -1067,10 +1181,17 @@
                                                         <input type="file" name="documentoAnexo" class="form-control" accept=".pdf">
                                                     </div>
                                                 </div>
+
+                                    
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div align="center">
+                                                        <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
+                                                        <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845; border-color:#CEA845;">Regresar</a>    
+                                                    </div>
+                                                </div> 
                                             </div>
-                                    </div>      
-                    
-                    
+                                    </div>                           
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -1567,6 +1688,46 @@
             }
         }
     </script>
+
+    <script>
+        const DURACION_SEGUNDOS = 4500; // 5 minutos
+        const TIEMPO_FINAL_KEY = 'tiempoFinalTemporizador';
+
+        // 1. Cargar o Calcular el Tiempo Final
+        let tiempoFinal;
+        let tiempoFinalGuardado = localStorage.getItem(TIEMPO_FINAL_KEY);
+
+        if (tiempoFinalGuardado) {
+            // Si ya existe, usa el tiempo guardado (útil si la página se recarga)
+            tiempoFinal = parseInt(tiempoFinalGuardado);
+        } else {
+            // Si no existe, calcula el tiempo final y guárdalo
+            tiempoFinal = Date.now() + DURACION_SEGUNDOS * 1000;
+            localStorage.setItem(TIEMPO_FINAL_KEY, tiempoFinal);
+        }
+
+        // 2. Iniciar el Intervalo de Actualización
+        function actualizarTemporizador() {
+            const tiempoRestante = tiempoFinal - Date.now();
+            const segundosRestantes = Math.max(0, Math.floor(tiempoRestante / 1000));
+
+            const minutos = Math.floor(segundosRestantes / 60);
+            const segundos = segundosRestantes % 60;
+            
+            const display = `${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
+            document.getElementById('temporizador').innerHTML = display;
+
+            if (segundosRestantes <= 0) {
+                clearInterval(intervalo);
+                document.getElementById('temporizador').innerHTML = "¡Tiempo terminado!";
+                localStorage.removeItem(TIEMPO_FINAL_KEY); // Limpiar la clave
+            }
+        }
+
+        const intervalo = setInterval(actualizarTemporizador, 1000);
+        actualizarTemporizador();
+    </script>
+
     <script src="../../public/assets/js/validaciones.js"></script> 
     <script src="../../public/assets/js/poderes/general.js"></script>
 @endsection

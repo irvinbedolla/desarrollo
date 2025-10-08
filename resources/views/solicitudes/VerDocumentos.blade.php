@@ -20,11 +20,6 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>CURP de Solicitante</td>
-                                            <td>{{$documento_solicitante->documentoCurp}}</td>
-                                            <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento_solicitante->documentoCurp}}">PDF</a><br></td>
-                                        </tr>
-                                        <tr>
                                             <td>Identificación de Solicitante</td>
                                             <td>{{$documento_solicitante->documentoIdentificacion}}</td>
                                             <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento_solicitante->documentoIdentificacion}}">PDF</a></td>
@@ -36,24 +31,24 @@
                                                         <td colspan="3" style="text-align: center; background-color:#7c7c7b">REPRESENTANTE LEGAL</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Identificación de Citado:{{$documento->empresa}}</td>
-                                                        <td>{{$documento->ine}}</td>
-                                                        <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->ine}}">PDF</a></td>
+                                                        <td>Identificación de Citado:{{$documento->nombres_patronal}} {{$documento->primer_apellido_patronal}} {{$documento->segundo_apellido_patronal}}</td>
+                                                        <td>{{$documento->ineDocumento}}</td>
+                                                        <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->ineDocumento}}">PDF</a></td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Poder de Citado:{{$documento->empresa}}</td>
-                                                        <td>{{$documento->representacion}}</td>
-                                                        <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->representacion}}">PDF</a></td>
+                                                        <td>Poder de Citado:{{$documento->nombres_patronal}} {{$documento->primer_apellido_patronal}} {{$documento->segundo_apellido_patronal}}</td>
+                                                        <td>{{$documento->representacionDocumento}}</td>
+                                                        <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->representacionDocumento}}">PDF</a></td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Anexo de Citado:{{$documento->empresa}}</td>
-                                                        <td>{{$documento->anexo}}</td>
-                                                        <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->anexo}}">PDF</a></td>
+                                                        <td>Cedula:{{$documento->nombres_patronal}} {{$documento->primer_apellido_patronal}} {{$documento->segundo_apellido_patronal}}</td>
+                                                        <td>{{$documento->cedulaDocumento}}</td>
+                                                        <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->cedulaDocumento}}">PDF</a></td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Anexo de Citado:{{$documento->empresa}}</td>
-                                                        <td>{{$documento->cedula}}</td>
-                                                        <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->cedula}}">PDF</a></td>
+                                                        <td>Anexo:{{$documento->nombres_patronal}} {{$documento->primer_apellido_patronal}} {{$documento->segundo_apellido_patronal}}</td>
+                                                        <td>{{$documento->anexo_documeto}}</td>
+                                                        <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento->anexo_documeto}}">PDF</a></td>
                                                     </tr>
                                                 @endforeach
                                             @endif

@@ -2601,7 +2601,10 @@ class SeerController extends Controller
                         'num_ext_patronal'          => $data["num_ext_pF"],
                         'cp_patronal'               => $data["cp_pF"],
                         'estatus'                   => "Pendiente",
-                        'reprecentante'             => "No"
+                        'reprecentante'             => "No",
+                        'idUsuario'                 => $id_usuario,
+                        'tipo_identificacion'       => $data["tipo_identificacion_pF"],
+                        'num_identificacion'        => $data["num_identificacion_pF"],
                 );
 
                 $nombre_ine = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_IDENTIFICACION.pdf";
@@ -2668,7 +2671,10 @@ class SeerController extends Controller
                         'documentoPoder_pF'             => $data["documentoPoder_pF"],
                         'tipo'                          => $data["tipoPersona"],
                         'estatus'                       => "Pendiente",
-                        'reprecentante'                 => "Si"
+                        'reprecentante'                 => "Si",
+                        'idUsuario'                     => $id_usuario,
+                        'tipo_identificacion'       => $data["tipo_identificacion_pFCR"],
+                        'num_identificacion'        => $data["num_identificacion_pFCR"],
                 );
 
                 $nombre_ine = $data["nombre_pF"]." ".$data["primero_PF"]." ".$data["segundo_Pf"]."-FISICA"."_IDENTIFICACION.pdf";
@@ -2745,7 +2751,10 @@ class SeerController extends Controller
                     'cedulaDocumento'               => $data["documentoPoder"],
                     'tipo'                          => $data["tipoPersona"],
                     'estatus'                       => "Pendiente",
-                    'reprecentante'                 => "Si"
+                    'reprecentante'                 => "Si",
+                    'idUsuario'                     => $id_usuario,
+                    'tipo_identificacion'           => $data["tipo_identificacion_Moral"],
+                    'num_identificacion'            => $data["num_identificacion_Moral"]
             );
 
             $nombre_ine = $data["razon"]."-MORAL"."_IDENTIFICACION.pdf";
@@ -4985,8 +4994,9 @@ class SeerController extends Controller
         if ($request->hasFile('documentoExpediente')) {
             $file = $request->file('documentoExpediente');
             if ($file->isValid()) {
-                $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-                $documentoExpediente = $filename . "_Expediente." . $file->getClientOriginalExtension();
+                $nombreInput = $data["nombreExpediente"];
+                $filename = \Illuminate\Support\Str::slug($nombreInput);
+                $documentoExpediente = $filename . '_Expediente.' . $file->getClientOriginalExtension();
         
                 $path = Storage::putFileAs(
                     'documentosSolicitud', $file, $documentoExpediente

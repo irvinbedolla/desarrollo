@@ -229,6 +229,15 @@
                             </div>
                         </div>
                     </div>
+                    <div  class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group"><br>
+                            <label for="name">Nombre de expediente<span style="color:red;">(*)</span></label>
+                            <input type="text" name="nombreExpediente" class="form-control" required> 
+                            <div class="invalid-feedback">
+                                El nombre para el expediente es obligatorio.
+                            </div>
+                        </div>
+                </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
