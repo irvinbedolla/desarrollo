@@ -750,7 +750,7 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
-                                <label for="name">Tipo de Vialidad del citado *</label>
+                                <label for="name">Tipo de Vialidad del Citado *</label>
                                 <select name="vialidad" class="form-control" required>
                                     <option value="">SELECCIONE</option>
                                     <option value="AMPLIACIÓN">Ampliación</option>

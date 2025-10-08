@@ -93,16 +93,16 @@ use App\Http\Controllers\RecepcionController;
     Route::post('registro_solicitud', [SeerController::class, 'GuardarRTemportal'])->name('guardar_registro_solicitud');
     
     //Solicitudes en línea trabajador
-    Route::get('solicitud_trabajador/{tipo_solicitud}',      [SeerController::class, 'trabajador'])->name('solicitud_trabajador');
-    Route::post('guardar_trabajador',       [SeerController::class, 'solicitud_parte1'])->name('parte1');
-    Route::post('solicitud_solicitante',    [SeerController::class, 'solicitud_parte2'])->name('parte2');
-    Route::get('vista_solicitante/{id}' ,   [SeerController::class, 'vista_solicitante'])->name('solicitante');
-    Route::post('/delegacion/{municipioId}',[SeerController::class, 'DelegacionPorMunicipio']); //Muestra la delegación que le corresponde según el municipio seleccionado
+    Route::get('Trabajador/{tipo_solicitud}',   [SeerController::class, 'trabajador'])->name('solicitud_trabajador');
+    Route::post('guardar_trabajador',           [SeerController::class, 'solicitud_parte1'])->name('parte1');
+    Route::post('solicitud_solicitante',        [SeerController::class, 'solicitud_parte2'])->name('parte2');
+    Route::get('vista_solicitante/{id}' ,       [SeerController::class, 'vista_solicitante'])->name('solicitante');
+    Route::post('/delegacion/{municipioId}',    [SeerController::class, 'DelegacionPorMunicipio']); //Muestra la delegación que le corresponde según el municipio seleccionado
     //Ruta de agregar citados
-    Route::get('/agrega_citado/{id}',       [SeerController::class, 'vista_citado'])->name('agregar_citado');
-    Route::post('/agrega_citado',           [SeerController::class, 'guardar_citado'])->name('seer.citados');
-    Route::get('/agrega_documento/{id}',    [SeerController::class, 'vista_documentos'])->name('agregar_documentos');
-    Route::get('/finaliza/{id}',            [SeerController::class, 'guardar_solicitud'])->name('seer.finaliza');
+    Route::get('/agrega_citado/{id}',           [SeerController::class, 'vista_citado'])->name('agregar_citado');
+    Route::post('/agrega_citado',               [SeerController::class, 'guardar_citado'])->name('seer.citados');
+    Route::get('/agrega_documento/{id}',        [SeerController::class, 'vista_documentos'])->name('agregar_documentos');
+    Route::get('/finaliza/{id}',                [SeerController::class, 'guardar_solicitud'])->name('seer.finaliza');
     
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -210,7 +210,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/seer/store_notificador',          [SeerController::class, 'store_notificador'])->name('seer.store_notificador');
         Route::get('/seer/estatus/{id}',                [SeerController::class, 'seer_estatus'])->name('seer.notificador');
         Route::post('/seer/updateNotificador',          [SeerController::class, 'update_notificador'])->name('seer.cambioEstatus');
-        Route::get('/notificador/historial',            [SeerController::class, 'hitorialnotificacador'])->name('Historial_Notificacador');
+        Route::get('/notificador/mihistorial',            [SeerController::class, 'hitorialnotificacador'])->name('Historial_Notificacador');
         Route::get('/notificador/historial',            [SeerController::class, 'todas_notificaciones'])->name('todas_notificaciones');
         //Ruta de enlace
         Route::post('/seer/store_enlace',               [SeerController::class, 'store_enlace'])->name('seer.store_enlace');

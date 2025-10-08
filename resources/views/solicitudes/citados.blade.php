@@ -255,9 +255,9 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-2">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Colonia del citado <span style="color:red;">(*)</span></label>
+                                                    <label for="name">Colonia del Citado <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="colonia" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo colonia es obligatorio.
@@ -265,7 +265,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-1">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Código Postal <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="cp" class="form-control soloNumeros" minlength="5" maxlength="5" required> 
@@ -275,7 +275,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-2">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Entre calle del domicilio (Opcional)</label>
                                                     <input type="text" name="calle1" class="form-control"> 
@@ -285,7 +285,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-2">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">y calle del domicilio (Opcional)</label>
                                                     <input type="text" name="calle2" class="form-control"> 
@@ -295,7 +295,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-1">
+                                            <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
                                                     <label for="text">Núm. ext. <span style="color:red;">(*)</span></label>
                                                     <input type="number" name="exterior" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
@@ -305,14 +305,14 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-1">
+                                            <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
                                                     <label for="name">Núm. int.</label>
                                                     <input type="text" name="interior" class="form-control"  oninput="this.value = this.value.toUpperCase()"> 
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Municipio o Alcaldía del citado <span style="color:red;">(*)</span></label>
                                                     <select id="municipio_citado" class="form-control" name="municipio_citado" required>

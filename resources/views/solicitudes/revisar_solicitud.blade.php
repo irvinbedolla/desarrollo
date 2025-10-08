@@ -770,7 +770,7 @@
 
                             <div class="col-xs-12 col-sm-12 col-md-6">
                                 <div class="form-group">
-                                    <label for="name">Tipo de Vialidad del citado *</label>
+                                    <label for="name">Tipo de Vialidad del Citado *</label>
                                     <select name="vialidad" class="form-control" required>
                                         <option value="">SELECCIONE</option>
                                         <option value="AMPLIACIÓN">Ampliación</option>
@@ -812,7 +812,7 @@
 
                             <div class="col-xs-12 col-sm-12 col-md-6">
                                 <div class="form-group">
-                                    <label for="name">Colonia del citado *</label>
+                                    <label for="name">Colonia del Citado *</label>
                                     <input type="text" name="colonia" class="form-control" required> 
                                     <div class="invalid-feedback">
                                         El campo colonia es obligatorio.

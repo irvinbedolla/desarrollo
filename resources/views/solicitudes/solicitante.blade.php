@@ -379,7 +379,7 @@
                                             </div>  
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Número de Seguro Social (Campo opcional)</label>
+                                                    <label for="name">Número de Seguro Social (Opcional)</label>
                                                     <input type="text" name="seguro" minlength="11" maxlength="12" class="form-control soloNumeros"> 
                                                     <div class="invalid-feedback">
                                                     </div>

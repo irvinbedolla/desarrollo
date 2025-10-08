@@ -75,7 +75,7 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
-                                            <label for="name">Tipo de Vialidad del citado *</label>
+                                            <label for="name">Tipo de Vialidad del Citado *</label>
                                             <select name="vialidad" class="form-control" readonly>
                                                 <option value="">SELECCIONE</option>
                                                 <option value="CALLE"          @php if($folio->tipo_vialidad === "CALLE") echo "selected"  @endphp>Calle</option>

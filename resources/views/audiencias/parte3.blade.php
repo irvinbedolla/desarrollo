@@ -180,6 +180,13 @@
                                             </div>
                                         </div>
 
+                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div id="div_pagos_diferidos1"><br>
+                                                <button id="addPago" type="button" class="btn btn-info">Agregar Pago En Audiencia</button>
+                                                <div id="newRowaPago"></div>
+                                            </div>
+                                        </div>
+
                                         <div id="div_pagos_diferidos"></div>
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-6"><br>
