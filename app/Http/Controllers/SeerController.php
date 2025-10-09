@@ -1229,8 +1229,9 @@ class SeerController extends Controller
         $citados  = SeerCitados::find($id);
         $id = $citados->id;
         $municipios = Municipios::all();
+        $estados = Estados::all();
 
-        return view('notificaciones.actualizarCitado', compact('id','municipios'));
+        return view('notificaciones.actualizarCitado', compact('id','municipios','estados'));
     }
 
     public function update_notificador(Request $request){
@@ -1800,6 +1801,7 @@ class SeerController extends Controller
             'exterior'          => 'required',
             'referencia'        => 'required',
             'municipio_citado'  => 'required',
+            'estado_citado'     => 'required'
         ]);
         
         $data_insert=array(
@@ -1813,6 +1815,7 @@ class SeerController extends Controller
             'municipio_citado'  => $data["municipio_citado"],
             'imagen_domicilio1' => $foto1,
             'imagen_domicilio2' => $foto2, 
+            'estado_citado'     => $data["estado_citado"],
         );
         $data_insert["notificacion"] =  $data["notificacion"];
 
@@ -1867,9 +1870,20 @@ class SeerController extends Controller
         if (isset($data["tipo"]) && $data["tipo"] === "Fisica") {
             unset($data_insert["primer_apellido"], $data_insert["segundo_apellido"]);
         }
+
+        $municipio = Municipios::find($data["municipio_citado"]); 
+        $estado = Estados::find($data["estado_citado"]);
+        $municipioNombre = $municipio ? mb_strtoupper($municipio->nombre, 'UTF-8') : '';
+        $estadoNombre = $estado ? mb_strtoupper($estado->nombre, 'UTF-8') : '';
+
         //Se van a generar quien resulte responsable
-        $data_insert["nombre"] = "QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O
-        USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN ".$data["calle1"].", NÚMERO ".$data["exterior"]." COLONIA ".$data["colonia"].", ".$data["municipio_citado"].", MICHOACÁN.";
+        $data_insert["nombre"] = "QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN " .
+             $data["calle"] . ", NÚMERO " . $data["exterior"];
+            if (!empty($data["interior"])) {
+                $data_insert["nombre"] .= " INT. " . $data["interior"];
+            }
+            $data_insert["nombre"] .= " COLONIA " . $data["colonia"] . ", " . $municipioNombre . ", " . $estadoNombre . ", C.P. " . $data["cp"] . ".";
+
         SeerCitados::create($data_insert); 
 
         return back()->with('success', 'Citado agregado correctamente, puedes agregar otro o continuar.');
@@ -2313,15 +2327,22 @@ class SeerController extends Controller
             }
         }
         
+        $municipio = Municipios::find($data["municipio_citado"]); 
+        $estado = Estados::find($data["estado_citado"]);
+        $municipioNombre = $municipio ? mb_strtoupper($municipio->nombre, 'UTF-8') : '';
+        $estadoNombre = $estado ? mb_strtoupper($estado->nombre, 'UTF-8') : '';
+
         //Se van a generar el citatorio
         SeerCitados::create($data_insert); 
-        if($data["lenguaje"] == "Si"){
-            $data_insert["nombre"] =  "REPRESENTANTE LEGAL  DE: QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O
-            USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN ".$data["calle1"].", NÚMERO ".$data["exterior"].
-            " COLONIA ".$data["colonia"].", ".$data["municipio_citado"].", MICHOACÁN.";
+        if($data["responsable"] == "Si"){
+            $data_insert["nombre"] =  "REPRESENTANTE LEGAL  DE: QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN " .
+             $data["calle"] . ", NÚMERO " . $data["exterior"];
+            if (!empty($data["interior"])) {
+                $data_insert["nombre"] .= " INT. " . $data["interior"];
+            }
+            $data_insert["nombre"] .= " COLONIA " . $data["colonia"] . ", " . $municipioNombre . ", " . $estadoNombre . ", C.P. " . $data["cp"] . ".";
             SeerCitados::create($data_insert);
         }
- 
 
         return back()->with('success', 'Citado agregado correctamente.');
     }
@@ -2834,12 +2855,12 @@ class SeerController extends Controller
         }
         $data_update = SeerCitados::find($data["id"])
         ->update([
-            'tipo_persona'             => $data["tipo"],
-            'curp'                     => $data["curp"],
+            //'tipo_persona'             => $data["tipo"],
+            'curp'                     => $data["curp"] ?? null,
             'rfc'                      => $data["rfc"],
             'nombre'                   => $data["nombre"],
-            'primer_apellido'          => $data["primer_apellido"],
-            'segundo_apellido'         => $data["segundo_apellido"],
+            'primer_apellido'          => $data["primer_apellido"] ?? null,
+            'segundo_apellido'         => $data["segundo_apellido"] ?? null,
             'colonia'                  => $data["colonia"],
             'cp'                       => $data["cp"],
             'calle1'                   => $data["calle1"],
@@ -2852,6 +2873,7 @@ class SeerController extends Controller
             'referencia'               => $data["referencia"],
             'imagen_domicilio1'        => $foto1,
             'imagen_domicilio2'        => $foto2,
+            'estado_citado'            => $data["estado_citado"],
         ]);
 
        
@@ -3104,8 +3126,9 @@ class SeerController extends Controller
 
     public function mostrar_citados($id){
         $municipios = Municipios::all();
+        $estados = Estados::all();
         $folio = SeerCitados::find($id);
-        return view('/notificaciones/ver_citado',compact('folio','municipios'));
+        return view('/notificaciones/ver_citado',compact('folio','municipios','estados'));
     }
 
     public function audienciaParte3($id){
@@ -4776,9 +4799,9 @@ class SeerController extends Controller
                 'municipio_citado'  => $data["municipio_citado"][$i],
                 'tipo_persona'      => $data["tipo_persona_citado"][$i],
                 'nombre'            => $data["nombre_citado"][$i],
-                'primer_apellido'   => $data["primer_apellido"][$i],
-                'segundo_apellido'  => $data["segundo_apellido"][$i],
-                'curp'              => $data["curp_citado"][$i],
+                'primer_apellido'   => $data["primer_apellido"][$i] ?? null,
+                'segundo_apellido'  => $data["segundo_apellido"][$i] ?? null,
+                'curp'              => $data["curp_citado"][$i] ?? null,
                 'rfc'               => $data["rfc_citado"][$i],
                 'imagen_domicilio1' => $foto1,
                 'imagen_domicilio2' => $foto2,
@@ -4787,9 +4810,9 @@ class SeerController extends Controller
             if(isset($data["rfc"])){
                 $data_insert["rfc"] =  $data["rfc_citado"][$i];
             }
-                if(isset($data["curp"])){
+                /*if(isset($data["curp"])){
                     $data_insert["curp"] =  $data["curp_citado"][$i];
-                }
+                }*/
                 if(isset($data["interior"])){
                     $data_insert["n_int"] =  $data["n_int_citado"][$i];
                 }
@@ -4802,16 +4825,16 @@ class SeerController extends Controller
                 if(isset($data["tipo"])){
                     $data_insert["tipo_persona"] =  $data["tipo_persona_citado"][$i];
                 }
-                if(isset($data["curp"])){
+                if(isset($data["curp"][$i])){
                     $data_insert["curp"] =  $data["curp_citado"][$i];
                 }
                 if(isset($data["nombre"])){
                     $data_insert["nombre"] =  $data["nombre_citado"][$i];
                 }
-                if(isset($data["primer_apellido"])){
+                if(isset($data["primer_apellido"][$i])){
                     $data_insert["primer_apellido"] =  $data["primer_apellido"][$i];
                 }
-                if(isset($data["segundo_apellido"])){
+                if(isset($data["segundo_apellido"][$i])){
                     $data_insert["segundo_apellido"] =  $data["segundo_apellido"][$i];
                 }
                 if(isset($data["rfc"])){
@@ -5970,12 +5993,12 @@ class SeerController extends Controller
         }
         $data_update = SeerCitados::find($data["id"])
         ->update([
-            'tipo_persona'             => $data["tipo"],
-            'curp'                     => $data["curp"],
+            //'tipo_persona'             => $data["tipo"],
+            'curp'                     => $data["curp"] ?? null,
             'rfc'                      => $data["rfc"],
             'nombre'                   => $data["nombre"],
-            'primer_apellido'          => $data["primer_apellido"],
-            'segundo_apellido'         => $data["segundo_apellido"],
+            'primer_apellido'          => $data["primer_apellido"] ?? null,
+            'segundo_apellido'         => $data["segundo_apellido"] ?? null,
             'colonia'                  => $data["colonia"],
             'cp'                       => $data["cp"],
             'calle1'                   => $data["calle1"],
@@ -5988,6 +6011,7 @@ class SeerController extends Controller
             'referencia'               => $data["referencia"],
             'imagen_domicilio1'        => $foto1,
             'imagen_domicilio2'        => $foto2,
+            'estado_citado'            => $data["estado_citado"],
         ]);
 
         if($data["estatus"] == "Sin asignar"){

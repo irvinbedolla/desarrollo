@@ -30,7 +30,7 @@
                                                         <td>{{$notificacion->id}}</td>
                                                         <td>{{$notificacion->NUE}}</td>
                                                         <td>{{$notificacion->nombre}} {{$notificacion->primer_apellido}} {{$notificacion->segundo_apellido}}</td>
-                                                        <td>Colonia:{{$notificacion->colonia}}, Calle:{{$notificacion->calle}} #{{$notificacion->n_ext}} Int:{{$notificacion->n_int}}</td>
+                                                        <td>Colonia:{{$notificacion->colonia}}, {{$notificacion->tipo_vialidad}} {{$notificacion->calle}} #{{$notificacion->n_ext}} @if($notificacion->n_int)Int: {{ $notificacion->n_int }}@endif</td>
                                                         <td>{{$notificacion->estatus}}</td>
                                                         <td>
                                                             <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('editar_citado_historial')}}">

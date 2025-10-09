@@ -44,6 +44,16 @@
         #resultado.ok {
             background-color: green;
         }
+
+        select[name="vialidad"] option {
+            text-transform: uppercase;
+        }
+        select[name="estado_citado"] option {
+            text-transform: uppercase;
+        }
+        select[name="municipio_citado"] option {
+            text-transform: uppercase;
+        }
     </style>
 
    
@@ -99,8 +109,9 @@
                                         </div>
                                     @endif
                                     <div style="background-color:#D2D3D5; width:100%; height:40px;">
-                                        <h3 class="text-center" style="color:black">Ingresa los datos del citado (Debes capturar al menos un Citado)</h3>
+                                        <h3 class="text-center" style="color:black">Ingresa los datos del citado</h3>
                                     </div>    
+                                    <p><span style="color:red;">*</span> Debes capturar al menos un citado</p>
 
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                                     <form class="needs-validation" novalidate method="POST" action="{{route('seer.citados')}}" enctype="multipart/form-data">
@@ -121,9 +132,9 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-2">
+                                            <div class="col-xs-12 col-sm-12 col-md-2" id="campo_curp">
                                                 <div class="form-group">
-                                                    <label for="name">CURP (Campo opcional)</label>
+                                                    <label for="name">CURP (Opcional)</label>
                                                     <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control"> 
                                                     <pre id="resultado"></pre>
                                                 </div>
@@ -140,7 +151,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
-                                                    <label for="name">RFC (Campo opcional)</label>
+                                                    <label for="name">RFC (Opcional)</label>
                                                     <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()">   
                                                 </div>
                                             </div>
@@ -153,7 +164,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4" id="lenguaje_señas">
                                                 <div class="form-group">
                                                     <label for="name">¿Qué tipo de lenguaje require?</label>
-                                                    <input type="text" name="lenguaje" class="form-control">
+                                                    <input type="text" name="lenguaje" class="form-control" oninput="this.value = this.value.toUpperCase()">
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-12" id="tipoPersona_nombre" style="display:none;">
@@ -195,13 +206,13 @@
                                         <div class="row"> 
                                             <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:30px;">
                                                 <div class="form-group">
-                                                    <h4 class="text-center">Dirección del citado</h4>
+                                                    <h4 class="text-center">Dirección de la fuente de empleo</h4>
                                                 </div>
                                             </div>    
 
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">¿Quién entregará los Citatorios? <span style="color:red;">(*)</span></label>
+                                                    <label for="name">¿Quién entregará los citatorios? <span style="color:red;">(*)</span></label>
                                                     <select name="notificacion" class="form-control" required>
                                                         <option value="">SELECCIONE</option>
                                                         <option value="Trabajador">Yo</option>
@@ -213,9 +224,9 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Tipo de Vialidad del citado <span style="color:red;">(*)</span></label>
+                                                    <label for="name">Tipo de vialidad <span style="color:red;">(*)</span></label>
                                                     <select name="vialidad" class="form-control" required>
                                                         <option value="">SELECCIONE</option>
                                                         <option value="AMPLIACIÓN">Ampliación</option>
@@ -245,29 +256,29 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Nombre de la vialidad <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="calle" class="form-control" required> 
+                                                    <input type="text" name="calle" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo calle es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Colonia del Citado <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="colonia" class="form-control" required> 
+                                                    <label for="name">Colonia <span style="color:red;">(*)</span></label>
+                                                    <input type="text" name="colonia" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo colonia es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-1">
                                                 <div class="form-group">
-                                                    <label for="name">Código Postal <span style="color:red;">(*)</span></label>
+                                                    <label for="name">Código postal <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="cp" class="form-control soloNumeros" minlength="5" maxlength="5" required> 
                                                     <div class="invalid-feedback">
                                                         El campo Código Postal es obligatorio.
@@ -275,27 +286,27 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
-                                                    <label for="name">Entre calle del domicilio (Opcional)</label>
-                                                    <input type="text" name="calle1" class="form-control"> 
+                                                    <label for="name">Entre calle (Opcional)</label>
+                                                    <input type="text" name="calle1" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo entre calle es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
-                                                    <label for="name">y calle del domicilio (Opcional)</label>
-                                                    <input type="text" name="calle2" class="form-control"> 
+                                                    <label for="name">y calle (Opcional)</label>
+                                                    <input type="text" name="calle2" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo y calle es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-2">
+                                            <div class="col-xs-12 col-sm-12 col-md-1">
                                                 <div class="form-group">
                                                     <label for="text">Núm. ext. <span style="color:red;">(*)</span></label>
                                                     <input type="number" name="exterior" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
@@ -305,16 +316,30 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-2">
+                                            <div class="col-xs-12 col-sm-12 col-md-1">
                                                 <div class="form-group">
                                                     <label for="name">Núm. int.</label>
                                                     <input type="text" name="interior" class="form-control"  oninput="this.value = this.value.toUpperCase()"> 
                                                 </div>
                                             </div>
-
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Municipio o Alcaldía del citado <span style="color:red;">(*)</span></label>
+                                                    <label for="name">Estado <span style="color:red;">(*)</span></label>
+                                                    <select id="estado_citado" class="form-control" name="estado_citado" required>
+                                                        <option value="">Seleccione</option>
+                                                        @foreach($estados as $es)
+                                                            <option value="{{$es['id']}}">{{$es['nombre']}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo Estado es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-2">
+                                                <div class="form-group">
+                                                    <label for="name">Municipio o Alcaldía <span style="color:red;">(*)</span></label>
                                                     <select id="municipio_citado" class="form-control" name="municipio_citado" required>
                                                         <option value="">Seleccione</option>
                                                         @foreach($municipios as $mun)
@@ -329,32 +354,38 @@
 
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
-                                                <label for="floatingTextarea">Referencias del domicilio del citado <span style="color:red;">(*)</span></label>
-                                                    <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencia" style="height: 100px;" required></textarea>
+                                                <label for="floatingTextarea">Referencias del domicilio <span style="color:red;">(*)</span></label>
+                                                    <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencia" style="height: 100px;" oninput="this.value = this.value.toUpperCase()" required></textarea>
                                                     <div class="invalid-feedback">
                                                         El campo referencias es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-4">
-                                                <div class="form-group">
-                                                    <a href="https://www.google.com.mx/maps/@19.6837376,-101.1712,14z?entry=ttu&g_ep=EgoyMDI1MDgzMC4wIKXMDSoASAFQAw%3D%3D" target="_blank">
-                                                        <img src="{{ asset('public/assets/images/Google-Maps.png') }}" alt="Mi Imagen" width="150">
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <label for="name">Ubica tu domicilio laboral y adjunta una captura</label>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-6 col-md-4"><br>
+                                                <div class="form-group text-center">
+                                                    <a class="btn btn-primary" 
+                                                       style="background-color:blue; border-color:blue;" 
+                                                       href="https://www.google.com.mx/maps/@19.6837376,-101.1712,14z?entry=ttu&g_ep=EgoyMDI1MDgzMC4wIKXMDSoASAFQAw%3D%3D" 
+                                                       target="_blank">
+                                                        Google Maps
                                                     </a>
                                                 </div>
-                                            </div>
+                                            </div>                                            
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Imagen 1 <span style="color:red;">(*)</span></label>
+                                                    <label for="name">Referencia 1 <span style="color:red;">(*)</span></label>
                                                     <input type="file" class="form-control" name="foto1" accept="image/*" required>
                                                     <div class="invalid-feedback">
-                                                        El campo imagen 1 es obligatorio.
+                                                        El campo Referencia 1 es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Imagen 2 (Opcional)</label>
+                                                    <label for="name">Referencia 2 (Opcional)</label>
                                                     <input type="file" class="form-control" name="foto2" accept="image/*">
                                                 </div>
                                             </div>
@@ -507,6 +538,7 @@
             const selectTipo = document.getElementById('tipo');
             const nombreDiv = document.getElementById('tipoPersona_nombre');
             const razonDiv = document.getElementById('tipoPersona_razon');
+            const curpDiv = document.getElementById('campo_curp');
 
             function actualizarTipoPersona() {
                 const valor = selectTipo.value;
@@ -514,10 +546,11 @@
                 // Oculta ambos inicialmente
                 nombreDiv.style.display = 'none';
                 razonDiv.style.display = 'none';
-
+                curpDiv.style.display = 'none';
 
                 if (valor === 'Fisica') {
                     nombreDiv.style.display = 'block';
+                    curpDiv.style.display = 'block';
                 } else if (valor === 'Moral') {
                     razonDiv.style.display = 'block';
                 }

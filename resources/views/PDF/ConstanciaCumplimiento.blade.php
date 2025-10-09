@@ -84,7 +84,7 @@
                         @else
                              {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}
                     @endif <br>
-                    Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha_audiencia)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
+                    Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
                     Asistencia de los interesados: Si. <br>
                     <!--Fecha del conflicto: [SOLICITUD_FECHA_CONFLICTO]  <br>
                     Posible prescripción de derechos: [SOLICITUD_PRESCRIPCION] <br> -->
@@ -102,8 +102,7 @@
                     <b>Motivación:</b> Conforme a la determinación de dar por terminado el conflicto laboral, la parte <b>TRABAJADORA</b> y la parte <b>EMPLEADORA</b>, 
                     celebraron el Convenio de Conciliación de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> ante esta 
                     Autoridad Conciliadora como resultado de la audiencia 
-                    de conciliación celebrada <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las  
-                    <b>{{ $solicitud->hora }}</b> hrs.<br><br>
+                    de conciliación celebrada el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}.</b><br><br>
                                 
                     De acuerdo con lo establecido en el convenio referido el <b>EMPLEADOR</b> se obligó al pago de los siguientes conceptos: <br>
               
@@ -133,7 +132,7 @@
                     En este sentido, el <b>EMPLEADOR</b> ha dado cumplimiento a la <b>totalidad</b> de los conceptos contenidos en el Convenio de Conciliación 
                     celebrado entre las <b>PARTES. Doy fe.</b><br><br>
                                 
-                    <b> Con fecha {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}
+                    <b> Con fecha {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}
                     se emite la presente Constancia de Cumplimiento del Convenio de Conciliación, con fundamento en la fracción XIV del 
                     artículo 684-E, fracción VIII del artículo 684-F de la Ley Federal del Trabajo, y artículo 20 del Reglamento Interior del Centro de Conciliación 
                     Laboral del Estado de Michoacán de Ocampo.</b>

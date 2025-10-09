@@ -435,8 +435,8 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Jornada Laboral(Día(s) y hora(s))<span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="jornada" class="form-control" required>
+                                                    <label for="name">Horario laboral <span style="color:red;">(*)</span></label>
+                                                    <input type="text" name="jornada" class="form-control" placeholder="Ejemplo: De lunes a viernes de 9Am a 5PM y Sábados de 9 Am a 2 PM" required>
                                                     <div class="invalid-feedback">
                                                         El campo jornada laboral es obligatoria.
                                                     </div>

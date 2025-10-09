@@ -42,27 +42,28 @@
                                             </div>
                                         </div>
                                     </div>
-                                            
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
-                                        <div class="form-group">
-                                            <label for="name">Primer apellido</label>
-                                            <input type="text" name="primer_apellido" class="form-control" value="<?=$folio["primer_apellido"];?>" oninput="this.value = this.value.toUpperCase()" > 
-                                            <div class="invalid-feedback">
-                                                El primer apellido es obligatorio.
+                                    @if(!empty($folio['primer_apellido']))    
+                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="form-group">
+                                                <label for="name">Primer apellido</label>
+                                                <input type="text" name="primer_apellido" class="form-control" value="<?=$folio["primer_apellido"];?>" oninput="this.value = this.value.toUpperCase()" > 
+                                                <div class="invalid-feedback">
+                                                    El primer apellido es obligatorio.
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
-                                        <div class="form-group">
-                                            <label for="name">Segundo apellido</label>
-                                            <input type="text" name="segundo_apellido" class="form-control" value="<?=$folio["segundo_apellido"];?>"oninput="this.value = this.value.toUpperCase()" > 
-                                            <div class="invalid-feedback">
-                                                El segundo apellido es obligatorio.
+                                    @endif
+                                    @if(!empty($folio['segundo_apellido']))
+                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="form-group">
+                                                <label for="name">Segundo apellido</label>
+                                                <input type="text" name="segundo_apellido" class="form-control" value="<?=$folio["segundo_apellido"];?>"oninput="this.value = this.value.toUpperCase()" > 
+                                                <div class="invalid-feedback">
+                                                    El segundo apellido es obligatorio.
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-
+                                    @endif
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">RFC</label>
@@ -75,7 +76,7 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
-                                            <label for="name">Tipo de Vialidad del Citado</label>
+                                            <label for="name">Tipo de vialidad</label>
                                             <select name="vialidad" class="form-control" required>
                                                 <option value="">SELECCIONE</option>
                                                 <option value="CALLE"          @php if($folio->tipo_vialidad === "CALLE") echo "selected"  @endphp>Calle</option>
@@ -135,9 +136,9 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                    <div class="col-xs-12 col-sm-12 col-md-2">
                                         <div class="form-group">
-                                            <label for="name">Entre calle del domicilio</label>
+                                            <label for="name">Entre calle</label>
                                             <input type="text" name="calle1" class="form-control" value="<?=$folio["calle1"];?>">
                                             <div class="invalid-feedback">
                                                 El campo calle es obligatorio.
@@ -145,9 +146,9 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                    <div class="col-xs-12 col-sm-12 col-md-2">
                                         <div class="form-group">
-                                            <label for="name">y calle del domicilio</label>
+                                            <label for="name">Y calle</label>
                                             <input type="text" name="calle2" class="form-control" value="<?=$folio["calle2"];?>"> 
                                             <div class="invalid-feedback">
                                                 El campo calle es obligatorio.
@@ -155,9 +156,9 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                    <div class="col-xs-12 col-sm-12 col-md-1">
                                         <div class="form-group">
-                                            <label for="name">Núm. ext.</label>
+                                            <label for="name">Núm. Ext.</label>
                                             <input type="text" name="exterior" class="form-control" value="<?=$folio["n_ext"];?>" required> 
                                             <div class="invalid-feedback">
                                                 El campo núm. ext. es obligatorio.
@@ -165,9 +166,9 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                    <div class="col-xs-12 col-sm-12 col-md-1">
                                         <div class="form-group">
-                                            <label for="name">Núm. int.</label>
+                                            <label for="name">Núm. Int.</label>
                                             <input type="text" name="interior" class="form-control" value="<?=$folio["n_int"];?>" > 
                                             <div class="invalid-feedback">
                                                 El campo núm. int. es obligatorio.
@@ -187,31 +188,31 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                    <div class="col-xs-12 col-sm-6 col-md-3">
                                         <div class="form-group">
-                                            <label for="name">Tipo de persona</label>
-                                            <select name="tipo" class="form-control">
-                                                <option value="">Seleccione</option>
-                                                <option value="Fisica" @php if($folio->tipo_persona === "Fisica") echo "selected"  @endphp>Física</option>
-                                                <option value="Moral" @php if($folio->tipo_persona === "Moral") echo "selected"  @endphp>Moral</option>
+                                            <label for="password">Estado</label>
+                                            <select class="form-control" name="estado_citado" id="estado_citado">
+                                                @foreach($estados as $est)
+                                                    <option value="{{$est['id']}}" {{ $folio['estado_citado'] == $est['id'] ? "selected" : '' }}>{{$est['nombre']}}</option>
+                                                @endforeach
                                             </select>
                                             <div class="invalid-feedback">
-                                                El tipo de persona es obligatorio.
+                                                El Estado es obligatorio.
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
-                                        <div class="form-group">
-                                            <label for="name">CURP</label>
-                                            <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control" value="<?=$folio["curp"];?>"> 
-                                            <pre id="resultado"></pre>
-                                            <div class="invalid-feedback">
-                                                El CURP es obligatorio.
+                                    @if(!empty($folio['curp']))
+                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="form-group">
+                                                <label for="name">CURP</label>
+                                                <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control" value="<?=$folio["curp"];?>"> 
+                                                <pre id="resultado"></pre>
+                                                <div class="invalid-feedback">
+                                                    El CURP es obligatorio.
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-
+                                    @endif
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <label for="floatingTextarea">Referencias del domicilio</label>
@@ -222,7 +223,7 @@
                                         </div>
                                     </div> 
                                     <div class="col-xs-12 col-sm-12 col-md-6">
-                                        <label for="password">Imagen 1</label><br>
+                                        <label for="password">Referencia 1</label><br>
                                         @if (!empty($folio->imagen_domicilio1) && $folio->imagen_domicilio1 !== 'Sin documento')
                                             <a target='_blank' href="{{ asset('storage/app/documentosSolicitud/'.$folio->imagen_domicilio1) }}">VER IMAGEN</a>
                                         @else
@@ -232,7 +233,7 @@
                                         <input type="hidden" name="imagen_domicilio1" value="{{ $folio->imagen_domicilio1 }}">
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
-                                        <label for="password">Imagen 2</label><br>
+                                        <label for="password">Referencia 2</label><br>
                                         @if (!empty($folio->imagen_domicilio2) && $folio->imagen_domicilio2 !== 'Sin documento')
                                             <a target='_blank' href="{{ asset('storage/app/documentosSolicitud/'.$folio->imagen_domicilio2) }}">VER IMAGEN</a><br>
                                         @else

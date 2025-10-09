@@ -103,7 +103,26 @@
                     @if($pagosDif>1)Las <b>PARTES</b> acordaron <b>PAGOS DIFERIDOS</b> en el convenio referido, en este sentido, el <b>EMPLEADOR</b> da cumplimiento ante esta Autoridad 
                     Conciliadora al siguiente concepto:<br>@endif
 
-                    <p><b>{{ $pagos->observaciones}}</b></p>
+                    <div class="table-responsive">
+                        <table id="pagos" class="table-striped" style="width:100%;">
+                            <thead>
+                                <th style="display: none;">ID</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Monto</th>
+                                <th>Descripción</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="display: none;">{{$pagos->id_solicitud}}</td>
+                                    <td>{{ \Carbon\Carbon::parse($pagos->fecha)->translatedFormat('d/m/y') }}</td> 
+                                    <td>{{ \Carbon\Carbon::parse(str_replace(' HORAS', '', $pagos->hora))->format('H:i') }} HORAS</td>
+                                    <td>${{ number_format($pagos->monto, 2) }}</td>
+                                    <td><p>{{$pagos->observaciones}}</p></td>
+                                </tr>
+                            </tbody>
+                        </table>      
+                    </div><br>
 
                     Quien suscribe da fe del cumplimiento del concepto anteriormente descrito por parte del <b>EMPLEADOR. Doy fe.</b><br><br>
 
