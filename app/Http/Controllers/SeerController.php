@@ -6048,7 +6048,7 @@ class SeerController extends Controller
         return view('notificaciones.indexHitorial',compact('mis_notificaciones'));
     }
 
-        public function todas_notificaciones(){
+    public function todas_notificaciones(){
         $id = auth()->user()->id;
         $user = User::find($id);
         $roles = Role::pluck('name','name')->all();
@@ -6189,5 +6189,13 @@ class SeerController extends Controller
         ->get();
 
         return view('/cumplimientos/pagar_audiencia',compact('cumplimientos'));
+    }
+
+    public function seer_detalles($id){
+        $estados = Estados::all();
+        $municipios = Municipios::all();
+        $folio = SeerCitados::find($id);
+        
+        return view('notificaciones.detalles',compact('folio','estados','municipios'));
     }
 }

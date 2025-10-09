@@ -202,7 +202,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                    <div id="motivo_identificacion" class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <label for="name">Motivo de la no identificación</label>
                                             <input type="text" name="motivo_identificacion" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
@@ -423,6 +423,7 @@
         </div>
     </section>
     <script>
+        document.getElementById("motivo_identificacion").style.display = "none";
         document.addEventListener('DOMContentLoaded', function () {
             const selectQuienAtiende = document.querySelector('select[name="quien_atiende"]');
             const mediaFiliacionDiv = document.getElementById('media-filiacion');
@@ -465,6 +466,17 @@
                 selectEstatus.addEventListener('change', actualizarTipoProblema);
                 // Ejecutar al cargar por si ya tiene valor
                 actualizarTipoProblema();
+            }
+        });
+        const tipo_iden = document.getElementById('identificacion_notificacion');
+        tipo_iden.addEventListener('change', function() {
+            const valorSeleccionado = this.value;
+            // Realiza la validación o acciones necesarias
+            if (valorSeleccionado === 'NO PROPORCIONA') {
+                document.getElementById('motivo_identificacion').style.display = "block";
+            }
+            else {
+                document.getElementById('motivo_identificacion').style.display = "none";
             }
         });
     </script>

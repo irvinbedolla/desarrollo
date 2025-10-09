@@ -60,7 +60,7 @@
                                                 </td>
                                                 <td>
                                                     @if($audiencia->estatus == "Conciliacion" || $audiencia->estatus == "Concluida" || $audiencia->estatus == "Concluida Pagos")
-                                                        <a class="btn btn-primary" href="{{ route('ratificacion_cumplimientos', $audiencia->id) }}">Cumplimientos</a>
+                                                        <a class="btn btn-primary" href="{{ route('audiencia_cumplimientos', $audiencia->id) }}">Cumplimientos</a>
                                                     @endif
                                                 </td>
                                                 <td>

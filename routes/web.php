@@ -341,6 +341,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Notificador
         Route::get('/notificaciones/busqueda',              [SeerController::class, 'notificaciones_consultar'])->name('notificaciones_consultar'); 
         Route::post('/notificaciones/resultado',            [SeerController::class, 'notificaciones_busqueda'])->name('notificaciones_busqueda');
+        Route::get('/notificaciones/detalles/{id}',         [SeerController::class, 'seer_detalles'])->name('seer_detalles'); 
     //Fin de Notificador
     //Cambiar las contraseña
         Route::get('/cambio_contraseña/index',  [HomeController::class, 'password_cambiar'])->name('password_cambiar');
@@ -351,7 +352,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Fin de Administración  
     //Audiencias
         Route::get('/audiencias/index',                     [SeerController::class, 'audiencia_index'])->name('audiencia_index');
-        Route::get('/audiencias/revisar/{id}',              [SeerController::class, 'solicitud_audiencia_revisar'])->name('solicitud_audiencia');
+        Route::get('/audiencias_Revisar/{id}',              [SeerController::class, 'solicitud_audiencia_revisar'])->name('solicitud_audiencia');
         Route::get('/citatorio/{id}',                       [SeerController::class, 'pdfCitatorioAudiencia'])->name('pdfCitatorioAudiencia');
         Route::get('/solicitud/indexA',                     [SeerController::class, 'indexA'])->name('audiencias.conciliador'); 
         Route::get('/solicitud/iniciar/{id}',               [SeerController::class, 'iniciar_audiencia'])->name('inicioAudiencia');

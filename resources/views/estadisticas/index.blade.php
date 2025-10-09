@@ -110,24 +110,30 @@
                                     <div class="table-responsive">
                                         <table id="example" class="table table-striped mt-1" style="text-align:center">
                                             <thead style="background-color: #4A001F;">
-                                                <th style="display: none;">ID</th>
+                                                <th style="color: #fff;">ID</th>
                                                 <th style="color: #fff;">Expediente</th>
                                                 <th style="color: #fff;">Solicitante</th>
                                                 <th style="color: #fff;">Citado</th>
                                                 <th style="color: #fff;">Dirección</th>
                                                 <th style="color: #fff;">Estatus</th>
+                                                <th style="color: #fff;">Detalles</th>
                                                 <th style="color: #fff;">Acciones</th>
                                             </thead>
                                             <tbody>
                                                 @foreach($estadisticas as $estadistica)
                                                     <tr>
-                                                        <td style="display: none;">{{$estadistica->id}}</td>
+                                                        <td>{{$estadistica->id}}</td>
                                                         <td>{{$estadistica->NUE}}</td>
                                                         <td>{{$estadistica->nombre_solicitado}}</td>
                                                         <td>{{$estadistica->nombre}}</td>
                                                         <td>{{$estadistica->municipio_citado}} colonia {{$estadistica->colonia}}, {{$estadistica->calle}} {{$estadistica->n_ext}}</td>
                                                         <td>{{$estadistica->estatus}}</td>
-                                                        <td><a class="btn btn-info" href="{{ route('seer.notificador', $estadistica->id) }}" onclick=nuevo_estadistica();>Atender</a></td>
+                                                        <td>
+                                                            <a class="btn btn-info" href="{{ route('seer_detalles', $estadistica->id) }}" onclick=nuevo_estadistica();>Consultar</a>
+                                                        </td>
+                                                        <td>
+                                                            <a class="btn btn-info" href="{{ route('seer.notificador', $estadistica->id) }}" onclick=nuevo_estadistica();>Atender</a>
+                                                        </td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>
