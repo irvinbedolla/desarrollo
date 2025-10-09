@@ -217,7 +217,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </forms>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -411,28 +411,41 @@
 
         // Agregar pago
         $("#addPago").click(function () {
+            let numeroPago = $('.numero_pago').length + 1;
             var html = '';
-            html += '<div id="inputFormRow2" class="col-xs-12 col-sm-6 col-md-12">';
+            html += '<div class="inputFormRow2 row mb-2 align-items-end">';
             html += '<div class="col-xs-12 col-sm-12 col-md-12">';
             html += '<div class="form-group">';
             html += '<label for="confirm-password"><br>Fecha y hora de pago</label>';
             html += '<div class="row">';
             html += '<div class="row">';
-            //Botón de selección de horario
-            html += '<div class="col-12">';
-            html += '<button type="button" class="btn btn-custom-morado w-75";" data-bs-toggle="modal" data-bs-target="#calendarModal"> Seleccionar Horario</button>';
-            html += '</div>';
-            html += '</div>'
-            html += '<div class="row">';
+
+            if (numeroPago === 1) {
+                html += '<label for="tipoPago">Seleccione una opción:</label>';
+                html += '<select name="tipoPago" id="tipoPago">';
+                html += '<option value="">-- Por favor, seleccione --</option>';
+                html += '<option value="pagarAudiencia">Pagar en Audiencia</option>';
+                html += '<option value="agendar">Agendar Pago</option>';
+                html += '</select>';
+            } else {
+                //Botón de selección de horario
+                html += '<div class="col-12">';
+                html += '<button type="button" class="btn btn-custom-morado w-75" data-bs-toggle="modal" data-bs-target="#calendarModal"> Seleccionar Horario</button>';
+                html += '</div>';
+                html += '</div>';
+                html += '<div class="row">';
+            }
             //Alerta de seleción de horario
-            html += '<div class="col-12">';
+            html += '<div class="col-12 mt-2">';
             html += '<div id="resumenCita" style="display:none;width:100%;">';
-            html += '<div class="alert alert-info w-75"">';
+            html += '<div class="alert alert-info w-75">';
             html += '<strong>Cita seleccionada:</strong> <span id="fechaResumen"></span> a las <span id="horaResumen"></span>';
             html += '</div>';
             html += '</div>';
             html += '</div>';
             html += '</div>';
+            //botón dinámico
+            html += '<div class="contenedor-boton-pago"></div>';
             html += '<div class="col-xs-12 col-sm-12 col-md-12">';
             html += '<div class="form-group">';
             //Monto a pagar
@@ -444,11 +457,11 @@
             html += '<div class="col-xs-12 col-sm-12 col-md-12">';
             html += '<div class="form-group">';
             html += '<label for="password">Tipo De Agenda</label>';
-                html +='<select class="form-control" name="tipo_pago[]" >';
-                html +='<option value="">Seleccione</option>';
-                html +='<option value="Por el Conciliador">Por el Conciliador</option>';
-                html +='<option value="Agendar en calendario">Agendar en calendario de Cumpliemientos</option>';
-                html +='</select>';
+            html += '<select class="form-control" name="tipo_pago[]" >';
+            html += '<option value="">Seleccione</option>';
+            html += '<option value="Por el Conciliador">Por el Conciliador</option>';
+            html += '<option value="Agendar en calendario">Agendar en calendario de Cumpliemientos</option>';
+            html += '</select>';
             html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>';
             html += '</div></div>';
             // Descripción de pago
@@ -464,7 +477,30 @@
             html += '</div>';
             $('#newRowaPago').append(html);
             actualizaNumeroPago();
+            
+            //Esto reemplaza el container por los botones de opciones, para que aparezca debajo del selector de opciones
+            $('#newRowaPago').find('#tipoPago').last().on('change', function() {
+                var opcionPago = $(this).val();
+                var parent = $(this).closest('.inputFormRow2');
+                var contenedor = parent.find('.contenedor-boton-pago');
+                contenedor.empty();
+                if (opcionPago === "pagarAudiencia") {
+                    contenedor.replaceWith('<div class="contenedor-boton-pago col-12 mb-2 mt-2"><button type="button" class="btn btn-success h-100 w-75" id="btnPagarAudiencia">Pagar en la audiencia</button></div>');
+                    $(document).on('click', '#btnPagarAudiencia', function() {
+                        mostrarSelectHorasAudiencia();
+                    });
+                } else if (opcionPago === "agendar") {
+                    contenedor.replaceWith('<div class="contenedor-boton-pago col-12 mb-2 mt-2"><button type="button" class="btn btn-custom-morado w-75" data-bs-toggle="modal" data-bs-target="#calendarModal"> Seleccionar Horario</button></div>');
+                    mostrarSelectHorasAudiencia();
+                } else {
+                    contenedor.replaceWith('<div class="contenedor-boton-pago"></div>');
+                }
+            });
         });
+
+        mostrarSelectHorasAudiencia(){
+            //Aquí voy a poner el listado de horas c:
+        }
 
         function actualizaNumeroPago() {
             let pagos = $('.numero_pago');
@@ -477,9 +513,9 @@
             }
         }
 
-        // Borrar pago
+        // Borrar pago 
         $(document).on('click', '.removeRow2', function () {
-            $(this).closest('.col-xs-12').remove();
+            $(this).closest('.inputFormRow2').remove();
         });
 
         // Agregar deducción
@@ -610,6 +646,13 @@
                     left: 'prev,next today',
                     center: 'title',
                 },
+                windowResize: function(view) {
+                    if (window.innerWidth < 768) {
+                        calendar.changeView('listWeek');
+                    } else{
+                        calendar.changeView('dayGridWeek');
+                    }
+                },
                 validRange: {
                     start: (() => {
                         const now = new Date();
@@ -695,6 +738,7 @@
                     document.getElementById('resumenCita').style.display = 'block';
 
                     // Cerrar modal
+                    document.activeElement.blur();
                     $('#calendarModal').modal('hide');
                 } else {
                     alert('Por favor selecciona un horario disponible');
