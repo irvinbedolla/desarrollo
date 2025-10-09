@@ -1094,7 +1094,7 @@
             });
         
             $('#tabla_detalles').show();
-            $('#tabla_solicitante').sow();
+            $('#tabla_solicitante').show();
             $('#tabla_citados').show();
             $('#tabla_documentos').show();
     </script>

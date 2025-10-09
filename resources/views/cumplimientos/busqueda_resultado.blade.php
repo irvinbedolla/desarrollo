@@ -210,6 +210,6 @@
     <script src="../public/assets/js/estadistica/estadistica.js"></script>
         <script>
             $('#tabla_detalles').show();
-            $('#tabla_solicitante').sow();
+            $('#tabla_solicitante').show();
     </script>
 @endsection

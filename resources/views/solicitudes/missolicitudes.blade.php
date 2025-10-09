@@ -12,7 +12,6 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            @can('ver_solicitante')
                                 <div class="table-responsive">
                                     <table id="example">
                                         <thead style="background-color: #4A001F;">
@@ -38,16 +37,17 @@
                                                                     Documentos
                                                                 </button>
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownCitatoriosBtn-{{ $solicitud->id }}">
-                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}"      target="_blank">Documentos Digitales</a></li>
-                                                                    <li><a class="dropdown-item" href="{{ route('PDFnotificacion_solicitante', $solicitud->id) }}" target="_blank">Notificación al solicitante</a></li>
-                                                                    <li><a class="dropdown-item" href="{{ route('PDFacuse_solicitud', $solicitud->id) }}"  target="_blank">Acuse de solicitud</a></li>
-                                                                    <li class="dropdown-divider"></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}" >Citatorios</a></li>
+                                                                    @if(($solicitud->estatus !== "Pendiente") && ($solicitud->estatus !== "Prevencion"))
+                                                                        <li><a class="btn btn-info" style="width: 100%"  href="{{ route('PDFnotificacion_solicitante', $solicitud->id) }}" target="_blank">Notificación al solicitante</a></li>
+                                                                        <li><a class="btn btn-info" style="width: 100%"  href="{{ route('PDFacuse_solicitud', $solicitud->id) }}"  target="_blank">Acuse de solicitud</a></li>
+                                                                    @endif
                                                                 </ul>
                                                             </div>                                           
                                                         @endif
                                                         @if($solicitud->estatus === "Concluida")
                                                             <a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}"      target="_blank">Documentos Digitales</a>
-                                                            <a class="btn btn-success" href="{{ route('PDFconveniosolicitud', $solicitud->id) }}"  target="_blank">Convenio</a>
+                                                            <a class="btn btn-success" style="width: 100%"  href="{{ route('PDFconveniosolicitud', $solicitud->id) }}"  target="_blank">Convenio</a>
                                                         @endif
                                                     </td>
                                                 </tr>
@@ -55,7 +55,6 @@
                                         </tbody>
                                     </table>
                                 </div>
-                            @endcan
                             <div class="pagination justify-content-end">
                             </div>
                         </div>

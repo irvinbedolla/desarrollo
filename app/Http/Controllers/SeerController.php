@@ -2373,6 +2373,7 @@ class SeerController extends Controller
         ->where('seer_general.delegacion', $user["delegacion"])
         ->where('seer_citados.id_notificador', 0)
         ->where('seer_citados.notificacion',"!=", "Trabajador")
+        ->orWhereIn('seer_general.estatus', "!=" ,["Pendiente","Prevencion"])
         ->get();
 
         return view('notificaciones.index',compact('personas','mis_notificaciones','userRole'));
@@ -4860,7 +4861,7 @@ class SeerController extends Controller
         //Actualizar el estatus
         SeerPerGeneral::find($data["id"])->update(['estatus' => "Pendiente" ]);
 
-        return redirect()->route('todas_solicitudes'); 
+        return redirect()->route('mis_solicitudes'); 
     }
 
     //PDF NOTIFICADORES NOTIFICACION
