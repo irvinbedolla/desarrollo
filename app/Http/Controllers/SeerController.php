@@ -3458,7 +3458,9 @@ class SeerController extends Controller
     }
 
     public function concluir_audiencia_conciliador(Request $request){
+        
         $data = $request->all();
+        //dd($data);
         $id_solicitud = $data["id"];
         $monto = 0;
         $fecha_actual = date('y-m-d');
@@ -3470,6 +3472,13 @@ class SeerController extends Controller
             if(isset($data["dias_pagos"])){
                 $conteo = count($data["dias_pagos"]);
                 for($i = 0; $i < $conteo; $i++) {
+                    $agenda = $data["tipo_pagoAgenda"];
+                    if ($agenda == "Conciliador"){
+                        $aux = "Conciliador";
+
+                    } else {
+                        $aux = "Audiencia";
+                    }
                     $data_pagos = [
                         'id_solicitud'  => $data["id"],
                         'fecha'         => $data["dias_pagos"][$i],
@@ -3477,7 +3486,7 @@ class SeerController extends Controller
                         'monto'         => $data["monto_pagos"][$i], 
                         'descripcion'   => $data["descripcion_pagos"][$i],
                         'estatus'       => "Pendiente", 
-                        'tipo_pago'     => "Audiencia"
+                        'tipo_pago'     => $aux
                     ];
                     $monto = $monto + $data["monto_pagos"][$i];
                     Pagos::create($data_pagos);

@@ -48,8 +48,6 @@
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                             <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('concluir_audiencia_conciliador')}}">
                                 @csrf
-                                <input type="hidden" name="dias_pagos[]" id="fechaSeleccionada" required>
-                                <input type="hidden" name="hora_pagos[]" id="horaSeleccionada" required>
                                 <input type="hidden" name="id" value="{{ $id }}">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12"  style="border:1px solid black;">
@@ -454,7 +452,7 @@
             html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>';
             html += '</div></div>';
             // Tipo de Agenda
-            html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+            /*html += '<div class="col-xs-12 col-sm-12 col-md-12">';
             html += '<div class="form-group">';
             html += '<label for="password">Tipo De Agenda</label>';
             html += '<select class="form-control" name="tipo_pago[]" >';
@@ -463,7 +461,7 @@
             html += '<option value="Agendar en calendario">Agendar en calendario de Cumpliemientos</option>';
             html += '</select>';
             html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>';
-            html += '</div></div>';
+            html += '</div></div>';*/
             // Descripción de pago
             html += '<div class="col-xs-12 col-sm-12 col-md-12">';
             html += '<div class="form-group">';
@@ -483,13 +481,16 @@
                 var opcionPago = $(this).val();
                 var parent = $(this).closest('.inputFormRow2');
                 var contenedor = parent.find('.contenedor-boton-pago');
-                contenedor.empty();
+                contenedor.empty()
+                parent.find('input[name="tipo_pagoAgenda[]"]').remove();
                 if (opcionPago === "pagarAudiencia") {
+                    parent.append('<input type="hidden" name="tipo_pagoAgenda[]" value="Audiencia">');
                     contenedor.replaceWith('<div class="contenedor-boton-pago col-12 mb-2 mt-2"><button type="button" class="btn btn-success h-100 w-75" id="btnPagarAudiencia">Pagar en la audiencia</button></div>');
                     $(document).on('click', '#btnPagarAudiencia', function() {
                         mostrarSelectHorasAudiencia();
                     });
                 } else if (opcionPago === "agendar") {
+                    parent.append('<input type="hidden" name="tipo_pagoAgenda[]" value="Conciliador">');
                     contenedor.replaceWith('<div class="contenedor-boton-pago col-12 mb-2 mt-2"><button type="button" class="btn btn-custom-morado w-75" data-bs-toggle="modal" data-bs-target="#calendarModal"> Seleccionar Horario</button></div>');
                     mostrarSelectHorasAudiencia();
                 } else {
@@ -498,9 +499,54 @@
             });
         });
 
-        mostrarSelectHorasAudiencia(){
-            //Aquí voy a poner el listado de horas c:
-        }
+        window.mostrarSelectHorasAudiencia = function() {
+            var hoy = new Date();
+            var fechaHoy = hoy.toISOString().split('T')[0];
+
+            var selectHtml = '<div class="form-group mt-2" id="selectHoraAudienciaDiv">';
+            selectHtml += '<label>Selecciona la hora para pagar en la audiencia:</label>';
+            selectHtml += '<select class="form-control" id="selectHoraAudiencia">';
+            selectHtml += '<option value="">Seleccione una hora</option>';
+            selectHtml += '<option value="09:00:00">9:00 AM</option>';
+            selectHtml += '<option value="09:30:00">9:30 AM</option>';
+            selectHtml += '<option value="10:00:00">10:00 AM</option>';
+            selectHtml += '<option value="10:30:00">10:30 AM</option>';
+            selectHtml += '<option value="11:00:00">11:00 AM</option>';
+            selectHtml += '<option value="11:30:00">11:30 AM</option>';
+            selectHtml += '<option value="12:00:00">12:00 PM</option>';
+            selectHtml += '<option value="12:30:00">12:30 PM</option>';
+            selectHtml += '<option value="13:00:00">1:00 PM</option>';
+            selectHtml += '<option value="13:30:00">1:30 PM</option>';
+            selectHtml += '<option value="14:00:00">2:00 PM</option>';
+            selectHtml += '<option value="14:30:00">2:30 PM</option>';
+            selectHtml += '<option value="15:00:00">3:00 PM</option>';
+            selectHtml += '<option value="15:30:00">3:30 PM</option>';
+            selectHtml += '<option value="16:00:00">4:00 PM</option>';
+            selectHtml += '<option value="16:30:00">4:30 PM</option>';
+            selectHtml += '</select>';
+            selectHtml += '<button type="button" class="btn btn-primary mt-2" id="confirmarHoraAudiencia">Confirmar hora</button>';
+            selectHtml += '</div>';
+            $('#selectHoraAudienciaDiv').remove();
+            $('#btnPagarAudiencia').parent().after(selectHtml);
+
+            $('#confirmarHoraAudiencia').off('click').on('click', function() {
+                var horaSeleccionada = $('#selectHoraAudiencia').val();
+                if (!horaSeleccionada) {
+                    alert('Selecciona una hora válida');
+                    return;
+                }
+
+                var pagoBlock = $(this).closest('.inputFormRow2');
+                pagoBlock.find('input[name="dias_pagos[]"], input[name="hora_pagos[]"]').remove();
+                pagoBlock.append('<input type="hidden" name="dias_pagos[]" value="'+fechaHoy+'">');
+                pagoBlock.append('<input type="hidden" name="hora_pagos[]" value="'+horaSeleccionada+'">');
+
+                pagoBlock.find('#fechaResumen').text(fechaHoy);
+                pagoBlock.find('#horaResumen').text(horaSeleccionada.substring(0,5));
+                pagoBlock.find('#resumenCita').show();
+                $('#selectHoraAudienciaDiv').remove();
+            });
+        };
 
         function actualizaNumeroPago() {
             let pagos = $('.numero_pago');
@@ -728,14 +774,16 @@
                     const fechaHora = new Date(window.selectedEvent.start);
                     const fecha = fechaHora.toISOString().split('T')[0];
                     const hora = fechaHora.toTimeString().substring(0, 8);
-                    // Guardar en campos ocultos
-                    document.getElementById('fechaSeleccionada').value = fecha;
-                    document.getElementById('horaSeleccionada').value = hora;
+
+                    var pagoBlock = $('.inputFormRow2').last();
+                    pagoBlock.find('input[name="dias_pagos[]"], input[name="hora_pagos[]"]').remove();
                     
-                    //Resumen de la cita
-                    document.getElementById('fechaResumen').textContent = fecha;
-                    document.getElementById('horaResumen').textContent = hora;
-                    document.getElementById('resumenCita').style.display = 'block';
+                    pagoBlock.append('<input type="hidden" name="dias_pagos[]" value="'+fecha+'">');
+                    pagoBlock.append('<input type="hidden" name="hora_pagos[]" value="'+hora+'">');
+
+                    pagoBlock.find('#fechaResumen').text(fecha);
+                    pagoBlock.find('#horaResumen').text(hora.substring(0,5));
+                    pagoBlock.find('#resumenCita').show();
 
                     // Cerrar modal
                     document.activeElement.blur();
