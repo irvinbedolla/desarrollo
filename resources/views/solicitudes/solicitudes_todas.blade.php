@@ -134,6 +134,18 @@
                                                                 </ul>
                                                             </div>
                                                         </div> 
+                                                    @elseif($solicitud->estatus == "Confirmado")
+                                                        <div class="dropdown">
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    Documentos
+                                                                </button>
+                                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                    <li><a class="dropdown-item" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}"  target="_blank">Documentos Digitales</a></li>
+                                                                    <li><button type="button" class="btn open-modal" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div> 
                                                     @endif 
                                                 </td>
                                             </tr>
@@ -157,6 +169,34 @@
     <div>.</div>
     <div class="loader"></div>
 </div>
+
+<!-- Modal Documentos -->
+<div class="modal fade" id="documentos" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalLabel">DOCUMENTOS</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+            <table class="table table-striped" style="width: 100%; text-align: center;">
+                <thead style="background-color: #D2D3D5;">
+                  <tr>
+                    <th>Citatorios</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="pdf-list"></tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- Modal Expediente -->
 <div class="modal fade" id="expediente" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
     <form  class='needs-validation novalidate' method='POST' action="{{ route('subir_expediente') }}" enctype="multipart/form-data">
         @csrf
@@ -177,6 +217,15 @@
                             </div>
                         </div>
                     </div>
+                    <div  class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group"><br>
+                            <label for="name">Nombre de expediente<span style="color:red;">(*)</span></label>
+                            <input type="text" name="nombreExpediente" class="form-control" required> 
+                            <div class="invalid-feedback">
+                                El nombre para el expediente es obligatorio.
+                            </div>
+                        </div>
+                </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -186,6 +235,7 @@
         </div>
     </form>
 </div>
+
 
 
 @section('scripts')
