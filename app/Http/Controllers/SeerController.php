@@ -3460,36 +3460,42 @@ class SeerController extends Controller
     public function concluir_audiencia_conciliador(Request $request){
         
         $data = $request->all();
-        //dd($data);
         $id_solicitud = $data["id"];
         $monto = 0;
         $fecha_actual = date('y-m-d');
         $id = auth()->user()->id;
         $user = User::find($id);
-
         if($data["conclucion"] == "Conciliacion"){
             //Revisar si existe
             if(isset($data["dias_pagos"])){
                 $conteo = count($data["dias_pagos"]);
                 for($i = 0; $i < $conteo; $i++) {
-                    $agenda = $data["tipo_pagoAgenda"];
-                    if ($agenda == "Conciliador"){
-                        $aux = "Conciliador";
-
-                    } else {
-                        $aux = "Audiencia";
+                    //Solo para el primer caso voy a seleccionar el tipo de pago
+                    if($conteo == 0){
+                        $data_pagos = [
+                            'id_solicitud'  => $data["id"],
+                            'fecha'         => $data["dias_pagos"][$i],
+                            'hora'          => $data["hora_pagos"][$i], 
+                            'monto'         => $data["monto_pagos"][$i], 
+                            'descripcion'   => $data["descripcion_pagos"][$i],
+                            'estatus'       => "Pendiente", 
+                            'tipo_pago'     => $data["tipo_pagoAgenda"],
+                        ];
+                        $monto = $monto + $data["monto_pagos"][$i];
+                        Pagos::create($data_pagos);
+                    }else{
+                        $data_pagos = [
+                            'id_solicitud'  => $data["id"],
+                            'fecha'         => $data["dias_pagos"][$i],
+                            'hora'          => $data["hora_pagos"][$i], 
+                            'monto'         => $data["monto_pagos"][$i], 
+                            'descripcion'   => $data["descripcion_pagos"][$i],
+                            'estatus'       => "Pendiente", 
+                            'tipo_pago'     => "Audiencia",
+                        ];
+                        $monto = $monto + $data["monto_pagos"][$i];
+                        Pagos::create($data_pagos);
                     }
-                    $data_pagos = [
-                        'id_solicitud'  => $data["id"],
-                        'fecha'         => $data["dias_pagos"][$i],
-                        'hora'          => $data["hora_pagos"][$i], 
-                        'monto'         => $data["monto_pagos"][$i], 
-                        'descripcion'   => $data["descripcion_pagos"][$i],
-                        'estatus'       => "Pendiente", 
-                        'tipo_pago'     => $aux
-                    ];
-                    $monto = $monto + $data["monto_pagos"][$i];
-                    Pagos::create($data_pagos);
                 }
             }
             //Regresar error
@@ -3505,7 +3511,7 @@ class SeerController extends Controller
                         'descripcion'   => $data["tipo_pago"][$i],
                         'tipo_pago'     => "Audiencia"
                     ];
-                    Concepto::create($data_citado);
+                    //Concepto::create($data_citado);
                 }
             }
             //Regresar error

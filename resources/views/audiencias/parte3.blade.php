@@ -420,7 +420,7 @@
 
             if (numeroPago === 1) {
                 html += '<label for="tipoPago">Seleccione una opción:</label>';
-                html += '<select name="tipoPago" id="tipoPago">';
+                html += '<select name="tipoPago" id="tipoPago" class="form-control">';
                 html += '<option value="">-- Por favor, seleccione --</option>';
                 html += '<option value="pagarAudiencia">Pagar en Audiencia</option>';
                 html += '<option value="agendar">Agendar Pago</option>';
@@ -484,13 +484,13 @@
                 contenedor.empty()
                 parent.find('input[name="tipo_pagoAgenda[]"]').remove();
                 if (opcionPago === "pagarAudiencia") {
-                    parent.append('<input type="hidden" name="tipo_pagoAgenda[]" value="Audiencia">');
+                    parent.append('<input type="hidden" name="tipo_pagoAgenda[]" value="Conciliador">');
                     contenedor.replaceWith('<div class="contenedor-boton-pago col-12 mb-2 mt-2"><button type="button" class="btn btn-success h-100 w-75" id="btnPagarAudiencia">Pagar en la audiencia</button></div>');
                     $(document).on('click', '#btnPagarAudiencia', function() {
                         mostrarSelectHorasAudiencia();
                     });
                 } else if (opcionPago === "agendar") {
-                    parent.append('<input type="hidden" name="tipo_pagoAgenda[]" value="Conciliador">');
+                    parent.append('<input type="hidden" name="tipo_pagoAgenda[]" value="Audiencia">');
                     contenedor.replaceWith('<div class="contenedor-boton-pago col-12 mb-2 mt-2"><button type="button" class="btn btn-custom-morado w-75" data-bs-toggle="modal" data-bs-target="#calendarModal"> Seleccionar Horario</button></div>');
                     mostrarSelectHorasAudiencia();
                 } else {
