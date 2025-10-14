@@ -657,7 +657,7 @@
                                             </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <label for="password">Identificacíon Oficial</label><br>
+                                                <label for="password">Identificación Oficial</label><br>
                                                 <a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoCurp}}">PDF</a><br>
                                                 <input type="file" name="documentoIdentificacion" accept=".pdf" class="form-control">
                                             </div>
@@ -668,7 +668,7 @@
                                                 </div>
                                             </div><br>
 
-                                             @foreach($citados as $citado)
+                                            @foreach($citados as $citado)
                                                 <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label for="password">Nombre Citado</label><br>

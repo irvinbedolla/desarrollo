@@ -84,7 +84,7 @@
                         {{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}<br>
                     @endforeach
                     <br>
-                    Fecha de presentación de solicitud: {{ COLOCAR FECHA }} <br>
+                    Fecha de presentación de solicitud: {{ $solicitud->fecha }} <br>
                     Posible prescripción de derechos: No <br>
                 </b></p>  
                 <p>

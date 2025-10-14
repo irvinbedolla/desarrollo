@@ -166,7 +166,7 @@
                                             </div>
                                             <div id="div1"  class="col-xs-12 col-sm-12 col-md-5">
                                                 <p>Rama Industrial del Negocio</p>
-                                                <div class="form-group"><br>
+                                                <div class="form-group">
                                                     <label for="name">Paso 1. Rama Industrial <span style="color:red;">(*)</span></label>
                                                     <select id="ramaIndustrial" class="form-control" name="ramaIndustrial" required>
                                                         <option value="">Seleccione</option>

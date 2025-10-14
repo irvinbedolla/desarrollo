@@ -2118,13 +2118,14 @@ class SeerController extends Controller
                 'tipo_persona'      => $data["tipo_persona_citado"][$i],
                 'nombre'            => $data["nombre_citado"][$i],
                 'notificacion'      => $data["notificacion"][$i],
-                'primer_apellido'   => $data["primer_apellido"][$i],
-                'segundo_apellido'  => $data["segundo_apellido"][$i],
+                'primer_apellido'   => $data["primer_apellido"][$i] ?? null,
+                'segundo_apellido'  => $data["segundo_apellido"][$i] ?? null,
                 'calle'             => $data["calle_citado"][$i],
                 'calle1'            => $data["calle1_citado"][$i],
                 'calle2'            => $data["calle2_citado"][$i],
-                'curp'              => $data["curp_citado"][$i],
+                'curp'              => $data["curp_citado"][$i] ?? null,
                 'rfc'               => $data["rfc_citado"][$i],
+                'estado_citado'     => $data["estado_citado"][$i],
                 'imagen_domicilio1' => $foto1,
                 'imagen_domicilio2' => $foto2,
             );
@@ -2215,8 +2216,11 @@ class SeerController extends Controller
         Audiencias::create($audiencia_insert);
         //Actualizar genera
         SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $Audiencia[3], 'estatus' => 'Confirmado' ]);
-        
-        return redirect()->route('solicitudes_pendientes'); 
+        if (isset($data["notificacion"][0]) && $data["notificacion"][0] == 'Trabajador') {
+            return redirect()->route('descargarCitatorios', ['id' => $data["id"]]);
+        }else{
+            return redirect()->route('solicitudes_pendientes'); 
+        }
     }
 
     public function GeneraExpediente($id,$delegacion){
@@ -2264,6 +2268,7 @@ class SeerController extends Controller
             'tipo_vialidad'     => $data["vialidad"],
             'referencia'        => $data["referencia"],
             'municipio_citado'  => $data["municipio_citado"],
+            'estado_citado'     => $data["estado_citado"],
             'imagen_domicilio1' => $foto1,
             'imagen_domicilio2' => $foto2,
         );
@@ -3814,49 +3819,44 @@ class SeerController extends Controller
     //PDF Citatorio
     public function pdfCitatorio($id) {
         try {
-            $solicitud      = SeerPerGeneral::findOrFail($id);
-            $solicitantes   = SeerSolicitante::where('id_solicitud', $id)->get();
-            $citados        = SeerCitados::where('id_solicitud', $id)->get();
-            $motivoIds      = SeerMotivo::where('id_solicitud', $id)->pluck('id_motivo');
-            $motivos        = SolicitudMotivo::whereIn('id', $motivoIds)->get();
-            $audiencia      = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id")
-                ->where("audiencias.id_solicitud", "=", $id)
+            $citado = SeerCitados::findOrFail($id);
+            $solicitud = SeerPerGeneral::findOrFail($citado->id_solicitud);
+            $solicitante = SeerSolicitante::where('id_solicitud', $citado->id_solicitud)->first();
+            $motivoIds = SeerMotivo::where('id_solicitud', $citado->id_solicitud)->pluck('id_motivo');
+            $motivos = SolicitudMotivo::whereIn('id', $motivoIds)->get();
+
+            $audiencia = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id")
+                ->where("audiencias.id_solicitud", "=", $citado->id_solicitud)
                 ->first();
 
-            $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
-            $conciliador = $conciliador->where("seer_general.conciliador_id", "=", $solicitud["conciliador_id"])
+            $conciliador = User::join("seer_general","seer_general.conciliador_id","=","users.id")
+                ->where("seer_general.conciliador_id", "=", $solicitud->conciliador_id)
                 ->select('users.name')
                 ->first();
 
-            $pdfs = [];
-    
-            foreach ($solicitantes as $solicitante) {
-                foreach ($citados as $citado) {
-                    $nombreArchivo = 'citatorio_' . $citado->nombre . '_' . $citado->primer_apellido . '.pdf';
-    
-                    // Genera el PDF en memoria
-                    $pdf = \PDF::loadView('PDF/Solicitudes/citatorio', compact('solicitud','solicitante','citado','motivos','audiencia','conciliador'))
-                        ->setPaper('a4', 'portrait')
-                        ->setOption('isHtml5ParserEnabled', true)
-                        ->setOption('isPhpEnabled', true);
-    
-                    // Codifica el PDF en base64 para enviarlo
-                    $pdfBase64 = base64_encode($pdf->output());
-    
-                    $pdfs[] = [
-                        'nombre' => $nombreArchivo,
-                        'base64' => $pdfBase64,
-                    ];
-                }
-            }
-    
-            return response()->json($pdfs);
+            $nombreArchivo = 'citatorio_' . $citado->nombre . '_' . $citado->primer_apellido . '.pdf';
+            $nombreArchivo = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $nombreArchivo); //Elimina los caracteres especiales no permitidos en archivos
+
+            $pdf = \PDF::loadView('PDF/Solicitudes/citatorio', compact(
+                'solicitud',
+                'solicitante',
+                'citado',
+                'motivos',
+                'audiencia',
+                'conciliador'
+            ))
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true);
+
+            return $pdf->download($nombreArchivo);
+
         } catch (\Exception $e) {
             return response()->json([
                 'error' => true,
                 'message' => $e->getMessage(),
             ], 500);
-        }
+        }  
     }
     //Consultar solicitudes(Solicitante) conciliadores
     public function consultar_solicitudes($id){
@@ -4142,6 +4142,7 @@ class SeerController extends Controller
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true); 
         $nombreArchivo = 'citatorio_' . $citado->nombre . '_' . $citado->primer_apellido . '.pdf';
+        $nombreArchivo = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $nombreArchivo); //Elimina los caracteres especiales no permitidos en archivos
 
         return $pdf->stream($nombreArchivo);
     }
@@ -6237,5 +6238,57 @@ class SeerController extends Controller
         $folio = SeerCitados::find($id);
         
         return view('notificaciones.detalles',compact('folio','estados','municipios'));
+    }
+    //VISTA PDF Citatorio entregado por el trabajador
+    public function descargarCitatorios($id) {
+        try {
+            $citados = SeerCitados::where('id_solicitud', $id)->get();
+
+            if ($citados->isEmpty()) {
+                return redirect()->back()->with('error', 'No hay citados para esta solicitud.');
+            }
+
+            return view('solicitudes.descargaCitatorios', compact('citados'));
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    //Guarda los citatorios para notificar el trabajador ya firmados digitalmente
+    public function guardar_citatoriosT(Request $request){
+        $data = $request->all();
+        $id = auth()->user()->id;
+        $user = User::find($id);
+
+        $solicitudId = $data['citatorioT_id'];
+        $solicitud = SeerPerGeneral::findOrFail($solicitudId);
+        if ($request->hasFile('documentoCitatoriosT')) {
+            $file = $request->file('documentoCitatoriosT');
+            if ($file->isValid()) {
+                $nombreInput = $data["nombreCitatoriosT"];
+                $filename = \Illuminate\Support\Str::slug($nombreInput);
+                $documentoCitatoriosT = $filename . '_Citatorio.' . $file->getClientOriginalExtension();
+        
+                $path = Storage::putFileAs(
+                    'documentosSolicitud', $file, $documentoCitatoriosT
+                );
+
+                $data_insertar= array(
+                    'id_solicitud'      => $solicitudId,
+                    'nombre_documento'  => $documentoCitatoriosT,
+                    'tipo_documentos'   => $file->getClientOriginalName(),
+                    'tramite'           => "Audiencia", 
+                );
+                DocumentosSolicitud::create($data_insertar);
+
+            } else {
+                return back()->withErrors(['documentoCitatoriosT' => 'Archivo no válido.']);
+            }
+        }
+        return back()->with('success', 'Citatorio cargado correctamente.');
     }
 }

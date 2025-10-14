@@ -1,91 +1,109 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="">
-        <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-        <meta name="generator" content="Ing. ISBM">
-        <title>Si Concilio</title>
-        <!-- Bootstrap core CSS -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <link rel="icon" href="../../public/assets/images/logo-ccl.png" type="image/x-icon">
+@extends('layouts.app_editar')
 
-    <style>
-        .loader {
-            position: fixed;
-            left: 0px;
-            top: 0px;
-            width: 100%;
-            height: 100%;
-            z-index: 9999;
-            background: url('../../public/assets/images/pageLoader.gif') 50% 50% no-repeat rgb(249,249,249);
-            opacity: .8;
-        }
-        
-    </style>   
-</head>
+@section('content')
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-        <div class="">
-            <img src="../../public/assets/images/Logos 2.png" class="img" style="" width="250" height="90">
-        </div> 
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent" >
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="{{ route('publico') }}" style="color: black;">INICIO<span class="sr-only"></span></a>
-                </li>
-            </ul>
+  
+    <section class="section"> 
+        <div class="section-header">
+            <h3 class="page__heading">Citatorios a entregar por el trabajador</h3>
         </div>
-    </nav>
-    <div class="container">
-        <br><br><br><br>
-    </div>
-    <div id="app">  
-        <section class="section">
-            <div class="section-body">
-                <div class="row"> 
-                    <div class="col-lg-12" >
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-12 col-md-12">
-                                        <div class="form-group">
-                                            <h4 class="text-center">Documentos del expediente</h4>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-12">
-                                        <div class="table-responsive">
-                                            <table id="tabla_solicitud" class="table-striped" style="margin: 0 center; text-align:center; width:100%;">
-                                                <thead style="background-color: #D2D3D5;">
-                                                    <th style="color: black;">Citatorios</th>
-                                                    <th style="color: black;">Acción</th>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach($SolicitudPDFs as $ArchivoPDF)
-                                                        <tr>
-                                                            <td style="text-align: left;">
-                                                                {{ $ArchivoPDF }}&nbsp;&nbsp;
-                                                            </td>
-                                                            <td>
-                                                                <a href="{{ asset('storage/app/documentosCitatorios/' . $ArchivoPDF) }}" target="_blank" class="btn btn-primary btn-sm" style="background-color:#CEA845; border-color:#CEA845;"> Visualizar </a>&nbsp;&nbsp;
-                                                                <a href="{{ asset('storage/app/documentosCitatorios/' . $ArchivoPDF) }}" download class="btn btn-success btn-sm" style="background-color:#920808; border-color:#920808;"> Descargar </a>
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div> 
+        <div class="section-body">
+            <div class="row"> 
+                <div class="col-lg-12" >
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                    <div class="table-responsive">
+                                        <table id="tabla_solicitud" class="table-striped" style="margin: 0 center; text-align:center; width:100%;">
+                                            <tbody>
+                                                @foreach($citados as $citado)
+                                                    <tr>
+                                                        <td style="text-align: left;">
+                                                            <div class="col-xs-12 col-sm-6 col-md-6">
+                                                                <div class="form-group">
+                                                                    <span>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido }}</span>   
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="col-xs-12 col-sm-6 col-md-6">
+                                                                <div class="form-group">
+                                                                    <a class="btn btn-success" href="{{ route('PDFSolicitud', $citado->id) }}" class="btn btn-success btn-sm" style="background-color:#920808; border-color:#920808;">Descargar</a>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
                                     </div> 
-                                </div>
-                            </div>
+                                    <div class="text-center mt-3">
+                                        <button type="button" class="btn btn-warning open-citatoriosT-modal" data-bs-toggle="modal" data-bs-target="#citatoriosTrabajador" data-id="{{ $citado->id_solicitud }}">
+                                            Subir citatorios firmados
+                                        </button>
+                                    </div>
+                                </div> 
+                             </div>
+                        </div>
+                    </div>
+                </div>        
+            </div>
+        </div>       
+    </section>
+@endsection
+
+<div id="nuevo_usuario" style ="display: none;">
+    <div>.</div>
+    <div class="loader"></div>
+</div>  
+<div class="modal fade" id="citatoriosTrabajador" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <form class="needs-validation" method="POST" action="{{ route('subir_citatoriosT') }}" enctype="multipart/form-data" novalidate>
+        @csrf
+        <input type="hidden" name="citatorioT_id" id="citatorioT_id">
+
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Subir citatorios</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="documentoCitatoriosT" class="form-label">Documento en PDF</label>
+                        <input type="file" name="documentoCitatoriosT" id="documentoCitatoriosT" class="form-control" accept=".pdf" required>
+                        <div class="invalid-feedback">
+                            El documento es obligatorio.
                         </div>
                     </div>
                 </div>
-            </div>    
-        </section>
-    </div>
-    
+                <div  class="col-xs-12 col-sm-12 col-md-12">
+                    <div class="form-group"><br>
+                        <label for="name">Nombre del archivo<span style="color:red;">(*)</span></label>
+                        <input type="text" name="nombreCitatoriosT" class="form-control" required> 
+                        <div class="invalid-feedback">
+                            El nombre para el archivo es obligatorio.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Subir</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+@section('scripts')
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const buttons = document.querySelectorAll('.open-citatoriosT-modal');
+        buttons.forEach(button => {
+            button.addEventListener('click', function () {
+                const id = this.getAttribute('data-id');
+                document.getElementById('citatorioT_id').value = id;
+            });
+        });
+    });
+</script>
+@endsection

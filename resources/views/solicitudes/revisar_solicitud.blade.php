@@ -740,7 +740,7 @@
         <form class='needs-validation novalidate'  method='POST' action="{{route('agregar_citado_edicion')}}">
             @csrf
             <input type="hidden" name="id" value="{{$id}}">
-            <div class="modal-dialog">
+            <div class="modal-dialog  modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Agregar Citado</h5>
