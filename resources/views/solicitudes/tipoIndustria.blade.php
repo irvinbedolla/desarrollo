@@ -1004,7 +1004,7 @@ Acude a la Oficina Estatal del Centro Federal de Conciliación y Registro Labora
                                                                 </div>
                                                                 <div class="col-md-6 content-vertical-center  pl-md-3  row">
                                                                     <div class="col-1 mr-1">
-                                                                        <input type="radio" class="radio_input industria" id="Ninguna de las anteriores28" data-nombre="Ninguna de las anteriores" data-descripcion="" name="industria" value="28">
+                                                                        <input type="radio" class="radio_input industria" id="Ningunadelasanteriores28" data-nombre="Ninguna de las anteriores" data-descripcion="" name="industria" value="28">
                                                                     </div>
                                                                     <div class="col-11 row ">
                                                                         <label for="Ningunadelasanteriores28" class="bold-gray-label pl-2">Ninguna de las anteriores</label>
@@ -1036,7 +1036,7 @@ Acude a la Oficina Estatal del Centro Federal de Conciliación y Registro Labora
         <div class="modal-content">
             <div class="modal-header header-default font-size-14" style="height: 38px">
                 <div class="col-md-12">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> <i class="bi bi-x-circle-fill Iconclose-circle-fill ml-2 btn-close cursor-pointer" data-dismiss="modal" aria-label="Close"></i></button>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true"> <i class="bi bi-x-circle-fill Iconclose-circle-fill ml-2 btn-close cursor-pointer" data-dismiss="modal" aria-label="Close"></i></button>
                     <span>Advertencia - competencia federal</span>
                 </div>
             </div>
@@ -1068,7 +1068,7 @@ Acude a la Oficina Estatal del Centro Federal de Conciliación y Registro Labora
                     <p id="detalle_industria"></p>
                 </div>
                 <div class="mt-3">
-                    <button type="button" class="btn btn-success-custom" style="float: right;" data-dismiss="modal"> <i class="bi bi-check-lg iconedit-fill"></i> Entendido </button>
+                    <button type="button" class="btn btn-success-custom" style="float: right;" data-bs-dismiss="modal"> <i class="bi bi-check-lg iconedit-fill"></i> Entendido </button>
                 </div>
             </div>
         </div>
