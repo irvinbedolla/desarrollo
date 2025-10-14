@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Auth, Hash;
 use App\Models\Recepcion;
+use App\Models\CitaDireccion;
 
 class HomeController extends Controller
 {

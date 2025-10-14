@@ -48,6 +48,9 @@ use App\Exports\RatificacionesFromViewExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\NotificacionesExport;
 use App\Models\Deducciones;
+use App\Models\TercerEncuentro;
+use App\Mail\WelcomeMail;
+use Illuminate\Support\Facades\Mail;
 
 class SeerController extends Controller
 {   
@@ -5672,8 +5675,6 @@ class SeerController extends Controller
         $inhabiles = DiasInhabiles::where('centro', $sede)->get(); //Obtenemos días inhabiles
 
         // 1. Obtener turnos ocupados filtrando por sede
-
-        $pagos = Pagos::where('tipo_pago','Audiencia')->get();
         $ocupados = Pagos::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
             ->where('delegacion', $sede)
             ->get();
@@ -5688,23 +5689,28 @@ class SeerController extends Controller
         $fecha = new \DateTime($fecha_inicio);
         $fin = new \DateTime($fecha_fin);
 
+        // 1. Inicializa el contador de días disponibles antes del bucle principal
+        $limiteSlotsDiario = 14; // Límite de 14 slots disponibles por día
+        
         while ($fecha <= $fin) {
             if ($fecha->format('N') < 6) { // Saltar fines de semana
                 // Definir inicio y fin de la jornada
                 $inicioJornada = (clone $fecha)->setTime(9, 0, 0);
                 $finJornada    = (clone $fecha)->setTime(15, 0, 0);
-
+                
+                $pagos_ocupados = Pagos::where('tipo_pago','Audiencia')
+                ->where('fecha',$fecha)
+                ->get();
+        
                 // Recorremos cada 30 minutos
                 $slot = clone $inicioJornada;
                 while ($slot < $finJornada) {
                     $slotStart = $slot->format('Y-m-d\TH:i:s');
                     $ahora = new \DateTime();
                     $currentCita = new \DateTime($slotStart);
-
-
+ 
                     // Verificar si está ocupado
                     $ocupado = isset($ocupadosMap[$slotStart]);
-
                     $esInhabil = false;
                     foreach($inhabiles as $dia){
                         $fechaInhabilInicio = $dia->fecha_inicio . 'T' . $dia->horario_inicio;
@@ -5716,14 +5722,19 @@ class SeerController extends Controller
 
                     // Determinar el estado
                     $estado = '';
-                    if ($ocupado) {
+                    if(count($pagos_ocupados) > 13){
                         $estado = 'ocupado';
-                    } elseif ($esInhabil) {
-                        $estado = 'inhabil';
-                    } elseif ($ahora > $currentCita) {
-                        $estado = 'expirado';
-                    } else {
-                        $estado = 'disponible';
+                    }
+                    else{ 
+                        if ($ocupado) {
+                            $estado = 'ocupado';
+                        } elseif ($esInhabil) {
+                            $estado = 'inhabil';
+                        } elseif ($ahora > $currentCita) {
+                            $estado = 'expirado';
+                        } else {
+                            $estado = 'disponible';
+                        }
                     }
 
                     switch ($estado) {
@@ -6290,5 +6301,79 @@ class SeerController extends Controller
             }
         }
         return back()->with('success', 'Citatorio cargado correctamente.');
+    }
+
+    public function registro_tercer_encuentro(){
+        return view('tercer_encuentro');
+    }
+
+    public function tercer_encuentro_registro(Request $request){
+        $data = $request->all();
+        
+        $data_insert=array(
+            'primer_apellido'   => $data["primero_trabajador"],
+            'segundo_apellido'  => $data["segundo_trabajador"],
+            'nombre'            => $data["trabajador"],
+            'correo'            => $data["email"],
+            'telefono'          => $data["telefono"],
+            'lugar'             => $data["trabajador_edad"],
+            'sexo'              => "trabajador_sexo",
+            'estatus'           => "Pendiente",
+        );
+
+        if( $data["convesatorio1"] == "on"){
+            $data_insert["convesatorio1"] = 'Conferencia Inaugural: “Implementación del Mecanismo Laboral de Respuesta Rápida (MLRR) del T- MEC”';
+        }
+        if( $data["convesatorio2"] == "on"){
+            $data_insert["convesatorio2"] = 'Conversatorio 1: “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”';
+        }
+        if( $data["convesatorio3"] == "on"){
+            $data_insert["convesatorio3"] = 'Conversatorio 2: “Implicación y Aplicación de la Ley Silla, Regulación del Trabajo en Plataformas Digitales y Reducción de las Jornadas Laborales”';
+        }
+        if( $data["convesatorio4"] == "on"){
+            $data_insert["convesatorio4"] = 'Conversatorio 3: “La Seguridad Social como Derecho Humano y su Impacto en las Resoluciones Judiciales”';
+        }
+        if( $data["convesatorio5"] == "on"){
+            $data_insert["convesatorio5"] = 'Presentación del Libro “Conciliación y Justicia Laboral” Coordinadores: Andrés Medina Guzmán y Sergio Carmelo Domínguez Mota';
+        }
+        if( $data["convesatorio6"] == "on"){
+            $data_insert["convesatorio6"] = 'Conversatorio 4: “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral';
+        }
+        if( $data["convesatorio7"] == "on"){
+            $data_insert["convesatorio7"] = 'Conversatorio 5: ILTRAS “Modelo de la Conciliación Laboral Comparada Internacionalmente”';
+        }
+        if( $data["convesatorio8"] == "on"){
+            $data_insert["convesatorio8"] = 'Presentación del Libro ILTRAS “El Despido en Latinoamérica: Una Visión de Derecho Comparado”';
+        }
+        if( $data["convesatorio9"] == "on"){
+            $data_insert["convesatorio9"] = 'Conferencia Magistral de Clausura';
+        }
+        if( $data["convesatorio10"] == "on"){
+            $data_insert["convesatorio10"] = 'Ceremonia de Clausura';
+        }
+        TercerEncuentro::create($data_insert);
+
+        $user = [
+            'primer_apellido'   => $data["primero_trabajador"],
+            'segundo_apellido'  => $data["segundo_trabajador"],
+            'nombre'            => $data["trabajador"],
+            'email'             => $data["email"],
+            'convesatorio1'    => 'Conferencia Inaugural: “Implementación del Mecanismo Laboral de Respuesta Rápida (MLRR) del T- MEC”',
+            'convesatorio2'    => 'Conversatorio 1: “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”',
+            'convesatorio3'    => 'Conversatorio 2: “Implicación y Aplicación de la Ley Silla, Regulación del Trabajo en Plataformas Digitales y Reducción de las Jornadas Laborales”',
+            'convesatorio4'    => 'Conversatorio 3: “La Seguridad Social como Derecho Humano y su Impacto en las Resoluciones Judiciales”',
+            'convesatorio5'    => 'Presentación del Libro “Conciliación y Justicia Laboral” Coordinadores: Andrés Medina Guzmán y Sergio Carmelo Domínguez Mota',
+            'convesatorio6'    => 'Conversatorio 4: “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral',
+            'convesatorio7'    => 'Conversatorio 5: ILTRAS “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
+            'convesatorio8'    => 'Presentación del Libro ILTRAS “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
+            'convesatorio9'    => 'Conferencia Magistral de Clausura',
+            'convesatorio10'   => 'Ceremonia de Clausura',
+        ];
+
+        // 2. Envío del correo
+        // El método Mail::to() toma el email del destinatario
+        Mail::to($user['email'])->send(new WelcomeMail($user));
+
+        return back()->with('success', 'Revisa tu bandeja de entrada para verificar tu folio de registro a las actividades del Tercer Encuentro Nacional de la Conciliación y Justicia Laboral.'); 
     }
 }

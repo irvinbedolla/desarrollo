@@ -22,6 +22,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\CitaController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\RecepcionController;
+use App\Http\Controllers\CitaDireccionController;
+use App\Http\Controllers\CorreosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,7 +47,9 @@ use App\Http\Controllers\RecepcionController;
 
     Route::get('solicitudes',    [SeerController::class, 'solicitudesLinea'])->name('solicitud');
     Route::get('tipoIndustria/{tipo_solicitud}',  [SeerController::class, 'Industrias'])->name('solicitud.industria');
-   
+    Route::get('/registro_tercer_encuentro',            [SeerController::class, 'registro_tercer_encuentro'])->name('registro_tercer_encuentro');
+    Route::post('/registro_tercer_encuentro/guardar',   [SeerController::class, 'tercer_encuentro_registro'])->name('tercer_encuentro_registro');
+
     
     //Rutas para el chat
         Route::post('/chat/crear',      [Controller::class, 'store_chat'])->name('RespuestasChat.store');
@@ -87,6 +91,7 @@ use App\Http\Controllers\RecepcionController;
     Route::get('citas',                         [TurnosController::class, 'create_publico'])->name('create_cita');
     Route::post('/citas/store_publico',         [TurnosController::class, 'store_publico'])->name('turnos.publico');
     Route::get('/validar_folio_abogado/{folio}',[TurnosController::class, 'validarFolio'])->name('validar_folio_abogado'); //valida si existe ya un abogado
+    Route::get('/Confirmacion/{id}',            [CitaDireccionController::class, 'codigoQR'])->name('revisarCitaQR');
 
     //Pre registro de solicitudes
     Route::get('registro', [SeerController::class, 'RTemportal'])->name('PreRegistro');
@@ -447,6 +452,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/revisar/indexSolictudes',          [SeerController::class, 'todas_solicitudes'])->name('todas_solicitudes');
         Route::get('/revisar/indexRatificaciones',      [SeerController::class, 'todas_ratificaciones'])->name('todas_ratificaciones');
     //Fin de rutas Generales
+    //Direccion General
+        Route::get('/DireccionGeneral/index',           [CitaDireccionController::class, 'index'])->name('indexDireccionGeneral');
+        Route::get('/DireccionGeneral/create',          [CitaDireccionController::class, 'create'])->name('cita_direccion_crear');
+        Route::post('/DireccionGeneral/guardar',        [CitaDireccionController::class, 'cita_direccion_guardar'])->name('cita_direccion_guardar');
+        Route::get('/DireccionGeneral/crearQR/{id}',    [CitaDireccionController::class, 'generarQr'])->name('generarQR_cita');
+    //Fin de rutas Generales
+    //Correos
+        Route::get('/Prueba_correo/mandar',                 [CorreosController::class, 'correo_prueba'])->name('correo_prueba');
+    //Fin Correos
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);
         Route::resource('/user-management/roles', RoleManagementController::class);
