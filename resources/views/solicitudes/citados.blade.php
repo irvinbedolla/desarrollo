@@ -164,7 +164,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4" id="lenguaje_señas">
                                                 <div class="form-group">
                                                     <label for="name">¿Qué tipo de lenguaje require?</label>
-                                                    <input type="text" name="lenguaje" class="form-control" oninput="this.value = this.value.toUpperCase()">
+                                                    <input type="text" name="lenguaje" class="form-control" id="lenguajeRequerido" oninput="this.value = this.value.toUpperCase()">
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-12" id="tipoPersona_nombre" style="display:none;">
@@ -309,7 +309,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-1">
                                                 <div class="form-group">
                                                     <label for="text">Núm. ext. <span style="color:red;">(*)</span></label>
-                                                    <input type="number" name="exterior" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <input type="number" name="exterior" min="0" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El núm. exterior es obligatorio.
                                                     </div>
@@ -319,7 +319,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-1">
                                                 <div class="form-group">
                                                     <label for="name">Núm. int.</label>
-                                                    <input type="text" name="interior" class="form-control"  oninput="this.value = this.value.toUpperCase()"> 
+                                                    <input type="text" name="interior" min="0" class="form-control"  oninput="this.value = this.value.toUpperCase()"> 
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-3">
@@ -561,6 +561,20 @@
                 // Ejecutar al cargar por si ya tiene valor
                 actualizarTipoPersona();
             }
+
+            const form = document.querySelector('form.needs-validation');
+            form.addEventListener('submit', function(e) {
+
+                const checkLanguage = document.getElementById('check_lenguaje');
+                if (checkLanguage.checked) {
+                    const languageRequired = document.getElementById('lenguajeRequerido');
+                    languageRequired.required = true;
+                }
+                else {
+                    const languageRequired = document.getElementById('lenguajeRequerido');
+                    languageRequired.required = false;
+                }
+            });
         });
         
         function sedes(){

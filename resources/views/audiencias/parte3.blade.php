@@ -686,19 +686,19 @@
             var calendarEl = document.getElementById('calendar');
             
             calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridWeek',
+                initialView: window.innerWidth < 768 ? 'listWeek' : 'dayGridWeek',
                 locale: 'es',
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
                 },
-                windowResize: function(view) {
+                /*windowResize: function(view) {
                     if (window.innerWidth < 768) {
                         calendar.changeView('listWeek');
                     } else{
                         calendar.changeView('dayGridWeek');
                     }
-                },
+                },*/
                 validRange: {
                     start: (() => {
                         const now = new Date();
@@ -765,6 +765,16 @@
                 },
             });
             calendar.render();
+
+            function updateCalendarView() {
+                if (window.innerWidth < 768) {
+                    calendar.changeView('listWeek');
+                } else {
+                    calendar.changeView('dayGridWeek');
+                }
+            }
+
+            window.addEventListener('resize', updateCalendarView);
         });
 
         // Confirmar selección

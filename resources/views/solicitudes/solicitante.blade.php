@@ -203,7 +203,7 @@
                                             <div class="col-xs-6 col-sm-12 col-md-6" id="lenguaje_señas">
                                                 <div class="form-group">
                                                     <label for="name">¿Qué tipo de lenguaje require?</label>
-                                                    <input type="text" name="lenguaje" class="form-control" oninput="this.value = this.value.toUpperCase()">
+                                                    <input type="text" name="lenguaje" class="form-control" id="lenguajeRequerido" oninput="this.value = this.value.toUpperCase()">
                                                 </div>
                                             </div> 
                                             <div class="col-xs-6 col-sm-12 col-md-3"><br>
@@ -213,7 +213,7 @@
                                             <div class="col-xs-6 col-sm-12 col-md-6" id="discapacidad">
                                                 <div class="form-group">
                                                     <label for="name">¿Cuál es su discapacidad?</label>
-                                                    <input type="text" name="tipo_discapacidad" class="form-control" oninput="this.value = this.value.toUpperCase()">
+                                                    <input type="text" name="tipo_discapacidad" class="form-control" id="discapacidadRequerida" oninput="this.value = this.value.toUpperCase()">
                                                 </div>
                                             </div> 
                                             <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
@@ -222,7 +222,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Teléfono Celular <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="telefono1" minlength="10" maxlength="10" class="form-control numeroTelefonico" required> 
+                                                    <input type="text" name="telefono1" minlength="10" maxlength="10" class="form-control numeroTelefonico" required>
                                                     <div class="invalid-feedback">
                                                         El campo teléfono es obligatorio.
                                                     </div>
@@ -421,7 +421,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Total de horas trabajadas por semana <span style="color:red;">(*)</span></label>
-                                                    <input type="number" name="horas" class="form-control" required> 
+                                                    <input type="number" name="horas" min="1" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo cantidad de horas trabajadas es obligatorio.
                                                     </div>
@@ -633,25 +633,25 @@
                 const fechaTermino = new Date(fechaTerminoStr);
                 // Validar que fecha inicio no sea la fecha de hoy
                 if (fechaInicioStr === fechaHoyStr) {
-                    alert("La fecha de ingreso no puede ser la fecha actual.");
+                    swal("Error", "La fecha de ingreso no puede ser la fecha actual.", "error");
                     inicio.value = "";
                     return;
                 }
 
                 if (fechaInicio > fechaHoy) {
-                    alert("La fecha de ingreso no puede ser mayor a la fecha actual.");
+                    swal("Error", "La fecha de ingreso no puede ser mayor a la fecha actual.", "error");
                     inicio.value = "";
                     return;
                 }
 
                 if (fechaTerminoStr && fechaTermino > fechaHoy) {
-                    alert("La fecha de término no puede ser mayor a la fecha actual.");
+                    swal("Error", "La fecha de término no puede ser mayor a la fecha actual.", "error");
                     termino.value = "";
                     return;
                 }
 
                 if (fechaInicioStr && fechaTerminoStr && fechaInicio > fechaTermino) {
-                    alert("La fecha de ingreso no puede ser mayor que la fecha de término.");
+                    swal("Error", "La fecha de ingreso no puede ser mayor que la fecha de término.", "error");
                     termino.value = "";
                     return;
                 }
@@ -659,5 +659,48 @@
 
             inicio.addEventListener("blur", validarFechas);
             termino.addEventListener("blur", validarFechas);
+
+            const form = document.querySelector('form.needs-validation');
+            form.addEventListener('submit', function(e) {
+                let tel1 = form.querySelector('input[name="telefono1"]');
+                let tel2 = form.querySelector('input[name="telefono2"]');
+                let valid = true;
+                // Validar teléfono celular (obligatorio)
+                if (tel1 && tel1.value.replace(/\D/g, '').length !== 10) {
+                    swal("Error", "El teléfono celular debe tener exactamente 10 dígitos.", "error");
+                    tel1.focus();
+                    valid = false;
+                }
+                // Validar teléfono fijo (opcional, solo si tiene valor)
+                if (tel2 && tel2.value && tel2.value.replace(/\D/g, '').length !== 10) {
+                    swal("Error", "El teléfono fijo debe tener exactamente 10 dígitos.", "error");
+                    tel2.focus();
+                    valid = false;
+                }
+
+                const checkLanguage = document.getElementById('check_lenguaje');
+                if (checkLanguage.checked) {
+                    const languageRequired = document.getElementById('lenguajeRequerido');
+                    languageRequired.required = true;
+                }
+                else {
+                    const languageRequired = document.getElementById('lenguajeRequerido');
+                    languageRequired.required = false;
+                }
+
+                const checkDisability = document.getElementById('check_discapacidad');
+                if (checkDisability.checked) {
+                    const languageRequired = document.getElementById('discapacidadRequerida');
+                    languageRequired.required = true;
+                }
+                else {
+                    const languageRequired = document.getElementById('discapacidadRequerida');
+                    languageRequired.required = false;
+                }
+                
+                if (!valid) {
+                    e.preventDefault();
+                }
+            });
         });
     </script>
