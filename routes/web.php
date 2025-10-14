@@ -461,6 +461,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Correos
         Route::get('/Prueba_correo/mandar',                 [CorreosController::class, 'correo_prueba'])->name('correo_prueba');
     //Fin Correos
+    //Tercer Encuentro
+        Route::get('/tercer_encuentro/index',   [SeerController::class, 'index_tercer_encuentro'])->name('index_tercer_encuentro');
+        Route::get('/tercer_encuentro/reporete',[SeerController::class, 'pdf_tercer_encuentro'])->name('pdf_tercer_encuentro');
+    //Fin de tercer encuentro
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);
         Route::resource('/user-management/roles', RoleManagementController::class);

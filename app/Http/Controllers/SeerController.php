@@ -6376,4 +6376,26 @@ class SeerController extends Controller
 
         return back()->with('success', 'Revisa tu bandeja de entrada para verificar tu folio de registro a las actividades del Tercer Encuentro Nacional de la Conciliación y Justicia Laboral.'); 
     }
+
+    public function index_tercer_encuentro(){
+        $personas = TercerEncuentro::all();
+        return view('tercer.index',compact('personas'));
+    }
+
+    public function pdf_tercer_encuentro(){
+        $personas_conferencia1 = TercerEncuentro::where('convesatorio1','Conferencia Inaugural: “Implementación del Mecanismo Laboral de Respuesta Rápida (MLRR) del T- MEC”')->orderby('primer_apellido')->get();
+        $personas_conferencia2 = TercerEncuentro::where('convesatorio2','Conversatorio 1: “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”')->orderby('primer_apellido')->get();
+        $personas_conferencia3 = TercerEncuentro::where('convesatorio3','Conversatorio 2: “Implicación y Aplicación de la Ley Silla, Regulación del Trabajo en Plataformas Digitales y Reducción de las Jornadas Laborales”')->orderby('primer_apellido')->get();
+        $personas_conferencia4 = TercerEncuentro::where('convesatorio4','Conversatorio 3: “La Seguridad Social como Derecho Humano y su Impacto en las Resoluciones Judiciales”')->orderby('primer_apellido')->get();
+        $personas_conferencia5 = TercerEncuentro::where('convesatorio5','Presentación del Libro “Conciliación y Justicia Laboral” Coordinadores: Andrés Medina Guzmán y Sergio Carmelo Domínguez Mota')->orderby('primer_apellido')->get();
+        $personas_conferencia6 = TercerEncuentro::where('convesatorio6','Conversatorio 4: “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral')->orderby('primer_apellido')->get();
+        $personas_conferencia7 = TercerEncuentro::where('convesatorio7','Conversatorio 5: ILTRAS “Modelo de la Conciliación Laboral Comparada Internacionalmente”')->orderby('primer_apellido')->get();
+        $personas_conferencia8 = TercerEncuentro::where('convesatorio8','Presentación del Libro ILTRAS “El Despido en Latinoamérica: Una Visión de Derecho Comparado”')->orderby('primer_apellido')->get();
+        $personas_conferencia9 = TercerEncuentro::where('convesatorio9','Conferencia Magistral de Clausura')->orderby('primer_apellido')->get();
+        $personas_conferencia10 = TercerEncuentro::where('convesatorio10','Ceremonia de Clausura')->orderby('primer_apellido')->get();
+        $pdf = \PDF::loadView('PDF/TercerEncuentro/reporte', compact('personas_conferencia1','personas_conferencia2','personas_conferencia3','personas_conferencia4','personas_conferencia5','personas_conferencia6'
+        ,'personas_conferencia7','personas_conferencia8','personas_conferencia9','personas_conferencia10'));
+        //$pdf->setPaper('a4', 'landscape');
+        return $pdf->stream('archivo.pdf');
+    }
 }
