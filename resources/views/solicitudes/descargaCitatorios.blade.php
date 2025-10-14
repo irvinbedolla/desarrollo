@@ -42,6 +42,7 @@
                                         <button type="button" class="btn btn-warning open-citatoriosT-modal" data-bs-toggle="modal" data-bs-target="#citatoriosTrabajador" data-id="{{ $citado->id_solicitud }}">
                                             Subir citatorios firmados
                                         </button>
+                                        <a href="{{ route('solicitudes_pendientes') }}" class="btn btn-success" >Terminar</a>
                                     </div>
                                 </div> 
                              </div>
