@@ -82,6 +82,7 @@
                             <th style="color: #fff;  text-align: center;">Telefono</th>
                             <th style="color: #fff;  text-align: center;">Email</th>
                             <th style="color: #fff;  text-align: center;">Visita</th>
+                            <th style="color: #fff;  text-align: center;">Firma</th>
                         </thead>
                         <tbody> 
                             @foreach($personas_conferencia1 as $persona)
@@ -90,6 +91,7 @@
                                     <td>{{$persona->telefono}}</td>
                                     <td>{{$persona->correo}}</td>
                                     <td>{{$persona->lugar}}</td>
+                                    <td>___________</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -104,6 +106,7 @@
                             <th style="color: #fff;  text-align: center;">Telefono</th>
                             <th style="color: #fff;  text-align: center;">Email</th>
                             <th style="color: #fff;  text-align: center;">Visita</th>
+                            <th style="color: #fff;  text-align: center;">Firma</th>
                         </thead>
                         <tbody> 
                             @foreach($personas_conferencia2 as $persona)
@@ -112,6 +115,7 @@
                                     <td>{{$persona->telefono}}</td>
                                     <td>{{$persona->correo}}</td>
                                     <td>{{$persona->lugar}}</td>
+                                    <td>___________</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -126,6 +130,7 @@
                             <th style="color: #fff;  text-align: center;">Telefono</th>
                             <th style="color: #fff;  text-align: center;">Email</th>
                             <th style="color: #fff;  text-align: center;">Visita</th>
+                            <th style="color: #fff;  text-align: center;">Firma</th>
                         </thead>
                         <tbody> 
                             @foreach($personas_conferencia3 as $persona)
@@ -134,6 +139,7 @@
                                     <td>{{$persona->telefono}}</td>
                                     <td>{{$persona->correo}}</td>
                                     <td>{{$persona->lugar}}</td>
+                                    <td>___________</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -148,6 +154,7 @@
                             <th style="color: #fff;  text-align: center;">Telefono</th>
                             <th style="color: #fff;  text-align: center;">Email</th>
                             <th style="color: #fff;  text-align: center;">Visita</th>
+                            <th style="color: #fff;  text-align: center;">Firma</th>
                         </thead>
                         <tbody> 
                             @foreach($personas_conferencia4 as $persona)
@@ -156,6 +163,7 @@
                                     <td>{{$persona->telefono}}</td>
                                     <td>{{$persona->correo}}</td>
                                     <td>{{$persona->lugar}}</td>
+                                    <td>___________</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -170,6 +178,7 @@
                             <th style="color: #fff;  text-align: center;">Telefono</th>
                             <th style="color: #fff;  text-align: center;">Email</th>
                             <th style="color: #fff;  text-align: center;">Visita</th>
+                            <th style="color: #fff;  text-align: center;">Firma</th>
                         </thead>
                         <tbody> 
                             @foreach($personas_conferencia5 as $persona)
@@ -178,6 +187,7 @@
                                     <td>{{$persona->telefono}}</td>
                                     <td>{{$persona->correo}}</td>
                                     <td>{{$persona->lugar}}</td>
+                                    <td>___________</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -192,6 +202,7 @@
                             <th style="color: #fff;  text-align: center;">Telefono</th>
                             <th style="color: #fff;  text-align: center;">Email</th>
                             <th style="color: #fff;  text-align: center;">Visita</th>
+                            <th style="color: #fff;  text-align: center;">Firma</th>
                         </thead>
                         <tbody> 
                             @foreach($personas_conferencia6 as $persona)
@@ -200,6 +211,7 @@
                                     <td>{{$persona->telefono}}</td>
                                     <td>{{$persona->correo}}</td>
                                     <td>{{$persona->lugar}}</td>
+                                    <td>___________</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -214,6 +226,7 @@
                             <th style="color: #fff;  text-align: center;">Telefono</th>
                             <th style="color: #fff;  text-align: center;">Email</th>
                             <th style="color: #fff;  text-align: center;">Visita</th>
+                            <th style="color: #fff;  text-align: center;">Firma</th>
                         </thead>
                         <tbody> 
                             @foreach($personas_conferencia7 as $persona)
@@ -222,6 +235,7 @@
                                     <td>{{$persona->telefono}}</td>
                                     <td>{{$persona->correo}}</td>
                                     <td>{{$persona->lugar}}</td>
+                                    <td>___________</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -236,6 +250,7 @@
                             <th style="color: #fff;  text-align: center;">Telefono</th>
                             <th style="color: #fff;  text-align: center;">Email</th>
                             <th style="color: #fff;  text-align: center;">Visita</th>
+                            <th style="color: #fff;  text-align: center;">Firma</th>
                         </thead>
                         <tbody> 
                             @foreach($personas_conferencia8 as $persona)
@@ -244,6 +259,7 @@
                                     <td>{{$persona->telefono}}</td>
                                     <td>{{$persona->correo}}</td>
                                     <td>{{$persona->lugar}}</td>
+                                    <td>___________</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -258,6 +274,7 @@
                             <th style="color: #fff;  text-align: center;">Telefono</th>
                             <th style="color: #fff;  text-align: center;">Email</th>
                             <th style="color: #fff;  text-align: center;">Visita</th>
+                            <th style="color: #fff;  text-align: center;">Firma</th>
                         </thead>
                         <tbody> 
                             @foreach($personas_conferencia9 as $persona)
@@ -266,6 +283,7 @@
                                     <td>{{$persona->telefono}}</td>
                                     <td>{{$persona->correo}}</td>
                                     <td>{{$persona->lugar}}</td>
+                                    <td>___________</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -280,6 +298,7 @@
                             <th style="color: #fff;  text-align: center;">Telefono</th>
                             <th style="color: #fff;  text-align: center;">Email</th>
                             <th style="color: #fff;  text-align: center;">Visita</th>
+                            <th style="color: #fff;  text-align: center;">Firma</th>
                         </thead>
                         <tbody> 
                             @foreach($personas_conferencia10 as $persona)
@@ -288,6 +307,7 @@
                                     <td>{{$persona->telefono}}</td>
                                     <td>{{$persona->correo}}</td>
                                     <td>{{$persona->lugar}}</td>
+                                    <td>___________</td>
                                 </tr>
                             @endforeach
                         </tbody>
