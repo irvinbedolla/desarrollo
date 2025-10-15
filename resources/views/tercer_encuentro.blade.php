@@ -298,12 +298,6 @@
                                                             13:30 - 14:20 h. Conferencia Magistral de Clausura
                                                         </label>
                                                     </div>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="convesatorio10">
-                                                        <label class="form-check-label" for="checkDefault">
-                                                            14:20 - 15:00 h. Ceremonia de Clausura
-                                                        </label>
-                                                    </div>
                                                 </div>
 
                                             <div class="col-xs-12 col-sm-12 col-md-12">

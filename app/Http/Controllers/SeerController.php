@@ -50,6 +50,7 @@ use App\Exports\NotificacionesExport;
 use App\Models\Deducciones;
 use App\Models\TercerEncuentro;
 use App\Mail\WelcomeMail;
+use App\Mail\SolicitudMail;
 use Illuminate\Support\Facades\Mail;
 
 class SeerController extends Controller
@@ -1935,9 +1936,22 @@ class SeerController extends Controller
             $usuario = User::create($data_insertar_user);
             $usuario->assignRole(('Solicitante'));
             $mensaje = " el correo:".$usuario["email"]." y la contraseña:CCLMICHOACAN".$numero_aleatorio." para continuar tú trámite.";
+
+            $variables = [
+                'Nombre'        => $nombre,
+                'Contraseña'    => "CCLMICHOACAN".$numero_aleatorio,
+                'email'         => $usuario["email"],
+            ];
+            Mail::to($usuario['email'])->send(new SolicitudMail($variables));
         }
         else{
             $mensaje = " el correo:".$usuario["email"]." para continuar tú trámite.";
+            $variables = [
+                'Nombre'        => $nombre,
+                'Contraseña'    => "Ya esta registrada",
+                'email'         => $usuario["email"],
+            ];
+            Mail::to($usuario['email'])->send(new SolicitudMail($variables));
         }
 
         return view('solicitudes.aviso',compact('id','mensaje','delegacion'));
@@ -6317,7 +6331,7 @@ class SeerController extends Controller
             'correo'            => $data["email"],
             'telefono'          => $data["telefono"],
             'lugar'             => $data["trabajador_edad"],
-            'sexo'              => "trabajador_sexo",
+            'sexo'              => $data["trabajador_sexo"],
             'estatus'           => "Pendiente",
         );
 
