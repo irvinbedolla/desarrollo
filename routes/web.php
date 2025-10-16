@@ -24,6 +24,7 @@ use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\RecepcionController;
 use App\Http\Controllers\CitaDireccionController;
 use App\Http\Controllers\CorreosController;
+use App\Http\Controllers\ConciliadoresController;
 
 /*
 |--------------------------------------------------------------------------
@@ -464,6 +465,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/tercer_encuentro/index',   [SeerController::class, 'index_tercer_encuentro'])->name('index_tercer_encuentro');
         Route::get('/tercer_encuentro/reporete',[SeerController::class, 'pdf_tercer_encuentro'])->name('pdf_tercer_encuentro');
     //Fin de tercer encuentro
+    //Conciliadores
+        Route::get('/conciliador/index',                [ConciliadoresController::class, 'index'])->name('index_conciliadores');
+        Route::post('/conciliador/update_perimsos/',    [ConciliadoresController::class, 'update'])->name('conciliadores_permisos');
+    
+    //Fin Conciliadores
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);
         Route::resource('/user-management/roles', RoleManagementController::class);

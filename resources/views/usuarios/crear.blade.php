@@ -93,8 +93,11 @@
                                             <select name="delegacion" class="form-control" required>
                                                 <option value="">Seleccione</option>
                                                 <option value="Morelia">Morelia</option>
+                                                <option value="Zitácuaro">Zitácuaro</option>
                                                 <option value="Uruapan">Uruapan</option>
+                                                <option value="Lázaro Cárdenas">Lázaro Cárdenas</option>
                                                 <option value="Zamora">Zamora</option>
+                                                <option value="Sahuayo">Sahuayo</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 La delegacion es obligatoria.

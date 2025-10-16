@@ -51,6 +51,7 @@ use App\Models\Deducciones;
 use App\Models\TercerEncuentro;
 use App\Mail\WelcomeMail;
 use App\Mail\SolicitudMail;
+use App\Models\PermisosConciliador;
 use Illuminate\Support\Facades\Mail;
 
 class SeerController extends Controller
@@ -1962,15 +1963,80 @@ class SeerController extends Controller
     }
 
     public function solicitudes_pendientes(){
-        $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
-        ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
-        ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
-        ->select('seer_general.id','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
-        'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
-        ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
-        ->orderBy('seer_general.fecha')
-        ->get();
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
 
+        if($userRole[0] == "Auxiliar" || $userRole[0] == "Excepcion"){
+            $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
+            ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
+            ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+            ->select('seer_general.id','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
+            'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
+            ->where('seer_general.delegacion', $user["delegacion"])
+            ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
+            ->orderBy('seer_general.fecha')
+            ->get();
+        }
+        else if($userRole[0] == "Conciliador"){
+            $permisos = PermisosConciliador::where('id_conciliador',$id)->first();
+            if($permisos["tipo"] == "Ambos"){
+                if($user["delegacion"] == "Morelia"){
+                    $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
+                    ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
+                    ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+                    ->select('seer_general.id','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
+                    'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
+                    ->whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])
+                    ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
+                    ->orderBy('seer_general.fecha')
+                    ->get();
+                }
+                if($user["delegacion"] == "Uruapan"){
+                    $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
+                    ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
+                    ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+                    ->select('seer_general.id','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
+                    'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
+                    ->whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])
+                    ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
+                    ->orderBy('seer_general.fecha')
+                    ->get();
+                }
+                if($user["delegacion"] == "Zamora"){
+                    $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
+                    ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
+                    ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+                    ->select('seer_general.id','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
+                    'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
+                    ->whereIn('seer_general.delegacion', ["Sahuayo", "Zamora"])
+                    ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
+                    ->orderBy('seer_general.fecha')
+                    ->get();
+                }
+            }else{
+                $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
+                ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
+                ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+                ->select('seer_general.id','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
+                'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
+                ->where('seer_general.delegacion', $user["delegacion"])
+                ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
+                ->orderBy('seer_general.fecha')
+                ->get();
+            }
+        }
+        else if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador"){
+            $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
+            ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
+            ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+            ->select('seer_general.id','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
+            'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
+            ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
+            ->orderBy('seer_general.fecha')
+            ->get();
+        }
         return view('solicitudes.solicitudes_pendientes', compact('solicitudes'));
     }
 
@@ -2256,6 +2322,15 @@ class SeerController extends Controller
         else if($delegacion == "Zamora"){
             $del = "ZAM";
         }
+        else if($delegacion == "Zitácuaro"){
+            $del = "ZIT";
+        }
+        else if($delegacion == "Sahuayo"){
+            $del = "SAH";
+        }
+        else if($delegacion == "Lázaro Cárdenas"){
+            $del = "LAZ";
+        }
         //contar el numero de ceros
         $numeroConCeros = str_pad($id, 5, "0", STR_PAD_LEFT);
         $folio = $del."/SOL"."/".$año_actual."/".$numeroConCeros;
@@ -2399,7 +2474,7 @@ class SeerController extends Controller
         ->where('seer_general.delegacion', $user["delegacion"])
         ->where('seer_citados.id_notificador', 0)
         ->where('seer_citados.notificacion',"!=", "Trabajador")
-        ->orWhereIn('seer_general.estatus', "!=" ,["Pendiente","Prevencion"])
+        ->whereNotIn('seer_general.estatus', ["Pendiente","Prevencion"])
         ->get();
 
         return view('notificaciones.index',compact('personas','mis_notificaciones','userRole'));
@@ -3226,14 +3301,44 @@ class SeerController extends Controller
         $user = User::find($id);
         $bandera = 0;
 
+        if($delegacion == "Morelia" || $delegacion == "Uruapan" || $delegacion == "Zamora"){
+            //Vamos a contar cuandos auxiliares existen en el CCL
+            $conciliadores = User::whereHas($relacionEloquent, function ($query) {
+                return $query->where('name', '=', 'Conciliador');
+            })
+            ->join('permisos_conciliador','permisos_conciliador.id_conciliador','users.id')
+            ->where('users.delegacion', $delegacion)
+            ->whereIn('permisos_conciliador.tipo', ["Ambos","Precencial"])
+            ->get();
+        }else{
+            if($delegacion == "Zitácuaro"){
+                $oficina_apoyo = "Morelia";
+            }
+            if($delegacion == "Lárazo Cárdenas"){
+                $oficina_apoyo = "Uruapan";
+            }
+            if($delegacion == "Sahuayo"){
+                $oficina_apoyo = "Zamora";
+            }
+            //Vamos a contar cuandos auxiliares existen en el CCL
+            $conciliadores = User::whereHas($relacionEloquent, function ($query) {
+                return $query->where('name', '=', 'Conciliador');
+            })
+            ->join('permisos_conciliador','permisos_conciliador.id_conciliador','users.id')
+            ->where('users.delegacion', $oficina_apoyo)
+            ->whereIn('permisos_conciliador.tipo', ["Ambos","Virtual"])
+            ->get();
+        }
 
-        //Vamos a contar cuandos auxiliares existen en el CCL
-        $conciliadores = User::whereHas($relacionEloquent, function ($query) {
-            return $query->where('name', '=', 'Conciliador');
-        })
-        ->where('delegacion', $user["delegacion"])
-        ->get();
-
+        if($delegacion == "Zitácuaro"){
+            $delegacion = "Morelia";
+        }
+        if($delegacion == "Lárazo Cárdenas"){
+            $delegacion = "Uruapan";
+        }
+        if($delegacion == "Sahuayo"){
+            $delegacion = "Zamora";
+        }
         //Numero de conciliadores
         $contador_conciliadores = count($conciliadores);
         //Obtener la ultima fecha y hora
@@ -5957,45 +6062,234 @@ class SeerController extends Controller
     }
     
     public function todas_audiencias(){
-        $audiencias = Audiencias::orderBy('created_at', 'desc')->limit(500)->get();
-        foreach ($audiencias as $audiencia) {
-            $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
-            $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-            $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
-            $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
-            $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Algo';
-            $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
-            $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
-            $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
-            $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+
+        if($userRole[0] == "Conciliador"){
+            $permisos = PermisosConciliador::where('id_conciliador',$id)->first();
+            if($permisos["tipo"] == "Ambos"){
+                if($user["delegacion"] == "Morelia"){
+                    $audiencias = Audiencias::whereIn('delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    foreach ($audiencias as $audiencia) {
+                        $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
+                        $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                        $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
+                        $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
+                        $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Algo';
+                        $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
+                        $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
+                        $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
+                        $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
+                    }
+                }
+                if($user["delegacion"] == "Uruapan"){
+                    $audiencias = Audiencias::whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    foreach ($audiencias as $audiencia) {
+                        $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
+                        $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                        $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
+                        $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
+                        $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Algo';
+                        $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
+                        $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
+                        $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
+                        $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
+                    }
+                }
+                if($user["delegacion"] == "Zamora"){
+                    $audiencias = Audiencias::whereIn('delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    foreach ($audiencias as $audiencia) {
+                        $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
+                        $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                        $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
+                        $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
+                        $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Algo';
+                        $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
+                        $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
+                        $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
+                        $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
+                    }
+                }
+            }
+            else{
+                $audiencias = Audiencias::where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(500)->get();
+                foreach ($audiencias as $audiencia) {
+                    $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
+                    $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                    $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
+                    $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
+                    $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Algo';
+                    $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
+                    $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
+                    $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
+                    $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
+                }
+            }
+        }
+        else if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador"){    
+            $audiencias = Audiencias::orderBy('created_at', 'desc')->limit(500)->get();
+            foreach ($audiencias as $audiencia) {
+                $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
+                $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
+                $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
+                $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Algo';
+                $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
+                $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
+                $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
+                $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
+            }
         }
 
         return view('audiencias.todas_audiencias',compact('audiencias'));
     }
 
     public function todas_solicitudes(){
-        $solicitudes = SeerPerGeneral::orderBy('created_at', 'desc')->limit(500)->get();
-        foreach ($solicitudes as $solicitud) {
-            $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
-            $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+
+        if($userRole[0] == "Auxiliar" || $userRole[0] == "Excepcion"){
+            $solicitudes = SeerPerGeneral::where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(500)->get();
+            foreach ($solicitudes as $solicitud) {
+                $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+            }
+        }
+        else if($userRole[0] == "Conciliador"){
+            $permisos = PermisosConciliador::where('id_conciliador',$id)->first();
+            if($permisos["tipo"] == "Ambos"){
+                if($user["delegacion"] == "Morelia"){
+                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    foreach ($solicitudes as $solicitud) {
+                        $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                        $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                    }
+                }
+                if($user["delegacion"] == "Uruapan"){
+                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    foreach ($solicitudes as $solicitud) {
+                        $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                        $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                    }
+                }
+                if($user["delegacion"] == "Sahuayo"){
+                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    foreach ($solicitudes as $solicitud) {
+                        $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                        $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                    }
+                }
+               
+            }
+            else{
+                $solicitudes = SeerPerGeneral::where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(500)->get();
+                foreach ($solicitudes as $solicitud) {
+                    $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                    $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                }
+            }
+        }
+        else if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador"){
+            $solicitudes = SeerPerGeneral::orderBy('created_at', 'desc')->limit(500)->get();
+            foreach ($solicitudes as $solicitud) {
+                $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+            }
         }
         return view('solicitudes.solicitudes_todas',compact('solicitudes'));
     }
 
     public function todas_ratificaciones(){
-        $solicitudes = Turnos::where('tipo','Ratificación')
-        ->orderBy('created_at', 'desc')->limit(500)->get();
-        foreach ($solicitudes as $audiencia) {
-            $pendientes = Pagos::where('id_solicitud',$audiencia["id"])
-            ->where('estatus',"Pendiente")
-            ->where('tipo_pago',"Ratificacion")
-            ->get();
-            if(count($pendientes) == 0){
-                //Si la contancia es 0 no tiene pagos pendientes
-                $audiencia->constancia = 0;
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+
+        if($userRole[0] == "Auxiliar" || $userRole[0] == "Excepcion"){
+            $solicitudes = Turnos::where('delegacion', $user["delegacion"])->where('tipo','Ratificación')->orderBy('created_at', 'desc')->limit(500)->get();
+            foreach ($solicitudes as $audiencia) {
+                $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
+                if(count($pendientes) == 0){
+                    //Si la contancia es 0 no tiene pagos pendientes
+                    $audiencia->constancia = 0;
+                }
+                else{
+                    $audiencia->constancia = 1;
+                }
+            }
+        }
+        else if($userRole[0] == "Conciliador"){
+            $permisos = PermisosConciliador::where('id_conciliador',$id)->first();
+            if($permisos["tipo"] == "Ambos"){
+                if($user["delegacion"] == "Morelia"){
+                    $solicitudes = Turnos::whereIn('delegacion', ["Morelia", "Zitácuaro"])->where('tipo','Ratificación')->orderBy('created_at', 'desc')->limit(500)->get();
+                    foreach ($solicitudes as $audiencia) {
+                        $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
+                        if(count($pendientes) == 0){
+                            //Si la contancia es 0 no tiene pagos pendientes
+                            $audiencia->constancia = 0;
+                        }
+                        else{
+                            $audiencia->constancia = 1;
+                        }
+                    }
+                }
+                if($user["delegacion"] == "Uruapan"){
+                    $solicitudes = Turnos::whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->where('tipo','Ratificación')->orderBy('created_at', 'desc')->limit(500)->get();
+                    foreach ($solicitudes as $audiencia) {
+                        $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
+                        if(count($pendientes) == 0){
+                            //Si la contancia es 0 no tiene pagos pendientes
+                            $audiencia->constancia = 0;
+                        }
+                        else{
+                            $audiencia->constancia = 1;
+                        }
+                    }
+                }
+                if($user["delegacion"] == "Zamora"){
+                     $solicitudes = Turnos::whereIn('delegacion', ["Sahuayo", "Zamora"])->where('tipo','Ratificación')->orderBy('created_at', 'desc')->limit(500)->get();
+                    foreach ($solicitudes as $audiencia) {
+                        $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
+                        if(count($pendientes) == 0){
+                            //Si la contancia es 0 no tiene pagos pendientes
+                            $audiencia->constancia = 0;
+                        }
+                        else{
+                            $audiencia->constancia = 1;
+                        }
+                    }
+                }
             }
             else{
-                $audiencia->constancia = 1;
+                $solicitudes = Turnos::where('delegacion', $user["delegacion"])->where('tipo','Ratificación')->orderBy('created_at', 'desc')->limit(500)->get();
+                foreach ($solicitudes as $audiencia) {
+                    $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
+                    if(count($pendientes) == 0){
+                        //Si la contancia es 0 no tiene pagos pendientes
+                        $audiencia->constancia = 0;
+                    }
+                    else{
+                        $audiencia->constancia = 1;
+                    }
+            }
+            }
+        }
+        else if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador"){
+            $solicitudes = Turnos::where('tipo','Ratificación')->orderBy('created_at', 'desc')->limit(500)->get();
+            foreach ($solicitudes as $audiencia) {
+                $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
+                if(count($pendientes) == 0){
+                    //Si la contancia es 0 no tiene pagos pendientes
+                    $audiencia->constancia = 0;
+                }
+                else{
+                    $audiencia->constancia = 1;
+                }
             }
         }
 

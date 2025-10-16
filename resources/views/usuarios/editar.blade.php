@@ -93,8 +93,11 @@
                                             <label for="name">Delegacion</label>
                                             <select name="delegacion" class="form-control">
                                                 <option value="Morelia" {{ $user["delegacion"] == 'Morelia' ? "selected" : '' }}>Morelia</option>
+                                                <option value="Zitácuaro" {{ $user["delegacion"] == 'Zitácuaro' ? "selected" : '' }}>Zitácuaro</option>
                                                 <option value="Uruapan" {{ $user['delegacion'] == 'Uruapan' ? "selected" : '' }}>Uruapan</option>
+                                                <option value="Lázaro Cárdenas" {{ $user["delegacion"] == 'Lázaro Cárdenas' ? "selected" : '' }}>Lázaro Cárdenas</option>
                                                 <option value="Zamora"  {{ $user['delegacion'] == 'Zamora' ? "selected" : '' }}>Zamora</option>
+                                                <option value="Sahuayo" {{ $user["delegacion"] == 'Sahuayo' ? "selected" : '' }}>Sahuayo</option>
                                             </select>
                                         </div>
                                     </div>
