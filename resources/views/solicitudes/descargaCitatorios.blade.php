@@ -12,6 +12,23 @@
                 <div class="col-lg-12" >
                     <div class="card">
                         <div class="card-body">
+                            @if (session('success'))
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    {{ session('success') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                                </div>
+                            @endif
+
+                            @if ($errors->any())
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <ul class="mb-0">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                                </div>
+                            @endif
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                     <div class="table-responsive">
@@ -22,7 +39,7 @@
                                                         <td style="text-align: left;">
                                                             <div class="col-xs-12 col-sm-6 col-md-6">
                                                                 <div class="form-group">
-                                                                    <span>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido }}</span>   
+                                                                    <p style="text-align: justify;">{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido }}</p>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -33,15 +50,21 @@
                                                                 </div>
                                                             </div>
                                                         </td>
+                                                        <td>
+                                                            <div class="col-xs-12 col-sm-6 col-md-6">
+                                                                <div class="form-group">
+                                                                    <button type="button" class="btn btn-warning open-citatoriosT-modal" data-bs-toggle="modal" data-bs-target="#citatoriosTrabajador" data-id="{{ $citado->id_solicitud }}">
+                                                                        Subir citatorio firmado
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>
                                         </table>
                                     </div> 
                                     <div class="text-center mt-3">
-                                        <button type="button" class="btn btn-warning open-citatoriosT-modal" data-bs-toggle="modal" data-bs-target="#citatoriosTrabajador" data-id="{{ $citado->id_solicitud }}">
-                                            Subir citatorios firmados
-                                        </button>
                                         <a href="{{ route('solicitudes_pendientes') }}" class="btn btn-success" >Terminar</a>
                                     </div>
                                 </div> 
@@ -66,7 +89,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalLabel">Subir citatorios</h5>
+                    <h5 class="modal-title" id="modalLabel">Subir citatorio</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">

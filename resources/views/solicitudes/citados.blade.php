@@ -362,18 +362,19 @@
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <label for="name">Ubica tu domicilio laboral y adjunta una captura</label>
+                                                <label for="name">Ubica tu domicilio laboral y adjunta una captura.</label>
                                             </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-4"><br>
-                                                <div class="form-group text-center">
+                                            <div class="col-xs-12 col-sm-6 col-md-2"><br>
+                                                <div class="form-group">
                                                     <a class="btn btn-primary" 
-                                                       style="background-color:blue; border-color:blue;" 
-                                                       href="https://www.google.com.mx/maps/@19.6837376,-101.1712,14z?entry=ttu&g_ep=EgoyMDI1MDgzMC4wIKXMDSoASAFQAw%3D%3D" 
-                                                       target="_blank">
-                                                        Google Maps
+                                                        style="background-color:blue; border-color:blue; display: flex; align-items: center; justify-content: center; gap: 8px;" 
+                                                        href="https://www.google.com.mx/maps/@19.6837376,-101.1712,14z?entry=ttu&g_ep=EgoyMDI1MDgzMC4wIKXMDSoASAFQAw%3D%3D" 
+                                                        target="_blank">
+                                                            <img src="https://www.gstatic.com/images/branding/product/1x/maps_64dp.png" alt="Google Maps" style="width:20px; height:20px;">
+                                                            Google Maps
                                                     </a>
                                                 </div>
-                                            </div>                                            
+                                            </div>                                     
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Referencia 1 <span style="color:red;">(*)</span></label>

@@ -1805,7 +1805,8 @@ class SeerController extends Controller
             'exterior'          => 'required',
             'referencia'        => 'required',
             'municipio_citado'  => 'required',
-            'estado_citado'     => 'required'
+            'estado_citado'     => 'required',
+            'vialidad'          => 'required'
         ]);
         
         $data_insert=array(
@@ -1882,7 +1883,7 @@ class SeerController extends Controller
 
         //Se van a generar quien resulte responsable
         $data_insert["nombre"] = "QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN " .
-             $data["calle"] . ", NÚMERO " . $data["exterior"];
+            $data["vialidad"] . " " . $data["calle"] . ", NÚMERO " . $data["exterior"];
             if (!empty($data["interior"])) {
                 $data_insert["nombre"] .= " INT. " . $data["interior"];
             }
@@ -1916,6 +1917,7 @@ class SeerController extends Controller
         //Revisar si ya existe el correo
         $solicitante = SeerSolicitante::where('id_solicitud',$id)->first();
         $nombre = $solicitante["nombre"]." ".$solicitante["primer_apellido"]." ".$solicitante["segundo_apellido"];
+        $folio = $solicitante["id_solicitud"];
         $delegacion = SeerPerGeneral::find($id);
         $usuario = User::where('email',$solicitante["email"])->first();
 
@@ -1938,18 +1940,20 @@ class SeerController extends Controller
             $mensaje = " el correo:".$usuario["email"]." y la contraseña:CCLMICHOACAN".$numero_aleatorio." para continuar tú trámite.";
 
             $variables = [
-                'Nombre'        => $nombre,
-                'Contraseña'    => "CCLMICHOACAN".$numero_aleatorio,
-                'email'         => $usuario["email"],
+                'Nombre'           => $nombre,
+                'Contraseña'       => "CCLMICHOACAN".$numero_aleatorio,
+                'email'            => $usuario["email"],
+                'NumFolio'         => $folio,
             ];
             Mail::to($usuario['email'])->send(new SolicitudMail($variables));
         }
         else{
             $mensaje = " el correo:".$usuario["email"]." para continuar tú trámite.";
             $variables = [
-                'Nombre'        => $nombre,
-                'Contraseña'    => "Ya esta registrada",
-                'email'         => $usuario["email"],
+                'Nombre'           => $nombre,
+                'Contraseña'       => "Ya esta registrada",
+                'email'            => $usuario["email"],
+                'NumFolio'         => $folio,
             ];
             Mail::to($usuario['email'])->send(new SolicitudMail($variables));
         }
