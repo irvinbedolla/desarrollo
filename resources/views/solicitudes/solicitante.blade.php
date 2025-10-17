@@ -143,7 +143,7 @@
                                             <div id="div1" class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
                                                     <label for="name">Edad<span style="color:red;">(*)</span></label>
-                                                    <input type="number" name="edad" class="form-control" id="años_edad" required> 
+                                                    <input type="number" min="0" name="edad" class="form-control" id="años_edad" required> 
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatoria.
                                                     </div>
@@ -204,6 +204,9 @@
                                                 <div class="form-group">
                                                     <label for="name">¿Qué tipo de lenguaje require?</label>
                                                     <input type="text" name="lenguaje" class="form-control" id="lenguajeRequerido" oninput="this.value = this.value.toUpperCase()">
+                                                    <div class="invalid-feedback">
+                                                        Debe especificar el idioma o lengua requerida.
+                                                    </div>
                                                 </div>
                                             </div> 
                                             <div class="col-xs-6 col-sm-12 col-md-3"><br>
@@ -214,6 +217,9 @@
                                                 <div class="form-group">
                                                     <label for="name">¿Cuál es su discapacidad?</label>
                                                     <input type="text" name="tipo_discapacidad" class="form-control" id="discapacidadRequerida" oninput="this.value = this.value.toUpperCase()">
+                                                    <div class="invalid-feedback">
+                                                        Debe especificar la discapacidad.
+                                                    </div>
                                                 </div>
                                             </div> 
                                             <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
@@ -232,7 +238,10 @@
                                                 <div class="form-group">
                                                     <label for="name">Teléfono Fijo (Campo opcional)</label>
                                                     <input type="text" name="telefono2" minlength="10" maxlength="10" class="form-control numeroTelefonico"> 
-                                                </div>   
+                                                </div>
+                                                 <div class="invalid-feedback">
+                                                        El teléfono fijo debe tener 10 dígitos
+                                                </div>  
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
@@ -421,7 +430,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Total de horas trabajadas por semana <span style="color:red;">(*)</span></label>
-                                                    <input type="number" name="horas" min="1" class="form-control" required> 
+                                                    <input type="number" name="horas" min="0" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo cantidad de horas trabajadas es obligatorio.
                                                     </div>

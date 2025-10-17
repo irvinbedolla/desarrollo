@@ -99,7 +99,7 @@
     });
 </script>
 
-@livewireScripts
+<script src="{{ asset('/public/vendor/livewire/livewire.js') }}"></script>
 </body>
 <!--end::Body-->
 

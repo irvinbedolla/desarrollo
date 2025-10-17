@@ -4420,8 +4420,8 @@ class SeerController extends Controller
         $ramas          = SolicitudRama::all();
         $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
         $citados        = SeerCitados::where("id_solicitud",$id)->get();
-        $estados        = Estados::all();
-        $municipios     = Municipios::where('estado',16)->get();
+        $estados        = Estados::orderBy('nombre', 'asc')->get();
+        $municipios     = Municipios::orderBy('nombre', 'asc')->get();
         $conciliadores = User::whereHas('roles', function ($query) {
             return $query->where('name', '=', 'Conciliador');
         })

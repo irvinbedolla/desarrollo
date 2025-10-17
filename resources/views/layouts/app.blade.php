@@ -77,7 +77,7 @@
         </div>
 
 
-        @livewireScripts
+    <script src="{{ asset('/public/vendor/livewire/livewire.js') }}"></script>
     </body>
         
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
