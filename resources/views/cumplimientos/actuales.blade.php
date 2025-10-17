@@ -112,7 +112,6 @@
                                                 <th style="color: #fff;">Empresa</th>
                                                 <th style="color: #fff;">Trabajador</th>
                                                 <th style="color: #fff;">Descripción</th>
-                                                <th style="color: #fff;">Observaciones</th>
                                                 <th style="color: #fff;">Monto</th>
                                                 <th style="color: #fff;">Estatus</th>
                                                 <th style="color: #fff;">Concluir</th>
@@ -127,7 +126,6 @@
                                                         <td>{{$ratificacion->empresa}}</td>
                                                         <td>{{$ratificacion->trabajador}}</td>
                                                         <td>{{$ratificacion->descripcion}}</td>
-                                                        <td>{{$ratificacion->observaciones}}</td>
                                                         <td>${{number_format($ratificacion->monto, 2)}}</td>
                                                         <td>{{$ratificacion->estatus}}</td>
                                                         <td><a class="btn btn-primary" href="{{ route('consulta_cumplimiento_ratificacion', ['id' => $ratificacion->id, 'tipo' => 1] ) }}">Consultar</a></td>
@@ -157,7 +155,6 @@
                                                 <th style="color: #fff;">Número de Expediente</th>
                                                 <th style="color: #fff;">Trabajador</th>
                                                 <th style="color: #fff;">Descripción</th>
-                                                <th style="color: #fff;">Observaciones</th>
                                                 <th style="color: #fff;">Monto</th>
                                                 <th style="color: #fff;">Estatus</th>
                                                 <th style="color: #fff;">Concluir</th>
@@ -171,7 +168,6 @@
                                                         <td>{{$audiencia->NUE}}</td>
                                                         <td>{{$audiencia->trabajador}}</td>
                                                         <td>{{$audiencia->descripcion}}</td>
-                                                        <td>{{$audiencia->observaciones}}</td>
                                                         <td>${{number_format($audiencia->monto, 2)}}</td>
                                                         <td>{{$audiencia->estatus}}</td>
                                                         <td><a class="btn btn-primary" href="{{ route('consulta_cumplimiento', ['id' => $audiencia->id, 'tipo' => 2] ) }}">Consultar</a></td>

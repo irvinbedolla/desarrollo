@@ -60,6 +60,11 @@
                                         <a href="{{ route('todas_solicitudes') }}" class="btn btn-primary"  style="width: 100%">Solicitudes</a>
                                     </div>
                                 </div>
+                                <div class="col-xs-12 col-sm-4 col-md-2">
+                                    <div align="center">
+                                        <a href="{{ route('todos_complimientos') }}" class="btn btn-primary"  style="width: 100%">Cumplimientos</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

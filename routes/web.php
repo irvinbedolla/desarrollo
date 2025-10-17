@@ -451,6 +451,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/revisar/indexAudiencia',           [SeerController::class, 'todas_audiencias'])->name('todas_audiencias');
         Route::get('/revisar/indexSolictudes',          [SeerController::class, 'todas_solicitudes'])->name('todas_solicitudes');
         Route::get('/revisar/indexRatificaciones',      [SeerController::class, 'todas_ratificaciones'])->name('todas_ratificaciones');
+        Route::get('/revisar/indexCumplimientos',       [SeerController::class, 'todos_complimientos'])->name('todos_complimientos');
     //Fin de rutas Generales
     //Direccion General
         Route::get('/DireccionGeneral/index',           [CitaDireccionController::class, 'index'])->name('indexDireccionGeneral');
