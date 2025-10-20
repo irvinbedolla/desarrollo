@@ -189,7 +189,12 @@
                 $('#Excel-PDF').css('display','none');
                 $('#reporte-notificador').css('display','block');
             }
-            
+            else if(valorCambiado == "Detallado"){
+                $('#PDF').css('display','block');
+                $('#Excel').css('display','none');
+                $('#Excel-PDF').css('display','none');
+                $('#reporte-notificador').css('display','none');
+            }
         });
     </script>
 @endsection

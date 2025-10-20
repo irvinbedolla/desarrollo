@@ -559,8 +559,6 @@ class SeerController extends Controller
             'pagosRatificacionPendiente','pagosRatificacionMontoPendiente'));
             return $pdf->stream('archivo.pdf');
         }
-        if($data["tipo_reporte"] == "Cumplimientos"){
-        }
         else if($data["tipo_reporte"] == "Ratificaciones"){
             if($data["tipo"] == "2"){
                 return Excel::download(new RatificacionesFromViewExport($fecha_inicial, $fecha_final,$sede), 'productos.xlsx');
@@ -622,120 +620,92 @@ class SeerController extends Controller
             return view('PDF/Estadisticas/Graficas');
         }
         else if($data["tipo_reporte"] == "Concentrado"){
-            /*
-                //SOLICITUDES
-                    $solicitudes  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
-                    $solicitudes = $solicitudes->join("users","users.id","=","seer_general.user_id");
-                    if($fecha_inicial != ""){
-                        $solicitudes = $solicitudes->where("fecha",">=",$fecha_inicial);
-                    }   
-                    if($fecha_final != ""){
-                        $solicitudes = $solicitudes->where("fecha","<=",$fecha_final);
-                    }
-                    if($sede != ""){
-                        $solicitudes = $solicitudes->where("seer_general.delegacion", $sede);
-                    }
-                    $solicitudes = $solicitudes->where("seer_auxiliares.tipo_solicitud", "Solicitud")
-                    ->select('users.id', 'users.name', DB::raw('count(seer_general.id) as solicitudes'))
-                    ->groupBy('users.id', 'users.name')
-                    ->get();
-                //RATIFICACIONES
-                    $ratificaciones  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
-                    $ratificaciones = $ratificaciones->join("users","users.id","=","seer_general.user_id");
-                    if($fecha_inicial != ""){
-                        $ratificaciones = $ratificaciones->where("fecha",">=",$fecha_inicial);
-                    }   
-                    if($fecha_final != ""){
-                        $ratificaciones = $ratificaciones->where("fecha","<=",$fecha_final);
-                    }
-                    if($sede != ""){
-                        $ratificaciones = $ratificaciones->where("seer_general.delegacion", $sede);
-                    }            
-                    $ratificaciones  = $ratificaciones->where("seer_auxiliares.tipo_solicitud", "Ratificación");
-                    $ratificaciones  = $ratificaciones->select('users.id', 'users.name', DB::raw('count(seer_general.id) as ratificaciones'), DB::raw('sum(seer_auxiliares.monto) as monto'))
-                    ->groupBy('users.id', 'users.name')
-                    ->get();
-                //AUDIENCIA 
-                    $audiencia  = SeerPerGeneral::join("seer_conciliadores","seer_conciliadores.id_solicitud","=","seer_general.id");
-                    $audiencia  = $audiencia->join("users","users.id","=","seer_general.conciliador_id");
-                    if($fecha_inicial != ""){
-                        $audiencia = $audiencia->where("fecha",">=",$fecha_inicial);
-                    }   
-                    if($fecha_final != ""){
-                        $audiencia = $audiencia->where("fecha","<=",$fecha_final);
-                    }
-                    if($sede != ""){
-                        $audiencia = $audiencia->where("seer_general.delegacion", $sede);
-                    }
-                    
-                    $audiencia  = $audiencia->select('users.id', 'users.name', DB::raw('count(seer_general.id) as audiencia'),  DB::raw('sum(seer_conciliadores.monto) as suma_audiencia'))
-                    ->groupBy('users.id', 'users.name')
-                    ->get();
-                //MONTO DE AUDIENCIA
-                    $montoaudiencia  = SeerPerGeneral::join("seer_auxiliares","seer_auxiliares.id_solicitud","=","seer_general.id");
-                    $montoaudiencia  = $montoaudiencia->join("seer_conciliadores","seer_conciliadores.id_solicitud","=","seer_general.id");
-                    $montoaudiencia  = $montoaudiencia->join("users","users.id","=","seer_general.user_id");
-                    if($fecha_inicial != ""){
-                        $montoaudiencia = $montoaudiencia->where("fecha",">=",$fecha_inicial);
-                    }   
-                    if($fecha_final != ""){
-                        $montoaudiencia = $montoaudiencia->where("fecha","<=",$fecha_final);
-                    }
-                    if($sede != ""){
-                        $montoaudiencia = $montoaudiencia->where("seer_general.delegacion", $sede);
-                    }
-                    $montoaudiencia = $montoaudiencia->where("seer_auxiliares.tipo_solicitud", "Solicitud");
-                    $montoaudiencia = $montoaudiencia->select('users.id', 'users.name', DB::raw('sum(seer_conciliadores.monto) as audiencia'))
-                    ->groupBy('users.id', 'users.name')
-                    ->get();
-                //COLECTIVAS
-                    $colectivas = SeerColectivas::join("users","users.id","=","seer_colectivas.conciliador");
-                    if($fecha_inicial != ""){
-                        $colectivas = $colectivas->where("seer_colectivas.fecha",">=",$fecha_inicial);
-                    }   
-                    if($fecha_final != ""){
-                        $colectivas = $colectivas->where("seer_colectivas.fecha","<=",$data["fecha_final"]);
-                    }
-                    $colectivas = $colectivas->where("seer_colectivas.delegacion", $sede);
-                    $colectivas = $colectivas->select('users.id', 'users.name', DB::raw('count(seer_colectivas.id) as colectivas'))
-                    ->groupBy('users.id', 'users.name')
-                    ->get();
-                //CONVENIOS
-                    $convenios = SeerConvenios::join("users","users.id","=","seer_convenios.user_id");
-                    $convenios  = $convenios->join("seer_general","seer_convenios.NUE","=","seer_general.NUE");
-                    if($fecha_inicial != ""){
-                        $convenios = $convenios->where("seer_convenios.fecha",">=",$fecha_inicial);
-                    }   
-                    if($fecha_final != ""){
-                        $convenios = $convenios->where("seer_convenios.fecha","<=",$data["fecha_final"]);
-                    }
-                    $convenios = $convenios->where("seer_general.delegacion", $sede);
-                    $convenios = $convenios->select('users.id', 'users.name', DB::raw('count(seer_convenios.id) as convenios'), DB::raw('SUM(seer_convenios.monto) as monto_pagos'))
-                    ->groupBy('users.id', 'users.name')
-                    ->get();
-                //ASESORIAS
-                    $asesorias = SeerAsesoria::join("users","users.id","=","seer_asesorias.id_usuario");
-                    if($fecha_inicial != ""){
-                        $asesorias = $asesorias->where("fecha",">=",$fecha_inicial);
-                    }   
-                    if($fecha_final != ""){
-                        $asesorias = $asesorias->where("fecha","<=",$data["fecha_final"]);
-                    }
-                    $asesorias = $asesorias->where("seer_asesorias.delegacion", $sede);
-                    $asesorias = $asesorias->select('users.id', 'users.name', DB::raw('count(seer_asesorias.id) as asesorias'))
-                    ->groupBy('users.id', 'users.name')
-                    ->get();
+            $auxiliares = [];
+            //Total de solicitudes
+                $solicitudes  = SeerPerGeneral::join("users","users.id","=","seer_general.user_id")->whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
+                if($sede !== "Todos"){
+                    $solicitudes = $solicitudes->where("seer_general.delegacion", $sede);
+                }
+                $solicitudes = $solicitudes->select('users.id', 'users.name', DB::raw('count(seer_general.id) as solicitudes'))
+                ->groupBy('users.id', 'users.name')
+                ->get();
+            //Total y Monto de convenido en audiencia y en ratificaicon
+
+                ///SE van unir las do conltas
+                /*
+                foreach ($audiencias as $audiencia) {
+                    $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
+                    $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                    $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
+                    $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Confirmar';
+                    $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Sin Confirmar';
+                    $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
+                    $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
+                    $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
+                    $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
+                }
+                */
+                $ratificaciones = Turnos::whereBetween('turnos.fecha',[$fecha_inicial,$fecha_final]);
+                if($sede !== "Todos"){
+                    $ratificaciones = $ratificaciones->where('turnos.delegacion',$sede);
+                }
+                $ratificaciones = $ratificaciones->join('pago_solicitud','turnos.id','pago_solicitud.id_solicitud')
+                ->join('users as user_usuario','user_usuario.id','turnos.user_id')
+                ->select('user_usuario.id', 'user_usuario.name',DB::raw('count(turnos.id) as num_cumplimiento_ratificacion'),  DB::raw('sum(turnos.monto) as sum_cumplimiento_ratificacion'))
+                ->groupBy('user_usuario.id', 'user_usuario.name')
+                ->get();
+
+                $ratificaciones_pagado = Turnos::whereBetween('turnos.fecha',[$fecha_inicial,$fecha_final]);
+                if($sede !== "Todos"){
+                     $ratificaciones_pagado = $ratificaciones_pagado->where('turnos.delegacion',$sede);
+                }
+                $ratificaciones_pagado = $ratificaciones_pagado->join('pago_solicitud','turnos.id','pago_solicitud.id_solicitud')
+                ->join('users as user_usuario','user_usuario.id','turnos.user_id')
+                ->where('pago_solicitud.estatus','pagado')
+                ->select('user_usuario.id', 'user_usuario.name',DB::raw('count(turnos.id) as num_cumplimiento_ratificacion'),  DB::raw('sum(turnos.monto) as sum_cumplimiento_ratificacion'))
+                ->groupBy('user_usuario.id', 'user_usuario.name')
+                ->get();
+
+                $pagosAudiencias = Pagos::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
+                if($sede !== "Todos"){
+                    $pagosAudiencias = $pagosAudiencias->where('pago_solicitud.delegacion',$sede);
+                }
+                $pagosAudiencias = $pagosAudiencias->join('seer_general','seer_general.id','pago_solicitud.id_solicitud')
+                ->join('users','users.id','seer_general.user_id')
+                ->where('pago_solicitud.tipo_pago',"Audiencia")
+                ->where('pago_solicitud.estatus','pagado')
+                ->select('users.id', 'users.name',DB::raw('count(seer_general.id) as num_cumplimiento_audiencia'),  DB::raw('sum(pago_solicitud.monto) as sum_cumplimiento_audienicia'))
+                ->groupBy('users.id', 'users.name')
+                ->get(); 
+
+                $pagosAudiencias_pagado = Pagos::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
+                if($sede !== "Todos"){
+                    $pagosAudiencias_pagado = $pagosAudiencias_pagado->where('pago_solicitud.delegacion',$sede);
+                }
+                $pagosAudiencias_pagado = $pagosAudiencias_pagado->join('seer_general','seer_general.id','pago_solicitud.id_solicitud')
+                ->join('users','users.id','seer_general.user_id')
+                ->where('pago_solicitud.tipo_pago',"Audiencia")
+                ->where('pago_solicitud.estatus','pagado')
+                ->select('users.id', 'users.name',DB::raw('count(seer_general.id) as num_cumplimiento_audiencia'),  DB::raw('sum(pago_solicitud.monto) as sum_cumplimiento_audienicia'))
+                ->groupBy('users.id', 'users.name')
+                ->get(); 
+
+            //Total de audienicas y total convenido en audiencia 
+                $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
+                $audiencia  = $audiencia->join("users","users.id","=","seer_general.conciliador_id")
+                ->whereBetween('audiencias.fecha',[$fecha_inicial,$fecha_final])
+                ->join('pago_solicitud','seer_general.id','pago_solicitud.id_solicitud');
+                if($sede !== "Todos"){
+                    $audiencia = $audiencia->where("audiencias.delegacion", $sede);
+                }
+                $audiencia  = $audiencia->select('users.id', 'users.name',DB::raw('count(seer_general.id) as num_cumplimiento_audiencia'),  DB::raw('sum(pago_solicitud.monto) as sum_cumplimiento_audienicia'))
+                ->groupBy('users.id', 'users.name')
+                ->get();
                 
-                    $porcenaje=0;
-            */
-            $pdf = \PDF::loadView('PDF/estadisticas/Reporte_cuantitativo');
+            //$pdf = \PDF::loadView('PDF/estadisticas/Reporte_cuantitativo', compact('solicitudes','ratificaciones','montoratificaciones','audiencia','montoaudiencia','colectivas','convenios','porcenaje');
+            $pdf = \PDF::loadView('PDF/estadisticas/reporte_cuantitativo', compact('solicitudes','ratificaciones','ratificaciones_pagado','pagosAudiencias','pagosAudiencias_pagado','audiencia'));
             return $pdf->stream('archivo.pdf');
-            //return $pdf->download('archivo.pdf');
-
-            //return view('estadisticas.ver_reporte_cuantitativo', compact('solicitudes','ratificaciones','montoratificaciones','audiencia','montoaudiencia','colectivas','convenios','porcenaje'));
         }
-
-
     }
 
     public function create_persona_s(){
@@ -4233,8 +4203,8 @@ class SeerController extends Controller
         $ramas          = SolicitudRama::all();
         $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
         $citados        = SeerCitados::where("id_solicitud",$id)->get();
-        $estados        = Estados::all();
-        $municipios     = Municipios::where('estado',16)->get();
+        $estados        = Estados::orderby('nombre','asc')->get();
+        $municipios     = Municipios::orderby('nombre','asc')->get();
         $conciliadores = User::whereHas('roles', function ($query) {
             return $query->where('name', '=', 'Conciliador');
         })
@@ -4250,6 +4220,7 @@ class SeerController extends Controller
 
         return view('audiencias.revisar_audiencia', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores'));
     }
+
 
     public function pdfCitatorioAudiencia($id) {
         $citado = SeerCitados::find($id);
@@ -6128,14 +6099,58 @@ class SeerController extends Controller
                 }
             }
         }
+        else if($userRole[0] == "Delegado"){
+            if($user["delegacion"] == "Morelia"){
+                $audiencias = Audiencias::whereIn('delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
+                foreach ($audiencias as $audiencia) {
+                    $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
+                    $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                    $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
+                    $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
+                    $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Algo';
+                    $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
+                    $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
+                    $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
+                    $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
+                }
+            }
+            if($user["delegacion"] == "Uruapan"){
+                $audiencias = Audiencias::whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
+                foreach ($audiencias as $audiencia) {
+                    $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
+                    $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                    $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
+                    $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
+                    $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Algo';
+                    $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
+                    $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
+                    $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
+                    $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
+                }
+            }
+            if($user["delegacion"] == "Zamora"){
+                $audiencias = Audiencias::whereIn('delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
+                foreach ($audiencias as $audiencia) {
+                    $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
+                    $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                    $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
+                    $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
+                    $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Algo';
+                    $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
+                    $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
+                    $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
+                    $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
+                }
+            }
+        }
         else if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador"){    
             $audiencias = Audiencias::orderBy('created_at', 'desc')->limit(500)->get();
             foreach ($audiencias as $audiencia) {
                 $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
                 $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
                 $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
-                $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
-                $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Algo';
+                $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Confirmar';
+                $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Sin Confirmar';
                 $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
                 $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
                 $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
@@ -6183,7 +6198,6 @@ class SeerController extends Controller
                         $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
                     }
                 }
-               
             }
             else{
                 $solicitudes = SeerPerGeneral::where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(500)->get();
@@ -6192,6 +6206,29 @@ class SeerController extends Controller
                     $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
                 }
             }
+        }
+        else if($userRole[0] == "Delegado"){
+            if($user["delegacion"] == "Morelia"){
+                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    foreach ($solicitudes as $solicitud) {
+                        $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                        $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                    }
+                }
+                if($user["delegacion"] == "Uruapan"){
+                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    foreach ($solicitudes as $solicitud) {
+                        $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                        $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                    }
+                }
+                if($user["delegacion"] == "Sahuayo"){
+                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    foreach ($solicitudes as $solicitud) {
+                        $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                        $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                    }
+                }
         }
         else if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador"){
             $solicitudes = SeerPerGeneral::orderBy('created_at', 'desc')->limit(500)->get();
@@ -6279,6 +6316,47 @@ class SeerController extends Controller
             }
             }
         }
+        else if($userRole[0] == "Delegado"){
+            if($user["delegacion"] == "Morelia"){
+                    $solicitudes = Turnos::whereIn('delegacion', ["Morelia", "Zitácuaro"])->where('tipo','Ratificación')->orderBy('created_at', 'desc')->limit(500)->get();
+                    foreach ($solicitudes as $audiencia) {
+                        $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
+                        if(count($pendientes) == 0){
+                            //Si la contancia es 0 no tiene pagos pendientes
+                            $audiencia->constancia = 0;
+                        }
+                        else{
+                            $audiencia->constancia = 1;
+                        }
+                    }
+                }
+                if($user["delegacion"] == "Uruapan"){
+                    $solicitudes = Turnos::whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->where('tipo','Ratificación')->orderBy('created_at', 'desc')->limit(500)->get();
+                    foreach ($solicitudes as $audiencia) {
+                        $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
+                        if(count($pendientes) == 0){
+                            //Si la contancia es 0 no tiene pagos pendientes
+                            $audiencia->constancia = 0;
+                        }
+                        else{
+                            $audiencia->constancia = 1;
+                        }
+                    }
+                }
+                if($user["delegacion"] == "Zamora"){
+                     $solicitudes = Turnos::whereIn('delegacion', ["Sahuayo", "Zamora"])->where('tipo','Ratificación')->orderBy('created_at', 'desc')->limit(500)->get();
+                    foreach ($solicitudes as $audiencia) {
+                        $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
+                        if(count($pendientes) == 0){
+                            //Si la contancia es 0 no tiene pagos pendientes
+                            $audiencia->constancia = 0;
+                        }
+                        else{
+                            $audiencia->constancia = 1;
+                        }
+                    }
+                }
+        }
         else if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador"){
             $solicitudes = Turnos::where('tipo','Ratificación')->orderBy('created_at', 'desc')->limit(500)->get();
             foreach ($solicitudes as $audiencia) {
@@ -6294,6 +6372,210 @@ class SeerController extends Controller
         }
 
         return view('ratificaciones.ratificaciones_todas',compact('solicitudes'));
+    }
+
+    public function todos_complimientos(){
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+
+        if($userRole[0] == "Auxiliar" || $userRole[0] == "Excepcion"){
+            $complimientos_ratificacion = Pagos::where("pago_solicitud.tipo_pago","Ratificacion")
+            ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
+            ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
+            "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
+            DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
+            DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
+            ->where('turnos.delegacion',$user["delegacion"])
+            ->orderBy('turnos.created_at', 'desc')->limit(500)
+            ->get();
+
+            $complimientos_audiencias = Pagos::where("pago_solicitud.tipo_pago","Audiencia")
+            ->join("seer_general","seer_general.id","pago_solicitud.id_solicitud")
+            ->join("seer_solicitante","seer_general.id","seer_solicitante.id_solicitud")
+            ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
+            "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE","seer_general.id as id_solicitud",
+            DB::raw('seer_solicitante.nombre AS trabajador'))
+            ->where('seer_general.delegacion',$user["delegacion"])
+            ->orderBy('seer_general.created_at', 'desc')->limit(500)
+            ->get();
+        }
+        else if($userRole[0] == "Conciliador"){
+            $permisos = PermisosConciliador::where('id_conciliador',$id)->first();
+            if($permisos["tipo"] == "Ambos"){
+                if($user["delegacion"] == "Morelia"){
+                    $complimientos_ratificacion = Pagos::where("pago_solicitud.tipo_pago","Ratificacion")
+                    ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
+                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
+                    "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
+                    DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
+                    DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
+                    ->whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])
+                    ->orderBy('turnos.created_at', 'desc')->limit(500)
+                    ->get();
+
+                    $complimientos_audiencias = Pagos::where("pago_solicitud.tipo_pago","Audiencia")
+                    ->join("seer_general","seer_general.id","pago_solicitud.id_solicitud")
+                    ->join("seer_solicitante","seer_general.id","seer_solicitante.id_solicitud")
+                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
+                    "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE","seer_general.id as id_solicitud",
+                    DB::raw('seer_solicitante.nombre AS trabajador'))
+                    ->whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])
+                    ->orderBy('seer_general.created_at', 'desc')->limit(500)
+                    ->get();
+                }
+                if($user["delegacion"] == "Uruapan"){
+                    $complimientos_ratificacion = Pagos::where("pago_solicitud.tipo_pago","Ratificacion")
+                    ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
+                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
+                    "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
+                    DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
+                    DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
+                    ->whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])
+                    ->orderBy('turnos.created_at', 'desc')->limit(500)
+                    ->get();
+
+                    $complimientos_audiencias = Pagos::where("pago_solicitud.tipo_pago","Audiencia")
+                    ->join("seer_general","seer_general.id","pago_solicitud.id_solicitud")
+                    ->join("seer_solicitante","seer_general.id","seer_solicitante.id_solicitud")
+                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
+                    "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE","seer_general.id as id_solicitud",
+                    DB::raw('seer_solicitante.nombre AS trabajador'))
+                    ->whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])
+                    ->orderBy('seer_general.created_at', 'desc')->limit(500)
+                    ->get();
+                }
+                if($user["delegacion"] == "Zamora"){
+                    $complimientos_ratificacion = Pagos::where("pago_solicitud.tipo_pago","Ratificacion")
+                    ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
+                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
+                    "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
+                    DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
+                    DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
+                    ->whereIn('seer_general.delegacion', ["Zamora", "Sahuayo"])
+                    ->orderBy('turnos.created_at', 'desc')->limit(500)
+                    ->get();
+
+                    $complimientos_audiencias = Pagos::where("pago_solicitud.tipo_pago","Audiencia")
+                    ->join("seer_general","seer_general.id","pago_solicitud.id_solicitud")
+                    ->join("seer_solicitante","seer_general.id","seer_solicitante.id_solicitud")
+                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
+                    "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE","seer_general.id as id_solicitud",
+                    DB::raw('seer_solicitante.nombre AS trabajador'))
+                    ->whereIn('seer_general.delegacion', ["Zamora", "Sahuayo"])
+                    ->orderBy('seer_general.created_at', 'desc')->limit(500)
+                    ->get();
+                }
+            }
+            else{
+                 $complimientos_ratificacion = Pagos::where("pago_solicitud.tipo_pago","Ratificacion")
+                ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
+                ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
+                "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
+                DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
+                DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
+                ->where('turnos.delegacion',$user["delegacion"])
+                ->orderBy('turnos.created_at', 'desc')->limit(500)
+                ->get();
+
+                $complimientos_audiencias = Pagos::where("pago_solicitud.tipo_pago","Audiencia")
+                ->join("seer_general","seer_general.id","pago_solicitud.id_solicitud")
+                ->join("seer_solicitante","seer_general.id","seer_solicitante.id_solicitud")
+                ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
+                "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE","seer_general.id as id_solicitud",
+                DB::raw('seer_solicitante.nombre AS trabajador'))
+                ->where('seer_general.delegacion',$user["delegacion"])
+                ->orderBy('seer_general.created_at', 'desc')->limit(500)
+                ->get();
+                }
+        }
+        else if($userRole[0] == "Delegado"){
+            if($user["delegacion"] == "Morelia"){
+                    $complimientos_ratificacion = Pagos::where("pago_solicitud.tipo_pago","Ratificacion")
+                    ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
+                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
+                    "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
+                    DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
+                    DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
+                    ->whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])
+                    ->orderBy('turnos.created_at', 'desc')->limit(500)
+                    ->get();
+
+                    $complimientos_audiencias = Pagos::where("pago_solicitud.tipo_pago","Audiencia")
+                    ->join("seer_general","seer_general.id","pago_solicitud.id_solicitud")
+                    ->join("seer_solicitante","seer_general.id","seer_solicitante.id_solicitud")
+                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
+                    "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE","seer_general.id as id_solicitud",
+                    DB::raw('seer_solicitante.nombre AS trabajador'))
+                    ->whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])
+                    ->orderBy('seer_general.created_at', 'desc')->limit(500)
+                    ->get();
+                }
+                if($user["delegacion"] == "Uruapan"){
+                    $complimientos_ratificacion = Pagos::where("pago_solicitud.tipo_pago","Ratificacion")
+                    ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
+                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
+                    "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
+                    DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
+                    DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
+                    ->whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])
+                    ->orderBy('turnos.created_at', 'desc')->limit(500)
+                    ->get();
+
+                    $complimientos_audiencias = Pagos::where("pago_solicitud.tipo_pago","Audiencia")
+                    ->join("seer_general","seer_general.id","pago_solicitud.id_solicitud")
+                    ->join("seer_solicitante","seer_general.id","seer_solicitante.id_solicitud")
+                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
+                    "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE","seer_general.id as id_solicitud",
+                    DB::raw('seer_solicitante.nombre AS trabajador'))
+                    ->whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])
+                    ->orderBy('seer_general.created_at', 'desc')->limit(500)
+                    ->get();
+                }
+                if($user["delegacion"] == "Zamora"){
+                    $complimientos_ratificacion = Pagos::where("pago_solicitud.tipo_pago","Ratificacion")
+                    ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
+                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
+                    "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
+                    DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
+                    DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
+                    ->whereIn('seer_general.delegacion', ["Zamora", "Sahuayo"])
+                    ->orderBy('turnos.created_at', 'desc')->limit(500)
+                    ->get();
+
+                    $complimientos_audiencias = Pagos::where("pago_solicitud.tipo_pago","Audiencia")
+                    ->join("seer_general","seer_general.id","pago_solicitud.id_solicitud")
+                    ->join("seer_solicitante","seer_general.id","seer_solicitante.id_solicitud")
+                    ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
+                    "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE","seer_general.id as id_solicitud",
+                    DB::raw('seer_solicitante.nombre AS trabajador'))
+                    ->whereIn('seer_general.delegacion', ["Zamora", "Sahuayo"])
+                    ->orderBy('seer_general.created_at', 'desc')->limit(500)
+                    ->get();
+                }
+        }
+        else if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador"){
+            $complimientos_ratificacion = Pagos::where("pago_solicitud.tipo_pago","Ratificacion")
+            ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
+            ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
+            "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
+            DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
+            DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
+            ->orderBy('turnos.created_at', 'desc')->limit(500)
+            ->get();
+
+            $complimientos_audiencias = Pagos::where("pago_solicitud.tipo_pago","Audiencia")
+            ->join("seer_general","seer_general.id","pago_solicitud.id_solicitud")
+            ->join("seer_solicitante","seer_general.id","seer_solicitante.id_solicitud")
+            ->select("pago_solicitud.id","pago_solicitud.fecha","pago_solicitud.hora","pago_solicitud.monto","pago_solicitud.descripcion",
+            "pago_solicitud.observaciones","pago_solicitud.estatus","seer_general.NUE","seer_general.id as id_solicitud",
+            DB::raw('seer_solicitante.nombre AS trabajador'))
+            ->orderBy('seer_general.created_at', 'desc')->limit(500)
+            ->get();
+        }
+
+        return view('cumplimientos/actuales',compact('complimientos_ratificacion','complimientos_audiencias'));
     }
 
     public function mostrar_citado(Request $request){
