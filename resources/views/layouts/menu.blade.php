@@ -274,6 +274,9 @@
             <a class="nav-link" href="{{ route('poderes') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
+            <a class="nav-link" href="{{ route('indexDireccionGeneral') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Dirección General</span>
+            </a>
         @endrole
     @endauth
     
@@ -355,6 +358,14 @@
             </a>
         @endrole
     @endauth
+    @auth
+        @role('Particular')
+            <a class="nav-link" href="{{ route('indexDireccionGeneral') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Dirección General</span>
+            </a>
+        @endrole
+    @endauth
+    
 </li>
 
 
