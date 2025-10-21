@@ -216,7 +216,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/seer/store_notificador',          [SeerController::class, 'store_notificador'])->name('seer.store_notificador');
         Route::get('/seer/estatus/{id}',                [SeerController::class, 'seer_estatus'])->name('seer.notificador');
         Route::post('/seer/updateNotificador',          [SeerController::class, 'update_notificador'])->name('seer.cambioEstatus');
-        Route::get('/notificador/mihistorial',            [SeerController::class, 'hitorialnotificacador'])->name('Historial_Notificacador');
+        Route::get('/notificador/mihistorial',          [SeerController::class, 'hitorialnotificacador'])->name('Historial_Notificacador');
         Route::get('/notificador/historial',            [SeerController::class, 'todas_notificaciones'])->name('todas_notificaciones');
         //Ruta de enlace
         Route::post('/seer/store_enlace',               [SeerController::class, 'store_enlace'])->name('seer.store_enlace');
@@ -311,6 +311,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/Verpdfcumpumplimiento/{id}',                       [SeerController::class, 'VerPDFCumplimiento'])->name('PDFcumplimiento');
         Route::get('/VerpdfcumpumplimientoP/{id}',                      [SeerController::class, 'PDFcumplimientoParcial'])->name('PDFcumplimientoParcial');
         Route::get('/solicitudes/descargarCitatorios/{id}',             [SeerController::class, 'descargarCitatorios'])->name('descargarCitatorios'); //Vista para descargar y subircitatorios entregados por el trabajador
+        Route::get('/VerpdfacuseConfirmacion/{id}',                     [SeerController::class, 'PDFacuseConfirmada'])->name('PDFacuseConfirmada'); //Acuse de solicitud confirmada
     //Fin de PDF
     //Ratificaciones
         Route::get('/ratificaciones/atender',               [TurnosController::class, 'revisar_ratificaciones_hoy'])->name('ratificacion_atender');

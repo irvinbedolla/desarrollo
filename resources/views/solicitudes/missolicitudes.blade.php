@@ -40,13 +40,17 @@
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}" >Citatorios</a></li>
                                                                     @if(($solicitud->estatus !== "Pendiente") && ($solicitud->estatus !== "Prevencion"))
                                                                         <li><a class="btn btn-info" style="width: 100%"  href="{{ route('PDFnotificacion_solicitante', $solicitud->id) }}" target="_blank">Notificación al solicitante</a></li>
-                                                                        <li><a class="btn btn-info" style="width: 100%"  href="{{ route('PDFacuse_solicitud', $solicitud->id) }}"  target="_blank">Acuse de solicitud</a></li>
+                                                                        <li><a class="btn btn-info" style="width: 100%"  href="{{ route('PDFacuseConfirmada', $solicitud->id) }}"  target="_blank">Acuse de solicitud confirmada</a></li>
+                                                                        <li><a class="btn btn-info" href="{{ route('PDFacuse_solicitud', $solicitud->id) }}"  target="_blank">Acuse de solicitud</a></li>
                                                                     @endif
                                                                 </ul>
                                                             </div>                                           
                                                         @endif
+                                                        @if(($solicitud->estatus === "Pendiente"))
+                                                            <a class="btn btn-info" href="{{ route('PDFacuse_solicitud', $solicitud->id) }}"  target="_blank">Acuse de solicitud</a>
+                                                        @endif
                                                         @if($solicitud->estatus === "Concluida")
-                                                            <a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}"      target="_blank">Documentos Digitales</a>
+                                                            <a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}"    target="_blank">Documentos Digitales</a>
                                                             <a class="btn btn-success" style="width: 100%"  href="{{ route('PDFconveniosolicitud', $solicitud->id) }}"  target="_blank">Convenio</a>
                                                         @endif
                                                     </td>

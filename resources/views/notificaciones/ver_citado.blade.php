@@ -3,7 +3,7 @@
 @section('content')
     <section class="section">
         <div class="section-header">
-            <h3 class="page__heading">Solicitantes</h3>
+            <h3 class="page__heading">Información del citado</h3>
         </div>
         <div class="section-body">
             <?php $fecha_actual = date('d-m-Y');?>
@@ -11,7 +11,7 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <h3 class="text-center">Citado</h3>
+                            <h3 class="text-center"></h3>
                             
                             <!--Se realiza la validación de campos para ver si dejó alguno vacío-->
                             @if ($errors->any())
@@ -35,7 +35,7 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
-                                            <label for="name">Nombre(s)</label>
+                                            <label for="name">Nombre(s) <span style="color:red;">(*)</span></label>
                                             <input type="text" name="nombre" class="form-control" value="<?=$folio["nombre"];?>" oninput="this.value = this.value.toUpperCase()" > 
                                             <div class="invalid-feedback">
                                                 El nombre es obligatorio.
@@ -45,7 +45,7 @@
                                     @if(!empty($folio['primer_apellido']))    
                                         <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div class="form-group">
-                                                <label for="name">Primer apellido</label>
+                                                <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
                                                 <input type="text" name="primer_apellido" class="form-control" value="<?=$folio["primer_apellido"];?>" oninput="this.value = this.value.toUpperCase()" > 
                                                 <div class="invalid-feedback">
                                                     El primer apellido es obligatorio.
@@ -73,10 +73,48 @@
                                             </div>
                                         </div>
                                     </div>
-
+                                    @if(!empty($folio['curp']))
+                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="form-group">
+                                                <label for="name">CURP</label>
+                                                <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control" value="<?=$folio["curp"];?>"> 
+                                                <pre id="resultado"></pre>
+                                                <div class="invalid-feedback">
+                                                    El CURP es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                    <div class="col-xs-12 col-sm-6 col-md-3">
+                                        <div class="form-group">
+                                            <label for="password">Estado <span style="color:red;">(*)</span></label>
+                                            <select class="form-control" name="estado_citado" id="estado_citado">
+                                                @foreach($estados as $est)
+                                                    <option value="{{$est['id']}}" {{ $folio['estado_citado'] == $est['id'] ? "selected" : '' }}>{{$est['nombre']}}</option>
+                                                @endforeach
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El Estado es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-3">
+                                        <div class="form-group">
+                                            <label for="password">Municipio <span style="color:red;">(*)</span></label>
+                                            <select class="form-control" name="municipio_citado" id="municipio_citado">
+                                                @foreach($municipios as $mun)
+                                                    <option value="{{$mun['id']}}" {{ $folio['municipio_citado'] == $mun['id'] ? "selected" : '' }}>{{$mun['nombre']}}</option>
+                                                @endforeach
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                El Municipio es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
-                                            <label for="name">Tipo de vialidad</label>
+                                            <label for="name">Tipo de vialidad <span style="color:red;">(*)</span></label>
                                             <select name="vialidad" class="form-control" required>
                                                 <option value="">SELECCIONE</option>
                                                 <option value="CALLE"          @php if($folio->tipo_vialidad === "CALLE") echo "selected"  @endphp>Calle</option>
@@ -108,17 +146,35 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
-                                            <label for="name">Nombre de la vialidad</label>
+                                            <label for="name">Nombre de la vialidad <span style="color:red;">(*)</span></label>
                                             <input type="text" name="calle" class="form-control" value="<?=$folio["calle"];?>"required> 
                                             <div class="invalid-feedback">
                                                 El campo calle es obligatorio.
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-1">
+                                        <div class="form-group">
+                                            <label for="name">Núm. Ext. <span style="color:red;">(*)</span></label>
+                                            <input type="text" name="exterior" class="form-control" value="<?=$folio["n_ext"];?>" required> 
+                                            <div class="invalid-feedback">
+                                                El campo núm. ext. es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
 
+                                    <div class="col-xs-12 col-sm-12 col-md-1">
+                                        <div class="form-group">
+                                            <label for="name">Núm. Int.</label>
+                                            <input type="text" name="interior" class="form-control" value="<?=$folio["n_int"];?>" > 
+                                            <div class="invalid-feedback">
+                                                El campo núm. int. es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
-                                            <label for="name">Colonia</label>
+                                            <label for="name">Colonia <span style="color:red;">(*)</span></label>
                                             <input type="text" name="colonia" class="form-control" value="<?=$folio["colonia"];?>"required> 
                                             <div class="invalid-feedback">
                                                 El campo colonia es obligatorio.
@@ -128,7 +184,7 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
-                                            <label for="name">Código Postal</label>
+                                            <label for="name">Código Postal <span style="color:red;">(*)</span></label>
                                             <input type="text" name="cp" class="form-control" value="<?=$folio["cp"];?>" minlength="5" maxlength="5" required> 
                                             <div class="invalid-feedback">
                                                 El campo Código Postal es obligatorio.
@@ -155,67 +211,9 @@
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div class="col-xs-12 col-sm-12 col-md-1">
-                                        <div class="form-group">
-                                            <label for="name">Núm. Ext.</label>
-                                            <input type="text" name="exterior" class="form-control" value="<?=$folio["n_ext"];?>" required> 
-                                            <div class="invalid-feedback">
-                                                El campo núm. ext. es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-xs-12 col-sm-12 col-md-1">
-                                        <div class="form-group">
-                                            <label for="name">Núm. Int.</label>
-                                            <input type="text" name="interior" class="form-control" value="<?=$folio["n_int"];?>" > 
-                                            <div class="invalid-feedback">
-                                                El campo núm. int. es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-3">
-                                        <div class="form-group">
-                                            <label for="password">Municipio</label>
-                                            <select class="form-control" name="municipio_citado" id="municipio_citado">
-                                                @foreach($municipios as $mun)
-                                                    <option value="{{$mun['id']}}" {{ $folio['municipio_citado'] == $mun['id'] ? "selected" : '' }}>{{$mun['nombre']}}</option>
-                                                @endforeach
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                El Estado es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-3">
-                                        <div class="form-group">
-                                            <label for="password">Estado</label>
-                                            <select class="form-control" name="estado_citado" id="estado_citado">
-                                                @foreach($estados as $est)
-                                                    <option value="{{$est['id']}}" {{ $folio['estado_citado'] == $est['id'] ? "selected" : '' }}>{{$est['nombre']}}</option>
-                                                @endforeach
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                El Estado es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @if(!empty($folio['curp']))
-                                        <div class="col-xs-12 col-sm-12 col-md-6">
-                                            <div class="form-group">
-                                                <label for="name">CURP</label>
-                                                <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control" value="<?=$folio["curp"];?>"> 
-                                                <pre id="resultado"></pre>
-                                                <div class="invalid-feedback">
-                                                    El CURP es obligatorio.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
-                                            <label for="floatingTextarea">Referencias del domicilio</label>
+                                            <label for="floatingTextarea">Referencias del domicilio <span style="color:red;">(*)</span></label>
                                             <textarea class="form-control" placeholder="" name="referencia"><?=$folio["referencia"];?></textarea>
                                             <div class="invalid-feedback">
                                                 El campo referencias es obligatorio.
@@ -223,7 +221,7 @@
                                         </div>
                                     </div> 
                                     <div class="col-xs-12 col-sm-12 col-md-6">
-                                        <label for="password">Referencia 1</label><br>
+                                        <label for="password">Referencia 1 <span style="color:red;">(*)</span></label><br>
                                         @if (!empty($folio->imagen_domicilio1) && $folio->imagen_domicilio1 !== 'Sin documento')
                                             <a target='_blank' href="{{ asset('storage/app/documentosSolicitud/'.$folio->imagen_domicilio1) }}">VER IMAGEN</a>
                                         @else

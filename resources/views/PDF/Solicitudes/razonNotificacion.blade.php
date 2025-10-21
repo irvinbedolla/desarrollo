@@ -55,7 +55,7 @@
                 z-index: 1;
             }
             p {
-                line-height: 1.4;
+                line-height: 1.3;
                 text-align: justify;
             }
             .page-break {
@@ -101,9 +101,9 @@
                             <td>{{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</td>
                         </tr>
                     </table>
-                </div><br><br><br><br><br><br><br><br><br>
+                </div><br><br><br><br><br><br><br><br><br><br><br><br><br>
                 <!-- DELIGENCIA EXITOSA, ATIENDE OTRA PERSONA -->
-                <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p><br>
+                <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p>
                            
                 <p>Siendo las <b>{{ \Carbon\Carbon::now()->format('H') }} HORAS CON {{ \Carbon\Carbon::now()->format('i') }} MINUTOS
                     DEL DÍA {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}, LIC. {{$notificador->name}}</b> en mi
@@ -145,12 +145,12 @@
                     en este domicilio.</b> Por todo lo anterior, y de conformidad con lo dispuesto en los artículos 741. 742 fracción XIII, 743 y 751 de la Ley Federal del Trabajo procedo a dejar CITATORIO DE LEY para
                     <b>EL REPRESENTANTE LEGAL DEL CITADO</b>.<br><br>
                     
-                    <div class="page-break"></div> <!-- Genera un salto de línea-->
-                    <br><br><br><br><br><br><br>
+                    <!--<div class="page-break"></div>--> <!-- Genera un salto de línea-->
+                    <!--<br><br><br><br><br><br><br>-->
                     <b>FIRMA PARA CONSTANCIA LEGAL.</b><br>
                     Anexando impresión fotográfica para constancia legal.<br>
                     <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. Doy fe.</b> 
-                </p><br><br>
+                </p>
                 <p><center><b>___________________________________<br> LIC. {{$notificador->name}}<br> FUNCIONARIO/A NOTIFICADOR/A</b></center> </p>
                 <div class="page-break"></div> <!-- Genera un salto de línea-->
                 @foreach($imagenes as $index => $imagen) <!--Muestra una fotografía por hoja, númerando por anexos-->

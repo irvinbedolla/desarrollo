@@ -30,7 +30,7 @@
                             @endif
 
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                            <form method="POST" action="{{ route('seer.cambioEstatus') }}" class="needs-validation novalidate" enctype='multipart/form-data'>
+                            <form method="POST" action="{{ route('seer.cambioEstatus') }}" class="needs-validation" novalidate enctype='multipart/form-data'>
                                 @csrf
                                 <input type="hidden" name="id" value="{{$id}}">
                                 <div class="row">
@@ -44,20 +44,6 @@
                                             </select>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-4">
-                                        <div class="form-group">
-                                            <label for="name">Nombre del Municipio o Alcaldía</label>
-                                            <select id="municipio_citado" class="form-control" name="municipio_citado" required>
-                                                <option value="">Seleccione</option>
-                                                @foreach($municipios as $mun)
-                                                    <option value="{{$mun['id']}}">{{$mun['nombre']}}</option>
-                                                @endforeach
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                El campo municipio o alcaldía es obligatorio.
                                             </div>
                                         </div>
                                     </div>
@@ -81,7 +67,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label>Medio</label>
-                                            <select name="medio[]" id="medio" class="form-select select2" multiple>
+                                            <select name="medio[]" id="medio" class="form-select select2" multiple required>
                                                 <option value="">Selecciona</option>
                                                 <option value="PLACAS OFICIALES">Placas oficiales</option>
                                                 <option value="NÚMERO VISIBLE">Número visible</option>
@@ -98,7 +84,7 @@
                                     <div class="col-xs-12 col-sm-6 col-md-6">
                                         <div class="form-group">
                                             <label>Tipo de vialidad</label>
-                                            <select name="vialidad_notificacion" class="form-control">
+                                            <select name="vialidad_notificacion" class="form-control" required>
                                                 <option value="">Selecciona</option>
                                                 <option value="AMPLIACION">Ampliación</option>
                                                 <option value="ANDADOR">Andador</option>
@@ -129,7 +115,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Abundar área</label>
-                                            <input type="text" name="abundar_area" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                            <textarea class="form-control" name="abundar_area" rows="4" oninput="this.value = this.value.toUpperCase()" required></textarea>
                                             <div class="invalid-feedback">
                                                 El campo abundar área es obligatorio.
                                             </div>
@@ -138,7 +124,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Abundar inmueble</label>
-                                            <input type="text" name="abundar_inmueble" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                            <textarea class="form-control" name="abundar_inmueble" rows="4" oninput="this.value = this.value.toUpperCase()" required></textarea>
                                             <div class="invalid-feedback">
                                                 El campo abundar inmueble es obligatorio.
                                             </div>
@@ -312,7 +298,7 @@
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
                                             <label>Finalización de diligencia</label>
-                                            <select name="estatus" id="estatus" class="form-control">
+                                            <select name="estatus" id="estatus" class="form-control" required>
                                                 <option value="">Selecciona</option>
                                                 <option value="Finalizado exitosamente">Finalizado exitosamente (persona)</option>
                                                 <option value="No notificada">Exitoso por instructivo (fijado en puerta)</option>
@@ -385,28 +371,28 @@
                                     
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
-                                            <label for="name">Imagen</label>
-                                            <input type="file" class="form-control" name="foto" accept="image/*">
+                                            <label for="name">Imagen 1</label>
+                                            <input type="file" class="form-control" name="foto" accept="image/*" required>
                                         </div>
                                     </div>
 
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
-                                            <label for="name">Imagen</label>
+                                            <label for="name">Imagen 2</label>
                                             <input type="file" class="form-control" name="foto1" accept="image/*">
                                         </div>
                                     </div>
 
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
-                                            <label for="name">Imagen</label>
+                                            <label for="name">Imagen 3</label>
                                             <input type="file" class="form-control" name="foto2" accept="image/*">
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-12">
                                         <div class="form-group">
                                             <label for="name">observaciones</label>
-                                            <input type="text" class="form-control" name="observaciones" oninput="this.value = this.value.toUpperCase()">
+                                            <textarea class="form-control" name="observaciones" rows="4" oninput="this.value = this.value.toUpperCase()" required></textarea>
                                         </div>
                                     </div>
 

@@ -111,13 +111,22 @@ class SeerController extends Controller
             ->where('delegacion', $user["delegacion"])
             ->get();
 
-            $estadisticas = SeerPerGeneral_old::join('seer_citados_old','seer_citados_old.id_solicitud','=','seer_general_old.id')
-            ->join('seer_auxiliares','seer_auxiliares.id_solicitud','=','seer_general_old.id')
-            ->select('seer_citados_old.id','seer_general_old.NUE','seer_general_old.solicitante','seer_citados_old.nombre',
-                'seer_citados_old.direccion','seer_citados_old.estatus')
-            ->where('seer_general_old.delegacion', $user["delegacion"])
+            $estadisticas = SeerPerGeneral_old::join('seer_citados_old', 'seer_citados_old.id_solicitud', '=', 'seer_general_old.id')
+            ->join('seer_auxiliares', 'seer_auxiliares.id_solicitud', '=', 'seer_general_old.id')
+            ->leftJoin('seer_citados', 'seer_citados.id_solicitud', '=', 'seer_general_old.id')
+            ->leftJoin('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
+            ->select(
+                'seer_citados_old.id as id_citado_old',
+                'seer_general_old.NUE',
+                'seer_general_old.solicitante',
+                'seer_citados_old.nombre',
+                'seer_citados_old.direccion',
+                'seer_citados_old.estatus',
+                'municipios.nombre as municipio_nombre',
+            )
+            ->where('seer_general_old.delegacion', $user['delegacion'])
             ->where('seer_citados_old.id_notificador', 0)
-            ->where('seer_auxiliares.notificacion',"!=", "Trabajador")
+            ->where('seer_auxiliares.notificacion', '!=', 'Trabajador')
             ->get();
         }
 
@@ -1515,7 +1524,7 @@ class SeerController extends Controller
             'ojos'                        => 'nullable',
             'particulares'                => 'nullable',
             'especificar'                 => 'nullable',
-            'municipio_citado'            => 'nullable',
+            //'municipio_citado'            => 'nullable',
         ]);
 
 
@@ -1549,7 +1558,7 @@ class SeerController extends Controller
                     'ojos'                       => $data["ojos"],
                     'particulares'               => $data["particulares"],
                     'especificar'                => $data["especificar"],
-                    'municipio_citado'           => $data["municipio_citado"],
+                   // 'municipio_citado'           => $data["municipio_citado"],
                 ]);
         }
         else{
@@ -1585,7 +1594,7 @@ class SeerController extends Controller
                     'ojos'                       => $data["ojos"],
                     'particulares'               => $data["particulares"],
                     'especificar'                => $data["especificar"],
-                    'municipio_citado'           => $data["municipio_citado"],
+                    //'municipio_citado'           => $data["municipio_citado"],
                 ]);
             }
         }
@@ -2678,9 +2687,13 @@ class SeerController extends Controller
         ->get();
 
         $mis_notificaciones = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+        ->join('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
+        ->join('estados', 'seer_citados.estado_citado', '=', 'estados.id')
         ->select('seer_general.id as id_solicitud','seer_citados.id as id_citado','seer_general.NUE',
             'seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido',
-            'seer_citados.colonia','seer_citados.calle','seer_citados.n_ext','seer_citados.n_int','seer_citados.estatus','seer_citados.tipo_notificacion')
+            'seer_citados.colonia','seer_citados.tipo_vialidad','seer_citados.calle','seer_citados.n_ext','seer_citados.n_int',
+            'seer_citados.municipio_citado','seer_citados.estado_citado','seer_citados.estatus','seer_citados.tipo_notificacion',
+            'municipios.nombre as municipio_nombre','estados.nombre as estado_nombre')
         ->where('seer_general.delegacion', $user["delegacion"])
         ->where('seer_citados.id_notificador', 0)
         ->where('seer_citados.notificacion',"!=", "Trabajador")
@@ -3363,7 +3376,7 @@ class SeerController extends Controller
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true); 
 
-        $nombreArchivo = 'falta_de_interes_' . $solicitud->trabajador .'.pdf';
+        $nombreArchivo = 'incompetencia_' . $solicitante->nombre .'.pdf';
         return $pdf->stream($nombreArchivo);  
     }
 
@@ -4101,7 +4114,7 @@ class SeerController extends Controller
         ->setOption('isHtml5ParserEnabled', true)
         ->setOption('isPhpEnabled', true);
 
-        $nombreArchivo = 'acuse_solicitud_' . $solicitud->empresa .'.pdf';
+        $nombreArchivo = 'acuse_solicitud_' . $solicitud->nombre .'.pdf';
         return $pdf->stream($nombreArchivo);               
     }
 
@@ -4134,22 +4147,27 @@ class SeerController extends Controller
     //PDF Multa de solicitud
     public function VerPDFMulta($id, $id_solicitud){
         $solicitud = SeerPerGeneral::find($id_solicitud);
-        //$solicitud = SeerPerGeneral::find($id);
         $conciliador = User::join("seer_general", "seer_general.conciliador_id", "=", "users.id")
         ->where("seer_general.id", "=", $id_solicitud)
-        ->select("users.name")
+        ->select('users.name')
         ->first();
         $citado = SeerCitados::find($id);
         $audiencia = Audiencias::where('id_solicitud', $id_solicitud)
         ->orderBy('fecha', 'desc')
         ->first();
-        $pdf = \PDF::loadView('PDF/Solicitudes/ActaMulta', compact('id','solicitud','citado','conciliador','audiencia'))
+        
+        $municipio = Municipios::find($citado->municipio_citado);
+        $municipioEmpresa = $municipio ? $municipio->nombre : 'No definido';
+        $estado = Estados::find($citado->estado_citado);
+        $estadoEmpresa = $estado ? $estado->nombre : 'No definido';
+
+        $pdf = \PDF::loadView('PDF/Solicitudes/ActaMulta', compact('id','solicitud','citado','conciliador','audiencia','municipioEmpresa','estadoEmpresa'))
         ->setPaper('a4', 'portrait')
         ->setOption('isHtml5ParserEnabled', true)
         ->setOption('isPhpEnabled', true);
 
         $nombreArchivo = 'multa_' . $solicitud->empresa .'.pdf';
-        return $pdf->stream($nombreArchivo);                  
+        return $pdf->stream($nombreArchivo);               
     }
 
     //PDF Citatorio
@@ -5283,6 +5301,11 @@ class SeerController extends Controller
             $municipio = \App\Models\Municipios::find($citado->municipio_citado);
             $municipioCitado = $municipio ? $municipio->nombre : null;
         }
+        $estadoCitado = null;
+        if ($citado && $citado->estado_citado) {
+            $estado = \App\Models\Estados::find($citado->estado_citado);
+            $estadoCitado = $estado ? $estado->nombre : null;
+        }
         $id_notificador = $citado->id_notificador;
 
         $notificador = User::where('id', $id_notificador)
@@ -5301,7 +5324,7 @@ class SeerController extends Controller
             }
         }
             
-        $html = view('PDF/Solicitudes/razonNoExitosa', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado'))->render();
+        $html = view('PDF/Solicitudes/razonNoExitosa', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -5309,7 +5332,7 @@ class SeerController extends Controller
             ->setOption('isPhpEnabled', true); 
 
         $nombreArchivo = 'Razón_NotificaciónN' . $solicitud->empresa .'.pdf';
-        return $pdf->stream($nombreArchivo);                 
+        return $pdf->stream($nombreArchivo);                   
     }
 
     //PDF Notificación No exitosa NO SE LOCALIZA INTERIOR
@@ -5510,14 +5533,16 @@ class SeerController extends Controller
     }
 
     public function notificaciones_consultar(){
-        //return view('/notificaciones/consultar');
+       //return view('/notificaciones/consultar');
         $id = auth()->user()->id;
         $user = User::find($id);
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
         
         $notificaciones = SeerCitados::join('seer_general','seer_general.id','seer_citados.id_solicitud')
-        ->select('seer_citados.*','seer_general.NUE')
+        ->join('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
+        ->join('estados', 'seer_citados.estado_citado', '=', 'estados.id')
+        ->select('seer_citados.*','seer_general.NUE','municipios.nombre as municipio_citado','estados.nombre as estado_citado')
         ->orderBy('created_at', 'desc')->limit(500)->get();
 
        
@@ -6923,10 +6948,12 @@ class SeerController extends Controller
         ->join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
         ->join('seer_solicitante','seer_solicitante.id_solicitud','=','seer_general.id')
         ->join('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
+        ->join('estados', 'seer_citados.estado_citado', '=', 'estados.id')
+        ->join('users', 'users.id', '=', 'seer_citados.id_notificador')
         ->where('seer_citados.estatus', "!=", 'Pendiente')
         ->select('seer_citados.id as id_citado','seer_general.NUE','seer_solicitante.nombre as nombre_solicitado','seer_citados.nombre','seer_citados.primer_apellido',
-        'seer_citados.segundo_apellido','municipios.nombre as municipio_citado','seer_citados.colonia','seer_citados.calle',
-        'seer_citados.n_ext','seer_citados.estatus','seer_citados.tipo_notificacion','seer_citados.id_solicitud as id_solicitud')
+        'seer_citados.segundo_apellido','municipios.nombre as municipio_citado','seer_citados.colonia','seer_citados.calle','seer_citados.tipo_vialidad','estados.nombre as estado_citado',
+        'seer_citados.n_ext','seer_citados.estatus','seer_citados.tipo_notificacion','seer_citados.id_solicitud as id_solicitud','users.name as notificador_nombre')
         ->orderBy('seer_citados.created_at', 'desc')
         ->limit(500)
         ->get();
@@ -7231,5 +7258,22 @@ class SeerController extends Controller
         ,'personas_conferencia7','personas_conferencia8','personas_conferencia9','personas_conferencia10'));
         //$pdf->setPaper('a4', 'landscape');
         return $pdf->stream('archivo.pdf');
+    }
+    //PDF Acuse de solicitud confirmada
+    public function PDFacuseConfirmada($id){
+        $solicitud = SeerPerGeneral::find($id);
+        $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
+        $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
+        ->first();
+
+        $citados = SeerCitados::where('id_solicitud', $id)->get();
+       
+        $pdf = \PDF::loadView('PDF/Solicitudes/acuseConfirmacion', compact('id','solicitud','solicitante','citados'))
+        ->setPaper('a4', 'portrait')
+        ->setOption('isHtml5ParserEnabled', true)
+        ->setOption('isPhpEnabled', true);
+
+        $nombreArchivo = 'acuse_confirmacion_' . $solicitante->nombre .'.pdf';
+        return $pdf->stream($nombreArchivo);               
     }
 }

@@ -64,23 +64,23 @@
     @php     
         $direccion_sede='';
         if($solicitud->delegacion === 'Morelia'){
-            $direccion_sede='BLVD. GARCÍA DE LEÓN NO. 1575, COL. CHAPULTEPEC ORIENTE, C.P.58260 MORELIA, MICHOACÁN DE OCAMPO';
+            $direccion_sede='BLVD. GARCÍA DE LEÓN NO. 1575, COL. CHAPULTEPEC ORIENTE, C.P. 58260 MORELIA, MICHOACÁN DE OCAMPO';
         }    
         if($solicitud->delegacion === 'Uruapan'){
-            $direccion_sede='NUEVO PARICUTÍN NO. 308, COL. JARDINES DE SAN RAFAEL, C.P.30136 URUAPAN, MICHOACÁN DE OCAMPO. SE ENCUENTRA DENTRO DEL RECINTÓ DONDE ESTA RENTAS DEL
+            $direccion_sede='NUEVO PARICUTÍN NO. 308, COL. JARDINES DE SAN RAFAEL, C.P. 30136 URUAPAN, MICHOACÁN DE OCAMPO. SE ENCUENTRA DENTRO DEL RECINTÓ DONDE ESTA RENTAS DEL
                 ESTADO, POR LA CLÍNICA DEL IMSS NO.76.';
         }
         if($solicitud->delegacion === 'Zamora') {
-            $direccion_sede='JUSTO SIERRA PONIENTE NO. 290, COL. JARDINES DE CATEDRAL, C.P.59600 ZAMORA, MICHOACÁN DE OCAMPO';
+            $direccion_sede='JUSTO SIERRA PONIENTE NO. 290, COL. JARDINES DE CATEDRAL, C.P. 59600 ZAMORA, MICHOACÁN DE OCAMPO';
         }  
         if($solicitud->delegacion === 'Zitácuaro') {
-            $direccion_sede='CUAUHTEMOC ORIENTE NO. 15, COL. CUAUHTEMOC, C.P. 61506ZITÁCUARO, MICHOACÁN DE OCAMPO';
+            $direccion_sede='CUAUHTEMOC ORIENTE NO. 15, COL. CUAUHTEMOC, C.P. 61506 ZITÁCUARO, MICHOACÁN DE OCAMPO';
         } 
         if($solicitud->delegacion === 'Lázaro Cárdenas') {
-            $direccion_sede='PARACHO NO. 26, COL. 600 CASAS, C.P.60950 LÁZARO CÁRDENAS, MICHOACÁN DE OCAMPO';
+            $direccion_sede='PARACHO NO. 26, COL. 600 CASAS, C.P. 60950 LÁZARO CÁRDENAS, MICHOACÁN DE OCAMPO';
         }  
         if($solicitud->delegacion === 'Sahuayo') {
-            $direccion_sede='AV. UNIVERSIDAD SUR NO. 300, COL. LOMAS DE UNIVERSIDAD, C.P.59103 SAHUAYO DE MORELOS, MICHOACÁN DE OCAMPO';
+            $direccion_sede='AV. UNIVERSIDAD SUR NO. 300, COL. LOMAS DE UNIVERSIDAD, C.P. 59103 SAHUAYO DE MORELOS, MICHOACÁN DE OCAMPO';
         } 
     @endphp
     @php
@@ -95,20 +95,20 @@
             <div class="content">
                 <div class="table-responsive">
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
-                            <tr>    
-                                <td><b>Número de identificación único: </b></td>
-                                <td>{{ $solicitud->NUE }} </td>
-                            </tr> 
-                            <tr>   
-                                <td><b>Centro de conciliación: </b></td>
-                                <td>{{ $solicitud->delegacion }} </td>
-                            </tr>
+                        <tr>   
+                            <td><b>Oficina: </b></td>
+                            <td>{{ $solicitud->delegacion }} </td>
+                        </tr>
+                        <tr>    
+                            <td><b>Número de identificación único: </b></td>
+                            <td>{{ $solicitud->NUE }} </td>
+                        </tr> 
                     </table>
                 </div><br><br><br><br>
                 <center><p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br> 
                         ACTA DE MULTA POR INCOMPARECENCIA</b></p></center>
-                <p>En <b>{{ $direccion_sede }}</b> a <b>{{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}</b>, el(la) funcionario(a) 
-                    conciliador(a) <b>Natalia Itzel Estrada Guzman</b>, adscrito al Centro 
+                <p>En <b>{{ $direccion_sede }}</b> a <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, el(la) funcionario(a) 
+                    conciliador(a) <b>{{$conciliador->name}}</b>, adscrito al Centro 
                     de Conciliación Laboral del Estado de Michoacán de Ocampo, <b>hace constar y certifica</b> que la parte citada 
                     <b>{{ $citado->nombre }} @if(!empty($citado->primer_apellido)){{ $citado->primer_apellido }}@endif  @if(!empty($citado->segundo_apellido)){{ $citado->segundo_apellido }}@endif no compareció,</b> 
                     a la Audiencia de Conciliación prevista para las 
@@ -119,9 +119,9 @@
                     <b>{{ $direccion_sede }}</b>, a <b>{{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}</b>.
                 </p>
                 <p>
-                    Vista la certificación mencionada, se advierte que la parte citada <b>{{ $citado->nombre }} @if(!empty($citado->primer_apellido)){{ $citado->primer_apellido }}@endif  @if(!empty($citado->segundo_apellido)){{ $citado->segundo_apellido }}@endif</b>, no compareció a la 
+                    Advirtiéndose así, que la parte citada <b>{{ $citado->nombre }} @if(!empty($citado->primer_apellido)){{ $citado->primer_apellido }}@endif  @if(!empty($citado->segundo_apellido)){{ $citado->segundo_apellido }}@endif</b>, no compareció a la 
                     audiencia de conciliación prevista para las <b>{{ \Carbon\Carbon::parse($audiencia->hora)->format('H:i') }}</b> horas de esta misma fecha, a pesar de encontrarse debidamente notificado(a) para tal efecto, circunstancia que se 
-                    corrobora con la notificación de fecha <b>{{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}</b>, por lo que con fundamento en los artículos 16, primer párrafo, 
+                    corrobora con la notificación de fecha <b>{{ \Carbon\Carbon::parse($citado->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, por lo que con fundamento en los artículos 16, primer párrafo, 
                     de la Constitución Política de los Estados Unidos Mexicanos; 590-E, 590-F, 684-E, fracciones IV, X, 684-I, fracción II de la Ley Federal del Trabajo; y 27 de 
                     la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo; artículo 20 fracción XVI y XVII del Reglamento Interior del Centro de 
                     Conciliación del Estado de Michoacán de Ocampo, <b>SE ACUERDA</b>:
@@ -143,26 +143,45 @@
                     citada <b>{{ $citado->nombre }} @if(!empty($citado->primer_apellido)){{ $citado->primer_apellido }}@endif  @if(!empty($citado->segundo_apellido)){{ $citado->segundo_apellido }}@endif</b> con los datos de identificación con los que se cuenta:
                 </p>
 
-                <p class="sangria"><b>1. Nombre o razón social: {{ $citado->nombre }} @if(!empty($citado->primer_apellido)){{ $citado->primer_apellido }}@endif  @if(!empty($citado->segundo_apellido)){{ $citado->segundo_apellido }}@endif<br> 
-                    2. CURP: @if(!empty($citado->curp)){{ $citado->curp }}@endif<br>
-                    3. RFC: @if(!empty($citado->rfc)){{ $citado->rfc }}@endif<br>
-                    4. Domicilio: {{ $citado->tipo_vialidad }} {{ $citado->calle }} #{{ $citado->n_ext }} 
-                    @if(!empty($citado->n_int))
-                        int. {{ $citado->n_int }}
-                    @endif 
-                    {{ $citado->colonia }}, {{ $citado->municipio_citado }} {{ $citado->cp }} {{ $citado->municipio_citado }}, MICHOACÁN DE OCAMPO.
-                </b></p>
-
+                <table style="margin-left: 20px; font-weight: bold;">
+                    <tr>
+                        <td style="width: 200px;">Nombre o razón social:</td>
+                        <td>{{ $citado->nombre }}
+                            @if(!empty($citado->primer_apellido)) {{ $citado->primer_apellido }} @endif
+                            @if(!empty($citado->segundo_apellido)) {{ $citado->segundo_apellido }} @endif
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>CURP:</td>
+                        <td>@if(!empty($citado->curp)){{ $citado->curp }}@endif</td>
+                    </tr>
+                    <tr>
+                        <td>RFC:</td>
+                        <td>@if(!empty($citado->rfc)){{ $citado->rfc }}@endif</td>
+                    </tr>
+                    <tr>
+                        <td>Domicilio:</td>
+                        <td>
+                            {{ $citado->tipo_vialidad }} {{ $citado->calle }} #{{ $citado->n_ext }}
+                            @if(!empty($citado->n_int))
+                                int. {{ $citado->n_int }}
+                            @endif
+                            {{ $citado->colonia }},
+                            {{ mb_strtoupper($municipioEmpresa, 'UTF-8') }},
+                            {{ mb_strtoupper($estadoEmpresa, 'UTF-8') }},
+                            C.P. {{ $citado->cp }}.
+                        </td>
+                    </tr>
+                </table><br>
                 <p><b>
                     Notifíquese personalmente a la parte citada dentro de los próximos 15 días hábiles y por buzón electrónico a la parte solicitante.
                 </b></p>
 
                 <p>
-                    Así lo proveyó <b>Natalia Itzel Estrada Guzman</b>, funcionario(a) conciliador(a) adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
+                    Así lo proveyó <b>{{$conciliador->name}}</b>, funcionario(a) conciliador(a) adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
                 </p>
 
-                <br><br>
-                <p><center><b>___________________________________<br> Natalia Itzel Estrada Guzman <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>               
+                <p><center><b>___________________________________<br> {{$conciliador->name}} <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>               
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

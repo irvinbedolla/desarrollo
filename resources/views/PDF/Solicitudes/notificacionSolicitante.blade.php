@@ -95,43 +95,45 @@
             <div class="content">
                 <div class="table-responsive">
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
-                            <tr>    
-                                <td><b>Número de identificación único: </b></td>
-                                <td>{{ $solicitud->NUE }} </td>
-                            </tr> 
-                            <tr>   
-                                <td><b>Centro de conciliación: </b></td>
-                                <td>{{ $solicitud->delegacion }} </td>
-                            </tr>
+                        <tr>   
+                            <td><b>Oficina: </b></td>
+                            <td>{{ $solicitud->delegacion }} </td>
+                        </tr>
+                        <tr>    
+                            <td><b>Número de identificación único: </b></td>
+                            <td>{{ $solicitud->NUE }} </td>
+                        </tr> 
                     </table>
                 </div><br><br><br>
                 <div class="col-lg-12">
                     <p><center><b>
-                        NOTIFICACIÓN AL SOLICITANTE<br>
-                        CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br>
+                        CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO
+                        NOTIFICACIÓN DE AUDIENCIA DE CONCILIACIÓN<br>
+                        </b></center></p><br>
                     <p><b>
-                        ASUNTO: AUDIENCIA DE CONCILIACION PREJUDICIAL<br>
+                        ASUNTO: NOTIFICACIÓN DE AUDIENCIA DE CONCILIACIÓN<br>
                         SOLICITANTE: {{ $solicitante->nombre }}<br><br>
                         CITADO (S): @foreach($citados as $citado)
                                         {{ $citado->nombre }} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}} <br>
                                     @endforeach
                         <br>
-                        FECHA Y HORA DE EMISIÓN DE DOCUMENTOS: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y \a \l\a\s H:i') }} hrs.<br>
+                        FECHA DE EMISIÓN DE DOCUMENTOS: {{ \Carbon\Carbon::parse($solicitud->fecha_confirmacion)->translatedFormat('d \d\e F \d\e\l Y') }}.<br>
                     </b></p>
 
-                    <p> Con fecha <b>{{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}</b> siendo las <b>{{ \Carbon\Carbon::now()->translatedFormat('H:i') }}</b> horas, ante esta 
-                        Autoridad Conciliadora, <b>{{ $solicitante->nombre }}</b>, me doy por notificado (a) personalmente de la fecha para la celebraciónn de la Audiencia de Conciliación de
-                        la solicitud de Conciliación con número de identificación único <b>{{ $solicitud->NUE }}</b>, misma que tendrá verificativo el día 
+                    <p> Con fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha_confirmacion)->translatedFormat('d \d\e F \d\e\l Y') }}</b> siendo las <b>{{ \Carbon\Carbon::now()->translatedFormat('H:i') }}</b> horas, ante esta 
+                        Autoridad Conciliadora, <b>{{ $solicitante->nombre }}</b>, me doy por notificado(a) personalmente de la fecha para la celebraciónn de la Audiencia de Conciliación derivada de 
+                        la solicitud con número de identificación único <b>{{ $solicitud->NUE }}</b>, misma que tendrá verificativo el día 
                         <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{ $audiencia->hora }}</b> horas, en la sala <b>{{ $audiencia->sala }}</b> de la Delegación 
-                        Regional de Michoacán de Ocampo del Centro de Conciliación Laboral 
+                        Regional de {{ $solicitud->delegacion }} del Centro de Conciliación Laboral 
                         del Estado de Michoacán de Ocampo, con domicilio en <b>{{$direccion_sede}}</b>.<br><br>
+
                         Asimismo, de conformidad con la fracción X del artículo 684-E, me hago conocedor que <b>de no comparecer se archivara el presente asunto por falta de interés</b>.
                     </p>
                     <br><br><br><br><br><br><br>
                     <div class="row">
                         <div class="col-12 text-center">
                             <div style="display: inline-block; margin-right: 50px;">
-                                <p><center><b>___________________________________<br> {{ $solicitante->nombre }} <br></b></center></p><br>
+                                <p><center><b>___________________________________<br> {{ $solicitante->nombre }} <br> SOLICITANTE</b></center></p><br>
                             </div>
                                     
                             <div style="display: inline-block; margin-right: 50px;">

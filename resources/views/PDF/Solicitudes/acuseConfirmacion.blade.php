@@ -7,7 +7,7 @@
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
 
         <!-- Bootstrap 5.3.3 -->
-        
+        <link href="../public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
         
@@ -89,7 +89,7 @@
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
         <footer>
-           
+    
         </footer>
         <main>
             <div class="content">
@@ -104,49 +104,37 @@
                             <td>{{ $solicitud->NUE }} </td>
                         </tr> 
                     </table>
-                </div><br><br><br><br>
-                <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br>
-                <p><b>ASUNTO: CITATORIO DE AUDIENCIA DE CONCILIACIÓN<br>
-                    SOLICITANTE: {{ $solicitante->nombre }}<br>
-                    CITADO: {{ $citado->nombre}} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}<br><br>
-                    FECHA DE EMISIÓN DEL CITATORIO:  {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}<br>
-                </b></p>  
-                           
-                <p><b>P R E S E N T E</b></p>
-                <p>En cumplimiento y observancia a la fracción XX, del artículo 123 Constitucional, apartado A; así como los de los
-                    Principios Procesales contenidos en los artículos 684-E, 684-F fracción I y 685 de la Ley Federal del Trabajo, que
-                    regulan el procedimiento obligatorio prejudicial conciliatorio; se notifica al Representante legal de <b>C. {{ $citado->nombre }} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}</b> para 
-                    que asista a la <b>Audiencia de Conciliación</b> 
-                    de fecha <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las
-                    <b>{{$audiencia->hora}}</b> horas, en la <b>{{ $audiencia->sala }}</b> de la Delegación Regional de <b>{{ $solicitud->delegacion}}</b> del Centro de Conciliación Laboral del
-                    Estado de Michoacán de Ocampo, con domicilio en <b>{{$direccion_sede}}.</b>
-                </p>
+                </div><br><br><br>
+                <div class="col-lg-12">
+                    <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br>
+                          ACUSE DE SOLICITUD DE CONFIRMADA</b></center>
+                    </p><br>
+                    <p><b>FECHA DE LA SOLICITUD: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}<br></b></p>
+                    <p><b> 
+                        SOLICITANTE: {{ $solicitante->nombre }}<br><br>
+                        CITADO (S): @foreach($citados as $citado)
+                                        {{ $citado->nombre }} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}} <br>
+                                    @endforeach
+                    </b></p>
+                    
+                    <p><b>{{ $solicitante->nombre }}</b>, ha confirmado exitosamente la solicitud de conciliación con folio <b>{{ $solicitud->NUE }}</b>.<br><br>
+                        En el documento NOTIFICACIÓN PARA LA CELEBRACIÓN DE LA AUDIENCIA DE CONCILIACIÓN se le señalará fecha y hora para la celebración de la audiencia de conciliación a la que deberá 
+                        comparecer <b>presencialmente</b> en las instalaciones del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<br><br>
+                        
+                        Atendiendo la fracción VII del artículo 689-E de la Ley Federal del Trabajo, las trabajadoras y los trabajadores, deberán acudir personalmente a la audiencia conciliatoria, sin 
+                        impedimento de poderse acompañar de una persona de su confianza, pero no se reconocerá a ésta como apoderado, por tratarse de un procedimiento de conciliación y no un juicio; no 
+                        obstante, el trabajador también podrá ser asistido por un licenciado en derecho, abogado o un Procurador de la Defensa del Trabajo. <br><br>
 
-                <p>La audiencia será presidida por una Conciliadora o Conciliador del Centro de Conciliación Laboral del Estado de
-                    Michoacán de Ocampo, en cumplimiento al artículo 684-H, manteniendo en todo momento los principios de
-                    conciliación, imparcialidad, neutralidad, flexibilidad, legalidad, equidad, buena fe, información, honestidad, y
-                    confidencialidad.
-                </p>
-                @if($citado->notificacion=="Centro")
-                <!--@(notificacion==centro)-->
-                    <p>Este citatorio se notifica de manera personal conforme al artículo 739, 739 Ter fracción I, 742 fracción XIII, 743, 
-                        744 y 745 Ter de la Ley Federal del Trabajo.
-                    </p>
-                <!--@(notificacion==centro)-->
-                    <p>Con fundamento en el artículo 684-E. fracción IV, así como el artículo 692 de la Ley Federal del Trabajo, se apercibe al citado que de no comparecer por sí o por conducto de
-                        su representante legal, o bien por medio de apoderado con facultades suficientes, se le impondrá una multa entre 50 y
-                        100 veces la Unidad de Medida y Actualización, y se le tendrá por inconforme con todo arreglo conciliatorio.
-                    </p>
-                @endif
-                <!--@(notificacion==solicitante)-->
-                @if($citado->notificacion=="Trabajador")
-                    <p>
-                        Con fundamento en los artículos 684-C último párrafo, 684-E antepenúltimo párrafo y 742 fracción XIII, el presente citatorio es entregado por el solicitante.
-                    </p>
-                @endif
+                        El patrón deberá asistir personalmente o por conducto de representante con facultades suficientes para obligarse en su nombre, atendiendo a los requisitos establecidos en el 
+                        artículo 692 de la Ley Federal del Trabajo.
+                        
+                        <br><br>
+                        En el caso de personas morales empleadoras, se deberá comparecer a través de un representante legal con facultades suficientes y apegándose al artículo señalado con anterioridad.<br><br>
 
-                <br><br><br><br><br>
-                <p><center><b>___________________________________<br> {{$conciliador->name}} <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>
+                        De conformidad con la fracción X del artículo 684-E de la Ley Federal del Trabajo, si a la audiencia de conciliación, sólo comparece el citado, se archivará el expediente por falta 
+                        de interés del solicitante, reanudándose los plazos de prescripción a partir de día siguiente a la fecha de la audiencia.
+                    </p>
+                </div>
             </div>
             <script type="text/php">
                 if (isset($pdf)) {
@@ -161,4 +149,3 @@
         </main>    
     </body>
 </html>    
-
