@@ -740,7 +740,7 @@ class SeerController extends Controller
                 ->get();
                 foreach ($audiencias as $audiencia) {
                     $CumplimientosAudiencia = Pagos::join('seer_general','seer_general.id','pago_solicitud.id_solicitud')
-                    ->join('users','users.id','seer_general.user_id')
+                    ->join('users','users.id','seer_general.conciliador_id')
                     ->where('users.id',$audiencia->user_id)
                     ->whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
                     if($sede !== "Todos"){
@@ -749,10 +749,8 @@ class SeerController extends Controller
                     $CumplimientosAudiencia = $CumplimientosAudiencia
                     ->where('pago_solicitud.tipo_pago',"Conciliador")
                     ->select('users.id', 'users.name',DB::raw('count(seer_general.id) as num_cumplimiento_audiencia'),  DB::raw('sum(pago_solicitud.monto) as sum_cumplimiento_audienicia'))
-                    ->where('users.id',$audiencia->user_id)
                     ->groupBy('users.id', 'users.name')
                     ->get();
-
                     $audienciasConvenidas = Audiencias::join("seer_general","seer_general.id","audiencias.id_solicitud")
                     ->join("users","users.id","=","seer_general.conciliador_id")->whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
                     if($sede !== "Todos"){
@@ -792,7 +790,7 @@ class SeerController extends Controller
                         $multas = $multas->where('seer_general.delegacion',$sede);
                     }
                     $multas = $multas->join('users','users.id','seer_general.user_id')
-                    ->where('users.id',$solicitud->user_id)
+                    ->where('users.id',$audiencia->user_id)
                     ->where('seer_citados.tipo_notificacion','Multa')
                     ->select('users.id', 'users.name',DB::raw('count(seer_citados.id) as numero_multas'))
                     ->groupBy('users.id', 'users.name')
@@ -802,46 +800,46 @@ class SeerController extends Controller
                     if($sede !== "Todos"){
                         $audiencias_virtuales = $audiencias_virtuales->where('seer_general.delegacion',$sede);
                     }
-                    $audiencias_virtuales = $audiencias_virtuales->join('users','users.id','seer_general.user_id')
-                    ->where('users.id',$solicitud->user_id)
+                    $audiencias_virtuales = $audiencias_virtuales->join('users','users.id','seer_general.conciliador_id')
+                    ->where('users.id',$audiencia->user_id)
                     ->where('seer_general.tipo','Virtual')
                     ->select('users.id', 'users.name',DB::raw('count(seer_general.id) as audiencia_virtual'))
                     ->groupBy('users.id', 'users.name')
                     ->get();
-
+                    
                     $numero_audiencias = SeerPerConciliador::join("seer_general","seer_general.id","seer_conciliadores.id_solicitud")
                     ->join('users','users.id','seer_general.user_id')
-                    ->where('id_solicitud',$solicitud->idSolicitud)
-                    ->select(DB::raw('count(seer_conciliadores.id) as numero_audiencias'))
+                    ->where('id_solicitud',$audiencia->idSolicitud)
+                    ->select(DB::raw('count(seer_conciliadores.id) as total_audiencias'))
                     ->groupBy('users.id', 'users.name')
                     ->get();
-
+                    //dd($numero_audiencias[0]->total_audiencias);
                     $audiencia->cumplimientoAudiencia = count($CumplimientosAudiencia) != 0 ? $CumplimientosAudiencia[0]->num_cumplimiento_audiencia : '0';
                     $audiencia->cumplimientoAudienciaMonto = count($CumplimientosAudiencia) != 0 ? $CumplimientosAudiencia[0]->sum_cumplimiento_audienicia : '0';
                     $audiencia->cumplimientoAudienciaConvenio = count($audienciasConvenidas) != 0 ? $audienciasConvenidas[0]->audiencias_convenio : '0';
                     $audiencia->cumplimientoAudienciaFalta = count($audienciasFaltaInteres) != 0 ? $audienciasFaltaInteres[0]->audiencias_falta : '0';
                     $audiencia->cumplimientoAudienciaIncompetencia = count($audienciasIncopetencia) != 0 ? $audienciasIncopetencia[0]->audiencias_falta : '0';
                     $audiencia->multas = count($multas) != 0 ? $multas[0]->numero_multas : '0';
-                    $audiencia->audiencias_virtuales = count($audiencias_virtuales) != 0 ? $numero_audiencias[0]->audiencia_virtual : '0';
-                    $audiencia->una_audiencias = count($numero_audiencias) == 1 ? $numero_audiencias[0]->numero_audiencias : '0';
-                    $audiencia->dos_audiencias = count($numero_audiencias) == 2 ? $numero_audiencias[0]->numero_audiencias : '0';
-                    $audiencia->tres_audiencias = count($numero_audiencias) == 3 ? $numero_audiencias[0]->numero_audiencias : '0';
+                    $audiencia->audiencias_virtuales = count($audiencias_virtuales) != 0 ? $audiencias_virtuales[0]->audiencia_virtual : '0';
+                    $audiencia->una_audiencias  = count($numero_audiencias) != 0 ? ($numero_audiencias[0]->total_audiencias == 1 ? $numero_audiencias[0]->total_audiencias : '0') : '000';
+                    $audiencia->dos_audiencias  = count($numero_audiencias) != 0 ? ($numero_audiencias[0]->total_audiencias == 2 ? $numero_audiencias[0]->total_audiencias : '0') : '000';
+                    $audiencia->tres_audiencias = count($numero_audiencias) != 0 ? ($numero_audiencias[0]->total_audiencias >= 3 ? $numero_audiencias[0]->total_audiencias : '0') : '000';
                 }
-
             //Notificadores
-                $notificaciones  = SeerPerGeneral::join("users","users.id","=","seer_general.user_id")
-                ->join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+                $notificaciones = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','seer_general.id')
+                ->join("users","users.id","seer_citados.id_notificador")
                 ->whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
                 if($sede !== "Todos"){
                     $notificaciones = $notificaciones->where("seer_general.delegacion", $sede);
                 }
-                $notificaciones = $notificaciones->select('users.id as user_id', 'users.name', DB::raw('count(seer_general.id) as notificaciones'))
+                $notificaciones = $notificaciones->select('users.id as user_id', 'users.name', DB::raw('count(seer_citados.id) as Todas_notificaciones'))
+                ->where('seer_citados.estatus',"!=", 'Sin asignar')
+                ->where('seer_citados.notificacion', 'Centro')
                 ->groupBy('users.id', 'users.name')
                 ->get();
-
                 foreach ($notificaciones as $solicitud) {
-                    $notificacion_notificada = SeerPerGeneral::join("users","users.id","=","seer_general.user_id")
-                    ->join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+                    $notificacion_notificada = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+                    ->join("users","users.id","seer_citados.id_notificador")
                     ->whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
                     if($sede !== "Todos"){
                         $notificacion_notificada = $notificacion_notificada->where("seer_general.delegacion", $sede);
@@ -852,8 +850,9 @@ class SeerController extends Controller
                     ->where('users.id',$solicitud->user_id)
                     ->get();
 
-                    $notificacion_Nonotificada  = SeerPerGeneral::join("users","users.id","=","seer_general.user_id")
-                    ->join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')->whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
+                    $notificacion_Nonotificada  = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+                    ->join("users","users.id","seer_citados.id_notificador")
+                    ->whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
                     if($sede !== "Todos"){
                         $notificacion_Nonotificada = $notificacion_Nonotificada->where("seer_general.delegacion", $sede);
                     }
@@ -863,8 +862,8 @@ class SeerController extends Controller
                     ->where('users.id',$solicitud->user_id)
                     ->get();
 
-                    $notificacion_Pendiente  = SeerPerGeneral::join("users","users.id","=","seer_general.user_id")
-                    ->join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+                    $notificacion_Pendiente  = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+                    ->join("users","users.id","seer_citados.id_notificador")
                     ->whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
                     if($sede !== "Todos"){
                         $notificacion_Pendiente = $notificacion_Pendiente->where("seer_general.delegacion", $sede);
@@ -875,8 +874,8 @@ class SeerController extends Controller
                     ->where('users.id',$solicitud->user_id)
                     ->get();
 
-                    $notificacion_Exhorto = SeerPerGeneral::join("users","users.id","=","seer_general.user_id")
-                    ->join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+                    $notificacion_Exhorto = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+                    ->join("users","users.id","seer_citados.id_notificador")
                     ->whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
                     if($sede !== "Todos"){
                         $notificacion_Exhorto = $notificacion_Exhorto->where("seer_general.delegacion", $sede);
@@ -887,8 +886,8 @@ class SeerController extends Controller
                     ->where('users.id',$solicitud->user_id)
                     ->get();
 
-                    $notificacion_NESC = SeerPerGeneral::join("users","users.id","=","seer_general.user_id")
-                    ->join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+                    $notificacion_NESC = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+                    ->join("users","users.id","seer_citados.id_notificador")
                     ->whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
                     if($sede !== "Todos"){
                         $notificacion_NESC = $notificacion_NESC->where("seer_general.delegacion", $sede);
@@ -899,38 +898,38 @@ class SeerController extends Controller
                     ->where('users.id',$solicitud->user_id)
                     ->get();
                     
-                    $notificacion_NENSC = SeerPerGeneral::join("users","users.id","=","seer_general.user_id")
-                    ->join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+                    $notificacion_NENSC = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+                    ->join("users","users.id","seer_citados.id_notificador")
                     ->whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
                     if($sede !== "Todos"){
                         $notificacion_NENSC = $notificacion_NENSC->where("seer_general.delegacion", $sede);
                     }
                     $notificacion_NENSC = $notificacion_NENSC->select(DB::raw('count(seer_citados.id) as notificacion_NENSC'))
-                    ->where('seer_citados.estatus', ' No exitosa no se constituye')
+                    ->where('seer_citados.estatus', 'No exitosa no se constituye')
                     ->groupBy('users.id', 'users.name')
                     ->where('users.id',$solicitud->user_id)
                     ->get();
 
-                   $notificacion_Finalizada = SeerPerGeneral::join("users","users.id","=","seer_general.user_id")
-                   ->join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+                   $notificacion_Finalizada = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+                    ->join("users","users.id","seer_citados.id_notificador")
                    ->whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
                     if($sede !== "Todos"){
                         $notificacion_Finalizada = $notificacion_Finalizada->where("seer_general.delegacion", $sede);
                     }
                     $notificacion_Finalizada = $notificacion_Finalizada->select(DB::raw('count(seer_citados.id) as exitosamente'))
-                    ->where('seer_citados.estatus', ' Finalizado exitosamente')
+                    ->where('seer_citados.estatus', 'Finalizado exitosamente')
                     ->groupBy('users.id', 'users.name')
                     ->where('users.id',$solicitud->user_id)
                     ->get();
                     
-                    $notificacion_Firma = SeerPerGeneral::join("users","users.id","=","seer_general.user_id")
-                    ->join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+                    $notificacion_Firma = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+                    ->join("users","users.id","seer_citados.id_notificador")
                     ->whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
                     if($sede !== "Todos"){
                         $notificacion_Firma = $notificacion_Firma->where("seer_general.delegacion", $sede);
                     }
                     $notificacion_Firma = $notificacion_Firma->select(DB::raw('count(seer_citados.id) as firma'))
-                    ->where('seer_citados.estatus', ' Recibe pero no firma')
+                    ->where('seer_citados.estatus', 'Recibe pero no firma')
                     ->groupBy('users.id', 'users.name')
                     ->where('users.id',$solicitud->user_id)
                     ->get();
@@ -3339,7 +3338,7 @@ class SeerController extends Controller
             'consecutivo'           =>  $numero_audiencia[1],
             'estatus_conciliacion'  => 'Regenerada'
         ];        
-        //SeerPerConciliador::create($data_conciliador);  
+        SeerPerConciliador::create($data_conciliador);  
         //Obtener la audiencia mas reciente
         $audiencia = Audiencias::where('id_solicitud',$data["id"])->select('id')->orderBy('id', 'desc')->first();
         //Actualizar tabla de audiencias        

@@ -45,7 +45,6 @@
                                                     <option value="Ratificaciones">Ratificaciones</option>
                                                     <option value="RatificacionesUsuario">Ratificaciones Por Usuario</option>
                                                     <option value="Notificaciones">Notificaciones Detallado</option>
-                                                    //<option value="Detallado">Detallado</option>
                                                     <option value="Concentrado">Concentrado</option>
                                                 </select>
                                                 <div class="invalid-feedback">

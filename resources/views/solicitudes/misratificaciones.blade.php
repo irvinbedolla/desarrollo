@@ -12,7 +12,6 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            @can('ver_solicitante')
                                 <div class="table-responsive">
                                     <table id="example" class="table table-striped mt-2">
                                         <thead style="background-color: #4A001F;">
@@ -96,7 +95,6 @@
                                         </tbody>
                                     </table>
                                 </div>
-                            @endcan
 
                             <!-- Centramos la paginación a la derecha-->
                             <div class="pagination justify-content-end">
