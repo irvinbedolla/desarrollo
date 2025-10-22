@@ -29,7 +29,7 @@
                                             <thead style="background-color: #4A001F;">
                                                 <th style="display: none;">ID</th>
                                                 <th style="color: #fff;">Fecha</th>
-                                                <th style="color: #fff;">Número unico de identificación</th>
+                                                <th style="color: #fff;">Número único de identificación</th>
                                                 <th style="color: #fff;">Solicitante</th>
                                                 <th style="color: #fff;">Tipo</th>
                                                 <th style="color: #fff;">Detalles</th>
@@ -80,7 +80,7 @@
                                             <thead style="background-color: #4A001F;">
                                                 <th style="display: none;">ID</th>
                                                 <th style="color: #fff;">Fecha</th>
-                                                <th style="color: #fff;">Número unico de identificación</th>
+                                                <th style="color: #fff;">Número único de identificación</th>
                                                 <th style="color: #fff;">Solicitante</th>
                                                 <th style="color: #fff;">Detalles</th>
                                                 <th style="color: #fff;">Estatus</th>
@@ -125,8 +125,12 @@
                                                         <td>{{$estadistica->id}}</td>
                                                         <td>{{$estadistica->NUE}}</td>
                                                         <td>{{$estadistica->nombre_solicitado}}</td>
-                                                        <td>{{$estadistica->nombre}}</td>
-                                                        <td>{{$estadistica->municipio_citado}} colonia {{$estadistica->colonia}}, {{$estadistica->calle}} {{$estadistica->n_ext}}</td>
+                                                        <td>{{$estadistica->nombre}} {{$estadistica->primer_apellido}} {{$estadistica->segundo_apellido}}</td>
+                                                        <td>COLONIA {{$estadistica->colonia}}, {{$estadistica->tipo_vialidad}} {{$estadistica->calle}} #{{$estadistica->n_ext}} 
+                                                            @if(!empty($estadistica->n_int))
+                                                                INT. {{ $estadistica->n_int }}
+                                                            @endif {{mb_strtoupper($estadistica->municipio_citado ?? 'SIN MUNICIPIO', 'UTF-8')}}
+                                                        </td>
                                                         <td>{{$estadistica->estatus}}</td>
                                                         <td>
                                                             <a class="btn btn-info" href="{{ route('seer_detalles', $estadistica->id) }}" onclick=nuevo_estadistica();>Consultar</a>

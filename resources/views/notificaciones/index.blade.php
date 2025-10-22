@@ -31,7 +31,10 @@
                                                         <td style="display: none;">{{$notificacion->id_solicitud}}</td>
                                                         <td>{{$notificacion->NUE}}</td>
                                                         <td>{{$notificacion->nombre}} {{$notificacion->primer_apellido}} {{$notificacion->segundo_apellido}}</td>
-                                                        <td>Colonia {{$notificacion->colonia}} {{$notificacion->tipo_vialidad}} {{$notificacion->calle}} {{$notificacion->n_ext}} {{$notificacion->municipio_citado}}</td>
+                                                        <td>COLONIA {{$notificacion->colonia}}, {{$notificacion->tipo_vialidad}} {{$notificacion->calle}} #{{$notificacion->n_ext}} 
+                                                            @if(!empty($notificacion->n_int))
+                                                                INT. {{ $notificacion->n_int }}
+                                                            @endif{{mb_strtoupper($notificacion->municipio_nombre, 'UTF-8')}}, {{mb_strtoupper($notificacion->estado_nombre, 'UTF-8')}}</td>
                                                         <td>{{$notificacion->estatus}}</td>
                                                         <td>{{$notificacion->tipo_notificacion}}</td>
                                                         @if($notificacion->estatus == "Pendiente" || $notificacion->estatus == "Sin asignar")

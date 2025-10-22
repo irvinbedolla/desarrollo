@@ -95,37 +95,36 @@
             <div class="content">
                 <div class="table-responsive">
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
-                            <tr>    
-                                <td><b>Número de identificación único: </b></td>
-                                <td>{{ $solicitud->NUE }} </td>
-                            </tr> 
-                            <tr>   
-                                <td><b>Centro de conciliación: </b></td>
-                                <td>{{ $solicitud->delegacion }} </td>
-                            </tr>
+                        <tr>   
+                            <td><b>Oficina: </b></td>
+                            <td>{{ $solicitud->delegacion }} </td>
+                        </tr>
+                        {{--<tr>    
+                            <td><b>Número de identificación único: </b></td>
+                            <td>{{ $solicitud->NUE }} </td>
+                        </tr> --}}
                     </table>
-                </div><br><br><br><br><br>
+                </div><br><br><br>
                 <div class="col-lg-12">
-                    <p><center><b>ACUSE DE SOLICITUD DE CONCILIACIÓN<br>
-                    CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br>
-                    <p><b>FECHA DE LA SOLICITUD: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}<br>
-                          FECHA DE CONFLICTO: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}
-                    </b></p>
+                    <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br>
+                          ACUSE DE SOLICITUD DE CONCILIACIÓN</b></center>
+                    </p><br>
+                    <p><b>FECHA DE LA SOLICITUD: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}<br></b></p>
                     <p><b> 
                         SOLICITANTE: {{ $solicitante->nombre }}<br><br>
-                        CITADO (S): <br>@foreach($citados as $citado)
+                        CITADO (S): @foreach($citados as $citado)
                                         {{ $citado->nombre }} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}} <br>
                                     @endforeach
-                        <br>
                     </b></p>
                     
-                    <p>Usted ha guardado exitosamente la solicitud de conciliación con folio <b>{{ $solicitud->NUE }}</b>. El Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con domicilio 
+                    <p>Usted ha guardado exitosamente la solicitud de conciliación con folio <b>{{ $solicitud->id }}</b>. El Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con domicilio 
                         en <b>{{$direccion_sede}}</b>, esta facultada para consultar su solicitud.<br><br>
 
-                        Conforme al artículo 735 de la Ley Federal del Trabajo este Centro de Conciliación tiene tres (3) días hábiles a partir de este momento para
-                        confirmar la solicitud, o requerir información o documentación faltante. En el caso de que no subsane la información o documentación dentro del mismo plazo señalado, con fundamento en el artículo
-                        684-C y 735 de la Ley Federal del Trabajo, ésta se archivará por falta de interes,
-                        dejando a salvo sus derechos para que pueda presentar una nueva solicitud.
+                        Conforme al artículo 735 de la Ley Federal del Trabajo a partir de este momento tiene <b>3 días hábiles</b> para confirmar su solicitud, por lo que deberá acudir 
+                        a este Centro de Conciliación con su identificación, integrar la documentación y/o información faltante. 
+                        <br><br>
+                        En el caso de que no subsane la información o documentación dentro del mismo plazo señalado, con fundamento en el artículo
+                        684-C y 735 de la Ley Federal del Trabajo, ésta se archivará por falta de interés, dejando a salvo sus derechos para que pueda presentar una nueva solicitud.
                     </p>
                 </div>
             </div>

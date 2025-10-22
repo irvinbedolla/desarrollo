@@ -55,7 +55,7 @@
                 z-index: 1;
             }
             p {
-                line-height: 1.4;
+                line-height: 1.3;
                 text-align: justify;
             }
             .page-break {
@@ -101,9 +101,9 @@
                             <td>{{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</td>
                         </tr>
                     </table>
-                </div><br><br><br><br><br><br><br><br><br><br>
+                </div><br><br><br><br><br><br><br><br><br><br><br><br><br>
                 <!-- DELIGENCIA NO EXITOSA, SE CONSTITUYE, CERRADO -->
-                <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p><br>
+                <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p>
                            
                 <p>Siendo las <<b>{{ \Carbon\Carbon::now()->format('H') }} HORAS CON {{ \Carbon\Carbon::now()->format('i') }} MINUTOS
                     DEL DÍA {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}, LIC. {{$notificador->name}}</b> en mi
@@ -111,9 +111,9 @@
                     ejercicio de las facultades conferidas en los artículos de la Ley Orgánica del Centro de Conciliación Laboral del Estado 
                     de Michoacán de Ocampo y 21 del reglamento interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, 
                     a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
-                    en el expediente citado, en el que se ordena NOTIFICAR <b>AL CITADO: {{$citado->nombre}}@if($citado->primer_apellido!=null) {{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null) {{$citado->segundo_apellido}}@endif</b>, 
-                    en el domicilio señalado en <b>{{$citado->tipo_vialidad}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) int. {{$citado->n_int}}@endif, 
-                    COLONIA {{$citado->colonia}}, {{strtoupper($municipioCitado)}}, CP {{$citado->cp}}, ESTADO MICHOACÁN DE OCAMPO.</b><br><br>
+                    en el expediente citado, en el que se ordena NOTIFICAR <b>AL CITADO: {{$citado->nombre}}@if($citado->primer_apellido!=null) {{$citado->primer_apellido}}@endif
+                    @if($citado->segundo_apellido!=null) {{$citado->segundo_apellido}}@endif</b>en el domicilio señalado en <b>{{$citado->tipo_vialidad}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) int. {{$citado->n_int}}@endif, 
+                    COLONIA {{$citado->colonia}} {{mb_strtoupper($municipioCitado, 'UTF-8')}}, {{mb_strtoupper($estadoCitado, 'UTF-8')}} C.P. {{$citado->cp}}.</b><br><br>
 
                     Cerciorándome de ser éstos los Municipio, Colonia y Vialidad correctas señaladas en la solicitude de conciliación, por 
                     <b>@php
@@ -144,7 +144,7 @@
                     <b>Anexando impresión fotográfica para constancia legal.</b><br>
                     <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. Doy fe.</b> 
                 </p>
-                <br>
+                
                 <p><center><b>___________________________________<br> LIC. {{$notificador->name}}<br> FUNCIONARIO/A NOTIFICADOR/A</b></center> </p>
                 <div class="page-break"></div> <!-- Genera un salto de línea-->
                 @foreach($imagenes as $index => $imagen) <!--Muestra una fotografía por hoja, númerando por anexos-->

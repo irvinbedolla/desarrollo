@@ -87,51 +87,57 @@
             <div class="content">
                 <div class="table-responsive">
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
-                            <tr>    
-                                <td><b>Número de identificación único: </b></td>
-                                <td>{{ $solicitud->NUE }} </td>
-                            </tr> 
-                            <tr>   
-                                <td><b>Centro de conciliación: </b></td>
-                                <td>{{ $solicitud->delegacion }} </td>
-                            </tr>
+                        <tr>   
+                            <td><b>Oficina: </b></td>
+                            <td>{{ $solicitud->delegacion }} </td>
+                        </tr>
+                        <tr>    
+                            <td><b>Número de identificación único: </b></td>
+                            <td>{{ $solicitud->NUE }} </td>
+                        </tr> 
                     </table>
                 </div><br><br><br><br>
-                <p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br>
-                        Solicitante: {{ $solicitante->nombre }}<br> 
-                        Citado(a): {{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido }}<br>
-                        Domicilio del citado(a): {{ $citado->calle }} {{ $citado->n_ext }} 
-                            @if(!empty($citado->n_int))
-                                int. {{ $citado->n_int }}
-                            @endif 
-                            {{ $citado->colonia }}, {{ $citado->municipio_citado }} {{ $citado->cp }}<br>
-                        Funcionario(a) conciliador(a) responsable: {{ $conciliador->name }}<br>
-                        Fecha de registro de la solicitud: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}<br>
-                        Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>
-                            {{ $audiencia->hora }}<br>
-                        Asistencia del citado: Si
+                <p><b>
+                    Solicitante: {{ $solicitante->nombre }}<br> 
+                    Citado(a): {{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido }}<br>
+                    Domicilio del citado(a): {{ $citado->tipo_vialidad }} {{ $citado->calle }} #{{ $citado->n_ext }} 
+                    @if(!empty($citado->n_int))
+                        int. {{ $citado->n_int }}
+                    @endif 
+                    {{ $citado->colonia }}, {{ mb_strtoupper($municipioEmpresa, 'UTF-8') }}, {{ mb_strtoupper($estadoEmpresa, 'UTF-8') }}, C.P. {{ $citado->cp }}<br>
+                    Fecha de registro de la solicitud: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}<br>
+                    Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $audiencia->hora }}<br>
+                    Funcionario(a) conciliador(a) responsable: {{ $conciliador->name }}<br>
+                    Asistencia del citado: Si <!-- Cambiar está parte por una condicional-->
                 </b></p>
                 <p>
                     <center><b>CONSTANCIA DE NO CONCILIACIÓN</b></center><br>
                 </p> 
                 <p>
-                    <b>Fundamento: </b>Artículos 684-E, fracción VIII, tercer párrafo y 684-F, fracción VIII, de la Ley Federal del Trabajo y
-                        artículos 5, primer párrafo y 8, fracción I y IV de la Ley Orgánica del Centro de Conciliación Laboral del Estado de
-                        Michoacán de Ocampo. <br><br>
+                    <!--Cuando el citado SI se presenta-->
+                    @if(si)
+                        <b>Motivación:</b> Una vez agotada la etapa de conciliación prejudicial, trás dialogar ambas partes y no llegar a un acuerdo conliatorio, se dejan a salvo los derechos de las partes 
+                        para solicitar una nueva fecha de audiencia en términos del artículo 684-E, fracción VIII, último párrafo.<br><br>
 
-                    <b>Motivación:</b> Por haber agotado la Etapa de Conciliación.<br>
-                        Se dejan a salvo los derechos de las partes para solicitar una nueva fecha de audiencia en términos del artículo 684-E,
-                        fracción VIII, último párrafo.<br>
-                        De conformidad con los principios constitucionales de legalidad, imparcialidad, confiabilidad, eficacia, objetividad,
-                        confidencialidad, profesionalismo, transparencia y publicidad, se expide con fecha <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>
+                        Con fundamento en los artículos 684-E, fracción VIII, tercer párrafo y 684-F, fracción VIII, de la Ley Federal del Trabajo y artículos 5, primer párrafo y 8, fracción I y IV de la 
+                        Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo y atendiendo los principios constitucionales de legalidad, imparcialidad, confiabilidad, eficacia, objetividad, 
+                        confidencialidad, profesionalismo, transparencia y publicidad, se expide con fecha <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
                         la presente <b>CONSTANCIA DE NO CONCILIACIÓN</b>.<br><br>
+                    @endif
+                    <!--Cuando el citado NO se presenta-->
+                    @if(no)
+                        <b>Motivación:</b> Toda vez que a la audiencia de conciliación, sólo comparecio el solicitante, esta autoridad conciliatoria emite constancia de haber agotado la etapa de conciliación prejudicial obligatoria.<br><br>
 
-                        Finalmente, se dejan a salvo los derechos de los interesados para ejercer las acciones respectivas ante el Tribunal
-                        Laboral competente, en términos de los artículos 123, apartado A, fracción XX, de la Constitución Política de los Estados
-                        Unidos Mexicanos; 521, fracción III, 870 Bis, de la Ley Federal del Trabajo. <b>Doy fe</b>.
+                        Con fundamento en el artículo 684-E, fracción X y 684-F, de la Ley Federal del Trabajo y artículos 5, primer párrafo y 8, fracción I y IV de la 
+                        Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo y atendiendo los principios constitucionales de legalidad, imparcialidad, confiabilidad, eficacia, objetividad, 
+                        confidencialidad, profesionalismo, transparencia y publicidad, se expide con fecha <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
+                        la presente <b>CONSTANCIA DE NO CONCILIACIÓN</b>.<br><br>
+                    @endif
+                    Finalmente, se dejan a salvo los derechos de los interesados para ejercer las acciones respectivas ante el Tribunal Laboral competente, en términos de los artículos 123, apartado A, 
+                    fracción XX, de la Constitución Política de los Estados Unidos Mexicanos; 521, fracción III, 870 Bis, de la Ley Federal del Trabajo. <b>Doy fe</b>.
                          
                 </p>    
-                <br><br><br><br>  
+                <br><br><br>  
                 <center><br><br> <p><b>___________________________________<br>{{ $conciliador->name }} <br> FUNCIONARIO/A CONCILIADOR/A</b></p></center>    
                 <br>
                 <p>En caso de que el conflicto se relacione con prestaciones de seguridad social, pensiones, designación de beneficiarios

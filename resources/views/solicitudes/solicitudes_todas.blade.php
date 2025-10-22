@@ -17,7 +17,7 @@
                                         <th style="color: #fff;">Fecha Captura</th>
                                         <th style="color: #fff;">Expediente</th>
                                         <th style="color: #fff;">Solicitante</th>
-                                        <th style="color: #fff;">Actividad Economica</th>
+                                        <th style="color: #fff;">Actividad Económica</th>
                                         <th style="color: #fff;">Tipo Solicitud</th>
                                         <th style="color: #fff;">Estatus</th>
                                         <th style="color: #fff;">Revisar</th>
