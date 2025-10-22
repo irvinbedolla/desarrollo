@@ -172,7 +172,7 @@
                                             <tr>
                                                 <td style=" text-align: center;">{{ $audiencia->name}}</td>
                                                 <td style=" text-align: center;">{{ $audiencia->audiencias}}</td>
-                                                <td style=" text-align: center;">{{ $audiencia->cumplimientoAudiencia}}</td>
+                                                <td style=" text-align: center;">{{ $audiencia->cumplimientoAudiencia }}</td>
                                                 <td style=" text-align: center;">${{ number_format($audiencia->cumplimientoAudienciaMonto, 2) }}</td>
                                                 <td style=" text-align: center;">{{ $audiencia->cumplimientoAudienciaConvenio}}</td>
                                                 <td style=" text-align: center;">{{ $audiencia->cumplimientoAudienciaFalta}}</td>
@@ -249,7 +249,7 @@
                                         @foreach($notificaciones as $notificacion)
                                             <tr>
                                                 <td style=" text-align: center;">{{ $notificacion->name}}</td>
-                                                <td style=" text-align: center;">{{ $notificacion->notificaciones}}</td>
+                                                <td style=" text-align: center;">{{ $notificacion->Todas_notificaciones}}</td>
                                                 <td style=" text-align: center;">{{ $notificacion->notificada}}</td>
                                                 <td style=" text-align: center;">{{ $notificacion->notificacion_Nonotificada}}</td>
                                                 <td style=" text-align: center;">{{ $notificacion->notificacion_pendientes}}</td>
@@ -259,7 +259,7 @@
                                                 <td style=" text-align: center;">{{ $notificacion->exitosamente}}</td>
                                                 <td style=" text-align: center;">{{ $notificacion->firma}}</td>
                                                 @php 
-                                                    $total_notificaciones = $total_notificaciones + $notificacion->notificaciones;
+                                                    $total_notificaciones = $total_notificaciones + $notificacion->Todas_notificaciones;
                                                     $total_Notificada = $total_Notificada + $notificacion->cumplimientoAudiencia;
                                                     $total_notificacion_Nonotificada = $total_notificacion_Nonotificada + $notificacion->cumplimientoAudienciaMonto;
                                                     $total_notificacion_pendientes = $total_notificacion_pendientes + $notificacion->notificacion_pendientes;
