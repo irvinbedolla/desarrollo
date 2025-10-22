@@ -2524,10 +2524,10 @@ class SeerController extends Controller
         //Actualizar genera
         SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $Audiencia[3], 'estatus' => 'Confirmado' ]);
         if (isset($data["notificacion"][0]) && $data["notificacion"][0] == 'Trabajador') {
-            return redirect()->route('descargarCitatorios', ['id' => $data["id"]]);
-        }else if (($isAudiencia = $request->input('isAudiencia')) === 'Si'){
+            return redirect()->route('descargarCitatorios', ['id' => $data["id"], 'isAud' => 1]);
+        } elseif ($request->input('isAudiencia') === '1') {
             return redirect()->route('todas_audiencias');
-        }else {
+        } else {
             return redirect()->route('solicitudes_pendientes'); 
         }
     }
@@ -7116,15 +7116,16 @@ class SeerController extends Controller
         return view('notificaciones.detalles',compact('folio','estados','municipios'));
     }
     //VISTA PDF Citatorio entregado por el trabajador
-    public function descargarCitatorios($id) {
+    public function descargarCitatorios(Request $request, $id) {
         try {
             $citados = SeerCitados::where('id_solicitud', $id)->get();
+            $isAudiencia = $request->query('isAud', null);
 
             if ($citados->isEmpty()) {
                 return redirect()->back()->with('error', 'No hay citados para esta solicitud.');
             }
 
-            return view('solicitudes.descargaCitatorios', compact('citados'));
+            return view('solicitudes.descargaCitatorios', compact('citados', 'isAudiencia'));
 
         } catch (\Exception $e) {
             return response()->json([
