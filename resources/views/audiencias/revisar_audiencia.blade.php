@@ -125,6 +125,7 @@
                              <form class="needs-validation" novalidate method="POST" action="{{route('confirmar_solicitud')}}" enctype='multipart/form-data'>
                                     @csrf
                                     <input type="hidden" name="id" value="{{$id}}">
+                                    <input type="hidden" name="isAudiencia" value="Si">
                                     <div class="tab">
                                         <a class="btn btn-info" onclick="openCity(event, 'detalles')">Detalles</a>
                                         <a class="btn btn-info" onclick="openCity(event, 'solicitante')">Solicitante</a>

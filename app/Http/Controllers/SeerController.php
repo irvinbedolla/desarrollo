@@ -2316,6 +2316,8 @@ class SeerController extends Controller
         $listado_auxiliares = array();
         $relacionEloquent = 'roles';
         $fecha_actual = date('y-m-d');
+
+        $isAudiencia = '';
         
         //Actualizar SEER GENERAL
         $delegacion = SeerPerGeneral::find($data["id"]);
@@ -2524,7 +2526,9 @@ class SeerController extends Controller
         SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $Audiencia[3], 'estatus' => 'Confirmado' ]);
         if (isset($data["notificacion"][0]) && $data["notificacion"][0] == 'Trabajador') {
             return redirect()->route('descargarCitatorios', ['id' => $data["id"]]);
-        }else{
+        }else if (($isAudiencia = $request->input('isAudiencia')) === 'Si'){
+            return redirect()->route('todas_audiencias');
+        }else {
             return redirect()->route('solicitudes_pendientes'); 
         }
     }

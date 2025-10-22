@@ -69,7 +69,7 @@
                                         <a href="{{ route('todos_complimientos') }}" class="btn btn-primary"  style="width: 100%">Cumplimientos</a>
                                     </div>
                                 </div>
-                                <div class="col-xs-4 col-sm-4 col-md-2">
+                                <div class="col-xs-4 col-sm-4 col-md-2 mt-3">
                                     <div align="center">
                                        <button type="button" class="btn btn-primary open-modal" data-bs-toggle="modal" data-bs-target="#ModalArchivar" style="width: 100%">
                                             Buscar
