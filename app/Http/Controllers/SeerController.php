@@ -3261,6 +3261,7 @@ class SeerController extends Controller
     }
     
     public function ObtenerAudiencia($delegacion){
+
         $fecha_actual = date('y-m-d');
         $hora_actual  = date("H:i:s");
         $array_final = array();

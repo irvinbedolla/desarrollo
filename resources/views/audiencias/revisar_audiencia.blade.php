@@ -75,6 +75,13 @@
         border: 1px solid #ccc;
         border-top: none;
     }
+
+    .was-validated .form-control:invalid ~ .invalid-feedback,
+    .was-validated select.form-control:invalid ~ .invalid-feedback,
+    .was-validated .form-select:invalid ~ .invalid-feedback {
+        display: block;
+    }
+
 </style>
 
 @section('content')
@@ -115,7 +122,7 @@
                                 </div>
                             @endif
 
-                             <form class="needs-validation novalidate" method="POST" action="{{route('confirmar_solicitud')}}" enctype='multipart/form-data'>
+                             <form class="needs-validation" novalidate method="POST" action="{{route('confirmar_solicitud')}}" enctype='multipart/form-data'>
                                     @csrf
                                     <input type="hidden" name="id" value="{{$id}}">
                                     <div class="tab">
@@ -209,23 +216,32 @@
                                             @foreach($solicitantes as $solicitante)
                                                 <div class="col-xs-12 col-sm-6 col-md-12">
                                                     <div class="form-group">
-                                                        <label for="password">Nombre</label>
-                                                        <input type="text" class="form-control" name="nombre_solicitante" value="<?=$solicitante["nombre"];?>">   
-                                                    </div>
+                                                        <label for="password">Nombre<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" class="form-control" name="nombre_solicitante" value="<?=$solicitante["nombre"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El campo nombre es obligatorio.
+                                                        </div>   
+                                                    </div>                                                    
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                <div class="col-xs-12 col-sm-6 col-md-3" hidden>
                                                     <div class="form-group">
-                                                        <label for="confirm-password">Tipo de Persona</label>
-                                                        <select name="tipo_persona_solicitante" class="form-control">
+                                                        <label for="confirm-password">Tipo de persona<span style="color:red;"> (*)</span></label>
+                                                        <select name="tipo_persona_solicitante" class="form-control" required>
                                                             <option value="Fisica" {{ $solicitante["tipo_persona"] == 'Fisica' ? "selected" : '' }}>Física</option>
                                                             <option value="Moral"  {{ $solicitante['tipo_persona'] == 'Moral' ? "selected" : '' }}>Moral</option>
                                                         </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo tipo de persona es obligatorio.
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="confirm-password">CURP</label>
-                                                        <input type="text" class="form-control" name="curp_solicitante" value="<?=$solicitante["curp"];?>">
+                                                        <label for="confirm-password">CURP<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" class="form-control" name="curp_solicitante" value="<?=$solicitante["curp"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El campo curp es obligatorio.
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 
@@ -237,172 +253,235 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="confirm-password">Sexo</label>
-                                                        <select name="sexo_solicitante" class="form-control">
+                                                        <label for="confirm-password">Sexo<span style="color:red;"> (*)</span></label>
+                                                        <select name="sexo_solicitante" class="form-control" required>
                                                             <option value="H" {{ $solicitante["sexo"] == 'H' ? "selected" : '' }}>Hombre</option>
                                                             <option value="M"  {{ $solicitante['sexo'] == 'M' ? "selected" : '' }}>Mujer</option>
                                                             <option value="NB"  {{ $solicitante['sexo'] == 'NB' ? "selected" : '' }}>No Binario</option>
                                                             <option value="LGBTTTIQ"  {{ $solicitante['sexo'] == 'LGBTTTIQ' ? "selected" : '' }}>LGBTTTIQ+</option>
                                                         </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo curp es obligatorio.
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="confirm-password">Nacionalidad</label>
-                                                        <select name="nacionalidad_solicitante" class="form-control">
+                                                        <label for="confirm-password">Nacionalidad<span style="color:red;"> (*)</span></label>
+                                                        <select name="nacionalidad_solicitante" class="form-control" required>
                                                             <option value="Mexicana" {{ $solicitante["sexo"] == 'Mexicana' ? "selected" : '' }}>Mexicana</option>
                                                             <option value="Otra"  {{ $solicitante['sexo'] == 'Otra' ? "selected" : '' }}>Otra</option>
                                                         </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
-                                                    <div class="form-group">
-                                                        <label for="password">Estado del solicitante</label>
-                                                        <select id="estado_solicitante" class="form-control" name="estado_solicitante">
-                                                            @foreach($estados as $est)
-                                                                <option value="{{$est['id']}}" {{ $solicitante['estado'] == $est['id'] ? "selected" : '' }}>{{$est['nombre']}}</option>
-                                                            @endforeach
-                                                        </select>
                                                         <div class="invalid-feedback">
-                                                            El Estado es obligatorio.
+                                                            El campo nacionalidad es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
+                                                
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Municipio del solicitante</label>
-                                                        <select class="form-control" name="municipio_solicitante" id="municipio_solicitante">
-                                                            @foreach($municipios as $mun)
-                                                                <option value="{{$mun['id']}}" {{ $solicitante['municipio_domicilio'] == $mun['id'] ? "selected" : '' }}>{{$mun['nombre']}}</option>
-                                                            @endforeach
-                                                        </select>
+                                                        <label for="password">Email<span style="color:red;"> (*)</span></label>
+                                                        <input type="email" class="form-control" name="email_solicitante" value="<?=$solicitante["email"];?>" required>
                                                         <div class="invalid-feedback">
-                                                            El Estado es obligatorio.
-                                                        </div>
+                                                            El campo email es obligatorio.
+                                                        </div>   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Email</label>
-                                                        <input type="email" class="form-control" name="email_solicitante" value="<?=$solicitante["email"];?>">   
+                                                        <label for="password">Fecha nacimiento<span style="color:red;"> (*)</span></label>
+                                                        <input type="date" class="form-control" name="fecha_nacimiento_solicitante" value="<?=$solicitante["fecha_nacimiento"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El fecha nacimiento es obligatorio.
+                                                        </div>   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Fecha Nacimiento</label>
-                                                        <input type="date" class="form-control" name="fecha_nacimiento_solicitante" value="<?=$solicitante["fecha_nacimiento"];?>">   
+                                                        <label for="password">Edad<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" class="form-control" name="edad_solicitante" value="<?=$solicitante["edad"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El campo edad es obligatorio.
+                                                        </div>   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Edad</label>
-                                                        <input type="text" class="form-control" name="edad_solicitante" value="<?=$solicitante["edad"];?>">   
+                                                        <label for="password">Teléfono<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" class="form-control" name="telefono1_solicitante" value="<?=$solicitante["telefono1"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El teléfono es obligatorio.
+                                                        </div>   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Télefono</label>
-                                                        <input type="text" class="form-control" name="telefono1_solicitante" value="<?=$solicitante["telefono1"];?>">   
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
-                                                    <div class="form-group">
-                                                        <label for="password">Télefono (Opcional)</label>
+                                                        <label for="password">Teléfono (Opcional)</label>
                                                         <input type="text" class="form-control" name="telefono2_solicitante" value="<?=$solicitante["telefono2"];?>">   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="confirm-password">Requiere Traductor</label>
-                                                        <select name="traductor_solicitante" class="form-control">
+                                                        <label for="confirm-password">Requiere traductor<span style="color:red;"> (*)</span></label>
+                                                        <select name="traductor_solicitante" id="needsLanguageSolicitante" class="form-control" required>
                                                             <option value="Si" {{ $solicitante["traductor"] == 'Si' ? "selected" : '' }}>SI</option>
                                                             <option value="No"  {{ $solicitante['traductor'] == 'No' ? "selected" : '' }}>NO</option>
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                <div class="col-xs-12 col-sm-6 col-md-3" id="languageRequired" hidden>
                                                     <div class="form-group">
-                                                        <label for="password">Lenjuage requerido</label>
-                                                        <input type="text" class="form-control" name="lenguaje_solicitante" value="<?=$solicitante["lenguaje"];?>">   
+                                                        <label for="password">Lenguaje requerido<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" class="form-control" name="lenguaje_solicitante" id="languageValueSolicitante" value="<?=$solicitante["lenguaje"];?>">   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="confirm-password">Tiene Discapacidad</label>
-                                                        <select name="discapacidad_solicitante" class="form-control">
+                                                        <label for="confirm-password">Tiene discapacidad<span style="color:red;"> (*)</span></label>
+                                                        <select name="discapacidad_solicitante" id="hasDisabilitySolicitante" class="form-control" required>
                                                             <option value="Si" {{ $solicitante["discapacidad"] == 'Si' ? "selected" : '' }}>SI</option>
                                                             <option value="No"  {{ $solicitante['discapacidad'] == 'No' ? "selected" : '' }}>NO</option>
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                <div class="col-xs-12 col-sm-6 col-md-3" id="disabilityRequired" hidden>
                                                     <div class="form-group">
-                                                        <label for="password">Lenjuage requerido</label>
-                                                        <input type="text" class="form-control" name="disc_solicitante" value="<?=$solicitante["tipo_discapacidad"];?>">   
+                                                        <label for="password">Discapacidad<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" class="form-control" name="disc_solicitante" id="disabilityValueSolicitante" value="<?=$solicitante["tipo_discapacidad"];?>">   
                                                     </div>
                                                 </div>
 
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
-                                                        <h4 class="text-center">Dirección</h4>
+                                                        <h4 class="text-center">Dirección del solicitante</h4>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="password">Entidad Federativa<span style="color:red;"> (*)</span></label>
+                                                        <select id="estado_solicitante" class="form-control" name="estado_solicitante" required>
+                                                            @foreach($estados as $est)
+                                                                <option value="{{$est['id']}}" {{ $solicitante['estado'] == $est['id'] ? "selected" : '' }}>{{$est['nombre']}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo entidad federativa es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="password">Municipio<span style="color:red;"> (*)</span></label>
+                                                        <select class="form-control" name="municipio_solicitante" required>
+                                                            @foreach($municipios as $mun)
+                                                                <option value="{{$mun['id']}}" {{ $solicitante['municipio_domicilio'] == $mun['id'] ? "selected" : '' }}>{{$mun['nombre']}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo municipio es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="password">Tipo de vialidad<span style="color:red;"> (*)</span></label>
+                                                        <!--input type="text" class="form-control" name="tipo_vialidad" value="<?=$solicitante["tipo_vialidad"];?>" required-->
+                                                        <select name="tipo_vialidad" class="form-control" required>
+                                                            <option value="">SELECCIONE</option>
+                                                            <option value="CALLE"          {{ $solicitante['tipo_vialidad'] == 'CALLE' ? "selected" : '' }}   >Calle</option>
+                                                            <option value="AVENIDA"        {{ $solicitante['tipo_vialidad'] == 'AVENIDA' ? "selected" : '' }} >Avenida</option>
+                                                            <option value="CALZADA"        {{ $solicitante['tipo_vialidad'] == 'CALZADA' ? "selected" : '' }} >Calzada</option>
+                                                            <option value="BOULEVARD"      {{ $solicitante['tipo_vialidad'] == 'BOULEVARD' ? "selected" : '' }} >Boulevard</option>
+                                                            <option value="AMPLIACIÓN"     {{ $solicitante['tipo_vialidad'] == 'AMPLIACIÓN' ? "selected" : '' }} >Ampliación</option>
+                                                            <option value="ANDADOR"        {{ $solicitante['tipo_vialidad'] == 'ANDADOR' ? "selected" : '' }} >Andador</option>
+                                                            <option value="AUTOPISTA"      {{ $solicitante['tipo_vialidad'] == 'AUTOPISTA' ? "selected" : '' }} >Autopista</option>
+                                                            <option value="CALLEJÓN"       {{ $solicitante['tipo_vialidad'] == 'CALLEJÓN' ? "selected" : '' }}>Callejón</option>
+                                                            <option value="CARRETERA"      {{ $solicitante['tipo_vialidad'] == 'CARRETERA' ? "selected" : '' }}   >Carretera</option>
+                                                            <option value="CERRADA"        {{ $solicitante['tipo_vialidad'] == 'CERRADA' ? "selected" : '' }} >Cerrada</option>
+                                                            <option value="CIRCUITO"       {{ $solicitante['tipo_vialidad'] == 'CIRCUITO' ? "selected" : '' }} >Circuito</option>
+                                                            <option value="CIRCUNVALACIÓN" {{ $solicitante['tipo_vialidad'] == 'CIRCUNVALACIÓN' ? "selected" : '' }} >Circunvalación</option>
+                                                            <option value="CONTINUACIÓN"   {{ $solicitante['tipo_vialidad'] == 'CONTINUACIÓN' ? "selected" : '' }} >Continuación</option>
+                                                            <option value="CORREDOR"       {{ $solicitante['tipo_vialidad'] == 'CORREDOR' ? "selected" : '' }} >Corredor</option>
+                                                            <option value="DIAGONAL"       {{ $solicitante['tipo_vialidad'] == 'DIAGONAL' ? "selected" : '' }} >Diagonal</option>
+                                                            <option value="EJE VIAL"       {{ $solicitante['tipo_vialidad'] == 'EJE VIAL' ? "selected" : '' }}>Eje vial</option>
+                                                            <option value="PERIFÉRICO"     {{ $solicitante['tipo_vialidad'] == 'PERIFÉRICO' ? "selected" : '' }}   >Periférico</option>
+                                                            <option value="PROLONGACIÓN"   {{ $solicitante['tipo_vialidad'] == 'PROLONGACIÓN' ? "selected" : '' }} >Prolongación</option>
+                                                            <option value="RETORNO"        {{ $solicitante['tipo_vialidad'] == 'RETORNO' ? "selected" : '' }} >Retorno</option>
+                                                            <option value="VIADUCTO"       {{ $solicitante['tipo_vialidad'] == 'VIADUCTO' ? "selected" : '' }} >Viaducto</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo tipo de vialidad es obligatorio.
+                                                        </div>   
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="password">Nombre de la vialidad<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" class="form-control" name="calle_solicitante" value="<?=$solicitante["calle"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El campo nombre de la vialidad es obligatorio.
+                                                        </div>   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Colonia</label>
-                                                        <input type="text" class="form-control" name="colonia_solicitante" value="<?=$solicitante["colonia"];?>">   
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-2">
-                                                    <div class="form-group">
-                                                        <label for="password">Tipo de Vialidad</label>
-                                                        <input type="text" class="form-control" name="tipo_vialidad" value="<?=$solicitante["tipo_vialidad"];?>">   
+                                                        <label for="password">Núm. Ext.<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" class="form-control" name="num_ext_solicitante" value="<?=$solicitante["num_ext"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El campo Núm. Ext. es obligatorio.
+                                                        </div>   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Calle</label>
-                                                        <input type="text" class="form-control" name="calle_solicitante" value="<?=$solicitante["calle"];?>">   
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-2">
-                                                    <div class="form-group">
-                                                        <label for="password">Núm Ext.</label>
-                                                        <input type="text" class="form-control" name="num_ext_solicitante" value="<?=$solicitante["num_ext"];?>">   
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-2">
-                                                    <div class="form-group">
-                                                        <label for="password">Núm Int.</label>
+                                                        <label for="password">Núm. Int.</label>
                                                         <input type="text" class="form-control" name="num_int_solicitante" value="<?=$solicitante["num_int"];?>">   
                                                     </div>
                                                 </div>
+
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="password">Colonia<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" class="form-control" name="colonia_solicitante" value="<?=$solicitante["colonia"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El campo colonia es obligatorio.
+                                                        </div>   
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="password">Código postal<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" class="form-control" name="codigo_postal_solicitante" value="<?=$solicitante["codigo_postal"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El campo código postal es obligatorio.
+                                                        </div>   
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="password">Referencia</label>
+                                                        <input type="text" class="form-control" name="referencia_solicitante" value="<?=$solicitante["referencia"];?>">   
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">Entre calle</label>
                                                         <input type="text" class="form-control" name="calle2_solicitante" value="<?=$solicitante["calle2"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="password">Y entre calle</label>
+                                                        <label for="password">Y calle</label>
                                                         <input type="text" class="form-control" name="calle3_solicitante" value="<?=$solicitante["calle3"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-1">
-                                                    <div class="form-group">
-                                                        <label for="password">Código postal</label>
-                                                        <input type="text" class="form-control" name="codigo_postal_solicitante" value="<?=$solicitante["codigo_postal"];?>">   
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-5">
-                                                    <div class="form-group">
-                                                        <label for="password">Referencia.</label>
-                                                        <input type="text" class="form-control" name="referencia_solicitante" value="<?=$solicitante["referencia"];?>">   
-                                                    </div>
-                                                </div>
-                                               
-                                                
                                                 
                                                 
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
@@ -419,62 +498,85 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Puesto</label>
-                                                        <input type="text" class="form-control" name="puesto" value="<?=$solicitante["puesto"];?>">   
+                                                        <label for="password">Puesto<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" class="form-control" name="puesto" value="<?=$solicitante["puesto"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El campo puesto es obligatorio.
+                                                        </div>   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="name">Periodo de pago</label>
-                                                        <select name="periodo_pago" class="form-control">
+                                                        <label for="name">Periodo de pago<span style="color:red;"> (*)</span></label>
+                                                        <select name="periodo_pago" class="form-control" required>
                                                             <option value="">SELECCIONE</option>
                                                             <option value="Semana"      {{ $solicitante['periodo_pago'] == 'Semana' ? "selected" : '' }}>SEMANAL</option>
                                                             <option value="Quincenal"   {{ $solicitante['periodo_pago'] == 'Quincenal' ? "selected" : '' }}>QUINCENAL</option>
                                                             <option value="Mensual"     {{ $solicitante['periodo_pago'] == 'Mensual' ? "selected" : '' }}>MENSUAL</option>
                                                             <option value="Diario"      {{ $solicitante['periodo_pago'] == 'Diario' ? "selected" : '' }}>DIARIO</option>
                                                         </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo periodo de pago es obligatorio.
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Sueldo</label>
-                                                        <input type="text" class="form-control" name="pago" value="<?=$solicitante["pago"];?>">   
+                                                        <label for="password">Sueldo<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" class="form-control" name="pago" value="<?=$solicitante["pago"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El campo sueldo es obligatorio.
+                                                        </div>   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-2">
                                                     <div class="form-group">
-                                                        <label for="password">Fecha de Ingreso</label>
-                                                        <input type="date" class="form-control" name="fecha_ingreso" value="<?=$solicitante["fecha_ingreso"];?>">   
+                                                        <label for="password">Fecha de ingreso<span style="color:red;"> (*)</span></label>
+                                                        <input type="date" class="form-control" name="fecha_ingreso" value="<?=$solicitante["fecha_ingreso"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El campo fecha de ingreso es obligatorio.
+                                                        </div>   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-2">
+                                                <div class="col-xs-12 col-sm-6 col-md-2" id= "fechaSalida" hidden>
                                                     <div class="form-group">
-                                                        <label for="password">Fecha de Salida</label>
+                                                        <label for="password">Fecha de salida</label>
                                                         <input type="date" class="form-control" name="fecha_salida" value="<?=$solicitante["fecha_salida"];?>">   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">Jornada Laboral(Día(s) y hora(s))</label>
-                                                        <input type="text" name="jornada" class="form-control" value="<?=$solicitante["jornada"];?>">
+                                                        <label for="name">Horario laboral<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" name="jornada" class="form-control" value="<?=$solicitante["jornada"];?>" required>
                                                         <div class="invalid-feedback">
-                                                            El campo jornada laboral es obligatoria.
+                                                            El campo horario laboral es obligatoria.
                                                         </div>
                                                     </div>
                                                 </div>
-                                               
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                            
+                                                <div class="col-xs-12 col-sm-6 col-md-2">
                                                     <div class="form-group">
-                                                        <label for="password">Horas trabajadas a la semana</label>
-                                                        <input type="text" class="form-control" name="horas_semana" value="<?=$solicitante["horas_semana"];?>">   
+                                                        <label for="password">Horas trabajadas a la semana<span style="color:red;"> (*)</span></label>
+                                                        <input type="number" class="form-control" min="0" name="horas_semana" value="<?=$solicitante["horas_semana"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El campo horas trabajadas es obligatorio.
+                                                        </div>   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-2">
                                                     <div class="form-group">
-                                                        <label for="password">Labora Actualmente</label>
-                                                        <input type="text" class="form-control" name="labora" value="<?=$solicitante["labora"];?>">   
+                                                        <label for="password">Labora actualmente<span style="color:red;"> (*)</span></label>
+                                                        <!--input type="text" class="form-control" name="labora" id="laboraActualmenteValue" value="<?=$solicitante["labora"];?>" required-->
+                                                        <select name="labora" id="laboraActualmenteValue" class="form-control" required>
+                                                            <option value="Si" {{ $solicitante["labora"] == 'Si' ? "selected" : '' }}>SI</option>
+                                                            <option value="No"  {{ $solicitante['labora'] == 'No' ? "selected" : '' }}>NO</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo labora actualmente es obligatorio.
+                                                        </div>   
                                                     </div>
                                                 </div>
+
                                             @endforeach
                                         </div>
                                     </div>
@@ -494,38 +596,56 @@
                                                 </div><br>
                                                 <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="password">Nombre Citado</label>
-                                                        <input type="text" class="form-control" name="nombre_citado[]" value="<?=$citado["nombre"];?>">   
+                                                        <label for="password">Nombre<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" class="form-control" name="nombre_citado[]" value="<?=$citado["nombre"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El campo nombre es obligatorio.
+                                                        </div>   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="password">Primer apellido</label>
-                                                        <input type="text" class="form-control" name="primer_apellido[]" value="<?=$citado["primer_apellido"];?>">   
+                                                @if(!empty($citado['primer_apellido']))
+                                                    <div class="col-xs-12 col-sm-6 col-md-4">
+                                                        <div class="form-group">
+                                                           <label for="password">Primer apellido<span style="color:red;"> (*)</span></label>
+                                                           <input type="text" class="form-control" name="primer_apellido[]" value="<?=$citado["primer_apellido"];?>" required>
+                                                           <div class="invalid-feedback">
+                                                                El campo primer apellido es obligatorio.
+                                                        </div>   
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="password">Segundo apellido</label>
-                                                        <input type="text" class="form-control" name="segundo_apellido[]" value="<?=$citado["segundo_apellido"];?>">   
+                                                @endif
+                                                @if(!empty($citado['segundo_apellido']))
+                                                    <div class="col-xs-12 col-sm-6 col-md-4">
+                                                        <div class="form-group">
+                                                           <label for="password">Segundo apellido<span style="color:red;"> (*)</span></label>
+                                                           <input type="text" class="form-control" name="segundo_apellido[]" value="<?=$citado["segundo_apellido"];?>" required>
+                                                           <div class="invalid-feedback">
+                                                                El campo segundo apellido es obligatorio.
+                                                            </div>   
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                @endif
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">Tipo de persona</label>
-                                                        <select name="tipo_persona_citado[]" class="form-control">
+                                                        <label for="name">Tipo de persona<span style="color:red;"> (*)</span></label>
+                                                        <select name="tipo_persona_citado[]" class="form-control" required>
                                                             <option value="">SELECCIONE</option>
                                                             <option value="Fisica" {{ $citado['tipo_persona'] == 'Fisica' ? "selected" : '' }}>Física</option>
                                                             <option value="Moral"  {{ $citado['tipo_persona'] == 'Moral' ? "selected" : '' }}>Moral</option>
                                                         </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo tipo de persona es obligatorio.
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="password">CURP</label>
-                                                        <input type="text" class="form-control" name="curp_citado[]" value="<?=$citado["curp"];?>" maxlength="18">   
+                                                @if(!empty($citado['curp']))
+                                                    <div class="col-xs-12 col-sm-6 col-md-4" id="campo_curp">
+                                                        <div class="form-group">
+                                                           <label for="password">CURP</label>
+                                                           <input type="text" class="form-control" name="curp_citado[]" value="<?=$citado["curp"];?>" maxlength="18">   
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                @endif
                                                 <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">RFC</label>
@@ -534,18 +654,41 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
-                                                        <h4 class="text-center">Dirección</h4>
+                                                        <h4 class="text-center">Dirección del citado</h4>
                                                     </div>
                                                 </div><br>
-                                                <div class="col-xs-12 col-sm-6 col-md-4">
+
+                                                <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Colonia del citado</label>
-                                                        <input type="text" class="form-control" name="colonia_citado[]" value="<?=$citado["colonia"];?>" required>   
+                                                        <label for="password">Entidad Federativa<span style="color:red;"> (*)</span></label>
+                                                        <select class="form-control" name="estado_citado[]">
+                                                            @foreach($estados as $est)
+                                                                <option value="{{$est['id']}}" {{ $citado['estado_citado'] == $est['id'] ? "selected" : '' }}>{{$est['nombre']}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El Estado es obligatorio.
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
+
+                                                <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="name">Tipo de Vialidad</label>
+                                                        <label for="password">Municipio<span style="color:red;"> (*)</span></label>
+                                                        <select class="form-control" name="municipio_citado[]">
+                                                            @foreach($municipios as $mun)
+                                                                <option value="{{$mun['id']}}" {{ $citado['municipio_citado'] == $mun['id'] ? "selected" : '' }}>{{$mun['nombre']}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El Municipio es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-12 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="name">Tipo de vialidad<span style="color:red;"> (*)</span></label>
                                                         <select name="vialidad_citado[]" class="form-control" required>
                                                             <option value="">SELECCIONE</option>
                                                             <option value="CALLE"          {{ $citado['tipo_vialidad'] == 'CALLE' ? "selected" : '' }}   >Calle</option>
@@ -574,34 +717,24 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="password">Código Postal</label>
-                                                        <input type="text" class="form-control" name="cp_citado[]" value="<?=$citado["cp"];?>" required>   
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="password">Calle del citado</label>
-                                                        <input type="text" class="form-control" name="calle_citado[]" value="<?=$citado["calle"];?>" required>   
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="password">Entre Calle</label>
-                                                        <input type="text" class="form-control" name="calle1_citado[]" value="<?=$citado["calle1"];?>">   
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="password">Entre Calle</label>
-                                                        <input type="text" class="form-control" name="calle2_citado[]" value="<?=$citado["calle2"];?>">   
-                                                    </div>
-                                                </div>
+
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">N° Ext.</label>
-                                                        <input type="text" class="form-control" name="n_ext_citado[]" value="<?=$citado["n_ext"];?>" required>   
+                                                        <label for="password">Nombre de la vialidad<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" class="form-control" name="calle_citado[]" value="<?=$citado["calle"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El campo nombre de la vialidad es obligatorio.
+                                                        </div>   
+                                                    </div>
+                                                </div>                                                
+                                                
+                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="password">N° Ext.<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" class="form-control" name="n_ext_citado[]" value="<?=$citado["n_ext"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El campo Núm. Ext. es obligatorio.
+                                                        </div>     
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
@@ -610,25 +743,85 @@
                                                         <input type="text" class="form-control" name="n_int_citado[]" value="<?=$citado["n_int"];?>">   
                                                     </div>
                                                 </div>
+
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Municipio del citado</label>
-                                                        <select class="form-control" name="municipio_citado" id="municipio_citado">
-                                                            @foreach($municipios as $mun)
-                                                                <option value="{{$mun['id']}}" {{ $citado['municipio_citado'] == $mun['id'] ? "selected" : '' }}>{{$mun['nombre']}}</option>
-                                                            @endforeach
+                                                        <label for="password">Colonia<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" class="form-control" name="colonia_citado[]" value="<?=$citado["colonia"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El campo colonia es obligatorio.
+                                                        </div>   
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="password">Código postal<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" class="form-control" name="cp_citado[]" value="<?=$citado["cp"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El campo código postal es obligatorio.
+                                                        </div>   
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="password">Referencia<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" class="form-control" name="referencia_citado[]" value="<?=$citado["referencia"];?>" required>
+                                                        <div class="invalid-feedback">
+                                                            El campo referencia es obligatorio.
+                                                        </div>   
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="password">Entre Calle</label>
+                                                        <input type="text" class="form-control" name="calle1_citado[]" value="<?=$citado["calle1"];?>">   
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="password">Y calle</label>
+                                                        <input type="text" class="form-control" name="calle2_citado[]" value="<?=$citado["calle2"];?>">   
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-xs-12 col-sm-12 col-md-2">
+                                                    <div class="form-group">
+                                                        <label for="name">¿Quién entregará las notificaciones?<span style="color:red;"> (*)</span></label>
+                                                        <select name="notificacion[]" class="form-control" required>
+                                                            <option value="Trabajador"  {{ $citado['notificacion'] == 'Trabajador' ? "selected" : '' }}>Trabajador</option>
+                                                            <option value="Centro"      {{ $citado['notificacion'] == 'Centro' ? "selected" : '' }}>Centro de conciliación Laboral</option>
                                                         </select>
                                                         <div class="invalid-feedback">
-                                                            El Estado es obligatorio.
+                                                            El campo es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-9">
-                                                    <div class="form-group">
-                                                        <label for="password">Referencia</label>
-                                                        <input type="text" class="form-control" name="referencia_citado[]" value="<?=$citado["referencia"];?>" required>   
-                                                    </div>
+
+                                                <div class="col-xs-12 col-sm-12 col-md-5">
+                                                    <label for="password">Referencia Imagen 1<span style="color:red;"> (*)</span></label><br>
+                                                    @if (!empty($citado->imagen_domicilio1) && $citado->imagen_domicilio1 !== 'Sin documento')
+                                                        <a target='_blank' href="../storage/app/documentosSolicitud/{{$citado->imagen_domicilio1}}">VER IMAGEN</a><br>
+                                                    @else
+                                                        <span class="text-muted">No se subió imagen</span>
+                                                    @endif
+                                                    <input type="file" name="foto1[]" accept="image/*" class="form-control">
+                                                    <input type="hidden" name="imagen_domicilio1[]" value="{{ $citado->imagen_domicilio1 }}">
                                                 </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-5">
+                                                    <label for="password">Referencia Imagen 2</label><br>
+                                                    @if (!empty($citado->imagen_domicilio2) && $citado->imagen_domicilio2 !== 'Sin documento')
+                                                        <a target='_blank' href="../storage/app/documentosSolicitud/{{$citado->imagen_domicilio2}}">VER IMAGEN</a><br>
+                                                    @else
+                                                        <span class="text-muted">No se subió imagen</span>
+                                                    @endif
+                                                    <input type="file" name="foto2[]" accept="image/*" class="form-control">
+                                                    <input type="hidden" name="imagen_domicilio2[]" value="{{ $citado->imagen_domicilio2 }}">
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-12"><br></div>
                                                 
                                                 
                                             @endforeach
@@ -698,6 +891,68 @@
                 </div>
             </div>
         </div>
+
+        <script>
+
+        //No toquen esto, funciona :)
+        
+        // Manejador para mostrar feedback de validación en formularios con pestañas.
+        document.addEventListener('DOMContentLoaded', function () {
+            var forms = document.querySelectorAll('form.needs-validation');
+            if (!forms || forms.length === 0) return;
+
+            forms.forEach(function(form) {
+                // Capturar el evento invalid en fase de captura para abrir la pestaña
+                // que contiene el control inválido antes de que el navegador intente enfocarlo.
+                form.addEventListener('invalid', function (e) {
+                    try { e.preventDefault(); e.stopPropagation(); } catch (err) {}
+                    var invalidEl = e.target;
+                    var tabContainer = invalidEl.closest('.tabcontent');
+                    if (tabContainer && tabContainer.id) {
+                        var selector = '.tab a[onclick*="' + tabContainer.id + '"]';
+                        var tabBtn = document.querySelector(selector);
+                        if (tabBtn) {
+                            try { tabBtn.click(); } catch (err) { /* ignore */ }
+                        } else if (typeof openCity === 'function') {
+                            try { openCity(new Event('click'), tabContainer.id); } catch (err) { /* ignore */ }
+                        }
+                    }
+                    setTimeout(function () { try { invalidEl.focus(); } catch (err) { /* ignore */ } }, 80);
+                }, true);
+
+                form.addEventListener('submit', function (e) {
+                    if (!form.checkValidity()) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        form.classList.add('was-validated');
+
+                        // Mostrar SweetAlert (fallback a alert si no está disponible)
+                        if (typeof swal === 'function') {
+                            swal("Error", "Por favor corrija los campos obligatorios.", "error");
+                        } else {
+                            try { alert('Por favor corrija los campos obligatorios.'); } catch (err) { /* ignore */ }
+                        }
+
+                        var firstInvalid = form.querySelector(':invalid');
+                        if (firstInvalid) {
+                            var tabContainer = firstInvalid.closest('.tabcontent');
+                            if (tabContainer && tabContainer.id) {
+                                var selector = '.tab a[onclick*="' + tabContainer.id + '"]';
+                                var tabBtn = document.querySelector(selector);
+                                if (tabBtn) {
+                                    try { tabBtn.click(); } catch (err) { /* ignore */ }
+                                } else if (typeof openCity === 'function') {
+                                    try { openCity(new Event('click'), tabContainer.id); } catch (err) { /* ignore */ }
+                                }
+                            }
+                            setTimeout(function () { try { firstInvalid.focus(); } catch (err) { /* ignore */ } }, 80);
+                        }
+                    }
+                }, false);
+            });
+        });
+        </script>
+
     </section>
 @endsection
 
@@ -1056,6 +1311,117 @@
                 // Reinicia el select
                 $(this).val('');
             }
+
+            //Tipo de persona
+            document.addEventListener('DOMContentLoaded', function () {
+                const selectTipo = document.getElementById('tipo');
+                const nombreDiv = document.getElementById('tipoPersona_nombre');
+                const razonDiv = document.getElementById('tipoPersona_razon');
+                const curpDiv = document.getElementById('campo_curp');
+
+                function actualizarTipoPersona() {
+                    const valor = selectTipo.value;
+
+                    nombreDiv.style.display = 'none';
+                    razonDiv.style.display = 'none';
+                    curpDiv.style.display = 'none';
+
+                    if (valor === 'Fisica') {
+                        nombreDiv.style.display = 'block';
+                        curpDiv.style.display = 'block';
+                    } else if (valor === 'Moral') {
+                        razonDiv.style.display = 'block';
+                    }
+                }
+
+                if (selectTipo) {
+                    selectTipo.addEventListener('change', actualizarTipoPersona);
+                    // Ejecutar al cargar por si ya tiene valor
+                    actualizarTipoPersona();
+                }
+
+                const needsLanguage = document.getElementById('needsLanguageSolicitante');
+                const languageDiv = document.getElementById('languageRequired');
+                const languageInput = document.getElementById('languageValueSolicitante');
+
+                const hasDisability = document.getElementById('hasDisabilitySolicitante');
+                const disabilityDiv = document.getElementById('disabilityRequired');
+                const disabilityInput = document.getElementById('disabilityValueSolicitante');
+
+                const laboraActualmente = document.getElementById('laboraActualmenteValue');
+                const fechaSalida = document.getElementById('fechaSalida')
+
+                function updateLanguageVisibility() {
+                    if (!languageDiv || !needsLanguage) return;
+                    if (needsLanguage.value === 'Si') {
+                        languageDiv.hidden = false;
+                        if (languageInput) languageInput.required = true;
+                    } else {
+                        languageDiv.hidden = true;
+                        if (languageInput) languageInput.required = false;
+                    }
+                }
+
+                function updateDisabilityVisibility() {
+                    if (!disabilityDiv || !hasDisability) return;
+                    if (hasDisability.value === 'Si') {
+                        disabilityDiv.hidden = false;
+                        if (disabilityInput) disabilityInput.required = true;
+                    } else {
+                        disabilityDiv.hidden = true;
+                        if (disabilityInput) disabilityInput.required = false;
+                    }
+                }
+
+                function updateFechaSalidaVisibility() {
+                    if (!laboraActualmente || !fechaSalida) return;
+                    if (laboraActualmente.value === 'Si') {
+                        fechaSalida.hidden = true;
+                    } else {
+                        fechaSalida.hidden = false;
+                    }
+                }
+
+                if (needsLanguage) needsLanguage.addEventListener('change', updateLanguageVisibility);
+                if (hasDisability) hasDisability.addEventListener('change', updateDisabilityVisibility);
+                if (laboraActualmente) laboraActualmente.addEventListener('change', updateFechaSalidaVisibility)
+
+                updateLanguageVisibility();
+                updateDisabilityVisibility();
+                updateFechaSalidaVisibility();
+
+
+                const forms = document.querySelectorAll('form.needs-validation');
+                if (forms && forms.length) {
+                    forms.forEach(function(form) {
+                        form.addEventListener('submit', function(e) {
+                            let tel1 = form.querySelector('input[name="telefono1_solicitante"]');
+                            let tel2 = form.querySelector('input[name="telefono2_solicitante"]');
+                            let valid = true;
+                            // Validar teléfono celular (obligatorio)
+                            if (tel1 && tel1.value.replace(/\D/g, '').length !== 10) {
+                                swal("Error", "El teléfono celular debe tener exactamente 10 dígitos.", "error");
+                                tel1.focus();
+                                valid = false;
+                            }
+                            // Validar teléfono fijo (opcional, solo si tiene valor)
+                            if (tel2 && tel2.value && tel2.value.replace(/\D/g, '').length !== 10) {
+                                swal("Error", "El teléfono fijo debe tener exactamente 10 dígitos.", "error");
+                                tel2.focus();
+                                valid = false;
+                            }
+
+                            if (!valid) {
+                                e.preventDefault();
+                            }
+
+                            //updateLanguageVisibility();
+                            //updateDisabilityVisibility();
+                            //updateFechaSalidaVisibility();
+                        });
+                    });
+                }
+            });
 
             // Eliminar fila e input hidden
             $(document).on('click', '.eliminar', function() {
