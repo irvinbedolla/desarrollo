@@ -52,6 +52,7 @@ use App\Models\TercerEncuentro;
 use App\Mail\WelcomeMail;
 use App\Mail\SolicitudMail;
 use App\Models\PermisosConciliador;
+use App\Mail\CorreoAcuseConfirmacion;
 use Illuminate\Support\Facades\Mail;
 
 class SeerController extends Controller
@@ -3815,8 +3816,7 @@ class SeerController extends Controller
         }while ($bandera != 1);
     }
 
-    public function concluir_audiencia_conciliador(Request $request){
-        
+    public function concluir_audiencia_conciliador(Request $request){    
         $data = $request->all();
         $id_solicitud = $data["id"];
         $monto = 0;
@@ -3829,7 +3829,7 @@ class SeerController extends Controller
                 $conteo = count($data["dias_pagos"]);
                 for($i = 0; $i < $conteo; $i++) {
                     //Solo para el primer caso voy a seleccionar el tipo de pago
-                    if($conteo == 0){
+                    if($i == 0){
                         $data_pagos = [
                             'id_solicitud'  => $data["id"],
                             'fecha'         => $data["dias_pagos"][$i],
@@ -3837,7 +3837,7 @@ class SeerController extends Controller
                             'monto'         => $data["monto_pagos"][$i], 
                             'descripcion'   => $data["descripcion_pagos"][$i],
                             'estatus'       => "Pendiente", 
-                            'tipo_pago'     => $data["tipo_pagoAgenda"],
+                            'tipo_pago'     => $data["tipo_pagoAgenda"][$i],
                         ];
                         $monto = $monto + $data["monto_pagos"][$i];
                         Pagos::create($data_pagos);
@@ -7298,6 +7298,7 @@ class SeerController extends Controller
         //$pdf->setPaper('a4', 'landscape');
         return $pdf->stream('archivo.pdf');
     }
+    
     //PDF Acuse de solicitud confirmada
     public function PDFacuseConfirmada($id){
         $solicitud = SeerPerGeneral::find($id);
@@ -7314,5 +7315,30 @@ class SeerController extends Controller
 
         $nombreArchivo = 'acuse_confirmacion_' . $solicitante->nombre .'.pdf';
         return $pdf->stream($nombreArchivo);               
+    }
+
+    public function enviarAcuse(){
+        $correos = TercerEncuentro::all();
+        foreach($correos as $correo){
+            $id = $correo["id"]; 
+            $nombre = $correo["nombre"];
+            // 1. Generar el PDF y obtener el contenido binario
+            $pdf = \PDF::loadView('PDF/vista-prueba', compact('id', 'nombre'));
+            //return $pdf->stream('archivo.pdf');
+            $pdfContent = $pdf->output();
+
+            // 2. Definir los datos para el cuerpo del mensaje (opcional)
+            $datosMensaje = [
+                'nombre_solicitante' => $nombre,
+                'fecha_envio' => now()->format('d/m/Y'),
+            ];
+            $destinatario = $correo->correo;
+            //$destinatario = 'sam_8929@hotmail.com';
+
+            // 3. Enviar el Mailable, pasando el contenido del PDF y los datos del mensaje
+            Mail::to($destinatario)->send(new CorreoAcuseConfirmacion($pdfContent, $datosMensaje));
+        }
+
+        return "Correo enviado con mensaje y PDF adjunto.";  
     }
 }
