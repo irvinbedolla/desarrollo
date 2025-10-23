@@ -21,6 +21,7 @@
                                             <th style="color: #fff;">Email</th>
                                             <th style="color: #fff;">Lugar de visita</th>
                                             <th style="color: #fff;">Sexo</th>
+                                            <th style="color: #fff;">Registrar asistencia</th>
                                         </thead>
                                         <tbody>
                                             @foreach($personas as $persona)
@@ -31,6 +32,7 @@
                                                     <td>{{$persona->correo}}</td>
                                                     <td>{{$persona->lugar}}</td>
                                                     <td>{{$persona->sexo}}</td>
+                                                    <td><a type="button" class="btn btn-success text-white" href="{{ route('registro_asistencia_te', $persona->id) }}">Registrar</a></td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

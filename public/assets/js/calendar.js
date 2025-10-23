@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Configuración del calendario de pagos
     calendarPagos = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridWeek',
+        initialView: window.innerWidth < 768 ? 'listWeek' : 'dayGridWeek',
         locale: 'es',
         events: 'pagos/eventos',
         eventSourceSuccess: function (events) {
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Configuración del calendario de audiencias
     calendarAudiencias = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridWeek',
+        initialView: window.innerWidth < 768 ? 'listWeek' : 'dayGridWeek',
         locale: 'es',
         events: 'audiencias/eventos',
         /*eventSourceSuccess: function (events) {
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Configuración del calendario de ratificaciones
     calendarRatificaciones = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridWeek',
+        initialView: window.innerWidth < 768 ? 'listWeek' : 'dayGridWeek',
         locale: 'es',
         events: 'ratificaciones/eventos',
         headerToolbar: {
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     calendarCitas = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridWeek',
+        initialView: window.innerWidth < 768 ? 'listWeek' : 'dayGridWeek',
         locale: 'es',
         events: 'citas/eventos',
         headerToolbar: {
@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     calendarConciliador = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridWeek',
+        initialView: window.innerWidth < 768 ? 'listWeek' : 'dayGridWeek',
         locale: 'es',
         events: 'pagos/conciliadores',
         eventSourceSuccess: function (events) {
@@ -196,6 +196,16 @@ document.addEventListener('DOMContentLoaded', function () {
     currentCalendar = calendarPagos;
     currentCalendar.render();
 
+    function updateCalendarView() {
+        if (window.innerWidth < 768) {
+            calendar.changeView('listWeek');
+        } else {
+            calendar.changeView('dayGridWeek');
+        }
+    }
+
+    window.addEventListener('resize', updateCalendarView);
+
     document.getElementById('btn-conciliador').addEventListener('click', function () {
         switchCalendar(calendarConciliador);
     });
@@ -229,6 +239,8 @@ function switchCalendar(newCalendar) {
     }
     currentCalendar = newCalendar;
     currentCalendar.render();
+
+    window.addEventListener('resize', updateCalendarView);
 }
 
 function handleEventClick(info, calendarType) {

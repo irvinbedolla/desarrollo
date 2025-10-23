@@ -7248,6 +7248,40 @@ class SeerController extends Controller
         return view('tercer.index',compact('personas'));
     }
 
+    public function registro_asistencia_te($id){
+        $persona = TercerEncuentro::findOrFail($id);
+        $asistencia = \App\Models\Asistencia::where('id_asistente', $persona->id)->first();
+        return view('tercer.registro_asistencia', compact('persona', 'asistencia'));
+    }
+
+    public function guardar_asistencia_te(Request $request, $id)
+    {
+        $persona = TercerEncuentro::findOrFail($id);
+
+        $existing = \App\Models\Asistencia::firstOrNew(['id_asistente' => $persona->id]);
+
+        $payload = [
+            'id_asistente' => $persona->id,
+            'conferencia1' => (bool)($existing->conferencia1 ?? false) || $request->boolean('conferencia1'),
+            'conferencia2' => (bool)($existing->conferencia2 ?? false) || $request->boolean('conferencia2'),
+            'conferencia3' => (bool)($existing->conferencia3 ?? false) || $request->boolean('conferencia3'),
+            'conferencia4' => (bool)($existing->conferencia4 ?? false) || $request->boolean('conferencia4'),
+            'conferencia5' => (bool)($existing->conferencia5 ?? false) || $request->boolean('conferencia5'),
+            'conferencia6' => (bool)($existing->conferencia6 ?? false) || $request->boolean('conferencia6'),
+            'conferencia7' => (bool)($existing->conferencia7 ?? false) || $request->boolean('conferencia7'),
+            'conferencia8' => (bool)($existing->conferencia8 ?? false) || $request->boolean('conferencia8'),
+            'conferencia9' => (bool)($existing->conferencia9 ?? false) || $request->boolean('conferencia9'),
+            'conferencia10' => (bool)($existing->conferencia10 ?? false) || $request->boolean('conferencia10'),
+        ];
+
+        $existing->fill($payload);
+        $existing->save();
+
+        return redirect()
+            ->route('registro_asistencia_te', $persona->id)
+            ->with('success', 'Asistencia guardada correctamente.');
+    }
+
     public function pdf_tercer_encuentro(){
         $personas_conferencia1 = TercerEncuentro::where('convesatorio1','Conferencia Inaugural: “Implementación del Mecanismo Laboral de Respuesta Rápida (MLRR) del T- MEC”')->orderby('primer_apellido')->get();
         $personas_conferencia2 = TercerEncuentro::where('convesatorio2','Conversatorio 1: “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”')->orderby('primer_apellido')->get();
