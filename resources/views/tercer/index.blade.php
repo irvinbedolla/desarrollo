@@ -15,24 +15,26 @@
                            
                                     <table id="example" class="table-striped" style="width:100%">
                                         <thead style="background-color: #4A001F;">
-                                            <th style="display: none;">ID</th>
+                                            <th style="color: #fff;">Folio</th>
                                             <th style="color: #fff;">Nombre</th>
                                             <th style="color: #fff;">Teléfono</th>
                                             <th style="color: #fff;">Email</th>
                                             <th style="color: #fff;">Lugar de visita</th>
                                             <th style="color: #fff;">Sexo</th>
                                             <th style="color: #fff;">Registrar asistencia</th>
+                                            <th style="color: #fff;">Editar Datos</th>
                                         </thead>
                                         <tbody>
                                             @foreach($personas as $persona)
                                                 <tr>
-                                                    <td style="display: none;">{{$persona->id}}</td>
-                                                    <td >{{$persona->nombre}} {{$persona->primer_apellido}} {{$persona->segundo_apellido}}</td>
+                                                    <td>{{$persona->id}}</td>
+                                                    <td>{{$persona->nombre}} {{$persona->primer_apellido}} {{$persona->segundo_apellido}}</td>
                                                     <td>{{$persona->telefono}}</td>
                                                     <td>{{$persona->correo}}</td>
                                                     <td>{{$persona->lugar}}</td>
                                                     <td>{{$persona->sexo}}</td>
                                                     <td><a type="button" class="btn btn-success text-white" href="{{ route('registro_asistencia_te', $persona->id) }}">Registrar</a></td>
+                                                    <td><a type="button" class="btn btn-primary text-white" href="{{ route('editar_datos_te', $persona->id) }}">Editar</a></td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

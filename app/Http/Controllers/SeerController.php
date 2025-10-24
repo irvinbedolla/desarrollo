@@ -33,6 +33,7 @@ use App\Models\DocumentosSolicitud;
 use App\Models\SeerPerGeneral_old;
 use App\Models\SeerCitados_old;
 use App\Models\SeerPerConciliador_old;
+use App\Models\Asistencia;
 
 //Para sacar el Id del usuario
 use Illuminate\Support\Facades\Auth;
@@ -6306,6 +6307,7 @@ class SeerController extends Controller
         $user = User::find($id);
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
+        $audiencias = array();
 
         if($userRole[0] == "Conciliador"){
             $permisos = PermisosConciliador::where('id_conciliador',$id)->first();
@@ -7250,7 +7252,7 @@ class SeerController extends Controller
 
     public function registro_asistencia_te($id){
         $persona = TercerEncuentro::findOrFail($id);
-        $asistencia = \App\Models\Asistencia::where('id_asistente', $persona->id)->first();
+        $asistencia = Asistencia::where('id_asistente', $persona->id)->first();
         return view('tercer.registro_asistencia', compact('persona', 'asistencia'));
     }
 
@@ -7258,7 +7260,7 @@ class SeerController extends Controller
     {
         $persona = TercerEncuentro::findOrFail($id);
 
-        $existing = \App\Models\Asistencia::firstOrNew(['id_asistente' => $persona->id]);
+        $existing = Asistencia::firstOrNew(['id_asistente' => $persona->id]);
 
         $payload = [
             'id_asistente' => $persona->id,
@@ -7280,6 +7282,11 @@ class SeerController extends Controller
         return redirect()
             ->route('registro_asistencia_te', $persona->id)
             ->with('success', 'Asistencia guardada correctamente.');
+    }
+
+    public function editar_datos_te($id){
+        $persona = TercerEncuentro::findOrFail($id);
+        return view('tercer.editar_datos', compact('persona'));
     }
 
     public function pdf_tercer_encuentro(){

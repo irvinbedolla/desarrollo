@@ -24,7 +24,7 @@
                                     @csrf
                                     <input type="hidden" name="id_asistente" value="{{ $persona->id }}">
                                     <div class="form-group">
-                                        <label>Conferencias / Asistencias</label>
+                                        <label>Conferencias</label>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="conferencia1" id="conferencia1" {{ optional($asistencia)->conferencia1 ? 'checked disabled' : '' }}>
                                             <label class="form-check-label {{ optional($asistencia)->conferencia1 ? 'text-success fw-semibold' : '' }}" for="conferencia1">Conferencia 1
@@ -97,16 +97,19 @@
                                                 @endif
                                             </label>
                                         </div>
-                                        <div class="form-check">
+                                        <!--div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="conferencia10" id="conferencia10" {{ optional($asistencia)->conferencia10 ? 'checked disabled' : '' }}>
                                             <label class="form-check-label {{ optional($asistencia)->conferencia10 ? 'text-success fw-semibold' : '' }}" for="conferencia10">Conferencia 10
                                                 @if(optional($asistencia)->conferencia10)
                                                     <i class="bi bi-check-circle-fill text-success ms-1"></i>
                                                 @endif
                                             </label>
-                                        </div>
+                                        </!--div>
+                                    </div-->
+                                    <div class="row">
+                                        <button class="btn btn-primary col-xs-12 col-sm-4 col-md-1 mr-2 mt-2" type="submit">Guardar</button>
+                                        <a type="button" class="btn btn-info col-xs-12 col-sm-4 col-md-1 mt-2" href="{{ route('index_tercer_encuentro') }}">Regresar</a>
                                     </div>
-                                    <button class="btn btn-primary" type="submit">Guardar asistencia</button>
                                 </form>
                             @else
                                 <p>Persona no encontrada.</p>

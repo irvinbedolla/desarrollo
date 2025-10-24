@@ -467,6 +467,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/tercer_encuentro/index',   [SeerController::class, 'index_tercer_encuentro'])->name('index_tercer_encuentro');
         Route::get('/registro_asistencia/{id}', [SeerController::class, 'registro_asistencia_te'])->name('registro_asistencia_te');
         Route::post('/registro_asistencia/{id}', [SeerController::class, 'guardar_asistencia_te'])->name('registro_asistencia_te.guardar');
+        Route::get('/editar_datos_te/{id}', [SeerController::class, 'editar_datos_te'])->name('editar_datos_te');
+        Route::post('/editar_datos_te/{id}', [SeerController::class, 'guardar_datos_te'])->name('editar_datos_te.guardar');
         Route::get('/tercer_encuentro/reporte', [SeerController::class, 'pdf_tercer_encuentro'])->name('pdf_tercer_encuentro');
         Route::get('constancias', [SeerController::class, 'enviarAcuse']);
     //Fin de tercer encuentro
