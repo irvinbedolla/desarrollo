@@ -50,7 +50,7 @@ use App\Http\Controllers\ConciliadoresController;
     Route::get('tipoIndustria/{tipo_solicitud}',  [SeerController::class, 'Industrias'])->name('solicitud.industria');
     Route::get('/registro_tercer_encuentro',            [SeerController::class, 'registro_tercer_encuentro'])->name('registro_tercer_encuentro');
     Route::post('/registro_tercer_encuentro/guardar',   [SeerController::class, 'tercer_encuentro_registro'])->name('tercer_encuentro_registro');
-
+    Route::get('GeneraConstancia',          [SeerController::class, 'genera_cosntancia']);
     
     //Rutas para el chat
         Route::post('/chat/crear',      [Controller::class, 'store_chat'])->name('RespuestasChat.store');
@@ -468,7 +468,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/registro_asistencia/{id}', [SeerController::class, 'registro_asistencia_te'])->name('registro_asistencia_te');
         Route::post('/registro_asistencia/{id}', [SeerController::class, 'guardar_asistencia_te'])->name('registro_asistencia_te.guardar');
         Route::get('/tercer_encuentro/reporte', [SeerController::class, 'pdf_tercer_encuentro'])->name('pdf_tercer_encuentro');
-        Route::get('constancias', [SeerController::class, 'enviarAcuse']);
+        Route::get('constancias',               [SeerController::class, 'enviarAcuse']);
     //Fin de tercer encuentro
     //Conciliadores
         Route::get('/conciliador/index',                [ConciliadoresController::class, 'index'])->name('index_conciliadores');

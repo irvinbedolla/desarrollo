@@ -16,7 +16,6 @@
     {{ $userData['convesatorio7'] }}<br>
     {{ $userData['convesatorio8'] }}<br>
     {{ $userData['convesatorio9'] }}<br>    
-    {{ $userData['convesatorio10'] }}
 
     Se informa que se otorgara constancia de participación por actividad(Conferencias, conversatorios y presentaciones de libro). Así mismo para obtener la constancia general de participación con un valor curricular será necesario contar con al menos el 80% de las asistencias.<br>
     <b>https://cclmichoacan.gob.mx/tercer_encuentro/</b>
