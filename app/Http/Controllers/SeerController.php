@@ -7216,9 +7216,6 @@ class SeerController extends Controller
         if( $data["convesatorio9"] == "on"){
             $data_insert["convesatorio9"] = 'Conferencia Magistral de Clausura';
         }
-        if( $data["convesatorio10"] == "on"){
-            $data_insert["convesatorio10"] = 'Ceremonia de Clausura';
-        }
         TercerEncuentro::create($data_insert);
 
         $user = [
@@ -7235,7 +7232,6 @@ class SeerController extends Controller
             'convesatorio7'    => 'Conversatorio 5: ILTRAS “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
             'convesatorio8'    => 'Presentación del Libro ILTRAS “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
             'convesatorio9'    => 'Conferencia Magistral de Clausura',
-            'convesatorio10'   => 'Ceremonia de Clausura',
         ];
 
         // 2. Envío del correo
@@ -7347,5 +7343,9 @@ class SeerController extends Controller
         }
 
         return "Correo enviado con mensaje y PDF adjunto.";  
+    }
+
+    public function genera_cosntancia(){
+        return view('genera_contancia');
     }
 }
