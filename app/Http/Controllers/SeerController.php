@@ -7354,14 +7354,54 @@ class SeerController extends Controller
         return "Correo enviado con mensaje y PDF adjunto.";  
     }
 
-    public function genera_cosntancia(){
+    public function genera_constancia(){
+        //Consulta a la tabla de tercer encuentro, y validar si convercsariotio1 == Si y vas a mandar la variable al select
         return view('genera_contancia');
     }
+
     //PDF Constancia Tercer Encuentro
     public function VerPDFConstancia($id){
         $constancia = TercerEncuentro::find($id);
 
         $html = view('PDF/TercerEncuentro/constancia', compact('id', 'constancia'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            //->setPaper('a4', 'landscape') //Horientación horizontal
+            ->setPaper('a4', 'portrait') //Horientación vertical
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'constancia_' . $constancia->nombre .'.pdf';
+        return $pdf->stream($nombreArchivo);  
+    }
+
+    public function RegistroPrimeraConferencia(){
+        return view('tercer.primeraconferencia');
+    }
+
+    public function guardar_asistencia_post(Request $request){
+        $data = $request->all();
+        $fecha_actual = date('y-m-d');
+        $hora_actual  = date("H:i:s");
+
+        if($fecha_actual == "2025-10-30"){
+            return back()->with('success', 'Poder registrado correctamente, tienes 10 dias habiles para pasar al CCL a confirmar tu documentacion.'); 
+        }
+        else if($fecha_actual == "2025-10-31"){
+
+        }
+        else{
+            return back()->withErrors('El registro no esta disponible.');
+        }
+    }
+
+    public function crear_constancia(Request $request){
+        $data = $request->all();
+        //$id = $data["folio"];
+        $constancia = TercerEncuentro::find($data["folio"]);
+        $nombre = $constancia["nombre"]." ".$constancia["primer_apellido"]." ".$constancia["segundo_apellido"];
+        $contancia = $data["constancia"];
+        $html = view('PDF/TercerEncuentro/constancia', compact('nombre', 'contancia'))->render();
 
         $pdf = \PDF::loadHTML($html)
             //->setPaper('a4', 'landscape') //Horientación horizontal

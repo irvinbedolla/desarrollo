@@ -52,10 +52,10 @@
 
     <div class="content">
         <div class="nombre-participante">
-            {{ $constancia->nombre }} {{ $constancia->primer_apellido }} {{ $constancia->segundo_apellido }}
+            {{ $nombre }}
         </div>
         <div class="texto-secundario">
-            <p>Por su asistencia a la Conferencia Inagural titulada<b><i>"Representatividad Sindical en México"</i></b>, celebrada el 30 de octubre de 2025 
+            <p>Por su asistencia a la Conferencia Inagural titulada<b><i>{{ $contancia }}</i></b>, celebrada el 30 de octubre de 2025 
             en el marco del <b>Tercer Encuentro Nacional de la Conciliación y la Justicia Laboral: <i>Una Mirada Internacional con Perspectiva en los Derechos 
             Humanos y Acceso a la Justicia Laboral,</i></b> cuya participación contribuyó al intercambio de ideas y al fortalecimiento del diálogo en materia laboral.</p>
         </div>

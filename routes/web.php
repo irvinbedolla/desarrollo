@@ -110,6 +110,12 @@ use App\Http\Controllers\ConciliadoresController;
     Route::get('/agrega_documento/{id}',        [SeerController::class, 'vista_documentos'])->name('agregar_documentos');
     Route::get('/finaliza/{id}',                [SeerController::class, 'guardar_solicitud'])->name('seer.finaliza');
     
+    //Constancias
+    Route::get('GeneraConstancia',          [SeerController::class, 'genera_constancia']);
+    Route::post('crear_constancia/',        [SeerController::class, 'crear_constancia'])->name('ValidarConstancia');
+    Route::get('primeraConferencia',        [SeerController::class, 'RegistroPrimeraConferencia']);
+    Route::post('guardar_asitencia',        [SeerController::class, 'guardar_asistencia_post'])->name('guardar_asistencia');
+
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/home', [DashboardController::class, 'index'])->name('dashboard');
@@ -464,13 +470,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/Prueba_correo/mandar',                 [CorreosController::class, 'correo_prueba'])->name('correo_prueba');
     //Fin Correos
     //Tercer Encuentro
-        Route::get('/tercer_encuentro/index',   [SeerController::class, 'index_tercer_encuentro'])->name('index_tercer_encuentro');
-        Route::get('/registro_asistencia/{id}', [SeerController::class, 'registro_asistencia_te'])->name('registro_asistencia_te');
-        Route::post('/registro_asistencia/{id}', [SeerController::class, 'guardar_asistencia_te'])->name('registro_asistencia_te.guardar');
-        Route::get('/editar_datos_te/{id}', [SeerController::class, 'editar_datos_te'])->name('editar_datos_te');
-        Route::post('/editar_datos_te/{id}', [SeerController::class, 'guardar_datos_te'])->name('editar_datos_te.guardar');
-        Route::get('/tercer_encuentro/reporte', [SeerController::class, 'pdf_tercer_encuentro'])->name('pdf_tercer_encuentro');
-        Route::get('constancias',               [SeerController::class, 'enviarAcuse']);
+        Route::get('/tercer_encuentro/index',           [SeerController::class, 'index_tercer_encuentro'])->name('index_tercer_encuentro');
+        Route::get('/registro_asistencia/{id}',         [SeerController::class, 'registro_asistencia_te'])->name('registro_asistencia_te');
+        Route::post('/registro_asistencia/{id}',        [SeerController::class, 'guardar_asistencia_te'])->name('registro_asistencia_te.guardar');
+        Route::get('/editar_datos_te/{id}',             [SeerController::class, 'editar_datos_te'])->name('editar_datos_te');
+        Route::post('/editar_datos_te/{id}',            [SeerController::class, 'guardar_datos_te'])->name('editar_datos_te.guardar');
+        Route::get('/tercer_encuentro/reporte',         [SeerController::class, 'pdf_tercer_encuentro'])->name('pdf_tercer_encuentro');
+        Route::get('constancias',                       [SeerController::class, 'enviarAcuse']);
         Route::get('/tercer_encuentro/constancia/{id}', [SeerController::class, 'VerPDFConstancia'])->name('PDFConstancia');
     //Fin de tercer encuentro
     //Conciliadores
