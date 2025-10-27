@@ -113,7 +113,7 @@ use App\Http\Controllers\ConciliadoresController;
     //Constancias
     Route::post('GeneraConstancia',         [SeerController::class, 'genera_constancia'])->name('generaConstancia');
     Route::post('crear_constancia/',        [SeerController::class, 'crear_constancia'])->name('ValidarConstancia');
-    Route::get('primeraConferencia',        [SeerController::class, 'RegistroPrimeraConferencia']);
+    Route::get('Asistencia',                [SeerController::class, 'RegistroPrimeraConferencia']);    
     Route::post('guardar_asitencia',        [SeerController::class, 'guardar_asistencia_post'])->name('guardar_asistencia');
 
 Route::middleware(['auth', 'verified'])->group(function () {

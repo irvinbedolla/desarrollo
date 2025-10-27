@@ -74,7 +74,13 @@
         <!-- Custom styles for this template -->
     </head>
     <body>
-        @if(session()->has('success'))
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+            <div class="">
+                &nbsp;&nbsp;<img src="public/assets/images/Logos 2.png" class="img" width="250" height="90">
+            </div> 
+        </nav><br><br><br><br><br>
+        <main>
+             @if(session()->has('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <strong>¡Registro correcto!</strong>
                 {{ session()->get('success') }}
@@ -84,23 +90,15 @@
             </div>
         @endif
 
-        <!--Se realiza la validación de campos para ver si dejó alguno vacío-->
-        @if (session()->has('error'))
-            <div class="alert alert-dark alert-dismissible fade show" role="alert">
-                <strong>¡Revise los campos!</strong>
-                {{ session()->get('error') }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
         @endif
-        
-        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-            <div class="">
-                &nbsp;&nbsp;<img src="public/assets/images/Logos 2.png" class="img" width="250" height="90">
-            </div> 
-        </nav><br><br><br><br><br>
-        <main>
             <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('guardar_asistencia')}}">
                 @csrf
                 <div class="container">

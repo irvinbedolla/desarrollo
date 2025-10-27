@@ -7412,15 +7412,53 @@ class SeerController extends Controller
         $hora_actual  = date("H:i:s");
 
         if($fecha_actual == "2025-10-30"){
-            return back()->with('success', 'Poder registrado correctamente, tienes 10 dias habiles para pasar al CCL a confirmar tu documentacion.'); 
+            if($hora_actual < "11:15:00"){
+                TercerEncuentro::find($data["id"])->update(['convesatorio1' => "Si"]);
+                return back()->with('success', 'Asistencia registrada correctamente.'); 
+            }
+            else if($hora_actual < "12:45:00"){
+                TercerEncuentro::find($data["id"])->update(['convesatorio2' => "Si"]);
+                return back()->with('success', 'Asistencia registrada correctamente.'); 
+            }
+            else if($hora_actual < "14:05:00"){
+                TercerEncuentro::find($data["id"])->update(['convesatorio3' => "Si"]);
+                return back()->with('success', 'Asistencia registrada correctamente.'); 
+            }
+            else if($hora_actual < "15:15:00"){
+                TercerEncuentro::find($data["id"])->update(['convesatorio4' => "Si"]);
+                return back()->with('success', 'Asistencia registrada correctamente.'); 
+            }
+            else if($hora_actual < "18:55:00"){
+                TercerEncuentro::find($data["id"])->update(['convesatorio5' => "Si"]);
+                return back()->with('success', 'Asistencia registrada correctamente.'); 
+            }
+            else if($hora_actual > "18:56:00"){
+                return back()->withErrors('El registro de asistencia concluyo.'); 
+            }
         }
         else if($fecha_actual == "2025-10-31"){
-
+            if($hora_actual < "10:45:00"){
+                TercerEncuentro::find($data["id"])->update(['convesatorio6' => "Si"]);
+                return back()->with('success', 'Asistencia registrada correctamente.'); 
+            }
+            else if($hora_actual < "12:15:00"){
+                TercerEncuentro::find($data["id"])->update(['convesatorio7' => "Si"]);
+                return back()->with('success', 'Asistencia registrada correctamente.'); 
+            }
+            else if($hora_actual < "13:45:00"){
+                TercerEncuentro::find($data["id"])->update(['convesatorio8' => "Si"]);
+                return back()->with('success', 'Asistencia registrada correctamente.'); 
+            }
+            else if($hora_actual > "14:00:00"){
+                return back()->withErrors('El registro de asistencia concluyo.'); 
+            }
         }
         else{
-            return back()->withErrors('El registro no esta disponible.');
+            $errors = "Registro de asistencia concluido.";
+            return back()->withErrors($errors);
         }
     }
+    
     //Genera las constacias de cada una de las conferencias asistidas
     public function crear_constancia(Request $request){
         $data = $request->all();
