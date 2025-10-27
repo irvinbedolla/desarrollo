@@ -33,7 +33,9 @@
                                             <th style="color: #ffff;">Notificación</th>
                                             <th style="color: #ffff;">Estatus Notificación</th>
                                             <th style="color: #ffff;">Representante legal</th>
+                                            <th style="color: #ffff;">Convenio</th>
                                             <th style="color: #ffff;">Acciones</th>
+                                            <th style="color: #ffff;"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -41,6 +43,7 @@
                                             <td style="display:none">{{$solicitante->id}}</td>
                                             <td style="color: #000000;"><b>Solicitante</b></td>
                                             <td>{{ $solicitante->nombre }}</td>
+                                            <td></td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
@@ -68,7 +71,11 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <button type="button" class="btn btn-primary open-modal" data-id="{{ $representante->id }}" data-bs-toggle="modal" data-bs-target="#modalCitados"> Citado </button>
+                                                    <input type="checkbox" name="aparece_convenio[{{ $representante->id }}]" value="1" {{ $representante->aparece_convenio == 1 ? 'checked' : '' }}>
+                                                </td>
+
+                                                <td><button type="button" class="btn btn-primary open-modal" data-id="{{ $representante->id }}" data-bs-toggle="modal" data-bs-target="#modalCitados"> Citado </button></td>
+                                                <td>
                                                     @if($representante->id_abogado != null)
                                                         <a class="btn btn-success" href="{{ route('PDFcompareceSP', $solicitud->id) }}"  target="_blank">Comparece sin poder</a>
                                                     @endif
@@ -184,7 +191,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-12"  style="border:1px solid black;">
                                         <div class="form-group">
                                             <label for="name">RESOLUCIÓN PRIMERA MANIFESTACIÓN</label>
-                                            <textarea name="primera" class="form-control">{{$conciliadores->resolicion_primera}}</textarea>
+                                            <textarea name="primera" class="form-control"> {{$conciliadores->resolicion_primera}}</textarea>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
                                             </div>
@@ -303,7 +310,7 @@
                                     </div>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-12">
-                                    <br><button type="submit" class="btn btn-success">Terminar</button>
+                                    <br><button id="btn-terminar" type="submit" class="btn btn-success">Terminar</button>
                                 </div>
                             </form>
                         </div>
@@ -1182,8 +1189,29 @@
                 input.value = partes[0] + '.' + partes.slice(1).join('');
             }
         }
-
     </script>
+    <!--citados a mostrar en convenio -->
+   <script>
+        document.getElementById('btn-terminar').addEventListener('click', function(e) {
+            var form = document.getElementById('form_roles');
+
+            document.querySelectorAll('.clon-checkbox').forEach(function(el){
+                el.remove();
+            });
+
+            var checkboxes = document.querySelectorAll('input[type=checkbox][name^="aparece_convenio"]');
+
+            checkboxes.forEach(function(checkbox) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = checkbox.name;
+                input.value = checkbox.checked ? 1 : 0; // enviar 0 si no está marcado 1 si lo marcaron
+                input.classList.add('clon-checkbox');
+                form.appendChild(input);
+            });
+        });
+    </script>
+
     <script src="../../public/assets/js/validaciones.js"></script> 
     <script src="../../public/assets/js/poderes/general.js"></script>
 @endsection

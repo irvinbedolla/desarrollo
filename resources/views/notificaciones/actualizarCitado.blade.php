@@ -36,7 +36,7 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
-                                            <label for="name">Tipo de guardado</label>
+                                            <label for="name">Tipo de guardado <span style="color:red;">(*)</span></label>
                                             <select class="form-control" name="tipo_llenado" required>
                                                 <option value="">Seleccione</option>
                                                 <option value="1">Actualizar unicamente esta notificicación</option>
@@ -49,7 +49,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
-                                            <label>¿Quién atiende?</label>
+                                            <label>¿Quién atiende? <span style="color:red;">(*)</span></label>
                                             <select name="quien_atiende" class="form-control" required>
                                                 <option value="">Selecciona</option>
                                                 <option value="CITADO O REPRESENTANTE">El citado o representante legal</option>
@@ -66,7 +66,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
-                                            <label>Medio</label>
+                                            <label>Medio <span style="color:red;">(*)</span></label>
                                             <select name="medio[]" id="medio" class="form-select select2" multiple required>
                                                 <option value="">Selecciona</option>
                                                 <option value="PLACAS OFICIALES">Placas oficiales</option>
@@ -83,7 +83,7 @@
                                     
                                     <div class="col-xs-12 col-sm-6 col-md-6">
                                         <div class="form-group">
-                                            <label>Tipo de vialidad</label>
+                                            <label>Tipo de vialidad <span style="color:red;">(*)</span></label>
                                             <select name="vialidad_notificacion" class="form-control" required>
                                                 <option value="">Selecciona</option>
                                                 <option value="AMPLIACION">Ampliación</option>
@@ -114,7 +114,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
-                                            <label for="name">Abundar área</label>
+                                            <label for="name">Abundar área <span style="color:red;">(*)</span></label>
                                             <textarea class="form-control" name="abundar_area" rows="4" oninput="this.value = this.value.toUpperCase()" required></textarea>
                                             <div class="invalid-feedback">
                                                 El campo abundar área es obligatorio.
@@ -123,7 +123,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
-                                            <label for="name">Abundar inmueble</label>
+                                            <label for="name">Abundar inmueble <span style="color:red;">(*)</span></label>
                                             <textarea class="form-control" name="abundar_inmueble" rows="4" oninput="this.value = this.value.toUpperCase()" required></textarea>
                                             <div class="invalid-feedback">
                                                 El campo abundar inmueble es obligatorio.
@@ -135,7 +135,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
-                                            <label for="name">Nombre</label>
+                                            <label for="name">Nombre <span style="color:red;">(*)</span></label>
                                             <input type="text" name="nombre_notificacion" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                             <div class="invalid-feedback">
                                                 El campo nombre es obligatorio.
@@ -144,7 +144,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
-                                            <label for="name">Relación (respecto al domicilio)</label>
+                                            <label for="name">Relación (respecto al domicilio) <span style="color:red;">(*)</span></label>
                                             <select name="relacion_notificacion" class="form-control">
                                                 <option value="">Selecciona</option>
                                                 <option value="RESIDE">Reside</option>
@@ -157,7 +157,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
-                                            <label for="name">Puesto</label>
+                                            <label for="name">Puesto <span style="color:red;">(*)</span> </label>
                                             <input type="text" name="puesto" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                             <div class="invalid-feedback">
                                                 El campo puesto es obligatorio.
@@ -166,7 +166,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
-                                            <label for="name">Identificación</label>
+                                            <label for="name">Identificación <span style="color:red;">(*)</span></label>
                                             <select name="identificacion_notificacion" id="identificacion_notificacion" class="form-control">
                                                 <option value="">Selecciona</option>
                                                 <option value="NO PROPORCIONA">No proporciona</option>
@@ -201,7 +201,7 @@
                                         <div class="row">                                      
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Género</label>
+                                                    <label for="name">Género <span style="color:red;">(*)</span></label>
                                                     <select name="genero" class="form-control">
                                                         <option value="">Selecciona</option>
                                                         <option value="MASCULINO">MASCULINO</option>
@@ -214,7 +214,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Tez</label>
+                                                    <label for="name">Tez <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="tez" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo tez es obligatorio.
@@ -223,7 +223,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Edad</label>
+                                                    <label for="name">Edad <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="edad_filiacion" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatorio.
@@ -233,7 +233,7 @@
                     
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Altura</label>
+                                                    <label for="name">Altura <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="altura" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo altura es obligatorio.
@@ -243,7 +243,7 @@
                     
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Complexión</label>
+                                                    <label for="name">Complexión <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="complexion" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo complexión es obligatorio.
@@ -253,7 +253,7 @@
                     
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="name">Cabello</label>
+                                                    <label for="name">Cabello <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="cabello" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo cabello es obligatorio.
@@ -263,7 +263,7 @@
                     
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Ojos</label>
+                                                    <label for="name">Ojos <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="ojos" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo ojos es obligatorio.
@@ -273,7 +273,7 @@
                     
                                             <div class="col-xs-12 col-sm-12 col-md-9">
                                                 <div class="form-group">
-                                                    <label for="name">Señas particulares</label>
+                                                    <label for="name">Señas particulares<span style="color:red;">(*)</span> </label>
                                                     <input type="text" name="particulares" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                 </div>
                                             </div>
@@ -282,7 +282,7 @@
                                     <!-- Fin de Media filiación -->
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
-                                            <label>Firma</label>
+                                            <label>Firma <span style="color:red;">(*)</span></label>
                                             <select name="firma" class="form-control">
                                                 <option value="">Selecciona</option>
                                                 <option value="NO FIRMA">No firma</option>
@@ -297,7 +297,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
-                                            <label>Finalización de diligencia</label>
+                                            <label>Finalización de diligencia <span style="color:red;">(*)</span></label>
                                             <select name="estatus" id="estatus" class="form-control" required>
                                                 <option value="">Selecciona</option>
                                                 <option value="Finalizado exitosamente">Finalizado exitosamente (persona)</option>
@@ -371,7 +371,7 @@
                                     
                                     <div class="col-xs-12 col-sm-6 col-md-4">
                                         <div class="form-group">
-                                            <label for="name">Imagen 1</label>
+                                            <label for="name">Imagen 1 <span style="color:red;">(*)</span></label>
                                             <input type="file" class="form-control" name="foto" accept="image/*" required>
                                         </div>
                                     </div>
@@ -391,13 +391,13 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-12">
                                         <div class="form-group">
-                                            <label for="name">observaciones</label>
+                                            <label for="name">Observaciones <span style="color:red;">(*)</span></label>
                                             <textarea class="form-control" name="observaciones" rows="4" oninput="this.value = this.value.toUpperCase()" required></textarea>
                                         </div>
                                     </div>
 
                                     <div class="col-xs-12 col-sm-12 col-md-12">
-                                        <button type="button" class="btn btn-secondary">Cancelar</button>
+                                        <a href="{{ route('seer') }}" class="btn btn-secondary">Cancelar</a>
                                         <button type="submit" class="btn btn-primary">Guardar</button>
                                     </div>
                                 </div>

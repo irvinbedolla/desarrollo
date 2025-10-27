@@ -22,7 +22,8 @@
                                             <th style="color: #fff;">Lugar de visita</th>
                                             <th style="color: #fff;">Sexo</th>
                                             <th style="color: #fff;">Registrar asistencia</th>
-                                            <th style="color: #fff;">Editar Datos</th>
+                                            <th style="color: #fff;">Editar datos</th>
+                                            <th style="color: #fff;">Constancia</th>
                                         </thead>
                                         <tbody>
                                             @foreach($personas as $persona)
@@ -35,6 +36,7 @@
                                                     <td>{{$persona->sexo}}</td>
                                                     <td><a type="button" class="btn btn-success text-white" href="{{ route('registro_asistencia_te', $persona->id) }}">Registrar</a></td>
                                                     <td><a type="button" class="btn btn-primary text-white" href="{{ route('editar_datos_te', $persona->id) }}">Editar</a></td>
+                                                    <td><a type="button" class="btn btn-primary text-white" href="{{ route('PDFConstancia', $persona->id) }}">Generar constancia</a></td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

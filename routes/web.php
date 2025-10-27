@@ -471,6 +471,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/editar_datos_te/{id}', [SeerController::class, 'guardar_datos_te'])->name('editar_datos_te.guardar');
         Route::get('/tercer_encuentro/reporte', [SeerController::class, 'pdf_tercer_encuentro'])->name('pdf_tercer_encuentro');
         Route::get('constancias',               [SeerController::class, 'enviarAcuse']);
+        Route::get('/tercer_encuentro/constancia/{id}', [SeerController::class, 'VerPDFConstancia'])->name('PDFConstancia');
     //Fin de tercer encuentro
     //Conciliadores
         Route::get('/conciliador/index',                [ConciliadoresController::class, 'index'])->name('index_conciliadores');

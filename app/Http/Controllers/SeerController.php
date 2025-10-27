@@ -4423,15 +4423,18 @@ class SeerController extends Controller
         $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
         $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
         ->first();
-
-        $html = view('PDF/Solicitudes/NoConciliacion', compact('id', 'solicitud','conciliador','citado','audiencia','solicitante'))->render();
+        $municipio = Municipios::find($citado->municipio_citado);
+        $municipioEmpresa = $municipio ? $municipio->nombre : 'No definido';
+        $estado = Estados::find($citado->estado_citado);
+        $estadoEmpresa = $estado ? $estado->nombre : 'No definido';
+        $html = view('PDF/Solicitudes/NoConciliacion', compact('id', 'solicitud','conciliador','citado','audiencia','solicitante','municipioEmpresa','estadoEmpresa'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true); 
 
-        $nombreArchivo = 'No_Conciliacion_' . $solicitud->empresa .'.pdf';
+        $nombreArchivo = 'No_Conciliacion_' . $solicitante->nombre .'.pdf';
         return $pdf->stream($nombreArchivo);                 
     }
 
@@ -5888,6 +5891,12 @@ class SeerController extends Controller
     
     public function terminar_audiencia(Request $request){
         $data = $request->all();
+        if (isset($data['aparece_convenio']) && is_array($data['aparece_convenio'])) {
+            foreach ($data['aparece_convenio'] as $id_representante => $valor) {
+                SeerCitados::where('id', $id_representante)
+                    ->update(['aparece_convenio' => $valor == 1 ? 1 : 0]);
+            }
+        }
         $id_solicitud = $data["id"];
         $monto = 0;
         $fecha_actual = date('y-m-d');
@@ -7347,5 +7356,20 @@ class SeerController extends Controller
 
     public function genera_cosntancia(){
         return view('genera_contancia');
+    }
+    //PDF Constancia Tercer Encuentro
+    public function VerPDFConstancia($id){
+        $constancia = TercerEncuentro::find($id);
+
+        $html = view('PDF/TercerEncuentro/constancia', compact('id', 'constancia'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            //->setPaper('a4', 'landscape') //Horientación horizontal
+            ->setPaper('a4', 'portrait') //Horientación vertical
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'constancia_' . $constancia->nombre .'.pdf';
+        return $pdf->stream($nombreArchivo);  
     }
 }
