@@ -27,11 +27,6 @@
                                                     <th style="color: #fff;">Editar datos</th>  
                                                 @endrole
                                             @endauth
-                                            @auth
-                                                @role('Super Usuario')
-                                                    <th style="color: #fff;">Constancia</th>
-                                                @endrole
-                                            @endauth
                                         </thead>
                                         <tbody>
                                             @foreach($personas as $persona)
@@ -48,11 +43,6 @@
                                                             <td><a type="button" class="btn btn-primary text-white" href="{{ route('editar_datos_te', $persona->id) }}">Editar</a></td>
                                                         @endrole
                                                     @endauth
-                                                    @auth
-                                                    @hasanyrole('Super Usuario')
-                                                        <td><a type="button" class="btn btn-info text-white" href="{{ route('generaConstancia.form', ['id' => $persona->id]) }}">Generar constancia</a></td>
-                                                    @endrole
-                                                @endauth
                                                 </tr>
                                             @endforeach
                                         </tbody>

@@ -7424,28 +7424,28 @@ class SeerController extends Controller
 
     public function guardar_asistencia_post(Request $request){
         $data = $request->all();
-        $fecha_actual = date('y-m-d');
+        $fecha_actual = date('Y-m-d');
         $hora_actual  = date("H:i:s");
 
         if($fecha_actual == "2025-10-30"){
             if($hora_actual < "11:15:00"){
-                TercerEncuentro::find($data["id"])->update(['convesatorio1' => "Si"]);
+                TercerEncuentro::find($data["folio"])->update(['convesatorio1' => "Si"]);
                 return back()->with('success', 'Asistencia registrada correctamente.'); 
             }
             else if($hora_actual < "12:45:00"){
-                TercerEncuentro::find($data["id"])->update(['convesatorio2' => "Si"]);
+                TercerEncuentro::find($data["folio"])->update(['convesatorio2' => "Si"]);
                 return back()->with('success', 'Asistencia registrada correctamente.'); 
             }
             else if($hora_actual < "14:05:00"){
-                TercerEncuentro::find($data["id"])->update(['convesatorio3' => "Si"]);
+                TercerEncuentro::find($data["folio"])->update(['convesatorio3' => "Si"]);
                 return back()->with('success', 'Asistencia registrada correctamente.'); 
             }
             else if($hora_actual < "15:15:00"){
-                TercerEncuentro::find($data["id"])->update(['convesatorio4' => "Si"]);
+                TercerEncuentro::find($data["folio"])->update(['convesatorio4' => "Si"]);
                 return back()->with('success', 'Asistencia registrada correctamente.'); 
             }
             else if($hora_actual < "18:55:00"){
-                TercerEncuentro::find($data["id"])->update(['convesatorio5' => "Si"]);
+                TercerEncuentro::find($data["folio"])->update(['convesatorio5' => "Si"]);
                 return back()->with('success', 'Asistencia registrada correctamente.'); 
             }
             else if($hora_actual > "18:56:00"){
@@ -7454,15 +7454,15 @@ class SeerController extends Controller
         }
         else if($fecha_actual == "2025-10-31"){
             if($hora_actual < "10:45:00"){
-                TercerEncuentro::find($data["id"])->update(['convesatorio6' => "Si"]);
+                TercerEncuentro::find($data["folio"])->update(['convesatorio6' => "Si"]);
                 return back()->with('success', 'Asistencia registrada correctamente.'); 
             }
             else if($hora_actual < "12:15:00"){
-                TercerEncuentro::find($data["id"])->update(['convesatorio7' => "Si"]);
+                TercerEncuentro::find($data["folio"])->update(['convesatorio7' => "Si"]);
                 return back()->with('success', 'Asistencia registrada correctamente.'); 
             }
             else if($hora_actual < "13:45:00"){
-                TercerEncuentro::find($data["id"])->update(['convesatorio8' => "Si"]);
+                TercerEncuentro::find($data["folio"])->update(['convesatorio8' => "Si"]);
                 return back()->with('success', 'Asistencia registrada correctamente.'); 
             }
             else if($hora_actual > "14:00:00"){
@@ -7526,13 +7526,11 @@ class SeerController extends Controller
         foreach ($participantes as $participante) {
             $asistencias = [];
             foreach ($conferencias as $campo => $nombre) {
-                if (!empty($participante->$campo) && strtolower(trim($participante->$campo)) === 'si') {
+                if ($participante->$campo === 'Si') {
                     $asistencias[$campo] = $nombre;
                 }
             }
             $totalAsistencias = count($asistencias);
-
-            echo "{$participante->nombre} {$participante->primer_apellido} — Asistencias: {$totalAsistencias}";
 
             if ($totalAsistencias >= 8) {
                 $id = $participante->id;
@@ -7548,10 +7546,8 @@ class SeerController extends Controller
                     'nombre_solicitante' => $nombre,
                     'fecha_envio' => now()->format('d/m/Y'),
                 ];
-                //echo "Cumple {$nombre} ({$totalAsistencias} asistencias)\n";
-                $destinatario = $const->correo;
-                //$destinatario = 'sam_8929@hotmail.com';
-
+                $destinatario = $correo;
+                
                 // 3. Enviar el Mailable, pasando el contenido del PDF y los datos del mensaje
                 Mail::to($destinatario)->send(new CorreoAcuseConfirmacion($pdfContent, $datosMensaje));
                 // Mail::to($correo)->send(new CorreoAcuseConfirmacion($pdfContent, $datosMensaje));
@@ -7559,5 +7555,4 @@ class SeerController extends Controller
         }
         return "Correos enviados a todos los participantes con 8 o más asistencias.";
     }
-
 }
