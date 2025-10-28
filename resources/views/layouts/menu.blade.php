@@ -365,6 +365,13 @@
             </a>
         @endrole
     @endauth
+    @auth
+        @role('Tercer Encuentro')
+            <a class="nav-link" href="{{ route('index_tercer_encuentro') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Tercer Encuentro</span>
+            </a>
+        @endrole
+    @endauth
     
 </li>
 
