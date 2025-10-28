@@ -50,7 +50,7 @@ use App\Http\Controllers\ConciliadoresController;
     Route::get('tipoIndustria/{tipo_solicitud}',  [SeerController::class, 'Industrias'])->name('solicitud.industria');
     Route::get('/registro_tercer_encuentro',            [SeerController::class, 'registro_tercer_encuentro'])->name('registro_tercer_encuentro');
     Route::post('/registro_tercer_encuentro/guardar',   [SeerController::class, 'tercer_encuentro_registro'])->name('tercer_encuentro_registro');
-    Route::get('GeneraConstancia/{id}',                 [SeerController::class, 'genera_constancia'])->name('generaConstancia.form');
+    Route::get('GeneraConstancia',                      [SeerController::class, 'genera_constancia']);
     
     //Rutas para el chat
         Route::post('/chat/crear',      [Controller::class, 'store_chat'])->name('RespuestasChat.store');
@@ -111,7 +111,7 @@ use App\Http\Controllers\ConciliadoresController;
     Route::get('/finaliza/{id}',                [SeerController::class, 'guardar_solicitud'])->name('seer.finaliza');
     
     //Constancias
-    Route::post('GeneraConstancia/{id}',         [SeerController::class, 'genera_constancia'])->name('generaConstancia');
+    Route::post('GeneraConstancia',         [SeerController::class, 'genera_constancia'])->name('generaConstancia');
     Route::post('crear_constancia/',        [SeerController::class, 'crear_constancia'])->name('ValidarConstancia');
     Route::get('Asistencia',                [SeerController::class, 'RegistroPrimeraConferencia']);    
     Route::post('guardar_asitencia',        [SeerController::class, 'guardar_asistencia_post'])->name('guardar_asistencia');

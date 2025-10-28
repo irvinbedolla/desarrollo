@@ -49,24 +49,25 @@
 </head>
 <body>
     <img src="{{ public_path('assets/images/constancia_3erEncuentro.jpg') }}" class="fondo-membrete">
-    @php
-        $conversatorios_31 = [
-            'Conversatorio 4: “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral”',
-            'Conversatorio 5: ILTRAS “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
-            'Presentación del Libro ILTRAS “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
-            'Conferencia Magistral de Clausura',
-        ];
+   @php
+    $conversatorios_31 = [
+        'Conversatorio 4: “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral”',
+        'Conversatorio 5: ILTRAS “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
+        'Presentación del Libro ILTRAS “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
+        'Conferencia Magistral de Clausura',
+    ];
 
-        $fecha = in_array($constancia, $conversatorios_31)
-            ? '31 de octubre de 2025'
-            : '30 de octubre de 2025';
-    @endphp
+    $fecha = in_array($conferencia, $conversatorios_31)
+        ? '31 de octubre de 2025'
+        : '30 de octubre de 2025';
+@endphp
+
     <div class="content">
         <div class="nombre-participante">
-            {{ $nombre }}
+            {{ $participante->nombre }} {{ $participante->primer_apellido }} {{ $participante->segundo_apellido }}
         </div>
         <div class="texto-secundario">
-            <p>Por su asistencia a la Conferencia Inagural titulada <b><i>{{ $constancia }}</i></b>, celebrada el {{ $fecha }} 
+            <p>Por su asistencia a la Conferencia Inagural titulada <b><i>{{ $conferencia }}</i></b>, celebrada el {{ $fecha }} 
             en el marco del <b>Tercer Encuentro Nacional de la Conciliación y la Justicia Laboral: <i>Una Mirada Internacional con Perspectiva en los Derechos 
             Humanos y Acceso a la Justicia Laboral,</i></b> cuya participación contribuyó al intercambio de ideas y al fortalecimiento del diálogo en materia laboral.</p>
         </div>

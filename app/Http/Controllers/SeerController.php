@@ -7368,41 +7368,45 @@ class SeerController extends Controller
         return "Correo enviado con mensaje y PDF adjunto.";  
     }
     // Vista para mostrar y generar constancia usando el folio (ID) ya obtenido
-    public function genera_constancia(Request $request, $id){
-        $constancia = TercerEncuentro::find($id);
-        if (!$constancia) {
-            return back()->with('error', 'Folio no encontrado.');
-        }
-
+    public function genera_constancia(Request $request){
+        $id = $request->input('folio');
+        $constancia = null;
         $asistencias = [];
-        $conferencias = [
-            'convesatorio1' => 'Conferencia Inaugural: “Implementación del Mecanismo Laboral de Respuesta Rápida (MLRR) del T- MEC”',
-            'convesatorio2' => 'Conversatorio 1: “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”',
-            'convesatorio3' => 'Conversatorio 2: “Implicación y Aplicación de la Ley Silla, Regulación del Trabajo en Plataformas Digitales y Reducción de las Jornadas Laborales”',
-            'convesatorio4' => 'Conversatorio 3: “La Seguridad Social como Derecho Humano y su Impacto en las Resoluciones Judiciales”',
-            'convesatorio5' => 'Presentación del Libro “Conciliación y Justicia Laboral” Coordinadores: Andrés Medina Guzmán y Sergio Carmelo Domínguez Mota',
-            'convesatorio6' => 'Conversatorio 4: “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral”',
-            'convesatorio7' => 'Conversatorio 5: ILTRAS “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
-            'convesatorio8' => 'Presentación del Libro ILTRAS “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
-            'convesatorio9' => 'Conferencia Magistral de Clausura',
-        ];
+        session(['ultimo_folio' => $id]);
 
-        foreach ($conferencias as $campo => $nombre) {
-            $valor = strtolower(trim((string) $constancia->$campo));
-            if ($valor === 'si' || $valor === 'sí') {
-                $asistencias[$campo] = $nombre;
+        if ($request->isMethod('post') && $id) {
+            $constancia = TercerEncuentro::find($id);
+
+            if (!$constancia) {
+                return back()->with('error', 'Folio no encontrado.');
+            }
+
+            $conferencias = [
+                'convesatorio1' => 'Conferencia Inaugural: “Implementación del Mecanismo Laboral de Respuesta Rápida (MLRR) del T- MEC”',
+                'convesatorio2' => 'Conversatorio 1: “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”',
+                'convesatorio3' => 'Conversatorio 2: “Implicación y Aplicación de la Ley Silla, Regulación del Trabajo en Plataformas Digitales y Reducción de las Jornadas Laborales”',
+                'convesatorio4' => 'Conversatorio 3: “La Seguridad Social como Derecho Humano y su Impacto en las Resoluciones Judiciales”',
+                'convesatorio5' => 'Presentación del Libro “Conciliación y Justicia Laboral” Coordinadores: Andrés Medina Guzmán y Sergio Carmelo Domínguez Mota',
+                'convesatorio6' => 'Conversatorio 4: “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral”',
+                'convesatorio7' => 'Conversatorio 5: ILTRAS “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
+                'convesatorio8' => 'Presentación del Libro ILTRAS “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
+                'convesatorio9' => 'Conferencia Magistral de Clausura',
+            ];
+
+            foreach ($conferencias as $campo => $nombre) {
+                if (!empty($constancia->$campo) && strtolower(trim($constancia->$campo)) === 'si') {
+                    $asistencias[$campo] = $nombre;
+                }
             }
         }
 
-        return view('genera_constancia', compact('constancia', 'asistencias', 'id'));
+        return view('genera_constancia', compact('constancia', 'asistencias','id'));
     }
 
     //PDF Constancia Tercer Encuentro
     public function VerPDFConstancia($id){
         $constancia = TercerEncuentro::find($id);
-        $nombre = TercerEncuentro::find('nombre');
-
-        $html = view('PDF/TercerEncuentro/constancia', compact('id', 'constancia', 'nombre'))->render();
+        $html = view('PDF/TercerEncuentro/constancia', compact('id', 'constancia'))->render();
 
         $pdf = \PDF::loadHTML($html)
             //->setPaper('a4', 'landscape') //Horientación horizontal
@@ -7411,7 +7415,7 @@ class SeerController extends Controller
             ->setOption('isPhpEnabled', true); 
 
         $nombreArchivo = 'constancia_' . $constancia->nombre .'.pdf';
-        return $pdf->stream($nombreArchivo);  
+        return $pdf->stream($nombreArchivo); 
     }
 
     public function RegistroPrimeraConferencia(){
@@ -7474,19 +7478,33 @@ class SeerController extends Controller
     //Genera las constacias de cada una de las conferencias asistidas
     public function crear_constancia(Request $request){
         $data = $request->all();
-        //$id = $data["folio"];
-        $constancia = TercerEncuentro::find($data["folio"]);
-        $nombre = $constancia["nombre"]." ".$constancia["primer_apellido"]." ".$constancia["segundo_apellido"];
-        $constancia = $data["constancia"];
-        $html = view('PDF/TercerEncuentro/constancia', compact('nombre', 'constancia'))->render();
+        $participante = TercerEncuentro::find($data["folio"]); // Objeto participante
+        $nombre = $participante->nombre . " " . $participante->primer_apellido . " " . $participante->segundo_apellido;
+        $conferencias = [
+            'convesatorio1' => 'Conferencia Inaugural: “Implementación del Mecanismo Laboral de Respuesta Rápida (MLRR) del T-MEC”',
+            'convesatorio2' => 'Conversatorio 1: “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”',
+            'convesatorio3' => 'Conversatorio 2: “Implicación y Aplicación de la Ley Silla, Regulación del Trabajo en Plataformas Digitales y Reducción de las Jornadas Laborales”',
+            'convesatorio4' => 'Conversatorio 3: “La Seguridad Social como Derecho Humano y su Impacto en las Resoluciones Judiciales”',
+            'convesatorio5' => 'Presentación del Libro “Conciliación y Justicia Laboral” Coordinadores: Andrés Medina Guzmán y Sergio Carmelo Domínguez Mota',
+            'convesatorio6' => 'Conversatorio 4: “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral”',
+            'convesatorio7' => 'Conversatorio 5: ILTRAS “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
+            'convesatorio8' => 'Presentación del Libro ILTRAS “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
+            'convesatorio9' => 'Conferencia Magistral de Clausura',
+        ];
+        $NumConferencia = $data["constancia"];
+        $conferencia = $conferencias[$NumConferencia];
+
+        $html = view('PDF/TercerEncuentro/constancia', [
+            'participante' => $participante,
+            'conferencia' => $conferencia,
+        ])->render();
 
         $pdf = \PDF::loadHTML($html)
-            //->setPaper('a4', 'landscape') //Horientación horizontal
-            ->setPaper('a4', 'portrait') //Horientación vertical
+            ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true); 
+
         $nombreArchivo = 'constancia_' . Str::slug($nombre, '_') . '.pdf';
-        //$nombreArchivo = 'constancia_' . $constancia->nombre .'.pdf';
         return $pdf->stream($nombreArchivo);
     }
 
