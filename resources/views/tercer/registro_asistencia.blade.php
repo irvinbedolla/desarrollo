@@ -26,86 +26,86 @@
                                     <div class="form-group">
                                         <label>Conferencias</label>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="conferencia1" id="conferencia1" {{ optional($asistencia)->conferencia1 ? 'checked disabled' : '' }}>
-                                            <label class="form-check-label {{ optional($asistencia)->conferencia1 ? 'text-success fw-semibold' : '' }}" for="conferencia1">Conferencia 1
-                                                @if(optional($asistencia)->conferencia1)
+                                            <input class="form-check-input" type="checkbox" name="convesatorio1" id="convesatorio1" {{ ($persona->convesatorio1 ?? 'No') === 'Si' ? 'checked' : '' }}>
+                                            <label class="form-check-label {{ ($persona->convesatorio1 ?? 'No') === 'Si' ? 'text-success fw-semibold' : '' }}" for="convesatorio1">Conversatorio 1
+                                                @if(($persona->convesatorio1 ?? 'No') === 'Si')
                                                     <i class="bi bi-check-circle-fill text-success ms-1"></i>
                                                 @endif
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="conferencia2" id="conferencia2" {{ optional($asistencia)->conferencia2 ? 'checked disabled' : '' }}>
-                                            <label class="form-check-label {{ optional($asistencia)->conferencia2 ? 'text-success fw-semibold' : '' }}" for="conferencia2">Conferencia 2
-                                                @if(optional($asistencia)->conferencia2)
+                                            <input class="form-check-input" type="checkbox" name="convesatorio2" id="convesatorio2" {{ ($persona->convesatorio2 ?? 'No') === 'Si' ? 'checked' : '' }}>
+                                            <label class="form-check-label {{ ($persona->convesatorio2 ?? 'No') === 'Si' ? 'text-success fw-semibold' : '' }}" for="convesatorio2">Conversatorio 2
+                                                @if(($persona->convesatorio2 ?? 'No') === 'Si')
                                                     <i class="bi bi-check-circle-fill text-success ms-1"></i>
                                                 @endif
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="conferencia3" id="conferencia3" {{ optional($asistencia)->conferencia3 ? 'checked disabled' : '' }}>
-                                            <label class="form-check-label {{ optional($asistencia)->conferencia3 ? 'text-success fw-semibold' : '' }}" for="conferencia3">Conferencia 3
-                                                @if(optional($asistencia)->conferencia3)
+                                            <input class="form-check-input" type="checkbox" name="convesatorio3" id="convesatorio3" {{ ($persona->convesatorio3 ?? 'No') === 'Si' ? 'checked' : '' }}>
+                                            <label class="form-check-label {{ ($persona->convesatorio3 ?? 'No') === 'Si' ? 'text-success fw-semibold' : '' }}" for="convesatorio3">Conversatorio 3
+                                                @if(($persona->convesatorio3 ?? 'No') === 'Si')
                                                     <i class="bi bi-check-circle-fill text-success ms-1"></i>
                                                 @endif
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="conferencia4" id="conferencia4" {{ optional($asistencia)->conferencia4 ? 'checked disabled' : '' }}>
-                                            <label class="form-check-label {{ optional($asistencia)->conferencia4 ? 'text-success fw-semibold' : '' }}" for="conferencia4">Conferencia 4
-                                                @if(optional($asistencia)->conferencia4)
+                                            <input class="form-check-input" type="checkbox" name="convesatorio4" id="convesatorio4" {{ ($persona->convesatorio4 ?? 'No') === 'Si' ? 'checked' : '' }}>
+                                            <label class="form-check-label {{ ($persona->convesatorio4 ?? 'No') === 'Si' ? 'text-success fw-semibold' : '' }}" for="convesatorio4">Conversatorio 4
+                                                @if(($persona->convesatorio4 ?? 'No') === 'Si')
                                                     <i class="bi bi-check-circle-fill text-success ms-1"></i>
                                                 @endif
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="conferencia5" id="conferencia5" {{ optional($asistencia)->conferencia5 ? 'checked disabled' : '' }}>
-                                            <label class="form-check-label {{ optional($asistencia)->conferencia5 ? 'text-success fw-semibold' : '' }}" for="conferencia5">Conferencia 5
-                                                @if(optional($asistencia)->conferencia5)
+                                            <input class="form-check-input" type="checkbox" name="convesatorio5" id="convesatorio5" {{ ($persona->conversatorio5 ?? 'No') === 'Si' ? 'checked' : '' }}>
+                                            <label class="form-check-label {{ ($persona->convesatorio5 ?? 'No') === 'Si' ? 'text-success fw-semibold' : '' }}" for="convesatorio5">Conversatorio 5
+                                                @if(($persona->convesatorio5 ?? 'No') === 'Si')
                                                     <i class="bi bi-check-circle-fill text-success ms-1"></i>
                                                 @endif
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="conferencia6" id="conferencia6" {{ optional($asistencia)->conferencia6 ? 'checked disabled' : '' }}>
-                                            <label class="form-check-label {{ optional($asistencia)->conferencia6 ? 'text-success fw-semibold' : '' }}" for="conferencia6">Conferencia 6
-                                                @if(optional($asistencia)->conferencia6)
+                                            <input class="form-check-input" type="checkbox" name="convesatorio6" id="convesatorio6" {{ ($persona->convesatorio6 ?? 'No') === 'Si' ? 'checked' : '' }}>
+                                            <label class="form-check-label {{ ($persona->convesatorio6 ?? 'No') === 'Si' ? 'text-success fw-semibold' : '' }}" for="convesatorio6">Conversatorio 6
+                                                @if(($persona->convesatorio6 ?? 'No') === 'Si')
                                                     <i class="bi bi-check-circle-fill text-success ms-1"></i>
                                                 @endif
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="conferencia7" id="conferencia7" {{ optional($asistencia)->conferencia7 ? 'checked disabled' : '' }}>
-                                            <label class="form-check-label {{ optional($asistencia)->conferencia7 ? 'text-success fw-semibold' : '' }}" for="conferencia7">Conferencia 7
-                                                @if(optional($asistencia)->conferencia7)
+                                            <input class="form-check-input" type="checkbox" name="convesatorio7" id="convesatorio7" {{ ($persona->convesatorio7 ?? 'No') === 'Si' ? 'checked' : '' }}>
+                                            <label class="form-check-label {{ ($persona->convesatorio7 ?? 'No') === 'Si' ? 'text-success fw-semibold' : '' }}" for="convesatorio7">Conversatorio 7
+                                                @if(($persona->convesatorio7 ?? 'No') === 'Si')
                                                     <i class="bi bi-check-circle-fill text-success ms-1"></i>
                                                 @endif
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="conferencia8" id="conferencia8" {{ optional($asistencia)->conferencia8 ? 'checked disabled' : '' }}>
-                                            <label class="form-check-label {{ optional($asistencia)->conferencia8 ? 'text-success fw-semibold' : '' }}" for="conferencia8">Conferencia 8
-                                                @if(optional($asistencia)->conferencia8)
+                                            <input class="form-check-input" type="checkbox" name="convesatorio8" id="convesatorio8" {{ ($persona->convesatorio8 ?? 'No') === 'Si' ? 'checked' : '' }}>
+                                            <label class="form-check-label {{ ($persona->convesatorio8 ?? 'No') === 'Si' ? 'text-success fw-semibold' : '' }}" for="convesatorio8">Conversatorio 8
+                                                @if(($persona->convesatorio8 ?? 'No') === 'Si')
                                                     <i class="bi bi-check-circle-fill text-success ms-1"></i>
                                                 @endif
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="conferencia9" id="conferencia9" {{ optional($asistencia)->conferencia9 ? 'checked disabled' : '' }}>
-                                            <label class="form-check-label {{ optional($asistencia)->conferencia9 ? 'text-success fw-semibold' : '' }}" for="conferencia9">Conferencia 9
-                                                @if(optional($asistencia)->conferencia9)
+                                            <input class="form-check-input" type="checkbox" name="convesatorio9" id="convesatorio9" {{ ($persona->convesatorio9 ?? 'No') === 'Si' ? 'checked' : '' }}>
+                                            <label class="form-check-label {{ ($persona->convesatorio9 ?? 'No') === 'Si' ? 'text-success fw-semibold' : '' }}" for="convesatorio9">Conversatorio 9
+                                                @if(($persona->convesatorio9 ?? 'No') === 'Si')
                                                     <i class="bi bi-check-circle-fill text-success ms-1"></i>
                                                 @endif
                                             </label>
                                         </div>
-                                        <!--div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="conferencia10" id="conferencia10" {{ optional($asistencia)->conferencia10 ? 'checked disabled' : '' }}>
-                                            <label class="form-check-label {{ optional($asistencia)->conferencia10 ? 'text-success fw-semibold' : '' }}" for="conferencia10">Conferencia 10
-                                                @if(optional($asistencia)->conferencia10)
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="convesatorio10" id="convesatorio10" {{ ($persona->convesatorio10 ?? 'No') === 'Si' ? 'checked' : '' }}>
+                                            <label class="form-check-label {{ ($persona->convesatorio10 ?? 'No') === 'Si' ? 'text-success fw-semibold' : '' }}" for="convesatorio10">Conversatorio 10
+                                                @if(($persona->convesatorio10 ?? 'No') === 'Si')
                                                     <i class="bi bi-check-circle-fill text-success ms-1"></i>
                                                 @endif
                                             </label>
-                                        </!--div>
-                                    </div-->
+                                        </div>
+                                    </div>
                                     <div class="row">
                                         <button class="btn btn-primary col-xs-12 col-sm-4 col-md-1 mr-2 mt-2" type="submit">Guardar</button>
                                         <a type="button" class="btn btn-info col-xs-12 col-sm-4 col-md-1 mt-2" href="{{ route('index_tercer_encuentro') }}">Regresar</a>

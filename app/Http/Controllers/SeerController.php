@@ -7257,32 +7257,26 @@ class SeerController extends Controller
 
     public function registro_asistencia_te($id){
         $persona = TercerEncuentro::findOrFail($id);
-        $asistencia = Asistencia::where('id_asistente', $persona->id)->first();
-        return view('tercer.registro_asistencia', compact('persona', 'asistencia'));
+        return view('tercer.registro_asistencia', compact('persona'));
     }
 
     public function guardar_asistencia_te(Request $request, $id)
     {
         $persona = TercerEncuentro::findOrFail($id);
 
-        $existing = Asistencia::firstOrNew(['id_asistente' => $persona->id]);
+        //Se va 1 por 1 para verificar los valores Si o No
+        for ($i = 1; $i <= 10; $i++) {
+            $key = 'convesatorio' . $i;
+            $valor = $request->boolean($key) ? 'Si' : 'No';
+            
+            //Si no encuentra Si o No (nombre de la conferencia) lo reemplaza con No
+            if (!in_array($valor, ['Si', 'No'], true)) {
+                $valor = 'No';
+            }
+            $persona->{$key} = $valor;
+        }
 
-        $payload = [
-            'id_asistente' => $persona->id,
-            'conferencia1' => (bool)($existing->conferencia1 ?? false) || $request->boolean('conferencia1'),
-            'conferencia2' => (bool)($existing->conferencia2 ?? false) || $request->boolean('conferencia2'),
-            'conferencia3' => (bool)($existing->conferencia3 ?? false) || $request->boolean('conferencia3'),
-            'conferencia4' => (bool)($existing->conferencia4 ?? false) || $request->boolean('conferencia4'),
-            'conferencia5' => (bool)($existing->conferencia5 ?? false) || $request->boolean('conferencia5'),
-            'conferencia6' => (bool)($existing->conferencia6 ?? false) || $request->boolean('conferencia6'),
-            'conferencia7' => (bool)($existing->conferencia7 ?? false) || $request->boolean('conferencia7'),
-            'conferencia8' => (bool)($existing->conferencia8 ?? false) || $request->boolean('conferencia8'),
-            'conferencia9' => (bool)($existing->conferencia9 ?? false) || $request->boolean('conferencia9'),
-            'conferencia10' => (bool)($existing->conferencia10 ?? false) || $request->boolean('conferencia10'),
-        ];
-
-        $existing->fill($payload);
-        $existing->save();
+        $persona->save();
 
         return redirect()
             ->route('registro_asistencia_te', $persona->id)
@@ -7292,6 +7286,26 @@ class SeerController extends Controller
     public function editar_datos_te($id){
         $persona = TercerEncuentro::findOrFail($id);
         return view('tercer.editar_datos', compact('persona'));
+    }
+
+    public function guardar_datos_te(Request $request, $id){
+        $persona = TercerEncuentro::findOrFail($id);
+
+        $validated = $request->validate([
+            'nombre'          => 'required|string|max:255',
+            'primer_apellido' => 'required|string|max:255',
+            'segundo_apellido'=> 'nullable|string|max:255',
+            'sexo'            => 'required|string|max:50',
+            'lugar'           => 'required|string|max:255',
+            'correo'          => 'required|email|max:255',
+            'telefono'        => 'required|string|max:50',
+        ]);
+
+        $persona->update($validated);
+
+        return redirect()
+            ->route('editar_datos_te', $persona->id)
+            ->with('success', 'Datos actualizados correctamente.');
     }
 
     public function pdf_tercer_encuentro(){

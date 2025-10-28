@@ -11,19 +11,27 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <a class="btn btn-info" href="{{ route('pdf_tercer_encuentro') }}" target="_blank">PDF</a>
+                            <!--a class="btn btn-info" href="{{ route('pdf_tercer_encuentro') }}" target="_blank">PDF</a-->
                            
                                     <table id="example" class="table-striped" style="width:100%">
                                         <thead style="background-color: #4A001F;">
-                                            <th style="color: #fff;">Folio</th>
-                                            <th style="color: #fff;">Nombre</th>
-                                            <th style="color: #fff;">Teléfono</th>
-                                            <th style="color: #fff;">Email</th>
+                                            <th style="color: #fff; width: 3%">Folio</th>
+                                            <th style="color: #fff; width: 20%">Nombre</th>
+                                            <th style="color: #fff; width: 10%">Teléfono</th>
+                                            <th style="color: #fff; width: 20%">Email</th>
                                             <th style="color: #fff;">Lugar de visita</th>
-                                            <th style="color: #fff;">Sexo</th>
-                                            <th style="color: #fff;">Registrar asistencia</th>
-                                            <th style="color: #fff;">Editar datos</th>
-                                            <th style="color: #fff;">Constancia</th>
+                                            <th style="color: #fff; width: 7%">Sexo</th>
+                                            @auth
+                                                @hasanyrole('Super Usuario|Tercer Encuentro')
+                                                    <th style="color: #fff;">Registro de asistencia</th>
+                                                    <th style="color: #fff;">Editar datos</th>  
+                                                @endrole
+                                            @endauth
+                                            @auth
+                                                @hasanyrole('Super Usuario')
+                                                    <th style="color: #fff;">Constancia</th>
+                                                @endrole
+                                            @endauth
                                         </thead>
                                         <tbody>
                                             @foreach($personas as $persona)
@@ -34,9 +42,17 @@
                                                     <td>{{$persona->correo}}</td>
                                                     <td>{{$persona->lugar}}</td>
                                                     <td>{{$persona->sexo}}</td>
-                                                    <td><a type="button" class="btn btn-success text-white" href="{{ route('registro_asistencia_te', $persona->id) }}">Registrar</a></td>
-                                                    <td><a type="button" class="btn btn-primary text-white" href="{{ route('editar_datos_te', $persona->id) }}">Editar</a></td>
-                                                    <td><a type="button" class="btn btn-primary text-white" href="{{ route('PDFConstancia', $persona->id) }}">Generar constancia</a></td>
+                                                    @auth
+                                                        @hasanyrole('Super Usuario|Tercer Encuentro')
+                                                            <td><a type="button" class="btn btn-success text-white" href="{{ route('registro_asistencia_te', $persona->id) }}">Registro</a></td>
+                                                            <td><a type="button" class="btn btn-primary text-white" href="{{ route('editar_datos_te', $persona->id) }}">Editar</a></td>
+                                                        @endrole
+                                                    @endauth
+                                                    @auth
+                                                    @hasanyrole('Super Usuario')
+                                                        <td><a type="button" class="btn btn-info text-white" href="{{ route('PDFConstancia', $persona->id) }}">Generar constancia</a></td>
+                                                    @endrole
+                                                @endauth
                                                 </tr>
                                             @endforeach
                                         </tbody>
