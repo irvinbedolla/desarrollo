@@ -7358,13 +7358,15 @@ class SeerController extends Controller
         $id = $request->input('folio');
         $constancia = null;
         $asistencias = [];
+        session(['ultimo_folio' => $id]);
 
         if ($request->isMethod('post') && $id) {
-
             $constancia = TercerEncuentro::find($id);
+
             if (!$constancia) {
                 return back()->with('error', 'Folio no encontrado.');
             }
+
             $conferencias = [
                 'convesatorio1' => 'Conferencia Inaugural: “Implementación del Mecanismo Laboral de Respuesta Rápida (MLRR) del T- MEC”',
                 'convesatorio2' => 'Conversatorio 1: “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”',
@@ -7383,7 +7385,8 @@ class SeerController extends Controller
                 }
             }
         }
-        return view('genera_constancia', compact('constancia', 'asistencias'));
+
+        return view('genera_constancia', compact('constancia', 'asistencias','id'));
     }
 
     //PDF Constancia Tercer Encuentro
@@ -7399,7 +7402,7 @@ class SeerController extends Controller
             ->setOption('isPhpEnabled', true); 
 
         $nombreArchivo = 'constancia_' . $constancia->nombre .'.pdf';
-        return $pdf->stream($nombreArchivo);  
+        return $pdf->stream($nombreArchivo);   
     }
 
     public function RegistroPrimeraConferencia(){
@@ -7475,6 +7478,57 @@ class SeerController extends Controller
             ->setOption('isPhpEnabled', true); 
         $nombreArchivo = 'constancia_' . Str::slug($nombre, '_') . '.pdf';
         //$nombreArchivo = 'constancia_' . $constancia->nombre .'.pdf';
-        return $pdf->stream($nombreArchivo);
+        return $pdf->stream($nombreArchivo); 
+    }
+    //Envio de constancia final a todos los que cumplieron cn el 80% de asistencia
+    public function enviarConstanciaFinal(){
+        $participantes = TercerEncuentro::all();
+        $conferencias = [
+            'convesatorio1' => 'Conferencia Inaugural: “Implementación del Mecanismo Laboral de Respuesta Rápida (MLRR) del T- MEC”',
+            'convesatorio2' => 'Conversatorio 1: “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”',
+            'convesatorio3' => 'Conversatorio 2: “Implicación y Aplicación de la Ley Silla, Regulación del Trabajo en Plataformas Digitales y Reducción de las Jornadas Laborales”',
+            'convesatorio4' => 'Conversatorio 3: “La Seguridad Social como Derecho Humano y su Impacto en las Resoluciones Judiciales”',
+            'convesatorio5' => 'Presentación del Libro “Conciliación y Justicia Laboral” Coordinadores: Andrés Medina Guzmán y Sergio Carmelo Domínguez Mota',
+            'convesatorio6' => 'Conversatorio 4: “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral”',
+            'convesatorio7' => 'Conversatorio 5: ILTRAS “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
+            'convesatorio8' => 'Presentación del Libro ILTRAS “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
+            'convesatorio9' => 'Conferencia Magistral de Clausura',
+        ];
+
+        foreach ($participantes as $participante) {
+            $asistencias = [];
+            foreach ($conferencias as $campo => $nombre) {
+                if (!empty($participante->$campo) && strtolower(trim($participante->$campo)) === 'si') {
+                    $asistencias[$campo] = $nombre;
+                }
+            }
+            $totalAsistencias = count($asistencias);
+
+            echo "{$participante->nombre} {$participante->primer_apellido} — Asistencias: {$totalAsistencias}";
+
+            if ($totalAsistencias >= 8) {
+                $id = $participante->id;
+                $nombre = "{$participante->nombre} {$participante->primer_apellido} {$participante->segundo_apellido}";
+                $correo = $participante->correo;
+
+                // Generar PDF
+                $pdf = \PDF::loadView('PDF/vista-prueba', compact('id', 'nombre'));
+                $pdfContent = $pdf->output();
+
+                // Datos del correo
+                $datosMensaje = [
+                    'nombre_solicitante' => $nombre,
+                    'fecha_envio' => now()->format('d/m/Y'),
+                ];
+                //echo "Cumple {$nombre} ({$totalAsistencias} asistencias)\n";
+                $destinatario = $const->correo;
+                //$destinatario = 'sam_8929@hotmail.com';
+
+                // 3. Enviar el Mailable, pasando el contenido del PDF y los datos del mensaje
+                Mail::to($destinatario)->send(new CorreoAcuseConfirmacion($pdfContent, $datosMensaje));
+                // Mail::to($correo)->send(new CorreoAcuseConfirmacion($pdfContent, $datosMensaje));
+            } 
+        }
+        return "Correos enviados a todos los participantes con 8 o más asistencias.";
     }
 }
