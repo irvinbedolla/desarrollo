@@ -80,25 +80,21 @@
             </div> 
         </nav><br><br><br><br><br>
         <main>
-             @if(session()->has('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <strong>¡Registro correcto!</strong>
-                {{ session()->get('success') }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        @endif
+            @if(session()->has('success'))
+                <div class="alert alert-success">
+                    <strong> {{ session()->get('success') }}</strong>
+                </div>
+            @endif
 
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('guardar_asistencia')}}">
                 @csrf
                 <div class="container">

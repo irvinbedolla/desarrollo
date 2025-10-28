@@ -132,8 +132,6 @@
                                         </button>
                                     </div>
                                 @endif
-
-                                <!--Se realiza la validación de campos para ver si dejó alguno vacío-->
                                 @if (session()->has('error'))
                                     <div class="alert alert-dark alert-dismissible fade show" role="alert">
                                         <strong>¡Revise los campos!</strong>
@@ -146,59 +144,52 @@
                                 <div style="background-color:#D2D3D5; width:100%; height:40px;">
                                     <h3 class="text-center" style="color:black">Genera tu constancia</h3>
                                 </div>
-                                <form method="POST" target="_blank" action="{{ route('ValidarConstancia') }}">
+                                <form method="POST" target="_self" action="{{ route('generaConstancia') }}" id="formConstancia">
                                     @csrf
                                     <div class="row align-items-end">
                                         <div class="col-md-4">
                                             <label for="folio" class="form-label fw-bold">Folio</label>
-                                            <input type="number" name="folio" id="folio" class="form-control" value="{{ old('folio') }}" required>
+                                            <input type="number" name="folio" id="folio" class="form-control" value="{{ old('folio', $id ?? '') }}" required placeholder="Ingresa tu folio">
                                         </div>
-                                        @if($constancia)
-                                            <div class="col-md-6">
-                                                <label for="constancia" class="form-label fw-bold">Conferencia / Conversatorio</label>
-                                                <select name="constancia" id="constancia" class="form-control" required>
-                                                    <option value="">Seleccione</option>
+                                        <div class="col-md-6">
+                                            <label for="constancia" class="form-label fw-bold">Conferencia / Conversatorio</label>
+                                            <select name="constancia" id="constancia" class="form-control" required>
+                                                @if(isset($constancia) && count($asistencias) > 0)
+                                                    <option value="">Seleccione una opción</option>
                                                     @foreach($asistencias as $campo => $nombre)
                                                         <option value="{{ $nombre }}">{{ $nombre }}</option>
                                                     @endforeach
-                                                </select>
-                                            </div>
-                                        @endif
+                                                @elseif(isset($constancia))
+                                                    <option value="">No tiene asistencias registradas</option>
+                                                @endif
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="mt-3">
-                                        <button type="submit" class="btn btn-success" >Generar constancia</button>
+                                        <button type="submit" class="btn btn-success">Generar constancia</button>
                                     </div>
-                                </form>   
-                                
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Posibles Casos</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            La Ley Federal del Trabajo en el articulo 685-Ter establece que no estas obligado a agotar la etapa conciliatoria en estos supuestos<br>
-                            -Discriminación<br>
-                            -Acoso u hostigamiento sexual<br>
-                            -Designación de beneficiarios<br>
-                            -Prestaciones de Seguridad Social
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </section>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const folioInput = document.getElementById('folio');
+                const form = document.getElementById('formConstancia');
+                let timer = null;
+                folioInput.addEventListener('input', function() {
+                    clearTimeout(timer);
+                    timer = setTimeout(() => {
+                        if (folioInput.value.trim() !== '') {
+                            form.submit();
+                        }
+                    }, 300);
+                });
+            });
+        </script>
     </main>
 </body>
 @section('scripts')
