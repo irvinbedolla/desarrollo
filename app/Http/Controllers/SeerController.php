@@ -7367,47 +7367,42 @@ class SeerController extends Controller
 
         return "Correo enviado con mensaje y PDF adjunto.";  
     }
-    //Vista en la que se ingresa el folio y muestra todas las conferencias a las que se asistio
-    public function genera_constancia(Request $request){
-        $id = $request->input('folio');
-        $constancia = null;
+    // Vista para mostrar y generar constancia usando el folio (ID) ya obtenido
+    public function genera_constancia(Request $request, $id){
+        $constancia = TercerEncuentro::find($id);
+        if (!$constancia) {
+            return back()->with('error', 'Folio no encontrado.');
+        }
+
         $asistencias = [];
-        session(['ultimo_folio' => $id]);
+        $conferencias = [
+            'convesatorio1' => 'Conferencia Inaugural: “Implementación del Mecanismo Laboral de Respuesta Rápida (MLRR) del T- MEC”',
+            'convesatorio2' => 'Conversatorio 1: “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”',
+            'convesatorio3' => 'Conversatorio 2: “Implicación y Aplicación de la Ley Silla, Regulación del Trabajo en Plataformas Digitales y Reducción de las Jornadas Laborales”',
+            'convesatorio4' => 'Conversatorio 3: “La Seguridad Social como Derecho Humano y su Impacto en las Resoluciones Judiciales”',
+            'convesatorio5' => 'Presentación del Libro “Conciliación y Justicia Laboral” Coordinadores: Andrés Medina Guzmán y Sergio Carmelo Domínguez Mota',
+            'convesatorio6' => 'Conversatorio 4: “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral”',
+            'convesatorio7' => 'Conversatorio 5: ILTRAS “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
+            'convesatorio8' => 'Presentación del Libro ILTRAS “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
+            'convesatorio9' => 'Conferencia Magistral de Clausura',
+        ];
 
-        if ($request->isMethod('post') && $id) {
-            $constancia = TercerEncuentro::find($id);
-
-            if (!$constancia) {
-                return back()->with('error', 'Folio no encontrado.');
-            }
-
-            $conferencias = [
-                'convesatorio1' => 'Conferencia Inaugural: “Implementación del Mecanismo Laboral de Respuesta Rápida (MLRR) del T- MEC”',
-                'convesatorio2' => 'Conversatorio 1: “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”',
-                'convesatorio3' => 'Conversatorio 2: “Implicación y Aplicación de la Ley Silla, Regulación del Trabajo en Plataformas Digitales y Reducción de las Jornadas Laborales”',
-                'convesatorio4' => 'Conversatorio 3: “La Seguridad Social como Derecho Humano y su Impacto en las Resoluciones Judiciales”',
-                'convesatorio5' => 'Presentación del Libro “Conciliación y Justicia Laboral” Coordinadores: Andrés Medina Guzmán y Sergio Carmelo Domínguez Mota',
-                'convesatorio6' => 'Conversatorio 4: “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral”',
-                'convesatorio7' => 'Conversatorio 5: ILTRAS “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
-                'convesatorio8' => 'Presentación del Libro ILTRAS “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
-                'convesatorio9' => 'Conferencia Magistral de Clausura',
-            ];
-
-            foreach ($conferencias as $campo => $nombre) {
-                if (!empty($constancia->$campo) && strtolower(trim($constancia->$campo)) === 'si') {
-                    $asistencias[$campo] = $nombre;
-                }
+        foreach ($conferencias as $campo => $nombre) {
+            $valor = strtolower(trim((string) $constancia->$campo));
+            if ($valor === 'si' || $valor === 'sí') {
+                $asistencias[$campo] = $nombre;
             }
         }
 
-        return view('genera_constancia', compact('constancia', 'asistencias','id'));
+        return view('genera_constancia', compact('constancia', 'asistencias', 'id'));
     }
 
     //PDF Constancia Tercer Encuentro
     public function VerPDFConstancia($id){
         $constancia = TercerEncuentro::find($id);
+        $nombre = TercerEncuentro::find('nombre');
 
-        $html = view('PDF/TercerEncuentro/constancia', compact('id', 'constancia'))->render();
+        $html = view('PDF/TercerEncuentro/constancia', compact('id', 'constancia', 'nombre'))->render();
 
         $pdf = \PDF::loadHTML($html)
             //->setPaper('a4', 'landscape') //Horientación horizontal
@@ -7416,7 +7411,7 @@ class SeerController extends Controller
             ->setOption('isPhpEnabled', true); 
 
         $nombreArchivo = 'constancia_' . $constancia->nombre .'.pdf';
-        return $pdf->stream($nombreArchivo);   
+        return $pdf->stream($nombreArchivo);  
     }
 
     public function RegistroPrimeraConferencia(){
@@ -7425,28 +7420,28 @@ class SeerController extends Controller
 
     public function guardar_asistencia_post(Request $request){
         $data = $request->all();
-        $fecha_actual = date('Y-m-d');
+        $fecha_actual = date('y-m-d');
         $hora_actual  = date("H:i:s");
 
         if($fecha_actual == "2025-10-30"){
             if($hora_actual < "11:15:00"){
-                TercerEncuentro::find($data["folio"])->update(['convesatorio1' => "Si"]);
+                TercerEncuentro::find($data["id"])->update(['convesatorio1' => "Si"]);
                 return back()->with('success', 'Asistencia registrada correctamente.'); 
             }
             else if($hora_actual < "12:45:00"){
-                TercerEncuentro::find($data["folio"])->update(['convesatorio2' => "Si"]);
+                TercerEncuentro::find($data["id"])->update(['convesatorio2' => "Si"]);
                 return back()->with('success', 'Asistencia registrada correctamente.'); 
             }
             else if($hora_actual < "14:05:00"){
-                TercerEncuentro::find($data["folio"])->update(['convesatorio3' => "Si"]);
+                TercerEncuentro::find($data["id"])->update(['convesatorio3' => "Si"]);
                 return back()->with('success', 'Asistencia registrada correctamente.'); 
             }
             else if($hora_actual < "15:15:00"){
-                TercerEncuentro::find($data["folio"])->update(['convesatorio4' => "Si"]);
+                TercerEncuentro::find($data["id"])->update(['convesatorio4' => "Si"]);
                 return back()->with('success', 'Asistencia registrada correctamente.'); 
             }
             else if($hora_actual < "18:55:00"){
-                TercerEncuentro::find($data["folio"])->update(['convesatorio5' => "Si"]);
+                TercerEncuentro::find($data["id"])->update(['convesatorio5' => "Si"]);
                 return back()->with('success', 'Asistencia registrada correctamente.'); 
             }
             else if($hora_actual > "18:56:00"){
@@ -7455,15 +7450,15 @@ class SeerController extends Controller
         }
         else if($fecha_actual == "2025-10-31"){
             if($hora_actual < "10:45:00"){
-                TercerEncuentro::find($data["folio"])->update(['convesatorio6' => "Si"]);
+                TercerEncuentro::find($data["id"])->update(['convesatorio6' => "Si"]);
                 return back()->with('success', 'Asistencia registrada correctamente.'); 
             }
             else if($hora_actual < "12:15:00"){
-                TercerEncuentro::find($data["folio"])->update(['convesatorio7' => "Si"]);
+                TercerEncuentro::find($data["id"])->update(['convesatorio7' => "Si"]);
                 return back()->with('success', 'Asistencia registrada correctamente.'); 
             }
             else if($hora_actual < "13:45:00"){
-                TercerEncuentro::find($data["folio"])->update(['convesatorio8' => "Si"]);
+                TercerEncuentro::find($data["id"])->update(['convesatorio8' => "Si"]);
                 return back()->with('success', 'Asistencia registrada correctamente.'); 
             }
             else if($hora_actual > "14:00:00"){
@@ -7475,7 +7470,7 @@ class SeerController extends Controller
             return back()->withErrors($errors);
         }
     }
-
+    
     //Genera las constacias de cada una de las conferencias asistidas
     public function crear_constancia(Request $request){
         $data = $request->all();
@@ -7492,8 +7487,9 @@ class SeerController extends Controller
             ->setOption('isPhpEnabled', true); 
         $nombreArchivo = 'constancia_' . Str::slug($nombre, '_') . '.pdf';
         //$nombreArchivo = 'constancia_' . $constancia->nombre .'.pdf';
-        return $pdf->stream($nombreArchivo); 
+        return $pdf->stream($nombreArchivo);
     }
+
     //Envio de constancia final a todos los que cumplieron cn el 80% de asistencia
     public function enviarConstanciaFinal(){
         $participantes = TercerEncuentro::all();
@@ -7545,4 +7541,5 @@ class SeerController extends Controller
         }
         return "Correos enviados a todos los participantes con 8 o más asistencias.";
     }
+
 }

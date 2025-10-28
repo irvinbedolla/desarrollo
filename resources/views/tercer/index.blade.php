@@ -28,7 +28,7 @@
                                                 @endrole
                                             @endauth
                                             @auth
-                                                @hasanyrole('Super Usuario')
+                                                @role('Super Usuario')
                                                     <th style="color: #fff;">Constancia</th>
                                                 @endrole
                                             @endauth
@@ -50,7 +50,7 @@
                                                     @endauth
                                                     @auth
                                                     @hasanyrole('Super Usuario')
-                                                        <td><a type="button" class="btn btn-info text-white" href="{{ route('PDFConstancia', $persona->id) }}">Generar constancia</a></td>
+                                                        <td><a type="button" class="btn btn-info text-white" href="{{ route('generaConstancia.form', ['id' => $persona->id]) }}">Generar constancia</a></td>
                                                     @endrole
                                                 @endauth
                                                 </tr>
