@@ -67,7 +67,7 @@
             {{ $participante->nombre }} {{ $participante->primer_apellido }} {{ $participante->segundo_apellido }}
         </div>
         <div class="texto-secundario">
-            <p>Por su asistencia a la Conferencia Inagural titulada <b><i>{{ $conferencia }}</i></b>, celebrada el {{ $fecha }} 
+            <p>Por su asistencia al <b><i>{{ $conferencia }}</i></b>, celebrada el {{ $fecha }} 
             en el marco del <b>Tercer Encuentro Nacional de la Conciliación y la Justicia Laboral: <i>Una Mirada Internacional con Perspectiva en los Derechos 
             Humanos y Acceso a la Justicia Laboral,</i></b> cuya participación contribuyó al intercambio de ideas y al fortalecimiento del diálogo en materia laboral.</p>
         </div>
