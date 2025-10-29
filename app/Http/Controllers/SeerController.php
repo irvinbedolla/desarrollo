@@ -7532,13 +7532,13 @@ class SeerController extends Controller
             }
             $totalAsistencias = count($asistencias);
 
-            if ($totalAsistencias >= 8) {
+            if ($totalAsistencias >= 6) {
                 $id = $participante->id;
                 $nombre = "{$participante->nombre} {$participante->primer_apellido} {$participante->segundo_apellido}";
                 $correo = $participante->correo;
 
                 // Generar PDF
-                $pdf = \PDF::loadView('PDF/vista-prueba', compact('id', 'nombre'));
+                $pdf = \PDF::loadView('PDF/TercerEncuentro/constanciaFinal', compact('nombre'));
                 $pdfContent = $pdf->output();
 
                 // Datos del correo
@@ -7553,6 +7553,6 @@ class SeerController extends Controller
                 // Mail::to($correo)->send(new CorreoAcuseConfirmacion($pdfContent, $datosMensaje));
             } 
         }
-        return "Correos enviados a todos los participantes con 8 o más asistencias.";
+        return "Correos enviados a todos los participantes con 6 o más asistencias.";
     }
 }
