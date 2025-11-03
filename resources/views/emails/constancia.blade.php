@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Registro de Solicituid</title>
+    <title>Constancia General del Tercer Encuentro de la Conciliación y la Justicia Laboral</title>
 </head>
 <body>
     <h1>Hola, {{ $datosMensaje['nombre_solicitante'] }}</h1>
-    Gracias por registrar tu solicitud en Si Concilio, tu número de folio es: , revisa el proceso de tu solicitud en https://siconcilio.cclmichoacan.gob.mx/ en el apartado de Buzón Electrónico para continuar tu proceso.<br>
-    
+    Por este medio, el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo y el Mtro. Andrés Medina Guzmán agradecen tu Asistencia a las actividades programadas dentro del Tercer Encuentro haciendo llegar la presente Constancia General.
 </body>
 </html>

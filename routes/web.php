@@ -116,6 +116,8 @@ use App\Http\Controllers\ConciliadoresController;
     Route::get('Asistencia',                [SeerController::class, 'RegistroPrimeraConferencia']);    
     Route::post('guardar_asitencia',        [SeerController::class, 'guardar_asistencia_post'])->name('guardar_asistencia');
     Route::get('constancia/final',          [SeerController::class, 'enviarConstanciaFinal']); //Genera el envio de la constancia final
+    Route::get('generaPDFmasivo',           [SeerController::class, 'generaPDFS']);
+    Route::get('constancia_individual',     [SeerController::class, 'constancia_individual']);
 
 Route::middleware(['auth', 'verified'])->group(function () {
 

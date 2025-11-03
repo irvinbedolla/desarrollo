@@ -30,7 +30,7 @@ class CorreoAcuseConfirmacion extends Mailable
      */
     public function build()
     {
-        return $this->subject('Acuse de Confirmación de Solicitud')
+        return $this->subject('Constancia de Asistencia al Tercer Encuentro de la Conciliación y la Justicia Laboral')
                     
                     // 1. Define el cuerpo del correo (el mensaje)
                     // Pasa los datos dinámicos a la vista del email
@@ -41,7 +41,7 @@ class CorreoAcuseConfirmacion extends Mailable
                     ])
                     
                     // 2. Adjunta el PDF generado en memoria
-                    ->attachData($this->pdfContent, 'Acuse_Confirmacion.pdf', [
+                    ->attachData($this->pdfContent, 'Constancia General.pdf', [
                         'mime' => 'application/pdf', 
                     ]);
     }
