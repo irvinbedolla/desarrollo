@@ -41,7 +41,17 @@
                             <div class="row">
                                 <div class="col-xs-4 col-sm-4 col-md-4">
                                     <div align="center">
-                                        <a href="{{ route('configuracion_sedes') }}" class="btn btn-primary">Dias inhábiles</a>
+                                        <a href="{{ route('configuracion_sedes') }}" class="btn btn-primary" style="width: 100%">Dias inhábiles</a>
+                                    </div>
+                                </div>
+                                <div class="col-xs-4 col-sm-4 col-md-4">
+                                    <div align="center">
+                                        <a href="{{ route('configuracion_sedes') }}" class="btn btn-primary" style="width: 100%">Usuarios</a>
+                                    </div>
+                                </div>
+                                <div class="col-xs-4 col-sm-4 col-md-4">
+                                    <div align="center">
+                                        <a href="{{ route('configuracion_sedes') }}" class="btn btn-primary" style="width: 100%">Retrocesos</a>
                                     </div>
                                 </div>
                             </div>

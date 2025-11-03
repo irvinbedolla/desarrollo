@@ -25,6 +25,7 @@ use App\Http\Controllers\RecepcionController;
 use App\Http\Controllers\CitaDireccionController;
 use App\Http\Controllers\CorreosController;
 use App\Http\Controllers\ConciliadoresController;
+use App\Http\Controllers\AdministracionController;
 
 /*
 |--------------------------------------------------------------------------

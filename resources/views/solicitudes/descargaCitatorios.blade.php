@@ -66,7 +66,7 @@
                                     </div> 
                                     <div class="text-center mt-3">
                                         @if(!empty($isAudiencia) && $isAudiencia == 1)
-                                            <a href="{{ route('todas_audiencias') }}" class="btn btn-success" >Terminar</a>
+                                            <a href="{{ route('solicitudes_pendientes') }}" class="btn btn-success" >Terminar</a>
                                         @else
                                             <a href="{{ route('solicitudes_pendientes') }}" class="btn btn-success" >Terminar</a>
                                         @endif
