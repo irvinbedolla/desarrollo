@@ -83,7 +83,7 @@
                     SOLICITUD CONVENIO DE CONCILIACIÓN<br>
                     NÚMERO DE IDENTIFICACIÓN ÚNICO {{ $solicitud->NUE }}<br><br>
                     SOLICITANTE: {{ $solicitante->nombre }}<br>
-                    CITADO(S): <br>
+                    CITADO(S):
                     @foreach($citados as $citado)    
                         {{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}<br>
                     @endforeach
@@ -94,7 +94,7 @@
                     590-F y 684-E de la Ley Federal del Trabajo; artículos 5°, 8°, 26 y 27 de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, 
                     artículos 33, 53 fracción I y 684-E de la Ley Federal del Trabajo; artículo 20, fracción V y X del Reglamento Interior del Centro de Conciliación Laboral de Michoacán de Ocampo, 
                     se celebra el presente convenio por una parte <b>{{ $solicitante->nombre }}</b> quién en lo 
-                    subsecuente se denominará la parte <b>“TRABAJADORA”</b> y, por otro <b>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido }}</b> 
+                    subsecuente se denominará la parte <b>“TRABAJADORA”</b> y, por otro <b>@foreach($citados as $citado) {{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido }},@endforeach</b> 
                     a quién en lo subsecuente se le denominará la parte <b>“EMPLEADORA”</b>, 
                     a quienes en lo sucesivo de forma conjunta se les denominará las <b>“PARTES”</b>, quienes se someten y obligan en términos de las siguientes declaraciones y cláusulas:
                 </p>

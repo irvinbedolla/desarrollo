@@ -4059,7 +4059,10 @@ class SeerController extends Controller
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
         ->first();
 
-        $citados = SeerCitados::where('id_solicitud', $id)->get();
+        //$citados = SeerCitados::where('id_solicitud', $id)->get();
+        $citados = SeerCitados::where('id_solicitud', $id)
+        ->where('aparece_convenio', 1)
+        ->get();
 
         $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
         $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
