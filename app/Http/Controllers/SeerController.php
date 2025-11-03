@@ -7381,17 +7381,17 @@ class SeerController extends Controller
                 return back()->with('error', 'Folio no encontrado.');
             }
 
-            $conferencias = [
-                'convesatorio1' => 'Conferencia Inaugural: “Implementación del Mecanismo Laboral de Respuesta Rápida (MLRR) del T- MEC”',
-                'convesatorio2' => 'Conversatorio 1: “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”',
-                'convesatorio3' => 'Conversatorio 2: “Implicación y Aplicación de la Ley Silla, Regulación del Trabajo en Plataformas Digitales y Reducción de las Jornadas Laborales”',
-                'convesatorio4' => 'Conversatorio 3: “La Seguridad Social como Derecho Humano y su Impacto en las Resoluciones Judiciales”',
-                'convesatorio5' => 'Presentación del Libro “Conciliación y Justicia Laboral” Coordinadores: Andrés Medina Guzmán y Sergio Carmelo Domínguez Mota',
-                'convesatorio6' => 'Conversatorio 4: “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral”',
-                'convesatorio7' => 'Conversatorio 5: ILTRAS “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
-                'convesatorio8' => 'Presentación del Libro ILTRAS “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
-                'convesatorio9' => 'Conferencia Magistral de Clausura',
-            ];
+        $conferencias = [
+            'convesatorio1' => 'Conferencia Magistral titulada “Representatividad Sindical en México”',
+            'convesatorio2' => 'Conversatorio titulado “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”',
+            'convesatorio3' => 'Conversatorio titulado “Implicación y Aplicación de la Ley Silla, Regulación del Trabajo en Plataformas Digitales y Reducción de las Jornadas Laborales”',
+            'convesatorio4' => 'Conversatorio titulado “La Seguridad Social como Derecho Humano y su Impacto en las Resoluciones Judiciales”',
+            'convesatorio5' => 'Presentación del Libro “Conciliación y Justicia Laboral” Coordinadores: Andrés Medina Guzmán y Sergio Carmelo Domínguez Mota',
+            'convesatorio6' => 'Conversatorio titulado “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral”',
+            'convesatorio7' => 'Conversatorio titulado “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
+            'convesatorio8' => 'Presentación del Libro “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
+            'convesatorio9' => 'Conferencia Magistral de Clausura',
+        ];
 
             foreach ($conferencias as $campo => $nombre) {
                 if (!empty($constancia->$campo) && strtolower(trim($constancia->$campo)) === 'si') {
@@ -7481,14 +7481,14 @@ class SeerController extends Controller
         $participante = TercerEncuentro::find($data["folio"]); // Objeto participante
         $nombre = $participante->nombre . " " . $participante->primer_apellido . " " . $participante->segundo_apellido;
         $conferencias = [
-            'convesatorio1' => 'Conferencia Inaugural: “Implementación del Mecanismo Laboral de Respuesta Rápida (MLRR) del T-MEC”',
-            'convesatorio2' => 'Conversatorio 1: “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”',
-            'convesatorio3' => 'Conversatorio 2: “Implicación y Aplicación de la Ley Silla, Regulación del Trabajo en Plataformas Digitales y Reducción de las Jornadas Laborales”',
-            'convesatorio4' => 'Conversatorio 3: “La Seguridad Social como Derecho Humano y su Impacto en las Resoluciones Judiciales”',
+            'convesatorio1' => 'Conferencia Magistral titulada “Representatividad Sindical en México”',
+            'convesatorio2' => 'Conversatorio titulado “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”',
+            'convesatorio3' => 'Conversatorio titulado “Implicación y Aplicación de la Ley Silla, Regulación del Trabajo en Plataformas Digitales y Reducción de las Jornadas Laborales”',
+            'convesatorio4' => 'Conversatorio titulado “La Seguridad Social como Derecho Humano y su Impacto en las Resoluciones Judiciales”',
             'convesatorio5' => 'Presentación del Libro “Conciliación y Justicia Laboral” Coordinadores: Andrés Medina Guzmán y Sergio Carmelo Domínguez Mota',
-            'convesatorio6' => 'Conversatorio 4: “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral”',
-            'convesatorio7' => 'Conversatorio 5: ILTRAS “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
-            'convesatorio8' => 'Presentación del Libro ILTRAS “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
+            'convesatorio6' => 'Conversatorio titulado “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral”',
+            'convesatorio7' => 'Conversatorio titulado “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
+            'convesatorio8' => 'Presentación del Libro “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
             'convesatorio9' => 'Conferencia Magistral de Clausura',
         ];
         $NumConferencia = $data["constancia"];
@@ -7512,14 +7512,14 @@ class SeerController extends Controller
     public function enviarConstanciaFinal(){
         $participantes = TercerEncuentro::all();
         $conferencias = [
-            'convesatorio1' => 'Conferencia Inaugural: “Implementación del Mecanismo Laboral de Respuesta Rápida (MLRR) del T- MEC”',
-            'convesatorio2' => 'Conversatorio 1: “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”',
-            'convesatorio3' => 'Conversatorio 2: “Implicación y Aplicación de la Ley Silla, Regulación del Trabajo en Plataformas Digitales y Reducción de las Jornadas Laborales”',
-            'convesatorio4' => 'Conversatorio 3: “La Seguridad Social como Derecho Humano y su Impacto en las Resoluciones Judiciales”',
+            'convesatorio1' => 'Conferencia Magistral titulada “Representatividad Sindical en México”',
+            'convesatorio2' => 'Conversatorio titulado “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”',
+            'convesatorio3' => 'Conversatorio titulado “Implicación y Aplicación de la Ley Silla, Regulación del Trabajo en Plataformas Digitales y Reducción de las Jornadas Laborales”',
+            'convesatorio4' => 'Conversatorio titulado “La Seguridad Social como Derecho Humano y su Impacto en las Resoluciones Judiciales”',
             'convesatorio5' => 'Presentación del Libro “Conciliación y Justicia Laboral” Coordinadores: Andrés Medina Guzmán y Sergio Carmelo Domínguez Mota',
-            'convesatorio6' => 'Conversatorio 4: “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral”',
-            'convesatorio7' => 'Conversatorio 5: ILTRAS “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
-            'convesatorio8' => 'Presentación del Libro ILTRAS “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
+            'convesatorio6' => 'Conversatorio titulado “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral”',
+            'convesatorio7' => 'Conversatorio titulado “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
+            'convesatorio8' => 'Presentación del Libro “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
             'convesatorio9' => 'Conferencia Magistral de Clausura',
         ];
 

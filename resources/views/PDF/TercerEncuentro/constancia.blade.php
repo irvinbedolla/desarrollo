@@ -51,15 +51,29 @@
     <img src="{{ public_path('assets/images/constancia_3erEncuentro.jpg') }}" class="fondo-membrete">
    @php
     $conversatorios_31 = [
-        'Conversatorio 4: “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral”',
-        'Conversatorio 5: ILTRAS “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
-        'Presentación del Libro ILTRAS “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
+        'Conversatorio titulado “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral”',
+        'Conversatorio titulado “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
+        'Presentación del Libro “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
         'Conferencia Magistral de Clausura',
     ];
 
     $fecha = in_array($conferencia, $conversatorios_31)
         ? '31 de octubre de 2025'
         : '30 de octubre de 2025';
+
+    $conversatorios_conferencias = [
+        'Conversatorio titulado “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral”',
+        'Conversatorio titulado “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
+        'Conversatorio titulado “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”',
+        'Conversatorio titulado “Implicación y Aplicación de la Ley Silla, Regulación del Trabajo en Plataformas Digitales y Reducción de las Jornadas Laborales”',
+        'Conversatorio titulado “La Seguridad Social como Derecho Humano y su Impacto en las Resoluciones Judiciales”',
+    ];
+    $complemento = in_array($conferencia, $conversatorios_conferencias)
+        ? 'al'
+        : 'a la';
+    $complemento2 = in_array($conferencia, $conversatorios_conferencias)
+        ? 'celebrado'
+        : 'celebrada';
 @endphp
 
     <div class="content">
@@ -67,7 +81,7 @@
             {{ $participante->nombre }} {{ $participante->primer_apellido }} {{ $participante->segundo_apellido }}
         </div>
         <div class="texto-secundario">
-            <p>Por su asistencia al <b><i>{{ $conferencia }}</i></b>, celebrada el {{ $fecha }} 
+            <p>Por su asistencia {{ $complemento }} <b><i>{{ $conferencia }}</i></b>, {{$complemento2}} el {{ $fecha }}, 
             en el marco del <b>Tercer Encuentro Nacional de la Conciliación y la Justicia Laboral: <i>Una Mirada Internacional con Perspectiva en los Derechos 
             Humanos y Acceso a la Justicia Laboral,</i></b> cuya participación contribuyó al intercambio de ideas y al fortalecimiento del diálogo en materia laboral.</p>
         </div>
