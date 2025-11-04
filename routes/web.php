@@ -368,7 +368,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Administración
         Route::get('administracion/configuracion',          [AdministracionController::class, 'configuracion'])->name('configuracion');
         Route::get('administracion/sedes',                  [AdministracionController::class, 'configuracion_sedes'])->name('configuracion_sedes');
-        Route::get('administracion/retrocesos',             [AdministracionController::class, 'genera_retroceso'])->name('genera_retroceso');        
+        Route::get('administracion/retrocesos',             [AdministracionController::class, 'genera_retroceso'])->name('genera_retroceso');       
+        Route::post('/consulta-retro-rati',                 [AdministracionController::class, 'consultar_retroceso_ratifficacion'])->name('consultar_retroceso_ratifficacion'); 
     //Fin de Administración  
     //Audiencias
         Route::get('/audiencias/index',                     [SeerController::class, 'audiencia_index'])->name('audiencia_index');

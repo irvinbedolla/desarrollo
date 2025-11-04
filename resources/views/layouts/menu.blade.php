@@ -92,6 +92,9 @@
             <a class="nav-link" href="{{ route('index_conciliadores') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Conciliadores</span>
             </a>
+            <a class="nav-link" href="{{ route('index_conciliadores') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Pendiente de Frima</span>
+            </a>
         @endrole
     @endauth
 

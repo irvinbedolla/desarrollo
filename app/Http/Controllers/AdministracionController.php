@@ -65,4 +65,28 @@ class AdministracionController extends Controller
     {
         return view('administracion.index_retroceso');
     }
+
+    public function consultar_retroceso_ratifficacion(Request $request){
+        // 1. Validar la solicitud si es necesario
+        $request->validate([
+            'id_a_consultar' => 'required|integer',
+        ]);
+
+        // 2. Realizar la consulta
+        $id = $request->input('id_a_consultar');
+        $registro = TuModelo::find($id); // o TuModelo::where('campo', $id)->first();
+
+        // 3. Retornar la respuesta JSON
+        if ($registro) {
+            return response()->json([
+                'success' => true,
+                'data' => $registro // Laravel lo convierte automáticamente a JSON
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Registro no encontrado.'
+        ], 404); // Se puede usar un código de estado 404 si no se encuentra
+    }
 }
