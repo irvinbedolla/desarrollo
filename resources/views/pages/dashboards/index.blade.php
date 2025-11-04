@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}"/>
+    <!-- Reverb client config for Echo (read by JS) -->
+    <meta name="reverb-key" content="{{ env('REVERB_APP_KEY', 'local') }}"/>
+    <meta name="reverb-host" content="{{ env('REVERB_HOST', request()->getHost()) }}"/>
+    <meta name="reverb-port" content="{{ env('REVERB_PORT', 8080) }}"/>
+    <meta name="reverb-scheme" content="{{ env('REVERB_SCHEME', request()->getScheme()) }}"/>
     <title>Si concilio</title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <!-- Bootstrap 4.1.1 -->
@@ -16,6 +21,7 @@
     <link href="public/assets/css/iziToast.min.css" rel="stylesheet">
     <link href="public/assets/css/sweetalert.css" rel="stylesheet" type="text/css"/>
     <link href="public/assets/css/select2.min.css" rel="stylesheet" type="text/css"/>
+    <link href="public/assets/css/realtime.css" rel="stylesheet" type="text/css"/>
     
     <!-- Agregados para los Select del Formulario Personas-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

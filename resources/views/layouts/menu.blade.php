@@ -5,6 +5,12 @@
             <a class="nav-link" href="{{ route('agenda') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Agenda</span>
             </a>
+            <a id="menu-pendiente-firma" class="nav-link" href="{{ route('index_conciliadores') }}">
+                <i class="bi bi-bank"></i>
+                <span class="text-dark" onclick="mis_citas()">Pendiente de Firma
+                    <span id="badge-pendiente-firma" class="menu-badge" style="display:none;">0</span>
+                </span>
+            </a>
             <a class="nav-link" href="{{ route('usuarios') }}">
                 <i class="bi bi-people-fill"></i><span class="text-dark" onclick="usuarios()">Usuarios</span>
             </a>
@@ -91,9 +97,6 @@
             </a>
             <a class="nav-link" href="{{ route('index_conciliadores') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Conciliadores</span>
-            </a>
-            <a class="nav-link" href="{{ route('index_conciliadores') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Pendiente de Frima</span>
             </a>
         @endrole
     @endauth

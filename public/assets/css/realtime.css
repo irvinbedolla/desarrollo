@@ -1,0 +1,23 @@
+/*Animación de resaltado*/
+.highlight-realtime {
+  background-color: #fff3cd !important;
+  border-left: 3px solid #ff6b6b;
+  animation: pulseRealtime 1s infinite alternate;
+}
+
+@keyframes pulseRealtime {
+  from { opacity: 1; }
+  to { opacity: 0.8; }
+}
+
+/*Contador de notificaciones*/
+.menu-badge {
+  display: inline-block;
+  margin-left: .5rem;
+  background: #dc3545;
+  color: #fff;
+  border-radius: 10px;
+  padding: 2px 6px;
+  font-size: 12px;
+  line-height: 1;
+}
