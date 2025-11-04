@@ -22,7 +22,7 @@
                                             <th style="color: #fff;">Descripción</th>
                                             <th style="color: #fff;">Unidad</th>
                                             <th style="color: #fff;">Estatus</th>
-                                            <th style="color: #fff;">QR</th>
+                                            <!--<th style="color: #fff;">QR</th>-->
                                         </thead>
                                         <tbody class="contenidobusqueda">
                                             @foreach($citas as $cita)

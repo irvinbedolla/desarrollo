@@ -160,7 +160,7 @@
                                                 </button>
                                             </div>
                                         @endif
-                                        <div style="background-color:#D2D3D5; width:100%; height:40px;">
+                                        <div style="background-color:#D2D3D5;">
                                             <h3 class="text-center" style="color:black">Cita Pendiente</h3>
                                         </div>    
                                         
@@ -178,16 +178,16 @@
                                                     <input type="text" value="{{$citas->descripcion}}" class="form-control"> 
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="">Fecha</label>
-                                                    <input type="date" class="form-control" value="{{$citas->fecha}}" >
+                                                    <input type="text" class="form-control" value="{{$citas->fecha}}" >
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                            <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="">Hora</label>
-                                                    <input type="time" class="form-control"  value="{{$citas->hora}}">
+                                                    <input type="text" class="form-control"  value="{{$citas->hora}}">
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
