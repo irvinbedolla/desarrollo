@@ -10,9 +10,7 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            @role('Particular')
-                                <a class="btn btn-warning" href="{{ route('cita_direccion_crear') }}" onclick=crear_usuario();> Nuevo</a>
-                            @endcan
+                            <a class="btn btn-warning" href="{{ route('cita_direccion_crear') }}" onclick=crear_usuario();> Nuevo</a>
                                 <div class="table-responsive">
                                     <table id="example" class="table-striped" style="width:100%">
                                         <thead style="background-color: #4A001F;">
@@ -24,7 +22,7 @@
                                             <th style="color: #fff;">Descripción</th>
                                             <th style="color: #fff;">Unidad</th>
                                             <th style="color: #fff;">Estatus</th>
-                                            <th style="color: #fff;">QR</th>
+                                            <!--<th style="color: #fff;">QR</th>-->
                                         </thead>
                                         <tbody class="contenidobusqueda">
                                             @foreach($citas as $cita)
@@ -38,9 +36,9 @@
                                                     <td>{{$cita->unidad}}</td>
                                                     <td>{{$cita->estatus}}</td>
                                                     <td>
-                                                        @role('Particular')
+                                                        <!--
                                                         <a class="btn btn-info" href="{{ route('generarQR_cita', $cita->id)}}" target="_blank">Generar QR</a>
-                                                        @endcan
+                                                        -->
                                                     </td>
                                                 </tr>
                                             @endforeach

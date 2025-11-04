@@ -102,7 +102,7 @@ class CitaDireccionController extends Controller
 
     public function generarQr($id)
     {
-        $dataParaQr = "https://sistema-integral-qa.cclmichoacan.gob.mx/Confirmacion/$id";
+        $dataParaQr = "https://siconcilio.cclmichoacan.gob.mx/Confirmacion/$id";
         // Genera el código QR como una cadena SVG (Scalable Vector Graphics)
         $qrCode = QrCode::size(200)->generate($dataParaQr);
 
