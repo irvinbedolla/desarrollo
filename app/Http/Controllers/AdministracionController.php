@@ -41,10 +41,15 @@ class AdministracionController extends Controller
         $id = auth()->user()->id;
         $user = User::find($id);
        
-        return view('administracion/index_admin');
+        return view('administracion.index_admin');
     }
+
     public function configuracion_sedes(){
         //dd("hola");
-      return view('administracion/index_sedes');
+      return view('administracion.index_sedes');
     } 
+
+    public function genera_retroceso(){
+        return view('administracion.index_retroceso');
+    }
 }

@@ -366,8 +366,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/cambio_contraseña/index',  [HomeController::class, 'password_cambiar'])->name('password_cambiar');
         Route::post('/notificaciones/editar',   [HomeController::class, 'contraseña_update'])->name('contraseña_update'); 
     //Administración
-        Route::get('administracion/configuracion',                         [AdministracionController::class, 'configuracion'])->name('configuracion');
-        Route::get('administracion/sedes',                                 [AdministracionController::class, 'configuracion_sedes'])->name('configuracion_sedes');
+        Route::get('administracion/configuracion',          [AdministracionController::class, 'configuracion'])->name('configuracion');
+        Route::get('administracion/sedes',                  [AdministracionController::class, 'configuracion_sedes'])->name('configuracion_sedes');
+        Route::get('administracion/retrocesos',             [AdministracionController::class, 'genera_retroceso'])->name('genera_retroceso');        
     //Fin de Administración  
     //Audiencias
         Route::get('/audiencias/index',                     [SeerController::class, 'audiencia_index'])->name('audiencia_index');

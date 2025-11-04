@@ -39,22 +39,21 @@
                             @endif
 
                             <div class="row">
-                                <div class="col-xs-4 col-sm-4 col-md-4">
-                                    <div align="center">
-                                        <a href="{{ route('configuracion_sedes') }}" class="btn btn-primary" style="width: 100%">Dias inhábiles</a>
-                                    </div>
+                                <div class="col-xs-4 col-sm-4 col-md-2">
+                                    <label>Ingresa el Folio</label>
+                                    <input type="number" name="folio" class="form-control">
                                 </div>
-                                <div class="col-xs-4 col-sm-4 col-md-4">
-                                    <div align="center">
-                                        <a href="{{ route('configuracion_sedes') }}" class="btn btn-primary" style="width: 100%">Usuarios</a>
-                                    </div>
+                                <div class="col-xs-4 col-sm-4 col-md-2">
+                                    <label>Ingresa el Año</label>
+                                    <input type="number" name="folio" class="form-control">
                                 </div>
-                                <div class="col-xs-4 col-sm-4 col-md-4">
-                                    <div align="center">
-                                        <a href="{{ route('genera_retroceso') }}" class="btn btn-primary" style="width: 100%">Retrocesos</a>
+                                <div class="col-xs-4 col-sm-4 col-md-2">
+                                    <div align="center"><br>
+                                        <button type="submit" class="btn btn-primary">Buscar</button>
                                     </div>
                                 </div>
                             </div>
+                            
                         </div>
                     </div>
                 </div>
