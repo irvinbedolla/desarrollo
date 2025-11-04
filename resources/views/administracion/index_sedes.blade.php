@@ -15,11 +15,22 @@
                                 <div class="table-responsive">
                                     <table id="example" class="table table-striped mt-1">
                                         <thead style="background-color: #4A001F;">
-                                            <th style="color: #fff;">Delegación</th>
-                                            <th style="color: #fff;">Acciones</th>
+                                            <tr>
+                                                <th style="color: #fff;">Delegación</th>
+                                                <th style="color: #fff; text-align: center;">Acciones</th>
+                                            </tr>
                                         </thead>
                                         <tbody>
-                                            
+                                            @foreach ($sedes as $sede)
+                                                <tr>
+                                                    <td>{{$sede instanceof \App\Models\Sedes ? ($sede->delegacion ?? $sede->nombre ?? $sede->name ?? '') : $sede}}</td>
+                                                    <td class="text-center">
+                                                        <a type="button" class="btn btn-success text-white">Agregar</a>
+                                                        <a type="button" class="btn btn-info text-white">Editar</a>
+                                                        <a type="button" class="btn btn-danger text-white">Borrar</a>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
                                         </tbody>
                                     </table>
                                 </div>

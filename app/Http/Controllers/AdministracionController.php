@@ -24,6 +24,7 @@ use App\Models\User;
 use App\Models\Turnos;
 use App\Models\TurnoDisponible;
 use App\Models\DiasInhabiles;
+use App\Models\Sedes;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -44,12 +45,24 @@ class AdministracionController extends Controller
         return view('administracion.index_admin');
     }
 
-    public function configuracion_sedes(){
-        //dd("hola");
-      return view('administracion.index_sedes');
+    public function configuracion_sedes()
+    {
+        $id = auth()->user()->id;
+        $user = User::findOrFail($id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+
+        if (!empty($userRole) && $userRole[0] === "Super Usuario") {
+            $sedes = Sedes::all();
+        } else {
+            $sedes = collect([$user->delegacion]);
+        }
+
+        return view('administracion.index_sedes', compact('sedes'));
     } 
 
-    public function genera_retroceso(){
+    public function genera_retroceso()
+    {
         return view('administracion.index_retroceso');
     }
 }
