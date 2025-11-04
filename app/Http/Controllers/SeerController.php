@@ -2524,7 +2524,13 @@ class SeerController extends Controller
         );
         Audiencias::create($audiencia_insert);
         //Actualizar genera
-        SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $Audiencia[3], 'estatus' => 'Confirmado' ]);
+        if (isset($data["notificacion"][0]) && $data["notificacion"][0] == 'Trabajador') {
+            SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $Audiencia[3], 'estatus' => 'Confirmado', 'pendiente_firma' => 'Si' ]);
+        }
+        else{
+            SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $Audiencia[3], 'estatus' => 'Confirmado' ]);
+        }
+        /*
         if (isset($data["notificacion"][0]) && $data["notificacion"][0] == 'Trabajador') {
             return redirect()->route('descargarCitatorios', ['id' => $data["id"], 'isAud' => 1]);
         } elseif ($request->input('isAudiencia') === '1') {
@@ -2532,6 +2538,8 @@ class SeerController extends Controller
         } else {
             return redirect()->route('solicitudes_pendientes'); 
         }
+        */
+        return redirect()->route('solicitudes_pendientes'); 
     }
 
     public function GeneraExpediente($id,$delegacion){
