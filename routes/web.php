@@ -49,8 +49,8 @@ use Illuminate\Support\Facades\DB;
         return view('../public/welcome');
     });
 
-    Route::get('solicitudes',    [SeerController::class, 'solicitudesLinea'])->name('solicitud');
-    Route::get('tipoIndustria/{tipo_solicitud}',  [SeerController::class, 'Industrias'])->name('solicitud.industria');
+    Route::get('solicitudes',                           [SeerController::class, 'solicitudesLinea'])->name('solicitud');
+    Route::get('tipoIndustria/{tipo_solicitud}',        [SeerController::class, 'Industrias'])->name('solicitud.industria');
     Route::get('/registro_tercer_encuentro',            [SeerController::class, 'registro_tercer_encuentro'])->name('registro_tercer_encuentro');
     Route::post('/registro_tercer_encuentro/guardar',   [SeerController::class, 'tercer_encuentro_registro'])->name('tercer_encuentro_registro');
     Route::get('GeneraConstancia',                      [SeerController::class, 'genera_constancia']);

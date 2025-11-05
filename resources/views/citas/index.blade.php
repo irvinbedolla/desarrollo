@@ -22,7 +22,7 @@
                                             <th style="color: #fff;">Descripción</th>
                                             <th style="color: #fff;">Unidad</th>
                                             <th style="color: #fff;">Estatus</th>
-                                            <!--<th style="color: #fff;">QR</th>-->
+                                            <th style="color: #fff;">QR</th>
                                         </thead>
                                         <tbody class="contenidobusqueda">
                                             @foreach($citas as $cita)
@@ -36,9 +36,7 @@
                                                     <td>{{$cita->unidad}}</td>
                                                     <td>{{$cita->estatus}}</td>
                                                     <td>
-                                                        <!--
                                                         <a class="btn btn-info" href="{{ route('generarQR_cita', $cita->id)}}" target="_blank">Generar QR</a>
-                                                        -->
                                                     </td>
                                                 </tr>
                                             @endforeach

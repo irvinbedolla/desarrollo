@@ -102,21 +102,21 @@
                             SOY <br>PATRONAL INDIVIDUAL   
                         </a>
                     </div>  
-                </div>   <!-- fin Seer -->
-                <div class="card">   <!-- Inicio Seer -->
+                </div>   <!-- 
+                <div class="card">  
                     <div style="display: block; text-align: center;">
                         <a href="{{ route('solicitud.industria', ['tipo_solicitud' =>3]) }}" class="button-link">
                             SOY <br>PATRONAL COLECTIVA    
                         </a>
                     </div>  
                 </div> 
-                <div class="card">   <!-- Inicio Seer -->
+                <div class="card"> 
                     <div style="display: block; text-align: center;">
                         <a href="{{ route('solicitud.industria', ['tipo_solicitud' =>4]) }}" class="button-link">
                             SOY<br> SINDICATO
                         </a>
                     </div>  
-                </div>   <!-- fin Seer -->
+                </div> -->
             </div></center><br><br><br>
         </main>
    
