@@ -91,7 +91,6 @@
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}"      target="_blank">Documentos Digitales</a></li>
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFnotificacion_solicitante', $solicitud->id) }}" target="_blank">Notificación al solicitante</a></li>
-                                                                    <li><button type="button" class="btn btn-info open-modal" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
                                                         </div>                                                        
@@ -130,7 +129,6 @@
                                                                     <li><a class="dropdown-item" href="{{ route('VerPDFAudiencia', $solicitud->id) }}"  target="_blank">Acta de Audiencia</a></li>
                                                                     <li><a class="dropdown-item" href="{{ route('PDFconveniosolicitud', $solicitud->id) }}" target="_blank">Convenio</a></li>
                                                                     <li><a class="dropdown-item" href="{{ route('PDFcumplimiento', $solicitud->id) }}"  target="_blank">Constancia de cumplimiento</a></li>
-                                                                    <li><button type="button" class="btn open-modal" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
                                                         </div> 
@@ -142,7 +140,6 @@
                                                                 </button>
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="dropdown-item" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}"  target="_blank">Documentos Digitales</a></li>
-                                                                    <li><button type="button" class="btn open-modal" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
                                                         </div> 

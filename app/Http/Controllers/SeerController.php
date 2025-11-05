@@ -2166,7 +2166,7 @@ class SeerController extends Controller
                 'email'            => $usuario["email"],
                 'NumFolio'         => $folio,
             ];
-            Mail::to($usuario['email'])->send(new SolicitudMail($variables));
+            //Mail::to($usuario['email'])->send(new SolicitudMail($variables));
         }
         else{
             $mensaje = " el correo:".$usuario["email"]." para continuar tú trámite.";
@@ -2176,7 +2176,7 @@ class SeerController extends Controller
                 'email'            => $usuario["email"],
                 'NumFolio'         => $folio,
             ];
-            Mail::to($usuario['email'])->send(new SolicitudMail($variables));
+            //Mail::to($usuario['email'])->send(new SolicitudMail($variables));
         }
 
         return view('solicitudes.aviso',compact('id','mensaje','delegacion'));
