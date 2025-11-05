@@ -7252,6 +7252,17 @@ class SeerController extends Controller
                 );
                 DocumentosSolicitud::create($data_insertar);
 
+                $totalCitados = SeerCitados::where('id_solicitud', $solicitudId)->count();
+                $totalCitatoriosSubidos = DocumentosSolicitud::where('id_solicitud', $solicitudId)
+                ->where('nombre_documento', 'like', '%Citatorio%')
+                ->count();
+                if ($totalCitatoriosSubidos >= $totalCitados && $totalCitados > 0) {
+                    SeerPerGeneral::where('id', $solicitudId)
+                    ->update(['pendiente_firma' => 'No']);
+                }
+
+            return back()->with('success', 'Citatorio cargado correctamente.');
+            
             } else {
                 return back()->withErrors(['documentoCitatoriosT' => 'Archivo no válido.']);
             }
