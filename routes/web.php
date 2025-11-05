@@ -490,7 +490,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Conciliadores
         Route::get('/conciliador/index',                [ConciliadoresController::class, 'index'])->name('index_conciliadores');
         Route::post('/conciliador/update_perimsos/',    [ConciliadoresController::class, 'update'])->name('conciliadores_permisos');
-    
+        Route::get('/conciliador/firmaCitatorios',      [SeerController::class, 'firmaCitatorios_index'])->name('index_conciliadores'); //Citatorios a firmar por los conciliadores
     //Fin Conciliadores
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);

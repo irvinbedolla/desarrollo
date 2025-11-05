@@ -197,6 +197,12 @@
             <a class="nav-link" href="{{ route('seer') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">SEER</span>
             </a>
+            <a id="menu-pendiente-firma" class="nav-link" href="{{ route('index_conciliadores') }}">
+                <i class="bi bi-bank"></i>
+                <span class="text-dark" onclick="mis_citas()">Pendiente de Firma
+                    <span id="badge-pendiente-firma" class="menu-badge" style="display:none;">0</span>
+                </span>
+            </a>
         @endrole
     @endauth
 

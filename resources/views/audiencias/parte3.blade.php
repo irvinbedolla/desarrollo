@@ -52,7 +52,7 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12"  style="border:1px solid black;">
                                         <div class="form-group">
-                                            <label for="name">RESOLUCIÓN PRIMERA MANIFESTACIÓN</label>
+                                            <label for="name">PRIMERA MANIFESTACIÓN DE LAS PARTES</label>
                                             <textarea name="primera" class="form-control" required></textarea>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
@@ -78,7 +78,7 @@
                                     <div id="justificacion" style="display:none"><br>
                                         <div class="col-xs-12 col-sm-12 col-md-12" style="border:1px solid black;">
                                             <div class="form-group">
-                                                <label for="name">RESOLUCIÓN JUSTIFICACIÓN PROPUESTA</label>
+                                                <label for="name">PROPUESTA DE CONVENIO CONCILIATORIO</label>
                                                 <textarea name="justificacion" class="form-control" required></textarea>
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
@@ -94,7 +94,7 @@
                                     <div id="segunda" style="display:none"><br>
                                         <div class="col-xs-12 col-sm-12 col-md-12" style="border:1px solid black;">
                                             <div class="form-group">
-                                                <label for="name">RESOLUCIÓN SEGUNDA MANIFESTACIÓN</label>
+                                                <label for="name">SEGUNDA MANIFESTACIÓN DE LAS PARTES</label>
                                                 <textarea name="segunda" class="form-control" required></textarea>
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
@@ -102,7 +102,7 @@
                                             </div>
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-6"><br>
-                                            <label for="name">Conclución de audiencia</label>
+                                            <label for="name">Final de la audiencia</label>
                                             <select id="tipo_de_conclucion" name="conclucion" class="form-control">
                                                 <option>Seleccione</option>
                                                 <option value="Conciliacion">Hubo Convenio</option>
@@ -203,7 +203,41 @@
                                         </div>
                                     </div>
 
-                                    <div id="no_conciliacion" style="display:none">
+                                    <div id="no_conciliacion" style="display:none"><br>
+                                        <div class="table-responsive">
+                                            <table class="table table-striped mt-1">
+                                                <thead style="background-color: #4A001F;">
+                                                    <tr> 
+                                                        <th style="display:none">ID</th>
+                                                        <th style="color: #ffff;">Tipo parte</th>
+                                                        <th style="color: #ffff;">Nombre de la parte</th>
+                                                        <th style="color: #ffff;">Representante legal</th>
+                                                        <th style="color: #ffff;">Asistencia</th>
+                                                        <th style="color: #ffff;"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>                                              
+                                                    @foreach($representantes as $representante)
+                                                        <tr>
+                                                            <td  style="display:none">{{$representante->id}}</td>
+                                                            <td style="color: #000000;"><b>Citado</b></td>
+                                                            <td>{{$representante->nombre}} {{$representante->primer_apellido}} {{$representante->segundo_apellido}}</td>
+                                                            <td>
+                                                                @if($representante->id_abogado != null && $representante->id_fisica == null)
+                                                                    {{ $representante->nombre_abogado }} {{ $representante->primero_abogado }} {{ $representante->segundo_abogado }}
+                                                                @else
+                                                                    {{ $representante->nombre_fisica }} {{ $representante->primer_fisica }} {{ $representante->segundo_fisica }}
+                                                                @endif
+                                                            </td>
+                                                            <td>
+                                                                <input type="checkbox" name="aparece_convenio[{{ $representante->id }}]" value="1" {{ $representante->aparece_convenio == 1 ? 'checked' : '' }}>
+                                                            </td>                                          
+                                                        </tr>
+                                                       
+                                                    @endforeach
+                                                </tbody> 
+                                            </table>
+                                        </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <br><button type="submit" class="btn btn-primary">Guardar</button>
                                         </div>
@@ -223,26 +257,6 @@
         </div>
     </section>
 @endsection
-
-<div class="modal fade" id="miModal" tabindex="-1" role="dialog" aria-labelledby="miModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="miModalLabel">Título del Modal</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                Contenido del modal...
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 
 <!-- Modal para archivar audiencia-->
 <div class="modal fade" id="ModalArchivar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -841,6 +855,27 @@
 
         const intervalo = setInterval(actualizarTemporizador, 1000);
         actualizarTemporizador();
+    </script>
+    <!--citados a mostrar en convenio -->
+    <script>
+        document.getElementById('btn-terminar').addEventListener('click', function(e) {
+            var form = document.getElementById('form_roles');
+
+            document.querySelectorAll('.clon-checkbox').forEach(function(el){
+                el.remove();
+            });
+
+            var checkboxes = document.querySelectorAll('input[type=checkbox][name^="aparece_convenio"]');
+
+            checkboxes.forEach(function(checkbox) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = checkbox.name;
+                input.value = checkbox.checked ? 1 : 0; // enviar 0 si no está marcado 1 si lo marcaron
+                input.classList.add('clon-checkbox');
+                form.appendChild(input);
+            });
+        });
     </script>
 @endsection
 

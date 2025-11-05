@@ -41,7 +41,7 @@
                                             <th style="color: #fff;">Estatus</th>
                                             <th style="color: #fff;">Detalles</th>
                                             <th style="color: #fff;">Acciones</th>
-                                            <th style="color: #fff;">Cumplimeintos</th>
+                                            <th style="color: #fff;">Cumplimientos</th>
                                             <th style="color: #fff;">Documentos</th>
                                         </thead>
                                         <tbody>
@@ -122,7 +122,7 @@
                                                                 </button>
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Documentos Digitales</a></li>
-                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFno_conciliacion', $audiencia->id_solicitud) }}"      target="_blank">Constancia de no conciliación</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFno_conciliacion', $audiencia->id_solicitud) }}" target="_blank">Constancias de no conciliación</a></li>
                                                                 </ul>
                                                             </div>
                                                         </div> 

@@ -190,7 +190,7 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12"  style="border:1px solid black;">
                                         <div class="form-group">
-                                            <label for="name">RESOLUCIÓN PRIMERA MANIFESTACIÓN</label>
+                                            <label for="name">PRIMERA MANIFESTACIÓN DE LAS PARTES</label>
                                             <textarea name="primera" class="form-control"> {{$conciliadores->resolicion_primera}}</textarea>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
@@ -201,7 +201,7 @@
                                     <div id="justificacion"><br>
                                         <div class="col-xs-12 col-sm-12 col-md-12" style="border:1px solid black;">
                                             <div class="form-group">
-                                                <label for="name">RESOLUCIÓN JUSTIFICACIÓN PROPUESTA</label>
+                                                <label for="name">PROPUESTA DE CONVENIO CONCILIATORIO</label>
                                                 <textarea name="justificacion" class="form-control" >{{$conciliadores->resolicion_justificacion}}</textarea>
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
@@ -212,7 +212,7 @@
                                     <div id="segunda" ><br>
                                         <div class="col-xs-12 col-sm-12 col-md-12" style="border:1px solid black;">
                                             <div class="form-group">
-                                                <label for="name">RESOLUCIÓN SEGUNDA MANIFESTACIÓN</label>
+                                                <label for="name">SEGUNDA MANIFESTACIÓN DE LAS PARTES</label>
                                                 <textarea name="segunda" class="form-control" >{{$conciliadores->resolicion_segunda}}</textarea>
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
@@ -220,7 +220,7 @@
                                             </div>
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-6"><br>
-                                            <label for="name">Conclución de audiencia</label>
+                                            <label for="name">Final de la audiencia</label>
                                             <select id="conclucion" name="conclucion" class="form-control">
                                                 <option>Seleccione</option>
                                                 <option value="Conciliacion" {{ $conciliadores["conclucion"] == "Conciliacion" ? "selected" : '' }}>Hubo Convenio</option>
@@ -284,7 +284,7 @@
                                         <div id="newRow"></div>
                                        
                                         <div class="col-xs-12 col-sm-6 col-md-12"><br>
-                                            <button id="addRetencion" type="button" class="btn btn-info">Agregar deducción</button>
+                                            <button id="addRetencion" type="button" class="btn btn-info">Agregar Deducción</button>
                                         </div>
                                         
                                         <div id="newRowDeduccion"></div>
@@ -1191,7 +1191,7 @@
         }
     </script>
     <!--citados a mostrar en convenio -->
-   <script>
+    <script>
         document.getElementById('btn-terminar').addEventListener('click', function(e) {
             var form = document.getElementById('form_roles');
 

@@ -2484,33 +2484,33 @@ class SeerController extends Controller
         switch($Audiencia[3]){
            //Morelia
             case 16:
-                $sala = "Sala 2";
+                $sala = "Sala 2"; break;
             case 22:
-                $sala = "Sala 11";
+                $sala = "Sala 11"; break;
             case 25:
-                $sala = "Sala 12";
+                $sala = "Sala 12"; break;
             case 33:
-                $sala = "Sala 8";
+                $sala = "Sala 8"; break;
             case 35:
-                $sala = "Sala 9";
+                $sala = "Sala 9"; break;
             case 36:
-                $sala = "Sala 7";
+                $sala = "Sala 7"; break;
             case 38:
-                $sala = "Sala 5";
-            //Usuapan
+                $sala = "Sala 5"; break;
+            //Uruapan
             case 41:
-                $sala = "Sala 10";
+                $sala = "Sala 10"; break;
             case 42:
-                $sala = "Sala 4";
+                $sala = "Sala 4"; break;
             case 45:
-                $sala = "Sala 1";
+                $sala = "Sala 1"; break;
             //Zamora
             case 51:
-                $sala = "Sala 3";
+                $sala = "Sala 3"; break;
             case 54:
-                $sala = "Sala 6";
+                $sala = "Sala 6"; break;
             default:
-                $sala = "Pendiente";
+                $sala = "Pendiente"; break;
         }
         $audiencia_insert=array(
             'id_solicitud'      => $data["id"],
@@ -3470,10 +3470,20 @@ class SeerController extends Controller
     }
 
     public function audienciaParte3($id){
-
         $sede = Auth::user()->delegacion;
+        $solicitud = SeerPerGeneral::find($id);
 
-        return view('/audiencias/parte3',compact('id', 'sede'));
+        $representantes = SeerCitados::
+        leftjoin('abogados', 'abogados.idAbogado', '=', 'seer_citados.id_abogado')
+        ->leftJoin('persona_fisica', 'persona_fisica.id', '=', 'seer_citados.id_fisica')
+        ->where('seer_citados.id_solicitud', $id)
+        ->select('seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido','seer_citados.rfc',
+        'abogados.nombres_patronal as nombre_abogado','abogados.primer_apellido_patronal as primero_abogado','abogados.segundo_apellido_patronal as segundo_abogado',
+        'persona_fisica.nombre as nombre_fisica','persona_fisica.primer_apellido as primer_fisica','persona_fisica.segundo_apellido as segundo_fisica',
+        'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus')
+        ->get();
+
+        return view('/audiencias/parte3',compact('id', 'sede','representantes'));
     }
 
     public function historial_notificador(Request $request){
@@ -3827,6 +3837,18 @@ class SeerController extends Controller
 
     public function concluir_audiencia_conciliador(Request $request){    
         $data = $request->all();
+
+        $apareceConvenio = isset($data['aparece_convenio']) && is_array($data['aparece_convenio'])
+        ? array_keys($data['aparece_convenio'])
+        : [];
+
+        $representantes = SeerCitados::where('id_solicitud', $request->id)->pluck('id');
+        SeerCitados::whereIn('id', $representantes)->update(['aparece_convenio' => 0]);
+        
+        if (!empty($apareceConvenio)) {
+            SeerCitados::whereIn('id', $apareceConvenio)->update(['aparece_convenio' => 1]);
+        }
+
         $id_solicitud = $data["id"];
         $monto = 0;
         $fecha_actual = date('y-m-d');
@@ -3887,17 +3909,17 @@ class SeerController extends Controller
             }
 
             if(isset($data["descripcion_deduccion"])){
-            $cont = count($data["descripcion_deduccion"]);
-            for($i = 0; $i < $cont; $i++) {
-                $data_deduccion = [
-                    'id_solicitud'  => $data["id"], 
-                    'monto'         => $data["monto_deduccion"][$i], 
-                    'descripcion'   => $data["descripcion_deduccion"][$i],
-                    'tipo_pago'     => "Audiencia"
-                ];
-                Deducciones::create($data_deduccion);
+                $cont = count($data["descripcion_deduccion"]);
+                for($i = 0; $i < $cont; $i++) {
+                    $data_deduccion = [
+                        'id_solicitud'  => $data["id"], 
+                        'monto'         => $data["monto_deduccion"][$i], 
+                        'descripcion'   => $data["descripcion_deduccion"][$i],
+                        'tipo_pago'     => "Audiencia"
+                    ];
+                    Deducciones::create($data_deduccion);
+                }
             }
-        }
             if($conteo >= 2){
                 $estatus = "Concluida Pagos";
             }
@@ -3907,7 +3929,7 @@ class SeerController extends Controller
             
             $solicitante = SeerSolicitante::where('id_solicitud',$data["id"])->first();
             $numero_audiencia = $this->GeneraAudiencia($data["id"]);
-            //Actualizar Audiecia
+            //Actualizar Audiencia
             $data_conciliador = [
                 'id_solicitud'          => $data["id"],
                 'numero_audiencia'      => $numero_audiencia["0"],
@@ -3944,7 +3966,7 @@ class SeerController extends Controller
         else{
             $solicitante = SeerSolicitante::where('id_solicitud',$data["id"])->first();
             $numero_audiencia = $this->GeneraAudiencia($data["id"]);
-            //Actualizar Audiecia
+            //Actualizar Audiencia
             $data_conciliador = [
                 'id_solicitud'          => $data["id"],
                 'numero_audiencia'      => $numero_audiencia["0"],
@@ -4417,36 +4439,52 @@ class SeerController extends Controller
     public function VerPDFNoConciliacion($id){
         $solicitud = SeerPerGeneral::find($id);
         
-        $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
-        $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
-        ->first();
-        
-        //$citado = SeerCitados::where('id_solicitud', $id)->get();
-        $citado  = SeerPerGeneral::join("seer_citados","seer_citados.id_solicitud","=","seer_general.id");
-        $citado = $citado->where("seer_citados.id_solicitud", "=", $solicitud["id"])
-        ->first();
+        $solicitante = SeerPerGeneral::join("seer_solicitante", "seer_solicitante.id_solicitud", "=", "seer_general.id")
+            ->where("seer_solicitante.id_solicitud", "=", $solicitud->id)
+            ->first();
 
-        $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
-        $conciliador = $conciliador->where("seer_general.conciliador_id", "=", $solicitud["conciliador_id"])
-        ->select('users.name')
-        ->first();
+        $conciliador = User::join("seer_general", "seer_general.conciliador_id", "=", "users.id")
+            ->where("seer_general.conciliador_id", "=", $solicitud->conciliador_id)
+            ->select('users.name')
+            ->first();
 
-        $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
-        $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
-        ->first();
-        $municipio = Municipios::find($citado->municipio_citado);
-        $municipioEmpresa = $municipio ? $municipio->nombre : 'No definido';
-        $estado = Estados::find($citado->estado_citado);
-        $estadoEmpresa = $estado ? $estado->nombre : 'No definido';
-        $html = view('PDF/Solicitudes/NoConciliacion', compact('id', 'solicitud','conciliador','citado','audiencia','solicitante','municipioEmpresa','estadoEmpresa'))->render();
+        $audiencia = SeerPerGeneral::join("audiencias", "audiencias.id_solicitud", "=", "seer_general.id")
+            ->where("audiencias.id_solicitud", "=", $solicitud->id)
+            ->first();
 
+        $citados = SeerCitados::where("id_solicitud", $solicitud->id)->get();
+        $html = '<html>
+            <head>
+                <meta charset="utf-8">
+                <style>
+                    body { font-family: DejaVu Sans, sans-serif; font-size: 12px; }
+                    .page-break { page-break-after: always; }
+                </style>
+            </head>
+            <body>';
+
+        foreach ($citados as $index => $citado) {
+            $municipio = Municipios::find($citado->municipio_citado);
+            $municipioEmpresa = $municipio ? $municipio->nombre : 'No definido';
+            $estado = Estados::find($citado->estado_citado);
+            $estadoEmpresa = $estado ? $estado->nombre : 'No definido';
+            $html .= view('PDF/Solicitudes/NoConciliacion', compact(
+                'id', 'solicitud', 'conciliador', 'citado', 'audiencia', 'solicitante', 'municipioEmpresa', 'estadoEmpresa'
+            ))->render();
+
+            if ($index < count($citados) - 1) {
+                $html .= '<div class="page-break"></div>';
+            }
+        }
+
+        $html .= '</body></html>';
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
-            ->setOption('isPhpEnabled', true); 
+            ->setOption('isPhpEnabled', true);
 
-        $nombreArchivo = 'No_Conciliacion_' . $solicitante->nombre .'.pdf';
-        return $pdf->stream($nombreArchivo);                 
+        $nombreArchivo = 'No_Conciliacion_' . $solicitante->nombre . '.pdf';
+        return $pdf->stream($nombreArchivo);                   
     }
 
     public function audiencias_cumplimiento(){
@@ -7140,6 +7178,36 @@ class SeerController extends Controller
     //VISTA PDF Citatorio entregado por el trabajador
     public function descargarCitatorios(Request $request, $id) {
         try {
+        // Obtener la solicitud
+        $solicitud = SeerPerGeneral::select('id', 'NUE')
+            ->where('id', $id)
+            ->first();
+
+        if (!$solicitud) {
+            return redirect()->back()->with('error', 'Solicitud no encontrada.');
+        }
+
+        // Obtener el nombre del solicitante
+        $solicitud->nombre_solicitante = SeerSolicitante::where('id_solicitud', $id)
+            ->value('nombre');
+
+        // Obtener los citados
+        $citados = SeerCitados::where('id_solicitud', $id)->get();
+        if ($citados->isEmpty()) {
+            return redirect()->back()->with('error', 'No hay citados para esta solicitud.');
+        }
+
+        $isAudiencia = $request->query('isAud', null);
+
+        return view('solicitudes.descargaCitatorios', compact('solicitud', 'citados', 'isAudiencia'));
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => true,
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+        /*try {
             $citados = SeerCitados::where('id_solicitud', $id)->get();
             $isAudiencia = $request->query('isAud', null);
 
@@ -7154,7 +7222,7 @@ class SeerController extends Controller
                 'error' => true,
                 'message' => $e->getMessage(),
             ], 500);
-        }
+        }¨*/
     }
 
     //Guarda los citatorios para notificar el trabajador ya firmados digitalmente
@@ -7565,5 +7633,29 @@ class SeerController extends Controller
             } 
         }
         return "Correos enviados a todos los participantes con 6 o más asistencias.";
+    }
+    public function firmaCitatorios_index(){
+        $user = auth()->user();
+        $solicitudes = SeerPerGeneral::select(
+            'seer_general.*',
+            'seer_solicitante.nombre as nombre_solicitante'
+        )
+        ->leftJoin('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
+        ->where('seer_general.conciliador_id', $user->id)
+        ->where('seer_general.pendiente_firma', 'Si')
+        ->where('seer_general.estatus', 'Confirmado')
+        ->orderByDesc('seer_general.id')
+        ->get();
+        /*$solicitudes = SeerPerGeneral::where('conciliador_id', $user->id)
+        ->where('pendiente_firma', 'Si')
+        ->where('estatus', 'Confirmado')
+        ->orderByDesc('id')
+        ->get();
+
+        /*foreach ($solicitudes as $solicitud) {
+            $solicitud->citados = SeerCitados::where('id_solicitud', $solicitud->id)->get();
+        }*/
+
+        return view('conciliadores.firmaCitatorios', compact('solicitudes', 'user'));
     }
 }
