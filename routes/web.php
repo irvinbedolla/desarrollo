@@ -26,8 +26,9 @@ use App\Http\Controllers\CitaDireccionController;
 use App\Http\Controllers\CorreosController;
 use App\Http\Controllers\ConciliadoresController;
 use App\Http\Controllers\AdministracionController;
-use App\Events\PendienteFirmaUpdated;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use App\Models\SeerPerGeneral;
 
 /*
 |--------------------------------------------------------------------------
@@ -508,11 +509,15 @@ Route::get('/auth/redirect/{provider}', [SocialiteController::class, 'redirect']
 
 require __DIR__ . '/auth.php';
 
-// Ruta de depuración protegida 
-Route::middleware(['auth', 'role:Super Usuario', 'throttle:10,1'])->group(function () {
-    // Evento de prueba
-    Route::get('/debug/broadcast/pendiente-firma/{count?}', function ($count = 1) {
-        event(new PendienteFirmaUpdated((int) $count));
-        return response()->json(['ok' => true, 'count' => (int) $count]);
-    })->name('debug.broadcast.pendiente_firma');
-});
+//Devuelve el conteo de registros pendientes de firma para el usuario logueado
+Route::middleware(['auth', 'throttle:120,1'])->get('/poll/pendiente-firma', function () {
+    $userId = Auth::id();
+    $count = 0;
+    if ($userId) {
+        $count = SeerPerGeneral::query()
+            ->where('pendiente_firma', 'Si')
+            ->where('conciliador_id', $userId)
+            ->count();
+    }
+    return response()->json(['count' => (int) $count]);
+})->name('poll.pendiente_firma');

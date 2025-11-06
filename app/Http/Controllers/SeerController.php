@@ -2311,6 +2311,13 @@ class SeerController extends Controller
     public function solicitud_confirmar(Request $request){
         $data = $request->all();
 
+        // Debe existir al menos un citado para poder guardar
+        if (!isset($data['colonia_citado']) || !is_array($data['colonia_citado']) || count($data['colonia_citado']) < 1) {
+            return back()
+                ->withErrors(['citados' => 'Debe agregar al menos un citado antes de guardar.'])
+                ->withInput();
+        }
+
         //Se va asignar el conciliador y la sala
         $id_user = auth()->user()->id;
         $user = User::find($id_user);
@@ -2400,6 +2407,14 @@ class SeerController extends Controller
         SeerCitados::where('id_solicitud',$data["id"])->delete();
         $cont = count($data["colonia_citado"]);
         for($i = 0; $i < $cont; $i++) {
+            //Si requiere traductor, el lenguaje es obligatorio
+            if (isset($data['traductor']) && is_array($data['traductor'])) {
+                $reqTrad = $data['traductor'][$i] ?? 'No';
+                $langVal = is_array($data['lenguaje'] ?? null) ? ($data['lenguaje'][$i] ?? null) : ($data['lenguaje'] ?? null);
+                if ($reqTrad === 'Si' && empty($langVal)) {
+                    return back()->withErrors(['citados' => 'Debe especificar el lenguaje para cada citado que requiera traductor.'])->withInput();
+                }
+            }
 
             $foto1 = $data["imagen_domicilio1"][$i] ?? 'Sin documento';
             $foto2 = $data["imagen_domicilio2"][$i] ?? 'Sin documento';
@@ -2438,10 +2453,18 @@ class SeerController extends Controller
                 'imagen_domicilio1' => $foto1,
                 'imagen_domicilio2' => $foto2,
             );
-            
-            if(isset($data["traductor"])){
-                $data_insert["traductor"] =  1;
-                $data_insert["lenguaje"]  =  $data["lenguaje"];
+            // Traductor por cada citado
+            if (isset($data["traductor"]) && is_array($data["traductor"])) {
+                $requiereTraductor = $data["traductor"][$i] ?? 'No';
+                if ($requiereTraductor === 'Si') {
+                    $data_insert["traductor"] = 1;
+                    $data_insert["lenguaje"]  = is_array($data["lenguaje"] ?? null)
+                        ? ($data["lenguaje"][$i] ?? null)
+                        : ($data["lenguaje"] ?? null);
+                } else {
+                    $data_insert["traductor"] = 0;
+                    $data_insert["lenguaje"]  = null;
+                }
             }
             if(isset($data["calle1"])){
                 SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle1' => $data["calle1_citado"] ]);
@@ -2575,6 +2598,11 @@ class SeerController extends Controller
         $imagen_domicilio1 = "Sin documento";
         $imagen_domicilio2 = "Sin documento";
 
+        //Si requiere traductor, lenguaje es obligatorio
+        if ((($data['traductor'] ?? 'No') === 'Si') && empty($data['lenguaje'])) {
+            return back()->withErrors(['citados' => 'Debe especificar el lenguaje cuando el citado requiere traductor.'])->withInput();
+        }
+
         if ($request->hasFile('foto1')) {
             $imagen_domicilio1 = $data["id"] . "-domicilio_Citado1.jpg";
             Storage::putFileAs('documentosSolicitud', $request->file('foto1'), $imagen_domicilio1);
@@ -2609,8 +2637,9 @@ class SeerController extends Controller
             $data_insert["curp"] =  $data["curp"];
         }
         if(isset($data["traductor"])){
-            $data_insert["traductor"] =  1;
-            $data_insert["lenguaje"]  =  $data["lenguaje"];
+            $requires = $data["traductor"] === 'Si';
+            $data_insert["traductor"] =  $requires ? 1 : 0;
+            $data_insert["lenguaje"]  =  $requires ? ($data["lenguaje"] ?? null) : null;
         }
         if(isset($data["interior"])){
             $data_insert["n_int"] =  $data["interior"];

@@ -3,11 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}"/>
-    <!-- Reverb client config for Echo (read by JS) -->
-    <meta name="reverb-key" content="{{ env('REVERB_APP_KEY', 'local') }}"/>
-    <meta name="reverb-host" content="{{ env('REVERB_HOST', request()->getHost()) }}"/>
-    <meta name="reverb-port" content="{{ env('REVERB_PORT', 8080) }}"/>
-    <meta name="reverb-scheme" content="{{ env('REVERB_SCHEME', request()->getScheme()) }}"/>
+    <meta name="poll-pendiente-url" content="{{ url('/poll/pendiente-firma') }}"/>
     <title>Si concilio</title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <!-- Bootstrap 4.1.1 -->

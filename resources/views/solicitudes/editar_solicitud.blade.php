@@ -664,6 +664,25 @@ select[name="municipio_citado"] option {
                                                         <input type="text" class="form-control" name="rfc_citado[]" value="<?=$citado["rfc"];?>">   
                                                     </div>
                                                 </div>
+
+                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                        <div class="form-group">
+                                                            <label for="name">¿Requiere traductor?<span style="color:red;"> (*)</span></label>
+                                                            <select name="traductor[]" id="traductor_{{$loop->index}}" class="form-control" required>
+                                                                <option value="No" {{ (isset($citado['traductor']) ? ($citado['traductor'] ? '' : 'selected') : (isset($citado->traductor) && !$citado->traductor ? 'selected' : '')) }}>No</option>
+                                                                <option value="Si" {{ (isset($citado['traductor']) ? ($citado['traductor'] ? 'selected' : '') : (isset($citado->traductor) && $citado->traductor ? 'selected' : '')) }}>Si</option>
+                                                            </select>
+                                                            <div class="invalid-feedback">Este campo es obligatorio.</div>
+                                                        </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-3" id="lenguaje_wrap_{{$loop->index}}">
+                                                    <div class="form-group">
+                                                        <label for="name">¿Qué tipo de lenguaje requiere?<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" name="lenguaje[]" id="lenguaje_{{$loop->index}}" class="form-control" value="{{ $citado['lenguaje'] ?? ($citado->lenguaje ?? '') }}" oninput="this.value = this.value.toUpperCase()">
+                                                        <div class="invalid-feedback">El lenguaje es obligatorio cuando requiere traductor.</div>
+                                                    </div>
+                                                </div>
+
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
                                                         <h4 class="text-center">Dirección del citado</h4>
@@ -863,8 +882,18 @@ select[name="municipio_citado"] option {
                                             <br>
                                             
                                             <div class="col-xs-12 col-sm-12 col-md-12"><br>
+                                                @php
+                                                    $citadosCount = isset($citados)
+                                                        ? (is_countable($citados) ? count($citados) : (method_exists($citados, 'count') ? $citados->count() : 0))
+                                                        : 0;
+                                                @endphp
                                                 @if($general['estatus'] == 'Prevencion' || $general['estatus'] == 'Pendiente')
-                                                    <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
+                                                    @if($citadosCount > 0)
+                                                        <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
+                                                    @else
+                                                        <button type="button" class="btn btn-secondary" disabled title="Agregue al menos un citado para poder guardar.">Guardar</button>
+                                                        <div class="text-muted mt-2">Debe agregar al menos un citado para poder guardar.</div>
+                                                    @endif
                                                     <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $general->id }}"> Prevención </button>
                                                 @endif
                                             </div>
@@ -1050,17 +1079,17 @@ select[name="municipio_citado"] option {
                             <div class="col-xs-12 col-sm-12 col-md-3">
                                 <div class="form-group">
                                     <label for="name">¿Requiere algún traductor? <span style="color:red;">(*)</span></label>
-                                    <select name="lenguaje" class="form-control" required>
+                                        <select name="traductor" id="traductor_modal" class="form-control" required>
                                        <option value="">SELECCIONE</option>
                                        <option value="Si">Si</option>
                                        <option value="No">No</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                <div class="col-xs-12 col-sm-12 col-md-3" id="lenguaje_modal_wrap" style="display:none;">
                                 <div class="form-group">
                                     <label for="name">¿Qué tipo de lenguaje require?</label>
-                                    <input type="text" name="lenguaje" class="form-control" oninput="this.value = this.value.toUpperCase()">
+                                        <input type="text" name="lenguaje" id="lenguaje_modal" class="form-control" oninput="this.value = this.value.toUpperCase()">
                                     <div class="invalid-feedback">
                                         La nacionalidad es obligatoria.
                                     </div>
@@ -1349,6 +1378,49 @@ select[name="municipio_citado"] option {
             })
 
             let motivosSeleccionados = [];
+
+                //Traductor por citado
+                function syncLenguajeRequired(index) {
+                    var sel = document.getElementById('traductor_' + index);
+                    var wrap = document.getElementById('lenguaje_wrap_' + index);
+                    var input = document.getElementById('lenguaje_' + index);
+                    if (!sel || !wrap || !input) return;
+                    if (sel.value === 'Si') {
+                        wrap.style.display = '';
+                        input.required = true;
+                    } else {
+                        wrap.style.display = 'none';
+                        input.required = false;
+                        try { input.value = ''; } catch (err) {}
+                    }
+                }
+        
+                var traductores = document.querySelectorAll('[id^="traductor_"]');
+                traductores.forEach(function(sel){
+                    var idx = sel.id.replace('traductor_', '');
+                    syncLenguajeRequired(idx);
+                    sel.addEventListener('change', function(){ syncLenguajeRequired(idx); });
+                });
+
+                //Traductor en modal Agregar Citado
+                var tradModal = document.getElementById('traductor_modal');
+                var langWrapModal = document.getElementById('lenguaje_modal_wrap');
+                var langInputModal = document.getElementById('lenguaje_modal');
+                function syncModalLenguaje(){
+                    if (!tradModal || !langWrapModal || !langInputModal) return;
+                    if (tradModal.value === 'Si') {
+                        langWrapModal.style.display = '';
+                        langInputModal.required = true;
+                    } else {
+                        langWrapModal.style.display = 'none';
+                        langInputModal.required = false;
+                        try { langInputModal.value = ''; } catch (err) {}
+                    }
+                }
+                if (tradModal) {
+                    syncModalLenguaje();
+                    tradModal.addEventListener('change', syncModalLenguaje);
+                }
 
             function validarcheckfolio(){
                 var opcionSeleccionada = $(this).val();
