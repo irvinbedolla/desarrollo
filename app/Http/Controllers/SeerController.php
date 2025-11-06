@@ -2486,83 +2486,87 @@ class SeerController extends Controller
             $path = Storage::putFileAs('documentosSolicitud', $request->file('indetificacion'), $documentoidentificacion);
             SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoIdentificacion' => $documentoidentificacion ]);
         }
-        //Actualizar el estatus
-        SeerPerGeneral::find($data["id"])->update(['estatus' => "Confirmado" ]);
-
-        $numero_audiencia = $this->GeneraAudiencia($data["id"]);
-        $numero_audiencias = SeerPerConciliador::find($data["id"]);
-        if(!isset($numero_audiencias)){
-            $num_audi = 0;
-        }
-        else{
-            $num_audi = $numero_audiencias->numero_audiencias;
-        }
-        $num_audi = $num_audi+1;
-
-        $Audiencia = $this->ObtenerAudiencia($delegacion["delegacion"]);
-
-        $sala = 1;
-        switch($Audiencia[3]){
-           //Morelia
-            case 16:
-                $sala = "Sala 2"; break;
-            case 22:
-                $sala = "Sala 11"; break;
-            case 25:
-                $sala = "Sala 12"; break;
-            case 33:
-                $sala = "Sala 8"; break;
-            case 35:
-                $sala = "Sala 9"; break;
-            case 36:
-                $sala = "Sala 7"; break;
-            case 38:
-                $sala = "Sala 5"; break;
-            //Uruapan
-            case 41:
-                $sala = "Sala 10"; break;
-            case 42:
-                $sala = "Sala 4"; break;
-            case 45:
-                $sala = "Sala 1"; break;
-            //Zamora
-            case 51:
-                $sala = "Sala 3"; break;
-            case 54:
-                $sala = "Sala 6"; break;
-            default:
-                $sala = "Pendiente"; break;
-        }
-        $audiencia_insert=array(
-            'id_solicitud'      => $data["id"],
-            'numero_audiencia'  => $num_audi,
-            'folio_audiencia'   => $numero_audiencia[0],
-            'fecha'             => $Audiencia[0],
-            'hora'              => $Audiencia[1],
-            'id_conciliador'    => $Audiencia[3],
-            'sala'              => $sala,
-            'delegacion'        => $delegacion["delegacion"]
-        );
-        Audiencias::create($audiencia_insert);
-        //Actualizar genera
-        if (isset($data["notificacion"][0]) && $data["notificacion"][0] == 'Trabajador') {
-            SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $Audiencia[3], 'estatus' => 'Confirmado', 'pendiente_firma' => 'Si' ]);
-        }
-        else{
-            SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $Audiencia[3], 'estatus' => 'Confirmado' ]);
-        }
         
-        //Mandar un correo
-        $user = [
-            'nombre'    => $data["nombre_solicitante"],
-            'fecha'     => date('d-m-Y'),
-            'email'     => $data["email_solicitante"],
-            'id'        => $data["id"],
-            'mensaje'   => "Tu solicitud fue aceptada revisa tu buzón electronico en: https://siconcilio.cclmichoacan.gob.mx/ para continuar tu tramite." ,
-        ];
+        //Si se va confirmar si el valor es 2 solo se va editar lo anterior
+        if($data["toquen"] == 1){
+            //Actualizar el estatus
+            SeerPerGeneral::find($data["id"])->update(['estatus' => "Confirmado" ]);
 
-        // El método Mail::to() toma el email del destinatario
-        Mail::to($user['email'])->send(new MailAceptacionRechazo($user));
+            $numero_audiencia = $this->GeneraAudiencia($data["id"]);
+            $numero_audiencias = SeerPerConciliador::find($data["id"]);
+            if(!isset($numero_audiencias)){
+                $num_audi = 0;
+            }
+            else{
+                $num_audi = $numero_audiencias->numero_audiencias;
+            }
+            $num_audi = $num_audi+1;
+
+            $Audiencia = $this->ObtenerAudiencia($delegacion["delegacion"]);
+
+            $sala = 1;
+            switch($Audiencia[3]){
+            //Morelia
+                case 16:
+                    $sala = "Sala 2"; break;
+                case 22:
+                    $sala = "Sala 11"; break;
+                case 25:
+                    $sala = "Sala 12"; break;
+                case 33:
+                    $sala = "Sala 8"; break;
+                case 35:
+                    $sala = "Sala 9"; break;
+                case 36:
+                    $sala = "Sala 7"; break;
+                case 38:
+                    $sala = "Sala 5"; break;
+                //Uruapan
+                case 41:
+                    $sala = "Sala 10"; break;
+                case 42:
+                    $sala = "Sala 4"; break;
+                case 45:
+                    $sala = "Sala 1"; break;
+                //Zamora
+                case 51:
+                    $sala = "Sala 3"; break;
+                case 54:
+                    $sala = "Sala 6"; break;
+                default:
+                    $sala = "Pendiente"; break;
+            }
+            $audiencia_insert=array(
+                'id_solicitud'      => $data["id"],
+                'numero_audiencia'  => $num_audi,
+                'folio_audiencia'   => $numero_audiencia[0],
+                'fecha'             => $Audiencia[0],
+                'hora'              => $Audiencia[1],
+                'id_conciliador'    => $Audiencia[3],
+                'sala'              => $sala,
+                'delegacion'        => $delegacion["delegacion"]
+            );
+            Audiencias::create($audiencia_insert);
+            //Actualizar genera
+            if (isset($data["notificacion"][0]) && $data["notificacion"][0] == 'Trabajador') {
+                SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $Audiencia[3], 'estatus' => 'Confirmado', 'pendiente_firma' => 'Si' ]);
+            }
+            else{
+                SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $Audiencia[3], 'estatus' => 'Confirmado' ]);
+            }
+            
+            //Mandar un correo
+            $user = [
+                'nombre'    => $data["nombre_solicitante"],
+                'fecha'     => date('d-m-Y'),
+                'email'     => $data["email_solicitante"],
+                'id'        => $data["id"],
+                'mensaje'   => "Tu solicitud fue aceptada revisa tu buzón electronico en: https://siconcilio.cclmichoacan.gob.mx/ para continuar tu tramite." ,
+            ];
+            // El método Mail::to() toma el email del destinatario
+            Mail::to($user['email'])->send(new MailAceptacionRechazo($user));
+        }
+
         return redirect()->route('solicitudes_pendientes'); 
     }
 
@@ -5232,22 +5236,22 @@ class SeerController extends Controller
                 'horas_semana'          => $data["horas_semana"],
         ]);
 
-            //Opcionales
-            if(isset($data["telefono2"])){
-                SeerSolicitante::where('id_solicitud', $data["id"])->update(['telefono2' => $data["telefono2_solicitante"] ]);
-            }
-            if(isset($data["num_int"])){
-                SeerSolicitante::where('id_solicitud', $data["id"])->update(['num_int' => $data["num_int_solicitante"] ]);
-            }
-            if(isset($data["nss"])){
-                SeerSolicitante::where('id_solicitud', $data["id"])->update(['nss' => $data["nss"] ]);
-            }
+        //Opcionales
+        if(isset($data["telefono2"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['telefono2' => $data["telefono2_solicitante"] ]);
+        }
+        if(isset($data["num_int"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['num_int' => $data["num_int_solicitante"] ]);
+        }
+        if(isset($data["nss"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['nss' => $data["nss"] ]);
+        }
 
 
-            //Citados
-            SeerCitados::where('id_solicitud',$data["id"])->delete();
-            $cont = count($data["colonia_citado"]);
-            for($i = 0; $i < $cont; $i++) {
+        //Citados
+        SeerCitados::where('id_solicitud',$data["id"])->delete();
+        $cont = count($data["colonia_citado"]);
+        for($i = 0; $i < $cont; $i++) {
                 $foto1 = $data["imagen_domicilio1"][$i] ?? 'Sin documento';
                 $foto2 = $data["imagen_domicilio2"][$i] ?? 'Sin documento';
             
@@ -5263,7 +5267,7 @@ class SeerController extends Controller
                     Storage::putFileAs('documentosSolicitud', $file, $foto2);
                 }
                 
-                $data_insert=array(
+            $data_insert=array(
                     'id_solicitud'      => $data["id"],
                     'colonia'           => $data["colonia_citado"][$i],
                     'cp'                => $data["cp_citado"][$i],
@@ -5280,11 +5284,11 @@ class SeerController extends Controller
                     'rfc'               => $data["rfc_citado"][$i],
                     'imagen_domicilio1' => $foto1,
                     'imagen_domicilio2' => $foto2,
-                );
+            );
                 
-                if(isset($data["rfc"])){
-                    $data_insert["rfc"] =  $data["rfc_citado"][$i];
-                }
+            if(isset($data["rfc"])){
+                $data_insert["rfc"] =  $data["rfc_citado"][$i];
+            }
                     /*if(isset($data["curp"])){
                         $data_insert["curp"] =  $data["curp_citado"][$i];
                     }*/
@@ -5315,29 +5319,29 @@ class SeerController extends Controller
                     if(isset($data["rfc"])){
                         $data_insert["rfc"] =  $data["rfc"][$i];
                     }
-                SeerCitados::create($data_insert);
-            }
+            SeerCitados::create($data_insert);
+        }
             
-            //Documentos
-            if(isset($data["curp"])){
-                $documento = $data["curp"]."_CURP.pdf";
-                $path = Storage::putFileAs('documentosSolicitud', $request->file('documentoCurp'), $documento);
-                SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoCurp' => $documento ]);
-            }
+        //Documentos
+        if(isset($data["curp"])){
+            $documento = $data["curp"]."_CURP.pdf";
+            $path = Storage::putFileAs('documentosSolicitud', $request->file('documentoCurp'), $documento);
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoCurp' => $documento ]);
+        }
             
-            //Acta de nacimiento
-            if(isset($data["indetificacion"])){
-                $documentoidentificacion = $data["curp"]."_Identificacion.pdf";
-                $path = Storage::putFileAs('documentosSolicitud', $request->file('indetificacion'), $documentoidentificacion);
-                SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoIdentificacion' => $documentoidentificacion ]);
-            }
+        //Acta de nacimiento
+        if(isset($data["indetificacion"])){
+            $documentoidentificacion = $data["curp"]."_Identificacion.pdf";
+            $path = Storage::putFileAs('documentosSolicitud', $request->file('indetificacion'), $documentoidentificacion);
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoIdentificacion' => $documentoidentificacion ]);
+        }
 
-            //Actualizar el estatus
-            SeerPerGeneral::find($data["id"])->update(['estatus' => "Pendiente" ]);
+        //Actualizar el estatus
+        SeerPerGeneral::find($data["id"])->update(['estatus' => "Pendiente" ]);
 
         return redirect()->route('mis_solicitudes'); 
     }
-    
+
     //PDF Notificación Por instructivo
     public function PDFnotificadoInstructivo($id, $id_solicitud){
         $solicitud = SeerPerGeneral::find($id_solicitud);
@@ -7692,25 +7696,33 @@ class SeerController extends Controller
     }
     public function firmaCitatorios_index(){
         $user = auth()->user();
-        $solicitudes = SeerPerGeneral::select(
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+
+        if($userRole[0] == "Auxiliar"){
+            $solicitudes = SeerPerGeneral::select(
             'seer_general.*',
             'seer_solicitante.nombre as nombre_solicitante'
-        )
-        ->leftJoin('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
-        ->where('seer_general.conciliador_id', $user->id)
-        ->where('seer_general.pendiente_firma', 'Si')
-        ->where('seer_general.estatus', 'Confirmado')
-        ->orderByDesc('seer_general.id')
-        ->get();
-        /*$solicitudes = SeerPerGeneral::where('conciliador_id', $user->id)
-        ->where('pendiente_firma', 'Si')
-        ->where('estatus', 'Confirmado')
-        ->orderByDesc('id')
-        ->get();
-
-        /*foreach ($solicitudes as $solicitud) {
-            $solicitud->citados = SeerCitados::where('id_solicitud', $solicitud->id)->get();
-        }*/
+            )
+            ->leftJoin('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
+            ->where('seer_general.user.id', $user->id)
+            ->where('seer_general.pendiente_firma', 'Si')
+            ->where('seer_general.estatus', 'Confirmado')
+            ->orderByDesc('seer_general.id')
+            ->get();
+        } 
+        else if($userRole[0] == "Conciliador"){
+            $solicitudes = SeerPerGeneral::select(
+            'seer_general.*',
+            'seer_solicitante.nombre as nombre_solicitante'
+            )
+            ->leftJoin('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
+            ->where('seer_general.conciliador_id', $user->id)
+            ->where('seer_general.pendiente_firma', 'Si')
+            ->where('seer_general.estatus', 'Confirmado')
+            ->orderByDesc('seer_general.id')
+            ->get();
+        }
 
         return view('conciliadores.firmaCitatorios', compact('solicitudes', 'user'));
     }

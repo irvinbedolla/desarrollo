@@ -103,7 +103,7 @@ select[name="municipio_citado"] option {
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <h3 class="text-center">Editar Solicitud</h3>
+                            <h3 class="text-center">Solicitud</h3>
                             @if(session()->has('success'))
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                                     <strong>¡Registro correcto!</strong>
@@ -139,7 +139,7 @@ select[name="municipio_citado"] option {
                                         <a class="btn btn-info" onclick="openCity(event, 'documentos')">Citado(s)</a>
                                         <a class="btn btn-info" onclick="openCity(event, 'observaciones')">Observaciones</a>
                                         <a class="btn btn-info" onclick="openCity(event, 'citados')">Documentos</a>
-                                        
+                                        <a class="btn btn-info" onclick="openCity(event, 'confirmacion')">Acciones</a>
                                     </div>
 
                                     <div id="detalles" class="tabcontent">
@@ -880,24 +880,6 @@ select[name="municipio_citado"] option {
                                                 <input type="file" name="documentoIdentificacion" accept=".pdf" class="form-control">
                                             </div>
                                             <br>
-                                            
-                                            <div class="col-xs-12 col-sm-12 col-md-12"><br>
-                                                @php
-                                                    $citadosCount = isset($citados)
-                                                        ? (is_countable($citados) ? count($citados) : (method_exists($citados, 'count') ? $citados->count() : 0))
-                                                        : 0;
-                                                @endphp
-                                                @if($general['estatus'] == 'Prevencion' || $general['estatus'] == 'Pendiente')
-                                                    @if($citadosCount > 0)
-                                                        <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
-                                                    @else
-                                                        <button type="button" class="btn btn-secondary" disabled title="Agregue al menos un citado para poder guardar.">Guardar</button>
-                                                        <div class="text-muted mt-2">Debe agregar al menos un citado para poder guardar.</div>
-                                                    @endif
-                                                    <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $general->id }}"> Prevención </button>
-                                                @endif
-                                            </div>
-
                                         </div>
                                     </div>
                                     <div id="observaciones" class="tabcontent">
@@ -917,6 +899,29 @@ select[name="municipio_citado"] option {
           
                                             <div class="col-xs-12 col-sm-12 col-md-12"><br>
                                                 <a class="btn btn-primary" href="{{ url()->previous() }}">Regresar</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="confirmacion" class="tabcontent">
+                                        <div id="tabla_confirmar" class="row">
+                                            <div class="col-xs-12 col-sm-12 col-md-12"><br>
+                                                @php
+                                                    $citadosCount = isset($citados)
+                                                        ? (is_countable($citados) ? count($citados) : (method_exists($citados, 'count') ? $citados->count() : 0))
+                                                        : 0;
+                                                @endphp
+                                                @if($general['estatus'] == 'Prevencion' || $general['estatus'] == 'Pendiente')
+                                                    @if($citadosCount > 0)
+                                                        <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;"  name="toquen" value="1">Confirmar</button>
+                                                    @else
+                                                        <button type="button" class="btn btn-secondary" disabled title="Agregue al menos un citado para poder guardar."  name="toquen" value="1">Confirmar</button>
+                                                        <div class="text-muted mt-2">Debe agregar al menos un citado para poder guardar.</div>
+                                                    @endif
+                                                    <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $general->id }}"> Prevención </button>
+                                                @endif
+                                                @if($general['estatus'] != 'Prevencion' && $general['estatus'] != 'Pendiente')
+                                                    <button type="submit" class="btn btn-primary" name="toquen" value="2">Guardar</button>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -1579,7 +1584,7 @@ select[name="municipio_citado"] option {
             $('#tabla_citados').show();
             $('#tabla_documentos').show();
             $('#tabla_observaciones').show();
-
+            $('#tabla_confirmar').show();
        
         $('.open-modal').click(function() {
             //console.log("hola");
