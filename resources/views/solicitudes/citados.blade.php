@@ -472,7 +472,7 @@
 
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div align="center">
-                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar citado</button>
+                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar otro(s) citado(s)</button>
                                                 @if($citados > 0)
                                                     <a href="{{ route('seer.finaliza',$id); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Concluir solicitud</a> 
                                                 @endif  

@@ -481,6 +481,15 @@
                                                     <input type="text" class="form-control" name="labora" value="<?=$solicitante["labora"];?>">   
                                                 </div>
                                             </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <label for="name">Describe brevemente el motivo de tu solicitud</label>
+                                                    <textarea class="form-control" name="descripcionSolicitud"><?=$solicitante["descripcionSolicitud"];?></textarea>
+                                                    <div class="invalid-feedback">
+                                                        El campo descripción del motivo de la solicitud es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
                                         @endforeach
                                     </div>
                                 </div>
@@ -493,182 +502,189 @@
                                         </div><br>
 
                                         @foreach($citados as $citado)
-                                            <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:30px;">
-                                                <div class="form-group">
-                                                    <h4 class="text-center">Citado</h4>
-                                                </div>
-                                            </div><br>
-                                            <div class="col-xs-12 col-sm-6 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="password">Nombre Citado</label>
-                                                    <input type="text" class="form-control" name="nombre_citado[]" value="<?=$citado["nombre"];?>">   
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="password">Primer apellido</label>
-                                                    <input type="text" class="form-control" name="primer_apellido[]" value="<?=$citado["primer_apellido"];?>">   
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="password">Segundo apellido</label>
-                                                    <input type="text" class="form-control" name="segundo_apellido[]" value="<?=$citado["segundo_apellido"];?>">   
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="name">Tipo de persona</label>
-                                                    <select name="tipo_persona_citado[]" class="form-control">
-                                                        <option value="">SELECCIONE</option>
-                                                        <option value="Fisica" {{ $citado['tipo_persona'] == 'Fisica' ? "selected" : '' }}>Física</option>
-                                                        <option value="Moral"  {{ $citado['tipo_persona'] == 'Moral' ? "selected" : '' }}>Moral</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="password">CURP</label>
-                                                    <input type="text" class="form-control" name="curp_citado[]" value="<?=$citado["curp"];?>" maxlength="18">   
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="password">RFC</label>
-                                                    <input type="text" class="form-control" name="rfc_citado[]" value="<?=$citado["rfc"];?>">   
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <div class="form-group">
-                                                    <h4 class="text-center">Dirección</h4>
-                                                </div>
-                                            </div><br>
-                                            <div class="col-xs-12 col-sm-6 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="password">Colonia del citado</label>
-                                                    <input type="text" class="form-control" name="colonia_citado[]" value="<?=$citado["colonia"];?>" required>   
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="name">Tipo de Vialidad</label>
-                                                    <select name="vialidad_citado[]" class="form-control" required>
-                                                        <option value="">SELECCIONE</option>
-                                                        <option value="CALLE"          {{ $citado['tipo_vialidad'] == 'CALLE' ? "selected" : '' }}   >Calle</option>
-                                                        <option value="AVENIDA"        {{ $citado['tipo_vialidad'] == 'AVENIDA' ? "selected" : '' }} >Avenida</option>
-                                                        <option value="CALZADA"        {{ $citado['tipo_vialidad'] == 'CALZADA' ? "selected" : '' }} >Calzada</option>
-                                                        <option value="BOULEVARD"      {{ $citado['tipo_vialidad'] == 'BOULEVARD' ? "selected" : '' }} >Boulevard</option>
-                                                        <option value="AMPLIACIÓN"     {{ $citado['tipo_vialidad'] == 'AMPLIACIÓN' ? "selected" : '' }} >Ampliación</option>
-                                                        <option value="ANDADOR"        {{ $citado['tipo_vialidad'] == 'ANDADOR' ? "selected" : '' }} >Andador</option>
-                                                        <option value="AUTOPISTA"      {{ $citado['tipo_vialidad'] == 'AUTOPISTA' ? "selected" : '' }} >Autopista</option>
-                                                        <option value="CALLEJÓN"       {{ $citado['tipo_vialidad'] == 'CALLEJÓN' ? "selected" : '' }}>Callejón</option>
-                                                        <option value="CARRETERA"      {{ $citado['tipo_vialidad'] == 'CARRETERA' ? "selected" : '' }}   >Carretera</option>
-                                                        <option value="CERRADA"        {{ $citado['tipo_vialidad'] == 'CERRADA' ? "selected" : '' }} >Cerrada</option>
-                                                        <option value="CIRCUITO"       {{ $citado['tipo_vialidad'] == 'CIRCUITO' ? "selected" : '' }} >Circuito</option>
-                                                        <option value="CIRCUNVALACIÓN" {{ $citado['tipo_vialidad'] == 'CIRCUNVALACIÓN' ? "selected" : '' }} >Circunvalación</option>
-                                                        <option value="CONTINUACIÓN"   {{ $citado['tipo_vialidad'] == 'CONTINUACIÓN' ? "selected" : '' }} >Continuación</option>
-                                                        <option value="CORREDOR"       {{ $citado['tipo_vialidad'] == 'CORREDOR' ? "selected" : '' }} >Corredor</option>
-                                                        <option value="DIAGONAL"       {{ $citado['tipo_vialidad'] == 'DIAGONAL' ? "selected" : '' }} >Diagonal</option>
-                                                        <option value="EJE VIAL"       {{ $citado['tipo_vialidad'] == 'EJE VIAL' ? "selected" : '' }} >Eje vial</option>
-                                                        <option value="PERIFÉRICO"     {{ $citado['tipo_vialidad'] == 'PERIFÉRICO' ? "selected" : '' }} >Periférico</option>
-                                                        <option value="PROLONGACIÓN"   {{ $citado['tipo_vialidad'] == 'PROLONGACIÓN' ? "selected" : '' }} >Prolongación</option>
-                                                        <option value="RETORNO"        {{ $citado['tipo_vialidad'] == 'RETORNO' ? "selected" : '' }} >Retorno</option>
-                                                        <option value="VIADUCTO"       {{ $citado['tipo_vialidad'] == 'VIADUCTO' ? "selected" : '' }} >Viaducto</option>
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        El campo vialidad es obligatorio.
+                                                <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:30px;">
+                                                    <div class="form-group">
+                                                        <h4 class="text-center">Citado</h4>
+                                                    </div>
+                                                </div><br>
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="password">Nombre</label>
+                                                        <input type="text" class="form-control" name="nombre_citado[]" value="<?=$citado["nombre"];?>">   
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="password">Código Postal</label>
-                                                    <input type="text" class="form-control" name="cp_citado[]" value="<?=$citado["cp"];?>" required>   
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="password">Calle del citado</label>
-                                                    <input type="text" class="form-control" name="calle_citado[]" value="<?=$citado["calle"];?>" required>   
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="password">Entre Calle</label>
-                                                    <input type="text" class="form-control" name="calle1_citado[]" value="<?=$citado["calle1"];?>">   
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="password">Entre Calle</label>
-                                                    <input type="text" class="form-control" name="calle2_citado[]" value="<?=$citado["calle2"];?>">   
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-1">
-                                                <div class="form-group">
-                                                    <label for="password">N° Ext.</label>
-                                                    <input type="text" class="form-control" name="n_ext_citado[]" value="<?=$citado["n_ext"];?>" required>   
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-1">
-                                                <div class="form-group">
-                                                    <label for="password">N° Int.</label>
-                                                    <input type="text" class="form-control" name="n_int_citado[]" value="<?=$citado["n_int"];?>">   
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-2">
-                                                <div class="form-group">
-                                                    <label for="password">Municipio del citado</label>
-                                                    <select class="form-control" name="municipio_citado[]">
-                                                        @foreach($municipios as $mun)
-                                                            <option value="{{$mun['id']}}" {{ $citado['municipio_citado'] == $mun['id'] ? "selected" : '' }}>{{$mun['nombre']}}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        El Estado es obligatorio.
+                                                @if(!empty($citado['primer_apellido']))
+                                                    <div class="col-xs-12 col-sm-6 col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="password">Primer apellido</label>
+                                                            <input type="text" class="form-control" name="primer_apellido[]" value="<?=$citado["primer_apellido"];?>">   
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-2">
-                                                <div class="form-group">
-                                                    <label for="name">¿Quién entregará las Notificaciones?</label>
-                                                    <select name="notificacion[]" class="form-control">
-                                                        <option value="Trabajador"  {{ $citado['notificacion'] == 'Trabajador' ? "selected" : '' }}>Trabajador</option>
-                                                        <option value="Centro"      {{ $citado['notificacion'] == 'Centro' ? "selected" : '' }}>Centro de conciliación Laboral</option>
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        El campo es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="password">Referencia</label>
-                                                    <input type="text" class="form-control" name="referencia_citado[]" value="<?=$citado["referencia"];?>" required>   
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <label for="password">Imagen 1</label><br>
-                                                @if (!empty($citado->imagen_domicilio1) && $citado->imagen_domicilio1 !== 'Sin documento')
-                                                    <a target='_blank' href="../storage/app/documentosSolicitud/{{$citado->imagen_domicilio1}}">VER IMAGEN</a><br>
-                                                @else
-                                                    <span class="text-muted">No se subió imagen</span>
                                                 @endif
-                                                <input type="file" name="foto1[]" accept="image/*" class="form-control">
-                                                <input type="hidden" name="imagen_domicilio1[]" value="{{ $citado->imagen_domicilio1 }}">
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <label for="password">Imagen 2</label><br>
-                                                @if (!empty($citado->imagen_domicilio2) && $citado->imagen_domicilio2 !== 'Sin documento')
-                                                    <a target='_blank' href="../storage/app/documentosSolicitud/{{$citado->imagen_domicilio2}}">VER IMAGEN</a><br>
-                                                @else
-                                                    <span class="text-muted">No se subió imagen</span>
+                                                @if(!empty($citado['segundo_apellido']))
+                                                    <div class="col-xs-12 col-sm-6 col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="password">Segundo apellido</label>
+                                                            <input type="text" class="form-control" name="segundo_apellido[]" value="<?=$citado["segundo_apellido"];?>">   
+                                                        </div>
+                                                    </div>
                                                 @endif
-                                                <input type="file" name="foto2[]" accept="image/*" class="form-control">
-                                                <input type="hidden" name="imagen_domicilio2[]" value="{{ $citado->imagen_domicilio2 }}">
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-12"><br></div>
-                                        @endforeach
+                                                <div class="col-xs-12 col-sm-12 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="name">Tipo de persona</label>
+                                                        <select name="tipo_persona_citado[]" class="form-control">
+                                                            <option value="">SELECCIONE</option>
+                                                            <option value="Fisica" {{ $citado['tipo_persona'] == 'Fisica' ? "selected" : '' }}>Física</option>
+                                                            <option value="Moral"  {{ $citado['tipo_persona'] == 'Moral' ? "selected" : '' }}>Moral</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                @if(!empty($citado['primer_apellido']))
+                                                    <div class="col-xs-12 col-sm-6 col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="password">CURP</label>
+                                                            <input type="text" class="form-control" name="curp_citado[]" value="<?=$citado["curp"];?>" maxlength="18">   
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="password">RFC</label>
+                                                        <input type="text" class="form-control" name="rfc_citado[]" value="<?=$citado["rfc"];?>">   
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div class="form-group">
+                                                        <h4 class="text-center">Dirección</h4>
+                                                    </div>
+                                                </div><br>
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="password">Colonia</label>
+                                                        <input type="text" class="form-control" name="colonia_citado[]" value="<?=$citado["colonia"];?>" required>   
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="name">Tipo de vialidad</label>
+                                                        <select name="vialidad_citado[]" class="form-control" required>
+                                                            <option value="">SELECCIONE</option>
+                                                            <option value="CALLE"          {{ $citado['tipo_vialidad'] == 'CALLE' ? "selected" : '' }}   >Calle</option>
+                                                            <option value="AVENIDA"        {{ $citado['tipo_vialidad'] == 'AVENIDA' ? "selected" : '' }} >Avenida</option>
+                                                            <option value="CALZADA"        {{ $citado['tipo_vialidad'] == 'CALZADA' ? "selected" : '' }} >Calzada</option>
+                                                            <option value="BOULEVARD"      {{ $citado['tipo_vialidad'] == 'BOULEVARD' ? "selected" : '' }} >Boulevard</option>
+                                                            <option value="AMPLIACIÓN"     {{ $citado['tipo_vialidad'] == 'AMPLIACIÓN' ? "selected" : '' }} >Ampliación</option>
+                                                            <option value="ANDADOR"        {{ $citado['tipo_vialidad'] == 'ANDADOR' ? "selected" : '' }} >Andador</option>
+                                                            <option value="AUTOPISTA"      {{ $citado['tipo_vialidad'] == 'AUTOPISTA' ? "selected" : '' }} >Autopista</option>
+                                                            <option value="CALLEJÓN"       {{ $citado['tipo_vialidad'] == 'CALLEJÓN' ? "selected" : '' }}>Callejón</option>
+                                                            <option value="CARRETERA"      {{ $citado['tipo_vialidad'] == 'CARRETERA' ? "selected" : '' }}   >Carretera</option>
+                                                            <option value="CERRADA"        {{ $citado['tipo_vialidad'] == 'CERRADA' ? "selected" : '' }} >Cerrada</option>
+                                                            <option value="CIRCUITO"       {{ $citado['tipo_vialidad'] == 'CIRCUITO' ? "selected" : '' }} >Circuito</option>
+                                                            <option value="CIRCUNVALACIÓN" {{ $citado['tipo_vialidad'] == 'CIRCUNVALACIÓN' ? "selected" : '' }} >Circunvalación</option>
+                                                            <option value="CONTINUACIÓN"   {{ $citado['tipo_vialidad'] == 'CONTINUACIÓN' ? "selected" : '' }} >Continuación</option>
+                                                            <option value="CORREDOR"       {{ $citado['tipo_vialidad'] == 'CORREDOR' ? "selected" : '' }} >Corredor</option>
+                                                            <option value="DIAGONAL"       {{ $citado['tipo_vialidad'] == 'DIAGONAL' ? "selected" : '' }} >Diagonal</option>
+                                                            <option value="EJE VIAL"       {{ $citado['tipo_vialidad'] == 'EJE VIAL' ? "selected" : '' }}>Eje vial</option>
+                                                            <option value="PERIFÉRICO"     {{ $citado['tipo_vialidad'] == 'PERIFÉRICO' ? "selected" : '' }}   >Periférico</option>
+                                                            <option value="PROLONGACIÓN"   {{ $citado['tipo_vialidad'] == 'PROLONGACIÓN' ? "selected" : '' }} >Prolongación</option>
+                                                            <option value="RETORNO"        {{ $citado['tipo_vialidad'] == 'RETORNO' ? "selected" : '' }} >Retorno</option>
+                                                            <option value="VIADUCTO"       {{ $citado['tipo_vialidad'] == 'VIADUCTO' ? "selected" : '' }} >Viaducto</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo vialidad es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="password">Código postal</label>
+                                                        <input type="text" class="form-control" name="cp_citado[]" value="<?=$citado["cp"];?>" required>   
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="password">Calle</label>
+                                                        <input type="text" class="form-control" name="calle_citado[]" value="<?=$citado["calle"];?>" required>   
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="password">Entre Calle</label>
+                                                        <input type="text" class="form-control" name="calle1_citado[]" value="<?=$citado["calle1"];?>">   
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="password">Y calle</label>
+                                                        <input type="text" class="form-control" name="calle2_citado[]" value="<?=$citado["calle2"];?>">   
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-1">
+                                                    <div class="form-group">
+                                                        <label for="password">N° Ext.</label>
+                                                        <input type="text" class="form-control" name="n_ext_citado[]" value="<?=$citado["n_ext"];?>" required>   
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-1">
+                                                    <div class="form-group">
+                                                        <label for="password">N° Int.</label>
+                                                        <input type="text" class="form-control" name="n_int_citado[]" value="<?=$citado["n_int"];?>">   
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-2">
+                                                    <div class="form-group">
+                                                        <label for="password">Estado</label>
+                                                        <select class="form-control" name="estado_citado[]" id="estado_citado">
+                                                            @foreach($estados as $est)
+                                                                <option value="{{$est['id']}}" {{ $citado['estado_citado'] == $est['id'] ? "selected" : '' }}>{{$est['nombre']}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El Estado es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-2">
+                                                    <div class="form-group">
+                                                        <label for="password">Municipio</label>
+                                                        <select class="form-control" name="municipio_citado[]" id="municipio_citado">
+                                                            @foreach($municipios as $mun)
+                                                                <option value="{{$mun['id']}}" {{ $citado['municipio_citado'] == $mun['id'] ? "selected" : '' }}>{{$mun['nombre']}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El Municipio es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="password">Referencia</label>
+                                                        <input type="text" class="form-control" name="referencia_citado[]" value="<?=$citado["referencia"];?>" required>   
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <label for="password">Referencia 1</label><br>
+                                                    @if (!empty($citado->imagen_domicilio1) && $citado->imagen_domicilio1 !== 'Sin documento')
+                                                        <a target='_blank' href="../storage/app/documentosSolicitud/{{$citado->imagen_domicilio1}}">VER IMAGEN</a><br>
+                                                    @else
+                                                        <span class="text-muted">No se subió imagen</span>
+                                                    @endif
+                                                    <input type="file" name="foto1[]" accept="image/*" class="form-control">
+                                                    <input type="hidden" name="imagen_domicilio1[]" value="{{ $citado->imagen_domicilio1 }}">
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                                    <label for="password">Referencia 2</label><br>
+                                                    @if (!empty($citado->imagen_domicilio2) && $citado->imagen_domicilio2 !== 'Sin documento')
+                                                        <a target='_blank' href="../storage/app/documentosSolicitud/{{$citado->imagen_domicilio2}}">VER IMAGEN</a><br>
+                                                    @else
+                                                        <span class="text-muted">No se subió imagen</span>
+                                                    @endif
+                                                    <input type="file" name="foto2[]" accept="image/*" class="form-control">
+                                                    <input type="hidden" name="imagen_domicilio2[]" value="{{ $citado->imagen_domicilio2 }}">
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-12"><br></div>
+                                            @endforeach
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
                                                 data-bs-target="#exampleModal1" data-id="{{ $id }}">Agregar Citado</a>

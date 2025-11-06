@@ -133,7 +133,7 @@
                     <div class="row">
                         <div class="col-12 text-center">
                             <div style="display: inline-block; margin-right: 50px;">
-                                <p><center><b>___________________________________<br> {{ $solicitante->nombre }} <br> SOLICITANTE</b></center></p><br>
+                                <p><center><b>___________________________________<br> {{ $solicitante->nombre }} <br> SOLICITANTE</b></center></p>
                             </div>
                                     
                             <div style="display: inline-block; margin-right: 50px;">

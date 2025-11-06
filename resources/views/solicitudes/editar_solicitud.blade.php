@@ -586,6 +586,15 @@ select[name="municipio_citado"] option {
                                                         </div>   
                                                     </div>
                                                 </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="name">Describe brevemente el motivo de tu solicitud <span style="color:red;">(*)</span></label>
+                                                        <textarea class="form-control" name="descripcionSolicitud"><?=$solicitante["descripcionSolicitud"];?></textarea>
+                                                        <div class="invalid-feedback">
+                                                            El campo descripción del motivo de la solicitud es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             <!--div class="col-xs-12 col-sm-12 col-md-2" style="margin-top: 20px;">
                                                 <button type="submit" class="btn btn-info btn-block">Actualizar datos del solicitante</button>
                                             </div-->
@@ -872,7 +881,7 @@ select[name="municipio_citado"] option {
                                             </div><br>
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <label for="password">Identificación Oficial</label><br>
+                                                <label for="password">Identificación Oficial <span style="color:red;">(*)</span></label><br>
                                                 <a target='_blank' class="btn btn-primary" href="../storage/app/documentosSolicitud/{{$solicitante->documentoIdentificacion}}">Consultar Documento PDF</a><br>
                                             </div>
                                              <div class="col-xs-12 col-sm-12 col-md-6">

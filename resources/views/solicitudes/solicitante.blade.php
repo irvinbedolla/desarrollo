@@ -466,6 +466,15 @@
                                                     <input type="date" name="fecha_salida" class="form-control"> 
                                                 </div>
                                             </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-10">
+                                                <div class="form-group">
+                                                    <label for="name">Describe brevemente el motivo de tu solicitud <span style="color:red;">(*)</span></label>
+                                                    <textarea class="form-control" name="descripcionSolicitud" required></textarea>
+                                                    <div class="invalid-feedback">
+                                                        El campo descripción del motivo de la solicitud es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
                                                 <h3 class="text-center" style="color:black">Documentos</h3>
                                             </div>

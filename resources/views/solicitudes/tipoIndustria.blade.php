@@ -288,7 +288,7 @@
     </div>
 
 <!-- inicio Modal Aviso privacidad-->
-<div class="modal fade" id="modal-aviso-privacidad">
+<div class="modal fade" id="modal-aviso-privacidad" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header header-default font-size-14" style="height: 38px">
@@ -344,12 +344,12 @@
     </div>
 </div>
 <!-- PDF Derechos y Obligaciones -->
-<div class="modal fade" id="modal-derechos-obligaciones">
+<div class="modal fade" id="modal-derechos-obligaciones" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Derechos y obligaciones</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <!--<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>-->
             </div>
             <div class="modal-body text-center">
                 <div class="text-center mb-3">

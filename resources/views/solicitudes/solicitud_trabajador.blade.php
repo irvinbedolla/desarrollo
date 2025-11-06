@@ -267,9 +267,12 @@
             const municipioSelect = document.getElementById('dSolicitud');
 
             const delegaciones = {
-                1: ['Morelia', 'Zitácuaro'],
-                2: ['Uruapan', 'Lázaro Cárdenas'],
-                3: ['Zamora', 'Sahuayo']
+                1: ['Morelia'],
+                2: ['Zitácuaro'],
+                3: ['Uruapan'],
+                4: ['Lázaro Cárdenas'],
+                5: ['Zamora'],
+                6: ['Sahuayo']
             };
 
             municipioSelect.addEventListener('change', function () {

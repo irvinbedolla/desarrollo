@@ -1902,6 +1902,7 @@ class SeerController extends Controller
             //'documentoCurp'             => 'required',
             'documentoIdentificacion'   => 'required',
             'num_identificacion'        => 'required',
+            'descripcionSolicitud'      => 'required',
         ]);
         
         $data_insert=array(
@@ -1934,6 +1935,7 @@ class SeerController extends Controller
             'jornada'              => $data["jornada"],
             'identificacion'       => $data["identificacion"],
             'num_identificacion'   => $data["num_identificacion"],
+            'descripcionSolicitud' => $data["descripcionSolicitud"],
         ); 
 
         if(isset($data["rfc"])){
@@ -2337,7 +2339,7 @@ class SeerController extends Controller
         $user = User::find($id_user);
         $listado_auxiliares = array();
         $relacionEloquent = 'roles';
-        $fecha_actual = date('y-m-d');
+        $fecha_actual = date('Y-m-d');
 
         $isAudiencia = '';
         
@@ -2346,7 +2348,7 @@ class SeerController extends Controller
         $NUE = $this->GeneraExpediente($data["id"],$delegacion["delegacion"]);
 
         SeerPerGeneral::where('id', $data["id"])
-        ->update(['NUE' => $NUE, 'actividad' => $data["actividad_economica"],'id_rama' => $data["ramaIndustrial"] ]);
+        ->update(['NUE' => $NUE, 'actividad' => $data["actividad_economica"],'id_rama' => $data["ramaIndustrial"], 'fecha_confirmacion' => $fecha_actual,]);
 
         if (!empty($data["motivo_solicitud"])) {
             foreach ($data["motivo_solicitud"] as $motivoId) {
@@ -2392,6 +2394,7 @@ class SeerController extends Controller
             'jornada'               => $data["jornada"],
             'estado_domicilio'      => $data["estado_solicitante"],
             'horas_semana'          => $data["horas_semana"],
+            'descripcionSolicitud'  => $data["descripcionSolicitud"],
         ]);
 
         //Opcionales
@@ -5234,6 +5237,7 @@ class SeerController extends Controller
                 'jornada'               => $data["jornada"],
                 'estado_domicilio'      => $data["estado_solicitante"],
                 'horas_semana'          => $data["horas_semana"],
+                'descripcionSolicitud'  => $data["descripcionSolicitud"],
         ]);
 
         //Opcionales
@@ -5282,6 +5286,7 @@ class SeerController extends Controller
                     'segundo_apellido'  => $data["segundo_apellido"][$i] ?? null,
                     'curp'              => $data["curp_citado"][$i] ?? null,
                     'rfc'               => $data["rfc_citado"][$i],
+                    'estado_citado'     => $data["estado_citado"][$i],
                     'imagen_domicilio1' => $foto1,
                     'imagen_domicilio2' => $foto2,
             );

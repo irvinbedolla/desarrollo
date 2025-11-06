@@ -265,8 +265,8 @@ body {font-family: Arial;}
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Estado del solicitante</label>
-                                                        <select id="estado_solicitante" class="form-control" name="estado_solicitante">
+                                                        <label for="password">Estado</label>
+                                                        <select id="estado_solicitante" class="form-control" name="estado_solicitante[]">
                                                             @foreach($estados as $est)
                                                                 <option value="{{$est['id']}}" {{ $solicitante['estado'] == $est['id'] ? "selected" : '' }}>{{$est['nombre']}}</option>
                                                             @endforeach
@@ -278,14 +278,14 @@ body {font-family: Arial;}
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
-                                                        <label for="password">Municipio del solicitante</label>
-                                                        <select class="form-control" name="municipio_solicitante">
+                                                        <label for="password">Municipio</label>
+                                                        <select class="form-control" name="municipio_solicitante[]">
                                                             @foreach($municipios as $mun)
                                                                 <option value="{{$mun['id']}}" {{ $solicitante['municipio_domicilio'] == $mun['id'] ? "selected" : '' }}>{{$mun['nombre']}}</option>
                                                             @endforeach
                                                         </select>
                                                         <div class="invalid-feedback">
-                                                            El Estado es obligatorio.
+                                                            El Municipio es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
@@ -482,6 +482,15 @@ body {font-family: Arial;}
                                                         <input type="text" class="form-control" name="labora" value="<?=$solicitante["labora"];?>">   
                                                     </div>
                                                 </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="name">Describe brevemente el motivo de tu solicitud <span style="color:red;">(*)</span></label>
+                                                        <textarea class="form-control" name="descripcionSolicitud"><?=$solicitante["descripcionSolicitud"];?></textarea>
+                                                        <div class="invalid-feedback">
+                                                            El campo descripción del motivo de la solicitud es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             @endforeach
                                         </div>
                                     </div>
@@ -645,7 +654,7 @@ body {font-family: Arial;}
                                                             @endforeach
                                                         </select>
                                                         <div class="invalid-feedback">
-                                                            El Estado es obligatorio.
+                                                            El Municipio es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
@@ -982,7 +991,7 @@ body {font-family: Arial;}
                         <div class="col-xs-12 col-sm-12 col-md-3">
                             <div class="form-group">
                                 <label for="name">Estado <span style="color:red;">(*)</span></label>
-                                <select id="estado_citado" class="form-control" name="estado_citado" required oninput="this.value = this.value.toUpperCase()">
+                                <select id="estado_citado" class="form-control" name="estado_citado[]" required oninput="this.value = this.value.toUpperCase()">
                                     <option value="">Seleccione</option>
                                     @foreach($estados as $es)
                                         <option value="{{$es['id']}}">{{$es['nombre']}}</option>
