@@ -13,33 +13,34 @@ use Illuminate\Queue\SerializesModels;
 class SolicitudMail extends Mailable
 {
     use Queueable, SerializesModels;
+    
+    public $pdfContent;
+    public $variables; // Propiedad para pasar datos a la vista
 
-    public $userData; // Propiedad para pasar datos a la vista
-
-    public function __construct($userData)
+    public function __construct($pdfContent, $variables)
     {
-        $this->userData = $userData;
+        $this->pdfContent = $pdfContent;
+        $this->variables = $variables;
     }
 
     /**
      * Define el Asunto y el Remitente (envelope)
      */
-    public function envelope(): Envelope
+    public function build()
     {
-        return new Envelope(
-            subject: 'Solicitud Capturada',
-            // from: new Address('otro_correo@app.com', 'Mi Aplicación') // Opcional, si quieres cambiar el remitente predeterminado
-        );
+        return $this->subject('Solicitud Capturada')
+                    
+                    // 1. Define el cuerpo del correo (el mensaje)
+                    // Pasa los datos dinámicos a la vista del email
+                    ->view('emails.confirmacion_solicitud') 
+                    ->with([
+                        'solicitante' => $this->variables['Nombre'],
+                    ])
+                    
+                    // 2. Adjunta el PDF generado en memoria
+                    ->attachData($this->pdfContent, 'Acuse de solicitud.pdf', [
+                        'mime' => 'application/pdf', 
+                    ]);
     }
-
-    /**
-     * Define el contenido del correo (vista de Blade)
-     */
-    public function content(): Content
-    {
-        return new Content(
-            view: 'emails.confirmacion_solicitud', // Nombre de la plantilla Blade (archivo: resources/views/emails/welcome.blade.php)
-        );
-    }
-    
+   
 }
