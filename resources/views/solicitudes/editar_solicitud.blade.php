@@ -687,7 +687,7 @@ select[name="municipio_citado"] option {
                                                 <div class="col-xs-12 col-sm-6 col-md-3" id="lenguaje_wrap_{{$loop->index}}">
                                                     <div class="form-group">
                                                         <label for="name">¿Qué tipo de lenguaje requiere?<span style="color:red;"> (*)</span></label>
-                                                        <input type="text" name="lenguaje[]" id="lenguaje_{{$loop->index}}" class="form-control" value="{{ $citado['lenguaje'] ?? ($citado->lenguaje ?? '') }}" oninput="this.value = this.value.toUpperCase()">
+                                                        <input type="text" name="lenguaje" id="lenguaje_{{$loop->index}}" class="form-control" value="{{ $citado['lenguaje'] ?? ($citado->lenguaje ?? '') }}" oninput="this.value = this.value.toUpperCase()">
                                                         <div class="invalid-feedback">El lenguaje es obligatorio cuando requiere traductor.</div>
                                                     </div>
                                                 </div>
