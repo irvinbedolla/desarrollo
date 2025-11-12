@@ -374,7 +374,7 @@ class SeerController extends Controller
         //Validar documentacion
         request()->validate([
             //General
-            'tipo_reporte'  => 'required|in:Cumplimientos,CumplimientosResumen,Ratificaciones,RatificacionesResumen,Detallado,Concentrado,RatificacionesUsuario,Notificaciones',
+            'tipo_reporte'  => 'required|in:Cumplimientos,CumplimientosResumen,Ratificaciones,RatificacionesResumen,Detallado,Concentrado,RatificacionesUsuario,Notificaciones,RatificacionesDias',
         ], $data);
         if(isset($data["sede"]))
             $sede = $data["sede"];
@@ -952,6 +952,45 @@ class SeerController extends Controller
                 
             $pdf = \PDF::loadView('PDF/estadisticas/reporte_cuantitativo', compact('solicitudes','audiencias','notificaciones'));
             $pdf->setPaper('legal', 'landscape');
+            return $pdf->stream('archivo.pdf');
+        }
+        else if($data["tipo_reporte"] == "RatificacionesDias"){
+            //Pagos de ratificacion(Turnos)
+            if($sede === "Todos"){
+                /*
+                SELECT
+    -- 1. Extrae solo la fecha (día-mes-año), ignorando la hora
+    DATE(fecha_registro) AS Dia_Del_Registro,
+    -- 2. Suma el campo 'cantidad' para cada día
+    SUM(cantidad) AS Suma_De_Registros
+FROM
+    mi_tabla
+-- 3. Agrupa los resultados por el día que extrajimos
+GROUP BY
+    Dia_Del_Registro
+-- 4. Opcional: Ordena por fecha
+ORDER BY
+    Dia_Del_Registro ASC;
+*/
+
+
+                $usuarios = Turnos::whereBetween('turnos.fecha',[$fecha_inicial,$fecha_final])
+                ->join('users','users.id','turnos.user_id')
+                ->select('users.name', DB::raw('count(turnos.id) as ratificacion'), DB::raw('SUM(turnos.monto) as ratificacionesMonto') )
+                ->groupBy('users.id', 'users.name')
+                ->get();
+
+            } else {
+                $usuarios = Turnos::whereBetween('turnos.fecha',[$fecha_inicial,$fecha_final])
+                ->where('turnos.delegacion',$sede)
+                ->join('users','users.id','turnos.user_id')
+                ->select('users.name', DB::raw('count(turnos.id) as ratificacion'), DB::raw('SUM(turnos.monto) as ratificacionesMonto') )
+                ->groupBy('users.id', 'users.name')
+                ->get();
+            }
+            
+            $pdf = \PDF::loadView('PDF/Estadisticas/RatificacionUsuario',compact('fecha_inicial','fecha_final','usuarios'));
+            //$pdf->setPaper('a4', 'landscape');
             return $pdf->stream('archivo.pdf');
         }
         else if($data["tipo_reporte"] == "Detallado"){
@@ -6702,7 +6741,7 @@ class SeerController extends Controller
             }
             }
         }
-        else if($userRole[0] == "Delegado"){
+        else if($userRole[0] == "Delegado" || $userRole[0] == "Enlace"){
             if($user["delegacion"] == "Morelia"){
                     $solicitudes = Turnos::whereIn('delegacion', ["Morelia", "Zitácuaro"])->where('tipo','Ratificación')->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($solicitudes as $audiencia) {
