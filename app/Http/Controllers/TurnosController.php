@@ -1131,7 +1131,20 @@ class TurnosController extends Controller
     }
 
     private function convertirNumerosALetras($valor) {
+        $valor = (float) $valor;
         $numberToWords = new NumberToWords();
+        $numberTransformer = $numberToWords->getNumberTransformer('es');
+        $parteEntera = floor($valor);
+        $parteDecimal = round(($valor - $parteEntera) * 100);
+        $letras = $parteEntera > 0
+            ? strtoupper($numberTransformer->toWords($parteEntera))
+            : 'CERO';
+        $centavos = str_pad($parteDecimal, 2, '0', STR_PAD_LEFT);
+        if ($parteEntera == 0 && $parteDecimal > 0) {
+            return "CERO PESOS {$centavos}/100 M.N.";
+        }
+        return "{$letras} PESOS {$centavos}/100 M.N.";
+        /*$numberToWords = new NumberToWords();
         $numberTransformer = $numberToWords->getNumberTransformer('es'); 
 
         $parteEntera = floor($valor);
@@ -1139,7 +1152,7 @@ class TurnosController extends Controller
 
         $parteDecimal = round(($valor - $parteEntera) * 100);
         $centavos = str_pad($parteDecimal, 2, '0', STR_PAD_LEFT); 
-        return "{$letras} PESOS {$centavos}/100";
+        return "{$letras} PESOS {$centavos}/100";*/
     }
 
     //PDF Acta de multa
