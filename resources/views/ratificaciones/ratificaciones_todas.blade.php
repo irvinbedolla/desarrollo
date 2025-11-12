@@ -17,6 +17,7 @@
                                         <thead style="background-color: #4A001F;">
                                             <th style="color: #fff;">Folio</th>
                                             <th style="color: #fff;">Fecha</th>
+                                            <th style="color: #fff;">NUE</th>
                                             <th style="color: #fff;">Empresa</th>
                                             <th style="color: #fff;">Teléfono</th>
                                             <th style="color: #fff;">Correo</th>
@@ -32,6 +33,7 @@
                                                 <tr>
                                                     <td>{{$solicitud->id}}</td>
                                                     <td>{{$solicitud->fecha}}</td> 
+                                                    <td>{{$solicitud->NUE}}</td> 
                                                     <td>@if(is_null($solicitud->nombre_empresa) && is_null($solicitud->primero_empresa) && is_null($solicitud->segundo_empresa))
                                                         {{$solicitud->empresa}}
                                                        @else {{$solicitud->nombre_empresa}} {{$solicitud->primero_empresa}} {{$solicitud->segundo_empresa}}@endif</td>

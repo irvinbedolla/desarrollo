@@ -516,10 +516,10 @@ class TurnosController extends Controller
                 'monto'             => 'required',
                 'frecuencia'        => 'required',
                 'tipo_pago'         => 'required',
-                //'sede'              => 'required',
+                'sede'              => 'required',
                 'dias'              => 'required',
-                //'fecha'             => 'required',
-                //'hora'              => 'required',
+                'fecha'             => 'required',
+                'hora'              => 'required',
                 'JLCA'              => 'required',
                 'motivo'            => 'required',
                 'salario'           => 'required',
@@ -600,8 +600,7 @@ class TurnosController extends Controller
                 'dias'              => $data["dias"],
                 'auxiliar'          => 0,
                 'lugar_auxiliar'    => "Recepción",
-                //'delegacion'        => $data["sede"],
-                'delegacion'        => 'Morelia',
+                'delegacion'        => $data["sede"],
                 'estatus'           => 'Confirmado',
                 'exepcion'          => 'No',
                 'ine'               => $representante["ineDocumento	"],
@@ -620,11 +619,12 @@ class TurnosController extends Controller
                 'codigo_postal'     => $data["cp"],
                 'idAbogado'         => $data["folio"],
                 'user_id'           => 0,
-                'fecha'             => $fecha_actual,
-                'hora'              => $hora_actual,
-                'hora_fin'          => $hora_actual,
+                'fecha'             => $data["fecha"],
+                'hora'              => $data["hora"],
+                'hora_fin'          => $data["hora"],
                 'num_identificacion'=> $data["num_identificacion"],
                 'estado_rat'        => $data["estado_rat"],
+                //'sede'              => $data["sede"],
             ); 
             $nombre = $data["trabajador"];
             
@@ -772,10 +772,9 @@ class TurnosController extends Controller
         if(isset($data["N_Int"])){
             $data_insert["num_int"] =  $data["N_Int"];
         }
-        
         //Se van insetar todos los datos
         Turnos::create($data_insertar);
-       
+       /*
         //Revisar si ya existe el correo
         $usuario = User::where('email',$email)->first();
         if(!isset($usuario)){
@@ -801,10 +800,9 @@ class TurnosController extends Controller
             $mensaje = " el correo:".$usuario["email"]." para continuar tú trámite.";
         }
         
-        
-
+        */
         return back()->with('success', 'Debes ingresar a '. 
-        ' http://siconcilio.cclmichoacan.gob.mx/ en el apartado de buzón electrónico con'.$mensaje  ); 
+        ' http://siconcilio.cclmichoacan.gob.mx/ en el apartado de buzón electrónico.'  ); 
     }
 
     public function pagoA_ratificacion(Request $request){
