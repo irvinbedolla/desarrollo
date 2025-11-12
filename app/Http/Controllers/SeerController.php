@@ -965,10 +965,10 @@ class SeerController extends Controller
 
             } else {
                 $usuarios = Turnos::whereBetween('turnos.fecha',[$fecha_inicial,$fecha_final])
-                ->where('turnos.delegacion',$sede)
                 ->join('users','users.id','turnos.user_id')
-                ->select('users.name', DB::raw('count(turnos.id) as ratificacion'), DB::raw('SUM(turnos.monto) as ratificacionesMonto') )
-                ->groupBy('users.id', 'users.name')
+                ->where('turnos.delegacion',$sede)
+                ->select('users.name','turnos.fecha', DB::raw('count(turnos.id) as numero') )
+                ->groupBy('users.id', 'turnos.fecha',  'users.name')
                 ->get();
             }
             
