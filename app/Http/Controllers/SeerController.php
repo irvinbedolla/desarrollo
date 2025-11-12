@@ -957,27 +957,10 @@ class SeerController extends Controller
         else if($data["tipo_reporte"] == "RatificacionesDias"){
             //Pagos de ratificacion(Turnos)
             if($sede === "Todos"){
-                /*
-                SELECT
-    -- 1. Extrae solo la fecha (día-mes-año), ignorando la hora
-    DATE(fecha_registro) AS Dia_Del_Registro,
-    -- 2. Suma el campo 'cantidad' para cada día
-    SUM(cantidad) AS Suma_De_Registros
-FROM
-    mi_tabla
--- 3. Agrupa los resultados por el día que extrajimos
-GROUP BY
-    Dia_Del_Registro
--- 4. Opcional: Ordena por fecha
-ORDER BY
-    Dia_Del_Registro ASC;
-*/
-
-
                 $usuarios = Turnos::whereBetween('turnos.fecha',[$fecha_inicial,$fecha_final])
                 ->join('users','users.id','turnos.user_id')
-                ->select('users.name', DB::raw('count(turnos.id) as ratificacion'), DB::raw('SUM(turnos.monto) as ratificacionesMonto') )
-                ->groupBy('users.id', 'users.name')
+                ->select('users.name','turnos.fecha', DB::raw('count(turnos.id) as numero') )
+                ->groupBy('users.id', 'turnos.fecha',  'users.name')
                 ->get();
 
             } else {
@@ -989,7 +972,7 @@ ORDER BY
                 ->get();
             }
             
-            $pdf = \PDF::loadView('PDF/Estadisticas/RatificacionUsuario',compact('fecha_inicial','fecha_final','usuarios'));
+            $pdf = \PDF::loadView('PDF/Estadisticas/reporte-dia_ratificacion',compact('fecha_inicial','fecha_final','usuarios'));
             //$pdf->setPaper('a4', 'landscape');
             return $pdf->stream('archivo.pdf');
         }
@@ -6402,7 +6385,7 @@ ORDER BY
         return view('estadisticas.mis_estadisticas');
     }
 
-        public function estadisticasPDF(Request $request){
+    public function estadisticasPDF(Request $request){
         $data = $request->all();
         $id = auth()->user()->id;
         $user = User::find($id);
