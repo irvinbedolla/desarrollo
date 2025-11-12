@@ -6402,7 +6402,7 @@ ORDER BY
         return view('estadisticas.mis_estadisticas');
     }
 
-    public function estadisticasPDF(Request $request){
+        public function estadisticasPDF(Request $request){
         $data = $request->all();
         $id = auth()->user()->id;
         $user = User::find($id);
@@ -6410,6 +6410,7 @@ ORDER BY
         $userRole = $user->roles->pluck('name')->all();
         $fecha_inicial = $data["fecha_inicial"];
         $fecha_final = $data["fecha_final"];
+        $sede = $user->delegacion;
        
         if($userRole[0] == "Auxiliar"){
             $Ratificacion = Turnos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
@@ -6426,27 +6427,16 @@ ORDER BY
         }
         else if($userRole[0] == "Cumplimientos"){
             $pagosAudiencias = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-            ->join('seer_general','seer_general.id','pago_solicitud.id_solicitud')
+            //->leftjoin('seer_general','seer_general.id','pago_solicitud.id_solicitud')
             ->leftjoin('users','users.id','pago_solicitud.id_conciliador')
             ->where('pago_solicitud.tipo_pago',"Audiencia")
-            ->select('pago_solicitud.fecha','pago_solicitud.hora','seer_general.NUE','pago_solicitud.nombre_trabajador','pago_solicitud.empresa_representante','pago_solicitud.descripcion','pago_solicitud.monto'
-            ,'users.name','pago_solicitud.estatus','seer_general.delegacion')
+            ->where('pago_solicitud.delegacion',$sede)
+            ->select('pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.nombre_trabajador','pago_solicitud.empresa_representante','pago_solicitud.descripcion','pago_solicitud.monto'
+            ,'users.name','pago_solicitud.estatus','pago_solicitud.NUE')
             //->selectRaw('count(pago_solicitud.id) as audiencias')
             ->get();
-
-            $pagosAudienciasMonto = Pagos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
-            ->join('users','users.id','pago_solicitud.id_conciliador')
-            ->where('pago_solicitud.tipo_pago',"Audiencia")
-            //->selectRaw('sum(pago_solicitud.monto) as audienciasMonto')
-            ->get();
-
-            $Audiencias = Pagos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
-            ->where('pago_solicitud.delegacion',$user["delegacion"])
-            ->join('users','users.id','pago_solicitud.id_conciliador')
-            ->where('pago_solicitud.tipo_pago',"Audiencia")
-            ->get(); 
-
-            $pdf = \PDF::loadView('PDF/Estadisticas/reporte-miscumplimientos', compact('fecha_inicial','fecha_final','pagosAudienciasMonto','pagosAudiencias','Audiencias'));
+            
+            $pdf = \PDF::loadView('PDF/Estadisticas/reporte-miscumplimientos', compact('fecha_inicial','fecha_final','pagosAudiencias'));
             $pdf->setPaper('a4', 'landscape');
             return $pdf->stream('archivo.pdf');
         }
