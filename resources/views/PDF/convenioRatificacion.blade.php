@@ -186,91 +186,19 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            <!--<p class="sangria">-->
+                                <!--<p class="sangria">-->
                                 @foreach($prestaciones as $concepto)
-                                    @switch($concepto->descripcion)                                   
-                                        @case('Vacaciones')
-                                            <tr>
-                                                <td>VACACIONES</td>
-                                                <td><b>${{ number_format($concepto->monto, 2) }} </td>
-                                                <td>{{ $vacacionesTexto }} M.N.</b></td>
-                                            </tr>
-                                            @break
-                                        @case('PrimaVacacional')
-                                            <tr>
-                                                <td>PRIMA VACACIONAL</td>
-                                                <td><b>${{ number_format($concepto->monto, 2) }}</td>
-                                                <td>{{ $primaTexto }} M.N.</b></td>
-                                            </tr>
-                                            @break
-                                        @case('Aguinaldo')
-                                            <tr>
-                                                <td>AGUINALDO</td> 
-                                                <td><b>${{ number_format($concepto->monto, 2) }}</td> 
-                                                <td>{{ $aguinaldoTexto }} M.N.</b></td>
-                                            </tr>
-                                            @break
-                                        @case('DSueldo')
-                                            <tr>
-                                                <td>DÍAS DE SUELDO</td>
-                                                <td><b>${{ number_format($concepto->monto, 2) }}</td> 
-                                                <td>{{ $DSueldoTexto }} M.N.</b></td>
-                                            </tr>
-                                            @break
-                                        @case('GratificaciónA')
-                                            <tr>
-                                                <td>GRATIFICACIÓN A (CON BASE AL SALARIO INTEGRADO)</td> 
-                                                <td><b>${{ number_format($concepto->monto, 2) }}</td> 
-                                                <td>{{ $gratificacionATexto }} M.N.</b></td>
-                                            </tr>
-                                            @break
-                                        @case('GratificaciónB')
-                                            <tr>
-                                                <td>GRATIFICACIÓN B (20 DÍAS POR AÑO CUMPLIDO)</td> 
-                                                <td><b>${{ number_format($concepto->monto, 2) }}</td>
-                                                <td>{{ $gratificacionBTexto }} M.N.</b></td>
-                                            </tr>
-                                            @break
-                                        @case('GratificaciónC')
-                                            <tr>
-                                                <td>GRATIFICACIÓN C (PRIMA DE ANTIGÜEDAD TOPADA)</td> 
-                                                <td><b>${{ number_format($concepto->monto, 2) }}</td> 
-                                                <td>{{ $gratificacionCTexto }} M.N.</b></td>
-                                            </tr>
-                                            @break
-                                        @case('GratificaciónD')
-                                            <tr>
-                                                <td>GRATIFICACIÓN D (INCLUYE CUALQUIER OTRA PRESTACIÓN)</td>
-                                                <td><b>${{ number_format($concepto->monto, 2) }}</td>
-                                                <td>{{ $gratificacionDTexto }} M.N.</b></td>
-                                            </tr>
-                                            @break
-                                        @case('GratificaciónE')
-                                            <tr>
-                                                <td>GRATIFICACIÓN E (PRESTACIONES EN ESPECIE)</td>
-                                                <td><b>${{ number_format($concepto->monto, 2) }}</td>
-                                                <td>{{ $gratificacionETexto }} M.N.</b></td>
-                                            </tr>
-                                            @break
-                                        @case('GratificaciónF')
-                                            <tr>
-                                                <td>GRATIFICACIÓN F (RECONOCIMIENTO DE DERECHOS)</td>
-                                                <td><b>${{ number_format($concepto->monto, 2) }}</td>
-                                                <td>{{ $gratificacionFTexto }} M.N.</b></td>
-                                            </tr>
-                                            @break 
-                                        @default 
-                                            <tr>
-                                                <td>OTRA PRESTACIÓN: {{ strtoupper($concepto->descripcion) }}</td>
-                                                <td><b>${{ number_format($concepto->monto, 2) }}</td>
-                                                <td>{{ $otrasTexto }} M.N.</b></td>
-                                            </tr>
-                                    @endswitch
+                                    <tr>
+                                        <td>{{ strtoupper($concepto->descripcion) }}</td>
+                                        <td><b>${{ number_format($concepto->monto, 2) }}</b></td>
+                                        <td>{{ $conceptosTexto[$concepto->id] }}</td> <!-- Aquí usamos el arreglo para obtener el texto -->
+                                    </tr>
                                 @endforeach
-                            <!--</p>-->
+                                <!--</p>-->
                             </tbody>
                         </table>      
 
+                        <!-- Para las deducciones -->
                         @if(!empty($deducciones) && count($deducciones) > 0)
                             <b>Deducciones</b>
                             <table class="table table-bordered">
@@ -282,15 +210,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <!--<p class="sangria">-->
                                     @foreach($deducciones as $deduccion)
                                         <tr>
                                             <td>{{ $deduccion->descripcion }}</td>
                                             <td><b>${{ number_format($deduccion->monto, 2) }}</b></td>
-                                            <td>{{ $deduccionesTexto }} M.N.</b></td>
+                                            <td>{{ $deduccionesTexto[$deduccion->id] }}</td> <!-- Aquí usamos el arreglo para obtener el texto -->
                                         </tr>
                                     @endforeach  
-                                <!--</p>-->
                                 </tbody>
                             </table> 
                         @endif
