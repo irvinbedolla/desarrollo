@@ -994,7 +994,6 @@ class TurnosController extends Controller
         return $pdf->stream($nombreArchivo);               
     }
 
-    //PDF Convenio Ratificación 
     public function VerPDFConvenio($id){
         $solicitud = Turnos::find($id);
         $pagos = Pagos::where('id_solicitud', $id)->get();
@@ -1002,14 +1001,14 @@ class TurnosController extends Controller
         $abogado = $abogado->where("turnos.id", "=", $id)
         ->first();*/
         $abogado = Poder::join("turnos", "turnos.idAbogado", "=", "abogados.idAbogado")
-          ->where("turnos.id", "=", $id)
-          ->select(
-          "abogados.*",
-          "turnos.tipo_identificacion as tipo_identificacion_turno",
-          "turnos.num_identificacion as num_identificacion_turno"
-        )
-        ->first();
-       // $abogado = Poder::where('idAbogado', $id)->get();
+            ->where("turnos.id", "=", $id)
+            ->select(
+                "abogados.*",
+                "turnos.tipo_identificacion as tipo_identificacion_turno",
+                "turnos.num_identificacion as num_identificacion_turno"
+            )
+            ->first();
+        // $abogado = Poder::where('idAbogado', $id)->get();
         //dd($abogado);
         //$prestacionesLab = Concepto::where('id_solicitud', $id)->first();
         //dd($prestaciones);
@@ -1017,102 +1016,65 @@ class TurnosController extends Controller
         $municipioEmpresa = $municipio ? $municipio->nombre : 'No definido';
         $estado = Estados::find($solicitud->estado_rat);
         $estadoEmpresa = $estado ? $estado->nombre : 'No definido';
-        $prestaciones = Concepto::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
-        $deducciones  = Deducciones::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
-        // Inicializa las variables de texto
-        $deduccionesTexto = '';
-        $vacacionesTexto = '';
-        $primaTexto = '';
-        $aguinaldoTexto = '';
-        $DSueldoTexto = '';
-        $antiguedadTexto = '';
-        $gratificacionATexto = ''; $gratificacionBTexto = ''; $gratificacionCTexto = ''; $gratificacionDTexto = ''; $gratificacionETexto = ''; $gratificacionFTexto = '';
-        $otrasTexto = '';
+
+        // Obtener prestaciones y deducciones
+        $prestaciones = Concepto::where('id_solicitud', $id)->get();
+        $deducciones = Deducciones::where('id_solicitud', $id)->get();
+
+        $conceptosTexto = [];
+        $deduccionesTexto = [];
+
         foreach ($prestaciones as $concepto) {
-            switch ($concepto->descripcion) {
-                case 'Vacaciones':
-                    $vacacionesTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'PrimaVacacional':
-                    $primaTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'Aguinaldo':
-                    $aguinaldoTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'DSueldo':
-                    $DSueldoTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónA':
-                    $gratificacionATexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónB':
-                    $gratificacionBTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónC':
-                    $gratificacionCTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónD':
-                    $gratificacionDTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónE':
-                    $gratificacionETexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónF':
-                    $gratificacionFTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                default:
-                    $otrasTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-            }
+            $conceptosTexto[$concepto->id] = $this->convertirNumerosALetras($concepto->monto);
         }
-        $totalPrestaciones = $prestaciones->sum('monto');
 
-        //DEDUCCIONES
         foreach ($deducciones as $deduccion) {
-            $deduccionesTexto = $this->convertirNumerosALetras($deduccion->monto);
+            $deduccionesTexto[$deduccion->id] = $this->convertirNumerosALetras($deduccion->monto);
         }
-        $totalDeducciones = $deducciones->sum('monto');
-        //Total a pagar
-        $pagoTotal= $totalPrestaciones-$totalDeducciones;
-        //
-        $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
 
+        $totalPrestaciones = $prestaciones->sum('monto');
+        $totalDeducciones = $deducciones->sum('monto');
+        $pagoTotal = $totalPrestaciones - $totalDeducciones;
+
+        $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
         $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
         $salario_mensual = $salario_diario * 30;
+
         $diarioTexto = $this->convertirNumerosALetras($salario_diario);
         $mensualTexto = $this->convertirNumerosALetras($salario_mensual);
         $montoTexto = $this->convertirNumerosALetras($solicitud->monto);
-        
-        $pagosDif  = Pagos::join("turnos","turnos.id","=","pago_solicitud.id_solicitud");
-        $pagosDif = $pagosDif->where("pago_solicitud.id_solicitud", "=", $id)
-        ->select(DB::raw('count(pago_solicitud.id_solicitud) as C_pagos'))
-        ->first();
 
-        $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
-        $conciliador = $conciliador->where("turnos.id", "=", $id)
-        ->select('users.name')
-        ->first();
+        // Obtener el número de pagos
+        $pagosDif = Pagos::join("turnos", "turnos.id", "=", "pago_solicitud.id_solicitud")
+            ->where("pago_solicitud.id_solicitud", "=", $id)
+            ->select(DB::raw('count(pago_solicitud.id_solicitud) as C_pagos'))
+            ->first();
+        $conciliador = User::join("turnos", "turnos.id_conciliador", "=", "users.id")
+            ->where("turnos.id", "=", $id)
+            ->select('users.name')
+            ->first();
 
-        //Descripción del tipo de identificación para los solicitantes
+        // Descripción del tipo de identificación para los solicitantes y poderes
         $identificacionSolicitante = $solicitud->tipo_identificacion;
         $descripcionIdentificacionS = $this->descripcionIdentificacion($identificacionSolicitante);
-
-        //Descripción del tipo de identificación para los poderes
         $identificacionPoder = $abogado->tipo_identificacion;
         $descripcionIdentificacionP = $this->descripcionIdentificacion($identificacionPoder);
 
         $html = view('PDF/convenioRatificacion', 
-            compact('id', 'solicitud', 'dias_descanso', 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','vacacionesTexto',
-            'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
-            'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones','abogado','deducciones','deduccionesTexto',
-            'municipioEmpresa','estadoEmpresa','pagoTotal','descripcionIdentificacionS','descripcionIdentificacionP'))
-            ->render();
+            compact(
+                'id', 'solicitud', 'dias_descanso', 'salario_diario', 'salario_mensual', 'pagos', 
+                'diarioTexto', 'mensualTexto', 'montoTexto', 'conceptosTexto', 'deduccionesTexto', 
+                'pagosDif', 'conciliador', 'abogado', 'municipioEmpresa', 'estadoEmpresa', 'pagoTotal', 
+                'descripcionIdentificacionS', 'descripcionIdentificacionP','prestaciones','deducciones'
+            )
+        )->render();
+
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true);
 
-        return $pdf->stream('Convenio_terminacion_'. $solicitud->trabajador .'.pdf');        
+        return $pdf->stream('Convenio_terminacion_'. $solicitud->trabajador .'.pdf');      
     }
 
     public function calcularSalarioDiario($salario, $frecuencia) {

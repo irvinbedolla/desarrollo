@@ -76,7 +76,7 @@
                     </table>
                 </div><br><br><br>
                 <div class="table-responsive">
-                    <spam>Ratificaciones</spam>
+                    <spam>Cumplimientos en Ratificaciones</spam>
                     <table class="table table-striped mt-2">
                         <thead style="background-color: #869b9c;">
                             <th style="color: #fff;  text-align: center;">Tipo</th>
@@ -104,7 +104,7 @@
                 </div>
 
                 <div class="table-responsive">
-                    <spam>Audiencias</spam>
+                    <spam>Cumplimientos de Audiencias</spam>
                     <table class="table table-striped mt-2">
                         <thead style="background-color: #869b9c;">
                             <th style="color: #fff;  text-align: center;">Tipo</th>
@@ -113,7 +113,7 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td style=" text-align: center;">Audiencia</td>
+                                <td style=" text-align: center;">Cumplimiento</td>
                                 <td style=" text-align: center;">{{ $pagosAudiencias->audiencias }}</td>
                                 <td style=" text-align: center;">${{ number_format($pagosAudienciasMonto->audienciasMonto,2) }}</td>
                             </tr>
