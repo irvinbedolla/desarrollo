@@ -374,7 +374,7 @@ class SeerController extends Controller
         //Validar documentacion
         request()->validate([
             //General
-            'tipo_reporte'  => 'required|in:Cumplimientos,CumplimientosResumen,Ratificaciones,RatificacionesResumen,Detallado,Concentrado,RatificacionesUsuario,Notificaciones',
+            'tipo_reporte'  => 'required|in:Cumplimientos,CumplimientosResumen,Ratificaciones,RatificacionesResumen,Detallado,Concentrado,RatificacionesUsuario,Notificaciones,RatificacionesDias',
         ], $data);
         if(isset($data["sede"]))
             $sede = $data["sede"];
@@ -952,6 +952,28 @@ class SeerController extends Controller
                 
             $pdf = \PDF::loadView('PDF/estadisticas/reporte_cuantitativo', compact('solicitudes','audiencias','notificaciones'));
             $pdf->setPaper('legal', 'landscape');
+            return $pdf->stream('archivo.pdf');
+        }
+        else if($data["tipo_reporte"] == "RatificacionesDias"){
+            //Pagos de ratificacion(Turnos)
+            if($sede === "Todos"){
+                $usuarios = Turnos::whereBetween('turnos.fecha',[$fecha_inicial,$fecha_final])
+                ->join('users','users.id','turnos.user_id')
+                ->select('users.name','turnos.fecha', DB::raw('count(turnos.id) as numero') )
+                ->groupBy('turnos.fecha','users.id')
+                ->get();
+
+            } else {
+                $usuarios = Turnos::whereBetween('turnos.fecha',[$fecha_inicial,$fecha_final])
+                ->join('users','users.id','turnos.user_id')
+                ->where('turnos.delegacion',$sede)
+                ->select('users.name','turnos.fecha', DB::raw('count(turnos.id) as numero') )
+                ->groupBy('turnos.fecha','users.id','users.name')
+                ->get();
+            }
+            
+            $pdf = \PDF::loadView('PDF/Estadisticas/reporte-dia_ratificacion',compact('fecha_inicial','fecha_final','usuarios'));
+            //$pdf->setPaper('a4', 'landscape');
             return $pdf->stream('archivo.pdf');
         }
         else if($data["tipo_reporte"] == "Detallado"){
@@ -6742,6 +6764,7 @@ class SeerController extends Controller
         $userRole = $user->roles->pluck('name')->all();
         $fecha_inicial = $data["fecha_inicial"];
         $fecha_final = $data["fecha_final"];
+        $sede = $user->delegacion;
        
         if($userRole[0] == "Auxiliar"){
             $Ratificacion = Turnos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
@@ -6758,27 +6781,16 @@ class SeerController extends Controller
         }
         else if($userRole[0] == "Cumplimientos"){
             $pagosAudiencias = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-            ->join('seer_general','seer_general.id','pago_solicitud.id_solicitud')
+            //->leftjoin('seer_general','seer_general.id','pago_solicitud.id_solicitud')
             ->leftjoin('users','users.id','pago_solicitud.id_conciliador')
             ->where('pago_solicitud.tipo_pago',"Audiencia")
-            ->select('pago_solicitud.fecha','pago_solicitud.hora','seer_general.NUE','pago_solicitud.nombre_trabajador','pago_solicitud.empresa_representante','pago_solicitud.descripcion','pago_solicitud.monto'
-            ,'users.name','pago_solicitud.estatus','seer_general.delegacion')
+            ->where('pago_solicitud.delegacion',$sede)
+            ->select('pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.nombre_trabajador','pago_solicitud.empresa_representante','pago_solicitud.descripcion','pago_solicitud.monto'
+            ,'users.name','pago_solicitud.estatus','pago_solicitud.NUE')
             //->selectRaw('count(pago_solicitud.id) as audiencias')
             ->get();
-
-            $pagosAudienciasMonto = Pagos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
-            ->join('users','users.id','pago_solicitud.id_conciliador')
-            ->where('pago_solicitud.tipo_pago',"Audiencia")
-            //->selectRaw('sum(pago_solicitud.monto) as audienciasMonto')
-            ->get();
-
-            $Audiencias = Pagos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
-            ->where('pago_solicitud.delegacion',$user["delegacion"])
-            ->join('users','users.id','pago_solicitud.id_conciliador')
-            ->where('pago_solicitud.tipo_pago',"Audiencia")
-            ->get(); 
-
-            $pdf = \PDF::loadView('PDF/Estadisticas/reporte-miscumplimientos', compact('fecha_inicial','fecha_final','pagosAudienciasMonto','pagosAudiencias','Audiencias'));
+            
+            $pdf = \PDF::loadView('PDF/Estadisticas/reporte-miscumplimientos', compact('fecha_inicial','fecha_final','pagosAudiencias'));
             $pdf->setPaper('a4', 'landscape');
             return $pdf->stream('archivo.pdf');
         }
@@ -7073,7 +7085,7 @@ class SeerController extends Controller
             }
             }
         }
-        else if($userRole[0] == "Delegado"){
+        else if($userRole[0] == "Delegado" || $userRole[0] == "Enlace"){
             if($user["delegacion"] == "Morelia"){
                     $solicitudes = Turnos::whereIn('delegacion', ["Morelia", "Zitácuaro"])->where('tipo','Ratificación')->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($solicitudes as $audiencia) {

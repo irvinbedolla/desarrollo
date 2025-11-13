@@ -71,55 +71,30 @@
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                             <tr>   
                                 <td><b>Centro de conciliación Laboral </b></td>
-                                <td>{{ $fecha_inicial }} a {{ $fecha_final }}</td>
+                                 <td>{{ $fecha_inicial }} a {{ $fecha_final }}</td>
                             </tr>
                     </table>
                 </div><br><br><br>
                 <div class="table-responsive">
-                    <spam>Cumplimientos en Ratificaciones</spam>
+                    <spam>Ratificaciones</spam>
                     <table class="table table-striped mt-2">
                         <thead style="background-color: #869b9c;">
-                            <th style="color: #fff;  text-align: center;">Tipo</th>
-                            <th style="color: #fff;  text-align: center;">Cantidad</th>
+                            <th style="color: #fff;  text-align: center;">Usuario</th>
+                            <th style="color: #fff;  text-align: center;">Fecha</th>
                             <th style="color: #fff;  text-align: center;">Monto</th>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td style=" text-align: center;">Ratificaciones Totales</td>
-                                <td style=" text-align: center;">{{ $pagosRatificacion->ratificaciones }}</td>
-                                <td style=" text-align: center;">${{ number_format($pagosRatificacionMonto->ratificacionesMonto,2) }}</td>
-                            </tr>
-                            <tr>
-                                <td style=" text-align: center;">Ratificaciones Pagadas</td>
-                                <td style=" text-align: center;">{{ $pagosRatificacionPagado->ratificaciones }}</td>
-                                <td style=" text-align: center;">${{ number_format($pagosRatificacionMontoPagado->ratificacionesMonto,2) }}</td>
-                            </tr>
-                            <tr>
-                                <td style=" text-align: center;">Ratificaciones Pendientes</td>
-                                <td style=" text-align: center;">{{ $pagosRatificacionPendiente->ratificaciones }}</td>
-                                <td style=" text-align: center;">${{ number_format($pagosRatificacionMontoPendiente->ratificacionesMonto,2) }}</td>
-                            </tr>
+                        <tbody> 
+                            @foreach($usuarios as $usuario)
+                                <tr>
+                                    <td style=" text-align: center;">{{ $usuario->name }}</td>
+                                    <td style=" text-align: center;">{{ $usuario->fecha }}</td>
+                                    <td style=" text-align: center;">{{ $usuario->numero }}</td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
 
-                <div class="table-responsive">
-                    <spam>Cumplimientos de Audiencias</spam>
-                    <table class="table table-striped mt-2">
-                        <thead style="background-color: #869b9c;">
-                            <th style="color: #fff;  text-align: center;">Tipo</th>
-                            <th style="color: #fff;  text-align: center;">Cantidad</th>
-                            <th style="color: #fff;  text-align: center;">Monto</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style=" text-align: center;">Cumplimiento</td>
-                                <td style=" text-align: center;">{{ $pagosAudiencias->audiencias }}</td>
-                                <td style=" text-align: center;">${{ number_format($pagosAudienciasMonto->audienciasMonto,2) }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

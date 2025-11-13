@@ -516,10 +516,10 @@ class TurnosController extends Controller
                 'monto'             => 'required',
                 'frecuencia'        => 'required',
                 'tipo_pago'         => 'required',
-                //'sede'              => 'required',
+                'sede'              => 'required',
                 'dias'              => 'required',
-                //'fecha'             => 'required',
-                //'hora'              => 'required',
+                'fecha'             => 'required',
+                'hora'              => 'required',
                 'JLCA'              => 'required',
                 'motivo'            => 'required',
                 'salario'           => 'required',
@@ -600,8 +600,7 @@ class TurnosController extends Controller
                 'dias'              => $data["dias"],
                 'auxiliar'          => 0,
                 'lugar_auxiliar'    => "Recepción",
-                //'delegacion'        => $data["sede"],
-                'delegacion'        => 'Morelia',
+                'delegacion'        => $data["sede"],
                 'estatus'           => 'Confirmado',
                 'exepcion'          => 'No',
                 'ine'               => $representante["ineDocumento	"],
@@ -620,11 +619,12 @@ class TurnosController extends Controller
                 'codigo_postal'     => $data["cp"],
                 'idAbogado'         => $data["folio"],
                 'user_id'           => 0,
-                'fecha'             => $fecha_actual,
-                'hora'              => $hora_actual,
-                'hora_fin'          => $hora_actual,
+                'fecha'             => $data["fecha"],
+                'hora'              => $data["hora"],
+                'hora_fin'          => $data["hora"],
                 'num_identificacion'=> $data["num_identificacion"],
                 'estado_rat'        => $data["estado_rat"],
+                //'sede'              => $data["sede"],
             ); 
             $nombre = $data["trabajador"];
             
@@ -772,10 +772,9 @@ class TurnosController extends Controller
         if(isset($data["N_Int"])){
             $data_insert["num_int"] =  $data["N_Int"];
         }
-        
         //Se van insetar todos los datos
         Turnos::create($data_insertar);
-       
+       /*
         //Revisar si ya existe el correo
         $usuario = User::where('email',$email)->first();
         if(!isset($usuario)){
@@ -801,10 +800,9 @@ class TurnosController extends Controller
             $mensaje = " el correo:".$usuario["email"]." para continuar tú trámite.";
         }
         
-        
-
+        */
         return back()->with('success', 'Debes ingresar a '. 
-        ' http://siconcilio.cclmichoacan.gob.mx/ en el apartado de buzón electrónico con'.$mensaje  ); 
+        ' http://siconcilio.cclmichoacan.gob.mx/ en el apartado de buzón electrónico.'  ); 
     }
 
     public function pagoA_ratificacion(Request $request){
@@ -996,7 +994,6 @@ class TurnosController extends Controller
         return $pdf->stream($nombreArchivo);               
     }
 
-    //PDF Convenio Ratificación 
     public function VerPDFConvenio($id){
         $solicitud = Turnos::find($id);
         $pagos = Pagos::where('id_solicitud', $id)->get();
@@ -1004,14 +1001,14 @@ class TurnosController extends Controller
         $abogado = $abogado->where("turnos.id", "=", $id)
         ->first();*/
         $abogado = Poder::join("turnos", "turnos.idAbogado", "=", "abogados.idAbogado")
-          ->where("turnos.id", "=", $id)
-          ->select(
-          "abogados.*",
-          "turnos.tipo_identificacion as tipo_identificacion_turno",
-          "turnos.num_identificacion as num_identificacion_turno"
-        )
-        ->first();
-       // $abogado = Poder::where('idAbogado', $id)->get();
+            ->where("turnos.id", "=", $id)
+            ->select(
+                "abogados.*",
+                "turnos.tipo_identificacion as tipo_identificacion_turno",
+                "turnos.num_identificacion as num_identificacion_turno"
+            )
+            ->first();
+        // $abogado = Poder::where('idAbogado', $id)->get();
         //dd($abogado);
         //$prestacionesLab = Concepto::where('id_solicitud', $id)->first();
         //dd($prestaciones);
@@ -1019,102 +1016,65 @@ class TurnosController extends Controller
         $municipioEmpresa = $municipio ? $municipio->nombre : 'No definido';
         $estado = Estados::find($solicitud->estado_rat);
         $estadoEmpresa = $estado ? $estado->nombre : 'No definido';
-        $prestaciones = Concepto::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
-        $deducciones  = Deducciones::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
-        // Inicializa las variables de texto
-        $deduccionesTexto = '';
-        $vacacionesTexto = '';
-        $primaTexto = '';
-        $aguinaldoTexto = '';
-        $DSueldoTexto = '';
-        $antiguedadTexto = '';
-        $gratificacionATexto = ''; $gratificacionBTexto = ''; $gratificacionCTexto = ''; $gratificacionDTexto = ''; $gratificacionETexto = ''; $gratificacionFTexto = '';
-        $otrasTexto = '';
+
+        // Obtener prestaciones y deducciones
+        $prestaciones = Concepto::where('id_solicitud', $id)->get();
+        $deducciones = Deducciones::where('id_solicitud', $id)->get();
+
+        $conceptosTexto = [];
+        $deduccionesTexto = [];
+
         foreach ($prestaciones as $concepto) {
-            switch ($concepto->descripcion) {
-                case 'Vacaciones':
-                    $vacacionesTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'PrimaVacacional':
-                    $primaTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'Aguinaldo':
-                    $aguinaldoTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'DSueldo':
-                    $DSueldoTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónA':
-                    $gratificacionATexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónB':
-                    $gratificacionBTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónC':
-                    $gratificacionCTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónD':
-                    $gratificacionDTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónE':
-                    $gratificacionETexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónF':
-                    $gratificacionFTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                default:
-                    $otrasTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-            }
+            $conceptosTexto[$concepto->id] = $this->convertirNumerosALetras($concepto->monto);
         }
-        $totalPrestaciones = $prestaciones->sum('monto');
 
-        //DEDUCCIONES
         foreach ($deducciones as $deduccion) {
-            $deduccionesTexto = $this->convertirNumerosALetras($deduccion->monto);
+            $deduccionesTexto[$deduccion->id] = $this->convertirNumerosALetras($deduccion->monto);
         }
-        $totalDeducciones = $deducciones->sum('monto');
-        //Total a pagar
-        $pagoTotal= $totalPrestaciones-$totalDeducciones;
-        //
-        $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
 
+        $totalPrestaciones = $prestaciones->sum('monto');
+        $totalDeducciones = $deducciones->sum('monto');
+        $pagoTotal = $totalPrestaciones - $totalDeducciones;
+
+        $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
         $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
         $salario_mensual = $salario_diario * 30;
+
         $diarioTexto = $this->convertirNumerosALetras($salario_diario);
         $mensualTexto = $this->convertirNumerosALetras($salario_mensual);
         $montoTexto = $this->convertirNumerosALetras($solicitud->monto);
-        
-        $pagosDif  = Pagos::join("turnos","turnos.id","=","pago_solicitud.id_solicitud");
-        $pagosDif = $pagosDif->where("pago_solicitud.id_solicitud", "=", $id)
-        ->select(DB::raw('count(pago_solicitud.id_solicitud) as C_pagos'))
-        ->first();
 
-        $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
-        $conciliador = $conciliador->where("turnos.id", "=", $id)
-        ->select('users.name')
-        ->first();
+        // Obtener el número de pagos
+        $pagosDif = Pagos::join("turnos", "turnos.id", "=", "pago_solicitud.id_solicitud")
+            ->where("pago_solicitud.id_solicitud", "=", $id)
+            ->select(DB::raw('count(pago_solicitud.id_solicitud) as C_pagos'))
+            ->first();
+        $conciliador = User::join("turnos", "turnos.id_conciliador", "=", "users.id")
+            ->where("turnos.id", "=", $id)
+            ->select('users.name')
+            ->first();
 
-        //Descripción del tipo de identificación para los solicitantes
+        // Descripción del tipo de identificación para los solicitantes y poderes
         $identificacionSolicitante = $solicitud->tipo_identificacion;
         $descripcionIdentificacionS = $this->descripcionIdentificacion($identificacionSolicitante);
-
-        //Descripción del tipo de identificación para los poderes
         $identificacionPoder = $abogado->tipo_identificacion;
         $descripcionIdentificacionP = $this->descripcionIdentificacion($identificacionPoder);
 
         $html = view('PDF/convenioRatificacion', 
-            compact('id', 'solicitud', 'dias_descanso', 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','vacacionesTexto',
-            'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
-            'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones','abogado','deducciones','deduccionesTexto',
-            'municipioEmpresa','estadoEmpresa','pagoTotal','descripcionIdentificacionS','descripcionIdentificacionP'))
-            ->render();
+            compact(
+                'id', 'solicitud', 'dias_descanso', 'salario_diario', 'salario_mensual', 'pagos', 
+                'diarioTexto', 'mensualTexto', 'montoTexto', 'conceptosTexto', 'deduccionesTexto', 
+                'pagosDif', 'conciliador', 'abogado', 'municipioEmpresa', 'estadoEmpresa', 'pagoTotal', 
+                'descripcionIdentificacionS', 'descripcionIdentificacionP','prestaciones','deducciones'
+            )
+        )->render();
+
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true);
 
-        return $pdf->stream('Convenio_terminacion_'. $solicitud->trabajador .'.pdf');        
+        return $pdf->stream('Convenio_terminacion_'. $solicitud->trabajador .'.pdf');      
     }
 
     public function calcularSalarioDiario($salario, $frecuencia) {
@@ -1133,7 +1093,20 @@ class TurnosController extends Controller
     }
 
     private function convertirNumerosALetras($valor) {
+        $valor = (float) $valor;
         $numberToWords = new NumberToWords();
+        $numberTransformer = $numberToWords->getNumberTransformer('es');
+        $parteEntera = floor($valor);
+        $parteDecimal = round(($valor - $parteEntera) * 100);
+        $letras = $parteEntera > 0
+            ? strtoupper($numberTransformer->toWords($parteEntera))
+            : 'CERO';
+        $centavos = str_pad($parteDecimal, 2, '0', STR_PAD_LEFT);
+        if ($parteEntera == 0 && $parteDecimal > 0) {
+            return "CERO PESOS {$centavos}/100 M.N.";
+        }
+        return "{$letras} PESOS {$centavos}/100 M.N.";
+        /*$numberToWords = new NumberToWords();
         $numberTransformer = $numberToWords->getNumberTransformer('es'); 
 
         $parteEntera = floor($valor);
@@ -1141,7 +1114,7 @@ class TurnosController extends Controller
 
         $parteDecimal = round(($valor - $parteEntera) * 100);
         $centavos = str_pad($parteDecimal, 2, '0', STR_PAD_LEFT); 
-        return "{$letras} PESOS {$centavos}/100";
+        return "{$letras} PESOS {$centavos}/100";*/
     }
 
     //PDF Acta de multa

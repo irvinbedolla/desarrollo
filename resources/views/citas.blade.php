@@ -623,34 +623,18 @@
                                                         <select id="sede" name="sede" class="form-control" onchange="modalCalendar();" required>
                                                             <option value="">Seleccione la sede</option>
                                                             <option value="Morelia">Morelia</option>
+                                                            <option value="Zitácuaro">Zitácuaro</option>
                                                             <option value="Uruapan">Uruapan</option>
+                                                            <option value="Lázaro Cárdenas">Lázaro Cárdenas</option>
                                                             <option value="Zamora">Zamora</option>
+                                                            <option value="Sahuayo">Sahuayo</option>
                                                         </select>
                                                         <div class="invalid-feedback">
                                                             La sede es obligatoria.
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <!--div class="col-xs-12 col-sm-12 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="name">Día</label>
-                                                        <input id="fecha" type="date" name="fecha" class="form-control" onchange="diaSemana();" disabled>
-                                                        <div class="invalid-feedback">
-                                                            El campo conflicto es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="password">Horario Disponible</label>
-                                                        <select id="horarios" name="hora" class="form-control">
-                                                            <option value=""> --Primero selecciona un Dia --</option>
-                                                        </select>
-                                                        <div class="invalid-feedback">
-                                                            El Horario es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div-->
+                                                
 
                                                 <input type="hidden" name="fecha" id="fechaSeleccionada" required>
                                                 <input type="hidden" name="hora" id="horaSeleccionada" required>
@@ -822,7 +806,7 @@
             document.getElementById("botonCalendar").removeAttribute("disabled");
         }
 
-        /*function diaSemana() {
+        function diaSemana() {
             var dia_semana  = document.getElementById("fecha").value;
             var sede        = document.getElementById("sede").value;
 
@@ -833,7 +817,7 @@
                     $('#horarios').html(html_select);
 
             });
-        }*/
+        }
 
        /* $(function(){
             $('#check_folio').on('change', validarcheckfolio);

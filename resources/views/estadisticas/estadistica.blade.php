@@ -44,6 +44,7 @@
                                                     <option value="CumplimientosResumen">Cumplimientos Resumen</option>
                                                     <option value="Ratificaciones">Ratificaciones</option>
                                                     <option value="RatificacionesUsuario">Ratificaciones Por Usuario</option>
+                                                    <option value="RatificacionesDias">Ratificaciones Por Dias</option> 
                                                     <option value="Notificaciones">Notificaciones Detallado</option>
                                                     <option value="Concentrado">Concentrado</option>
                                                 </select>
