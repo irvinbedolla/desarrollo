@@ -103,7 +103,7 @@ select[name="municipio_citado"] option {
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <h3 class="text-center">Solicitud</h3>
+                            <h3 class="text-center">Detalles de la Solicitud</h3>
                             @if(session()->has('success'))
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                                     <strong>¡Registro correcto!</strong>
@@ -589,7 +589,7 @@ select[name="municipio_citado"] option {
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
                                                         <label for="name">Describe brevemente el motivo de tu solicitud <span style="color:red;">(*)</span></label>
-                                                        <textarea class="form-control" name="descripcionSolicitud"><?=$solicitante["descripcionSolicitud"];?></textarea>
+                                                        <textarea class="form-control" name="descripcionSolicitud" required>{{ $solicitante["descripcionSolicitud"] ?? '' }}</textarea>
                                                         <div class="invalid-feedback">
                                                             El campo descripción del motivo de la solicitud es obligatorio.
                                                         </div>
@@ -1102,7 +1102,7 @@ select[name="municipio_citado"] option {
                             </div>
                                 <div class="col-xs-12 col-sm-12 col-md-3" id="lenguaje_modal_wrap" style="display:none;">
                                 <div class="form-group">
-                                    <label for="name">¿Qué tipo de lenguaje require?</label>
+                                    <label for="name">¿Qué tipo de lenguaje require? <span style="color:red;">(*)</span></label>
                                         <input type="text" name="lenguaje" id="lenguaje_modal" class="form-control" oninput="this.value = this.value.toUpperCase()">
                                     <div class="invalid-feedback">
                                         La nacionalidad es obligatoria.

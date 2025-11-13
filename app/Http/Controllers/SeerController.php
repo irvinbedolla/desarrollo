@@ -2331,6 +2331,237 @@ class SeerController extends Controller
         return view('solicitudes.revisar_solicitud', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos'));
     }
 
+    public function audiencia_confirmar(Request $request){
+        $data = $request->all();
+
+        //Se va asignar el conciliador y la sala
+        $id_user = auth()->user()->id;
+        $user = User::find($id_user);
+        $listado_auxiliares = array();
+        $relacionEloquent = 'roles';
+        $fecha_actual = date('Y-m-d');
+
+        $isAudiencia = '';
+        
+        //Actualizar SEER GENERAL
+        $delegacion = SeerPerGeneral::find($data["id"]);
+        $NUE = $this->GeneraExpediente($data["id"],$delegacion["delegacion"]);
+
+        SeerPerGeneral::where('id', $data["id"])
+        ->update(['NUE' => $NUE, 'actividad' => $data["actividad_economica"],'id_rama' => $data["ramaIndustrial"], 'fecha_confirmacion' => $fecha_actual,]);
+
+        if (!empty($data["motivo_solicitud"])) {
+            foreach ($data["motivo_solicitud"] as $motivoId) {
+                SeerMotivo::create([
+                    'id_solicitud'    => $data["id"],
+                    'id_motivo'       => $motivoId,
+                    
+                ]);
+            }
+        }
+
+        //Actualizar SEER SOLICTUD
+        SeerSolicitante::where('id_solicitud', $data["id"])
+        ->update([/*'tipo_persona' => $data["tipo_persona_solicitante"],*/ 
+            'curp'                  => $data["curp_solicitante"],
+            //'rfc'                   => $data["rfc_solicitante"],
+            'nombre'                => $data["nombre_solicitante"],
+            'sexo'                  => $data["sexo_solicitante"],
+            'nacionalidad'          => $data["nacionalidad_solicitante"],
+            //'estado'                => $data["estado_solicitante"],
+            'email'                 => $data["email_solicitante"],
+            'fecha_nacimiento'      => $data["fecha_nacimiento_solicitante"],
+            'edad'                  => $data["edad_solicitante"],
+            'telefono1'             => $data["telefono1_solicitante"],
+            'traductor'             => $data["traductor_solicitante"],
+            'lenguaje'              => $data["lenguaje_solicitante"],
+            'discapacidad'          => $data["discapacidad_solicitante"],
+            'tipo_discapacidad'     => $data["disc_solicitante"],
+            'tipo_vialidad'         => $data["tipo_vialidad"],
+            'calle'                 => $data["calle_solicitante"],
+            'num_ext'               => $data["num_ext_solicitante"],
+            'codigo_postal'         => $data["codigo_postal_solicitante"],
+            //'referencia'            => $data["referencia_solicitante"],
+            'colonia'               => $data["colonia_solicitante"],
+            //'calle2'                => $data["calle2_solicitante"],
+            //'calle3'                => $data["calle3_solicitante"],
+            'municipio_domicilio'   => $data["municipio_solicitante"],
+            'puesto'                => $data["puesto"],
+            'pago'                  => $data["pago"],
+            'periodo_pago'          => $data["periodo_pago"],
+            'fecha_ingreso'         => $data["fecha_ingreso"],
+            'fecha_salida'          => $data["fecha_salida"],
+            'jornada'               => $data["jornada"],
+            'estado_domicilio'      => $data["estado_solicitante"],
+            'horas_semana'          => $data["horas_semana"],
+            'descripcionSolicitud'  => $data["descripcionSolicitud"],
+        ]);
+
+        //Opcionales
+        if(isset($data["telefono2"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['telefono2' => $data["telefono2_solicitante"] ]);
+        }
+        if(isset($data["num_int"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['num_int' => $data["num_int_solicitante"] ]);
+        }
+        if(isset($data["nss"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['nss' => $data["nss"] ]);
+        }
+        if(isset($data["rfc"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['rfc' => $data["rfc_solicitante"] ]);
+        }
+        if(isset($data["referencia"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['referencia' => $data["referencia_solicitante"] ]);
+        }
+        if(isset($data["calle2"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle2' => $data["calle2_solicitante"] ]);
+        }
+        if(isset($data["calle3"])){
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle3' => $data["calle3_solicitante"] ]);
+        }
+
+        //Citados
+        SeerCitados::where('id_solicitud',$data["id"])->delete();
+        $cont = count($data["colonia_citado"]);
+        for($i = 0; $i < $cont; $i++) {
+
+            $foto1 = $data["imagen_domicilio1"][$i] ?? 'Sin documento';
+            $foto2 = $data["imagen_domicilio2"][$i] ?? 'Sin documento';
+        
+            if ($request->hasFile("foto1.$i")) {
+                $file = $request->file("foto1")[$i];
+                $foto1 = $data["id"] . "-citado_foto1_" . Str::random(8) . "." . $file->getClientOriginalExtension();
+                Storage::putFileAs('documentosSolicitud', $file, $foto1);
+            }
+        
+            if ($request->hasFile("foto2.$i")) {
+                $file = $request->file("foto2")[$i];
+                $foto2 = $data["id"] . "-citado_foto2_" . Str::random(8) . "." . $file->getClientOriginalExtension();
+                Storage::putFileAs('documentosSolicitud', $file, $foto2);
+            }
+            $data_insert=array(
+                'id_solicitud'      => $data["id"],
+                'colonia'           => $data["colonia_citado"][$i],
+                'cp'                => $data["cp_citado"][$i],
+                'n_ext'             => $data["n_ext_citado"][$i],
+                'calle'             => $data["n_int_citado"][$i],
+                'tipo_vialidad'     => $data["vialidad_citado"][$i],
+                'referencia'        => $data["referencia_citado"][$i],
+                'municipio_citado'  => $data["municipio_citado"][$i],
+                'tipo_persona'      => $data["tipo_persona_citado"][$i],
+                'nombre'            => $data["nombre_citado"][$i],
+                'notificacion'      => $data["notificacion"][$i],
+                'primer_apellido'   => $data["primer_apellido"][$i] ?? null,
+                'segundo_apellido'  => $data["segundo_apellido"][$i] ?? null,
+                'calle'             => $data["calle_citado"][$i],
+                'calle1'            => $data["calle1_citado"][$i],
+                'calle2'            => $data["calle2_citado"][$i],
+                'curp'              => $data["curp_citado"][$i] ?? null,
+                'rfc'               => $data["rfc_citado"][$i],
+                'estado_citado'     => $data["estado_citado"][$i],
+                'imagen_domicilio1' => $foto1,
+                'imagen_domicilio2' => $foto2,
+            );
+            
+            if(isset($data["traductor"])){
+                $data_insert["traductor"] =  1;
+                $data_insert["lenguaje"]  =  $data["lenguaje"];
+            }
+            if(isset($data["calle1"])){
+                SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle1' => $data["calle1_citado"] ]);
+            }
+            if(isset($data["calle2"])){
+                SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle2' => $data["calle2_citado"] ]);
+            }
+            SeerCitados::create($data_insert);
+        }
+
+        //Documentos
+        if(isset($data["curp"])){
+            $documento = $data["curp"]."_CURP.pdf";
+            $path = Storage::putFileAs('documentosSolicitud', $request->file('documentoCurp'), $documento);
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoCurp' => $documento ]);
+        }
+ 
+        //Acta de nacimiento
+        if(isset($data["indetificacion"])){
+            $documentoidentificacion = $data["curp"]."_Identificacion.pdf";
+            $path = Storage::putFileAs('documentosSolicitud', $request->file('indetificacion'), $documentoidentificacion);
+            SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoIdentificacion' => $documentoidentificacion ]);
+        }
+        
+        //Si se va confirmar si el valor es 2 solo se va editar lo anterior
+        if($data["toquen"] == 1){
+            //Actualizar el estatus
+            SeerPerGeneral::find($data["id"])->update(['estatus' => "Confirmado" ]);
+
+            $numero_audiencia = $this->GeneraAudiencia($data["id"]);
+            $numero_audiencias = SeerPerConciliador::find($data["id"]);
+            if(!isset($numero_audiencias)){
+                $num_audi = 0;
+            }
+            else{
+                $num_audi = $numero_audiencias->numero_audiencias;
+            }
+            $num_audi = $num_audi+1;
+
+            $Audiencia = $this->ObtenerAudiencia($delegacion["delegacion"]);
+
+            $sala = 1;
+            switch($Audiencia[3]){
+            //Morelia
+                case 16:
+                    $sala = "Sala 2"; break;
+                case 22:
+                    $sala = "Sala 11"; break;
+                case 25:
+                    $sala = "Sala 12"; break;
+                case 33:
+                    $sala = "Sala 8"; break;
+                case 35:
+                    $sala = "Sala 9"; break;
+                case 36:
+                    $sala = "Sala 7"; break;
+                case 38:
+                    $sala = "Sala 5"; break;
+                //Uruapan
+                case 41:
+                    $sala = "Sala 10"; break;
+                case 42:
+                    $sala = "Sala 4"; break;
+                case 45:
+                    $sala = "Sala 1"; break;
+                //Zamora
+                case 51:
+                    $sala = "Sala 3"; break;
+                case 54:
+                    $sala = "Sala 6"; break;
+                default:
+                    $sala = "Pendiente"; break;
+            }
+            $audiencia_insert=array(
+                'id_solicitud'      => $data["id"],
+                'numero_audiencia'  => $num_audi,
+                'folio_audiencia'   => $numero_audiencia[0],
+                'fecha'             => $Audiencia[0],
+                'hora'              => $Audiencia[1],
+                'id_conciliador'    => $Audiencia[3],
+                'sala'              => $sala,
+                'delegacion'        => $delegacion["delegacion"]
+            );
+            Audiencias::create($audiencia_insert);
+            //Actualizar genera
+            if (isset($data["notificacion"][0]) && $data["notificacion"][0] == 'Trabajador') {
+                SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $Audiencia[3], 'estatus' => 'Confirmado', 'pendiente_firma' => 'Si' ]);
+            }
+            else{
+                SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $Audiencia[3], 'estatus' => 'Confirmado' ]);
+            }
+        }
+
+        return redirect()->route('todas_audiencias'); 
+    }
+
     public function solicitud_confirmar(Request $request){
         $data = $request->all();
 
@@ -2791,6 +3022,13 @@ class SeerController extends Controller
         $solicitud = SeerPerGeneral::find($id);
         $conciliador = User::select('name')->where('id', $solicitud->conciliador_id)->first();
 
+    
+        $fechaConfirmacion = SeerPerGeneral::where('id', $id)->value('fecha_confirmacion');
+        if(is_null($fechaConfirmacion)) {
+            $fechaConfirmacion = now();
+            $fechaConfirmacion = $fechaConfirmacion->format('Y-m-d');
+        }
+
         $representantes = SeerCitados::
         leftjoin('abogados', 'abogados.idAbogado', '=', 'seer_citados.id_abogado')
         ->leftJoin('persona_fisica', 'persona_fisica.id', '=', 'seer_citados.id_fisica')
@@ -2805,7 +3043,7 @@ class SeerController extends Controller
         SeerPerGeneral::find($id)->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
         $estados        = Estados::all();
         $municipios     = Municipios::where('estado',16)->get();
-        return view('/audiencias/audiencias',compact('id','solicitudes','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios'));
+        return view('/audiencias/audiencias',compact('id','solicitudes','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios', 'fechaConfirmacion'));
     }
 
     public function guardar_audiencia_archivo(Request $request){
@@ -6144,117 +6382,250 @@ class SeerController extends Controller
 
     public function obtenerCumplimientos(Request $request)
     {
-        $fecha_inicio = now()->subDays(20)->format('Y-m-d');
-        $fecha_fin = now()->addDays(700)->format('Y-m-d');
-        $sede = $request->input('sede'); // Obtener sede de la solicitud
+        $fecha_inicio_str = $request->input('start', now()->format('Y-m-d'));
+        $fecha_fin_str = $request->input('end', now()->addDays(700)->format('Y-m-d'));
 
-        $inhabiles = DiasInhabiles::where('centro', $sede)->get(); //Obtenemos días inhabiles
+        $fecha_inicio_dt = (new \DateTime($fecha_inicio_str))->setTime(0, 0, 0);
+        $fecha_fin_dt = (new \DateTime($fecha_fin_str))->setTime(23, 59, 59);
 
-        // 1. Obtener turnos ocupados filtrando por sede
-        $ocupados = Pagos::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
+        $sede = $request->input('sede');
+
+        $inhabiles = DiasInhabiles::where('centro', $sede)
+            ->where(function($query) use ($fecha_inicio_dt, $fecha_fin_dt) {
+                $query->where('fecha_inicio', '<=', $fecha_fin_dt)
+                    ->where('fecha_final', '>=', $fecha_inicio_dt);
+            })
+            ->get();
+
+        $ocupados = Pagos::whereBetween('fecha', [$fecha_inicio_dt, $fecha_fin_dt])
             ->where('delegacion', $sede)
             ->get();
+            
         $ocupadosMap = [];
         foreach ($ocupados as $cumplimiento) {
-            $slotKey = date_format($cumplimiento->fecha, 'Y-m-d') . 'T' . date_format($cumplimiento->hora,'H:i:s');
+            $slotKey = $cumplimiento->fecha->format('Y-m-d') . 'T' . $cumplimiento->hora->format('H:i:s');
             $ocupadosMap[$slotKey] = true;
         }
 
-        // 2. Crear slots disponibles
-        $todosLosEventos = [];
-        $fecha = new \DateTime($fecha_inicio);
-        $fin = new \DateTime($fecha_fin);
+        $pagosPorDia = Pagos::where('tipo_pago', 'Audiencia')
+            ->where('delegacion', $sede)
+            ->whereBetween('fecha', [$fecha_inicio_dt, $fecha_fin_dt])
+            ->select('fecha', DB::raw('COUNT(*) as total'))
+            ->groupBy('fecha')
+            ->get();
 
-        // 1. Inicializa el contador de días disponibles antes del bucle principal
-        $limiteSlotsDiario = 14; // Límite de 14 slots disponibles por día
+        $pagosPorDiaMap = [];
+        foreach ($pagosPorDia as $dia) {
+            $pagosPorDiaMap[$dia->fecha->format('Y-m-d')] = $dia->total;
+        }
+
+        $ahora = new \DateTime();
+
+        $todosLosEventos = [];
+        $fecha = (new \DateTime($fecha_inicio_str))->setTime(0,0,0);
+        $fin = (new \DateTime($fecha_fin_str))->setTime(0,0,0);
         
         while ($fecha <= $fin) {
             if ($fecha->format('N') < 6) { // Saltar fines de semana
-                // Definir inicio y fin de la jornada
+                
                 $inicioJornada = (clone $fecha)->setTime(9, 0, 0);
                 $finJornada    = (clone $fecha)->setTime(15, 0, 0);
-                
-                $pagos_ocupados = Pagos::where('tipo_pago','Audiencia')
-                ->where('fecha',$fecha)
-                ->get();
         
-                // Recorremos cada 30 minutos
+                $fecha_str = $fecha->format('Y-m-d');
+                $conteoDiario = $pagosPorDiaMap[$fecha_str] ?? 0; 
+                $diaEstaLleno = ($conteoDiario > 13); 
+
                 $slot = clone $inicioJornada;
                 while ($slot < $finJornada) {
                     $slotStart = $slot->format('Y-m-d\TH:i:s');
-                    $ahora = new \DateTime();
-                    $currentCita = new \DateTime($slotStart);
- 
-                    // Verificar si está ocupado
+
                     $ocupado = isset($ocupadosMap[$slotStart]);
+                    
                     $esInhabil = false;
                     foreach($inhabiles as $dia){
                         $fechaInhabilInicio = $dia->fecha_inicio . 'T' . $dia->horario_inicio;
                         $fechaInhabilFinal = $dia->fecha_final . 'T' . $dia->horario_final;
                         if($slotStart >= $fechaInhabilInicio && $slotStart <= $fechaInhabilFinal){
                             $esInhabil = true;
+                            break;
                         }
                     }
 
-                    // Determinar el estado
                     $estado = '';
-                    if(count($pagos_ocupados) > 13){
+                    if ($diaEstaLleno) { 
                         $estado = 'ocupado';
-                    }
-                    else{ 
-                        if ($ocupado) {
-                            $estado = 'ocupado';
-                        } elseif ($esInhabil) {
-                            $estado = 'inhabil';
-                        } elseif ($ahora > $currentCita) {
-                            $estado = 'expirado';
-                        } else {
-                            $estado = 'disponible';
-                        }
+                    } elseif ($ocupado) { 
+                        $estado = 'ocupado';
+                    } elseif ($esInhabil) {
+                        $estado = 'inhabil';
+                    } elseif ($ahora > $slot) {
+                        $estado = 'expirado';
+                    } else {
+                        $estado = 'disponible';
                     }
 
                     switch ($estado) {
                         case 'ocupado':
                             $todosLosEventos[] = [
-                                'title' => 'Ocupado',
-                                'start' => $slotStart,
-                                'color' => '#DA0909',
-                                'extendedProps' => ['estado' => 'ocupado']
+                                'title' => 'Ocupado', 'start' => $slotStart,
+                                'color' => '#DA0909', 'extendedProps' => ['estado' => 'ocupado']
                             ];
                             break;
                         case 'inhabil':
                             $todosLosEventos[] = [
-                                'title' => 'Inhábil',
-                                'start' => $slotStart,
-                                'color' => '#3B78DB',
-                                'extendedProps' => ['estado' => 'inhabil']
+                                'title' => 'Inhábil', 'start' => $slotStart,
+                                'color' => '#3B78DB', 'extendedProps' => ['estado' => 'inhabil']
                             ];
                             break;
                         case 'expirado':
                             $todosLosEventos[] = [
-                                'title' => 'Expirado',
-                                'start' => $slotStart,
-                                'color' => '#F59727',
-                                'extendedProps' => ['estado' => 'expirado']
+                                'title' => 'Expirado', 'start' => $slotStart,
+                                'color' => '#F59727', 'extendedProps' => ['estado' => 'expirado']
                             ];
                             break;
                         case 'disponible':
                         default:
                             $todosLosEventos[] = [
-                                'title' => 'Disponible',
-                                'start' => $slotStart,
-                                'color' => '#00CE1C',
-                                'extendedProps' => ['estado' => 'disponible']
+                                'title' => 'Disponible', 'start' => $slotStart,
+                                'color' => '#00CE1C', 'extendedProps' => ['estado' => 'disponible']
                             ];
                             break;
                     }
 
-                    // Avanzar 30 minutos
                     $slot->modify('+30 minutes');
                 }
             }
+            $fecha->modify('+1 day');
+        }
 
-            // Avanzar al siguiente día
+        return response()->json($todosLosEventos);
+    }
+
+    //Calcula la fecha mínima a partir de la cual se puede reagendar,
+    private function calcularFechaMinimaHabil(string $sede, int $diasHabiles = 16): \DateTime
+    {
+        $fecha = (new \DateTime())->setTime(0, 0, 0); 
+        $contador = 0;
+        $rangosInhabiles = DiasInhabiles::where('centro', $sede)->get(['fecha_inicio', 'fecha_final']);
+
+        while ($contador < $diasHabiles) {
+            $fecha->modify('+1 day');
+
+            if ((int)$fecha->format('N') >= 6) {
+                continue;
+            }
+
+            $fechaStr = $fecha->format('Y-m-d');
+            $esInhabil = false;
+            foreach ($rangosInhabiles as $r) {
+                if ($r->fecha_inicio <= $fechaStr && $r->fecha_final >= $fechaStr) {
+                    $esInhabil = true; break;
+                }
+            }
+
+            if ($esInhabil) {
+                continue;
+            }
+
+            $contador++;
+        }
+
+        return $fecha;
+    }
+
+    public function obtenerAudiencias(Request $request)
+    {
+        
+        $fecha_inicio_str = $request->input('start', now()->format('Y-m-d'));
+        $fecha_fin_str = $request->input('end', now()->addDays(300)->format('Y-m-d'));
+        
+        $fecha_inicio = (new \DateTime($fecha_inicio_str))->setTime(0, 0, 0);
+        $fecha_fin = (new \DateTime($fecha_fin_str))->setTime(23, 59, 59);
+
+        $sede = $request->input('sede'); 
+
+        // Calcular fecha mínima para reagendar (16 días hábiles desde hoy)
+        $fechaMinimaHabil = $this->calcularFechaMinimaHabil($sede, 16);
+        $minDateStr = $fechaMinimaHabil->format('Y-m-d');
+
+        $inhabiles = DiasInhabiles::where('centro', $sede)
+            ->where(function($query) use ($fecha_inicio, $fecha_fin) {
+                $query->where('fecha_inicio', '<=', $fecha_fin)
+                    ->where('fecha_final', '>=', $fecha_inicio);
+            })
+            ->get();
+
+        $ocupados = Audiencias::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
+            ->where('delegacion', $sede)
+            ->get();
+            
+        $ocupadosMap = [];
+        foreach ($ocupados as $cumplimiento) {
+            $slotKey = $cumplimiento->fecha->format('Y-m-d') . 'T' . $cumplimiento->hora->format('H:i:s');
+            $ocupadosMap[$slotKey] = true;
+        }
+
+        $ahora = new \DateTime();
+
+        $todosLosEventos = [];
+        $fecha = (new \DateTime($fecha_inicio_str))->setTime(0,0,0);
+        $fin_loop = (new \DateTime($fecha_fin_str))->setTime(0,0,0);
+
+        while ($fecha <= $fin_loop) {
+            if ($fecha->format('N') < 6) { // Saltar fines de semana
+                
+                $inicioJornada = (clone $fecha)->setTime(9, 0, 0);
+                $finJornada    = (clone $fecha)->setTime(16, 30, 0);
+                
+
+                $slot = clone $inicioJornada;
+                while ($slot < $finJornada) {
+                    $slotStart = $slot->format('Y-m-d\TH:i:s');
+                    
+                    $ocupado = isset($ocupadosMap[$slotStart]);
+                    
+                    $esInhabil = false;
+                    foreach($inhabiles as $dia){
+                        $fechaInhabilInicio = $dia->fecha_inicio . 'T' . $dia->horario_inicio;
+                        $fechaInhabilFinal = $dia->fecha_final . 'T' . $dia->horario_final;
+                        if($slotStart >= $fechaInhabilInicio && $slotStart <= $fechaInhabilFinal){
+                            $esInhabil = true;
+                            break;
+                        }
+                    }
+
+                    // Bloquear slots anteriores a la fecha mínima (aunque estén en el futuro)
+                    if ($slot->format('Y-m-d') < $minDateStr) {
+                        $estado = 'expirado';
+                    } elseif ($ocupado) {
+                        $estado = 'ocupado';
+                    } elseif ($esInhabil) {
+                        $estado = 'inhabil';
+                    } elseif ($ahora > $slot) {
+                        $estado = 'expirado';
+                    } else {
+                        $estado = 'disponible';
+                    }
+
+                    $colores = [
+                        'ocupado' => '#DA0909', 'inhabil' => '#3B78DB',
+                        'expirado' => '#F59727', 'disponible' => '#00CE1C'
+                    ];
+                    $titulos = [
+                        'ocupado' => 'Ocupado', 'inhabil' => 'Inhábil',
+                        'expirado' => 'No disponible', 'disponible' => 'Disponible'
+                    ];
+
+                    $todosLosEventos[] = [
+                        'title' => $titulos[$estado],
+                        'start' => $slotStart,
+                        'color' => $colores[$estado],
+                        'extendedProps' => ['estado' => $estado]
+                    ];
+
+                    $slot->modify('+75 minutes');
+                }
+            }
             $fecha->modify('+1 day');
         }
 

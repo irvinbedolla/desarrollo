@@ -1044,7 +1044,7 @@
 
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="">Correo electrónico <span style="color:red;">(*)</label>
+                                                        <label for="">Correo electrónico <span style="color:red;">(*)</span></label>
                                                         <input type="email" class="form-control" name="correo_Moral" id="correo_Moral" >
                                                         <div class="invalid-feedback">
                                                             El Correo electrónico es obligatorio.
@@ -1053,7 +1053,7 @@
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="">Teléfono <span style="color:red;">(*)</label>
+                                                        <label for="">Teléfono <span style="color:red;">(*)</span></label>
                                                         <input type="text" class="form-control" placeholder="*Telefono"  name="telefono_Moral" id="telefono_Moral" maxlength="10" pattern="[0-9]+" >
                                                         <div class="invalid-feedback">
                                                             El telefono es obligatorio.
@@ -1226,19 +1226,22 @@
     <form class='needs-validation novalidate'  method='POST' action="{{route('reagendar_audiencia')}}">
         @csrf
         <input type="hidden" id="modal-id-reagendar" name="id" value="">
-        <div class="modal-dialog">
+        <input type="hidden" id="fechaConfirmacion" value= "{{ $fechaConfirmacion }}">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Fecha de la reagenda</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="date" class="form-control" name="fecha">
-                    <input type="time" class="form-control" name="hora">
+                    <input type="hidden" id="sede" value="{{ Auth::user()->delegacion ?? ($sede ?? '') }}">
+                    <div id="calendar"></div>
+                    <input type="hidden" name="fecha" id="fechaSeleccionada">
+                    <input type="hidden" name="hora" id="horaSeleccionada">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="submit" class="btn btn-success" id="btnGuardarReagenda" disabled>Guardar</button>
                 </div>
             </div>
         </div>
@@ -1466,6 +1469,72 @@
 </div>
 
 @section('scripts')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+    <style>
+        
+        .fc-event { 
+            padding: 3px 6px !important; 
+            border-radius: 4px !important; 
+            font-size: 12px !important; 
+            cursor: pointer; 
+        }
+        #calendar{ 
+            width: 100%; 
+            min-height: 500px; 
+        }
+        .fc-event-disponible, .fc-est-disponible{ 
+            color:#fff !important; 
+            background-color:#00CE1C !important; 
+            border-color:#00CE1C !important; 
+        }
+        .fc-event-expirado, .fc-est-expirado{ 
+            color:#fff !important; 
+            background-color:#F59727 !important; 
+            border-color:#F59727 !important; 
+        }
+        .fc-event-inhabil, .fc-est-inhabil{ 
+            color:#fff !important; 
+            background-color:#3B78DB !important; 
+            border-color:#3B78DB !important; 
+        }
+        .fc-event-ocupado, .fc-est-ocupado{ color:#fff !important; 
+            background-color:#DA0909 !important;
+            border-color:#DA0909 !important; 
+        }
+        .fc-event-selected { 
+            border: 2px solid #FFD700 !important; 
+            box-shadow: 0 0 8px #FFD700; 
+        }
+        .fc .fc-event-main, .fc .fc-event-time { 
+            color:#fff !important; 
+        }
+       
+        .fc-list .fc-list-event.fc-event-disponible td,
+        .fc-list .fc-list-event.fc-est-disponible td{ 
+            background-color:#00CE1C !important; 
+            color:#fff !important; 
+        }
+        .fc-list .fc-list-event.fc-event-expirado td,
+        .fc-list .fc-list-event.fc-est-expirado td{ 
+            background-color:#F59727 !important; 
+            color:#fff !important; 
+        }
+        .fc-list .fc-list-event.fc-event-inhabil td,
+        .fc-list .fc-list-event.fc-est-inhabil td{ 
+            background-color:#3B78DB !important; 
+            color:#fff !important; 
+        }
+        .fc-list .fc-list-event.fc-event-ocupado td,
+        .fc-list .fc-list-event.fc-est-ocupado td{ 
+            background-color:#DA0909 !important; 
+            color:#fff !important; 
+        }
+        @media (min-width: 1200px){ .modal-xl{ --bs-modal-width: 95vw; } }
+        .modal .modal-body{ max-height: calc(100vh - 200px); overflow-y: auto; }
+
+    </style>
+
     <script>
          $('.open-modal').click(function() {
             const id = $(this).data('id'); // Obtiene el valor de data-id
@@ -1690,6 +1759,11 @@
     </script>
 
     <script>
+        if(!window.Swal){
+            const swScript = document.createElement('script');
+            swScript.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js';
+            document.head.appendChild(swScript);
+        }
         const DURACION_SEGUNDOS = 4500; // 5 minutos
         const TIEMPO_FINAL_KEY = 'tiempoFinalTemporizador';
 
@@ -1726,6 +1800,154 @@
 
         const intervalo = setInterval(actualizarTemporizador, 1000);
         actualizarTemporizador();
+    </script>
+
+    <script>
+        let calendar;
+        $('#ModalReagendar').on('shown.bs.modal', function () {
+            const calEl = document.getElementById('calendar');
+            if (!calEl) return;
+            if (calendar) { calendar.destroy(); }
+            // Calcular fecha mínima (16 días hábiles) para posicionar el calendario directamente en la primera semana válida.
+            const sede = $('#sede').val();
+            const hoy = new Date();
+            hoy.setHours(0,0,0,0);
+            let fechaCursor = new Date(hoy);
+            let habilesContados = 0;
+            let fechasInhabilesCentro = window.__diasInhabilesCentroCache || null;
+            function cargarInhabilesSync(){
+                if(fechasInhabilesCentro) return Promise.resolve();
+                return fetch(`{{ url('/api/dias-inhabiles-centro') }}?centro=${encodeURIComponent(sede)}`)
+                    .then(r=>r.json())
+                    .then(data=>{ fechasInhabilesCentro = data.map(d=>({inicio:d.fecha_inicio, fin:d.fecha_final})); window.__diasInhabilesCentroCache = fechasInhabilesCentro; })
+                    .catch(()=>{ fechasInhabilesCentro = []; });
+            }
+            function esInhabil(fecha){
+                const fStr = fecha.toISOString().slice(0,10);
+                for(const r of fechasInhabilesCentro){
+                    if(r.inicio <= fStr && r.fin >= fStr){ return true; }
+                }
+                return false;
+            }
+            function calcularFechaMinima(){
+                while(habilesContados < 16){
+                    fechaCursor.setDate(fechaCursor.getDate()+1);
+                    const esFinSemana = fechaCursor.getDay() === 0 || fechaCursor.getDay() === 6;
+                    if(esFinSemana) continue;
+                    if(esInhabil(fechaCursor)) continue;
+                    habilesContados++;
+                }
+                return new Date(fechaCursor);
+            }
+
+            function toYMD(dt) {
+                const y = dt.getFullYear();
+                const m = String(dt.getMonth() + 1).padStart(2, '0');
+                const d = String(dt.getDate()).padStart(2, '0');
+                return `${y}-${m}-${d}`;
+                }
+
+            function addDaysYMD(ymd, n) {
+                const [y, m, d] = ymd.split('-').map(Number);
+                const dt = new Date(y, m - 1, d);   // local
+                dt.setDate(dt.getDate() + n);
+                return toYMD(dt);
+            }
+
+            cargarInhabilesSync().then(()=>{
+                const fechaMinima = calcularFechaMinima();
+                const fechaMinimaStr = fechaMinima.toISOString().slice(0,10);
+                // Ajustar a lunes de la semana que contiene la fecha mínima para no cortar la semana
+                const fechaSemanaInicio = new Date(fechaMinima);
+                const desplazamientoLunes = (fechaSemanaInicio.getDay() + 6) % 7;
+                fechaSemanaInicio.setDate(fechaSemanaInicio.getDate() - desplazamientoLunes);
+                const startOfWeekStr = fechaSemanaInicio.toISOString().slice(0,10);
+
+                const fechaConfirmacion = document.getElementById('fechaConfirmacion').value;
+                const fechaLimite = fechaConfirmacion ? addDaysYMD(fechaConfirmacion, 46) : null;
+
+
+                calendar = new FullCalendar.Calendar(calEl, {
+                    locale: 'es',
+                    firstDay: 1,
+                    initialDate: fechaMinimaStr,
+                    initialView: window.innerWidth < 768 ? 'listWeek' : 'dayGridWeek',
+                    headerToolbar: { left: 'prev,next today', center: 'title', right: '' },
+                    validRange: function() {
+                        const range = { start: startOfWeekStr };
+                        if (fechaLimite) range.end = fechaLimite; 
+                        return range;
+                    },
+                    events: function(fetchInfo, success, failure) {
+                        $.ajax({
+                            url: '{{ url('/api/obtenerAudiencias') }}',
+                            data: { sede: sede, start: fetchInfo.startStr, end: fetchInfo.endStr },
+                            success: success,
+                            error: () => failure('No se pudieron cargar eventos')
+                        });
+                    },
+                    eventTimeFormat: { hour: '2-digit', minute: '2-digit' },
+                    eventClick: function(info) {
+                        const slot = new Date(info.event.start);
+                        if (info.event.extendedProps.estado === 'disponible' && slot > new Date() && slot.toISOString().slice(0,10) >= fechaMinimaStr) {
+                            $('.fc-event-selected').removeClass('fc-event-selected');
+                            info.el.classList.add('fc-event-selected');
+                            const fecha = slot.toISOString().split('T')[0];
+                            const hora = slot.toTimeString().substring(0,5);
+                            $('#fechaSeleccionada').val(fecha);
+                            $('#horaSeleccionada').val(hora+':00');
+                            $('#btnGuardarReagenda').prop('disabled', false);
+                        } else {
+                            alert('Horario no disponible (antes de la fecha mínima o no hábil).');
+                        }
+                    },
+                    eventDidMount: function(info){
+                        const estado = info.event.extendedProps.estado;
+                        if(estado){ info.el.classList.add('fc-est-'+estado); info.el.classList.add('fc-event-'+estado); }
+                    }
+                });
+                calendar.render();
+                setTimeout(function(){ if (calendar) { calendar.updateSize(); calendar.refetchEvents(); } }, 200);
+            });
+        });
+
+        $('#sede').on('change', function(){ if(calendar){ calendar.refetchEvents(); }});
+
+        const formReagendar = document.querySelector('#ModalReagendar form');
+        if(formReagendar){
+            formReagendar.addEventListener('submit', function(e){
+                const idAudiencia = document.getElementById('modal-id-reagendar').value;
+                const fecha = document.getElementById('fechaSeleccionada').value;
+                const hora = document.getElementById('horaSeleccionada').value;
+                let mensajeHtml = '<p>Se reagendará la Audiencia con <strong>ID: '+idAudiencia+'</strong></p>';
+                if(fecha){ mensajeHtml += '<p>Fecha: <strong>'+fecha+'</strong></p>'; }
+                if(hora){ mensajeHtml += '<p>Hora: <strong>'+hora.substring(0,5)+'</strong></p>'; }
+                mensajeHtml += '<p>¿Confirmas?</p>';
+                e.preventDefault();
+                function lanzar(){
+                    Swal.fire({
+                        title: 'Confirmar reagenda',
+                        html: mensajeHtml,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, reagendar',
+                        cancelButtonText: 'Cancelar',
+                        reverseButtons: true,
+                        focusCancel: true,
+                        customClass: {
+                            confirmButton: 'btn btn-success',
+                            cancelButton: 'btn btn-secondary'
+                        },
+                        buttonsStyling: false
+                    }).then((result)=>{
+                        if(result.isConfirmed){
+                            formReagendar.submit();
+                        }
+                    });
+                }
+                if(window.Swal){ lanzar(); } else { setTimeout(lanzar, 200); }
+            });
+        }
     </script>
 
     <script src="../../public/assets/js/validaciones.js"></script> 
