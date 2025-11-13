@@ -47,6 +47,7 @@
                                                     <option value="RatificacionesDias">Ratificaciones Por Dias</option> 
                                                     <option value="Notificaciones">Notificaciones Detallado</option>
                                                     <option value="Concentrado">Concentrado</option>
+                                                    <option value="EstadisticaMexico">Estadistica Mexico</option> 
                                                 </select>
                                                 <div class="invalid-feedback">
                                                     Debes seleccionar un tipo de reporte.
@@ -189,7 +190,7 @@
                 $('#Excel-PDF').css('display','none');
                 $('#reporte-notificador').css('display','block');
             }
-            else if(valorCambiado == "Concentrado" || valorCambiado == "Detallado"){
+            else if(valorCambiado == "Concentrado" || valorCambiado == "Detallado" || valorCambiado == "EstadisticaMexico" || valorCambiado == "RatificacionesDias"){
                 $('#PDF').css('display','block');
                 $('#Excel').css('display','none');
                 $('#Excel-PDF').css('display','none');

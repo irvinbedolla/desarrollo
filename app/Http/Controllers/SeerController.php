@@ -56,6 +56,7 @@ use App\Models\PermisosConciliador;
 use App\Mail\CorreoAcuseConfirmacion;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\MailAceptacionRechazo;
+use App\Exports\ReporteMexicoRati;
 
 class SeerController extends Controller
 {   
@@ -374,7 +375,7 @@ class SeerController extends Controller
         //Validar documentacion
         request()->validate([
             //General
-            'tipo_reporte'  => 'required|in:Cumplimientos,CumplimientosResumen,Ratificaciones,RatificacionesResumen,Detallado,Concentrado,RatificacionesUsuario,Notificaciones,RatificacionesDias',
+            'tipo_reporte'  => 'required|in:Cumplimientos,CumplimientosResumen,Ratificaciones,RatificacionesResumen,Detallado,Concentrado,RatificacionesUsuario,Notificaciones,EstadisticaMexico',
         ], $data);
         if(isset($data["sede"]))
             $sede = $data["sede"];
@@ -975,6 +976,9 @@ class SeerController extends Controller
             $pdf = \PDF::loadView('PDF/Estadisticas/reporte-dia_ratificacion',compact('fecha_inicial','fecha_final','usuarios'));
             //$pdf->setPaper('a4', 'landscape');
             return $pdf->stream('archivo.pdf');
+        }
+        else if($data["tipo_reporte"] == "EstadisticaMexico"){
+            return Excel::download(new ReporteMexicoRati($fecha_inicial, $fecha_final,$sede), 'reporte.xlsx');
         }
         else if($data["tipo_reporte"] == "Detallado"){
             

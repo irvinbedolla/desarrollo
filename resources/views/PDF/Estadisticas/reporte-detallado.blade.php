@@ -71,7 +71,6 @@
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                             <tr>   
                                 <td><b>Centro de conciliación: </b></td>
-                                <td>Morelia</td>
                             </tr>
                     </table>
                 </div><br><br><br>
