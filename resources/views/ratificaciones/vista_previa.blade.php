@@ -252,10 +252,18 @@
                                         </div>
                                         <div id="div_pagos_diferidos"></div>
                                     </div>
-                                </div>
-                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                    <br><button type="submit" class="btn btn-success">Terminar</button>
-                                </div>
+                                </div><br><br>
+                                <div class="row">    
+                                    <div class="col-xs-12 col-sm-12 col-md-2">
+                                        <a  class="btn btn-success"href="{{ route('PDFconvenioratificacion', $solicitud->id) }}"  target="_blank">Convenio</a>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-2">
+                                        <a  class="btn btn-success" href="{{ route('PDFaudiencia', $solicitud->id) }}"  target="_blank">Acta de audiencia</a>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-2">
+                                        <button type="submit" class="btn btn-success">Terminar</button>
+                                    </div>
+                                </div>    
                             </form>
                         </div>
                     </div>
