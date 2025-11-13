@@ -80,7 +80,7 @@
                     ACTA DE AUDIENCIA DE CONCILIACIÓN     </b></center></p><br><br> 
 
                 <p>
-                    En el <b>Centro de Conciliación Laboral del Estado de Michoacán de Ocampo con sede en {{ $solicitud->delegacion }}</b>, siendo las <b>{{ $solicitud->hora }} horas del
+                    En el <b>Centro de Conciliación Laboral del Estado de Michoacán de Ocampo con sede en {{ $solicitud->delegacion }}</b>, siendo las <b>{{ \Carbon\Carbon::parse($solicitud->hora)->format('H:i') }} horas del
                     {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, hora y día señalados para la celebración de la Audiencia de Conciliación 
                     Prejudicial, relativa al expediente electrónico con Número de Identificación Único <b>{{ $solicitud->NUE }}</b>, misma que se celebra ante  
                     <b>{{ $conciliador->name }}</b>, Funcionario/a Conciliador/a adscrito al Centro de Conciliación 
@@ -135,89 +135,16 @@
                         <tbody>
                         <!--<p class="sangria">-->
                             @foreach($prestaciones as $concepto)
-                                @switch($concepto->descripcion)                                   
-                                    @case('Vacaciones')
-                                    <tr>
-                                        <td>VACACIONES</td>
-                                        <td><b>${{ number_format($concepto->monto, 2) }} </td>
-                                        <td>{{ $vacacionesTexto }} M.N.</b></td>
-                                    </tr>
-                                    @break
-                                    @case('PrimaVacacional')
-                                        <tr>
-                                            <td>PRIMA VACACIONAL</td>
-                                            <td><b>${{ number_format($concepto->monto, 2) }}</td>
-                                            <td>{{ $primaTexto }} M.N.</b></td>
-                                        </tr>
-                                        @break
-                                    @case('Aguinaldo')
-                                        <tr>
-                                            <td>AGUINALDO</td> 
-                                            <td><b>${{ number_format($concepto->monto, 2) }}</td> 
-                                            <td>{{ $aguinaldoTexto }} M.N.</b></td>
-                                        </tr>
-                                        @break
-                                    @case('DSueldo')
-                                        <tr>
-                                            <td>DÍAS DE SUELDO</td>
-                                            <td><b>${{ number_format($concepto->monto, 2) }}</td> 
-                                            <td>{{ $DSueldoTexto }} M.N.</b></td>
-                                        </tr>
-                                        @break
-                                    @case('GratificaciónA')
-                                        <tr>
-                                            <td>GRATIFICACIÓN A (CON BASE AL SALARIO INTEGRADO)</td> 
-                                            <td><b>${{ number_format($concepto->monto, 2) }}</td> 
-                                            <td>{{ $gratificacionATexto }} M.N.</b></td>
-                                        </tr>
-                                        @break
-                                    @case('GratificaciónB')
-                                        <tr>
-                                            <td>GRATIFICACIÓN B (20 DÍAS POR AÑO CUMPLIDO)</td> 
-                                            <td><b>${{ number_format($concepto->monto, 2) }}</td>
-                                            <td>{{ $gratificacionBTexto }} M.N.</b></td>
-                                        </tr>
-                                        @break
-                                    @case('GratificaciónC')
-                                        <tr>
-                                            <td>GRATIFICACIÓN C (PRIMA DE ANTIGÜEDAD TOPADA)</td> 
-                                            <td><b>${{ number_format($concepto->monto, 2) }}</td> 
-                                            <td>{{ $gratificacionCTexto }} M.N.</b></td>
-                                        </tr>
-                                        @break
-                                    @case('GratificaciónD')
-                                        <tr>
-                                            <td>GRATIFICACIÓN D (INCLUYE CUALQUIER OTRA PRESTACIÓN)</td>
-                                            <td><b>${{ number_format($concepto->monto, 2) }}</td>
-                                            <td>{{ $gratificacionDTexto }} M.N.</b></td>
-                                        </tr>
-                                        @break
-                                    @case('GratificaciónE')
-                                        <tr>
-                                            <td>GRATIFICACIÓN E (PRESTACIONES EN ESPECIE)</td>
-                                            <td><b>${{ number_format($concepto->monto, 2) }}</td>
-                                            <td>{{ $gratificacionETexto }} M.N.</b></td>
-                                        </tr>
-                                        @break
-                                    @case('GratificaciónF')
-                                        <tr>
-                                            <td>GRATIFICACIÓN F (RECONOCIMIENTO DE DERECHOS)</td>
-                                            <td><b>${{ number_format($concepto->monto, 2) }}</td>
-                                            <td>{{ $gratificacionFTexto }} M.N.</b></td>
-                                        </tr>
-                                        @break 
-                                    @default 
-                                        <tr>
-                                            <td>OTRA PRESTACIÓN: {{ strtoupper($concepto->descripcion) }}</td>
-                                            <td><b>${{ number_format($concepto->monto, 2) }}</td>
-                                            <td>{{ $otrasTexto }} M.N.</b></td>
-                                        </tr>
-                                    @endswitch
-                                @endforeach
+                                <tr>
+                                    <td>{{ strtoupper($concepto->descripcion) }}</td>
+                                    <td><b>${{ number_format($concepto->monto, 2) }}</b></td>
+                                    <td>{{ $conceptosTexto[$concepto->id] }}</td> <!-- Aquí usamos el arreglo para obtener el texto -->
+                                </tr>
+                            @endforeach
                             <!--</p>-->
                         </tbody>
                     </table>      
-
+            <!-- Para las deducciones -->
                     @if(!empty($deducciones) && count($deducciones) > 0)
                         <b>Deducciones</b>
                         <table class="table table-bordered">
@@ -229,18 +156,16 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            <!--<p class="sangria">-->
                                 @foreach($deducciones as $deduccion)
                                     <tr>
                                         <td>{{ $deduccion->descripcion }}</td>
                                         <td><b>${{ number_format($deduccion->monto, 2) }}</b></td>
-                                        <td>{{ $deduccionesTexto }} M.N.</b></td>
+                                        <td>{{ $deduccionesTexto[$deduccion->id] }}</td> <!-- Aquí usamos el arreglo para obtener el texto -->
                                     </tr>
                                 @endforeach  
-                            <!--</p>-->
                             </tbody>
                         </table> 
-                    @endif  
+                    @endif
                     <table class="table table-bordered" style="width:100%; float: right;">
                         <thead>
                             <tr style="background-color: #f0f0f0;">
@@ -283,7 +208,7 @@
 
                     Asimismo, se informa que sus datos no podrán ser difundidos sin el consentimiento expreso, salvo las excepciones previstas en ley.<br><br>
 
-                    Así lo proveyó, <b>{{ $conciliador->name }}</b>, Funcionario(a) Conciliador(a) adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
+                    Así lo proveyó, <b>{{ strtoupper($conciliador->name) }}</b>, Funcionario(a) Conciliador(a) adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
                 </p>
 
                 <br><br>
@@ -299,7 +224,7 @@
                         </div>
                     </div>
                     <br><br><br>
-                    <p><center><b>___________________________________<br> {{ $conciliador->name }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
+                    <p><center><b>___________________________________<br> {{ strtoupper($conciliador->name) }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
                         DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>                    
             </div>
             <script type="text/php">

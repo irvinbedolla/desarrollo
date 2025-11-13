@@ -1186,59 +1186,21 @@ class TurnosController extends Controller
         ->first();
         //$prestacionesLab = Concepto::where('id_solicitud', $id)->first();
         //dd($prestaciones);
-        $prestaciones = Concepto::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
-        $deducciones  = Deducciones::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
-        // Inicializa las variables de texto
-        $deduccionesTexto = '';
-        $vacacionesTexto = '';
-        $primaTexto = '';
-        $aguinaldoTexto = '';
-        $DSueldoTexto = '';
-        $antiguedadTexto = '';
-        $gratificacionATexto = ''; $gratificacionBTexto = ''; $gratificacionCTexto = ''; $gratificacionDTexto = ''; $gratificacionETexto = ''; $gratificacionFTexto = '';
-        $otrasTexto = '';
+       $prestaciones = Concepto::where('id_solicitud', $id)->get();
+        $deducciones = Deducciones::where('id_solicitud', $id)->get();
+
+        $conceptosTexto = [];
+        $deduccionesTexto = [];
+
         foreach ($prestaciones as $concepto) {
-            switch ($concepto->descripcion) {
-                case 'Vacaciones':
-                    $vacacionesTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'PrimaVacacional':
-                    $primaTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'Aguinaldo':
-                    $aguinaldoTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'DSueldo':
-                    $DSueldoTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónA':
-                    $gratificacionATexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónB':
-                    $gratificacionBTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónC':
-                    $gratificacionCTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónD':
-                    $gratificacionDTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónE':
-                    $gratificacionETexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónF':
-                    $gratificacionFTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                default:
-                    $otrasTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-            }
+            $conceptosTexto[$concepto->id] = $this->convertirNumerosALetras($concepto->monto);
         }
-        $totalPrestaciones = $prestaciones->sum('monto');
-        //DEDUCCIONES
+
         foreach ($deducciones as $deduccion) {
-            $deduccionesTexto = $this->convertirNumerosALetras($deduccion->monto);
+            $deduccionesTexto[$deduccion->id] = $this->convertirNumerosALetras($deduccion->monto);
         }
+
+        $totalPrestaciones = $prestaciones->sum('monto');
         $totalDeducciones = $deducciones->sum('monto');
         //Total a pagar
         $pagoTotal= $totalPrestaciones-$totalDeducciones;
@@ -1255,9 +1217,8 @@ class TurnosController extends Controller
         $identificacionPoder = $abogado->tipo_identificacion;
         $descripcionIdentificacionP = $this->descripcionIdentificacion($identificacionPoder);
 
-        $html = view('PDF/ActaAudiencia', compact('id','solicitud','conciliador','vacacionesTexto',
-        'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
-        'gratificacionETexto','gratificacionFTexto','otrasTexto','prestaciones','deducciones','deduccionesTexto','pagoTotal','descripcionIdentificacionS','descripcionIdentificacionP','abogado'))->render();
+        $html = view('PDF/ActaAudiencia', compact('id','solicitud','conciliador','prestaciones','deducciones','deduccionesTexto','pagoTotal','descripcionIdentificacionS',
+        'descripcionIdentificacionP','abogado','conceptosTexto'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')

@@ -79,12 +79,12 @@
                             <td>{{ $solicitud->NUE }} </td>
                         </tr>   
                     </table>
-                </div><br><br><br><br>
-                <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</center><br>
+                </div><br><br><br>
+                <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center><br>
                    <!-- SOLICITUD RATIFICACIÓN DE CONVENIO TERMINACIÓN VOLUNTARIA <br><br>
                     SOLICITANTES:<br>
                     {{--{{ $solicitud->empresa }}<br>--}}-->
-                </b></p>  
+                </p>  
                 <p><center><b>CONVENIO DE CONCILIACIÓN</b></center></p><br>
                 <p>Con fundamento en los artículos 123, apartado A, fracción XXVII, inciso h) párrafo segundo, de la Constitución Política de los Estados Unidos Mexicanos; 
                     artículos 33, 53 fracción I y 684-E de la Ley Federal del Trabajo, artículo 27 de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, 
@@ -101,13 +101,14 @@
                     expedida a su favor por <b>{{ $descripcionIdentificacionS }}</b> y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p> 
 
                 <p><b>SEGUNDA.</b> 
-                @if(is_null($abogado->nombre_representante) && is_null($abogado->primer_apellido_representante) && is_null($abogado->segundo_apellido_representante))
-                    La parte EMPLEADORA <b>{{$abogado->nombres_patronal}} {{$abogado->primer_apellido_patronal}} {{$abogado->segundo_apellido_patronal}}</b> se identifica con 
-                    <b>{{ strtoupper($abogado->tipo_identificacion) }}, de Número <b>{{ $abogado->num_identificacion }}</b> expedida a su favor por <b>{{ $descripcionIdentificacionP }}</b>, 
-                    y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
-                @else Declara <b>{{$abogado->nombre_representante}} {{$abogado->primer_apellido_representante}} {{$abogado->segundo_apellido_representante}}</b> quien se identifica con 
-                    <b>{{ strtoupper($abogado->tipo_identificacion) }}</b>, de Número <b>{{ $abogado->num_identificacion }}</b> expedida a su favor por <b>{{ $descripcionIdentificacionP }}</b>, así como <b>{{$abogado->descipcion_poder}}</b></p>  
-                @endif
+                    @if(is_null($abogado->nombre_representante) && is_null($abogado->primer_apellido_representante) && is_null($abogado->segundo_apellido_representante))
+                        La parte EMPLEADORA <b>{{$abogado->nombres_patronal}} {{$abogado->primer_apellido_patronal}} {{$abogado->segundo_apellido_patronal}}</b> se identifica con 
+                        <b>{{ strtoupper($abogado->tipo_identificacion) }}</b>, de Número <b>{{ $abogado->num_identificacion }}</b> expedida a su favor por <b>{{ $descripcionIdentificacionP }}</b>, 
+                        y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
+                    @else Declara <b>{{$abogado->nombre_representante}} {{$abogado->primer_apellido_representante}} {{$abogado->segundo_apellido_representante}}</b> quien se identifica con 
+                        <b>{{ strtoupper($abogado->tipo_identificacion) }}</b>, de Número <b>{{ $abogado->num_identificacion }}</b> expedida a su favor por <b>{{ $descripcionIdentificacionP }}</b>, así como <b>{{$abogado->descipcion_poder}}</b>  
+                    @endif
+                </p><br><br>
                 <b>TERCERA.</b> Declara la parte <b>TRABAJADORA</b>:
                     <p class="sangria">
                         a) Que fue contratada por la parte <b>EMPLEADORA</b> desde el <b>{{ \Carbon\Carbon::parse($solicitud->fecha_inicio)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, para prestar sus 
@@ -116,7 +117,7 @@
                     </p>
                     <p class="sangria">                
                         b) Que por el desempeño de sus labores contaba con las siguientes prestaciones:<br>
-                            - Salario mensual: <b>${{ number_format($salario_mensual, 2) }} {{ $mensualTexto }} M.N</b>. <br>
+                            - Salario mensual: <b>${{ number_format($salario_mensual, 2) }} {{ $mensualTexto }}</b> <br>
                             - Días de descanso: <b>{{ $dias_descanso }}</b><br>
                             - Vacaciones: <b>{{ $solicitud->vacaciones_dias }}</b> días al año.<br>
                             - Aguinaldo: <b>{{ $solicitud->aguinaldo_dias }}</b> días al año.<br>
@@ -173,7 +174,7 @@
                             prestaciones ordinarias y extraordinarias y en especie que conforme a derecho le corresponden, así mismo como cualquier riesgo o accidente de trabajo que haya sufrido. Por lo anterior, 
                             la parte <b>EMPLEADORA</b> no adeuda pago de concepto alguno.<br><br>
 
-                        <b>QUINTA</b>. La parte <b>TRABAJADORA</b> recibirá de la parte <b>EMPLEADORA</b> la cantidad de <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }} M.N</b>, 
+                        <b>QUINTA</b>. La parte <b>TRABAJADORA</b> recibirá de la parte <b>EMPLEADORA</b> la cantidad de <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }}</b>, 
                             conforme a los siguientes conceptos:</p>
 
                         <b>Prestaciones</b>
@@ -191,7 +192,7 @@
                                     <tr>
                                         <td>{{ strtoupper($concepto->descripcion) }}</td>
                                         <td><b>${{ number_format($concepto->monto, 2) }}</b></td>
-                                        <td>{{ $conceptosTexto[$concepto->id] }}</td> <!-- Aquí usamos el arreglo para obtener el texto -->
+                                        <td>{{ $conceptosTexto[$concepto->id] }}</td>
                                     </tr>
                                 @endforeach
                                 <!--</p>-->
@@ -214,7 +215,7 @@
                                         <tr>
                                             <td>{{ $deduccion->descripcion }}</td>
                                             <td><b>${{ number_format($deduccion->monto, 2) }}</b></td>
-                                            <td>{{ $deduccionesTexto[$deduccion->id] }}</td> <!-- Aquí usamos el arreglo para obtener el texto -->
+                                            <td>{{ $deduccionesTexto[$deduccion->id] }}</td>
                                         </tr>
                                     @endforeach  
                                 </tbody>
@@ -235,7 +236,7 @@
                     @if($pagosDif->C_pagos>'1')            
                         <p><b>SEXTA</b>. La <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará en <b>{{ $pagosDif->C_pagos}}</b> 
                             exhibiciones, hasta culminar la cantidad de 
-                            <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }} M.N</b>, tal como se muestra:
+                            <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }}</b>, tal como se muestra:
                         </p>
                         <div class="table-responsive">
                             <table id="pagos" class="table-striped" style="width:100%;">
@@ -262,7 +263,7 @@
 
                         <p>En caso de que la parte <b>EMPLEADORA</b> no cubra el pago de la cantidad estipulada y dentro del plazo determinado en esta cláusula, deberá pagar a la parte <b>TRABAJADORA</b> 
                             el equivalente a un día de salario diario, el cual se fijará en razón del salario que percibía dicha parte antes de finalizar la relación de trabajo correspondiente a la cantidad de 
-                            <b>${{ number_format($salario_diario, 2) }} {{ $diarioTexto }} M.N</b>. Esa cantidad se sumará a la previamente pactada, por cada día que 
+                            <b>${{ number_format($salario_diario, 2) }} {{ $diarioTexto }}</b> Esa cantidad se sumará a la previamente pactada, por cada día que 
                             transcurra, sin que se dé cabal cumplimiento al convenio, con fundamento en el artículo 684-E, fracción XIV, último párrafo, de la Ley Federal del Trabajo.</p>
                         
                         <p>Asimismo, manifiestan estar de acuerdo que de no pagarse el primero de los pagos convenidos en la fecha de su vencimiento, quedará a salvo el derecho de cualquiera de las partes para 
@@ -336,7 +337,7 @@
                         </div>
                     </div>
                     <br><br>
-                    <p><center><b>___________________________________<br> {{ $conciliador->name }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
+                    <p><center><b>___________________________________<br> {{ strtoupper($conciliador->name) }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
                         DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>     
             </div>
             <script type="text/php">
