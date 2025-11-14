@@ -212,19 +212,26 @@
                 </p>
 
                 <br><br>
-                    <div class="row">
-                        <div class="col-12 text-center">
-                            <div style="display: inline-block; margin-right: 50px;">
-                                <p><center><b>___________________________________<br> {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}  <br> LA PARTE TRABAJADORA<br></b></center></p>
-                            </div>
-                                    
-                            <div style="display: inline-block;">
-                                <p><center><b>___________________________________<br> {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}<br>LA PARTE EMPLEADORA<br></b></center></p>
-                            </div>
-                        </div>
-                    </div>
-                    <br><br><br>
-                    <p><center><b>___________________________________<br> {{ strtoupper($conciliador->name) }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
+                <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:30px;">
+                    <tr>
+                        <td style="width:50%; vertical-align:top; padding:0 20px;">
+                            <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                            <b>
+                                {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}<br>
+                                LA PARTE TRABAJADORA
+                            </b>
+                            </td>
+                            <td style="width:50%; vertical-align:top; padding:0 20px;">
+                            <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                            <b>
+                                {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}<br>
+                                LA PARTE EMPLEADORA
+                            </b>
+                        </td>        
+                    </tr>
+                </table>
+                <br><br><br>
+                <p><center><b>___________________________________<br> {{ strtoupper($conciliador->name) }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
                         DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>                    
             </div>
             <script type="text/php">

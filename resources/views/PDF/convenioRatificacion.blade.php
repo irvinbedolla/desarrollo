@@ -300,7 +300,7 @@
 
                     <p>En caso de que la parte <b>EMPLEADORA</b> no cubra el pago de la cantidad estipulada y dentro del plazo determinado en esta cláusula, deberá pagar a la parte <b>TRABAJADORA</b> 
                         el equivalente a un día de salario diario, el cual se fijará en razón del salario que percibía dicha parte antes de finalizar la relación de trabajo correspondiente a la cantidad de 
-                        <b>${{ number_format($salario_diario, 2) }} {{ $diarioTexto }} M.N</b>. Esa cantidad se sumará a la previamente pactada, por cada día que 
+                        <b>${{ number_format($salario_diario, 2) }} {{ $diarioTexto }}</b> Esa cantidad se sumará a la previamente pactada, por cada día que 
                         transcurra, sin que se dé cabal cumplimiento al convenio, con fundamento en el artículo 684-E, fracción XIV, último párrafo, de la Ley Federal del Trabajo.</p>
                     @endif  
                     <p>      
@@ -324,18 +324,25 @@
                         lo sanciona en este mismo acto. <b>Doy fe</b>.
                     </p>
                                     
-                    <br><br><br>
-                    <div class="row">
-                        <div class="col-12 text-center">
-                            <div style="display: inline-block; margin-right: 50px;">
-                                <p><center><b>___________________________________<br> {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}  <br> LA PARTE TRABAJADORA<br></b></center></p>
-                            </div>
-                                    
-                            <div style="display: inline-block;">
-                                <p><center><b>___________________________________<br> {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}<br>LA PARTE EMPLEADORA<br></b></center></p>
-                            </div>
-                        </div>
-                    </div>
+                    <br><br>
+                    <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:30px;">
+                        <tr>
+                            <td style="width:50%; vertical-align:top; padding:0 20px;">
+                            <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                            <b>
+                                {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}<br>
+                                LA PARTE TRABAJADORA
+                            </b>
+                            </td>
+                            <td style="width:50%; vertical-align:top; padding:0 20px;">
+                            <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                            <b>
+                                {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}<br>
+                                LA PARTE EMPLEADORA
+                            </b>
+                            </td>
+                        </tr>
+                    </table>
                     <br><br>
                     <p><center><b>___________________________________<br> {{ strtoupper($conciliador->name) }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
                         DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>     
