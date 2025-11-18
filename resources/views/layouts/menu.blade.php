@@ -242,23 +242,14 @@
             <a class="nav-link" href="{{ route('agenda') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Agenda</span>
             </a>
+            <a class="nav-link" href="{{ route('configuracion') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Administración</span>
+            </a>
             <a class="nav-link" href="{{ route('poderes') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
-            <a class="nav-link" href="{{ route('miscapacitaciones') }}">
-                <i class="bi bi-backpack4-fill"></i><span class="text-dark" onclick="mis_capacitaciones()">Mis capacitaciones</span>
-            </a>
-            <a class="nav-link" href="{{ route('expedientes') }}">
-                <i class="bi bi-graph-down"></i><span class="text-dark" onclick="expedientes()">Expediente</span>
-            </a>
             <a class="nav-link" href="{{ route('seer.estadistica') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadisticas</span>
-            </a>
-            <a class="nav-link" href="{{ route('turno_estadistica') }}">
-                <i class="bi bi-graph-up"></i><span class="text-dark" onclick="estadistica_turno()">Estadistica turno</span>
-            </a>
-            <a class="nav-link" href="{{ route('persona.historial') }}">
-                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
             </a>
         @endrole
     @endauth

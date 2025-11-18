@@ -25,6 +25,9 @@ use App\Models\Turnos;
 use App\Models\TurnoDisponible;
 use App\Models\DiasInhabiles;
 use App\Models\Sedes;
+use App\Models\Pagos;
+use App\Models\Concepto; 
+use App\Models\Deducciones;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -66,27 +69,76 @@ class AdministracionController extends Controller
         return view('administracion.index_retroceso');
     }
 
-    public function consultar_retroceso_ratifficacion(Request $request){
-        // 1. Validar la solicitud si es necesario
-        $request->validate([
-            'id_a_consultar' => 'required|integer',
-        ]);
+    public function consultar_retroceso(Request $request){
+        $data = $request->all();
+        if($data["tipo"] == "Cumplimiento"){
+            $folios = Pagos::where("id_solicitud",$data["folio"])
+            ->whereYear("fecha",$data["año"])
+            ->select('id','NUE','fecha','descripcion','estatus')
+            ->get()
+            ->map(function ($folio) {
+                return [
+                    'id' => $folio->id,
+                    'NUE' => $folio->NUE,
+                    'fecha' => $folio->fecha->format('Y-m-d H:i:s'),
+                    'descripcion' => $folio->descripcion,
+                    'estatus' => $folio->estatus,
+                ];
+            })
+            ->toArray();
 
-        // 2. Realizar la consulta
-        $id = $request->input('id_a_consultar');
-        $registro = TuModelo::find($id); // o TuModelo::where('campo', $id)->first();
-
-        // 3. Retornar la respuesta JSON
-        if ($registro) {
-            return response()->json([
-                'success' => true,
-                'data' => $registro // Laravel lo convierte automáticamente a JSON
-            ]);
+            if(count($folios) != 0){
+                return redirect()->back()
+                ->with('message', 'Cumplimientos Encontrados.') // Mensaje general
+                ->with('folios_generados', $folios)
+                ->with('tipo', $data["tipo"]); // La variable específica
+            }
+            else{
+                return back()->withErrors('Debes seleccionar al menos una Región.');
+            }
         }
+        else if($data["tipo"] == "Ratificación"){
+            $folios = Turnos::where('id',$data["folio"])
+            ->whereYear("fecha",$data["año"])
+            ->select('id','NUE','fecha','estatus')
+            ->selectRaw("CONCAT(empresa,' ',primero_empresa,' ',segundo_empresa) as empresa")
+            ->selectRaw("CONCAT(trabajador,' ',primero_trabajador,' ',segundo_trabajador) as trabajador")
+            ->get()
+            ->map(function ($folio) {
+                return [
+                    'id' => $folio->id,
+                    'NUE' => $folio->NUE,
+                    'fecha' => $folio->fecha,
+                    'empresa' => $folio->empresa,
+                    'trabajador' => $folio->trabajador,
+                    'estatus' => $folio->estatus,
+                ];
+            })
+            ->toArray();
 
-        return response()->json([
-            'success' => false,
-            'message' => 'Registro no encontrado.'
-        ], 404); // Se puede usar un código de estado 404 si no se encuentra
+            if(count($folios) != 0){
+                return redirect()->back()
+                ->with('message', 'Ratificación Encontrados.') // Mensaje general
+                ->with('folios_generados', $folios)
+                ->with('tipo', $data["tipo"]); // La variable específica
+            }
+            else{
+                return back()->withErrors('Debes seleccionar al menos una Región.');
+            }
+        }
+    }
+
+    public function hacer_retroceso($id){
+        Pagos::find($id)->update(['estatus'  => "Pendiente"]);
+        return redirect()->back()->with('success', 'Puedes realizar tu pago nuevamente.');
+    }
+
+    public function hacer_retroceso_ratificacion($id){
+        Turnos::find($id)->update(['estatus'  => "Pendiente"]);
+        Pagos::      where("id_solicitud",$id)->delete();
+        Concepto::   where('id_solicitud',$id)->delete();
+        Deducciones::where('id_solicitud',$id)->where('tipo_pago','Ratificacion')->delete();
+
+        return redirect()->back()->with('success', 'Puedes realizar tu ratificación nuevamente.');
     }
 }

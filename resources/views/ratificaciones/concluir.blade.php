@@ -118,7 +118,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-1">
                                             <div class="form-group"><br>
                                                 <label for="name">Otros</label>
-                                                <input type="text" name="otros" class="form-control"> 
+                                                <input type="number" name="otros" class="form-control"> 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>

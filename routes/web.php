@@ -371,7 +371,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('administracion/configuracion',          [AdministracionController::class, 'configuracion'])->name('configuracion');
         Route::get('administracion/sedes',                  [AdministracionController::class, 'configuracion_sedes'])->name('configuracion_sedes');
         Route::get('administracion/retrocesos',             [AdministracionController::class, 'genera_retroceso'])->name('genera_retroceso');       
-        Route::post('/consulta-retro-rati',                 [AdministracionController::class, 'consultar_retroceso_ratifficacion'])->name('consultar_retroceso_ratifficacion'); 
+        Route::post('/generar-ratroceso',                   [AdministracionController::class, 'consultar_retroceso'])->name('generar_retroceso'); 
+        Route::get('administracion/RC/{id}',                [AdministracionController::class, 'hacer_retroceso_cumplimiento'])->name('accion_retrocesoC');    
+        Route::get('administracion/RR/{id}',                [AdministracionController::class, 'hacer_retroceso_ratificacion'])->name('accion_retrocesoR');       
     //Fin de Administración  
     //Audiencias
         Route::get('/audiencias/index',                     [SeerController::class, 'audiencia_index'])->name('audiencia_index');
@@ -493,6 +495,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/conciliador/index',                [ConciliadoresController::class, 'index'])->name('index_conciliadores');
         Route::post('/conciliador/update_perimsos/',    [ConciliadoresController::class, 'update'])->name('conciliadores_permisos');
         Route::get('/conciliador/firmaCitatorios',      [SeerController::class, 'firmaCitatorios_index'])->name('firma_citatorio'); //Citatorios a firmar por los conciliadores
+
+
+        Route::get('/conciliador/prueba',                [TurnosController::class, 'actualizar_folio']);
     //Fin Conciliadores
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);

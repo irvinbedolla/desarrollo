@@ -548,11 +548,8 @@ class TurnosController extends Controller
         */
         //Buscar la proxima fecha disponible de la sede
         $numero_consecutivo = 0;
-        $consecutivo  = Turnos::latest('id')
-        ->where('fecha', $fecha_actual)
-        ->first();
+        $consecutivo  = Turnos::latest('consecutivo')->where('delegacion',$data["sede"])->first();
         
-
         if(empty($consecutivo)){
             $numero_consecutivo = 1;
         }
@@ -1698,6 +1695,15 @@ class TurnosController extends Controller
         else if($delegacion == "Zamora"){
             $del = "ZAM";
         }
+        else if($delegacion == "Zitácuaro"){
+            $del = "ZIT";
+        }
+        else if($delegacion == "Lázaro Cárdenas"){
+            $del = "LZC";
+        }
+        else if($delegacion == "Sahuayo"){
+            $del = "SAH";
+        }
         //contar el numero de ceros
         $numeroConCeros = str_pad($id, 5, "0", STR_PAD_LEFT);
         $folio = $del."/RAT"."/".$año_actual."/".$numeroConCeros;
@@ -2185,5 +2191,38 @@ class TurnosController extends Controller
 
         $nombreArchivo = 'constancia_de_incumplimiento_'  .'.pdf';
         return $pdf->stream($nombreArchivo);                  
+    }
+
+
+    public function actualizar_folio(){
+        
+        $tableName = 'turnos'; // Reemplaza con el nombre real de tu tabla
+        $idColumn = 'id'; // Columna para ordenar la secuencia (usualmente 'id')
+        $delegacionColumn = 'delegacion'; // Columna de agrupación
+        $consecutivoColumn = 'consecutivo'; // Columna a actualizar
+
+        $sql = "
+            UPDATE {$tableName} AS r
+            JOIN (
+                SELECT 
+                    {$idColumn},
+                    {$delegacionColumn},
+                    @consecutivo_delegacion := IF(
+                        @delegacion_actual = {$delegacionColumn}, 
+                        @consecutivo_delegacion + 1, 
+                        1
+                    ) AS nuevo_consecutivo,                    
+                    @delegacion_actual := {$delegacionColumn} AS dummy_var 
+                FROM 
+                    {$tableName}
+                ORDER BY 
+                    {$delegacionColumn} ASC, 
+                    {$idColumn} ASC 
+            ) AS subquery 
+            ON r.{$idColumn} = subquery.{$idColumn}
+            SET 
+                r.{$consecutivoColumn} = subquery.nuevo_consecutivo;";
+
+        DB::statement($sql);
     }
 }
