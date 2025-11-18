@@ -2119,7 +2119,9 @@ class SeerController extends Controller
                 $data_insert["nombre"] = $data["nombre"];
             }
         }
+
         //Se van a generar el citatorio
+        $data_insert['resulte_responsable'] = 'No';
         SeerCitados::create($data_insert); 
         // Si es persona física, elimina los apellidos para este citado
         if (isset($data["tipo"]) && $data["tipo"] === "Fisica") {
@@ -2140,9 +2142,15 @@ class SeerController extends Controller
         }
         $data_insert["nombre"] .= " COLONIA " . $data["colonia"] . ", " . $municipioNombre . ", " . $estadoNombre . ", C.P. " . $data["cp"] . ".";
 
-        $busar_quien_resulte = SeerCitados::where("nombre", $data_insert["nombre"]);
-        if(isset($busar_quien_resulte)){
-            SeerCitados::create($data_insert); 
+        // Marcar este nuevo registro como el "quien resulte" y crear solo si no existe ya uno igual
+        $data_insert['resulte_responsable'] = 'Si';
+        $direccionNombre = $data_insert["nombre"];
+        $existe = SeerCitados::where('id_solicitud', $data['id'])
+                    ->where('nombre', $direccionNombre)
+                    ->where('resulte_responsable', 'Si')
+                    ->exists();
+        if (!$existe) {
+            SeerCitados::create($data_insert);
         }
 
 
@@ -2487,6 +2495,7 @@ class SeerController extends Controller
                 'estado_citado'     => $data["estado_citado"][$i],
                 'imagen_domicilio1' => $foto1,
                 'imagen_domicilio2' => $foto2,
+                'resulte_responsable' => $data['resulte_responsable'][$i] ?? 'No',
             );
             
             if(isset($data["traductor"])){
@@ -2718,6 +2727,7 @@ class SeerController extends Controller
                 'estado_citado'     => $data["estado_citado"][$i],
                 'imagen_domicilio1' => $foto1,
                 'imagen_domicilio2' => $foto2,
+                'resulte_responsable' => $data['resulte_responsable'][$i] ?? 'No',
             );
             
             if(isset($data["traductor"])){
@@ -2959,16 +2969,41 @@ class SeerController extends Controller
         $municipioNombre = $municipio ? mb_strtoupper($municipio->nombre, 'UTF-8') : '';
         $estadoNombre = $estado ? mb_strtoupper($estado->nombre, 'UTF-8') : '';
 
-        //Se van a generar el citatorio
-        SeerCitados::create($data_insert); 
-        if($data["responsable"] == "Si"){
-            $data_insert["nombre"] =  "REPRESENTANTE LEGAL  DE: QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN " .
+        // Detectar robustamente si se indicó "Quien resulte responsable"
+        $isResulte = false;
+        if (isset($data["responsable"])) {
+            $val = trim($data["responsable"]);
+            $valLower = mb_strtolower($val, 'UTF-8');
+            if ($valLower === 'si' || $valLower === 'sí') {
+                $isResulte = true;
+            }
+        }
+
+        $normalCitado = $data_insert;
+        $normalCitado['resulte_responsable'] = 'No';
+        SeerCitados::create($normalCitado);
+
+        if ($isResulte) {
+            $special = $data_insert;
+            $special["nombre"] =  "REPRESENTANTE LEGAL DE: QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN " .
              $data["calle"] . ", NÚMERO " . $data["exterior"];
             if (!empty($data["interior"])) {
-                $data_insert["nombre"] .= " INT. " . $data["interior"];
+                $special["nombre"] .= " INT. " . $data["interior"];
             }
-            $data_insert["nombre"] .= " COLONIA " . $data["colonia"] . ", " . $municipioNombre . ", " . $estadoNombre . ", C.P. " . $data["cp"] . ".";
-            SeerCitados::create($data_insert);
+            $special["nombre"] .= " COLONIA " . $data["colonia"] . ", " . $municipioNombre . ", " . $estadoNombre . ", C.P. " . $data["cp"] . ".";
+            $special['resulte_responsable'] = 'Si';
+ 
+            $special['primer_apellido'] = null;
+            $special['segundo_apellido'] = null;
+
+            $direccionNombre = $special["nombre"];
+            $existe = SeerCitados::where('id_solicitud', $data['id'])
+                        ->where('nombre', $direccionNombre)
+                        ->where('resulte_responsable', 'Si')
+                        ->exists();
+            if (!$existe) {
+                SeerCitados::create($special);
+            }
         }
 
         return back()->with('success', 'Citado agregado correctamente.');

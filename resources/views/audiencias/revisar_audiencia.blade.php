@@ -601,46 +601,46 @@
                                             </div><br>
 
                                             @foreach($citados as $citado)
+                                                @php
+                                                    $esResulte = isset($citado['resulte_responsable']) ? $citado['resulte_responsable'] : (isset($citado->resulte_responsable) ? $citado->resulte_responsable : 'No');
+                                                @endphp
                                                 <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:30px;">
                                                     <div class="form-group">
                                                         <h4 class="text-center">Citado</h4>
                                                     </div>
                                                 </div><br>
-                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                <div class="col-xs-12 col-sm-6 col-md-4" id="nombre_wrap_{{$loop->index}}">
                                                     <div class="form-group">
                                                         <label for="password">Nombre<span style="color:red;"> (*)</span></label>
                                                         <input type="text" class="form-control" name="nombre_citado[]" value="<?=$citado["nombre"];?>" required>
+                                                        <input type="hidden" name="resulte_responsable[]" value="{{ $esResulte }}">
                                                         <div class="invalid-feedback">
                                                             El campo nombre es obligatorio.
-                                                        </div>   
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                @if(!empty($citado['primer_apellido']))
-                                                    <div class="col-xs-12 col-sm-6 col-md-4">
-                                                        <div class="form-group">
-                                                           <label for="password">Primer apellido<span style="color:red;"> (*)</span></label>
-                                                           <input type="text" class="form-control" name="primer_apellido[]" value="<?=$citado["primer_apellido"];?>" required>
-                                                           <div class="invalid-feedback">
-                                                                El campo primer apellido es obligatorio.
-                                                        </div>   
+                                                <div class="col-xs-12 col-sm-6 col-md-4" id="primer_wrap_{{$loop->index}}" style="{{ $esResulte == 'Si' ? 'display:none;' : '' }}">
+                                                    <div class="form-group">
+                                                       <label for="password">Primer apellido<span style="color:red;"> (*)</span></label>
+                                                       <input type="text" class="form-control" name="primer_apellido[]" value="<?= $citado["primer_apellido"] ?? ''; ?>" @if($esResulte == 'Si') @else required @endif>
+                                                       <div class="invalid-feedback">
+                                                            El campo primer apellido es obligatorio.
                                                         </div>
                                                     </div>
-                                                @endif
-                                                @if(!empty($citado['segundo_apellido']))
-                                                    <div class="col-xs-12 col-sm-6 col-md-4">
-                                                        <div class="form-group">
-                                                           <label for="password">Segundo apellido<span style="color:red;"> (*)</span></label>
-                                                           <input type="text" class="form-control" name="segundo_apellido[]" value="<?=$citado["segundo_apellido"];?>" required>
-                                                           <div class="invalid-feedback">
-                                                                El campo segundo apellido es obligatorio.
-                                                            </div>   
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-4" id="segundo_wrap_{{$loop->index}}" style="{{ $esResulte == 'Si' ? 'display:none;' : '' }}">
+                                                    <div class="form-group">
+                                                       <label for="password">Segundo apellido</label>
+                                                       <input type="text" class="form-control" name="segundo_apellido[]" value="<?= $citado["segundo_apellido"] ?? ''; ?>">
+                                                       <div class="invalid-feedback">
+                                                            El campo segundo apellido es obligatorio.
                                                         </div>
                                                     </div>
-                                                @endif
+                                                </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Tipo de persona<span style="color:red;"> (*)</span></label>
-                                                        <select name="tipo_persona_citado[]" class="form-control" required>
+                                                        <select name="tipo_persona_citado[]" class="form-control" resulte_flag="{{ $esResulte }}" required>
                                                             <option value="">SELECCIONE</option>
                                                             <option value="Fisica" {{ $citado['tipo_persona'] == 'Fisica' ? "selected" : '' }}>Física</option>
                                                             <option value="Moral"  {{ $citado['tipo_persona'] == 'Moral' ? "selected" : '' }}>Moral</option>
@@ -883,7 +883,7 @@
                                                 <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label for="password">Citatorio</label><br>
-                                                        <a class="btn btn-success" href="{{ route('pdfCitatorioAudiencia', $citado->id) }}"  target="_blank">Generar</a>
+                                                        <a class="btn btn-success" href="{{ route('pdfCitatorioAudiencia', $citado->id) }}"  target="_blank">Visualizar</a>
                                                     </div>
                                                 </div>
                                             @endforeach
@@ -1116,8 +1116,8 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
-                                            <label for="name">Segundo apellido <span style="color:red;">(*)</span></label>
-                                            <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                            <label for="name">Segundo apellido</label>
+                                            <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                             <div class="invalid-feedback">
                                                 El nombre es obligatorio.
                                             </div>
@@ -1571,6 +1571,60 @@
 
         const intervalo = setInterval(actualizarTemporizador, 1000);
         actualizarTemporizador();
+    </script>
+    <script>
+        function syncTipoCitado(index){
+            try {
+                var sel = document.querySelectorAll('select[name="tipo_persona_citado[]"]')[index];
+                if(!sel) return;
+
+                var nombreInput = document.querySelectorAll('input[name="nombre_citado[]"]')[index];
+                var primerInput = document.querySelectorAll('input[name="primer_apellido[]"]')[index];
+                var segundoInput = document.querySelectorAll('input[name="segundo_apellido[]"]')[index];
+
+                var nombreWrap = nombreInput ? nombreInput.closest('.form-group').parentElement : null;
+                var primerWrap = primerInput ? primerInput.closest('.form-group').parentElement : null;
+                var segundoWrap = segundoInput ? segundoInput.closest('.form-group').parentElement : null;
+
+                if (sel.value === 'Moral') {
+                    // Tipo de persona moral solo puede visualizar el nombre
+                    if (nombreWrap) nombreWrap.style.display = '';
+                    if (primerWrap) primerWrap.style.display = 'none';
+                    if (segundoWrap) segundoWrap.style.display = 'none';
+                    if (nombreInput) nombreInput.required = true;
+                    if (primerInput) primerInput.required = false;
+                    if (segundoInput) segundoInput.required = false;
+                } else {
+                    // Tipo de persona física visualiza los 3
+                    if (nombreWrap) nombreWrap.style.display = '';
+                    if (primerWrap) primerWrap.style.display = '';
+                    if (segundoWrap) segundoWrap.style.display = '';
+                    if (nombreInput) nombreInput.required = true;
+                    if (primerInput) primerInput.required = true;
+                    if (segundoInput) segundoInput.required = false;
+                }
+                // Si este citado es el 'quien resulte'
+                try {
+                    var resulteFlag = sel.getAttribute('resulte_flag');
+                    if (resulteFlag === 'Si') {
+                        if (primerWrap) primerWrap.style.display = 'none';
+                        if (segundoWrap) segundoWrap.style.display = 'none';
+                        if (primerInput) primerInput.required = false;
+                        if (segundoInput) segundoInput.required = false;
+                    }
+                } catch (err) {}
+            } catch (err) {
+                console.warn('syncTipoCitado error', err);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function(){
+            var selects = document.querySelectorAll('select[name="tipo_persona_citado[]"]');
+            selects.forEach(function(sel, idx){
+                syncTipoCitado(idx);
+                sel.addEventListener('change', function(){ syncTipoCitado(idx); });
+            });
+        });
     </script>
 @endsection
 

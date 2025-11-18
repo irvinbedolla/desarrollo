@@ -191,7 +191,7 @@
 
                                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                                         <div class="form-group">
-                                                            <label for="name">Segundo apellido <span style="color:red;">(*)</span></label>
+                                                            <label for="name">Segundo apellido</label>
                                                             <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                             <div class="invalid-feedback">
                                                                 El segundo apellido es obligatorio.
