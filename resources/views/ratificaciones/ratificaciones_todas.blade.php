@@ -15,13 +15,15 @@
                                 <div class="table-responsive">
                                     <table id="example" class="table table-striped mt-2"> 
                                         <thead style="background-color: #4A001F;">
-                                            <th style="color: #fff;">Folio</th> 
+                                            <th style="color: #fff;">Folio General</th> 
                                             <th style="color: #fff;">N° Interno</th> 
+                                            <th style="color: #fff;">NUE</th> 
                                             <th style="color: #fff;">Fecha</th>
                                             <th style="color: #fff;">Empresa</th>
                                             <th style="color: #fff;">Teléfono</th>
                                             <th style="color: #fff;">Correo</th>
                                             <th style="color: #fff;">Trabajador</th>
+                                            <th style="color: #fff;">Delegación</th>
                                             <th style="color: #fff;">Estatus</th>
                                             <th style="color: #fff;">Detalles</th>
                                             <th style="color: #fff;">Concluir</th>
@@ -33,6 +35,7 @@
                                                 <tr>
                                                     <td>{{$solicitud->id}}</td>
                                                     <td>{{$solicitud->consecutivo}}</td>
+                                                    <td>{{$solicitud->NUE}}</td>
                                                     <td>{{$solicitud->fecha}}</td> 
                                                     <td>@if(is_null($solicitud->nombre_empresa) && is_null($solicitud->primero_empresa) && is_null($solicitud->segundo_empresa))
                                                         {{$solicitud->empresa}}
@@ -40,6 +43,7 @@
                                                     <td>{{$solicitud->telefono}}</td>
                                                     <td>{{$solicitud->email}}</td>
                                                     <td>{{$solicitud->trabajador}} {{$solicitud->primero_trabajador}}  {{$solicitud->segundo_trabajador}}</td>
+                                                    <td>{{$solicitud->delegacion}}</td>
                                                     <td>{{$solicitud->estatus}}</td>
                                                     <td><a class="btn btn-primary" href="{{ route('consultar_ratificacion', $solicitud->id) }}">Consultar</a></td>
                                                     <td>
