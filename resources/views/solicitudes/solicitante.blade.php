@@ -61,7 +61,7 @@
         <br><br><br><br>
     </div>
 </head>
-
+<body>
     <div id="app">  
         <section class="section">
             <div class="section-body">
@@ -574,6 +574,41 @@
             </div>
         </section>
     </div>
+    <script>
+        // Función genérica para convertir todo el texto a mayúsculas
+        function convertirAMayusculas() {
+            const elementos = document.querySelectorAll('input[type="text"], textarea');
+
+            elementos.forEach(elemento => {
+                elemento.addEventListener('input', function() {
+                    this.value = this.value.toUpperCase();
+                });
+                if (elemento.value) {
+                    elemento.value = elemento.value.toUpperCase();
+                }
+            });
+        }
+
+        // Ejecutar la función cuando el DOM esté completamente cargado
+        document.addEventListener('DOMContentLoaded', (event) => {
+            convertirAMayusculas();
+            (function () {
+                'use strict'
+                var forms = document.querySelectorAll('.needs-validation')
+                Array.prototype.slice.call(forms)
+                    .forEach(function (form) {
+                        form.addEventListener('submit', function (event) {
+                            if (!form.checkValidity()) {
+                                event.preventDefault()
+                                event.stopPropagation()
+                            }
+                            form.classList.add('was-validated')
+                        }, false)
+                    })
+            })()
+        });
+    </script>
+</body>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <div id="crear_poder" style ="display: none;">

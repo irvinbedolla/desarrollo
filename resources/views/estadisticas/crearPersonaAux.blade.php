@@ -148,7 +148,7 @@
                                                         <option value="Recision de la relación laboral">Recision de la relación laboral</option>
                                                         <option value="Derecho de preferencia">Derecho de preferencia</option>
                                                         <option value="Derecho de antiguedad">Derecho de antiguedad</option>
-                                                        <option value="Derecho de ascesnso">Derecho de ascesnso</option>
+                                                        <option value="Derecho de ascesnso">Derecho de ascenso</option>
                                                         <option value="Terminación voluntaria de relación laboral">Terminación voluntaria de relación laboral</option>
                                                         <option value="Supuestos de Excepción 685-Ter LFT">Supuestos de Excepción 685-Ter LFT</option>
                                                         <option value="Otros">Otros</option>

@@ -73,9 +73,10 @@
         </ul>
     </div>
 </nav>
-<div class="container">
-    <br><br><br><br>
-</div>
+<body>
+    <div class="container">
+        <br><br><br><br>
+    </div>
     <div id="app">  
         <section class="section">
             <div class="section-body">
@@ -309,7 +310,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-1">
                                                 <div class="form-group">
                                                     <label for="text">Núm. ext. <span style="color:red;">(*)</span></label>
-                                                    <input type="number" name="exterior" min="0" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <input type="text" name="exterior" min="0" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El núm. exterior es obligatorio.
                                                     </div>
@@ -486,7 +487,41 @@
             </div>
         </section>
     </div>
+    <script>
+        // Función genérica para convertir todo el texto a mayúsculas
+        function convertirAMayusculas() {
+            const elementos = document.querySelectorAll('input[type="text"], textarea');
 
+            elementos.forEach(elemento => {
+                elemento.addEventListener('input', function() {
+                    this.value = this.value.toUpperCase();
+                });
+                if (elemento.value) {
+                    elemento.value = elemento.value.toUpperCase();
+                }
+            });
+        }
+
+        // Ejecutar la función cuando el DOM esté completamente cargado
+        document.addEventListener('DOMContentLoaded', (event) => {
+            convertirAMayusculas();
+            (function () {
+                'use strict'
+                var forms = document.querySelectorAll('.needs-validation')
+                Array.prototype.slice.call(forms)
+                    .forEach(function (form) {
+                        form.addEventListener('submit', function (event) {
+                            if (!form.checkValidity()) {
+                                event.preventDefault()
+                                event.stopPropagation()
+                            }
+                            form.classList.add('was-validated')
+                        }, false)
+                    })
+            })()
+        });
+    </script>
+</body>
     <div id="crear_poder" style ="display: none;">
         <div>.</div>
         <div class="loader"></div>

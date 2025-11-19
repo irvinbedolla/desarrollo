@@ -202,42 +202,8 @@
                                             <br><button type="submit" class="btn btn-primary" name="valor" value="1">Vista Previa</button>
                                         </div>
                                     </div>
-
+ 
                                     <div id="no_conciliacion" style="display:none"><br>
-                                        <div class="table-responsive">
-                                            <table class="table table-striped mt-1">
-                                                <thead style="background-color: #4A001F;">
-                                                    <tr> 
-                                                        <th style="display:none">ID</th>
-                                                        <th style="color: #ffff;">Tipo parte</th>
-                                                        <th style="color: #ffff;">Nombre de la parte</th>
-                                                        <th style="color: #ffff;">Representante legal</th>
-                                                        <th style="color: #ffff;">Asistencia</th>
-                                                        <th style="color: #ffff;"></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>                                              
-                                                    @foreach($representantes as $representante)
-                                                        <tr>
-                                                            <td  style="display:none">{{$representante->id}}</td>
-                                                            <td style="color: #000000;"><b>Citado</b></td>
-                                                            <td>{{$representante->nombre}} {{$representante->primer_apellido}} {{$representante->segundo_apellido}}</td>
-                                                            <td>
-                                                                @if($representante->id_abogado != null && $representante->id_fisica == null)
-                                                                    {{ $representante->nombre_abogado }} {{ $representante->primero_abogado }} {{ $representante->segundo_abogado }}
-                                                                @else
-                                                                    {{ $representante->nombre_fisica }} {{ $representante->primer_fisica }} {{ $representante->segundo_fisica }}
-                                                                @endif
-                                                            </td>
-                                                            <td>
-                                                                <input type="checkbox" name="aparece_convenio[{{ $representante->id }}]" value="1" {{ $representante->aparece_convenio == 1 ? 'checked' : '' }}>
-                                                            </td>                                          
-                                                        </tr>
-                                                       
-                                                    @endforeach
-                                                </tbody> 
-                                            </table>
-                                        </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <br><button type="submit" class="btn btn-primary">Guardar</button>
                                         </div>
@@ -561,8 +527,23 @@
                 $('#selectHoraAudienciaDiv').remove();
             });
         };
-
+        // Borrar pago
+        $(document).on('click', '.removeRow2', function () {
+            $(this).closest('.col-xs-12').remove();
+            actualizaNumeroPago();
+        });
+        //Actualiza los números de pago
         function actualizaNumeroPago() {
+            let pagos = $('.numero_pago');
+            if (pagos.length === 1) {
+                pagos.eq(0).val("Pago único");
+            } else {
+                pagos.each(function(index) {
+                   $(this).val("Parcialidad " + (index + 1));
+                });
+            }
+        }
+        /*function actualizaNumeroPago() {
             let pagos = $('.numero_pago');
             if (pagos.length === 1) {
                 pagos.eq(0).val("Pago único");
@@ -576,7 +557,7 @@
         // Borrar pago 
         $(document).on('click', '.removeRow2', function () {
             $(this).closest('.inputFormRow2').remove();
-        });
+        });*/
 
         // Agregar deducción
         $("#addRetencion").click(function () {
@@ -856,27 +837,7 @@
         const intervalo = setInterval(actualizarTemporizador, 1000);
         actualizarTemporizador();
     </script>
-    <!--citados a mostrar en convenio -->
-    <script>
-        document.getElementById('btn-terminar').addEventListener('click', function(e) {
-            var form = document.getElementById('form_roles');
-
-            document.querySelectorAll('.clon-checkbox').forEach(function(el){
-                el.remove();
-            });
-
-            var checkboxes = document.querySelectorAll('input[type=checkbox][name^="aparece_convenio"]');
-
-            checkboxes.forEach(function(checkbox) {
-                var input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = checkbox.name;
-                input.value = checkbox.checked ? 1 : 0; // enviar 0 si no está marcado 1 si lo marcaron
-                input.classList.add('clon-checkbox');
-                form.appendChild(input);
-            });
-        });
-    </script>
+    
 @endsection
 
 <!-- Modal para seleccionar fecha y horario -->
