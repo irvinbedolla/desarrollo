@@ -3760,6 +3760,18 @@ class SeerController extends Controller
         $citados = SeerCitados::where('id_solicitud',$data["id"])->select('notificacion')->orderBy('id', 'desc')->first();
         $user = auth()->user();
 
+        //Se usa para marcar que citados si tienen un representante o una persona fisica, para el tema de la no conciliación y se genere un documento por citado, indicando si asistió o no
+        $citados_apareceConvenio = SeerCitados::where('id_solicitud', $id)->get();
+        foreach ($citados_apareceConvenio as $citado) {
+
+            $tiene_representante = 
+                (!empty($citado->id_abogado) && $citado->id_abogado > 0) ||
+                (!empty($citado->id_fisica) && $citado->id_fisica > 0);
+
+            $citado->aparece_convenio = $tiene_representante ? 1 : 0;
+            $citado->save();
+        }
+
         //Si la bandera es 0 selecciono a todos los representantes puede avanzar
         if($data["bandera"] == 0){
             return redirect()->route('audiencias.parte3',compact('id'));
@@ -3839,7 +3851,7 @@ class SeerController extends Controller
         ->select('seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido','seer_citados.rfc',
         'abogados.nombres_patronal as nombre_abogado','abogados.primer_apellido_patronal as primero_abogado','abogados.segundo_apellido_patronal as segundo_abogado',
         'persona_fisica.nombre as nombre_fisica','persona_fisica.primer_apellido as primer_fisica','persona_fisica.segundo_apellido as segundo_fisica',
-        'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus')
+        'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus','seer_citados.aparece_convenio')
         ->get();
 
         return view('/audiencias/parte3',compact('id', 'sede','representantes'));
@@ -4321,6 +4333,18 @@ class SeerController extends Controller
                 'conciliador_id'        => $user->id,
                 'estatus'               => $data["conclucion"]
             ]);
+
+            //Actualiza el campo aparece_convenio de la tabla citados a los citados que responderán o los que pagarán los cumplimientos
+            $apareceConvenio = isset($data['aparece_convenio']) && is_array($data['aparece_convenio'])
+            ? array_keys($data['aparece_convenio'])
+            : [];
+
+            $representantes = SeerCitados::where('id_solicitud', $request->id)->pluck('id');
+            SeerCitados::whereIn('id', $representantes)->update(['aparece_convenio' => 0]);
+            
+            if (!empty($apareceConvenio)) {
+                SeerCitados::whereIn('id', $apareceConvenio)->update(['aparece_convenio' => 1]);
+            }
         }
         else{
             $solicitante = SeerSolicitante::where('id_solicitud',$data["id"])->first();
