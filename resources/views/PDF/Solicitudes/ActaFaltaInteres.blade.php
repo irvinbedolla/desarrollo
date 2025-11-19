@@ -87,21 +87,24 @@
             <div class="content">
                 <div class="table-responsive">
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
-                            <tr>    
-                                <td><b>Número de identificación único: </b></td>
-                                <td>{{ $solicitud->NUE }} </td>
-                            </tr> 
-                            <tr>   
-                                <td><b>Centro de conciliación: </b></td>
-                                <td>{{ $solicitud->delegacion }} </td>
-                            </tr>
+                        <tr>   
+                            <td><b>Oficina: </b></td>
+                            <td>{{ $solicitud->delegacion }} </td>
+                        </tr>
+                        <tr>    
+                            <td><b>Número de identificación único: </b></td>
+                            <td>{{ $solicitud->NUE }} </td>
+                        </tr> 
                     </table>
-                </div><br><br><br><br><br>
-                <p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br>
-                        Asunto: Archivo de asunto por falta de interés<br>
-                        Solicitante: {{ $solicitante->nombre }} <br> 
+                </div><br><br><br>
+    
+                <p><b>
+                    Solicitante: {{ $solicitante->nombre }} <br>
+                    Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{$audiencia->hora}} horas<br>
+                    Asistencia del solicitante: No
                 </b></p>  
-                <p>En <b>{{ $direccion_sede }} a {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}.</b></p>
+                <center><p><b>ARCHIVO POR FALTA DE INTERÉS</b></p></center>
+                <p>En <b>{{ $solicitud->delegacion }}, Michoacán de Ocampo a {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}.</b></p>
                 <p>
                     <b>VISTO</b> el estado que guarda el expediente identificado con el número <b>{{ $solicitud->NUE }}</b> relativo a la solicitud de conciliación realizada por
                     <b>{{ $solicitante->nombre }}</b>, por falta de interés se formula resolución en atención a los siguientes:

@@ -78,6 +78,7 @@
                             <div class="table-responsive">
                                 <table class="table table-striped mt-2">
                                     <thead style="background-color: #869b9c;">
+                                        <th style="color: #fff;  text-align: center;">Consecutivo</th>
                                         <th style="color: #fff;  text-align: center;">NUE</th>
                                         <th style="color: #fff;  text-align: center;">Mes</th>
                                         <th style="color: #fff;  text-align: center;">Año</th>
@@ -94,6 +95,7 @@
                                     <tbody>
                                         @foreach($reportes as $solicitud)
                                             <tr>
+                                                <td style=" text-align: center;">{{ $solicitud->consecutivo}}</td>
                                                 <td style=" text-align: center;">{{ $solicitud->NUE}}</td>
                                                 <td style=" text-align: center;">{{ $solicitud->mes}}</td>
                                                 <td style=" text-align: center;">{{ $solicitud->año}}</td>

@@ -426,7 +426,7 @@ class RecepcionController extends Controller
         return redirect()->route('turnos');
     }
 
-        public function cambiar($id)
+    public function cambiar($id)
     {
         $fecha_actual = date('Y-m-d');
         $hora_actual  = date("H:i:s");
@@ -447,18 +447,10 @@ class RecepcionController extends Controller
         ->where('delegacion', $user["delegacion"])
         ->get();
 
-        if($user["delegacion"] == "Morelia"){
-            array_push($listado_auxiliares, 3);
-            array_push($listado_auxiliares, 4);
-            array_push($listado_auxiliares, 5);
-            array_push($listado_auxiliares, 66);
+        foreach($usuariosauxiliares as $token ){
+            array_push($listado_auxiliares, $token["id"]);
         }
-        else{
-            foreach($usuariosauxiliares as $token ){
-                array_push($listado_auxiliares, $token["id"]);
-            }
-        }
-
+        
         //validar si hay disponibles
         $random = array_rand($listado_auxiliares);
         $nombre_usuario = User::find($listado_auxiliares[$random]);

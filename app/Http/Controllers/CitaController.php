@@ -7,7 +7,10 @@ use App\Models\Pagos;
 use App\Models\Recepcion;
 use App\Models\Turnos;
 use App\Models\User;
+use App\Models\PermisosConciliador;
+use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CitasExport;
 
@@ -59,11 +62,41 @@ class CitaController extends Controller
     public function citas() {
         //$recepciones = Recepcion::all();
         $id_usuario = auth()->user()->id;
+        $sede = Auth::user()->delegacion;
         $user = User::find($id_usuario);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
 
-        $recepciones = Pagos::where('tipo_pago','Ratificacion')
-        ->where('delegacion', $user["delegacion"])
-        ->get();
+        if($userRole[0] == "Conciliador"){
+            $tipo_conciliador = PermisosConciliador::where('id_conciliador',$id_usuario)->first();
+            if($tipo_conciliador["tipo"] == "Ambos"){
+                //Validar la sede y agregar la oficina de apoyo
+                if($sede == "Morelia"){
+                    $recepciones = Pagos::where('tipo_pago','Ratificacion')
+                    ->whereIn('delegacion', [$user["delegacion"], "Zitácuaro" ])
+                    ->get();
+                }
+                else if($sede == "Uruapan"){
+                    $recepciones = Pagos::where('tipo_pago','Ratificacion')
+                    ->whereIn('delegacion', [$user["delegacion"], "Lázaro Cárdenas" ])
+                    ->get();
+                }
+                else if($sede == "Zamora"){
+                    $recepciones = Pagos::where('tipo_pago','Ratificacion')
+                    ->whereIn('delegacion', [$user["delegacion"], "Sahuayo" ])
+                    ->get();
+                }
+            }else{
+                $recepciones = Pagos::where('tipo_pago','Ratificacion')
+                ->where('delegacion', $user["delegacion"])
+                ->get();
+            }
+        }
+        else{
+            $recepciones = Pagos::where('tipo_pago','Ratificacion')
+            ->where('delegacion', $user["delegacion"])
+            ->get();
+        }
         $tipo = 8;
 
         $eventos = [];
@@ -113,10 +146,40 @@ class CitaController extends Controller
     public function pagos() {
         $id_usuario = auth()->user()->id;
         $user = User::find($id_usuario);
-        
-        $pagos = Pagos::where('tipo_pago','Audiencia')
-        ->where('delegacion', $user["delegacion"])
-        ->get();
+        $sede = Auth::user()->delegacion;
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+
+        if($userRole[0] == "Conciliador"){
+            $tipo_conciliador = PermisosConciliador::where('id_conciliador',$id_usuario)->first();
+            if($tipo_conciliador["tipo"] == "Ambos"){
+                //Validar la sede y agregar la oficina de apoyo
+                if($sede == "Morelia"){
+                    $pagos = Pagos::where('tipo_pago','Audiencia')
+                    ->whereIn('delegacion', [$user["delegacion"], "Zitácuaro" ])
+                    ->get();
+                }
+                else if($sede == "Uruapan"){
+                    $pagos = Pagos::where('tipo_pago','Audiencia')
+                    ->whereIn('delegacion', [$user["delegacion"], "Lázaro Cárdenas" ])
+                    ->get();
+                }
+                else if($sede == "Zamora"){
+                    $pagos = Pagos::where('tipo_pago','Audiencia')
+                    ->whereIn('delegacion', [$user["delegacion"], "Sahuayo" ])
+                    ->get();
+                }
+            }else{
+                $pagos = Pagos::where('tipo_pago','Audiencia')
+                ->where('delegacion', $user["delegacion"])
+                ->get();
+            }
+        }
+        else{
+            $pagos = Pagos::where('tipo_pago','Audiencia')
+            ->where('delegacion', $user["delegacion"])
+            ->get();
+        }
 
         $eventos = [];
         foreach ($pagos as $pago) {
@@ -164,10 +227,40 @@ class CitaController extends Controller
     public function conciliadores() {
         $id_usuario = auth()->user()->id;
         $user = User::find($id_usuario);
-        
-        $pagos = Pagos::where('tipo_pago','Conciliador')
-        ->where('delegacion', $user["delegacion"])
-        ->get();
+        $sede = Auth::user()->delegacion;
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+
+        if($userRole[0] == "Conciliador"){
+            $tipo_conciliador = PermisosConciliador::where('id_conciliador',$id_usuario)->first();
+            if($tipo_conciliador["tipo"] == "Ambos"){
+                //Validar la sede y agregar la oficina de apoyo
+                if($sede == "Morelia"){
+                    $pagos = Pagos::where('tipo_pago','Conciliador')
+                    ->whereIn('delegacion', [$user["delegacion"], "Zitácuaro" ])
+                    ->get();
+                }
+                else if($sede == "Uruapan"){
+                    $pagos = Pagos::where('tipo_pago','Conciliador')
+                    ->whereIn('delegacion', [$user["delegacion"], "Lázaro Cárdenas" ])
+                    ->get();
+                }
+                else if($sede == "Zamora"){
+                    $pagos = Pagos::where('tipo_pago','Conciliador')
+                    ->whereIn('delegacion', [$user["delegacion"], "Sahuayo" ])
+                    ->get();
+                }
+            }else{
+                $pagos = Pagos::where('tipo_pago','Conciliador')
+                ->where('delegacion', $user["delegacion"])
+                ->get();
+            }
+        }
+        else{
+            $pagos = Pagos::where('tipo_pago','Conciliador')
+            ->where('delegacion', $user["delegacion"])
+            ->get();
+        }
 
         $eventos = [];
         foreach ($pagos as $pago) {

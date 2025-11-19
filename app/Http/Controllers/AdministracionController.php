@@ -24,6 +24,7 @@ use App\Models\User;
 use App\Models\Turnos;
 use App\Models\TurnoDisponible;
 use App\Models\DiasInhabiles;
+use App\Models\HorasInhabiles;
 use App\Models\Sedes;
 use App\Models\Pagos;
 use App\Models\Concepto; 
@@ -54,14 +55,25 @@ class AdministracionController extends Controller
         $user = User::findOrFail($id);
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
-
+       
         if (!empty($userRole) && $userRole[0] === "Super Usuario") {
             $sedes = Sedes::all();
+            $conciliadores = User::role('Conciliador')
+            ->orderBy('delegacion')
+            ->get();
+            $bloqueos = DiasInhabiles::orderBy('fecha_inicio','desc')->get();
         } else {
             $sedes = collect([$user->delegacion]);
+            $conciliadores = User::role('Conciliador')
+            ->where('delegacion', $user->delegacion)
+            ->get();
+            $bloqueos = DiasInhabiles::where('centro', $user->delegacion)
+            ->orWhere('user_id', $user->id)
+            ->orderBy('fecha_inicio','desc')
+            ->get();
         }
 
-        return view('administracion.index_sedes', compact('sedes'));
+        return view('administracion.index_sedes', compact('sedes','conciliadores','bloqueos'));
     } 
 
     public function genera_retroceso()
@@ -140,5 +152,74 @@ class AdministracionController extends Controller
         Deducciones::where('id_solicitud',$id)->where('tipo_pago','Ratificacion')->delete();
 
         return redirect()->back()->with('success', 'Puedes realizar tu ratificación nuevamente.');
+    }
+    
+    public function bloqueoSede(Request $request)
+    {
+        $request->validate([
+            'sede_id'        => 'required',
+            'fecha_inicio'   => 'required|date',
+            'fecha_final'    => 'required|date|after_or_equal:fecha_inicio',
+        ]);
+        
+        $existe = DiasInhabiles::where('centro', $request->sede_id)
+        ->whereDate('fecha_inicio', '<=', $request->fecha_final)
+        ->whereDate('fecha_final', '>=', $request->fecha_inicio)
+        ->exists();
+        if ($existe) {
+            return back()->withErrors('Ya existe un bloqueo para esta sede en ese rango de fechas.');
+        }
+
+        DiasInhabiles::create([
+            'fecha_inicio'   => $request->fecha_inicio,
+            'fecha_final'    => $request->fecha_final,
+            'horario_inicio' => "00:00:00",
+            'horario_final'  => "23:59:59",
+            'centro'         => $request->sede_id,
+            'user_id'        => null,
+        ]);
+        
+        return back()->with('success', 'La sede quedó bloqueada correctamente.');
+    }
+
+    public function bloqueoConciliador(Request $request)
+    {
+        $request->validate([
+            'conciliador_id' => 'required|integer',
+            'fecha_inicio'   => 'required|date',
+            'fecha_final'    => 'required|date|after_or_equal:fecha_inicio',
+            'hora_inicio'    => 'required',
+            'hora_final'     => 'required|after:hora_inicio',
+        ]);
+        $existe = DiasInhabiles::where('user_id', $request->conciliador_id)
+        ->whereDate('fecha_inicio', '<=', $request->fecha_final)
+        ->whereDate('fecha_final', '>=', $request->fecha_inicio)
+        ->where('horario_inicio', '<=', $request->hora_final)
+        ->where('horario_final', '>=', $request->hora_inicio)
+        ->exists();
+        if ($existe) {
+            return back()->withErrors("El conciliador ya está bloqueado en ese horario.");
+        }
+        DiasInhabiles::create([
+            'fecha_inicio'   => $request->fecha_inicio,
+            'fecha_final'    => $request->fecha_final,
+            'horario_inicio' => $request->hora_inicio,
+            'horario_final'  => $request->hora_final,
+            'centro'         => Auth::user()->delegacion,
+            'user_id'        => $request->conciliador_id,
+        ]);
+
+        return back()->with('success', 'El conciliador fue bloqueado correctamente.');
+    }
+
+    public function eliminarBloqueo($id)
+    {
+        $bloqueo = DiasInhabiles::find($id);
+        if(!$bloqueo){
+            return back()->withErrors('El bloqueo no existe.');
+        }
+
+        $bloqueo->delete();
+        return back()->with('success', 'Bloqueo eliminado correctamente.');
     }
 }

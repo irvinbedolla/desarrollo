@@ -375,7 +375,7 @@ class SeerController extends Controller
         //Validar documentacion
         request()->validate([
             //General
-            'tipo_reporte'  => 'required|in:Cumplimientos,CumplimientosResumen,Ratificaciones,RatificacionesResumen,Detallado,Concentrado,RatificacionesUsuario,Notificaciones,EstadisticaMexico',
+            'tipo_reporte'  => 'required|in:Cumplimientos,CumplimientosResumen,Ratificaciones,RatificacionesResumen,CCIRSJL,Concentrado,RatificacionesUsuario,Notificaciones,EstadisticaMexico,RatificacionesDias,CCIRSJL',
         ], $data);
         if(isset($data["sede"]))
             $sede = $data["sede"];
@@ -980,8 +980,31 @@ class SeerController extends Controller
         else if($data["tipo_reporte"] == "EstadisticaMexico"){
             return Excel::download(new ReporteMexicoRati($fecha_inicial, $fecha_final,$sede), 'reporte.xlsx');
         }
-        else if($data["tipo_reporte"] == "Detallado"){
+        else if($data["tipo_reporte"] == "CCIRSJL"){
+            //2 CONCILIACION EN MATERIA LABORAL
+            $total_asesoria =  SeerAsesoria::whereBetween('fecha', [$fecha_inicial,$fecha_final])
+            ->selectRaw('count(seer_asesorias.id) as total_asesorias')
+            ->where('delegacion',$sede)
+            ->first();
             
+            $solicitud_despido  = SeerPerGeneral::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
+            if($sede !== "Todos"){
+                $solicitud_despido = $solicitud_despido->where("seer_general.delegacion", $sede);
+            }
+            $solicitud_despido = $solicitud_despido->select(DB::raw('count(seer_general.id) as solicitudes'))
+            ->join('seer_motivos','seer_motivos.id_solicitud','seer_general.id')
+            ->where('seer_motivos.id_motivo',1)
+            ->first();
+
+            $solicitud_finiquito  = SeerPerGeneral::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
+            if($sede !== "Todos"){
+                $solicitud_finiquito = $solicitud_finiquito->where("seer_general.delegacion", $sede);
+            }
+            $solicitud_finiquito = $solicitud_finiquito->select(DB::raw('count(seer_general.id) as solicitudes'))
+            ->join('seer_motivos','seer_motivos.id_solicitud','seer_general.id')
+            ->where('seer_motivos.id_motivo',1)
+            ->first();
+            dd($solicitud_finiquito);
         }
     }
 
@@ -3989,6 +4012,18 @@ class SeerController extends Controller
         $citados = SeerCitados::where('id_solicitud',$data["id"])->select('notificacion')->orderBy('id', 'desc')->first();
         $user = auth()->user();
 
+        //Se usa para marcar que citados si tienen un representante o una persona fisica, para el tema de la no conciliación y se genere un documento por citado, indicando si asistió o no
+        $citados_apareceConvenio = SeerCitados::where('id_solicitud', $id)->get();
+        foreach ($citados_apareceConvenio as $citado) {
+
+            $tiene_representante = 
+                (!empty($citado->id_abogado) && $citado->id_abogado > 0) ||
+                (!empty($citado->id_fisica) && $citado->id_fisica > 0);
+
+            $citado->aparece_convenio = $tiene_representante ? 1 : 0;
+            $citado->save();
+        }
+
         //Si la bandera es 0 selecciono a todos los representantes puede avanzar
         if($data["bandera"] == 0){
             return redirect()->route('audiencias.parte3',compact('id'));
@@ -4068,7 +4103,7 @@ class SeerController extends Controller
         ->select('seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido','seer_citados.rfc',
         'abogados.nombres_patronal as nombre_abogado','abogados.primer_apellido_patronal as primero_abogado','abogados.segundo_apellido_patronal as segundo_abogado',
         'persona_fisica.nombre as nombre_fisica','persona_fisica.primer_apellido as primer_fisica','persona_fisica.segundo_apellido as segundo_fisica',
-        'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus')
+        'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus','seer_citados.aparece_convenio')
         ->get();
 
         return view('/audiencias/parte3',compact('id', 'sede','representantes'));
@@ -4550,6 +4585,18 @@ class SeerController extends Controller
                 'conciliador_id'        => $user->id,
                 'estatus'               => $data["conclucion"]
             ]);
+
+            //Actualiza el campo aparece_convenio de la tabla citados a los citados que responderán o los que pagarán los cumplimientos
+            $apareceConvenio = isset($data['aparece_convenio']) && is_array($data['aparece_convenio'])
+            ? array_keys($data['aparece_convenio'])
+            : [];
+
+            $representantes = SeerCitados::where('id_solicitud', $request->id)->pluck('id');
+            SeerCitados::whereIn('id', $representantes)->update(['aparece_convenio' => 0]);
+            
+            if (!empty($apareceConvenio)) {
+                SeerCitados::whereIn('id', $apareceConvenio)->update(['aparece_convenio' => 1]);
+            }
         }
         else{
             $solicitante = SeerSolicitante::where('id_solicitud',$data["id"])->first();

@@ -70,7 +70,7 @@
                 <div class="table-responsive">
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                             <tr>   
-                                <td><b>Centro de conciliación: </b></td>
+                                <td><b>Centro de conciliación Laboral del Estado de Michoacan de Ocampo</b></td>
                             </tr>
                     </table>
                 </div><br><br><br>
