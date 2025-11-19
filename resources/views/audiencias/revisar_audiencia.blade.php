@@ -664,6 +664,43 @@
                                                         <input type="text" class="form-control" name="rfc_citado[]" value="<?=$citado["rfc"];?>">   
                                                     </div>
                                                 </div>
+                                                @php
+                                                    $tradVal = 'No';
+                                                    if (isset($citado['traductor'])) {
+                                                        $tradVal = (string) $citado['traductor'];
+                                                    } elseif (isset($citado->traductor)) {
+                                                        $tradVal = (string) $citado->traductor;
+                                                    }
+                                                    if ($tradVal === '1' || $tradVal === '1' || $tradVal === 'true' || $tradVal === 'True') {
+                                                        $tradVal = 'Si';
+                                                    }
+                                                    if ($tradVal === '0' || $tradVal === 'false' || $tradVal === 'False') {
+                                                        $tradVal = 'No';
+                                                    }
+                                                    $lenguajeVal = '';
+                                                    if (isset($citado['lenguaje'])) {
+                                                        $lenguajeVal = $citado['lenguaje'];
+                                                    } elseif (isset($citado->lenguaje)) {
+                                                        $lenguajeVal = $citado->lenguaje;
+                                                    }
+                                                @endphp
+                                                <div class="col-xs-12 col-sm-6 col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="name">¿Requiere traductor?<span style="color:red;"> (*)</span></label>
+                                                        <select name="traductor[]" id="traductor_{{$loop->index}}" class="form-control" required>
+                                                            <option value="No" {{ $tradVal !== 'Si' ? 'selected' : '' }}>No</option>
+                                                            <option value="Si" {{ $tradVal === 'Si' ? 'selected' : '' }}>Si</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">Este campo es obligatorio.</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-3" id="lenguaje_wrap_{{$loop->index}}" style="{{ $tradVal === 'Si' ? '' : 'display:none;' }}">
+                                                    <div class="form-group">
+                                                        <label for="name">¿Qué tipo de lenguaje requiere?<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" name="lenguaje[]" id="lenguaje_{{$loop->index}}" class="form-control" value="{{ $lenguajeVal ?? '' }}" oninput="this.value = this.value.toUpperCase()">
+                                                        <div class="invalid-feedback">El lenguaje es obligatorio cuando requiere traductor.</div>
+                                                    </div>
+                                                </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
                                                         <h4 class="text-center">Dirección del citado</h4>
@@ -1482,6 +1519,29 @@
                     syncModalLenguaje();
                     tradModal.addEventListener('change', syncModalLenguaje);
                 }
+
+                // Traductor por citado 
+                function syncLenguajeRequired(index) {
+                    var sel = document.getElementById('traductor_' + index);
+                    var wrap = document.getElementById('lenguaje_wrap_' + index);
+                    var input = document.getElementById('lenguaje_' + index);
+                    if (!sel || !wrap || !input) return;
+                    if (sel.value === 'Si') {
+                        wrap.style.display = '';
+                        input.required = true;
+                    } else {
+                        wrap.style.display = 'none';
+                        input.required = false;
+                        try { input.value = ''; } catch (err) {}
+                    }
+                }
+
+                var traductores = document.querySelectorAll('[id^="traductor_"]');
+                traductores.forEach(function(sel){
+                    var idx = sel.id.replace('traductor_', '');
+                    syncLenguajeRequired(idx);
+                    sel.addEventListener('change', function(){ syncLenguajeRequired(idx); });
+                });
 
 
                 const forms = document.querySelectorAll('form.needs-validation');

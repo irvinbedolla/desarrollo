@@ -891,6 +891,7 @@ select[name="municipio_citado"] option {
                                             <br>
                                         </div>
                                     </div>
+
                                     <div id="observaciones" class="tabcontent">
                                         <div id="tabla_citados" class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-12">
@@ -906,11 +907,12 @@ select[name="municipio_citado"] option {
                                                 </div>
                                             </div>
           
-                                            <div class="col-xs-12 col-sm-12 col-md-12"><br>
+                                            <!--div class="col-xs-12 col-sm-12 col-md-12"><br>
                                                 <a class="btn btn-primary" href="{{ url()->previous() }}">Regresar</a>
-                                            </div>
+                                            </!--div-->
                                         </div>
                                     </div>
+
                                     <div id="confirmacion" class="tabcontent">
                                         <div id="tabla_confirmar" class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-12"><br>
@@ -1654,6 +1656,7 @@ select[name="municipio_citado"] option {
             });
         });
     </script>
+    
     <script src="../public/assets/js/poderes/general.js"></script>
 @endsection
 

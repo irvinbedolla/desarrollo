@@ -296,7 +296,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/solicitudes/crear/PF',                [SeerController::class, 'citado_personaF'])->name('insertar_citado_PF');
         Route::post('/solicitudes/guardar',                 [SeerController::class, 'guardar_rechazo'])->name('rechazar_solicitud');
         Route::get('/correcion_solicitudes/{id}',           [SeerController::class, 'solicitud_consultarSolicitante'])->name('consulta_solicitante');
-        Route::post('/correcion_solicitudes',               [SeerController::class, 'correccion_solicitante'])->name('correccion_solicitante');
+        Route::post('/correcion_solicitudes',               [SeerController::class, 'solicitante_edicion'])->name('solicitante_edicion');
         Route::post('/solicitudes/actualiza',               [SeerController::class, 'actualiza_citados'])->name('actualiza_citados');
         Route::get('/solicitudes/historialSolicitante',     [SeerController::class, 'Historial_Solicitante'])->name('historial_solicitante');
         Route::post('/solicitud/guardarCitatoriosT',        [SeerController::class, 'guardar_citatoriosT'])->name('subir_citatoriosT'); //Subir los citatorios entregados por el trabajador ya firmados
