@@ -46,8 +46,9 @@
                                                     <option value="RatificacionesUsuario">Ratificaciones Por Usuario</option>
                                                     <option value="RatificacionesDias">Ratificaciones Por Dias</option> 
                                                     <option value="Notificaciones">Notificaciones Detallado</option>
-                                                    <option value="Concentrado">Concentrado</option>
-                                                    <option value="EstadisticaMexico">Estadistica Mexico</option> 
+                                                    <option value="EstadisticaMexico">INEGI</option> 
+                                                    <option value="Concentrado">General</option>
+                                                    <option value="CCIRSJL">CCIRSJL</option>
                                                 </select>
                                                 <div class="invalid-feedback">
                                                     Debes seleccionar un tipo de reporte.

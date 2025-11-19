@@ -101,8 +101,11 @@
                                                 <select id="sede" name="sede" class="form-control" onchange="modalCalendar();" required>
                                                     <option value="">Seleccione la sede</option>
                                                     <option value="Morelia">Morelia</option>
+                                                    <option value="Zitácuaro">Zitácuaro</option>
                                                     <option value="Uruapan">Uruapan</option>
+                                                    <option value="Lázaro Cárdenas">Lázaro Cárdenas</option>
                                                     <option value="Zamora">Zamora</option>
+                                                    <option value="Sahuayo">Sahuayo</option>
                                                 </select>
                                                 <div class="invalid-feedback">
                                                     La sede es obligatoria.

@@ -375,7 +375,7 @@ class SeerController extends Controller
         //Validar documentacion
         request()->validate([
             //General
-            'tipo_reporte'  => 'required|in:Cumplimientos,CumplimientosResumen,Ratificaciones,RatificacionesResumen,Detallado,Concentrado,RatificacionesUsuario,Notificaciones,EstadisticaMexico',
+            'tipo_reporte'  => 'required|in:Cumplimientos,CumplimientosResumen,Ratificaciones,RatificacionesResumen,CCIRSJL,Concentrado,RatificacionesUsuario,Notificaciones,EstadisticaMexico,RatificacionesDias,CCIRSJL',
         ], $data);
         if(isset($data["sede"]))
             $sede = $data["sede"];
@@ -980,8 +980,31 @@ class SeerController extends Controller
         else if($data["tipo_reporte"] == "EstadisticaMexico"){
             return Excel::download(new ReporteMexicoRati($fecha_inicial, $fecha_final,$sede), 'reporte.xlsx');
         }
-        else if($data["tipo_reporte"] == "Detallado"){
+        else if($data["tipo_reporte"] == "CCIRSJL"){
+            //2 CONCILIACION EN MATERIA LABORAL
+            $total_asesoria =  SeerAsesoria::whereBetween('fecha', [$fecha_inicial,$fecha_final])
+            ->selectRaw('count(seer_asesorias.id) as total_asesorias')
+            ->where('delegacion',$sede)
+            ->first();
             
+            $solicitud_despido  = SeerPerGeneral::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
+            if($sede !== "Todos"){
+                $solicitud_despido = $solicitud_despido->where("seer_general.delegacion", $sede);
+            }
+            $solicitud_despido = $solicitud_despido->select(DB::raw('count(seer_general.id) as solicitudes'))
+            ->join('seer_motivos','seer_motivos.id_solicitud','seer_general.id')
+            ->where('seer_motivos.id_motivo',1)
+            ->first();
+
+            $solicitud_finiquito  = SeerPerGeneral::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
+            if($sede !== "Todos"){
+                $solicitud_finiquito = $solicitud_finiquito->where("seer_general.delegacion", $sede);
+            }
+            $solicitud_finiquito = $solicitud_finiquito->select(DB::raw('count(seer_general.id) as solicitudes'))
+            ->join('seer_motivos','seer_motivos.id_solicitud','seer_general.id')
+            ->where('seer_motivos.id_motivo',1)
+            ->first();
+            dd($solicitud_finiquito);
         }
     }
 
