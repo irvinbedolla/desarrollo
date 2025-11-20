@@ -37,6 +37,7 @@
 
                             @endif
 
+                            <!--
                             <div class="card p-4 shadow-sm">
                                 <h5 class="text-muted">Tiempo Restante:</h5>
                                 <h1 id="temporizador" class="text-danger font-weight-bold">
@@ -44,7 +45,8 @@
                                 </h1>
                                 <p id="mensaje-estado" class="mt-2"></p>
                             </div>
-
+                            -->
+                            
                             <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                             <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('concluir_audiencia_conciliador')}}">
                                 @csrf
@@ -204,6 +206,10 @@
                                     </div>
  
                                     <div id="no_conciliacion" style="display:none"><br>
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <label>Motivo del porque no hubo convenio</label>
+                                            <textarea name="observaciones" class="form-control"></textarea>
+                                        </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <br><button type="submit" class="btn btn-primary">Guardar</button>
                                         </div>
@@ -536,10 +542,10 @@
         function actualizaNumeroPago() {
             let pagos = $('.numero_pago');
             if (pagos.length === 1) {
-                pagos.eq(0).val("Pago único");
+                pagos.eq(0).val("Cumplimiento total de convenio");
             } else {
                 pagos.each(function(index) {
-                   $(this).val("Parcialidad " + (index + 1));
+                   $(this).val("Cumplimiento " + (index + 1));
                 });
             }
         }

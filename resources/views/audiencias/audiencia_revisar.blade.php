@@ -465,7 +465,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Representantes Legales</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Representante Legales</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -1121,10 +1121,10 @@
         function actualizaNumeroPago() {
             let pagos = $('.numero_pago');
             if (pagos.length === 1) {
-                pagos.eq(0).val("Pago único");
+                pagos.eq(0).val("Cumplimiento total de convenio");
             } else {
                 pagos.each(function(index) {
-                   $(this).val("Parcialidad " + (index + 1));
+                   $(this).val("Cumplimiento " + (index + 1));
                 });
             }
         }

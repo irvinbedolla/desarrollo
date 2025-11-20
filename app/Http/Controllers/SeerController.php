@@ -4634,6 +4634,7 @@ class SeerController extends Controller
                 'tipo'                  => "Presencial",
                 'fecha_terminacion'     => $fecha_actual, 
                 'conciliador_id'        => $user->id,
+                'observaciones'         => $data["observaciones"], 
                 'estatus'               => $data["conclucion"]
             ]);
 
