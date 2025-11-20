@@ -1810,6 +1810,7 @@
             if (calendar) { calendar.destroy(); }
             // Calcular fecha mínima (16 días hábiles) para posicionar el calendario directamente en la primera semana válida.
             const sede = $('#sede').val();
+            const conciliadorId = '{{ $conciliador->id ?? "" }}';
             const hoy = new Date();
             hoy.setHours(0,0,0,0);
             let fechaCursor = new Date(hoy);
@@ -1881,7 +1882,7 @@
                     events: function(fetchInfo, success, failure) {
                         $.ajax({
                             url: '{{ url('/api/obtenerAudiencias') }}',
-                            data: { sede: sede, start: fetchInfo.startStr, end: fetchInfo.endStr },
+                            data: { sede: sede, start: fetchInfo.startStr, end: fetchInfo.endStr, conciliador: conciliadorId },
                             success: success,
                             error: () => failure('No se pudieron cargar eventos')
                         });

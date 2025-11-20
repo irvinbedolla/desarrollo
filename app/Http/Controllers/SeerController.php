@@ -3356,7 +3356,7 @@ class SeerController extends Controller
             ->get();
         
         $solicitud = SeerPerGeneral::find($id);
-        $conciliador = User::select('name')->where('id', $solicitud->conciliador_id)->first();
+        $conciliador = User::select('id','name')->where('id', $solicitud->conciliador_id)->first();
 
     
         $fechaConfirmacion = SeerPerGeneral::where('id', $id)->value('fecha_confirmacion');
@@ -6904,6 +6904,8 @@ class SeerController extends Controller
 
         $sede = $request->input('sede'); 
 
+        $id_conciliador = $request->input('conciliador') ?? auth()->user()->id;
+
         // Calcular fecha mínima para reagendar (16 días hábiles desde hoy)
         $fechaMinimaHabil = $this->calcularFechaMinimaHabil($sede, 16);
         $minDateStr = $fechaMinimaHabil->format('Y-m-d');
@@ -6916,7 +6918,7 @@ class SeerController extends Controller
             ->get();
 
         $ocupados = Audiencias::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
-            ->where('delegacion', $sede)
+            ->where('id_conciliador', $id_conciliador)
             ->get();
             
         $ocupadosMap = [];
