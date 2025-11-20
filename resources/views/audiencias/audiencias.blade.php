@@ -13,6 +13,7 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
+                            <!--
                             <div class="card p-4 shadow-sm">
                                 <h5 class="text-muted">Tiempo Restante:</h5>
                                 <h1 id="temporizador" class="text-danger font-weight-bold">
@@ -20,6 +21,7 @@
                                 </h1>
                                 <p id="mensaje-estado" class="mt-2"></p>
                             </div>
+                            -->
                             <a href="" type="button" class="btn btn-info">
                                 Actualizar representantes
                             </a>
