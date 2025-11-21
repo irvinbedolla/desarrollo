@@ -4652,57 +4652,35 @@ class SeerController extends Controller
     
     // PDF Convenio para solicitudes
     public function VerPDFConvenioSol($id){
-        $solicitud = SeerPerGeneral::find($id); 
+       $solicitud = SeerPerGeneral::find($id); 
+        $datosAudiencia = SeerPerConciliador::where('id_solicitud', $id)->first();
         $pagos = Pagos::where('id_solicitud', $id)->get();
-        //$prestacionesLab = Concepto::where('id_solicitud', $id)->first();
-        $prestaciones = Concepto::where('id_solicitud', $id)->get(); // Devuelve una colección de conceptos de pago
-        // Inicializa las variables de texto
-        $vacacionesTexto = '';
-        $primaTexto = '';
-        $aguinaldoTexto = '';
-        $DSueldoTexto = '';
-        $antiguedadTexto = '';
-        $gratificacionATexto = ''; $gratificacionBTexto = ''; $gratificacionCTexto = ''; $gratificacionDTexto = ''; $gratificacionETexto = ''; $gratificacionFTexto = '';
-        $otrasTexto = '';
+        $municipio = Municipios::find($solicitud->municipio_rat);
+        $municipioEmpresa = $municipio ? $municipio->nombre : 'No definido';
+        $estado = Estados::find($solicitud->estado_rat);
+        $estadoEmpresa = $estado ? $estado->nombre : 'No definido';
+        $abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
+        ->where('id_solicitud',$id)
+        ->select('abogados.nombres_patronal','abogados.primer_apellido_patronal','abogados.segundo_apellido_patronal','abogados.descipcion_poder','abogados.tipo_identificacion','abogados.num_identificacion')
+        ->first();
+        // Obtener prestaciones y deducciones
+        $prestaciones = Concepto::where('id_solicitud', $id)->get();
+        $deducciones = Deducciones::where('id_solicitud', $id)->get();
+
+        $conceptosTexto = [];
+        $deduccionesTexto = [];
+
         foreach ($prestaciones as $concepto) {
-            switch ($concepto->descripcion) {
-                case 'Vacaciones':
-                    $vacacionesTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'PrimaVacacional':
-                    $primaTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'Aguinaldo':
-                    $aguinaldoTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'DSueldo':
-                    $DSueldoTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónA':
-                    $gratificacionATexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónB':
-                    $gratificacionBTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónC':
-                    $gratificacionCTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónD':
-                    $gratificacionDTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónE':
-                    $gratificacionETexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'GratificaciónF':
-                    $gratificacionFTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                case 'Otras':
-                    $otrasTexto = $this->convertirNumerosALetras($concepto->monto);
-                    break;
-                default:
-                    break;
-            }
+            $conceptosTexto[$concepto->id] = $this->convertirNumerosALetras($concepto->monto);
         }
+
+        foreach ($deducciones as $deduccion) {
+            $deduccionesTexto[$deduccion->id] = $this->convertirNumerosALetras($deduccion->monto);
+        }
+
+        $totalPrestaciones = $prestaciones->sum('monto');
+        $totalDeducciones = $deducciones->sum('monto');
+        $pagoTotal = $totalPrestaciones - $totalDeducciones;
         
        // $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
         $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
@@ -4734,17 +4712,24 @@ class SeerController extends Controller
         $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
         ->first();
 
+        // Descripción del tipo de identificación para los solicitantes y poderes
+        $identificacionSolicitante = $solicitante->identificacion;
+        $descripcionIdentificacionS = $this->descripcionIdentificacion($identificacionSolicitante);
+        $identificacionPoder = $abogado->tipo_identificacion;
+        $descripcionIdentificacionP = $this->descripcionIdentificacion($identificacionPoder);
+
         $html = view('PDF/Solicitudes/convenioSolicitud', 
-        compact('id', 'solicitud', /*'dias_descanso',*/ 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','vacacionesTexto',
+        compact('id', 'solicitud', /*'dias_descanso',*/ 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto',/*'vacacionesTexto',
         'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
-        'gratificacionETexto','gratificacionFTexto','otrasTexto','pagosDif','conciliador','prestaciones','solicitante','citados','audiencia'))
+        'gratificacionETexto','gratificacionFTexto','otrasTexto',*/'pagosDif','conciliador','prestaciones','solicitante','citados','audiencia','pagoTotal','abogado',
+        'conceptosTexto', 'deduccionesTexto','municipioEmpresa', 'estadoEmpresa','descripcionIdentificacionS', 'descripcionIdentificacionP','prestaciones','deducciones','datosAudiencia'))
         ->render();
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true);
 
-        return $pdf->stream('Convenio_terminacion.pdf');            
+        return $pdf->stream('Convenio_solicitud.pdf');          
     }
 
     public function calcularSalarioDiario($salario, $frecuencia) {
@@ -6149,9 +6134,13 @@ class SeerController extends Controller
 
     // PDF PTU
     public function VerPDFConvenioPTU($id){
-        $solicitud = SeerPerGeneral::find($id); 
+        $solicitud = SeerPerGeneral::find($id);
+        $datosAudiencia = SeerPerConciliador::where('id_solicitud', $id)->first(); 
         $citado = SeerCitados::where('id_solicitud', $id)->get();
-       // $citado = SeerCitados::where('id_solicitud', $id)->get();
+        $abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
+        ->where('id_solicitud',$id)
+        ->select('abogados.nombres_patronal','abogados.primer_apellido_patronal','abogados.segundo_apellido_patronal','abogados.descipcion_poder','abogados.tipo_identificacion','abogados.num_identificacion')
+        ->first();
         $pagos = Pagos::where('id_solicitud', $id)->get();
         
        // $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
@@ -6177,14 +6166,15 @@ class SeerController extends Controller
         ->first();
         
         $html = view('PDF/Solicitudes/convenioPTU', 
-        compact('id', 'solicitud', /*'dias_descanso',*/ 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','pagosDif','conciliador','solicitante','citado'))
+        compact('id', 'solicitud', /*'dias_descanso',*/ 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto',
+        'pagosDif','conciliador','solicitante','citado','abogado','datosAudiencia'))
         ->render();
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true);
 
-        return $pdf->stream('Convenio_PTU.pdf');            
+        return $pdf->stream('Convenio_PTU.pdf');           
     }
 
     public function Historial_Solicitante(){ //ANA
@@ -8457,5 +8447,21 @@ class SeerController extends Controller
         }
 
         return view('conciliadores.firmaCitatorios', compact('solicitudes', 'user'));
+    }
+    
+    //Muestra quien emite el tipo de identificación seleccionado para usar en PDF convenio y acta de audiencia
+    private function descripcionIdentificacion($tipo) {
+        $descripciones = [
+            'Credencial de elector'   => 'Instituto Nacional Electoral',
+            'Pasaporte'               => 'Secretaria de Relaciones Exteriores',
+            'Cédula profesional'      => 'Autoridad Correspondiente',
+            'Licencia de conducir'    => 'Autoridad Correspondiente',
+            'Credencial de inapam'    => 'Instituto Nacional de las Personas Adultas Mayores',
+            'Cartilla militar'        => 'Secretaria de la Defensa Nacional',
+            'Documento migratorio'    => 'Instituto Nacional de Migración',
+            'Constancia de identidad' => 'Autoridad Correspondiente',
+            'Otro'                    => 'Autoridad Correspondiente',
+        ];
+        return $descripciones[$tipo];
     }
 }

@@ -92,24 +92,23 @@
             <div class="content">
                 <div class="table-responsive">
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
-                            <tr>    
-                                <td><b>Número de identificación único: </b></td>
-                                <td>{{ $solicitud->NUE }} </td>
-                            </tr> 
-                            <tr>   
-                                <td><b>Centro de conciliación: </b></td>
-                                <td>{{ $solicitud->delegacion }} </td>
-                            </tr>
+                        <tr>   
+                            <td><b>Oficina: </b></td>
+                            <td>{{ strtoupper($solicitud->delegacion) }} </td>
+                        </tr>
+                        <tr>    
+                            <td><b>Número de identificación único: </b></td>
+                            <td>{{ $solicitud->NUE }} </td>
+                        </tr> 
                     </table>
-                </div><br><br><br><br><br>
+                </div><br><br><br>
                 <p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br>
-                    SOLICITANTE:<br>
-                    {{ $solicitante->nombre }}<br>
+                    SOLICITANTE: {{ $solicitante->nombre }}<br>
                 </b></p>  
                 <p><center><b>CONVENIO DE CONCILIACIÓN DE PAGO DE PARTICIPACIÓN DE UTILIDADES </b></center></p><br>
                 <p>Con fundamento en los artículos 123, apartado A, fracciones XX párrafo segundo y  XXVII, inciso h)  de la Constitución Política de los Estados Unidos Mexicanos; 33, 98, 117, 
                     122, 130, 590-E fracción I, 684-E fracción VI, XIII y 684-F fracción VIII, IX de la Ley Federal del Trabajo, artículo 8 fracción I, III y artículo 27 de Ley Orgánica del 
-                    Centro de Conciliación Laboral del Estado de <b>MICHOACÁN</b> con domicilio en <b>{{$direccion_sede}}</b> se celebra el presente convenio por una parte 
+                    Centro de Conciliación Laboral del Estado de Michoacán con domicilio en <b>{{$direccion_sede}}</b> se celebra el presente convenio por una parte 
                     <b>{{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}</b> quién en lo subsecuente se denominará la parte <b>“EMPLEADORA”</b> y, por otro el <b>C. 
                     {{ $solicitante->nombre }}</b>, a quién en lo subsecuente se le denominará la parte <b>“TRABAJADOR”</b>, a quienes en lo sucesivo de forma conjunta se les denominará las <b>“PARTES”</b>, quienes 
                     se someten y obligan en términos de las siguientes declaraciones y cláusulas:
@@ -117,15 +116,15 @@
 
                 <p><center><b>D E C L A R A C I O N E S:</b></center></p><br>
 
-                <p><b>PRIMERA</b>. {{ $solicitud->resolucion_primera }}.</p> 
+                <p><b>PRIMERA</b>. {{ $datosAudiencia->resolucion_primera }}.</p> 
 
-                <p><b>SEGUNDA</b>. {{ $solicitud->resolucion_segunda }}</p>.  
+                <p><b>SEGUNDA</b>. {{ $datosAudiencia->resolucion_segunda }}</p>.  
 
                 <p><b>TERCERA</b>. Declara la parte <b>TRABAJADORA</b>:</p>
                     <p class="sangria">
-                        a) Que fue contratada por la parte <b>EMPLEADORA</b> desde el <b>{{ \Carbon\Carbon::parse($solicitud->fecha_inicio)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, para prestar sus 
-                        servicios como <b>{{$solicitud->puesto}}</b>, puesto en el que se desempeñó 
-                        hasta el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha_termino)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, puesto que dio origen a la solicitud de <b>PAGO DE UTILIDADES</b> objeto de este convenio.
+                        a) Que fue contratada por la parte <b>EMPLEADORA</b> desde el <b>{{ \Carbon\Carbon::parse($solicitante->fecha_ingreso)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, para prestar sus 
+                        servicios como <b>{{$solicitante->puesto}}</b>, puesto en el que se desempeñó 
+                        hasta el día <b>{{ \Carbon\Carbon::parse($solicitante->fecha_salida)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, puesto que dio origen a la solicitud de <b>PAGO DE UTILIDADES</b> objeto de este convenio.
                     </p>
                     <p class="sangria">                
                         b) Que por el desempeño de sus labores contaba con todas las prestaciones, incluido el REPARTO DE UTILIDAD.
@@ -137,7 +136,7 @@
 
                 <p> <b>CUARTA.</b> Declara la parte <b>EMPLEADORA:</b> </p>
                     <p class="sangria">     
-                        a) Que la parte <b>TRABAJADORA</b>, fue contratada para laborar como <b>{{$solicitud->puesto}}</b> en el domicilio ubicado en <b>LIBRAMIENTO SUR #2389, SAN MIGUEL CURAHUANGO, MARAVATIO MICHOACAN.</b>
+                        a) Que la parte <b>TRABAJADORA</b>, fue contratada para laborar como <b>{{$solicitante->puesto}}</b> en el domicilio ubicado en <b>LIBRAMIENTO SUR #2389, SAN MIGUEL CURAHUANGO, MARAVATIO MICHOACAN.</b>
                     </p> 
                     <p class="sangria"> 
                         b) <b>Que bajo protesta de decir verdad conformo la Comisión Mixta de Participación de Utilidades a qué se refiere el artículo 125 de la Ley Federal del Trabajo, a efecto de determinar la cantidad que por 
@@ -176,15 +175,17 @@
                         cláusula <b>QUINTA por concepto de participación de utilidades le corresponden respecto al ejercicio fiscal 2023.</b><br><br>
 
                         <b>CUARTA.</b> La <b>TRABAJADORA</b> manifiesta que durante el tiempo que laboró para la parte <b>EMPLEADORA</b>, se cubrió en tiempo y forma el pago su salario; cada una de las prestaciones ordinarias y 
-                        extraordinarias y en especie que conforme a derecho le corresponden, así mismo como cualquier riesgo o accidente de trabajo que haya sufrido. Por lo anterior, la parte <b>EMPLEADORA</b> no adeuda pago de concepto alguno.<b><br>
+                        extraordinarias y en especie que conforme a derecho le corresponden, así mismo como cualquier riesgo o accidente de trabajo que haya sufrido. Por lo anterior, la parte <b>EMPLEADORA</b> no adeuda pago de concepto alguno.<br><br>
 
-                        <b>QUINTA.</b> La <b>TRABAJADORA</b> recibirá por parte de la <b>EMPLEADORA</b> la cantidad de <b>$5065.00 (CINCO MIL SESENTA Y CINCO PESOS 00/100 M.N.)</b> conforme a los siguientes conceptos: 
+                        <b>QUINTA.</b> La <b>TRABAJADORA</b> recibirá por parte de la <b>EMPLEADORA</b> la cantidad de <b>${{ number_format($datosAudiencia->monto, 2) }} {{ $montoTexto }}</b> conforme a los siguientes conceptos: 
                         <b>Participación de Reparto de utilidades respecto de ejercicio fiscal 2023.</b><br><br>
 
-                        <b>SEXTA.</b> La <b>EMPLEADORA</b> manifiesta que en este acto, le pagará a la <b>TRABAJADORA en una sola exhibición la cantidad $5065.00 (CINCO MIL SESENTA Y CINCO PESOS 00/100 M.N.)</b> en el domicilio que ocupa el 
-                        Centro de Conciliación Laboral del Estado de Michoacán, ubicado en </b>{{$direccion_sede}}</b>, con lo que se certifique el cumplimiento de su obligación de conformidad con lo establecido en el artículo 684-E, fracción 
-                        XIV, de la Ley Federal del Trabajo, el día </b>11 de junio del 2025 a las 14:00 hrs</b>, en el recinto que ocupa este Centro de Conciliación Laboral, asimismo  manifiestan además que de conformidad con lo establecido 
-                        en el artículo 684-E fracción XIV cuarto párrafo señalan como pena convencional en caso de incumplimiento en mora de dicho convenio, la cantidad de </b>$800.00 pesos</b>.<br><br>
+                        <b>SEXTA.</b> La <b>EMPLEADORA</b> manifiesta que en este acto, le pagará a la <b>TRABAJADORA en una sola exhibición la cantidad ${{ number_format($datosAudiencia->monto, 2) }} {{ $montoTexto }}</b> en el domicilio que ocupa el 
+                        Centro de Conciliación Laboral del Estado de Michoacán, ubicado en <b>{{$direccion_sede}}</b>, con lo que se certifique el cumplimiento de su obligación de conformidad con lo establecido en el artículo 684-E, fracción 
+                        XIV, de la Ley Federal del Trabajo, el día <b>@foreach($pagos as $pago)
+                        {{ \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ \Carbon\Carbon::parse(str_replace(' HORAS', '', $pago->hora))->format('H:i') }} @endforeach</b>, en el recinto que 
+                        ocupa este Centro de Conciliación Laboral, asimismo  manifiestan además que de conformidad con lo establecido 
+                        en el artículo 684-E fracción XIV cuarto párrafo señalan como pena convencional en caso de incumplimiento en mora de dicho convenio, la cantidad de <b>$800.00 pesos</b>.<br><br>
 
                         <b>SÉPTIMA.</b> Las <b>PARTES</b> solicitan se apruebe y sancione este convenio, toda vez que se elaboró conforme a las disposiciones aplicables de la Ley Federal del Trabajo como resultado del diálogo de la conciliación 
                         entre la <b>TRABAJADORA</b> y la <b>EMPLEADORA</b>. Asimismo, manifiestan que se encuentran conformes con el presente acuerdo por no contener cláusula contraria a la costumbre, a la moral, ni renuncia a los derechos de las <b>PARTES</b>.<br><br>
@@ -200,24 +201,31 @@
                         <b>DÉCIMA PRIMERA.</b> En caso de que no se cumpla los términos de lo convenido en el presente instrumento, las <b>PARTES</b> deberán acudir a los Tribunales Laborales a efecto de que se realice el procedimiento de ejecución 
                         que la Ley Federal del Trabajo contempla.<br><br>
                         
-                        <b>Enteradas las <b>PARTES</b> del alcance legal del presente convenio que se eleva a cosa juzgada, conforme al artículo 684-E fracción XIII, mismo que se firma en el CENTRO DE CONCILIACION LABORAL DEL ESTADO DE MICHOACÁN, 
-                        DELEGACIÓN Morelia ubicado en <b>{{$direccion_sede}}</b>, ante la fe del/la <b>LIC. {{ $conciliador->name }}</b>, funcionario/a conciliadoro/a, quien lo sanciona en este mismo acto. <b>Doy fe.</b>
+                        Enteradas las <b>PARTES</b> del alcance legal del presente convenio que se eleva a cosa juzgada, conforme al artículo 684-E fracción XIII, mismo que se firma en el CENTRO DE CONCILIACION LABORAL DEL ESTADO DE MICHOACÁN, 
+                        DELEGACIÓN Morelia ubicado en <b>{{$direccion_sede}}</b>, ante la fe del/la <b>LIC. {{ strtoupper($conciliador->name) }}</b>, funcionario/a conciliadoro/a, quien lo sanciona en este mismo acto. <b>Doy fe.</b>
                     </p>
-                                    
                     <br><br>
-                    <div class="row">
-                        <div class="col-12 text-center">
-                            <div style="display: inline-block; margin-right: 50px;">
-                                <p><center><b>___________________________________<br> {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}  <br> LA PARTE TRABAJADORA<br></b></center></p>
-                            </div>
-                                    
-                            <div style="display: inline-block;">
-                                <p><center><b>___________________________________<br> {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}<br>LA PARTE EMPLEADORA<br></b></center></p>
-                            </div>
-                        </div>
-                    </div>
+                    <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:30px;">
+                        <tr>
+                            <td style="width:50%; vertical-align:top; padding:0 20px;">
+                            <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                            <b>
+                                {{ $solicitante->nombre }}<br>
+                                LA PARTE TRABAJADORA
+                            </b>
+                            </td>
+                            <td style="width:50%; vertical-align:top; padding:0 20px;">
+                            <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                            <b>
+                                {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}<br>
+                                LA PARTE EMPLEADORA
+                            </b>
+                            </td>
+                        </tr>
+                    </table>
                     <br><br>
-                    <p><center><b>___________________________________<br> {{ $conciliador->name }} <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>     
+                    <p><center><b>___________________________________<br> {{ strtoupper($conciliador->name) }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
+                        DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>               
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

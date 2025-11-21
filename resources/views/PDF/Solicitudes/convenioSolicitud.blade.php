@@ -69,19 +69,17 @@
             <div class="content">
                 <div class="table-responsive">
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
-                            <tr>    
-                                <td><b>Número de identificación único: </b></td>
-                                <td>{{ $solicitud->NUE }} </td>
-                            </tr> 
-                            <tr>   
-                                <td><b>Centro de conciliación: </b></td>
-                                <td>{{ $solicitud->delegacion }} </td>
-                            </tr>
+                        <tr>   
+                            <td><b>Oficina: </b></td>
+                            <td>{{ strtoupper($solicitud->delegacion) }} </td>
+                        </tr>
+                        <tr>    
+                            <td><b>Número de identificación único: </b></td>
+                            <td>{{ $solicitud->NUE }} </td>
+                        </tr> 
                     </table>
-                </div><br><br><br><br><br>
+                </div><br><br><br>
                 <p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br>
-                    SOLICITUD CONVENIO DE CONCILIACIÓN<br>
-                    NÚMERO DE IDENTIFICACIÓN ÚNICO {{ $solicitud->NUE }}<br><br>
                     SOLICITANTE: {{ $solicitante->nombre }}<br>
                     CITADO(S):
                     @foreach($citados as $citado)    
@@ -101,9 +99,10 @@
 
                 <p><center><b>D E C L A R A C I O N E S:</b></center></p><br>
 
-                <p><b>PRIMERA.</b> La PARTE TRABAJADORA {{ $solicitud->resolucion_primera }}.</p> 
+                <p><b>PRIMERA.</b> La parte <b>TRABAJADORA {{ $solicitante->nombre }}</b> se identifica con <b>{{ strtoupper($solicitante->identificacion) }}</b>, de Número <b>{{ $solicitante->num_identificacion }}</b> 
+                    expedida a su favor por <b>{{ $descripcionIdentificacionS }}</b> y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p> 
 
-                <p><b>SEGUNDA.</b> {{ $solicitud->resolucion_segunda }}.</p>
+                <p><b>SEGUNDA.</b> {{ $datosAudiencia->resolucion_segunda }}.</p>
 
                 <b>TERCERA.</b> Declara la parte <b>TRABAJADORA</b>:
                     <p class="sangria">
@@ -114,15 +113,15 @@
                     <p class="sangria">                
                         b) Que por el desempeño de sus labores contaba con las siguientes prestaciones:<br>
                             - Salario mensual: <b>${{ number_format($salario_mensual, 2) }} {{ $mensualTexto }} M.N</b>. <br>
-                            - Vacaciones: <b>{{ $solicitud->vacaciones_dias }}</b> días al año.<br>
-                            - Aguinaldo: <b>{{ $solicitud->aguinaldo_dias }}</b> días al año.<br>
-                            - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>{{ $solicitud->Otras }}</b>.
+                            - Vacaciones: <b>{{ $datosAudiencia->vacaciones}}</b> días al año.<br>
+                            - Aguinaldo: <b>{{ $datosAudiencia->aguinaldo }}</b> días al año.<br>
+                            - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>{{ $datosAudiencia->otros }}</b>.
                     </p>
                     <p class="sangria">
                         c) Que desempeñaba sus actividades laborales en las siguientes condiciones: <br>
-                            - Horario: <b>{{ $solicitud->horario }}.</b><br>
-                            - Horario de comida: <b>{{ $solicitud->comida }}.</b><br>
-                            - Domicilio donde prestaba sus servicios: <b>{{ $solicitud->domicilio }}.</b>
+                            - Horario: <b>{{ $datosAudiencia->horario }}.</b><br>
+                            - Horario de comida: <b>{{ $datosAudiencia->comida }}.</b><br>
+                            - Domicilio donde prestaba sus servicios: <b>{{ $datosAudiencia->domicilio }}.</b>
                     </p>
                         <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
                     <p class="sangria">
@@ -156,73 +155,87 @@
                     <center><b>C L Á U S U L A S:</b></center>
                     
                     <p><br>
-                        <b>PRIMERA.</b> Las <b>PARTES</b> han determinado que por así convenir a sus intereses dan por concluida la relación laboral por mutuo acuerdo, conforme a lo estipulado por el artículo 53, 
+                        <b>PRIMERA</b>. Las <b>PARTES</b> han determinado que por así convenir a sus intereses dan por concluida la relación laboral por mutuo acuerdo, conforme a lo estipulado por el artículo 53, 
                             fracción I, de la Ley Federal del Trabajo.<br> <br>
 
-                        <b>SEGUNDA.</b> La parte <b>TRABAJADORA</b> manifiesta bajo protesta de decir verdad, que el vínculo laboral lo mantuvo exclusivamente con la parte <b>EMPLEADORA</b>. Por lo anterior, 
+                        <b>SEGUNDA</b>. La parte <b>TRABAJADORA</b> manifiesta bajo protesta de decir verdad, que el vínculo laboral lo mantuvo exclusivamente con la parte <b>EMPLEADORA</b>. Por lo anterior, 
                             expresa que no existió relación laboral alguna con otras personas, incluido el personal que fungía como superior jerárquico en el centro de trabajo donde la parte <b>TRABAJADORA</b> 
                             desempeñaba sus labores.<br><br>
                                     
-                        <b>TERCERA.</b> La parte <b>EMPLEADORA</b> otorgará en favor de la parte <b>TRABAJADORA</b> el pago acordado conforme a las disposiciones de la Ley Federal del Trabajo y respetando los derechos 
+                        <b>TERCERA</b>. La parte <b>EMPLEADORA</b> otorgará en favor de la parte <b>TRABAJADORA</b> el pago acordado conforme a las disposiciones de la Ley Federal del Trabajo y respetando los derechos 
                             consagrados en el mismo ordenamiento legal. <br>
 
-                        Asimismo, la parte <b>TRABAJADORA</b> manifiesta su entera conformidad y la aceptación de éste, así como la forma en que se obtuvieron los conceptos que se describen en la cláusula <b>QUINTA.</b><br><br>
+                        Asimismo, la parte <b>TRABAJADORA</b> manifiesta su entera conformidad y la aceptación de éste, así como la forma en que se obtuvieron los conceptos que se describen en la cláusula <b>QUINTA</b>.<br><br>
                         
-                        <b>CUARTA.</b> La parte <b>TRABAJADORA</b> manifiesta que durante el tiempo que laboró para la parte <b>EMPLEADORA</b>, se cubrió en tiempo y forma el pago su salario; cada una de las 
+                        <b>CUARTA</b>. La parte <b>TRABAJADORA</b> manifiesta que durante el tiempo que laboró para la parte <b>EMPLEADORA</b>, se cubrió en tiempo y forma el pago su salario; cada una de las 
                             prestaciones ordinarias y extraordinarias y en especie que conforme a derecho le corresponden, así mismo como cualquier riesgo o accidente de trabajo que haya sufrido. Por lo anterior, 
                             la parte <b>EMPLEADORA</b> no adeuda pago de concepto alguno.<br><br>
 
-                        <b>QUINTA.</b> La parte <b>TRABAJADORA</b> recibirá por la parte <b>EMPLEADORA</b> la cantidad de <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }} M.N</b>, 
+                        <b>QUINTA</b>. La parte <b>TRABAJADORA</b> recibirá de la parte <b>EMPLEADORA</b> la cantidad de <b>${{ number_format($datosAudiencia->monto, 2) }} {{ $montoTexto }}</b>, 
                             conforme a los siguientes conceptos:</p>
-                            <p class="sangria">
-                                @foreach($prestaciones as $concepto)
-                                    @switch($concepto->descripcion)                                   
-                                        @case('Vacaciones')
-                                            - Vacaciones: <b>${{ number_format($concepto->monto, 2) }} {{ $vacacionesTexto }} M.N</b>.<br>
-                                            @break
-                                        @case('PrimaVacacional')
-                                            - Prima vacacional: <b>${{ number_format($concepto->monto, 2) }} {{ $primaTexto }} M.N</b>.<br>
-                                            @break
-                                        @case('Aguinaldo')
-                                            - Aguinaldo: <b>${{ number_format($concepto->monto, 2) }} {{ $aguinaldoTexto }} M.N</b>.<br>
-                                            @break
-                                        @case('DSueldo')
-                                            - Días de sueldo: <b>${{ number_format($concepto->monto, 2) }} {{ $DSueldoTexto }} M.N</b>.<br>
-                                            @break
-                                        @case('GraficaciónA')
-                                            - Graficación A (Con base al salario integrado): <b>${{ number_format($concepto->monto, 2) }} {{ $gratificacionATexto }} M.N</b>.<br>
-                                            @break
-                                        @case('GraficaciónB')
-                                            - Graficación B (20 Días por año cumplido): <b>${{ number_format($concepto->monto, 2) }} {{ $gratificacionBTexto }} M.N</b>.<br>
-                                            @break
-                                        @case('GratificaciónC')
-                                            - Graficación C (Prima de antigüedad topada): <b>${{ number_format($concepto->monto, 2) }} {{ $gratificacionCTexto }} M.N</b>.<br>
-                                            @break
-                                        @case('GratificaciónD')
-                                            - Graficación D (Incluye cualquier otra prestación): <b>${{ number_format($concepto->monto, 2) }} {{ $gratificacionDTexto }} M.N</b>.<br>
-                                            @break
-                                        @case('GratificaciónE')
-                                            - Graficación E (Prestaciones en especie): <b>${{ number_format($concepto->monto, 2) }} {{ $gratificacionETexto }} M.N</b>.<br>
-                                            @break
-                                        @case('GratificaciónF')
-                                            - Graficación F (Reconocimiento de derechos): <b>${{ number_format($concepto->monto, 2) }} {{ $gratificacionFTexto }} M.N</b>.<br>
-                                            @break 
-                                        @case('Otras')
-                                            - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>${{ number_format($concepto->monto, 2) }} {{ $otrasTexto }} M.N</b>. {{ $solicitud->Especifique }}<br>
-                                            @break
-                                        @default    
-                                    @endswitch
-                                @endforeach
-                            </p>
 
+                        <b>Prestaciones</b>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Concepto</th>
+                                    <th>Monto</th>
+                                    <th>Monto en letra</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!--<p class="sangria">-->
+                                @foreach($prestaciones as $concepto)
+                                    <tr>
+                                        <td>{{ strtoupper($concepto->descripcion) }}</td>
+                                        <td><b>${{ number_format($concepto->monto, 2) }}</b></td>
+                                        <td>{{ $conceptosTexto[$concepto->id] }}</td>
+                                    </tr>
+                                @endforeach
+                                <!--</p>-->
+                            </tbody>
+                        </table>      
+
+                        <!-- Para las deducciones -->
+                        @if(!empty($deducciones) && count($deducciones) > 0)
+                            <b>Deducciones</b>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Concepto</th>
+                                        <th>Monto</th>
+                                        <th>Monto en letra</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($deducciones as $deduccion)
+                                        <tr>
+                                            <td>{{ $deduccion->descripcion }}</td>
+                                            <td><b>${{ number_format($deduccion->monto, 2) }}</b></td>
+                                            <td>{{ $deduccionesTexto[$deduccion->id] }}</td>
+                                        </tr>
+                                    @endforeach  
+                                </tbody>
+                            </table> 
+                        @endif
+
+                        <table class="table table-bordered" style="width:100%; float: right;">
+                            <thead>
+                            <tr>
+                                <td class="text-right"><strong>Neto a pagar: </strong>
+                                <td><strong>${{ number_format($pagoTotal, 2) }} M.N.</strong></td>
+                            </tr>
+                            </thead>   
+                        </table>
+                    </p>
+                    <p><b>{{ $datosAudiencia->resolucion_justificacion }}</b></p><br>
                     <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
-                    
 
                     <!-- CON PAGOS DIFERIDOS-->       
                     @if($pagosDif>'1')            
                         <p><b>SEXTA.</b> La parte <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará en <b>{{ $pagosDif->C_pagos}}</b> 
                             exhibiciones, hasta culminar la cantidad de 
-                            <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }} M.N</b>, tal como se muestra:
+                            <b>${{ number_format($datosAudiencia->monto, 2) }} {{ $montoTexto }} M.N</b>, tal como se muestra:
                         </p>
                         <div class="table-responsive">
                             <table id="pagos" class="table-striped" style="width:100%;">
@@ -254,7 +267,7 @@
                     <!-- CONDICIONAL 1 SOLO PAGO(EN UNA SOLA EXIBICIÓN)--> 
                     @if($pagosDif=='1')            
                         <p><b>SEXTA.</b> La parte <b>EMPLEADORA</b> manifiesta que en este acto en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> le paga a la parte <b>TRABAJADORA en una exibición</b> la cantidad 
-                            de <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }} M.N</b>, en el domicilio que ocupa el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con lo que se certifica el cumplimiento de su 
+                            de <b>${{ number_format($datosAudiencia->monto, 2) }} {{ $montoTexto }} M.N</b>, en el domicilio que ocupa el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con lo que se certifica el cumplimiento de su 
                             obligación bajo el presente convenio, de conformidad con lo establecido en el artículo 684-E, fracción XIV, último párrafo, de la Ley Federal del Trabajo.</p> 
                     @endif        
 
@@ -277,24 +290,31 @@
                         <b>DÉCIMA PRIMERA.</b> En caso de que no se cumplan los términos de lo convenido en el presente instrumento, las <b>PARTES</b> deberán acudir a los juzgados Laborales del fuero común a 
                         efecto de que se realice el procedimiento de ejecución que la Ley Federal del Trabajo contempla. <br>
                         <br>Enteradas las <b>PARTES</b> del alcance legal del presente convenio que se eleva a la categoria de cosa juzgada, conforme al artículo 684-E fracción XIII, mismo que se firma en <b>{{ $solicitud->delegacion }}</b> 
-                        de Michoacán de Ocampo a los <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\í\a\s \d\e F \d\e\l Y') }}</b>, ante la fe de <b>{{ $conciliador->name }}</b>, funcionario(a) conciliador(a), quien 
+                        de Michoacán de Ocampo a los <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\í\a\s \d\e F \d\e\l Y') }}</b>, ante la fe de <b>{{ strtoupper($conciliador->name) }}</b>, funcionario(a) conciliador(a), quien 
                         lo sanciona en este mismo acto. <b>Doy fe.</b>
                     </p>
-                                    
                     <br><br>
-                    <div class="row">
-                        <div class="col-12 text-center">
-                            <div style="display: inline-block; margin-right: 50px;">
-                                <p><center><b>___________________________________<br> {{ $solicitante->nombre }}<br> LA PARTE TRABAJADORA<br></b></center></p>
-                            </div>
-                                    
-                            <div style="display: inline-block;">
-                                <p><center><b>___________________________________<br> {{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido }}<br>LA PARTE EMPLEADORA<br></b></center></p>
-                            </div>
-                        </div>
-                    </div>
+                    <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:30px;">
+                        <tr>
+                            <td style="width:50%; vertical-align:top; padding:0 20px;">
+                            <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                            <b>
+                                {{ $solicitante->nombre }}<br>
+                                LA PARTE TRABAJADORA
+                            </b>
+                            </td>
+                            <td style="width:50%; vertical-align:top; padding:0 20px;">
+                            <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                            <b>
+                                {{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido }}<br>
+                                LA PARTE EMPLEADORA
+                            </b>
+                            </td>
+                        </tr>
+                    </table>
                     <br><br>
-                    <p><center><b>___________________________________<br> {{ $conciliador->name }} <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>     
+                    <p><center><b>___________________________________<br> {{ strtoupper($conciliador->name) }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
+                        DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>               
             </div>
             <script type="text/php">
                 if (isset($pdf)) {
