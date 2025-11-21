@@ -144,19 +144,25 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-9">
                                                 <div class="form-group">
-                                                    <label for="password">Actividad</label>
-                                                    <input type="text" name="actividad_economica" class="form-control" value="<?=$general["actividad"];?>">
+                                                    <label for="password">Actividad económica<span style="color:red;"> (*)</span></label>
+                                                    <input type="text" name="actividad_economica" class="form-control" value="<?=$general["actividad"];?>" required>
+                                                    <div class="invalid-feedback">
+                                                        La actividad económica es obligatoria.
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
-                                                    <label for="name">Rama industrial del negocio</label>
-                                                    <select class="form-control" name="ramaIndustrial">
+                                                    <label for="name">Rama industrial del negocio<span style="color:red;"> (*)</span></label>
+                                                    <select class="form-control" name="ramaIndustrial" required>
                                                         <option value="">Seleccione</option>
                                                         @foreach($ramas as $rama)
                                                             <option value="{{$rama['id']}}" {{ $rama["id"] == $general["id_rama"] ? "selected" : '' }} >{{$rama['rama_industrial']}}</option>
                                                         @endforeach
                                                     </select>
+                                                    <div class="invalid-feedback">
+                                                        El rama industrial es obligatoria.
+                                                    </div>
                                                 </div>
                                             </div>
                                         
@@ -1071,7 +1077,7 @@
                             <div class="col-xs-12 col-sm-12 col-md-2">
                                 <div class="form-group">
                                     <label for="name">Tipo de persona <span style="color:red;">(*)</span></label>
-                                    <select name="tipo" id="tipo" class="form-control">
+                                    <select name="tipo" id="tipo" class="form-control" required>
                                         <option value="">Seleccione</option>
                                         <option value="Fisica">Física</option>
                                         <option value="Moral">Moral</option>
@@ -1135,7 +1141,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
                                             <label for="name">Nombre(s) <span style="color:red;">(*)</span></label>
-                                            <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                            <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                             <div class="invalid-feedback">
                                                 El nombre es obligatorio.
                                             </div>
@@ -1145,7 +1151,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
                                             <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
-                                            <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                            <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                             <div class="invalid-feedback">
                                                 El nombre es obligatorio.
                                             </div>
@@ -1297,7 +1303,7 @@
                         <div class="col-xs-12 col-sm-12 col-md-9">
                             <div class="form-group">
                             <label for="floatingTextarea">Referencias del domicilio <span style="color:red;">(*)</span></label>
-                                <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencia" oninput="this.value = this.value.toUpperCase()"></textarea>
+                                <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencia" required oninput="this.value = this.value.toUpperCase()"></textarea>
                                 <div class="invalid-feedback">
                                     El campo referencias es obligatorio.
                                 </div>
@@ -1415,6 +1421,8 @@
                 $('#div1').append(
                     '<input type="hidden" name="motivo_solicitud[]" value="' + opcionSeleccionada + '" id="input-motivo-' + opcionSeleccionada + '">'
                 );
+
+                try { updateMotivosState(); } catch (err) { /* ignore */ }
 
                 // Reinicia el select
                 $(this).val('');
@@ -1587,12 +1595,57 @@
 
                 // Actualiza la lista de los motivos seleccionados
                 motivosSeleccionados = motivosSeleccionados.filter(id => id !== idMotivo);
+                
+                try { updateMotivosState(); } catch (err) { /* ignore */ }
             });
         
             $('#tabla_detalles').show();
             $('#tabla_solicitante').show();
             $('#tabla_citados').show();
             $('#tabla_documentos').show();
+            
+            // Verifica si hay al menos un motivo y habilita/deshabilita los botones de confirmación en esta vista
+            function updateMotivosState(){
+                try{
+                    var hidden = document.querySelectorAll('input[name="motivo_solicitud[]"]');
+
+                    var existingRows = 0;
+                    var tables = document.querySelectorAll('table');
+                    tables.forEach(function(t){
+                        try{
+                            var th = t.querySelector('thead th');
+                            if(!th) return;
+                            var txt = th.textContent || th.innerText || '';
+                            if(txt.trim().toLowerCase().indexOf('motivo capturado') !== -1){
+                                var tb = t.tBodies[0];
+                                if(tb) existingRows = tb.rows.length;
+                            }
+                        }catch(e){}
+                    });
+
+                    var totalMotivos = (hidden ? hidden.length : 0) + (existingRows ? existingRows : 0);
+                    var hasMotivo = totalMotivos > 0;
+
+                    var confirmArea = document.getElementById('tabla_confirmar');
+                    if(!confirmArea) return;
+                    var buttons = confirmArea.querySelectorAll('button[type="submit"], button[name="toquen"]');
+                    buttons.forEach(function(btn){
+                        if(btn.hasAttribute('data-ignore-motivo')) return;
+                        btn.disabled = !hasMotivo;
+                    });
+                    var existing = document.getElementById('motivo-warning');
+                    if(!hasMotivo){
+                        if(!existing){
+                            var div = document.createElement('div');
+                            div.id = 'motivo-warning';
+                            div.className = 'text-muted mt-2';
+                            div.innerText = 'Debe agregar al menos un motivo para poder guardar cambios.';
+                            confirmArea.appendChild(div);
+                        }
+                    } else { if(existing) existing.remove(); }
+                }catch(err){ console.warn('updateMotivosState', err); }
+            }
+            try { document.addEventListener('DOMContentLoaded', updateMotivosState); } catch(err){}
     </script>
     <script>
         const DURACION_SEGUNDOS = 300; // 5 minutos

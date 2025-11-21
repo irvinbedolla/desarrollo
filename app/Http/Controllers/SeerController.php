@@ -2380,9 +2380,18 @@ class SeerController extends Controller
     }
     
     public function eliminar_motivo($id,$id_motivo){
-        
         SeerMotivo::find($id_motivo)->delete();
-        return redirect()->route('regresa_eliminar', ['id' => $id] ); 
+        return redirect()->route('solicitud_audiencia', ['id' => $id] ); 
+    }
+
+    public function eliminar_motivo_solicitud($id, $id_motivo){
+        SeerMotivo::find($id_motivo)->delete();
+        return redirect()->route('solicitud_editar', ['id' => $id] );
+    }
+
+    public function eliminar_motivo_buzon($id, $id_motivo){
+        SeerMotivo::find($id_motivo)->delete();
+        return redirect()->route('consulta_solicitante', ['id' => $id] );
     }
 
     public function regresa_eliminar($id){
@@ -2797,7 +2806,7 @@ class SeerController extends Controller
         //Si se va confirmar si el valor es 2 solo se va editar lo anterior
         if($data["toquen"] == 1){
             //Actualizar el estatus
-            SeerPerGeneral::find($data["id"])->update(['estatus' => "Confirmado" ]);
+            SeerPerGeneral::find($data["id"])->update(['estatus' => "Pendiente" ]);
 
             $numero_audiencia = $this->GeneraAudiencia($data["id"]);
             $numero_audiencias = SeerPerConciliador::find($data["id"]);
