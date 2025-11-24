@@ -136,20 +136,36 @@
                                                 <img src="public/assets/images/ccl-r.png" alt="" style="max-width: 50%; height: auto;">
                                             </li>
                                         </ul>
-                                        @if($userRole[0] == 'Super Usuario' || $userRole[0] == 'Auxiliar'    || 
-                                            $userRole[0] == 'Conciliador'   || $userRole[0] == 'Notificador' || $userRole[0] == 'Excepcion' 
-                                            || $userRole[0] == 'Cumplimientos' || $userRole[0] == 'Enlace')
-                                            <div class="container">
-                                                <h1>Agenda</h1>
-                                                <div class="mt-3 mb-3 text-left">
-                                                        <button id="btn-actualizar" class="btn btn-lg btn-custom-morado">Actualizar</button>   
-
-                                                        <button id="btn-citas" class="btn btn-lg btn-custom-morado float-right">Cumplimientos de Ratificación</button>
-                                                        <button id="btn-pagos" class="btn btn-lg btn-custom-morado float-right">Cumplimientos</button>
-                                                        <button id="btn-conciliador" class="btn btn-lg btn-custom-morado float-right">Cumplimientos en Audiencia</button>
-                                                        <button id="btn-ratificaciones" class="btn btn-lg btn-custom-morado float-right">Ratificaciones</button>
-                                                        <button id="btn-audiencias" class="btn btn-lg btn-custom-morado  float-right">Audiencias</button>
-                                                </div>
+                                            @if($userRole[0] != 'Solicitante')
+                                                @if($userRole[0] == 'Super Usuario' || $userRole[0] == 'Administrador' || $userRole[0] == 'Delegado')
+                                                    <h1>Agenda</h1>
+                                                    <div class="mt-3 mb-3 text-left">
+                                                            <button id="btn-actualizar" class="btn btn-lg btn-custom-morado">Actualizar</button>   
+                                                            <button id="btn-citas" class="btn btn-lg btn-custom-morado float-right">Cumplimientos de Ratificación</button>
+                                                            <button id="btn-pagos" class="btn btn-lg btn-custom-morado float-right">Cumplimientos</button>
+                                                            <button id="btn-conciliador" class="btn btn-lg btn-custom-morado float-right">Cumplimientos en Audiencia</button>
+                                                            <button id="btn-ratificaciones" class="btn btn-lg btn-custom-morado float-right">Ratificaciones</button>
+                                                            <button id="btn-audiencias" class="btn btn-lg btn-custom-morado  float-right">Audiencias</button>
+                                                    </div>
+                                                @endif
+                                                @if( $userRole[0] == 'Conciliador' || $userRole[0] == 'Enlace')
+                                                    <h1>Agenda</h1>
+                                                    <div class="mt-3 mb-3 text-left">
+                                                            <button id="btn-actualizar" class="btn btn-lg btn-custom-morado">Actualizar</button>   
+                                                            <button id="btn-pagos" class="btn btn-lg btn-custom-morado float-right">Cumplimientos</button>
+                                                            <button id="btn-conciliador" class="btn btn-lg btn-custom-morado float-right">Cumplimientos en Audiencia</button>
+                                                            <button id="btn-audiencias" class="btn btn-lg btn-custom-morado  float-right">Audiencias</button>
+                                                    </div>
+                                                @endif
+                                                @if( $userRole[0] == 'Auxiliar' || $userRole[0] == 'Excepcion')
+                                                    <button id="btn-actualizar" class="btn btn-lg btn-custom-morado">Actualizar</button>   
+                                                    <button id="btn-pagos" class="btn btn-lg btn-custom-morado float-right">Cumplimientos</button>
+                                                    <button id="btn-conciliador" class="btn btn-lg btn-custom-morado float-right">Cumplimientos en Audiencia</button>
+                                                @endif
+                                                @if( $userRole[0] == 'Cumplimientos')
+                                                    <button id="btn-actualizar" class="btn btn-lg btn-custom-morado">Actualizar</button>   
+                                                    <button id="btn-pagos" class="btn btn-lg btn-custom-morado float-right">Cumplimientos</button>
+                                                @endif
                                                 <div id="calendar">
                                                 </div>
                                                 <!--

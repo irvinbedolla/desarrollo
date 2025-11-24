@@ -19,8 +19,9 @@ class AudienciasController extends Controller
     public function audiencias() {
         $userID = Auth::user()->id;
         $userRole = Auth::user()->roles->pluck('name')->all();
-        
-        if ($userRole[0] == "Super Usuario") {
+        $sede = Auth::user()->delegacion;
+
+        if ($userRole[0] == "Super Usuario" || $userRole[0] == "Administardor") {
             $audiencias = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
             ->select('audiencias.*','seer_general.NUE','seer_general.estatus')->get();
 
@@ -66,9 +67,26 @@ class AudienciasController extends Controller
 
             return response()->json($eventos);
         }
-        else if ($userRole[0] == "Delegado") {
-            $delegacion = Auth::user()->delegacion;
-            $audiencias = Audiencias::where('delegacion', $delegacion)->get();
+        else if ($userRole[0] == "Delegado" || $userRole[0] == "Enlace") {
+           
+            if($sede == "Morelia"){
+                $delegaciones = ['Morelia', 'Zitácuaro'];
+                $audiencias = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
+                ->select('audiencias.*','seer_general.NUE','seer_general.estatus')
+                ->where('delegacion', $delegaciones)->get();
+            }
+            else if($sede == "Uruapan"){
+                $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
+                $audiencias = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
+                ->select('audiencias.*','seer_general.NUE','seer_general.estatus')
+                ->where('delegacion', $delegaciones)->get();
+            }
+            else if($sede == "Zamora"){
+                $delegaciones = ['Zamora', 'Sahuayo'];
+                $audiencias = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
+                ->select('audiencias.*','seer_general.NUE','seer_general.estatus')
+                ->where('delegacion', $delegaciones)->get();
+            }
 
             $eventos = [];
             foreach ($audiencias as $audiencia) {
@@ -112,18 +130,85 @@ class AudienciasController extends Controller
 
             return response()->json($eventos);
         }
+        else if ($userRole[0] == "Conciliador") {
+            $audiencias = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
+            ->select('audiencias.*','seer_general.NUE','seer_general.estatus')
+            ->where('audiencias.id_conciliador',$userID)
+            ->get();
 
+            $eventos = [];
+            foreach ($audiencias as $audiencia) {
+
+                $tipo = 5;
+
+                if ($audiencias->estatus === 'Incompetencia') {
+                    $color = '#DA0909';
+                } elseif ($audiencia->estatus === 'Archivada') {
+                    $color = '#EAE300';
+                } elseif ($audiencia->estatus === 'Conciliación') {
+                    $color = '#00CE1C';
+                } elseif ($audiencia->estatus === 'No Conciliación') {
+                    $color = '#00CE1C';
+                }
+                 else {
+                    $color = '#CCCCCC';
+                }
+
+                $eventos[] = [
+                    'id' => $audiencia->id,
+                    'id_solicitud' => $audiencia->id_solicitud,
+                    'title' => $audiencia->tipo,
+                    'start' => $audiencia->fecha->format('Y-m-d') . 'T' . $audiencia->hora->format('H:i:s'),
+                    'extendedProps' => [
+                        'hora' => $audiencia->hora->format('h:i A'),
+                        'color' => $color,
+                        'numero_audiencia' => $audiencia->numero_audiencia,
+                        'folio_audiencia' => $audiencia->folio_audiencia,
+                        'fecha' => $audiencia->fecha->format('d/m/Y'),
+                        'estatus' => $audiencia->estatus,
+                        'tipo' => $audiencia->tipo,
+                        'conciliador' => $audiencia->id_conciliador,
+                        'delegacion' => $audiencia->delegacion,
+                        'sala' => $audiencia->sala,
+                        'usuario' => $userID,
+                        'tipo' => $tipo
+                    ]
+                ];
+            }
+
+            return response()->json($eventos);
+        }
     }
 
     public function ratificaciones() {
         $userID = Auth::user()->id;
         $userRole = Auth::user()->roles->pluck('name')->all();
+        $sede = Auth::user()->delegacion;
         
-        if ($userRole[0] == "Super Usuario") {
+        if ($userRole[0] == "Super Usuario" || $userRole[0] == "Administardor") {
             $ratificaciones = Turnos::all();
+        }
+        else if ($userRole[0] == "Delegado" || $userRole[0] == "Enlace") {
+            $sede = Auth::user()->delegacion;
+            if($sede == "Morelia"){
+                $delegaciones = ['Morelia', 'Zitácuaro'];
+                $ratificaciones = Turnos::where('delegacion', $delegaciones)->get();
+            }
+            else if($sede == "Uruapan"){
+                $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
+                $ratificaciones = Turnos::where('delegacion', $delegaciones)->get();
+            }
+            else if($sede == "Zamora"){
+                $delegaciones = ['Zamora', 'Sahuayo'];
+                $ratificaciones = Turnos::where('delegacion', $delegaciones)->get();
+            }
+        }
+        else{
+            $ratificaciones = Turnos::where('delegacion', $sede)->get();
+        }
 
-            $eventos = [];
-            foreach ($ratificaciones as $rati) {
+        $eventos = [];
+        foreach ($ratificaciones as $rati) {
 
                 $tipo = 7;
 
@@ -156,51 +241,9 @@ class AudienciasController extends Controller
                         'tipo' => $tipo
                     ]
                 ];
-            }
-
-            return response()->json($eventos);
         }
-        else if ($userRole[0] == "Delegado") {
-            $delegacion = Auth::user()->delegacion;
-            $audiencias = Audiencias::where('delegacion', $delegacion)->get();
 
-            $eventos = [];
-            foreach ($ratificaciones as $rati) {
-
-                $tipo = 7;
-
-                if ($rati->estatus === 'Incumplimiento') {
-                    $color = '#DA0909';
-                } elseif ($rati->estatus === 'Archivada') {
-                    $color = '#EAE300';
-                } elseif ($rati->estatus === 'Concluida') {
-                    $color = '#00CE1C';
-                } elseif ($rati->estatus === 'Concluida Pagos') {
-                    $color = '#00CE1C';
-                }
-                 else {
-                    $color = '#CCCCCC';
-                }
-
-                $eventos[] = [
-                    'id' => $rati->id,
-                    'title' => $rati->empresa,
-                    'start' => $rati->fecha . 'T' . $rati->hora,
-                    'extendedProps' => [
-                        'hora' => $rati->hora,
-                        'color' => $color,
-                        'folio_audiencia' => $rati->id,
-                        'fecha' => $rati->fecha,
-                        'estatus' => $rati->estatus,
-                        'delegacion' => $rati->delegacion,
-                        'usuario' => $userID,
-                        'tipo' => $tipo
-                    ]
-                ];
-            }
-
-            return response()->json($eventos);
-        }
+        return response()->json($eventos);
     }
 
     public function exportarExcel()

@@ -4102,7 +4102,7 @@ class SeerController extends Controller
     }
 
     public function audienciaParte3($id){
-        $sede = Auth::user()->delegacion;
+        $sede = $solicitud["delegacion"];
         $solicitud = SeerPerGeneral::find($id);
 
         $representantes = SeerCitados::
