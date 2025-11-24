@@ -817,7 +817,6 @@ class SeerController extends Controller
                     ->select(DB::raw('count(seer_conciliadores.id) as total_audiencias'))
                     ->groupBy('users.id', 'users.name')
                     ->get();
-                    //dd($numero_audiencias[0]->total_audiencias);
                     $audiencia->cumplimientoAudiencia = count($CumplimientosAudiencia) != 0 ? $CumplimientosAudiencia[0]->num_cumplimiento_audiencia : '0';
                     $audiencia->cumplimientoAudienciaMonto = count($CumplimientosAudiencia) != 0 ? $CumplimientosAudiencia[0]->sum_cumplimiento_audienicia : '0';
                     $audiencia->cumplimientoAudienciaConvenio = count($audienciasConvenidas) != 0 ? $audienciasConvenidas[0]->audiencias_convenio : '0';
@@ -1004,7 +1003,6 @@ class SeerController extends Controller
             ->join('seer_motivos','seer_motivos.id_solicitud','seer_general.id')
             ->where('seer_motivos.id_motivo',1)
             ->first();
-            dd($solicitud_finiquito);
         }
     }
 
@@ -2415,7 +2413,6 @@ class SeerController extends Controller
 
     public function audiencia_confirmar(Request $request){
         $data = $request->all();
-
         //Se va asignar el conciliador y la sala
         $id_user = auth()->user()->id;
         $user = User::find($id_user);
@@ -3109,7 +3106,7 @@ class SeerController extends Controller
                 'mensaje'   => "Tu solicitud fue aceptada revisa tu buzón electronico en: https://siconcilio.cclmichoacan.gob.mx/ para continuar tu tramite." ,
             ];
             // El método Mail::to() toma el email del destinatario
-            Mail::to($user['email'])->send(new MailAceptacionRechazo($user));
+            //Mail::to($user['email'])->send(new MailAceptacionRechazo($user));
         }
 
         return redirect()->route('solicitudes_pendientes'); 
