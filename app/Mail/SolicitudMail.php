@@ -34,7 +34,7 @@ class SolicitudMail extends Mailable
                     // Pasa los datos dinámicos a la vista del email
                     ->view('emails.confirmacion_solicitud') 
                     ->with([
-                        'solicitante' => $this->variables['Nombre'],
+                        'variables' => $this->variables,
                     ])
                     
                     // 2. Adjunta el PDF generado en memoria
