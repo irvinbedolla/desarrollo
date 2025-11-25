@@ -324,16 +324,16 @@ select[name="municipio_citado"] option {
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="password">Teléfono<span style="color:red;"> (*)</span></label>
-                                                        <input type="text" class="form-control" name="telefono1_solicitante" value="<?=$solicitante["telefono1"];?>" required>
+                                                        <input type="tel" id="telefono1_solicitante" class="form-control" name="telefono1_solicitante" value="<?=$solicitante["telefono1"];?>" required inputmode="numeric" maxlength="14">
                                                         <div class="invalid-feedback">
-                                                            El teléfono es obligatorio.
+                                                            El teléfono es obligatorio y debe contener 10 dígitos.
                                                         </div>   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="password">Teléfono (Opcional)</label>
-                                                        <input type="text" class="form-control" name="telefono2_solicitante" value="<?=$solicitante["telefono2"];?>">   
+                                                        <input type="tel" id="telefono2_solicitante" class="form-control" name="telefono2_solicitante" value="<?=$solicitante["telefono2"];?>" inputmode="numeric" maxlength="14">   
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
@@ -1556,31 +1556,89 @@ select[name="municipio_citado"] option {
 
                 const forms = document.querySelectorAll('form.needs-validation');
                 if (forms && forms.length) {
+                    // Función para validar teléfonos en tiempo real
+                    function updateTelefonoState(form){
+                        try{
+                            var tel1 = form.querySelector('input[name="telefono1_solicitante"]');
+                            var tel2 = form.querySelector('input[name="telefono2_solicitante"]');
+                            var validTel1 = true;
+                            var validTel2 = true;
+
+                            if(tel1){
+                                var d1 = (tel1.value || '').replace(/\D/g, '');
+                                if(d1.length !== 10){
+                                    tel1.classList.add('is-invalid');
+                                    tel1.classList.remove('is-valid');
+                                    try { tel1.setCustomValidity('El teléfono celular debe tener 10 dígitos'); } catch(e){}
+                                    validTel1 = false;
+                                } else {
+                                    tel1.classList.remove('is-invalid');
+                                    tel1.classList.add('is-valid');
+                                    try { tel1.setCustomValidity(''); } catch(e){}
+                                    validTel1 = true;
+                                }
+                            }
+
+                            if(tel2){
+                                var d2 = (tel2.value || '').replace(/\D/g, '');
+                                if(tel2.value && d2.length !== 10){
+                                    tel2.classList.add('is-invalid');
+                                    tel2.classList.remove('is-valid');
+                                    try { tel2.setCustomValidity('El teléfono fijo debe tener 10 dígitos'); } catch(e){}
+                                    validTel2 = false;
+                                } else {
+                                    tel2.classList.remove('is-invalid');
+                                    if(d2.length === 10) tel2.classList.add('is-valid'); else tel2.classList.remove('is-valid');
+                                    try { tel2.setCustomValidity(''); } catch(e){}
+                                    validTel2 = true;
+                                }
+                            }
+
+                            var confirmArea = document.getElementById('tabla_confirmar');
+                            if(confirmArea){
+                                var existing = document.getElementById('telefono-warning');
+                                if(!(validTel1 && validTel2)){
+                                    if(!existing){
+                                        var div = document.createElement('div');
+                                        div.id = 'telefono-warning';
+                                        div.className = 'text-muted mt-2';
+                                        div.innerText = 'Por favor ingrese teléfonos válidos (10 dígitos) antes de guardar.';
+                                        confirmArea.appendChild(div);
+                                    }
+                                } else { if(existing) existing.remove(); }
+                            }
+                        }catch(err){ console.warn('updateTelefonoState', err); }
+                    }
+
                     forms.forEach(function(form) {
+                        // Escuchar inputs de teléfono
+                        var tel1input = form.querySelector('input[name="telefono1_solicitante"]');
+                        var tel2input = form.querySelector('input[name="telefono2_solicitante"]');
+                        if(tel1input){ tel1input.addEventListener('input', function(){ updateTelefonoState(form); }); tel1input.addEventListener('blur', function(){ updateTelefonoState(form); }); }
+                        if(tel2input){ tel2input.addEventListener('input', function(){ updateTelefonoState(form); }); tel2input.addEventListener('blur', function(){ updateTelefonoState(form); }); }
+
                         form.addEventListener('submit', function(e) {
-                            let tel1 = form.querySelector('input[name="telefono1_solicitante"]');
-                            let tel2 = form.querySelector('input[name="telefono2_solicitante"]');
-                            let valid = true;
-                            // Validar teléfono celular (obligatorio)
+                            var valid = true;
+                            var tel1 = form.querySelector('input[name="telefono1_solicitante"]');
+                            var tel2 = form.querySelector('input[name="telefono2_solicitante"]');
                             if (tel1 && tel1.value.replace(/\D/g, '').length !== 10) {
-                                swal("Error", "El teléfono celular debe tener exactamente 10 dígitos.", "error");
-                                tel1.focus();
+                                if (typeof swal === 'function') { swal("Error", "El teléfono celular debe tener exactamente 10 dígitos.", "error"); } else { try { alert('El teléfono celular debe tener exactamente 10 dígitos.'); } catch(e){} }
+                                try { tel1.focus(); } catch(e){}
                                 valid = false;
                             }
-                            // Validar teléfono fijo (opcional, solo si tiene valor)
                             if (tel2 && tel2.value && tel2.value.replace(/\D/g, '').length !== 10) {
-                                swal("Error", "El teléfono fijo debe tener exactamente 10 dígitos.", "error");
-                                tel2.focus();
+                                if (typeof swal === 'function') { swal("Error", "El teléfono fijo debe tener exactamente 10 dígitos.", "error"); } else { try { alert('El teléfono fijo debe tener exactamente 10 dígitos.'); } catch(e){} }
+                                try { tel2.focus(); } catch(e){}
                                 valid = false;
                             }
+
+                            try { updateTelefonoState(form); } catch(e){}
 
                             if (!valid) {
                                 e.preventDefault();
+                                e.stopPropagation();
+                                form.classList.add('was-validated');
                             }
-
-                            //updateLanguageVisibility();
-                            //updateDisabilityVisibility();
-                            //updateFechaSalidaVisibility();
                         });
                     });
                 }
