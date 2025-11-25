@@ -100,7 +100,6 @@
                                                 <div class="form-group">
                                                     <label for="name">Auxiliar</label>
                                                     <select class="form-control" name="auxiliar">
-                                                        <option value="">Seleccione</option>
                                                         <option value="Todos">Todos</option>
                                                         @foreach($usuariosauxiliares as $aux)
                                                             <option value="{{$aux['id']}}">{{$aux['name']}}</option>
@@ -112,7 +111,6 @@
                                                 <div class="form-group">
                                                     <label for="name">Notificador</label>
                                                     <select class="form-control" name="notificador">
-                                                        <option value="">Seleccione</option>
                                                         <option value="Todos">Todos</option>
                                                         @foreach($usuariosnotificadores as $not)
                                                             <option value="{{$not['id']}}">{{$not['name']}}</option>

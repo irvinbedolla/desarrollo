@@ -2253,6 +2253,7 @@ class SeerController extends Controller
                 'email'            => $usuario["email"],
                 'NumFolio'         => $folio,
             ];
+            //dd($variables);
             Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
         }
         else{
@@ -2270,6 +2271,7 @@ class SeerController extends Controller
                 'email'            => $usuario["email"],
                 'NumFolio'         => $folio,
             ];
+            //dd($variables);
             Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
         }
 
