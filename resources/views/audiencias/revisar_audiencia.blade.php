@@ -87,7 +87,11 @@
 @section('content')
     <section class="section">
         <div class="section-header">
+            @if ($isAudiencia == 'Si')
             <h3 class="page__heading">Revisar Audiencia</h3>
+            @else
+            <h3 class="page__heading">Revisar Solicitud</h3>
+            @endif
         </div>
         <div class="section-body">
             <?php $fecha_actual = date('d-m-Y');?>

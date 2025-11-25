@@ -5137,10 +5137,10 @@ class SeerController extends Controller
         return view('/cumplimientos/index',compact('auxiliares','conciliadores'));
     }
 
-    public function solicitud_audiencia_revisar($id){
+    public function solicitud_audiencia_revisar($id, Request $request){
         $id_user = auth()->user()->id;
         $user = User::find($id_user);
-        $id             = $id;
+        $isAudiencia = $request->query('isAudiencia', null);
         $general        = SeerPerGeneral::find($id);
         $ramas          = SolicitudRama::all();
         $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
@@ -5160,7 +5160,7 @@ class SeerController extends Controller
         ->where('id_solicitud',$id)
         ->select('catalogo_motivos.motivo','seer_motivos.id')->get();
 
-        return view('audiencias.revisar_audiencia', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores'));
+        return view('audiencias.revisar_audiencia', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores', 'isAudiencia'));
     }
 
 
@@ -7143,6 +7143,7 @@ class SeerController extends Controller
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
         $audiencias = array();
+        $isAudiencia = 'Si';
 
         if($userRole[0] == "Conciliador"){
             $permisos = PermisosConciliador::where('id_conciliador',$id)->first();
@@ -7264,7 +7265,7 @@ class SeerController extends Controller
             }
         }
 
-        return view('audiencias.todas_audiencias',compact('audiencias'));
+        return view('audiencias.todas_audiencias',compact('audiencias', 'isAudiencia'));
     }
 
     public function todas_solicitudes(){
@@ -7272,6 +7273,7 @@ class SeerController extends Controller
         $user = User::find($id);
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
+        $isAudiencia = 'No';
 
         if($userRole[0] == "Auxiliar" || $userRole[0] == "Excepcion"){
             $solicitudes = SeerPerGeneral::where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(500)->get();
@@ -7343,7 +7345,7 @@ class SeerController extends Controller
                 $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
             }
         }
-        return view('solicitudes.solicitudes_todas',compact('solicitudes'));
+        return view('solicitudes.solicitudes_todas',compact('solicitudes', 'isAudiencia'));
     }
 
     public function todas_ratificaciones(){

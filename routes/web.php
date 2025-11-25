@@ -384,7 +384,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Fin de Administración  
     //Audiencias
         Route::get('/audiencias/index',                     [SeerController::class, 'audiencia_index'])->name('audiencia_index');
-        Route::get('/audiencias_Revisar/{id}',              [SeerController::class, 'solicitud_audiencia_revisar'])->name('solicitud_audiencia');
+    Route::get('/audiencias_Revisar/{id}/{isAudiencia?}',              [SeerController::class, 'solicitud_audiencia_revisar'])->name('solicitud_audiencia');
         Route::get('/citatorio/{id}',                       [SeerController::class, 'pdfCitatorioAudiencia'])->name('pdfCitatorioAudiencia');
         Route::get('/solicitud/indexA',                     [SeerController::class, 'indexA'])->name('audiencias.conciliador'); 
         Route::get('/solicitud/iniciar/{id}',               [SeerController::class, 'iniciar_audiencia'])->name('inicioAudiencia');
