@@ -375,7 +375,7 @@ class SeerController extends Controller
         //Validar documentacion
         request()->validate([
             //General
-            'tipo_reporte'  => 'required|in:Cumplimientos,CumplimientosResumen,Ratificaciones,RatificacionesResumen,CCIRSJL,Concentrado,RatificacionesUsuario,Notificaciones,EstadisticaMexico,RatificacionesDias,CCIRSJL',
+            'tipo_reporte'  => 'required|in:Cumplimientos,CumplimientosResumen,Ratificaciones,RatificacionesResumen,CCIRSJL,Concentrado,RatificacionesUsuario,Notificaciones,EstadisticaMexico,RatificacionesDias,Graficas',
         ], $data);
         if(isset($data["sede"]))
             $sede = $data["sede"];
@@ -622,14 +622,43 @@ class SeerController extends Controller
             $pdf = \PDF::loadView('PDF/Estadisticas/RatificacionUsuario',compact('fecha_inicial','fecha_final','usuarios'));
             //$pdf->setPaper('a4', 'landscape');
             return $pdf->stream('archivo.pdf');
-        
-            
         }
         else if($data["tipo_reporte"] == "Notificaciones"){
             //Notificaciones
             return Excel::download(new NotificacionesExport($fecha_inicial, $fecha_final, $sede, $auxiliar , $notificador), 'notificaciones.xlsx');
         }
         else if($data["tipo_reporte"] == "Graficas"){
+
+            $conciliadores = User::whereHas($relacionEloquent, function ($query) {
+                return $query->where('name', '=', 'Conciliador');
+            })
+            ->where('delegacion', $sede)
+            ->get();
+
+
+            
+
+            foreach ($conciliadores as $conciliador) {
+
+dd($conciliador);
+                $estadisticas  = SeerPerGeneral::join("users","users.id","=","seer_general.user_id")
+                ->whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
+                if($sede !== "Todos"){
+                    $estadisticas = $estadisticas->where("seer_general.delegacion", $sede);
+                }
+                $estadisticas = $estadisticas->select('users.id as user_id', 'users.name', 'seer_general.id')
+                ->groupBy('users.id', 'users.name')
+                ->get();
+
+
+                $conciliaciones_totales = SeerPerGeneral::join("seer_conciliadores","seer_conciliadores.id_solicitud","=","seer_general.id")
+                ->select(DB::raw('count(seer_conciliadores.id) as conciliacion_total'))
+                ->where('seer_conciliadores.estatus_conciliacion','Conciliacion')
+                ->where('seer_general.conciliador_id',$solicitud->id)
+                ->get();
+
+            }
+
             return view('PDF/Estadisticas/Graficas');
         }
         else if($data["tipo_reporte"] == "Concentrado"){
@@ -985,24 +1014,72 @@ class SeerController extends Controller
             ->selectRaw('count(seer_asesorias.id) as total_asesorias')
             ->where('delegacion',$sede)
             ->first();
+            //DEPIDO
+                $solicitud_despido_H  = SeerPerGeneral::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
+                if($sede !== "Todos"){
+                    $solicitud_despido_H = $solicitud_despido_H->where("seer_general.delegacion", $sede);
+                }
+                $solicitud_despido_H = $solicitud_despido_H->select(DB::raw('count(seer_general.id) as solicitudes'))
+                ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+                ->join('seer_motivos','seer_motivos.id_solicitud','seer_general.id')
+                ->where('seer_motivos.id_motivo',1)
+                ->where('seer_solicitante.sexo','H')
+                ->first();
+                $solicitud_despido_M  = SeerPerGeneral::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
+                if($sede !== "Todos"){
+                    $solicitud_despido_M = $solicitud_despido_M->where("seer_general.delegacion", $sede);
+                }
+                $solicitud_despido_M = $solicitud_despido_M->select(DB::raw('count(seer_general.id) as solicitudes'))
+                ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+                ->join('seer_motivos','seer_motivos.id_solicitud','seer_general.id')
+                ->where('seer_motivos.id_motivo',1)
+                ->where('seer_solicitante.sexo','M')
+                ->first();
             
-            $solicitud_despido  = SeerPerGeneral::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
-            if($sede !== "Todos"){
-                $solicitud_despido = $solicitud_despido->where("seer_general.delegacion", $sede);
-            }
-            $solicitud_despido = $solicitud_despido->select(DB::raw('count(seer_general.id) as solicitudes'))
-            ->join('seer_motivos','seer_motivos.id_solicitud','seer_general.id')
-            ->where('seer_motivos.id_motivo',1)
-            ->first();
+            //FINIQUIETO
+                $solicitud_finiquito_H  = SeerPerGeneral::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
+                if($sede !== "Todos"){
+                    $solicitud_finiquito_H = $solicitud_finiquito_H->where("seer_general.delegacion", $sede);
+                }
+                $solicitud_finiquito_H = $solicitud_finiquito_H->select(DB::raw('count(seer_general.id) as solicitudes'))
+                ->join('seer_motivos','seer_motivos.id_solicitud','seer_general.id')
+                ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+                ->where('seer_motivos.id_motivo',1)
+                ->where('seer_solicitante.sexo','H')
+                ->first();
 
-            $solicitud_finiquito  = SeerPerGeneral::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
-            if($sede !== "Todos"){
-                $solicitud_finiquito = $solicitud_finiquito->where("seer_general.delegacion", $sede);
-            }
-            $solicitud_finiquito = $solicitud_finiquito->select(DB::raw('count(seer_general.id) as solicitudes'))
-            ->join('seer_motivos','seer_motivos.id_solicitud','seer_general.id')
-            ->where('seer_motivos.id_motivo',1)
-            ->first();
+                $solicitud_finiquito_M  = SeerPerGeneral::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
+                if($sede !== "Todos"){
+                    $solicitud_finiquito_M = $solicitud_finiquito_M->where("seer_general.delegacion", $sede);
+                }
+                $solicitud_finiquito_M = $solicitud_finiquito_M->select(DB::raw('count(seer_general.id) as solicitudes'))
+                ->join('seer_motivos','seer_motivos.id_solicitud','seer_general.id')
+                ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+                ->where('seer_motivos.id_motivo',1)
+                ->where('seer_solicitante.sexo','M')
+                ->first();
+            //DERECHO DE PREFERERNCIA ATIGUEDAD Y ASENSO
+                $solicitud_finiquito_H  = SeerPerGeneral::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
+                if($sede !== "Todos"){
+                    $solicitud_finiquito_H = $solicitud_finiquito_H->where("seer_general.delegacion", $sede);
+                }
+                $solicitud_finiquito_H = $solicitud_finiquito_H->select(DB::raw('count(seer_general.id) as solicitudes'))
+                ->join('seer_motivos','seer_motivos.id_solicitud','seer_general.id')
+                ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+                ->whereIn('seer_motivos.id_motivo',[4,5,6])
+                ->where('seer_solicitante.sexo','H')
+                ->first();
+
+                $solicitud_finiquito_H  = SeerPerGeneral::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
+                if($sede !== "Todos"){
+                    $solicitud_finiquito_H = $solicitud_finiquito_H->where("seer_general.delegacion", $sede);
+                }
+                $solicitud_finiquito_H = $solicitud_finiquito_H->select(DB::raw('count(seer_general.id) as solicitudes'))
+                ->join('seer_motivos','seer_motivos.id_solicitud','seer_general.id')
+                ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+                ->whereIn('seer_motivos.id_motivo',[4,5,6])
+                ->where('seer_solicitante.sexo','M')
+                ->first();
         }
     }
 
