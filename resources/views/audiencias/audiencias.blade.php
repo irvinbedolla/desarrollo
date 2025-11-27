@@ -28,9 +28,11 @@
                             <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#ModalArchivar" data-id="{{ $id }}">
                                 Archivar
                             </button>
+                            @if ($allCentro == 1)
                             <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#ModalReagendar" data-id="{{ $id }}">
                                 Reagendar
                             </button>
+                            @endif
                             <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#ModalIncopentencia" data-id="{{ $id }}">
                                 Incompetencia
                             </button>
@@ -56,7 +58,7 @@
                                             <td></td>
                                             <td></td>
                                             <td>
-                                                <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal1" data-id="{{ $id }}">Editar</a>
+                                                <a type="button" class="btn btn-warning w-100 open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal1" data-id="{{ $id }}">Editar</a>
                                             </td>
                                         </tr>
                                        
@@ -79,9 +81,9 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <button type="button" class="btn btn-primary open-modal" data-id="{{ $representante->id }}" data-bs-toggle="modal" data-bs-target="#modalCitados"> Citado </button>
+                                                    <button type="button" class="btn btn-primary w-100 mt-1 mb-1 text-nowrap open-modal" data-id="{{ $representante->id }}" data-bs-toggle="modal" data-bs-target="#modalCitados"> Registrar Comparecencia </button>
                                                     @if($representante->id_abogado != null)
-                                                        <a class="btn btn-success" href="{{ route('PDFcompareceSP', $solicitud->id) }}"  target="_blank">Comparece sin poder</a>
+                                                        <a class="btn btn-success mb-1 w-100" href="{{ route('PDFcompareceSP', $solicitud->id) }}"  target="_blank">Comparecencia sin Acreditación de Facultades</a>
                                                     @endif
                                                 </td>
                                             </tr>
@@ -278,7 +280,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarCitados">Agregar en representación</button>
+                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarCitados">Agregar Registro Patronal</button>
                 <!--
                 <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarDerecho">Agregar por propio derecho</button>
                 <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalActualizaCitados">Actualizar citado</button>
@@ -1537,6 +1539,8 @@
 
     </style>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
          $('.open-modal').click(function() {
             const id = $(this).data('id'); // Obtiene el valor de data-id
@@ -1761,11 +1765,11 @@
     </script>
 
     <script>
-        if(!window.Swal){
+        /*if(!window.Swal){
             const swScript = document.createElement('script');
             swScript.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js';
             document.head.appendChild(swScript);
-        }
+        }*/
         const DURACION_SEGUNDOS = 4500; // 5 minutos
         const TIEMPO_FINAL_KEY = 'tiempoFinalTemporizador';
 
@@ -1858,6 +1862,7 @@
             }
 
             cargarInhabilesSync().then(()=>{
+
                 const fechaMinima = calcularFechaMinima();
                 const fechaMinimaStr = fechaMinima.toISOString().slice(0,10);
                 // Ajustar a lunes de la semana que contiene la fecha mínima para no cortar la semana
@@ -1901,7 +1906,11 @@
                             $('#horaSeleccionada').val(hora+':00');
                             $('#btnGuardarReagenda').prop('disabled', false);
                         } else {
-                            alert('Horario no disponible (antes de la fecha mínima o no hábil).');
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Uups...',
+                                text: 'Horario no disponible',
+                            });
                         }
                     },
                     eventDidMount: function(info){

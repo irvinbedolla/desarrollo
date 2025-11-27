@@ -3373,6 +3373,19 @@ class SeerController extends Controller
             $fechaConfirmacion = $fechaConfirmacion->format('Y-m-d');
         }
 
+        $allCentro = 1;
+        $citadosCentro = SeerCitados::where('id_solicitud', $id)->latest()->get();
+        /*if($citadoCentro->notificacion != 'Centro'){
+            $allCentro = 0;
+        }*/
+        foreach ($citadosCentro as $citado){
+            if($citado->notificacion == 'Centro'){
+                $allCentro = 0;
+                break;
+            }
+        }
+
+
         $representantes = SeerCitados::
         leftjoin('abogados', 'abogados.idAbogado', '=', 'seer_citados.id_abogado')
         ->leftJoin('persona_fisica', 'persona_fisica.id', '=', 'seer_citados.id_fisica')
@@ -3382,12 +3395,14 @@ class SeerController extends Controller
         'persona_fisica.nombre as nombre_fisica','persona_fisica.primer_apellido as primer_fisica','persona_fisica.segundo_apellido as segundo_fisica',
         'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus')
         ->get();
+
+
         $solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
         $abogados = Poder::all();
         SeerPerGeneral::find($id)->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
         $estados        = Estados::all();
         $municipios     = Municipios::where('estado',16)->get();
-        return view('/audiencias/audiencias',compact('id','solicitudes','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios', 'fechaConfirmacion'));
+        return view('/audiencias/audiencias',compact('id','solicitudes','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios', 'fechaConfirmacion', 'allCentro'));
     }
 
     public function guardar_audiencia_archivo(Request $request){
@@ -6936,7 +6951,7 @@ class SeerController extends Controller
             if ($fecha->format('N') < 6) { // Saltar fines de semana
                 
                 $inicioJornada = (clone $fecha)->setTime(9, 0, 0);
-                $finJornada    = (clone $fecha)->setTime(16, 30, 0);
+                $finJornada    = (clone $fecha)->setTime(15, 15, 0);
                 
 
                 $slot = clone $inicioJornada;
