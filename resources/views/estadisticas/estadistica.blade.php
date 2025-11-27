@@ -49,6 +49,7 @@
                                                     <option value="EstadisticaMexico">INEGI</option> 
                                                     <option value="Concentrado">General</option>
                                                     <option value="CCIRSJL">CCIRSJL</option>
+                                                    <option value="Graficas">Efectividad</option>
                                                 </select>
                                                 <div class="invalid-feedback">
                                                     Debes seleccionar un tipo de reporte.
