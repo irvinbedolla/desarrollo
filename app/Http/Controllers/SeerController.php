@@ -629,37 +629,39 @@ class SeerController extends Controller
         }
         else if($data["tipo_reporte"] == "Graficas"){
 
-            $conciliadores = User::whereHas($relacionEloquent, function ($query) {
-                return $query->where('name', '=', 'Conciliador');
-            })
-            ->where('delegacion', $sede)
-            ->get();
-
-
-            
-
+            $conciliadores = User::role('Conciliador')->select('id','name')->get();
+            $i = 0;
             foreach ($conciliadores as $conciliador) {
-
-dd($conciliador);
-                $estadisticas  = SeerPerGeneral::join("users","users.id","=","seer_general.user_id")
-                ->whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
-                if($sede !== "Todos"){
-                    $estadisticas = $estadisticas->where("seer_general.delegacion", $sede);
-                }
-                $estadisticas = $estadisticas->select('users.id as user_id', 'users.name', 'seer_general.id')
-                ->groupBy('users.id', 'users.name')
-                ->get();
-
-
-                $conciliaciones_totales = SeerPerGeneral::join("seer_conciliadores","seer_conciliadores.id_solicitud","=","seer_general.id")
-                ->select(DB::raw('count(seer_conciliadores.id) as conciliacion_total'))
+                $conciliacion  = SeerPerGeneral::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final])
+                ->join("seer_conciliadores","seer_conciliadores.id_solicitud","=","seer_general.id")
+                ->select(DB::raw('count(seer_conciliadores.id) as Conciliacion'))
+                ->where('seer_general.conciliador_id',$conciliador->id)
                 ->where('seer_conciliadores.estatus_conciliacion','Conciliacion')
-                ->where('seer_general.conciliador_id',$solicitud->id)
-                ->get();
+                ->first();
 
+                $noconciliacion  = SeerPerGeneral::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final])
+                ->join("seer_conciliadores","seer_conciliadores.id_solicitud","=","seer_general.id")
+                ->select(DB::raw('count(seer_conciliadores.id) as NoConciliacion'))
+                ->where('seer_general.conciliador_id',$conciliador->id)
+                ->where('seer_conciliadores.estatus_conciliacion','No conciliacion')
+                ->first();
+
+                $conciliadores[$i]->conciliador     = $conciliacion->Conciliacion;
+                $conciliadores[$i]->noconciliador   = $noconciliacion->NoConciliacion;
+                if($conciliacion->Conciliacion == 0){
+                    $conciliadores[$i]->total = 0;
+                }else{
+                    $conciliadores[$i]->total           = $conciliacion->Conciliacion / ($conciliacion->Conciliacion + $noconciliacion->NoConciliacion);
+                }
+                $i++;
             }
+            // Ahora, extraemos las etiquetas (meses) y los datos (counts)
+            $labels = $conciliadores->pluck('name')->toArray();;
+            $data   = $conciliadores->pluck('total')->toArray();;
 
-            return view('PDF/Estadisticas/Graficas');
+           
+
+            return view('PDF/Estadisticas/Graficas',compact('labels','data'));
         }
         else if($data["tipo_reporte"] == "Concentrado"){
             //Auxiliares
@@ -4193,8 +4195,8 @@ dd($conciliador);
     }
 
     public function audienciaParte3($id){
-        $sede = $solicitud["delegacion"];
         $solicitud = SeerPerGeneral::find($id);
+        $sede = $solicitud["delegacion"];
 
         $representantes = SeerCitados::
         leftjoin('abogados', 'abogados.idAbogado', '=', 'seer_citados.id_abogado')
@@ -6752,6 +6754,14 @@ dd($conciliador);
                 'conciliador_id'        => $user->id,
                 'estatus'               => $data["conclucion"]
             ]);
+
+            //Validar la bandera para mostrar documento o 
+            if($data["bandera"] == 1){
+                return redirect()->route('todas_audiencias');
+            }
+            else if($data["bandera"] == 2){
+                return redirect()->route('vista_previa',compact('id_solicitud'));
+            }
         }
         else{
             //$solicitante = SeerSolicitante::where('id_solicitud',$data["id"])->first();
@@ -7243,7 +7253,7 @@ dd($conciliador);
             $permisos = PermisosConciliador::where('id_conciliador',$id)->first();
             if($permisos["tipo"] == "Ambos"){
                 if($user["delegacion"] == "Morelia"){
-                    $audiencias = Audiencias::whereIn('delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    $audiencias = Audiencias::select('id_solicitud')->distinct()->whereIn('delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($audiencias as $audiencia) {
                         $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
                         $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
@@ -7257,7 +7267,7 @@ dd($conciliador);
                     }
                 }
                 if($user["delegacion"] == "Uruapan"){
-                    $audiencias = Audiencias::whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    $audiencias = Audiencias::select('id_solicitud')->distinct()->whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($audiencias as $audiencia) {
                         $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
                         $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
@@ -7271,7 +7281,7 @@ dd($conciliador);
                     }
                 }
                 if($user["delegacion"] == "Zamora"){
-                    $audiencias = Audiencias::whereIn('delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    $audiencias = Audiencias::select('id_solicitud')->distinct()->whereIn('delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($audiencias as $audiencia) {
                         $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
                         $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
@@ -7286,7 +7296,7 @@ dd($conciliador);
                 }
             }
             else{
-                $audiencias = Audiencias::where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(500)->get();
+                $audiencias = Audiencias::select('id_solicitud')->distinct()->where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(500)->get();
                 foreach ($audiencias as $audiencia) {
                     $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
                     $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
@@ -7302,7 +7312,7 @@ dd($conciliador);
         }
         else if($userRole[0] == "Delegado"){
             if($user["delegacion"] == "Morelia"){
-                $audiencias = Audiencias::whereIn('delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
+                $audiencias = Audiencias::select('id_solicitud')->distinct()->whereIn('delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
                 foreach ($audiencias as $audiencia) {
                     $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
                     $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
@@ -7316,7 +7326,7 @@ dd($conciliador);
                 }
             }
             if($user["delegacion"] == "Uruapan"){
-                $audiencias = Audiencias::whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
+                $audiencias = Audiencias::select('id_solicitud')->distinct()->whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
                 foreach ($audiencias as $audiencia) {
                     $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
                     $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
@@ -7330,7 +7340,7 @@ dd($conciliador);
                 }
             }
             if($user["delegacion"] == "Zamora"){
-                $audiencias = Audiencias::whereIn('delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
+                $audiencias = Audiencias::select('id_solicitud')->distinct()->whereIn('delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
                 foreach ($audiencias as $audiencia) {
                     $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
                     $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
@@ -7345,7 +7355,9 @@ dd($conciliador);
             }
         }
         else if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador"){    
-            $audiencias = Audiencias::orderBy('created_at', 'desc')->limit(500)->get();
+            $audiencias = Audiencias::select('id_solicitud')->distinct()->orderBy('created_at', 'desc')->limit(500)->get();
+            //$registros_unicos_recientes = $audiencias->unique('id_solicitud');
+
             foreach ($audiencias as $audiencia) {
                 $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
                 $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';

@@ -73,7 +73,7 @@
                 <div class="table-responsive">
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                             <tr>   
-                                <td><b>Centro de conciliación: </b></td>
+                                <td><b>Centro de conciliación Laboral del Estados de Michocanca de Ocampo.</b></td>
                             </tr>
                     </table>
                 </div><br><br><br>
@@ -91,11 +91,11 @@
                             type: 'bar'
                         },
                         series: [{
-                            name: 'sales',
-                            data: [30,40,45,50,49,60,70,91,125]
+                            name: 'Efectividad',
+                            data: @json($labels)
                         }],
                         xaxis: {
-                            categories: [1991,1992,1993,1994,1995,1996,1997, 1998,1999]
+                            categories: @json($labels)
                         }
                         }
 
@@ -115,6 +115,7 @@
                                 useCORS: true,
                                 allowTaint: true,
                                 backgroundColor: '#ffffff',
+                                colors: ['#FF0000'],
                                 logging: true,
                                 onclone: function(clonedDoc) {
                                     clonedDoc.querySelectorAll('.apexcharts-canvas').forEach(canvas => {

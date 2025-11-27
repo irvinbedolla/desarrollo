@@ -300,8 +300,8 @@
                                             <div class="row">
                                                 <div class="col-xs-12 col-sm-12 col-md-6"><br>
                                                     <label for="name">Tipo de audiencia</label>
-                                                    <select name="tipo_audiencia" class="form-control">
-                                                        <option>Seleccione</option>
+                                                    <select name="tipo_audiencia" class="form-control" required> 
+                                                        <option value="">Seleccione</option>
                                                         <option value="Presencial" {{ $conciliadores["tipo_audiencia"] == "Presencial" ? "selected" : '' }}>Presencial</option>
                                                         <option value="Virtual" {{ $conciliadores["tipo_audiencia"] == "Virtual" ? "selected" : '' }}>Virtual</option>
                                                     </select>
@@ -309,9 +309,20 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                    <br><button id="btn-terminar" type="submit" class="btn btn-success">Terminar</button>
-                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-2">
+                                        <br><button id="btn-terminar" type="submit" class="btn btn-success" name="bandera" value="1">Terminar</button>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-2">
+                                        <br><button id="btn-terminar" type="submit" class="btn btn-success" name="bandera" value="2">Actualizar</button>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-2">
+                                        <br><a class="btn btn-success" href="{{ route('PDFconveniosolicitud', $id) }}" target="_blank">Convenio</a>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-2">
+                                        <br><a class="btn btn-success" href="{{ route('VerPDFAudiencia', $id) }}"  target="_blank">Acta de Audiencia</a></li>
+                                    </div>
+                            </div>
                             </form>
                         </div>
                     </div>
