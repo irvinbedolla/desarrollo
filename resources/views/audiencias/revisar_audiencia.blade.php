@@ -140,9 +140,23 @@
 
                                     <div id="detalles" class="tabcontent">
                                         <div id="tabla_detalles" class="row">
+
                                             <div class="col-xs-12 col-sm-6 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Fecha de registro</label>
+                                                    <label for="name">Fecha de Confirmación</label>
+                                                    <input type="date" class="form-control" value="{{ $general['fecha_confirmacion'] ?? '' }}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-6 col-md-9">
+                                                <div class="form-group">
+                                                    <label for="password">Número de Expediente</label>
+                                                    <input type="text" name="actividad_economica" class="form-control" value="{{ $general['NUE'] ?? '' }}" readonly>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-6 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">Fecha de Registro</label>
                                                     <input type="date" class="form-control" value="<?=$general["fecha"];?>" readonly>
                                                 </div>
                                             </div>
@@ -907,7 +921,7 @@
                                                 <input type="file" name="documentoCurp" accept=".pdf" class="form-control">
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6"></div>
-                                        {{--<div class="col-xs-12 col-sm-12 col-md-6">
+                                            {{--<div class="col-xs-12 col-sm-12 col-md-6">
                                                 <label for="password">Identificación Oficial</label><br>
                                                 <a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoCurp}}">PDF</a><br>
                                                 <input type="file" name="documentoIdentificacion" accept=".pdf" class="form-control">
@@ -946,41 +960,117 @@
                                                     </div>
                                                     <div class="col-xs-12 col-sm-3 col-md-3">
                                                         <div class="form-group">
-                                                            <label>Nombre Citado Notificado</label><br>
+                                                            <label>Nombre Citado</label><br>
                                                         <span>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido }}</span>
                                                         </div>
                                                     </div>
-                                                    <div class="col-sm-3">
-                                                        <label>Notificación</label><br>
+                                                    <div class="col-sm-2">
+                                                        <label>Estado de la Notificación</label><br>
                                                         {{-- Notifica el trabajador --}}
                                                         @if($notificado->notificacion === "Trabajador")
-                                                            <span style="color:blue">Notifica el trabajador</span>
+                                                            <span style="color:blue">Notificación Entregada por el Solicitante</span>
 
                                                         {{-- No exitosa se constituye --}}
                                                         @elseif($notificado->estatus === "No exitosa se constituye")
-                                                            <a class="btn btn-info" href="{{ route('PDFNoExitosa', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}" target="_blank">Visualizar</a>
+                                                            <span style="color:blue">Se Constituye</span>
 
                                                         {{-- Finalisada exitosamente --}}
                                                         @elseif($notificado->estatus === "Finalizado exitosamente")
-                                                            <a class="btn btn-info" href="{{ route('PDFRazonNoticacion', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}" target="_blank">Visualizar</a>
+                                                            <span style="color:blue">Notificado Exitosamente</span>
 
                                                         {{-- No notificada por instructivo--}}
                                                         @elseif($notificado->estatus === "No notificada")
-                                                            <a class="btn btn-info" href="{{ route('PDFInstructivo', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}" target="_blank">Visualizar</a>
+                                                            <span style="color:blue">No Notificado</span>
 
                                                         {{-- No exitosa, no se cosntituye --}}
                                                         @elseif($notificado->estatus === "No exitosa no se constituye")
-                                                            <a class="btn btn-info" style="width:100%"
-                                                            href="{{ route('PDFNoExitosaInt', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}"
-                                                            target="_blank">
-                                                                Visualizar
-                                                            </a>
+                                                            <span style="color:blue">No se Constituye</span>
+
                                                         @else
-                                                            <span style="color:blue">Sin notificar</span>
+                                                            <span style="color:blue">Sin Notificar</span>
                                                         @endif
                                                     </div>
+
+                                                    <div class="col-sm-1">
+                                                        <label>Notificación</label><br>
+                                                        @if($notificado->notificacion === "Trabajador")
+                                                            <a class="btn btn-secondary" disabled>Visualizar</a>
+
+                                                        {{-- No exitosa se constituye --}}
+                                                        @elseif($notificado->estatus === "No exitosa se constituye")
+                                                            <a class="btn btn-success" href="{{ route('PDFNoExitosa', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}" target="_blank">Visualizar</a>
+
+                                                        {{-- Finalisada exitosamente --}}
+                                                        @elseif($notificado->estatus === "Finalizado exitosamente")
+                                                            <a class="btn btn-success" href="{{ route('PDFRazonNoticacion', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}" target="_blank">Visualizar</a>
+
+                                                        {{-- No notificada por instructivo--}}
+                                                        @elseif($notificado->estatus === "No notificada")
+                                                            <a class="btn btn-success" href="{{ route('PDFInstructivo', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}" target="_blank">Visualizar</a>
+
+                                                        {{-- No exitosa, no se cosntituye --}}
+                                                        @elseif($notificado->estatus === "No exitosa no se constituye")
+                                                            <a class="btn btn-success" href="{{ route('PDFNoExitosaInt', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}"target="_blank">Visualizar</a>
+                                                        
+                                                        @else
+                                                            <a class="btn btn-secondary" disabled>Visualizar</a>
+                                                        @endif
+                                                    </div>
+                                                  
                                                 </div>
                                             @endforeach
+
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6"><br>
+                                                <div class="form-group">
+                                                    <h4 class="text-center">Acuses</h4>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-6"><br>
+                                                <div class="form-group">
+                                                    <h4 class="text-center">Notificación al solicitante</h4>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-xs-12 col-sm-3 col-md-3">
+                                                <div class="form-group">
+                                                    <label>­</label><br>
+                                                    <span>Acuse de Confirmación</span><br>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-3"><br>
+                                                <a class="btn btn-info"  href="{{ route('PDFacuseConfirmada', $general["id"]) }}"  target="_blank">Visualizar</a>
+                                            </div>
+
+
+                                            <div class="col-xs-12 col-sm-3 col-md-3">
+                                                <div class="form-group">
+                                                    <label>Nombre Solicitante</label><br>
+                                                    <span>{{ $solicitante->nombre }}</span>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-xs-12 col-sm-12 col-md-3"><br>
+                                                <a class="btn btn-info"  href="{{ route('PDFnotificacion_solicitante', $general["id"]) }}" target="_blank">Visualizar</a>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-3 col-md-3">
+                                                <div class="form-group">
+                                                    <label>­</label><br>
+                                                    <span>Acuse de Solicitud</span><br>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-xs-12 col-sm-12 col-md-3"><br>
+                                                <a class="btn btn-info" href="{{ route('PDFacuse_solicitud', $general["id"]) }}"  target="_blank">Visualizar</a>
+                                            </div>
+
+
                                            {{-- @foreach($citados as $citado)
                                                 <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
@@ -1206,7 +1296,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
                                             <label for="name">Nombre(s) <span style="color:red;">(*)</span></label>
-                                            <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                            <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                             <div class="invalid-feedback">
                                                 El nombre es obligatorio.
                                             </div>
@@ -1216,7 +1306,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
                                             <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
-                                            <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                            <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                             <div class="invalid-feedback">
                                                 El nombre es obligatorio.
                                             </div>

@@ -3445,6 +3445,11 @@ class SeerController extends Controller
         $solicitud = SeerPerGeneral::find($id);
         $conciliador = User::select('id','name')->where('id', $solicitud->conciliador_id)->first();
 
+        $NUE = $solicitud->NUE;
+        if($NUE === NULL){
+            $NUE = 'Sin NUE';
+        }
+
     
         $fechaConfirmacion = SeerPerGeneral::where('id', $id)->value('fecha_confirmacion');
         if(is_null($fechaConfirmacion)) {
@@ -3481,7 +3486,7 @@ class SeerController extends Controller
         SeerPerGeneral::find($id)->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
         $estados        = Estados::all();
         $municipios     = Municipios::where('estado',16)->get();
-        return view('/audiencias/audiencias',compact('id','solicitudes','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios', 'fechaConfirmacion', 'allCentro'));
+        return view('/audiencias/audiencias',compact('id','solicitudes','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios', 'fechaConfirmacion', 'allCentro', 'NUE'));
     }
 
     public function guardar_audiencia_archivo(Request $request){
@@ -4142,7 +4147,7 @@ class SeerController extends Controller
                     $nuevo_citado->notificacion = 'Centro';
                     $nuevo_citado->save();
                 }
-                
+                return redirect()->route('audiencias.parte3',compact('id'));
             }
             else if($citados->notificacion == "Centro"){
                 //Si va por el centro se van a generar las multas a los que no tiene reprecentante legal

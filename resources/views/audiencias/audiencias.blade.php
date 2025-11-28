@@ -296,6 +296,7 @@
         @csrf
         <input type="hidden" name="id" value="{{$id}}">
         <input type="hidden" name="id_citado_2" id="id_citado_2" value="">
+        <input type="hidden" name="NUE" id="NUE" value={{ $NUE }}>
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1307,9 +1308,10 @@
             <div class="modal-content modal-xl">
                 <div class="modal-header">
                     @if($bandera != 0)
-                        <span>Si no seleccionas todos los representantes debes seleccionar una fecha para que próxima audiencia.<br>
-                        Notificará el centro</span>
-                        <input type="date" name="fecha" class="form-control">
+                        <!--span>Si no seleccionas todos los representantes debes seleccionar una fecha para que próxima audiencia.<br>
+                        Notificará el centro</!--span>
+                        <input type="date" name="fecha" class="form-control"-->
+                        Se multará a los citados que no tengan un representante asignado.
                     @else
                         Continuar con la audiencia.
                     @endif
@@ -1928,10 +1930,10 @@
         const formReagendar = document.querySelector('#ModalReagendar form');
         if(formReagendar){
             formReagendar.addEventListener('submit', function(e){
-                const idAudiencia = document.getElementById('modal-id-reagendar').value;
+                const idAudiencia = document.getElementById('NUE').value;
                 const fecha = document.getElementById('fechaSeleccionada').value;
                 const hora = document.getElementById('horaSeleccionada').value;
-                let mensajeHtml = '<p>Se reagendará la Audiencia con <strong>ID: '+idAudiencia+'</strong></p>';
+                let mensajeHtml = '<p>Se reagendará la Audiencia con <strong>NUE: '+idAudiencia+'</strong></p>';
                 if(fecha){ mensajeHtml += '<p>Fecha: <strong>'+fecha+'</strong></p>'; }
                 if(hora){ mensajeHtml += '<p>Hora: <strong>'+hora.substring(0,5)+'</strong></p>'; }
                 mensajeHtml += '<p>¿Confirmas?</p>';
