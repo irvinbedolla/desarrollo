@@ -69,7 +69,7 @@
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <form class='needs-validation novalidate'  method='POST' action="{{route('ratificacion_pagoA')}}">
+    <form class='needs-validation novalidate'  method='POST' action="{{route('pagoA_audiencia')}}">
         @csrf
         <input type="hidden" id="modal-id" name="id" value="">
         <div class="modal-dialog">

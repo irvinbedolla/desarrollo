@@ -409,7 +409,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/solicitudes/terminar_audiencia',      [SeerController::class, 'terminar_audiencia'])->name('terminar_audiencia');
         Route::get('/audienicas/cumplimietos/{id}',         [SeerController::class, 'ver_pagos_audiencia'])->name('audiencia_cumplimientos');
         Route::post('/guardar_edicion_audiencia',           [SeerController::class, 'audiencia_confirmar'])->name('audiencia_confirmar');
-        
+        Route::post('/audiencias/pagoA',                    [SeerController::class, 'pagoA_audiencia'])->name('pagoA_audiencia'); // cumplimiento en audiencias
     //Fin de Audiencias
     //Citados
         Route::post('/solicitud/guardar_citadoC',           [SeerController::class, 'insertar_citados_con'])->name('insertar_citado');
