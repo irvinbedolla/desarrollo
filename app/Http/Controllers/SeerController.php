@@ -5248,6 +5248,10 @@ class SeerController extends Controller
         })
         ->where('delegacion', $user["delegacion"])
         ->get();
+        // Obtener todos los citados notificados de la solicitud
+        $notificaciones = SeerCitados::where('id_solicitud', $id)
+        ->get()
+        ->keyBy('id');
         //Catalogo de motivos
         //$mostrarMotivos = SolicitudMotivo::all();
         $mostrarMotivos = SolicitudMotivo::where('tipo_solicitud', $general->tipo_solicitud)->get();
@@ -5256,7 +5260,7 @@ class SeerController extends Controller
         ->where('id_solicitud',$id)
         ->select('catalogo_motivos.motivo','seer_motivos.id')->get();
 
-        return view('audiencias.revisar_audiencia', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores', 'isAudiencia'));
+        return view('audiencias.revisar_audiencia', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores', 'isAudiencia','notificaciones'));
     }
 
 
@@ -5487,6 +5491,11 @@ class SeerController extends Controller
             $municipio = \App\Models\Municipios::find($citado->municipio_citado);
             $municipioCitado = $municipio ? $municipio->nombre : null;
         }
+        $estadoCitado = null;
+        if ($citado && $citado->estado_citado) {
+            $estado = \App\Models\Estados::find($citado->estado_citado);
+            $estadoCitado = $estado ? $estado->nombre : null;
+        }
         $id_notificador = $citado->id_notificador;
 
         $notificador = User::where('id', $id_notificador)
@@ -5504,7 +5513,7 @@ class SeerController extends Controller
                 $imagenes[] = null;
             }
         }
-        $html = view('PDF/Solicitudes/razonNotificacion', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado'))->render();
+        $html = view('PDF/Solicitudes/razonNotificacion', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -6051,6 +6060,11 @@ class SeerController extends Controller
             $municipio = \App\Models\Municipios::find($citado->municipio_citado);
             $municipioCitado = $municipio ? $municipio->nombre : null;
         }
+        $estadoCitado = null;
+        if ($citado && $citado->estado_citado) {
+            $estado = \App\Models\Estados::find($citado->estado_citado);
+            $estadoCitado = $estado ? $estado->nombre : null;
+        }
         $id_notificador = $citado->id_notificador;
 
         $notificador = User::where('id', $id_notificador)
@@ -6069,7 +6083,7 @@ class SeerController extends Controller
             }
         }
             
-        $html = view('PDF/Solicitudes/razonPorInstructivo', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado'))->render();
+        $html = view('PDF/Solicitudes/razonPorInstructivo', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -6150,33 +6164,38 @@ class SeerController extends Controller
             $municipio = \App\Models\Municipios::find($citado->municipio_citado);
             $municipioCitado = $municipio ? $municipio->nombre : null;
         }
-         $id_notificador = $citado->id_notificador;
+        $estadoCitado = null;
+        if ($citado && $citado->estado_citado) {
+            $estado = \App\Models\Estados::find($citado->estado_citado);
+            $estadoCitado = $estado ? $estado->nombre : null;
+        }
+        $id_notificador = $citado->id_notificador;
  
-         $notificador = User::where('id', $id_notificador)
-             ->select('name')
-             ->first();
+        $notificador = User::where('id', $id_notificador)
+            ->select('name')
+            ->first();
  
-         $imagenes = [];
+        $imagenes = [];
  
-         for ($i = 1; $i <= 3; $i++) {
-             $path = storage_path("app/documentos_notificacion/{$citado->id}-foto{$i}.jpg");
+        for ($i = 1; $i <= 3; $i++) {
+            $path = storage_path("app/documentos_notificacion/{$citado->id}-foto{$i}.jpg");
  
-             if (file_exists($path)) {
-                 $imagenes[] = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($path));
-             } else {
-                 $imagenes[] = null;
-             }
-         }
+            if (file_exists($path)) {
+                $imagenes[] = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($path));
+            } else {
+                $imagenes[] = null;
+            }
+        }
              
-         $html = view('PDF/Solicitudes/razonNumInt', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado'))->render();
+        $html = view('PDF/Solicitudes/razonNumInt', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado'))->render();
  
-         $pdf = \PDF::loadHTML($html)
-             ->setPaper('a4', 'portrait')
-             ->setOption('isHtml5ParserEnabled', true)
-             ->setOption('isPhpEnabled', true); 
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
  
-         $nombreArchivo = 'Razón_NotificaciónNInt' . $solicitud->empresa .'.pdf';
-         return $pdf->stream($nombreArchivo);                      
+        $nombreArchivo = 'Razón_NotificaciónNInt' . $solicitud->empresa .'.pdf';
+        return $pdf->stream($nombreArchivo);                      
     }
 
     //Guarda el expediente

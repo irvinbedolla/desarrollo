@@ -240,7 +240,7 @@
                                             <button id="addRow" type="button" class="btn btn-info">Agregar Concepto de Pago</button>
                                         </div>                                        
                                         <div id="newRow"></div>
-                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                        <div class="col-xs-12 col-sm-12 col-md-12"><br>
                                             <button id="addRetencion" type="button" class="btn btn-info">Agregar deducción</button>
                                         </div>
                                         <div id="newRowDeduccion"></div>
@@ -253,6 +253,10 @@
                                         <div id="div_pagos_diferidos"></div>
                                     </div>
                                 </div><br><br>
+                                  <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <h4 class="text-center" style="margin-top:20px;">Total a pagar:</h4>
+                                            <h3 id="totalCalculado" class="text-center" style="color:green;">$0.00</h3>
+                                        </div>
                                 <div class="row">    
                                     <div class="col-xs-12 col-sm-12 col-md-2">
                                         <a  class="btn btn-success"href="{{ route('PDFconvenioratificacion', $solicitud->id) }}"  target="_blank">Convenio</a>
@@ -572,6 +576,61 @@
                 input.value = partes[0] + '.' + partes.slice(1).join('');
             }
         }
+
+        //Muestra un input cuando en prestaciones se selecciona la opción Otros concepto de pago
+        $(document).on('change', '.tipo-pago-select', function () {
+            var selected = $(this).val();
+            var container = $(this).closest('.form-group').find('.otra-prestacion-input');
+
+            if (selected === 'Otras') {
+                container.show();
+                container.find('input').attr('required', true);
+            } else {
+                container.hide();
+                container.find('input').val('').removeAttr('required');
+            }
+        });
+        //Muestra el total a pagar en base a las prestaciones y deducciones capturadas
+        function formatoMoneda(num) {
+            return num.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+    
+        function calcularTotal() {
+            let totalPrestaciones = 0;
+            let totalDeducciones = 0;
+
+            // NUEVAS PRESTACIONES
+            $('input[name="monto_pago[]"]').each(function () {
+                let val = parseFloat($(this).val());
+                if (!isNaN(val)) totalPrestaciones += val;
+            });
+
+            // NUEVAS DEDUCCIONES
+            $('input[name="monto_deduccion[]"]').each(function () {
+                let val = parseFloat($(this).val());
+                if (!isNaN(val)) totalDeducciones += val;
+            });
+
+            // PRESTACIONES YA GUARDADAS
+            @foreach($conceptos as $c)
+                totalPrestaciones += {{ floatval($c->monto) }};
+            @endforeach
+
+            // DEDUCCIONES YA GUARDADAS
+            @foreach($deducciones as $d)
+                totalDeducciones += {{ floatval($d->monto) }};
+            @endforeach
+
+            let total = totalPrestaciones - totalDeducciones;
+            $("#totalCalculado").text('$' + formatoMoneda(total));
+        }
+
+        $(document).on('input', 'input[name="monto_pago[]"]', calcularTotal);
+        $(document).on('input', 'input[name="monto_deduccion[]"]', calcularTotal);
+        $(document).on('click', '.removeRow, .removeRow3', function () {
+            setTimeout(calcularTotal, 100);
+        });
+        calcularTotal();
     </script>
     <script src="../../public/assets/js/poderes/general.js"></script>
 @endsection

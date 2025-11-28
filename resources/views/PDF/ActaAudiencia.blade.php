@@ -216,23 +216,29 @@
                     <tr>
                         <td style="width:50%; vertical-align:top; padding:0 20px;">
                             <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
-                            <b>
-                                {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}<br>
+                            <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}<br>
                                 LA PARTE TRABAJADORA
                             </b>
-                            </td>
-                            <td style="width:50%; vertical-align:top; padding:0 20px;">
+                        </td>
+                        <td style="width:50%; vertical-align:top; padding:0 20px;">
                             <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
-                            <b>
-                                {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}<br>
+                            <b>{{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}<br>
                                 LA PARTE EMPLEADORA
                             </b>
-                        </td>        
+                        </td>
                     </tr>
-                </table>
-                <br><br><br>
-                <p><center><b>___________________________________<br> {{ strtoupper($conciliador->name) }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
-                        DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>                    
+                    <br><br><br>
+                    <tr>
+                        <td colspan="2" style="text-align:center; vertical-align:top; padding:0 20px;">
+                            <div style="border-top: 2px solid #000; width:50%; margin: 0 auto 5px auto;"></div>
+                            <b>{{ strtoupper($conciliador->name) }}<br>
+                                    FUNCIONARIO/A CONCILIADOR/A<br>
+                                    DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>
+                                    ESTADO DE MICHOACÁN DE OCAMPO
+                            </b>
+                        </td>
+                    </tr>
+                </table>                    
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

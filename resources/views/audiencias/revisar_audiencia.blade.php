@@ -901,26 +901,87 @@
                                                     <h4 class="text-center">Documentos Solicitante</h4>
                                                 </div>
                                             </div><br>
-
                                             <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <label for="password">CURP</label><br>
+                                                <label for="password">Identificación Oficial</label><br>
                                                 <a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoIdentificacion}}">PDF</a><br>
                                                 <input type="file" name="documentoCurp" accept=".pdf" class="form-control">
                                             </div>
-
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-6"></div>
+                                        {{--<div class="col-xs-12 col-sm-12 col-md-6">
                                                 <label for="password">Identificación Oficial</label><br>
                                                 <a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoCurp}}">PDF</a><br>
                                                 <input type="file" name="documentoIdentificacion" accept=".pdf" class="form-control">
-                                            </div>
-                                            <br>
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                            </div>--}}
+                                            <div class="col-xs-12 col-sm-12 col-md-6"><br>
                                                 <div class="form-group">
                                                     <h4 class="text-center">Citatorios</h4>
                                                 </div>
                                             </div><br>
-
+                                            <div class="col-xs-12 col-sm-12 col-md-6"><br>
+                                                <div class="form-group">
+                                                    <h4 class="text-center">Notificaciones</h4>
+                                                </div>        
+                                            </div><br>
                                             @foreach($citados as $citado)
+                                                @php
+                                                    $notificado = $notificaciones->get($citado->id);
+                                                @endphp
+
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-sm-3 col-md-3">
+                                                        <div class="form-group">
+                                                            <label>Nombre Citado</label><br>
+                                                            <span>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido }}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-3 col-md-3">
+                                                        <div class="form-group">
+                                                            <label>Citatorio</label><br>
+                                                            <a class="btn btn-success"
+                                                            href="{{ route('pdfCitatorioAudiencia', $citado->id) }}"
+                                                            target="_blank">
+                                                            Visualizar
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-3 col-md-3">
+                                                        <div class="form-group">
+                                                            <label>Nombre Citado Notificado</label><br>
+                                                        <span>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido }}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <label>Notificación</label><br>
+                                                        {{-- Notifica el trabajador --}}
+                                                        @if($notificado->notificacion === "Trabajador")
+                                                            <span style="color:blue">Notifica el trabajador</span>
+
+                                                        {{-- No exitosa se constituye --}}
+                                                        @elseif($notificado->estatus === "No exitosa se constituye")
+                                                            <a class="btn btn-info" href="{{ route('PDFNoExitosa', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}" target="_blank">Visualizar</a>
+
+                                                        {{-- Finalisada exitosamente --}}
+                                                        @elseif($notificado->estatus === "Finalizado exitosamente")
+                                                            <a class="btn btn-info" href="{{ route('PDFRazonNoticacion', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}" target="_blank">Visualizar</a>
+
+                                                        {{-- No notificada por instructivo--}}
+                                                        @elseif($notificado->estatus === "No notificada")
+                                                            <a class="btn btn-info" href="{{ route('PDFInstructivo', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}" target="_blank">Visualizar</a>
+
+                                                        {{-- No exitosa, no se cosntituye --}}
+                                                        @elseif($notificado->estatus === "No exitosa no se constituye")
+                                                            <a class="btn btn-info" style="width:100%"
+                                                            href="{{ route('PDFNoExitosaInt', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}"
+                                                            target="_blank">
+                                                                Visualizar
+                                                            </a>
+                                                        @else
+                                                            <span style="color:blue">Sin notificar</span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                           {{-- @foreach($citados as $citado)
                                                 <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label for="password">Nombre Citado</label><br>
@@ -933,7 +994,7 @@
                                                         <a class="btn btn-success" href="{{ route('pdfCitatorioAudiencia', $citado->id) }}"  target="_blank">Visualizar</a>
                                                     </div>
                                                 </div>
-                                            @endforeach
+                                            @endforeach--}}
                                             
                                             <!--div class="col-xs-12 col-sm-12 col-md-12">
                                                 @if(($general->estatus !== "Conciliacion") || ($general->estatus !== "No conciliacion") || ($general->estatus !== "Archivada"))

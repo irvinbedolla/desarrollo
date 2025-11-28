@@ -112,7 +112,7 @@
                     Estado de Michoacán de Ocampo y 21 del reglamento interior del Centro de Conciliación Laboral del Estado de Michoacán 
                     de Ocampo, a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN, me constituyo física y legalmente en el
                     domicilio ubicado en <b>{{strtoupper($citado->tipo_vialidad)}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) int. {{$citado->n_int}}@endif, COLONIA {{$citado->colonia}}, 
-                    {{$municipioCitado}}, CP {{$citado->cp}}, ESTADO MICHOACÁN DE OCAMPO</b>, siendo este el domicilio señalado en la solicitud de Conciliación como el del <b>CITADO:
+                    {{mb_strtoupper($municipioCitado, 'UTF-8')}}, CP {{$citado->cp}}, {{mb_strtoupper($estadoCitado,'UTF-8')}}</b>, siendo este el domicilio señalado en la solicitud de Conciliación como el del <b>CITADO:
                     {{$citado->nombre}} @if($citado->primer_apellido!=null){{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null){{$citado->segundo_apellido}}@endif.</b> Todo ello a efecto 
                     de dar cumplimiento al CITATORIO DE CONCILIACIÓN de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> en el expediente citado.<br><br>
 
@@ -131,11 +131,12 @@
                                 @php $index++; @endphp
                             @endif
                         @endforeach
+                    </b>
                     A mayor abundamiento, verifico que cerca del domicilio se encuentran los siguientes puntos de referencia:
                     <b>{{$citado->abundar_area}}.</b> De igual forma, he constatado que se trata de un inmueble con las siguientes características: <b>{{$citado->abundar_inmueble}}.</b><br><br>
 
                     Asimismo, por los informes que me proporciona la persona con quien se entiende la presente diligencia, quien dijo llamarse <b>{{$citado->nombre_notificacion}},
-                    QUIEN NO SE IDENTIFICA {{$citado->motivo_identificacion}}.</b> Procedo a especificar su media filiación,que incluye los siguientes rasgos: <b>SEXO {{$citado->genero}}, 
+                    QUIEN NO SE IDENTIFICA, {{$citado->motivo_identificacion}}.</b> Procedo a especificar su media filiación, que incluye los siguientes rasgos: <b>SEXO {{$citado->genero}}, 
                     TEZ {{$citado->tez}}, EDAD {{$citado->edad_filiacion}} AÑOS, ALTURA {{$citado->altura}} M., COMPLEXIÓN {{$citado->complexion}}, CABELLO {{$citado->cabello}}, OJOS {{$citado->ojos}} 
                     Y SEÑAS PARTICULARES: {{$citado->particulares}}. LO ANTERIOR SE HACE DE MANERA APROXIMADA, YA QUE EL SUSCRITO NO ES PERITO EN LA MATERIA</b>. Quien manifiesta que <b>OCUPA EL PUESTO DE 
                     {{$citado->puesto}}</b> en el domicilio en que se actúa. Enseguida me identifico con credencial vigente expedida por el Centro
@@ -151,7 +152,7 @@
                     Anexando impresión fotográfica para constancia legal.<br>
                     <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. Doy fe.</b> 
                 </p>
-                <p><center><b>___________________________________<br> LIC. {{$notificador->name}}<br> FUNCIONARIO/A NOTIFICADOR/A</b></center> </p>
+                <p><center><b>___________________________________<br> LIC. {{mb_strtoupper($notificador->name,'UTF-8')}}<br> FUNCIONARIO/A NOTIFICADOR/A</b></center> </p>
                 <div class="page-break"></div> <!-- Genera un salto de línea-->
                 @foreach($imagenes as $index => $imagen) <!--Muestra una fotografía por hoja, númerando por anexos-->
                     @if($imagen)

@@ -1659,8 +1659,6 @@ class TurnosController extends Controller
             return redirect()->route('todas_ratificaciones');
             //return redirect()->route('audiencias.conciliador');
         }
-
-        
     }
 
     public function pagar_ratificacion($id){
@@ -2019,8 +2017,26 @@ class TurnosController extends Controller
         $conceptos      = Concepto::where('id_solicitud',$id)->where('tipo_pago','Ratificacion')->get();
         $pagos          = Pagos::where('id_solicitud',$id)->where('tipo_pago','Ratificacion')->get();
         $deducciones    = Deducciones::where('id_solicitud',$id)->where('tipo_pago','Ratificacion')->get();
+        // Obtener prestaciones y deducciones
+        /*$prestaciones = Concepto::where('id_solicitud', $id)->get();
+        $deducciones = Deducciones::where('id_solicitud', $id)->get();
 
-        return view('/ratificaciones/vista_previa',compact('idSolicitud','representantes','conciliador','solicitud','abogados','estados','municipios','conceptos','pagos','deducciones'));
+        $conceptosTexto = [];
+        $deduccionesTexto = [];
+
+        foreach ($prestaciones as $concepto) {
+            $conceptosTexto[$concepto->id] = $this->convertirNumerosALetras($concepto->monto);
+        }
+
+        foreach ($deducciones as $deduccion) {
+            $deduccionesTexto[$deduccion->id] = $this->convertirNumerosALetras($deduccion->monto);
+        }*/
+
+        $totalPrestaciones = $conceptos->sum('monto');
+        $totalDeducciones = $deducciones->sum('monto');
+        $pagoTotal = $totalPrestaciones - $totalDeducciones;
+
+        return view('/ratificaciones/vista_previa',compact('idSolicitud','representantes','conciliador','solicitud','abogados','estados','municipios','conceptos','pagos','deducciones','pagoTotal'));
 
     }
 
@@ -2100,7 +2116,7 @@ class TurnosController extends Controller
             }
         }
         //Validar si existe un pago extra
-        if(isset($data["tipo_pago"])){
+       /* if(isset($data["tipo_pago"])){
             $cont = count($data["monto_pago"]);
             for($i = 0; $i < $cont; $i++) {
                 $data_citado = [
@@ -2108,6 +2124,26 @@ class TurnosController extends Controller
                     'monto'         => $data["monto_pago"][$i], 
                     'descripcion'   => $data["tipo_pago"][$i],
                     'tipo_pago'     => "Audiencia"
+                ];
+                Concepto::create($data_citado);
+            }
+        }*/
+        if(isset($data["tipo_pago"])){
+            $tiposPago = $data["tipo_pago"];
+            $cont = count($data["monto_pago"]);
+            $otrasPrestaciones = $data["otra_prestacion"] ?? [];
+        
+            for($i = 0; $i < $cont; $i++) {
+                $descripcion = $tiposPago[$i];
+                if ($descripcion === "Otras" && isset($otrasPrestaciones[$i]) && !empty(trim($otrasPrestaciones[$i]))) {
+                    $descripcion = trim($otrasPrestaciones[$i]);
+                }
+                
+                $data_citado = [
+                    'id_solicitud'  => $data["id"], 
+                    'monto'         => $data["monto_pago"][$i], 
+                    'descripcion'   => $descripcion,
+                    'tipo_pago'     => "Ratificacion"
                 ];
                 Concepto::create($data_citado);
             }
@@ -2195,7 +2231,6 @@ class TurnosController extends Controller
 
 
     public function actualizar_folio(){
-        
         $tableName = 'turnos'; // Reemplaza con el nombre real de tu tabla
         $idColumn = 'id'; // Columna para ordenar la secuencia (usualmente 'id')
         $delegacionColumn = 'delegacion'; // Columna de agrupación

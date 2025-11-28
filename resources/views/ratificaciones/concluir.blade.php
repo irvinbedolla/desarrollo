@@ -188,9 +188,10 @@
                                             </div>
                                         </div>
                                         <div id="newRowaPago"></div>
-
-                                       
-
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <h4 class="text-center" style="margin-top:20px;">Total a pagar:</h4>
+                                            <h3 id="totalCalculado" class="text-center" style="color:green;">$0.00</h3>
+                                        </div>
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <br><button type="submit" class="btn btn-primary" name="valor" value="2">Guardar</button>
@@ -412,9 +413,23 @@
             $(this).closest('.col-xs-12').remove();
         });
 
+        //CALCULO DE PAGO TOTAL
+        // Calcular prestaciones
+        $(document).on('input', 'input[name="monto_pago[]"]', function () {
+            calcularTotal();
         });
 
-        
+        // Calcular deducciones
+        $(document).on('input', 'input[name="monto_deduccion[]"]', function () {
+            calcularTotal();
+        });
+        $(document).on('click', '.removeRow, .removeRow3', function () {
+            setTimeout(calcularTotal, 100);
+        });
+
+
+        });
+
         function validarNumero(input) {
             // La expresión regular permite cualquier número (0-9) y un solo punto (.)
             // El 'g' al final asegura que se reemplace globalmente
@@ -458,5 +473,38 @@
                 container.find('input').val('').removeAttr('required');
             }
         });
+
+        //Muestra el total a pagar en base a las prestaciones y deducciones capturadas
+        function formatoMoneda(num) {
+            return num.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+        function calcularTotal() {
+            let totalPrestaciones = 0;
+            let totalDeducciones = 0;
+            let totalPagosDiferidos = 0;
+
+            // SUMA PRESTACIONES
+            $('input[name="monto_pago[]"]').each(function () {
+                let val = parseFloat($(this).val());
+                if (!isNaN(val)) totalPrestaciones += val;
+            });
+
+            // SUMA DEDUCCIONES
+            $('input[name="monto_deduccion[]"]').each(function () {
+                let val = parseFloat($(this).val());
+                if (!isNaN(val)) totalDeducciones += val;
+            });
+
+            let total = totalPrestaciones - totalDeducciones;
+
+            $('input[name="monto_pagos[]"]').each(function () {
+            let val = parseFloat($(this).val());
+            if (!isNaN(val)) totalPagosDiferidos += val;
+            });
+
+            $('#totalCalculado').text("$" + formatoMoneda(total));
+            $("#totalPagosDiferidos").text('$' + formatoMoneda(totalPagosDiferidos));
+        }
+
     </script>
 @endsection
