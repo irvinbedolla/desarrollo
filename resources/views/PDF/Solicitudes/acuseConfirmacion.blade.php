@@ -107,9 +107,10 @@
                 </div><br><br><br>
                 <div class="col-lg-12">
                     <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br>
-                          ACUSE DE SOLICITUD DE CONFIRMADA</b></center>
+                          ACUSE DE SOLICITUD CONFIRMADA</b></center>
                     </p><br>
-                    <p><b>FECHA DE LA SOLICITUD: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}<br></b></p>
+                    <p><b>FECHA DE LA SOLICITUD: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}<br>
+                          FECHA DE CONFIRMACIÓN DE LA SOLICITUD:{{ \Carbon\Carbon::parse($solicitud->fecha_confirmacion)->translatedFormat('d \d\e F \d\e\l Y') }}</b></p>
                     <p><b> 
                         SOLICITANTE: {{ $solicitante->nombre }}<br><br>
                         CITADO (S): @foreach($citados as $citado)
@@ -119,10 +120,10 @@
                     
                     <p><b>{{ $solicitante->nombre }}</b>, ha confirmado exitosamente la solicitud de conciliación con folio <b>{{ $solicitud->NUE }}</b>.<br><br>
                         En el documento NOTIFICACIÓN PARA LA CELEBRACIÓN DE LA AUDIENCIA DE CONCILIACIÓN se le señalará fecha y hora para la celebración de la audiencia de conciliación a la que deberá 
-                        comparecer <b>presencialmente</b> en las instalaciones del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<br><br>
+                        comparecer <b>presencialmente</b> en las instalaciones del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, ubicada en <b>{{$direccion_sede}}</b><br><br>
                         
                         Atendiendo la fracción VII del artículo 689-E de la Ley Federal del Trabajo, las trabajadoras y los trabajadores, deberán acudir personalmente a la audiencia conciliatoria, sin 
-                        impedimento de poderse acompañar de una persona de su confianza, pero no se reconocerá a ésta como apoderado, por tratarse de un procedimiento de conciliación y no un juicio; no 
+                        impedimento de poderse acompañar de una persona de su confianza, pero no se reconocerá a ésta como apoderado, por tratarse de un procedimiento de conciliación y no de un juicio; no 
                         obstante, el trabajador también podrá ser asistido por un licenciado en derecho, abogado o un Procurador de la Defensa del Trabajo. <br><br>
 
                         El patrón deberá asistir personalmente o por conducto de representante con facultades suficientes para obligarse en su nombre, atendiendo a los requisitos establecidos en el 

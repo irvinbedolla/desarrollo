@@ -7280,14 +7280,25 @@ class SeerController extends Controller
                     $audiencias = Audiencias::select('id_solicitud')->distinct()->whereIn('delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($audiencias as $audiencia) {
                         $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
-                        $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                        $audiencia->nombre = $solicitante?->nombre ?? 'Sin solicitante';
+
                         $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
-                        $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
-                        $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Algo';
-                        $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
-                        $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
-                        $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
-                        $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
+                        $audiencia->NUE = $expediente?->NUE ?? 'Sin Expediente';
+                        $audiencia->estatus = $expediente?->estatus ?? 'Sin estatus';
+                        $audiencia->fecha = date('Y-m-d', strtotime($audiencia["fecha"]));
+                        $audiencia->hora = date('H:i:s', strtotime($audiencia["hora"]));
+                        $datosAudiencia = Audiencias::where('id_solicitud', $audiencia->id_solicitud)->first();
+                        $conciliador = User::find($datosAudiencia->id_conciliador);
+                        $audiencia->conciliador = $conciliador?->name ?? 'Sin Conciliador';
+                        
+                        $pendientes = Pagos::where('id_solicitud',$audiencia["id_solicitud"])->where('estatus',"Pendiente")->where('tipo_pago',"Audiencia")->get();
+                        if(count($pendientes) == 0){
+                            //Si la contancia es 0 no tiene pagos pendientes
+                            $audiencia->constancia = 0;
+                        }
+                        else{
+                            $audiencia->constancia = 1;
+                        }
                     }
                 }
                 if($user["delegacion"] == "Uruapan"){
@@ -7302,6 +7313,14 @@ class SeerController extends Controller
                         $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
                         $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
                         $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
+                        $pendientes = Pagos::where('id_solicitud',$audiencia["id_solicitud"])->where('estatus',"Pendiente")->where('tipo_pago',"Audiencia")->get();
+                        if(count($pendientes) == 0){
+                            //Si la contancia es 0 no tiene pagos pendientes
+                            $audiencia->constancia = 0;
+                        }
+                        else{
+                            $audiencia->constancia = 1;
+                        }
                     }
                 }
                 if($user["delegacion"] == "Zamora"){
@@ -7316,6 +7335,14 @@ class SeerController extends Controller
                         $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
                         $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
                         $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
+                        $pendientes = Pagos::where('id_solicitud',$audiencia["id_solicitud"])->where('estatus',"Pendiente")->where('tipo_pago',"Audiencia")->get();
+                        if(count($pendientes) == 0){
+                            //Si la contancia es 0 no tiene pagos pendientes
+                            $audiencia->constancia = 0;
+                        }
+                        else{
+                            $audiencia->constancia = 1;
+                        }
                     }
                 }
             }
@@ -7331,6 +7358,14 @@ class SeerController extends Controller
                     $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
                     $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
                     $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
+                    $pendientes = Pagos::where('id_solicitud',$audiencia["id_solicitud"])->where('estatus',"Pendiente")->where('tipo_pago',"Audiencia")->get();
+                    if(count($pendientes) == 0){
+                        //Si la contancia es 0 no tiene pagos pendientes
+                        $audiencia->constancia = 0;
+                    }
+                    else{
+                        $audiencia->constancia = 1;
+                    }     
                 }
             }
         }
@@ -7347,6 +7382,14 @@ class SeerController extends Controller
                     $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
                     $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
                     $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
+                    $pendientes = Pagos::where('id_solicitud',$audiencia["id_solicitud"])->where('estatus',"Pendiente")->where('tipo_pago',"Audiencia")->get();
+                    if(count($pendientes) == 0){
+                        //Si la contancia es 0 no tiene pagos pendientes
+                        $audiencia->constancia = 0;
+                    }
+                    else{
+                        $audiencia->constancia = 1;
+                    }
                 }
             }
             if($user["delegacion"] == "Uruapan"){
@@ -7361,6 +7404,14 @@ class SeerController extends Controller
                     $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
                     $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
                     $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
+                    $pendientes = Pagos::where('id_solicitud',$audiencia["id_solicitud"])->where('estatus',"Pendiente")->where('tipo_pago',"Audiencia")->get();
+                    if(count($pendientes) == 0){
+                        //Si la contancia es 0 no tiene pagos pendientes
+                        $audiencia->constancia = 0;
+                    }
+                    else{
+                        $audiencia->constancia = 1;
+                    }
                 }
             }
             if($user["delegacion"] == "Zamora"){
@@ -7375,6 +7426,14 @@ class SeerController extends Controller
                     $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
                     $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
                     $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
+                    $pendientes = Pagos::where('id_solicitud',$audiencia["id_solicitud"])->where('estatus',"Pendiente")->where('tipo_pago',"Audiencia")->get();
+                    if(count($pendientes) == 0){
+                        //Si la contancia es 0 no tiene pagos pendientes
+                        $audiencia->constancia = 0;
+                    }
+                    else{
+                        $audiencia->constancia = 1;
+                    }
                 }
             }
         }
@@ -7392,6 +7451,14 @@ class SeerController extends Controller
                 $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
                 $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
                 $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
+                $pendientes = Pagos::where('id_solicitud',$audiencia["id_solicitud"])->where('estatus',"Pendiente")->where('tipo_pago',"Audiencia")->get();
+                if(count($pendientes) == 0){
+                    //Si la contancia es 0 no tiene pagos pendientes
+                    $audiencia->constancia = 0;
+                }
+                else{
+                    $audiencia->constancia = 1;
+                }
             }
         }
 
@@ -8601,5 +8668,21 @@ class SeerController extends Controller
             'Otro'                    => 'Autoridad Correspondiente',
         ];
         return $descripciones[$tipo];
+    }
+    public function pagoA_audiencia(Request $request){
+        $data = $request->all();
+        Pagos::find($data["id"])
+        ->update(['estatus'  => "Pagado", 'observaciones' => $data["observaciones"]]);
+
+        $pagos = Pagos::find($data["id"]);
+        $id_solicitud = $pagos["id_solicitud"];
+        $faltantes =  Pagos::where('id_solicitud',$id_solicitud)->where('estatus',"Pendiente")->get();
+
+        if(count($faltantes) == 0){
+            SeerPerGeneral::find($id_solicitud)
+            ->update(['estatus' => "Concluida"]);
+        }
+
+        return redirect()->route('todas_audiencias'); 
     }
 }

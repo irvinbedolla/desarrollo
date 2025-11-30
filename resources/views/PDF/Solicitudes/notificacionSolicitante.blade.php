@@ -108,11 +108,10 @@
                 <div class="col-lg-12">
                     <p><center><b>
                         CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO
-                        NOTIFICACIÓN DE AUDIENCIA DE CONCILIACIÓN<br>
                         </b></center></p><br>
                     <p><b>
-                        ASUNTO: NOTIFICACIÓN DE AUDIENCIA DE CONCILIACIÓN<br>
-                        SOLICITANTE: {{ $solicitante->nombre }}<br><br>
+                        ASUNTO: NOTIFICACIÓN PARA LA CELEBRACIÓN DE LA AUDIENCIA DE CONCILIACIÓN<br>
+                        SOLICITANTE: {{ $solicitante->nombre }}<br>
                         CITADO (S): @foreach($citados as $citado)
                                         {{ $citado->nombre }} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}} <br>
                                     @endforeach
@@ -121,13 +120,13 @@
                     </b></p>
 
                     <p> Con fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha_confirmacion)->translatedFormat('d \d\e F \d\e\l Y') }}</b> siendo las <b>{{ \Carbon\Carbon::now()->translatedFormat('H:i') }}</b> horas, ante esta 
-                        Autoridad Conciliadora, <b>{{ $solicitante->nombre }}</b>, me doy por notificado(a) personalmente de la fecha para la celebraciónn de la Audiencia de Conciliación derivada de 
+                        Autoridad Conciliadora, <b>{{ $solicitante->nombre }}</b>, me doy por notificado(a) personalmente de la fecha para la celebración de la Audiencia de Conciliación derivada de 
                         la solicitud con número de identificación único <b>{{ $solicitud->NUE }}</b>, misma que tendrá verificativo el día 
                         <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{ $audiencia->hora }}</b> horas, en la sala <b>{{ $audiencia->sala }}</b> de la Delegación 
                         Regional de {{ $solicitud->delegacion }} del Centro de Conciliación Laboral 
                         del Estado de Michoacán de Ocampo, con domicilio en <b>{{$direccion_sede}}</b>.<br><br>
 
-                        Asimismo, de conformidad con la fracción X del artículo 684-E, me hago conocedor que <b>de no comparecer se archivara el presente asunto por falta de interés</b>.
+                        Asimismo, de conformidad con la fracción X del artículo 684-E, me hago conocedor que <b>de no comparecer se archivará el presente asunto por falta de interés</b>.
                     </p>
                     <br><br><br><br><br><br><br>
                     <div class="row">
