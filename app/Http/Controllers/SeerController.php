@@ -6977,7 +6977,7 @@ class SeerController extends Controller
                             break;
                     }
 
-                    $slot->modify('+30 minutes');
+                    $slot->modify('+15 minutes');
                 }
             }
             $fecha->modify('+1 day');
