@@ -47,6 +47,7 @@
                                             <th style="color: #ffff;">Estatus Notificación</th>
                                             <th style="color: #ffff;">Representante legal</th>
                                             <th style="color: #ffff;">Acciones</th>
+                                            <th style="color: #ffff;"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -82,9 +83,11 @@
                                                 </td>
                                                 <td>
                                                     <button type="button" class="btn btn-primary w-100 mt-1 mb-1 text-nowrap open-modal" data-id="{{ $representante->id }}" data-bs-toggle="modal" data-bs-target="#modalCitados"> Registrar Comparecencia </button>
-                                                    @if($representante->id_abogado != null)
+                                                </td>
+                                                <td>
+                                                    {{--@if($representante->id_abogado != null)--}}
                                                         <a class="btn btn-success mb-1 w-100" href="{{ route('PDFcompareceSP', $solicitud->id) }}"  target="_blank">Comparecencia sin Acreditación de Facultades</a>
-                                                    @endif
+                                                    {{--@endif--}}
                                                 </td>
                                             </tr>
                                             @php $contador++; @endphp

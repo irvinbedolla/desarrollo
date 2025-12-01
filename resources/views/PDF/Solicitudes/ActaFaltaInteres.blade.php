@@ -109,9 +109,8 @@
                     <b>VISTO</b> el estado que guarda el expediente identificado con el número <b>{{ $solicitud->NUE }}</b> relativo a la solicitud de conciliación realizada por
                     <b>{{ $solicitante->nombre }}</b>, por falta de interés se formula resolución en atención a los siguientes:
                 </p>
-                <p>
-                    <center><b>RESULTANDOS</b></center>
-                </p><br>
+                    <center><b>RESULTANDOS</b></center><br>
+
                 <p>
                     <b>Primero.</b> El <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, <b>{{ $solicitante->nombre }}</b> solicitó ante este Centro, 
                     iniciar con el Procedimiento de Conciliación Prejudicial con el(los) citados:
@@ -136,9 +135,7 @@
                                 
                     En esas condiciones, este Centro expone los siguientes: 
                 </p>
-                <p>
-                    <center><b>CONSIDERANDOS</b></center>
-                </p><br>
+                    <center><b>CONSIDERANDOS</b></center><br>
 
                 <p>
                     <b>I.</b> Esta Autoridad es competente para conocer del presente asunto en términos de lo dispuesto por los artículos 123, apartado A, fracción XX, 
@@ -152,11 +149,9 @@
                     </b> horas para la Audiencia, se notificó a la parte 
                     solicitante <b>{{ $solicitante->nombre }}</b>, sin embargo, no acudió, no obrando una causa justificada de la incomparecencia. <br><br> 
                     Por lo anteriormente expuesto, se:
-                </p>       
-                <p>
-                    <center><b>RESUELVE</b></center>
-                </p>
-                <p>
+                </p> <br><br><br><br><br>      
+                    <p><br><br><center><b>RESUELVE</b></center><br>
+
                     <b>Primero.</b> Se archiva el expediente <b>{{ $solicitud->NUE }}</b> que consta desde el <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, 
                     en este Centro, por falta de interés del Solicitante.<br><br>
 
@@ -173,7 +168,8 @@
                 </p>
 
                 <br>
-                <center><br><br> <p><b>___________________________________<br>{{ $conciliador->name }} <br> FUNCIONARIO/A CONCILIADOR/A</b></p></center>     
+                <center><br><br> <p><b>___________________________________<br>{{ strtoupper($conciliador->name) }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
+                        DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>     
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

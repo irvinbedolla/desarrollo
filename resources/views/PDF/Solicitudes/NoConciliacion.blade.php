@@ -106,7 +106,7 @@
                     @endif 
                     {{ $citado->colonia }}, {{ mb_strtoupper($municipioEmpresa, 'UTF-8') }}, {{ mb_strtoupper($estadoEmpresa, 'UTF-8') }}, C.P. {{ $citado->cp }}<br>
                     Fecha de registro de la solicitud: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}<br>
-                    Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $audiencia->hora }}<br>
+                    Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ \Carbon\Carbon::parse($audiencia->hora)->format('H:i') }} hrs.<br>
                     Funcionario(a) conciliador(a) responsable: {{ $conciliador->name }}<br>
                     Asistencia del citado: @if($citado->aparece_convenio==1)Si @else No @endif
                 </b></p>
@@ -138,9 +138,10 @@
                          
                 </p>    
                 <br><br><br>  
-                <center><br><br> <p><b>___________________________________<br>{{ $conciliador->name }} <br> FUNCIONARIO/A CONCILIADOR/A</b></p></center>    
+                <center><br><br> <p><b>___________________________________<br>{{ strtoupper($conciliador->name) }} <br> FUNCIONARIO/A CONCILIADOR<br>
+                DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>    
                 <br>
-                <p>En caso de que el conflicto se relacione con prestaciones de seguridad social, pensiones, designación de beneficiarios
+                <p style="font-size:10px">En caso de que el conflicto se relacione con prestaciones de seguridad social, pensiones, designación de beneficiarios
                     y devolución de aportaciones, puedes acudir a la Procuraduría de la Defensa del Trabajo.<br><br>
                     Se hace del conocimiento de los trabajadores, sus beneficiarios y sindicatos que en caso de requerirlo, pueden ser
                     asesorados y en su caso, representados legalmente para presentar una demanda, por la Procuraduría de la Defensa

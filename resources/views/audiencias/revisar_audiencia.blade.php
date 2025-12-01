@@ -135,32 +135,32 @@
                                         <a class="btn btn-info" onclick="openCity(event, 'solicitante')">Solicitante</a>
                                         <a class="btn btn-info" onclick="openCity(event, 'documentos')">Citado(s)</a>
                                         <a class="btn btn-info" onclick="openCity(event, 'citados')">Documentos</a>
-                                        <a class="btn btn-info" onclick="openCity(event, 'confirmacion')">Acciones</a>
+                                        <a class="btn btn-success" onclick="openCity(event, 'confirmacion')">Acciones</a>
                                     </div>
 
                                     <div id="detalles" class="tabcontent">
                                         <div id="tabla_detalles" class="row">
-
+                                            <div class="col-xs-12 col-sm-6 col-md-2">
+                                                <div class="form-group">
+                                                    <label for="name">Fecha de Registro</label>
+                                                    <input type="date" class="form-control" value="<?=$general["fecha"];?>" readonly>
+                                                </div>
+                                            </div>
                                             <div class="col-xs-12 col-sm-6 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Fecha de Confirmación</label>
                                                     <input type="date" class="form-control" value="{{ $general['fecha_confirmacion'] ?? '' }}" readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-9">
+                                            <div class="col-xs-12 col-sm-6 col-md-3">
                                                 <div class="form-group">
                                                     <label for="password">Número de Expediente</label>
                                                     <input type="text" name="actividad_economica" class="form-control" value="{{ $general['NUE'] ?? '' }}" readonly>
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-6 col-md-3">
-                                                <div class="form-group">
-                                                    <label for="name">Fecha de Registro</label>
-                                                    <input type="date" class="form-control" value="<?=$general["fecha"];?>" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-9">
+                                            
+                                            <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
                                                     <label for="password">Actividad económica<span style="color:red;"> (*)</span></label>
                                                     <input type="text" name="actividad_economica" class="form-control" value="<?=$general["actividad"];?>" required>
@@ -606,7 +606,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
                                                         <label for="name">Describe brevemente el motivo de tu solicitud <span style="color:red;">(*)</span></label>
-                                                        <textarea class="form-control" name="descripcionSolicitud" required>{{ $solicitante["descripcionSolicitud"] ?? '' }}</textarea>
+                                                        <textarea class="form-control" name="descripcionSolicitud" oninput="this.value = this.value.toUpperCase()" required>{{ $solicitante["descripcionSolicitud"] ?? '' }}</textarea>
                                                         <div class="invalid-feedback">
                                                             El campo descripción del motivo de la solicitud es obligatorio.
                                                         </div>
@@ -865,7 +865,7 @@
                                                     <div class="form-group">
                                                         <label for="name">¿Quién entregará las notificaciones?<span style="color:red;"> (*)</span></label>
                                                         <select name="notificacion[]" class="form-control" required>
-                                                            <option value="Trabajador"  {{ $citado['notificacion'] == 'Trabajador' ? "selected" : '' }}>Trabajador</option>
+                                                            <option value="Trabajador"  {{ $citado['notificacion'] == 'Trabajador' ? "selected" : '' }}>Solicitante</option>
                                                             <option value="Centro"      {{ $citado['notificacion'] == 'Centro' ? "selected" : '' }}>Centro de conciliación Laboral</option>
                                                         </select>
                                                         <div class="invalid-feedback">
@@ -1105,7 +1105,7 @@
                                                 @endphp
                                                 @if(($general->estatus !== "Conciliacion") || ($general->estatus !== "No conciliacion") || ($general->estatus !== "Archivada"))
                                                     @if($citadosCount > 0)
-                                                        <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;"  name="toquen" value="1">Guardar Edición</button>
+                                                        <button type="submit" class="btn btn-primary" name="toquen" value="1">Guardar Edición</button>
                                                     @else
                                                         <button type="button" class="btn btn-secondary" disabled title="Agregue al menos un citado para poder guardar."  name="toquen" value="1">Guardar Edición</button>
                                                         <div class="text-muted mt-2">Debe agregar al menos un citado para poder guardar.</div>
@@ -1220,7 +1220,7 @@
                                 <label for="name">¿Quién entregará las notificaciones? <span style="color:red;">(*)</span></label>
                                 <select name="notificacion" class="form-control" required>
                                     <option value="">SELECCIONE</option>
-                                    <option value="Trabajador">Trabajador</option>
+                                    <option value="Trabajador">Solicitante</option>
                                     <option value="Centro">Centro de conciliación Laboral</option>
                                 </select>
                                 <div class="invalid-feedback">
@@ -1267,7 +1267,7 @@
                                     <label for="name">RFC (Opcional)</label>
                                     <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()"> 
                                     <div class="invalid-feedback">
-                                         El campo conflicto es obligatorio.
+                                         El campo RFC es obligatorio.
                                     </div>
                                 </div>
                             </div>
@@ -1952,6 +1952,37 @@
                 sel.addEventListener('change', function(){ syncTipoCitado(idx); });
             });
         });
+         // Función para convertir todo el texto a mayúsculas
+        function convertirAMayusculas() {
+            const elementos = document.querySelectorAll('input[type="text"], textarea');
+
+            elementos.forEach(elemento => {
+                elemento.addEventListener('input', function() {
+                    this.value = this.value.toUpperCase();
+                });
+                if (elemento.value) {
+                    elemento.value = elemento.value.toUpperCase();
+                }
+            });
+        }
+        document.addEventListener('DOMContentLoaded', (event) => {
+            convertirAMayusculas();
+            (function () {
+                'use strict'
+                var forms = document.querySelectorAll('.needs-validation')
+                Array.prototype.slice.call(forms)
+                    .forEach(function (form) {
+                        form.addEventListener('submit', function (event) {
+                            if (!form.checkValidity()) {
+                                event.preventDefault()
+                                event.stopPropagation()
+                            }
+                            form.classList.add('was-validated')
+                        }, false)
+                    })
+            })()
+        });
+        // FIN Función para convertir todo el texto a mayúsculas
     </script>
 @endsection
 
