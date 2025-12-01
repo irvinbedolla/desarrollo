@@ -108,8 +108,8 @@
                 <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br>
                 <p><b>ASUNTO: CITATORIO DE AUDIENCIA DE CONCILIACIÓN<br>
                     SOLICITANTE: {{ $solicitante->nombre }}<br>
-                    CITADO: {{ $citado->nombre}} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}<br><br>
-                    FECHA DE EMISIÓN DEL CITATORIO:  {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}<br>
+                    CITADO: {{ $citado->nombre}} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}<br>
+                    FECHA DE EMISIÓN DEL CITATORIO:  {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}
                 </b></p>  
                            
                 <p><b>P R E S E N T E</b></p>
@@ -146,7 +146,8 @@
                 @endif
 
                 <br><br><br><br><br>
-                <p><center><b>___________________________________<br> {{$conciliador->name}} <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>
+                <p><center><b>___________________________________<br> {{strtoupper($conciliador->name)}} <br> FUNCIONARIO/A CONCILIADOR/A<br>
+                        DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></center> </p>
             </div>
             <script type="text/php">
                 if (isset($pdf)) {
