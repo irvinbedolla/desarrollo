@@ -3504,6 +3504,7 @@ class SeerController extends Controller
         $num_audi = $num_audi+1;
 
         $numero_audiencia = $this->GeneraAudiencia($data["id"]);
+        
         $data_conciliador = [
             'id_solicitud'          => $data["id"],
             'numero_audiencia'      => $numero_audiencia[0],
@@ -3524,7 +3525,15 @@ class SeerController extends Controller
             'conciliador_id'    => $user->id
         ]);
 
-        
+        $numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
+        Audiencias::where('id_solicitud',$data["id"])
+        ->orderBy('id_solicitud','desc')
+        ->update([
+            'numero_audiencia'  =>  $numAudiencia+1,
+            'folio_audiencia'   =>  $numero_audiencia[0],
+            'estatus'           => 'Archivada',
+        ]);
+
         return redirect()->route('todas_audiencias');
     }
 
@@ -4018,6 +4027,15 @@ class SeerController extends Controller
             'estatus'               => 'Incompetencia'
         ]);
 
+        $numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
+        Audiencias::where('id_solicitud',$data["id"])
+        ->orderBy('id_solicitud','desc')
+        ->update([
+            'numero_audiencia'  =>  $numAudiencia+1,
+            'folio_audiencia'   =>  $numero_audiencia[0],
+            'estatus'           => 'Archivada',
+        ]);
+
         return redirect()->route('todas_audiencias');
     }
     
@@ -4066,11 +4084,15 @@ class SeerController extends Controller
         ];        
         SeerPerConciliador::create($data_conciliador);  
         //Obtener la audiencia mas reciente
-        $audiencia = Audiencias::where('id_solicitud',$data["id"])->select('id')->orderBy('id', 'desc')->first();
+        //$audiencia = Audiencias::where('id_solicitud',$data["id"])->select('id')->orderBy('id', 'desc')->first();
         //Actualizar tabla de audiencias        
-        Audiencias::find($audiencia["id"])->update([
-            'fecha' => $data["fecha"],
-            'hora'  => $data["hora"],
+        $numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
+        Audiencias::where('id_solicitud',$data["id"])
+        ->orderBy('id_solicitud','desc')
+        ->update([
+            'numero_audiencia'  =>  $numAudiencia+1,
+            'folio_audiencia'   =>  $numero_audiencia[0],
+            'estatus'           => 'Archivada',
         ]);
         //Actualizar tabla general
         $solicitud = SeerPerGeneral::find($data["id"])
@@ -4696,6 +4718,15 @@ class SeerController extends Controller
                 'estatus'               => $data["conclucion"]
             ]);
 
+            $numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
+            Audiencias::where('id_solicitud',$data["id"])
+            ->orderBy('id_solicitud','desc')
+            ->update([
+                'numero_audiencia'  =>  $numAudiencia+1,
+                'folio_audiencia'   =>  $numero_audiencia[0],
+                'estatus'           => 'Archivada',
+            ]);
+
             //Actualiza el campo aparece_convenio de la tabla citados a los citados que responderán o los que pagarán los cumplimientos
             $apareceConvenio = isset($data['aparece_convenio']) && is_array($data['aparece_convenio'])
             ? array_keys($data['aparece_convenio'])
@@ -4746,6 +4777,15 @@ class SeerController extends Controller
                 'conciliador_id'        => $user->id,
                 'observaciones'         => $data["observaciones"], 
                 'estatus'               => $data["conclucion"]
+            ]);
+
+            $numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
+            Audiencias::where('id_solicitud',$data["id"])
+            ->orderBy('id_solicitud','desc')
+            ->update([
+                'numero_audiencia'  =>  $numAudiencia+1,
+                'folio_audiencia'   =>  $numero_audiencia[0],
+                'estatus'           => 'Archivada',
             ]);
 
             return redirect()->route('audiencia_index');
