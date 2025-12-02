@@ -2332,7 +2332,6 @@ class SeerController extends Controller
                 'email'            => $usuario["email"],
                 'NumFolio'         => $folio,
             ];
-            //dd($variables);
             Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
         }
         else{
@@ -2350,7 +2349,6 @@ class SeerController extends Controller
                 'email'            => $usuario["email"],
                 'NumFolio'         => $folio,
             ];
-            //dd($variables);
             Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
         }
 
@@ -3124,9 +3122,7 @@ class SeerController extends Controller
                 $num_audi = $numero_audiencias->numero_audiencias;
             }
             $num_audi = $num_audi+1;
-
             $Audiencia = $this->ObtenerAudiencia($delegacion["delegacion"]);
-
             $sala = 1;
             switch($Audiencia[3]){
             //Morelia
@@ -3159,11 +3155,14 @@ class SeerController extends Controller
                 default:
                     $sala = "Pendiente"; break;
             }
+            $fecha_audiencia = date('Y-m-d', strtotime($Audiencia[0]."+7 day"));
+
             $audiencia_insert=array(
                 'id_solicitud'      => $data["id"],
                 'numero_audiencia'  => $num_audi,
                 'folio_audiencia'   => $numero_audiencia[0],
                 'fecha'             => $Audiencia[0],
+                'proxima_audiencia' => $fecha_audiencia,
                 'hora'              => $Audiencia[1],
                 'id_conciliador'    => $Audiencia[3],
                 'sala'              => $sala,
@@ -4025,7 +4024,6 @@ class SeerController extends Controller
     public function GeneraAudiencia($id){
         $año_actual = date('Y');
         $id_adiencia = SeerPerConciliador::select('consecutivo')->orderBy('consecutivo', 'desc')->first();
-        
         if(!isset($id_adiencia)){
             $num_adiencia = 0;
         }
@@ -4288,6 +4286,7 @@ class SeerController extends Controller
             ->whereIn('permisos_conciliador.tipo', ["Ambos","Precencial"])
             ->get();
         }else{
+            //Voy a revisar la sede para saber si hay conciliadores que tengan estatus de ambos
             if($delegacion == "Zitácuaro"){
                 $oficina_apoyo = "Morelia";
             }
@@ -4297,6 +4296,7 @@ class SeerController extends Controller
             if($delegacion == "Sahuayo"){
                 $oficina_apoyo = "Zamora";
             }
+
             //Vamos a contar cuandos auxiliares existen en el CCL
             $conciliadores = User::whereHas($relacionEloquent, function ($query) {
                 return $query->where('name', '=', 'Conciliador');
@@ -4307,21 +4307,14 @@ class SeerController extends Controller
             ->get();
         }
 
-        if($delegacion == "Zitácuaro"){
-            $delegacion = "Morelia";
-        }
-        if($delegacion == "Lárazo Cárdenas"){
-            $delegacion = "Uruapan";
-        }
-        if($delegacion == "Sahuayo"){
-            $delegacion = "Zamora";
-        }
         //Numero de conciliadores
         $contador_conciliadores = count($conciliadores);
+        //dd($contador_conciliadores);
         //Obtener la ultima fecha y hora
         $fecha_reciente = Audiencias::where('delegacion',$delegacion)->select('fecha','hora')->orderBy('fecha', 'desc')->first();
+        //dd($fecha_reciente);
         $fecha_revisar = date('Y-m-d', strtotime($fecha_reciente["fecha"]));
-        $fecha_revisar = strtotime($fecha_revisar." +7 day");
+        $fecha_audiencia = $fecha_revisar;
         $fecha_hora = date('H:i:s', strtotime($fecha_reciente["hora"]));
         //Validar cuantas audiencias hay en ese horario y eas hora
         $conteo = Audiencias::where('delegacion',$delegacion)
@@ -4352,6 +4345,7 @@ class SeerController extends Controller
                             $revisar_centro = DiasInhabiles::
                             where('fecha_inicio', $fecha_revisar)
                             ->where('centro',$user["delegacion"])
+                            ->whereNull('user_id')
                             ->first();
 
                             $revisar_disponible = DiasInhabiles::
@@ -4371,6 +4365,7 @@ class SeerController extends Controller
                             $random = array_rand($listado_auxiliares);
                             $array_horarios[0] = $fecha_revisar;
                             $array_horarios[1] = $fecha_hora;
+                            $array_horarios[2] = $fecha_audiencia;
                             $array_horarios[3] = $listado_auxiliares[$random];
                             return $array_horarios;
                         }
@@ -4388,6 +4383,7 @@ class SeerController extends Controller
                             $revisar_centro = DiasInhabiles::
                             where('fecha_inicio', $fecha_revisar)
                             ->where('centro',$user["delegacion"])
+                            ->whereNull('user_id')
                             ->first();
 
                             $revisar_disponible = DiasInhabiles::
@@ -4407,6 +4403,7 @@ class SeerController extends Controller
                             $random = array_rand($listado_auxiliares);
                             $array_horarios[0] = $fecha_revisar;
                             $array_horarios[1] = $fecha_hora;
+                            $array_horarios[2] = $fecha_audiencia;
                             $array_horarios[3] = $listado_auxiliares[$random];
                             return $array_horarios;
                         }
@@ -4424,6 +4421,7 @@ class SeerController extends Controller
                             $revisar_centro = DiasInhabiles::
                             where('fecha_inicio', $fecha_revisar)
                             ->where('centro',$user["delegacion"])
+                            ->whereNull('user_id')
                             ->first();
 
                             $revisar_disponible = DiasInhabiles::
@@ -4443,6 +4441,7 @@ class SeerController extends Controller
                             $random = array_rand($listado_auxiliares);
                             $array_horarios[0] = $fecha_revisar;
                             $array_horarios[1] = $fecha_hora;
+                             $array_horarios[2] = $fecha_audiencia;
                             $array_horarios[3] = $listado_auxiliares[$random];
                             return $array_horarios;
                         }
@@ -4479,6 +4478,7 @@ class SeerController extends Controller
                             $random = array_rand($listado_auxiliares);
                             $array_horarios[0] = $fecha_revisar;
                             $array_horarios[1] = $fecha_hora;
+                            $array_horarios[2] = $fecha_audiencia;
                             $array_horarios[3] = $listado_auxiliares[$random];
                             return $array_horarios;
                         }
@@ -4515,6 +4515,7 @@ class SeerController extends Controller
                             $random = array_rand($listado_auxiliares);
                             $array_horarios[0] = $fecha_revisar;
                             $array_horarios[1] = $fecha_hora;
+                            $array_horarios[2] = $fecha_audiencia;
                             $array_horarios[3] = $listado_auxiliares[$random];
                             return $array_horarios;
                         }
@@ -4532,6 +4533,7 @@ class SeerController extends Controller
                             $revisar_centro = DiasInhabiles::
                             where('fecha_inicio', $fecha_revisar)
                             ->where('centro',$user["delegacion"])
+                            ->whereNull('user_id')
                             ->first();
 
                             $revisar_disponible = DiasInhabiles::
@@ -4551,6 +4553,7 @@ class SeerController extends Controller
                             $random = array_rand($listado_auxiliares);
                             $array_horarios[0] = $fecha_revisar;
                             $array_horarios[1] = $fecha_hora;
+                            $array_horarios[2] = $fecha_audiencia;
                             $array_horarios[3] = $listado_auxiliares[$random];
                             return $array_horarios;
                         }
