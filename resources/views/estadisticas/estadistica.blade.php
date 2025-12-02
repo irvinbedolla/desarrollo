@@ -88,7 +88,9 @@
                                                 <label for="name">Sede</label>
                                                 <select class="form-control" name="sede" required>
                                                     <option value="">Seleccione</option>
-                                                    <option value="Todos">Todos</option>
+                                                    @if($userRole[0] == "Super Usuario")
+                                                        <option value="Todos">Todos</option>
+                                                    @endif
                                                     @foreach($estadisticas as $aSport)
                                                         <option value="{{$aSport['nombre']}}">{{$aSport['nombre']}}</option>
                                                     @endforeach

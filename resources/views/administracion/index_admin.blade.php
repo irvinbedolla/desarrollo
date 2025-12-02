@@ -46,7 +46,7 @@
                                 </div>
                                 <div class="col-xs-4 col-sm-4 col-md-4">
                                     <div align="center" class="mb-2">
-                                        <a href="{{ route('configuracion_sedes') }}" class="btn btn-primary" style="width: 100%">Usuarios</a>
+                                        <a href="{{ route('configuracion_usuarios') }}" class="btn btn-primary" style="width: 100%">Usuarios</a>
                                     </div>
                                 </div>
                                 <div class="col-xs-4 col-sm-4 col-md-4">
