@@ -108,7 +108,8 @@
                                             <select id="tipo_de_conclucion" name="conclucion" class="form-control">
                                                 <option>Seleccione</option>
                                                 <option value="Conciliacion">Hubo Convenio</option>
-                                                <option value="No conciliacion">No hubo Convenio</option>
+                                                <option value="No conciliacion">No Hubo Convenio</option>
+                                                <option value="Reagenda">No Hubo Convenio (Se desea reagendar)</option>
                                                 <option value="Archivada por incomparecencia">Archivar</option>
                                             </select>
                                         </div>
@@ -258,6 +259,32 @@
     <div class="loader"></div>
 </div>
 
+<div class="modal fade" id="ModalReagendar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <form class='needs-validation novalidate'  method='POST' action="{{route('reagendar_audiencia_parte3')}}">
+        @csrf
+        <input type="hidden" id="modal-id-reagendar" name="id" value="">
+        <input type="hidden" id="fechaConfirmacion" value= "{{ $fechaConfirmacion }}">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Fecha de la reagenda</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="sede" value="{{ Auth::user()->delegacion ?? ($sede ?? '') }}">
+                    <div id="calendarReagendar"></div>
+                    <input type="hidden" name="fecha" id="fechaSeleccionada">
+                    <input type="hidden" name="hora" id="horaSeleccionada">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success" id="btnGuardarReagenda" disabled>Guardar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
 <style>
     .fc-event {
             padding: 3px 6px !important;
@@ -335,6 +362,7 @@
 
 @section('scripts')
     <script src="../../public/assets/js/turnos/turnos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- FullCalendar CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.css">
     <!-- FullCalendar JS -->
@@ -643,6 +671,47 @@
                 document.getElementById("pagos").style.display = "none";
                 document.getElementById('dias').style.display = "none";
             } 
+            else if (valorSeleccionado === 'Reagenda'){
+                document.getElementById('no_conciliacion').style.display = "none";
+                document.getElementById('archivada').style.display = "none"
+                document.getElementById("pagos").style.display = "none";
+                document.getElementById('dias').style.display = "none";
+
+                function abrirModalReagendar(){
+                    var solicitudEl = document.getElementById('solicitud-id');
+                    var solicitudId = solicitudEl ? solicitudEl.value : '{{ $id ?? '' }}';
+                    var modalInput = document.getElementById('modal-id-reagendar');
+                    if(modalInput) modalInput.value = solicitudId;
+                    $('#ModalReagendar').modal('show');
+                }
+
+                if (window.Swal && typeof Swal.fire === 'function'){
+                    Swal.fire({
+                        title: 'Calendario de Reagenda',
+                        text: 'Se mostrará el calendario para seleccionar nueva fecha y hora.',
+                        icon: 'info',
+                        showCancelButton: true,
+                        confirmButtonText: 'Abrir calendario',
+                        cancelButtonText: 'Cancelar',
+                        reverseButtons: true,
+                        customClass: { confirmButton: 'btn btn-success', cancelButton: 'btn btn-secondary' },
+                        buttonsStyling: false
+                    }).then(function(result){
+                        if(result.isConfirmed){
+                            abrirModalReagendar();
+                        } else {
+                            tipo_iden.value = 'Seleccione';
+                        }
+                    });
+                } else {
+                    var confirmar = confirm('Se abrirá el calendario para reagendar. ¿Deseas continuar?');
+                    if(confirmar){
+                        abrirModalReagendar();
+                    } else {
+                        tipo_iden.value = 'Seleccione';
+                    }
+                }
+            }
             else if (valorSeleccionado === 'Archivada por incomparecencia') {
                 const confirmar = confirm("¿Estás seguro de que deseas archivar esta audiencia?");
                 if (confirmar) {
@@ -679,14 +748,14 @@
     </script>
 
     <script>
-        let calendar;
+        let calendarModal;
         $('#calendarModal').on('shown.bs.modal', function () {
-            if (calendar) {
-                calendar.destroy();
+            if (calendarModal) {
+                calendarModal.destroy();
             }
             var calendarEl = document.getElementById('calendar');
             
-            calendar = new FullCalendar.Calendar(calendarEl, {
+            calendarModal = new FullCalendar.Calendar(calendarEl, {
                 initialView: window.innerWidth < 768 ? 'listWeek' : 'dayGridWeek',
                 locale: 'es',
                 headerToolbar: {
@@ -725,7 +794,8 @@
                         success: function(data) {
                             successCallback(data);
                         },
-                        error: function() {
+                        error: function(xhr, status, err) {
+                            console.error('calendarModal: error al cargar eventos', status, err, xhr && xhr.responseText);
                             failureCallback('Error al cargar eventos');
                         }
                     });
@@ -765,13 +835,14 @@
                     }
                 },
             });
-            calendar.render();
+            calendarModal.render();
+            setTimeout(function(){ if (calendarModal) { calendarModal.updateSize(); calendarModal.refetchEvents(); } }, 200);
 
             function updateCalendarView() {
                 if (window.innerWidth < 768) {
-                    calendar.changeView('listWeek');
+                    calendarModal.changeView('listWeek');
                 } else {
-                    calendar.changeView('dayGridWeek');
+                    calendarModal.changeView('dayGridWeek');
                 }
             }
 
@@ -842,6 +913,165 @@
 
         const intervalo = setInterval(actualizarTemporizador, 1000);
         actualizarTemporizador();
+    </script>
+
+    <script>
+        let calendarReagendar;
+        $('#ModalReagendar').on('shown.bs.modal', function () {
+            const calEl = document.getElementById('calendarReagendar');
+            if (!calEl) return;
+            if (calendarReagendar) { calendarReagendar.destroy(); }
+            // Calcular fecha mínima (16 días hábiles) para posicionar el calendario directamente en la primera semana válida.
+            const sede = $('#sede').val();
+            const conciliadorId = '{{ $conciliador->id ?? "" }}';
+            const hoy = new Date();
+            hoy.setHours(0,0,0,0);
+            let fechaCursor = new Date(hoy);
+            let habilesContados = 0;
+            let fechasInhabilesCentro = window.__diasInhabilesCentroCache || null;
+            function cargarInhabilesSync(){
+                if(fechasInhabilesCentro) return Promise.resolve();
+                return fetch(`{{ url('/api/dias-inhabiles-centro') }}?centro=${encodeURIComponent(sede)}`)
+                    .then(r=>r.json())
+                    .then(data=>{ fechasInhabilesCentro = data.map(d=>({inicio:d.fecha_inicio, fin:d.fecha_final})); window.__diasInhabilesCentroCache = fechasInhabilesCentro; })
+                    .catch(()=>{ fechasInhabilesCentro = []; });
+            }
+            function esInhabil(fecha){
+                const fStr = fecha.toISOString().slice(0,10);
+                for(const r of fechasInhabilesCentro){
+                    if(r.inicio <= fStr && r.fin >= fStr){ return true; }
+                }
+                return false;
+            }
+            function calcularFechaMinima(){
+                const siguiente = new Date(hoy);
+                siguiente.setDate(siguiente.getDate() + 1);
+                siguiente.setHours(0,0,0,0);
+                return siguiente;
+            }
+
+            function toYMD(dt) {
+                const y = dt.getFullYear();
+                const m = String(dt.getMonth() + 1).padStart(2, '0');
+                const d = String(dt.getDate()).padStart(2, '0');
+                return `${y}-${m}-${d}`;
+                }
+
+            function addDaysYMD(ymd, n) {
+                const [y, m, d] = ymd.split('-').map(Number);
+                const dt = new Date(y, m - 1, d);   // local
+                dt.setDate(dt.getDate() + n);
+                return toYMD(dt);
+            }
+
+            cargarInhabilesSync().then(()=>{
+
+                const fechaMinima = calcularFechaMinima();
+                const fechaMinimaStr = fechaMinima.toISOString().slice(0,10);
+                // Ajustar a lunes de la semana que contiene la fecha mínima para no cortar la semana
+                const fechaSemanaInicio = new Date(fechaMinima);
+                const desplazamientoLunes = (fechaSemanaInicio.getDay() + 6) % 7;
+                fechaSemanaInicio.setDate(fechaSemanaInicio.getDate() - desplazamientoLunes);
+                const startOfWeekStr = fechaSemanaInicio.toISOString().slice(0,10);
+
+                const fechaConfirmacion = document.getElementById('fechaConfirmacion').value;
+                const fechaLimite = fechaConfirmacion ? addDaysYMD(fechaConfirmacion, 46) : null;
+
+
+                calendarReagendar = new FullCalendar.Calendar(calEl, {
+                    locale: 'es',
+                    firstDay: 1,
+                    initialDate: fechaMinimaStr,
+                    initialView: window.innerWidth < 768 ? 'listWeek' : 'dayGridWeek',
+                    headerToolbar: { left: 'prev,next today', center: 'title', right: '' },
+                    validRange: function() {
+                        const range = { start: startOfWeekStr };
+                        if (fechaLimite) range.end = fechaLimite; 
+                        return range;
+                    },
+                    events: function(fetchInfo, success, failure) {
+                        $.ajax({
+                            url: '{{ url('/api/obtenerAudiencias') }}',
+                            data: { sede: sede, start: fetchInfo.startStr, end: fetchInfo.endStr, conciliador: conciliadorId },
+                            success: function(data){
+                                console.log('calendarReagendar: audiencias recibidas', data && data.length);
+                                success(data);
+                            },
+                            error: function(xhr,status,err){
+                                console.error('calendarReagendar: error al cargar audiencias', status, err, xhr && xhr.responseText);
+                                failure('No se pudieron cargar eventos');
+                            }
+                        });
+                    },
+                    eventTimeFormat: { hour: '2-digit', minute: '2-digit' },
+                    eventClick: function(info) {
+                        const slot = new Date(info.event.start);
+                        if (info.event.extendedProps.estado === 'disponible' && slot > new Date() && slot.toISOString().slice(0,10) >= fechaMinimaStr) {
+                            $('.fc-event-selected').removeClass('fc-event-selected');
+                            info.el.classList.add('fc-event-selected');
+                            const fecha = slot.toISOString().split('T')[0];
+                            const hora = slot.toTimeString().substring(0,5);
+                            $('#fechaSeleccionada').val(fecha);
+                            $('#horaSeleccionada').val(hora+':00');
+                            $('#btnGuardarReagenda').prop('disabled', false);
+                        } else {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Uups...',
+                                text: 'Horario no disponible',
+                            });
+                        }
+                    },
+                    eventDidMount: function(info){
+                        const estado = info.event.extendedProps.estado;
+                        if(estado){ info.el.classList.add('fc-est-'+estado); info.el.classList.add('fc-event-'+estado); }
+                    }
+                });
+                calendarReagendar.render();
+                setTimeout(function(){ if (calendarReagendar) { calendarReagendar.updateSize(); calendarReagendar.refetchEvents(); } }, 200);
+            });
+        });
+
+        $('#sede').on('change', function(){ 
+            if(typeof calendarModal !== 'undefined' && calendarModal){ calendarModal.refetchEvents(); }
+            if(typeof calendarReagendar !== 'undefined' && calendarReagendar){ calendarReagendar.refetchEvents(); }
+        });
+
+        const formReagendar = document.querySelector('#ModalReagendar form');
+        if(formReagendar){
+            formReagendar.addEventListener('submit', function(e){
+                const idAudiencia = document.getElementById('NUE').value;
+                const fecha = document.getElementById('fechaSeleccionada').value;
+                const hora = document.getElementById('horaSeleccionada').value;
+                let mensajeHtml = '<p>Se reagendará la Audiencia con <strong>NUE: '+idAudiencia+'</strong></p>';
+                if(fecha){ mensajeHtml += '<p>Fecha: <strong>'+fecha+'</strong></p>'; }
+                if(hora){ mensajeHtml += '<p>Hora: <strong>'+hora.substring(0,5)+'</strong></p>'; }
+                mensajeHtml += '<p>¿Confirmas?</p>';
+                e.preventDefault();
+                function lanzar(){
+                    Swal.fire({
+                        title: 'Confirmar reagenda',
+                        html: mensajeHtml,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, reagendar',
+                        cancelButtonText: 'Cancelar',
+                        reverseButtons: true,
+                        focusCancel: true,
+                        customClass: {
+                            confirmButton: 'btn btn-success',
+                            cancelButton: 'btn btn-secondary'
+                        },
+                        buttonsStyling: false
+                    }).then((result)=>{
+                        if(result.isConfirmed){
+                            formReagendar.submit();
+                        }
+                    });
+                }
+                if(window.Swal){ lanzar(); } else { setTimeout(lanzar, 200); }
+            });
+        }
     </script>
     
 @endsection

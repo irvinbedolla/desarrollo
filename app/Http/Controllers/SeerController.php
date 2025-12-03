@@ -3167,7 +3167,8 @@ class SeerController extends Controller
                 'hora'              => $Audiencia[1],
                 'id_conciliador'    => $Audiencia[3],
                 'sala'              => $sala,
-                'delegacion'        => $delegacion["delegacion"]
+                'delegacion'        => $delegacion["delegacion"],
+                'estatus'           => 'Pendiente'
             );
             Audiencias::create($audiencia_insert);
             //Actualizar genera
@@ -4067,13 +4068,62 @@ class SeerController extends Controller
             'estatus_conciliacion'  => 'Regenerada'
         ];        
         SeerPerConciliador::create($data_conciliador);  
-        //Obtener la audiencia mas reciente
-        $audiencia = Audiencias::where('id_solicitud',$data["id"])->select('id')->orderBy('id', 'desc')->first();
-        //Actualizar tabla de audiencias        
-        Audiencias::find($audiencia["id"])->update([
-            'fecha' => $data["fecha"],
-            'hora'  => $data["hora"],
-        ]);
+        
+        \DB::transaction(function() use ($user, $data) {
+            //Obtener la audiencia mas reciente
+            $audienciaOld = Audiencias::where('id_solicitud', $data["id"])->orderBy('id', 'desc')->first();
+
+            if ($audienciaOld) {
+                // Marcar la audiencia existente como reagendada
+                $audienciaOld->update([
+                    'estatus' => 'Reagendada'
+                ]);
+
+                $old_num = is_numeric($audienciaOld->numero_audiencia) ? intval($audienciaOld->numero_audiencia) : 0;
+                $new_num = $old_num + 1;
+
+                // Incrementar folio (formato: 0000/2025)
+                $old_folio = $audienciaOld->folio_audiencia ?? '';
+                if (strpos($old_folio, '/') !== false) {
+                    list($prefix, $year) = explode('/', $old_folio, 2);
+                    $prefixNum = intval(preg_replace('/[^0-9]/', '', $prefix));
+                    $width = strlen(preg_replace('/[^0-9]/', '', $prefix));
+                    $newPrefix = str_pad(strval($prefixNum + 1), max(4, $width), '0', STR_PAD_LEFT);
+                    $new_folio = $newPrefix . '/' . $year;
+                } else {
+                    $year = date('Y');
+                    $new_folio = str_pad(strval($new_num), 4, '0', STR_PAD_LEFT) . '/' . $year;
+                }
+
+                // Crear nueva audiencia con estatus Pendiente y datos copiados
+                Audiencias::create([
+                    'id_conciliador'   => $user->id,
+                    'id_solicitud'     => $audienciaOld->id_solicitud,
+                    'numero_audiencia' => $new_num,
+                    'folio_audiencia'  => $new_folio,
+                    'fecha'            => $data["fecha"],
+                    'hora'             => $data["hora"],
+                    'sala'             => $audienciaOld->sala ?? null,
+                    'delegacion'       => $audienciaOld->delegacion ?? null,
+                    'estatus'          => 'Pendiente'
+                ]);
+            } else {
+                // Si no existe audiencia previa, crear una nueva simple
+                $new_folio = str_pad('1', 4, '0', STR_PAD_LEFT) . '/' . date('Y');
+                Audiencias::create([
+                    'id_conciliador'   => $user->id,
+                    'id_solicitud'     => $data["id"],
+                    'numero_audiencia' => 1,
+                    'folio_audiencia'  => $new_folio,
+                    'fecha'            => $data["fecha"],
+                    'hora'             => $data["hora"],
+                    'sala'             => null,
+                    'delegacion'       => null,
+                    'estatus'          => 'Pendiente'
+                ]);
+            }
+        });
+
         //Actualizar tabla general
         $solicitud = SeerPerGeneral::find($data["id"])
         ->update([
@@ -4083,6 +4133,100 @@ class SeerController extends Controller
     
         return redirect()->route('todas_audiencias');
     }
+
+    public function reagendar_audiencia_parte3(Request $request){
+        $data = $request->all();
+        $user = auth()->user();
+        $fecha_actual = date('y-m-d');
+
+        //Guardar registro en SeerConciliador
+        $numero_audiencias = SeerPerConciliador::find($data["id"]);
+        if(!isset($numero_audiencias)){
+            $num_audi = 0;
+        }
+        else{
+            $num_audi = $numero_audiencias->numero_audiencias;
+        }
+        $num_audi = $num_audi+1;
+
+        $numero_audiencia = $this->GeneraAudiencia($data["id"]);
+        //Se va insertar un registro en audiencias 
+        $data_conciliador = [
+            'id_solicitud'          => $data["id"],
+            'numero_audiencia'      => $numero_audiencia[0],
+            'numero_audiencias'     => $num_audi,
+            'validado'              => 'Validado',
+            'fecha_conclucion'      =>  $fecha_actual,
+            'consecutivo'           =>  $numero_audiencia[1],
+            'estatus_conciliacion'  => 'Regenerada'
+        ];        
+        SeerPerConciliador::create($data_conciliador);  
+        
+        \DB::transaction(function() use ($user, $data) {
+            //Obtener la audiencia mas reciente
+            $audienciaOld = Audiencias::where('id_solicitud', $data["id"])->orderBy('id', 'desc')->first();
+
+            if ($audienciaOld) {
+                // Marcar la audiencia existente como reagendada
+                $audienciaOld->update([
+                    'estatus' => 'No conciliacion reagendada'
+                ]);
+
+                $old_num = is_numeric($audienciaOld->numero_audiencia) ? intval($audienciaOld->numero_audiencia) : 0;
+                $new_num = $old_num + 1;
+
+                // Incrementar folio (formato: 0000/2025)
+                $old_folio = $audienciaOld->folio_audiencia ?? '';
+                if (strpos($old_folio, '/') !== false) {
+                    list($prefix, $year) = explode('/', $old_folio, 2);
+                    $prefixNum = intval(preg_replace('/[^0-9]/', '', $prefix));
+                    $width = strlen(preg_replace('/[^0-9]/', '', $prefix));
+                    $newPrefix = str_pad(strval($prefixNum + 1), max(4, $width), '0', STR_PAD_LEFT);
+                    $new_folio = $newPrefix . '/' . $year;
+                } else {
+                    $year = date('Y');
+                    $new_folio = str_pad(strval($new_num), 4, '0', STR_PAD_LEFT) . '/' . $year;
+                }
+
+                // Crear nueva audiencia con estatus Pendiente y datos copiados
+                Audiencias::create([
+                    'id_conciliador'   => $user->id,
+                    'id_solicitud'     => $audienciaOld->id_solicitud,
+                    'numero_audiencia' => $new_num,
+                    'folio_audiencia'  => $new_folio,
+                    'fecha'            => $data["fecha"],
+                    'hora'             => $data["hora"],
+                    'sala'             => $audienciaOld->sala ?? null,
+                    'delegacion'       => $audienciaOld->delegacion ?? null,
+                    'estatus'          => 'Pendiente'
+                ]);
+            } else {
+                // Si no existe audiencia previa, crear una nueva simple
+                $new_folio = str_pad('1', 4, '0', STR_PAD_LEFT) . '/' . date('Y');
+                Audiencias::create([
+                    'id_conciliador'   => $user->id,
+                    'id_solicitud'     => $data["id"],
+                    'numero_audiencia' => 1,
+                    'folio_audiencia'  => $new_folio,
+                    'fecha'            => $data["fecha"],
+                    'hora'             => $data["hora"],
+                    'sala'             => null,
+                    'delegacion'       => null,
+                    'estatus'          => 'Pendiente'
+                ]);
+            }
+        });
+
+        //Actualizar tabla general
+        $solicitud = SeerPerGeneral::find($data["id"])
+        ->update([
+            'estatus'           => 'Confirmado',
+            'conciliador_id'    => $user->id
+        ]);
+    
+        return redirect()->route('todas_audiencias');
+    }
+
 
     //PDF Acta por falta de interés
     public function VerPDFIncompetencia($id){
@@ -4203,6 +4347,17 @@ class SeerController extends Controller
         $solicitud = SeerPerGeneral::find($id);
         $sede = $solicitud["delegacion"];
 
+        $NUE = $solicitud->NUE;
+        if($NUE === NULL){
+            $NUE = 'Sin NUE';
+        }
+
+        $fechaConfirmacion = SeerPerGeneral::where('id', $id)->value('fecha_confirmacion');
+        if(is_null($fechaConfirmacion)) {
+            $fechaConfirmacion = now();
+            $fechaConfirmacion = $fechaConfirmacion->format('Y-m-d');
+        }
+
         $representantes = SeerCitados::
         leftjoin('abogados', 'abogados.idAbogado', '=', 'seer_citados.id_abogado')
         ->leftJoin('persona_fisica', 'persona_fisica.id', '=', 'seer_citados.id_fisica')
@@ -4213,7 +4368,7 @@ class SeerController extends Controller
         'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus','seer_citados.aparece_convenio')
         ->get();
 
-        return view('/audiencias/parte3',compact('id', 'sede','representantes'));
+        return view('/audiencias/parte3',compact('id', 'sede','representantes', 'fechaConfirmacion', 'NUE'));
     }
 
     public function historial_notificador(Request $request){
@@ -7029,11 +7184,11 @@ class SeerController extends Controller
 
         $sede = $request->input('sede'); 
 
-        $id_conciliador = $request->input('conciliador') ?? auth()->user()->id;
+        $id_conciliador = $request->input('conciliador') ?? auth()->id();
 
-        // Calcular fecha mínima para reagendar (16 días hábiles desde hoy)
-        $fechaMinimaHabil = $this->calcularFechaMinimaHabil($sede, 16);
-        $minDateStr = $fechaMinimaHabil->format('Y-m-d');
+    // Calcular fecha mínima para reagendar: permitir desde el siguiente día natural
+    $fechaMinima = (new \DateTime())->setTime(0,0,0)->modify('+1 day');
+    $minDateStr = $fechaMinima->format('Y-m-d');
 
         $inhabiles = DiasInhabiles::where('centro', $sede)
             ->where(function($query) use ($fecha_inicio, $fecha_fin) {
@@ -7117,6 +7272,19 @@ class SeerController extends Controller
         }
 
         return response()->json($todosLosEventos);
+    }
+
+    public function diasInhabilesCentro(Request $request)
+    {
+        $centro = $request->query('centro');
+        if (!$centro) {
+            return response()->json([], 200);
+        }
+
+        $rangos = DiasInhabiles::where('centro', $centro)
+            ->get(['fecha_inicio', 'fecha_final', 'horario_inicio', 'horario_final']);
+
+        return response()->json($rangos);
     }
 
     public function cumplimiento_incomparecencia(Request $request, $id){
@@ -7277,7 +7445,7 @@ class SeerController extends Controller
             $permisos = PermisosConciliador::where('id_conciliador',$id)->first();
             if($permisos["tipo"] == "Ambos"){
                 if($user["delegacion"] == "Morelia"){
-                    $audiencias = Audiencias::select('id_solicitud')->distinct()->whereIn('delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador')->distinct()->whereIn('delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($audiencias as $audiencia) {
                         $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
                         $audiencia->nombre = $solicitante?->nombre ?? 'Sin solicitante';
@@ -7302,7 +7470,7 @@ class SeerController extends Controller
                     }
                 }
                 if($user["delegacion"] == "Uruapan"){
-                    $audiencias = Audiencias::select('id_solicitud')->distinct()->whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador')->distinct()->whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($audiencias as $audiencia) {
                         $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
                         $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
@@ -7324,7 +7492,7 @@ class SeerController extends Controller
                     }
                 }
                 if($user["delegacion"] == "Zamora"){
-                    $audiencias = Audiencias::select('id_solicitud')->distinct()->whereIn('delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador')->distinct()->whereIn('delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($audiencias as $audiencia) {
                         $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
                         $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
@@ -7347,7 +7515,7 @@ class SeerController extends Controller
                 }
             }
             else{
-                $audiencias = Audiencias::select('id_solicitud')->distinct()->where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(500)->get();
+                $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador')->distinct()->where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(500)->get();
                 foreach ($audiencias as $audiencia) {
                     $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
                     $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
@@ -7371,7 +7539,7 @@ class SeerController extends Controller
         }
         else if($userRole[0] == "Delegado"){
             if($user["delegacion"] == "Morelia"){
-                $audiencias = Audiencias::select('id_solicitud')->distinct()->whereIn('delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
+                $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador')->distinct()->whereIn('delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
                 foreach ($audiencias as $audiencia) {
                     $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
                     $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
@@ -7393,7 +7561,7 @@ class SeerController extends Controller
                 }
             }
             if($user["delegacion"] == "Uruapan"){
-                $audiencias = Audiencias::select('id_solicitud')->distinct()->whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
+                $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador')->distinct()->whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
                 foreach ($audiencias as $audiencia) {
                     $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
                     $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
@@ -7415,7 +7583,7 @@ class SeerController extends Controller
                 }
             }
             if($user["delegacion"] == "Zamora"){
-                $audiencias = Audiencias::select('id_solicitud')->distinct()->whereIn('delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
+                $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador')->distinct()->whereIn('delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
                 foreach ($audiencias as $audiencia) {
                     $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
                     $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
@@ -7438,7 +7606,7 @@ class SeerController extends Controller
             }
         }
         else if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador"){    
-            $audiencias = Audiencias::select('id_solicitud')->distinct()->orderBy('created_at', 'desc')->limit(500)->get();
+            $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador')->distinct()->orderBy('created_at', 'desc')->limit(500)->get();
             //$registros_unicos_recientes = $audiencias->unique('id_solicitud');
 
             foreach ($audiencias as $audiencia) {

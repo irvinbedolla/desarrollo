@@ -3,6 +3,13 @@
     $fechaActual = date('Y-m-d');
     $contador = 0;
 @endphp
+@section('page_css')
+<style>
+    .btn-invisible {
+        display: none;
+    }
+</style>
+@endsection
 @section('content')
     <section class="section">
         <div class="section-header">
@@ -60,6 +67,9 @@
                                             <td></td>
                                             <td>
                                                 <a type="button" class="btn btn-warning w-100 open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal1" data-id="{{ $id }}">Editar</a>
+                                            </td>
+                                            <td>
+                                                <button class="btn-invisible">Oculto</button>
                                             </td>
                                         </tr>
                                        

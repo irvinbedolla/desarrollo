@@ -384,11 +384,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Fin de Administración  
     //Audiencias
         Route::get('/audiencias/index',                     [SeerController::class, 'audiencia_index'])->name('audiencia_index');
-    Route::get('/audiencias_Revisar/{id}/{isAudiencia?}',              [SeerController::class, 'solicitud_audiencia_revisar'])->name('solicitud_audiencia');
+        Route::get('/audiencias_Revisar/{id}/{isAudiencia?}',              [SeerController::class, 'solicitud_audiencia_revisar'])->name('solicitud_audiencia');
         Route::get('/citatorio/{id}',                       [SeerController::class, 'pdfCitatorioAudiencia'])->name('pdfCitatorioAudiencia');
         Route::get('/solicitud/indexA',                     [SeerController::class, 'indexA'])->name('audiencias.conciliador'); 
         Route::get('/solicitud/iniciar/{id}',               [SeerController::class, 'iniciar_audiencia'])->name('inicioAudiencia');
         Route::post('/reagendar_audiencia',                 [SeerController::class, 'reagendar_audiencia'])->name('reagendar_audiencia');
+        Route::post('/reagendar_audiencia_parte3',          [SeerController::class, 'reagendar_audiencia_parte3'])->name('reagendar_audiencia_parte3');          
         Route::post('/auciencia/concluir/',                 [SeerController::class, 'audiencia_parte2'])->name('audiencia_parte2');
         Route::get('/solicitud/indexB/{id}',                [SeerController::class, 'audienciaParte3'])->name('audiencias.parte3'); 
         Route::post('/solicitud/guardar',                   [SeerController::class, 'concluir_audiencia'])->name('concluir_audiencia');
