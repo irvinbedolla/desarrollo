@@ -302,4 +302,74 @@ class AdministracionController extends Controller
         $user = User::find($id)->delete();
         return redirect()->route('configuracion_usuarios');
     }
+
+    public function consular_cumplimientos(){
+        return view('administracion.index_cumplimientos');
+    }
+
+    public function borrar_cumplimeinto(Request $request){
+        $data = $request->all();
+        if($data["tipo"] == "Audiencia"){
+            $folios = Pagos::where("id_solicitud",$data["folio"])
+            ->whereYear("fecha",$data["año"])
+            ->where('tipo_pago','Audiencia')
+            ->select('id','NUE','fecha','descripcion','estatus')
+            ->get()
+            ->map(function ($folio) {
+                return [
+                    'id' => $folio->id,
+                    'NUE' => $folio->NUE,
+                    'fecha' => $folio->fecha->format('Y-m-d H:i:s'),
+                    'descripcion' => $folio->descripcion,
+                    'estatus' => $folio->estatus,
+                ];
+            })
+            ->toArray();
+
+            if(count($folios) != 0){
+                return redirect()->back()
+                ->with('message', 'Cumplimientos Encontrados.') // Mensaje general
+                ->with('folios_generados', $folios)
+                ->with('tipo', $data["tipo"]); // La variable específica
+            }
+            else{
+                return back()->withErrors('No existe el folio y/o año ingresado.');
+            }
+        }
+        else if($data["tipo"] == "Ratificación"){
+            $folios = Pagos::where("id_solicitud",$data["folio"])
+            ->whereYear("fecha",$data["año"])
+            ->where('tipo_pago','Ratificacion')
+            ->select('id','NUE','fecha','descripcion','estatus')
+            ->get()
+            ->map(function ($folio) {
+                return [
+                    'id' => $folio->id,
+                    'NUE' => $folio->NUE,
+                    'fecha' => $folio->fecha->format('Y-m-d H:i:s'),
+                    'descripcion' => $folio->descripcion,
+                    'estatus' => $folio->estatus,
+                ];
+            })
+            ->toArray();
+
+            if(count($folios) != 0){
+                return redirect()->back()
+                ->with('message', 'Cumplimientos Encontrados.') // Mensaje general
+                ->with('folios_generados', $folios)
+                ->with('tipo', $data["tipo"]); // La variable específica
+            }
+            else{
+                return back()->withErrors('No existe el folio y/o año ingresado.');
+            }
+        }
+        else{
+            return back()->withErrors('Debes seleccionar un tipo de cumplimiento.');
+        }
+    }
+
+    public function destroy_cumplimientoA($id){
+        Pagos::find($id)->update(['tipo_pago'  => "Borrado"]);
+        return back()->with('success', 'Cumplimeinto borrado correctamente.');
+    }
 }
