@@ -17,12 +17,21 @@ class ConciliadoresController extends Controller
     {
         $id = auth()->user()->id;
         $user = User::find($id);
-
-        $conciliadores = User::whereHas('roles', function ($query) {
-            return $query->where('name', '=', 'Conciliador');
-        })
-        ->where('delegacion', $user["delegacion"])
-        ->get();
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+        
+        if($userRole[0] == "Super Usuario"){
+            $conciliadores = User::whereHas('roles', function ($query) {
+                return $query->where('name', '=', 'Conciliador');
+            })
+            ->get();
+        }else{
+            $conciliadores = User::whereHas('roles', function ($query) {
+                return $query->where('name', '=', 'Conciliador');
+            })
+            ->where('delegacion', $user["delegacion"])
+            ->get();
+        }
 
         return view('conciliadores.index',compact('conciliadores'));
     }

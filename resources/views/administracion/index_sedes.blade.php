@@ -27,7 +27,103 @@
                                     </button>
                                 </div>
                             @endif
-                            {{--@can('ver-curso')--}}
+                                <div class="tab">
+                                    <a class="btn btn-info" onclick="mostrar_sedes()">Bloqueos de Sedes</a>
+                                    <a class="btn btn-info" onclick="mostrar_conciliador()">Bloqueos de Conciliadores</a>
+                                    <a class="btn btn-info" href="{{ route('configuracion') }}">Regresar</a>
+                                </div>
+                                <!-- TABLA DE BLOQUEOS DE SEDES -->
+                                <div id="sedes" style="display:none">
+                                    <div class="card mt-4">
+                                         <div class="card-header text-white" style="background-color: #496163;">
+                                            <h5>Bloqueos de Sedes</h5>
+                                        </div>
+                                        <div class="card-body table-responsive">
+                                            <table class="table table-striped">
+                                                <thead style="background-color: #4A001F;">
+                                                    <tr>
+                                                        <th style="color: #fff;">Sede</th>
+                                                        <th style="color: #fff;">Fecha inicio</th>
+                                                        <th style="color: #fff;">Fecha final</th>
+                                                        <th style="color: #fff;">Hora inicio</th>
+                                                        <th style="color: #fff;">Hora final</th>
+                                                        <th style="color: #fff;">Acciones</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @forelse($bloqueos->whereNull('user_id') as $bloqueo)
+                                                        <tr>
+                                                            <td>{{ $bloqueo->centro }}</td>
+                                                            <td>{{ \Carbon\Carbon::parse($bloqueo->fecha_inicio)->format('d-m-Y') }}</td>
+                                                            <td>{{ \Carbon\Carbon::parse($bloqueo->fecha_final)->format('d-m-Y') }}</td>
+                                                            <td>{{ $bloqueo->horario_inicio }}</td>
+                                                            <td>{{ $bloqueo->horario_final }}</td>
+                                                            <td>
+                                                                <form action="{{ route('eliminarBloqueo', $bloqueo->id) }}" method="POST" 
+                                                                    onsubmit="return confirm('¿Seguro que deseas eliminar este bloqueo?');">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                                                                </form>
+                                                            </td>
+                                                        </tr>
+                                                    @empty
+                                                        <tr>
+                                                            <td colspan="6" class="text-center">No hay bloqueos de sedes registrados.</td>
+                                                        </tr>
+                                                    @endforelse
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- TABLA DE BLOQUEOS DE CONCILIADORES -->
+                                <div id="solicitante" style="display:none">
+                                    <div class="card mt-4">
+                                        <div class="card-header text-white" style="background-color: #496163;">
+                                            <h5>Bloqueos de Conciliadores</h5>
+                                        </div>
+                                        <div class="card-body table-responsive">
+                                            <table class="table table-striped">
+                                                <thead style="background-color: #4A001F;">
+                                                    <tr>
+                                                        <th style="color: #fff;">Conciliador</th>
+                                                        <th style="color: #fff;">Sede</th>
+                                                        <th style="color: #fff;">Fecha inicio</th>
+                                                        <th style="color: #fff;">Fecha final</th>
+                                                        <th style="color: #fff;">Hora inicio</th>
+                                                        <th style="color: #fff;">Hora final</th>
+                                                        <th style="color: #fff;">Acciones</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @forelse($bloqueos->whereNotNull('user_id') as $bloqueo)
+                                                        <tr>
+                                                            <td>{{ $conciliadores->firstWhere('id', $bloqueo->user_id)->name ?? 'N/A' }}</td>
+                                                            <td>{{ $sedes->firstWhere('id', $bloqueo->centro)->delegacion ?? $bloqueo->centro }}</td>
+                                                            <td>{{ \Carbon\Carbon::parse($bloqueo->fecha_inicio)->format('d-m-Y') }}</td>
+                                                            <td>{{ \Carbon\Carbon::parse($bloqueo->fecha_final)->format('d-m-Y') }}</td>
+                                                            <td>{{ $bloqueo->horario_inicio }}</td>
+                                                            <td>{{ $bloqueo->horario_final }}</td>
+                                                            <td>
+                                                                <form action="{{ route('eliminarBloqueo', $bloqueo->id) }}" method="POST" 
+                                                                    onsubmit="return confirm('¿Seguro que deseas eliminar este bloqueo?');">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                                                                </form>
+                                                            </td>
+                                                        </tr>
+                                                    @empty
+                                                        <tr>
+                                                            <td colspan="7" class="text-center">No hay bloqueos de conciliadores registrados.</td>
+                                                        </tr>
+                                                    @endforelse
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="table-responsive">
                                     <table id="example" class="table table-striped mt-1">
                                         <thead style="background-color: #4A001F;">
@@ -51,96 +147,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <!-- TABLA DE BLOQUEOS DE SEDES -->
-                                <div class="card mt-4">
-                                    <div class="card-header text-white" style="background-color: #496163;">
-                                        <h5>Bloqueos de Sedes</h5>
-                                    </div>
-                                    <div class="card-body table-responsive">
-                                        <table class="table table-striped">
-                                            <thead style="background-color: #4A001F;">
-                                                <tr>
-                                                    <th style="color: #fff;">Sede</th>
-                                                    <th style="color: #fff;">Fecha inicio</th>
-                                                    <th style="color: #fff;">Fecha final</th>
-                                                    <th style="color: #fff;">Hora inicio</th>
-                                                    <th style="color: #fff;">Hora final</th>
-                                                    <th style="color: #fff;">Acciones</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @forelse($bloqueos->whereNull('user_id') as $bloqueo)
-                                                    <tr>
-                                                        <td>{{ $bloqueo->centro }}</td>
-                                                        <td>{{ \Carbon\Carbon::parse($bloqueo->fecha_inicio)->format('d-m-Y') }}</td>
-                                                        <td>{{ \Carbon\Carbon::parse($bloqueo->fecha_final)->format('d-m-Y') }}</td>
-                                                        <td>{{ $bloqueo->horario_inicio }}</td>
-                                                        <td>{{ $bloqueo->horario_final }}</td>
-                                                        <td>
-                                                            <form action="{{ route('eliminarBloqueo', $bloqueo->id) }}" method="POST" 
-                                                                onsubmit="return confirm('¿Seguro que deseas eliminar este bloqueo?');">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
-                                                            </form>
-                                                        </td>
-                                                    </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="6" class="text-center">No hay bloqueos de sedes registrados.</td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-
-                                <!-- TABLA DE BLOQUEOS DE CONCILIADORES -->
-                                <div class="card mt-4">
-                                    <div class="card-header text-white" style="background-color: #496163;">
-                                        <h5>Bloqueos de Conciliadores</h5>
-                                    </div>
-                                    <div class="card-body table-responsive">
-                                        <table class="table table-striped">
-                                            <thead style="background-color: #4A001F;">
-                                                <tr>
-                                                    <th style="color: #fff;">Conciliador</th>
-                                                    <th style="color: #fff;">Sede</th>
-                                                    <th style="color: #fff;">Fecha inicio</th>
-                                                    <th style="color: #fff;">Fecha final</th>
-                                                    <th style="color: #fff;">Hora inicio</th>
-                                                    <th style="color: #fff;">Hora final</th>
-                                                    <th style="color: #fff;">Acciones</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @forelse($bloqueos->whereNotNull('user_id') as $bloqueo)
-                                                    <tr>
-                                                        <td>{{ $conciliadores->firstWhere('id', $bloqueo->user_id)->name ?? 'N/A' }}</td>
-                                                        <td>{{ $sedes->firstWhere('id', $bloqueo->centro)->delegacion ?? $bloqueo->centro }}</td>
-                                                        <td>{{ \Carbon\Carbon::parse($bloqueo->fecha_inicio)->format('d-m-Y') }}</td>
-                                                        <td>{{ \Carbon\Carbon::parse($bloqueo->fecha_final)->format('d-m-Y') }}</td>
-                                                        <td>{{ $bloqueo->horario_inicio }}</td>
-                                                        <td>{{ $bloqueo->horario_final }}</td>
-                                                        <td>
-                                                            <form action="{{ route('eliminarBloqueo', $bloqueo->id) }}" method="POST" 
-                                                                onsubmit="return confirm('¿Seguro que deseas eliminar este bloqueo?');">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
-                                                            </form>
-                                                        </td>
-                                                    </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="7" class="text-center">No hay bloqueos de conciliadores registrados.</td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            {{--@endcan--}}
+                                
                             <!-- Centramos la paginación a la derecha-->
                             <div class="pagination justify-content-end">
                             </div>                        
@@ -242,8 +249,8 @@
 
 
 @section('scripts')
-    <script src="../../public/js/estadistica/estadistica.js"></script>
-
+    <script src="../public/assets/js/estadistica/estadistica.js"></script>
+    
     <script>
         // Asignar la sede seleccionada al input del modal
         $('#modalBloqueo').on('show.bs.modal', function (event) {
@@ -252,6 +259,16 @@
             var modal = $(this);
             modal.find('#modal_sede_id').val(sede);
         });
+        function mostrar_sedes() {
+            alert("Consulta Correcta");
+            document.getElementById("sedes").style.display = "block";
+            document.getElementById("solicitante").style.display = "none";
+        }
+        function mostrar_conciliador(){
+            alert("Consulta Correcta");
+            document.getElementById("sedes").style.display = "none";
+            document.getElementById("solicitante").style.display = "block";
+        }
     </script>
 
 @endsection

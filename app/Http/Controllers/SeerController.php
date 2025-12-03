@@ -2332,7 +2332,6 @@ class SeerController extends Controller
                 'email'            => $usuario["email"],
                 'NumFolio'         => $folio,
             ];
-            //dd($variables);
             Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
         }
         else{
@@ -2350,7 +2349,6 @@ class SeerController extends Controller
                 'email'            => $usuario["email"],
                 'NumFolio'         => $folio,
             ];
-            //dd($variables);
             Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
         }
 
@@ -3124,9 +3122,7 @@ class SeerController extends Controller
                 $num_audi = $numero_audiencias->numero_audiencias;
             }
             $num_audi = $num_audi+1;
-
             $Audiencia = $this->ObtenerAudiencia($delegacion["delegacion"]);
-
             $sala = 1;
             switch($Audiencia[3]){
             //Morelia
@@ -3159,11 +3155,14 @@ class SeerController extends Controller
                 default:
                     $sala = "Pendiente"; break;
             }
+            $fecha_audiencia = date('Y-m-d', strtotime($Audiencia[0]."+7 day"));
+
             $audiencia_insert=array(
                 'id_solicitud'      => $data["id"],
                 'numero_audiencia'  => $num_audi,
                 'folio_audiencia'   => $numero_audiencia[0],
                 'fecha'             => $Audiencia[0],
+                'proxima_audiencia' => $fecha_audiencia,
                 'hora'              => $Audiencia[1],
                 'id_conciliador'    => $Audiencia[3],
                 'sala'              => $sala,
@@ -3506,6 +3505,7 @@ class SeerController extends Controller
         $num_audi = $num_audi+1;
 
         $numero_audiencia = $this->GeneraAudiencia($data["id"]);
+        
         $data_conciliador = [
             'id_solicitud'          => $data["id"],
             'numero_audiencia'      => $numero_audiencia[0],
@@ -3526,7 +3526,15 @@ class SeerController extends Controller
             'conciliador_id'    => $user->id
         ]);
 
-        
+        $numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
+        Audiencias::where('id_solicitud',$data["id"])
+        ->orderBy('id_solicitud','desc')
+        ->update([
+            'numero_audiencia'  =>  $numAudiencia+1,
+            'folio_audiencia'   =>  $numero_audiencia[0],
+            'estatus'           => 'Archivada',
+        ]);
+
         return redirect()->route('todas_audiencias');
     }
 
@@ -3934,6 +3942,9 @@ class SeerController extends Controller
         ]);
 
        
+       if ($request->has('origen') && $request->origen === "previa") {
+            return redirect()->route('vista_previa', ['id_solicitud' => $id]);
+        }
         return redirect()->route('notificaciones');
     }
 
@@ -4020,13 +4031,21 @@ class SeerController extends Controller
             'estatus'               => 'Incompetencia'
         ]);
 
+        $numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
+        Audiencias::where('id_solicitud',$data["id"])
+        ->orderBy('id_solicitud','desc')
+        ->update([
+            'numero_audiencia'  =>  $numAudiencia+1,
+            'folio_audiencia'   =>  $numero_audiencia[0],
+            'estatus'           => 'Archivada',
+        ]);
+
         return redirect()->route('todas_audiencias');
     }
     
     public function GeneraAudiencia($id){
         $año_actual = date('Y');
         $id_adiencia = SeerPerConciliador::select('consecutivo')->orderBy('consecutivo', 'desc')->first();
-        
         if(!isset($id_adiencia)){
             $num_adiencia = 0;
         }
@@ -4443,6 +4462,7 @@ class SeerController extends Controller
             ->whereIn('permisos_conciliador.tipo', ["Ambos","Precencial"])
             ->get();
         }else{
+            //Voy a revisar la sede para saber si hay conciliadores que tengan estatus de ambos
             if($delegacion == "Zitácuaro"){
                 $oficina_apoyo = "Morelia";
             }
@@ -4452,6 +4472,7 @@ class SeerController extends Controller
             if($delegacion == "Sahuayo"){
                 $oficina_apoyo = "Zamora";
             }
+
             //Vamos a contar cuandos auxiliares existen en el CCL
             $conciliadores = User::whereHas($relacionEloquent, function ($query) {
                 return $query->where('name', '=', 'Conciliador');
@@ -4462,21 +4483,14 @@ class SeerController extends Controller
             ->get();
         }
 
-        if($delegacion == "Zitácuaro"){
-            $delegacion = "Morelia";
-        }
-        if($delegacion == "Lárazo Cárdenas"){
-            $delegacion = "Uruapan";
-        }
-        if($delegacion == "Sahuayo"){
-            $delegacion = "Zamora";
-        }
         //Numero de conciliadores
         $contador_conciliadores = count($conciliadores);
+        //dd($contador_conciliadores);
         //Obtener la ultima fecha y hora
         $fecha_reciente = Audiencias::where('delegacion',$delegacion)->select('fecha','hora')->orderBy('fecha', 'desc')->first();
+        //dd($fecha_reciente);
         $fecha_revisar = date('Y-m-d', strtotime($fecha_reciente["fecha"]));
-        $fecha_revisar = strtotime($fecha_revisar." +7 day");
+        $fecha_audiencia = $fecha_revisar;
         $fecha_hora = date('H:i:s', strtotime($fecha_reciente["hora"]));
         //Validar cuantas audiencias hay en ese horario y eas hora
         $conteo = Audiencias::where('delegacion',$delegacion)
@@ -4507,6 +4521,7 @@ class SeerController extends Controller
                             $revisar_centro = DiasInhabiles::
                             where('fecha_inicio', $fecha_revisar)
                             ->where('centro',$user["delegacion"])
+                            ->whereNull('user_id')
                             ->first();
 
                             $revisar_disponible = DiasInhabiles::
@@ -4526,6 +4541,7 @@ class SeerController extends Controller
                             $random = array_rand($listado_auxiliares);
                             $array_horarios[0] = $fecha_revisar;
                             $array_horarios[1] = $fecha_hora;
+                            $array_horarios[2] = $fecha_audiencia;
                             $array_horarios[3] = $listado_auxiliares[$random];
                             return $array_horarios;
                         }
@@ -4543,6 +4559,7 @@ class SeerController extends Controller
                             $revisar_centro = DiasInhabiles::
                             where('fecha_inicio', $fecha_revisar)
                             ->where('centro',$user["delegacion"])
+                            ->whereNull('user_id')
                             ->first();
 
                             $revisar_disponible = DiasInhabiles::
@@ -4562,6 +4579,7 @@ class SeerController extends Controller
                             $random = array_rand($listado_auxiliares);
                             $array_horarios[0] = $fecha_revisar;
                             $array_horarios[1] = $fecha_hora;
+                            $array_horarios[2] = $fecha_audiencia;
                             $array_horarios[3] = $listado_auxiliares[$random];
                             return $array_horarios;
                         }
@@ -4579,6 +4597,7 @@ class SeerController extends Controller
                             $revisar_centro = DiasInhabiles::
                             where('fecha_inicio', $fecha_revisar)
                             ->where('centro',$user["delegacion"])
+                            ->whereNull('user_id')
                             ->first();
 
                             $revisar_disponible = DiasInhabiles::
@@ -4598,6 +4617,7 @@ class SeerController extends Controller
                             $random = array_rand($listado_auxiliares);
                             $array_horarios[0] = $fecha_revisar;
                             $array_horarios[1] = $fecha_hora;
+                             $array_horarios[2] = $fecha_audiencia;
                             $array_horarios[3] = $listado_auxiliares[$random];
                             return $array_horarios;
                         }
@@ -4634,6 +4654,7 @@ class SeerController extends Controller
                             $random = array_rand($listado_auxiliares);
                             $array_horarios[0] = $fecha_revisar;
                             $array_horarios[1] = $fecha_hora;
+                            $array_horarios[2] = $fecha_audiencia;
                             $array_horarios[3] = $listado_auxiliares[$random];
                             return $array_horarios;
                         }
@@ -4670,6 +4691,7 @@ class SeerController extends Controller
                             $random = array_rand($listado_auxiliares);
                             $array_horarios[0] = $fecha_revisar;
                             $array_horarios[1] = $fecha_hora;
+                            $array_horarios[2] = $fecha_audiencia;
                             $array_horarios[3] = $listado_auxiliares[$random];
                             return $array_horarios;
                         }
@@ -4687,6 +4709,7 @@ class SeerController extends Controller
                             $revisar_centro = DiasInhabiles::
                             where('fecha_inicio', $fecha_revisar)
                             ->where('centro',$user["delegacion"])
+                            ->whereNull('user_id')
                             ->first();
 
                             $revisar_disponible = DiasInhabiles::
@@ -4706,6 +4729,7 @@ class SeerController extends Controller
                             $random = array_rand($listado_auxiliares);
                             $array_horarios[0] = $fecha_revisar;
                             $array_horarios[1] = $fecha_hora;
+                            $array_horarios[2] = $fecha_audiencia;
                             $array_horarios[3] = $listado_auxiliares[$random];
                             return $array_horarios;
                         }
@@ -4848,6 +4872,15 @@ class SeerController extends Controller
                 'estatus'               => $data["conclucion"]
             ]);
 
+            $numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
+            Audiencias::where('id_solicitud',$data["id"])
+            ->orderBy('id_solicitud','desc')
+            ->update([
+                'numero_audiencia'  =>  $numAudiencia+1,
+                'folio_audiencia'   =>  $numero_audiencia[0],
+                'estatus'           => 'Archivada',
+            ]);
+
             //Actualiza el campo aparece_convenio de la tabla citados a los citados que responderán o los que pagarán los cumplimientos
             $apareceConvenio = isset($data['aparece_convenio']) && is_array($data['aparece_convenio'])
             ? array_keys($data['aparece_convenio'])
@@ -4898,6 +4931,15 @@ class SeerController extends Controller
                 'conciliador_id'        => $user->id,
                 'observaciones'         => $data["observaciones"], 
                 'estatus'               => $data["conclucion"]
+            ]);
+
+            $numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
+            Audiencias::where('id_solicitud',$data["id"])
+            ->orderBy('id_solicitud','desc')
+            ->update([
+                'numero_audiencia'  =>  $numAudiencia+1,
+                'folio_audiencia'   =>  $numero_audiencia[0],
+                'estatus'           => 'Archivada',
             ]);
 
             return redirect()->route('audiencia_index');
@@ -5419,8 +5461,10 @@ class SeerController extends Controller
         $motivos        = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
         ->where('id_solicitud',$id)
         ->select('catalogo_motivos.motivo','seer_motivos.id')->get();
-
-        return view('audiencias.revisar_audiencia', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores', 'isAudiencia','notificaciones'));
+        $historial_audiencias = Audiencias::where('id_solicitud', $id)
+        ->orderBy('fecha', 'desc')
+        ->get();
+        return view('audiencias.revisar_audiencia', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores', 'isAudiencia','notificaciones','historial_audiencias'));
     }
 
 
@@ -5941,19 +5985,60 @@ class SeerController extends Controller
     public function VerPDFAudiencia($id){
         $solicitud = SeerPerGeneral::find($id);
         $pagos = Pagos::where('id_solicitud',$id)->get();
-
+        $datosAudiencia = SeerPerConciliador::where('id_solicitud', $id)->first();
+        $solicitante = SeerSolicitante::where('id_solicitud',$solicitud["id"])->first();
+        $pagos = Pagos::where('id_solicitud', $id)->get();
+        $abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
+        ->where('id_solicitud',$id)
+        ->select('abogados.nombres_patronal','abogados.primer_apellido_patronal','abogados.segundo_apellido_patronal','abogados.descipcion_poder','abogados.tipo_identificacion','abogados.num_identificacion')
+        ->first();
         $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id")
         ->select('users.name')
         ->first();
-        $html = view('PDF/ActaAudiencia', compact('id','solicitud','conciliador','pagos'))->render();
+        /*$audiencia = Audiencias::where('id_solicitud', $id)
+        ->orderByDesc('id')
+        ->first();*/
+        $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
+        $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
+        ->first();
+
+        $prestaciones = Concepto::where('id_solicitud', $id)->get();
+        $deducciones = Deducciones::where('id_solicitud', $id)->get();
+
+        $conceptosTexto = [];
+        $deduccionesTexto = [];
+
+        foreach ($prestaciones as $concepto) {
+            $conceptosTexto[$concepto->id] = $this->convertirNumerosALetras($concepto->monto);
+        }
+
+        foreach ($deducciones as $deduccion) {
+            $deduccionesTexto[$deduccion->id] = $this->convertirNumerosALetras($deduccion->monto);
+        }
+
+        $totalPrestaciones = $prestaciones->sum('monto');
+        $totalDeducciones = $deducciones->sum('monto');
+        //Total a pagar
+        $pagoTotal= $totalPrestaciones-$totalDeducciones;
+        
+        //Descripción del tipo de identificación para los solicitantes
+        $identificacionSolicitante = $solicitante->identificacion;
+        $descripcionIdentificacionS = $this->descripcionIdentificacion($identificacionSolicitante);
+
+        //Descripción del tipo de identificación para los poderes
+        $identificacionPoder = $abogado->tipo_identificacion;
+        $descripcionIdentificacionP = $this->descripcionIdentificacion($identificacionPoder);
+
+        $html = view('PDF/Solicitudes/ActaAudiencia', compact('id','solicitud','conciliador','prestaciones','deducciones','deduccionesTexto','pagoTotal','descripcionIdentificacionS',
+        'descripcionIdentificacionP','abogado','conceptosTexto','solicitante','audiencia','datosAudiencia'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true); 
 
-        $nombreArchivo = 'constancia_de_pago_'  .'.pdf';
-        return $pdf->stream($nombreArchivo);         
+        $nombreArchivo = 'acta_de_audiencia_' . $solicitud->trabajador .'.pdf';
+        return $pdf->stream($nombreArchivo);            
     }
 
     public function audiencia_index(){
@@ -7447,7 +7532,40 @@ class SeerController extends Controller
                 if($user["delegacion"] == "Morelia"){
                     $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador')->distinct()->whereIn('delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($audiencias as $audiencia) {
+                        $datosAudiencia = Audiencias::where('id_solicitud', $audiencia->id_solicitud)
+                        ->orderBy('numero_audiencia', 'DESC')
+                        ->first();
+                        $audienciaActual = Audiencias::where('id_solicitud', $audiencia->id_solicitud)
+                        ->orderBy('numero_audiencia', 'DESC')
+                        ->first();
+
+                        $audiencia->estatus_conciliacion = $audienciaActual->estatus_conciliacion;
+
+                        $audiencia->fecha = $datosAudiencia->fecha;
+                        $audiencia->hora = $datosAudiencia->hora;
+                        $audiencia->id_conciliador = $datosAudiencia->id_conciliador;
+                        $audiencia["fecha"] = date('d-m-Y', strtotime($audiencia["fecha"]));
+                        $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
+
                         $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
+                        $audiencia->nombre = $solicitante?->nombre ?? 'Sin solicitante';
+
+                        $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
+                        $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
+                        $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Sin estatus';
+                        $datosAudiencia = Audiencias::where('id_solicitud', $audiencia->id_solicitud)->first();
+                        $conciliador = User::find($datosAudiencia->id_conciliador);
+                        $audiencia->conciliador = $conciliador?->name ?? 'Sin Conciliador';
+                        
+                        $pendientes = Pagos::where('id_solicitud',$audiencia["id_solicitud"])->where('estatus',"Pendiente")->where('tipo_pago',"Audiencia")->get();
+                        if(count($pendientes) == 0){
+                            //Si la contancia es 0 no tiene pagos pendientes
+                            $audiencia->constancia = 0;
+                        }
+                        else{
+                            $audiencia->constancia = 1;
+                        }
+                        /*$solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
                         $audiencia->nombre = $solicitante?->nombre ?? 'Sin solicitante';
 
                         $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
@@ -7466,7 +7584,7 @@ class SeerController extends Controller
                         }
                         else{
                             $audiencia->constancia = 1;
-                        }
+                        }*/
                     }
                 }
                 if($user["delegacion"] == "Uruapan"){
@@ -8852,5 +8970,20 @@ class SeerController extends Controller
         }
 
         return redirect()->route('todas_audiencias'); 
+    }
+    // Eliminar/Quitar representante legal asiganado al de iniciar la audiencia
+    public function quitarRepresentante(Request $request)
+    {
+        $id = $request->id;
+        $citado = SeerCitados::findOrFail($id);
+        $citado->id_abogado = null;
+        $citado->id_fisica = null;
+        $citado->save();
+
+        return back()->with('success', 'Representante eliminado correctamente.');
+    }
+    public function eliminar_deduccion_audiencia($id_solicitud){
+        Deducciones::find($id_solicitud)->delete();
+        return back()->with('success', 'Pago Deducción Correctamente.');
     }
 }

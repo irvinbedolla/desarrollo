@@ -102,7 +102,7 @@
                 <p><b>PRIMERA.</b> La parte <b>TRABAJADORA {{ $solicitante->nombre }}</b> se identifica con <b>{{ strtoupper($solicitante->identificacion) }}</b>, de Número <b>{{ $solicitante->num_identificacion }}</b> 
                     expedida a su favor por <b>{{ $descripcionIdentificacionS }}</b> y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p> 
 
-                <p><b>SEGUNDA.</b> {{ $datosAudiencia->resolucion_segunda }}.</p>
+                <p><b>SEGUNDA.</b> {{ $datosAudiencia->resolicion_segunda }}.</p>
 
                 <b>TERCERA.</b> Declara la parte <b>TRABAJADORA</b>:
                     <p class="sangria">
@@ -314,7 +314,7 @@
                     </table>
                     <br><br>
                     <p><center><b>___________________________________<br> {{ strtoupper($conciliador->name) }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
-                        DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>               
+                        DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>               
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

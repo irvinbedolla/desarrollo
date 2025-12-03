@@ -373,6 +373,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Administración
         Route::get('administracion/configuracion',          [AdministracionController::class, 'configuracion'])->name('configuracion');
         Route::get('administracion/sedes',                  [AdministracionController::class, 'configuracion_sedes'])->name('configuracion_sedes');
+        Route::get('administracion/usuarios',               [AdministracionController::class, 'configuracion_usuarios'])->name('configuracion_usuarios');
         Route::get('administracion/retrocesos',             [AdministracionController::class, 'genera_retroceso'])->name('genera_retroceso');       
         Route::post('/generar-ratroceso',                   [AdministracionController::class, 'consultar_retroceso'])->name('generar_retroceso'); 
         Route::get('administracion/RC/{id}',                [AdministracionController::class, 'hacer_retroceso_cumplimiento'])->name('accion_retrocesoC');    
@@ -380,7 +381,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/bloquear_sede',                       [AdministracionController::class, 'bloqueoSede'])->name('bloqueoSede');  //Bloquear días inhabiles para toda la sede
         Route::post('/bloquear_conciliador',                [AdministracionController::class, 'bloqueoConciliador'])->name('bloqueoConciliador'); //bloquear por días u horas a conciliadores
         Route::delete('/bloqueo/{id}',                      [AdministracionController::class, 'eliminarBloqueo'])->name('eliminarBloqueo'); //eliminar fechas bloqueadas(inhabiles)
-
+        Route::get('/administracion/edit/{id}',             [AdministracionController::class, 'edit'])->name('administrador_usuarios_edit');
+        Route::patch('/administracion/update/{post}',       [AdministracionController::class, 'update'])->name('usuarios_update');
+        Route::delete('/administracion/destroy/{id}',       [AdministracionController::class, 'destroy'])->name('usuarios_destroy');
+        Route::get('/administracion/borrarCumplimientos',   [AdministracionController::class, 'consular_cumplimientos'])->name('configuracion_borrar_cumpli');
+        Route::post('/administracion/borrarCumplimiento',   [AdministracionController::class, 'borrar_cumplimeinto'])->name('borrar_cumplimeinto');
+        Route::delete('/administracion/destroy/{id}',       [AdministracionController::class, 'destroy_cumplimientoA'])->name('borrar_cumplimeintoA');
     //Fin de Administración  
     //Audiencias
         Route::get('/audiencias/index',                     [SeerController::class, 'audiencia_index'])->name('audiencia_index');
@@ -411,6 +417,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/audienicas/cumplimietos/{id}',         [SeerController::class, 'ver_pagos_audiencia'])->name('audiencia_cumplimientos');
         Route::post('/guardar_edicion_audiencia',           [SeerController::class, 'audiencia_confirmar'])->name('audiencia_confirmar');
         Route::post('/audiencias/pagoA',                    [SeerController::class, 'pagoA_audiencia'])->name('pagoA_audiencia'); // cumplimiento en audiencias
+        Route::post('/representante/quitar',                [SeerController::class, 'quitarRepresentante'])->name('representante.quitar'); //Eliminar/Quitar representante legal asiganado al iniciar la audiencia
+        Route::delete('/audieniecias/deduccion_eliminar_pago/{id_solicitud}', [SeerController::class, 'eliminar_deduccion_audiencia'])->name('eliminar_deduccion_audiencia');
     //Fin de Audiencias
     //Citados
         Route::post('/solicitud/guardar_citadoC',           [SeerController::class, 'insertar_citados_con'])->name('insertar_citado');

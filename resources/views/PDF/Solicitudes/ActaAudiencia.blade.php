@@ -67,7 +67,7 @@
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                         <tr>   
                             <td><b>Oficina: </b></td>
-                            <td>{{ strtoupper($solicitud->delegacion) }} </td>
+                            <td>{{ $solicitud->delegacion }} </td>
                         </tr>
                         <tr>    
                             <td><b>Número de identificación único: </b></td>
@@ -120,10 +120,10 @@
                     jurisdiccional, máxime que en el procedimiento ni el patrón ni el trabajador puede estar seguro de ganar el juicio, mientras que en la conciliación se llega a un acuerdo en el que 
                     se benefician ambas partes.<br><br>
 
-                    A continuación, se cede el uso de la voz de manera ordenada y respetuosa a los presentes en esta audiencia, para manifestar en relación al proceso de conciliación: <br>
+                    A continuación, se cede el uso de la voz de manera ordenada y respetuosa a los presentes en esta audiencia, para manifestar en relación al proceso de conciliación:
                 </p>
                     <!--[RESOLUCION_PRIMERA_MANIFESTACION]-->
-                    <p><b>{{ $solicitud->resolucion_primera }}</b></p>
+                    <p><b>{{ $datosAudiencia->resolicion_primera }}</b></p>
 
                 <p> Así, resulta procedente exponer a los presentes la propuesta de un acuerdo conciliatorio justo y equitativo que beneficie a ambas partes del conflicto; haciendo de su conocimiento 
                     que, en el caso de estar conformes con dicho acuerdo, se procederá a realizar el convenio por escrito, mismo que deberá ratificarse en el presente acto y, posteriormente, se les 
@@ -145,7 +145,7 @@
                                 <tr>
                                     <td>{{ strtoupper($concepto->descripcion) }}</td>
                                     <td><b>${{ number_format($concepto->monto, 2) }}</b></td>
-                                    <td>{{ $conceptosTexto[$concepto->id] }}</td> <!-- Aquí usamos el arreglo para obtener el texto -->
+                                    <td>{{ $conceptosTexto[$concepto->id] }}</td> 
                                 </tr>
                             @endforeach
                             <!--</p>-->
@@ -167,7 +167,7 @@
                                     <tr>
                                         <td>{{ $deduccion->descripcion }}</td>
                                         <td><b>${{ number_format($deduccion->monto, 2) }}</b></td>
-                                        <td>{{ $deduccionesTexto[$deduccion->id] }}</td> <!-- Aquí usamos el arreglo para obtener el texto -->
+                                        <td>{{ $deduccionesTexto[$deduccion->id] }}</td> 
                                     </tr>
                                 @endforeach  
                             </tbody>
@@ -183,20 +183,20 @@
                     </table>   
                 </p> 
                 <!--[RESOLUCION_PROPUESTAS_TRABAJADORES] -->
-                <p><b>{{ $solicitud->resolucion_trabajadores }}</b></p>
+                {{--<p><b>{{ $conciliador->resolucion_trabajadores }}</b></p>--}}
 
                 <!--[RESOLUCION_JUSTIFICACION_PROPUESTA]-->
-                <p><b>{{ $solicitud->resolucion_justificacion }}</b></p>
+                <p><b>{{ $datosAudiencia->resolicion_justificacion }}</b></p>
                 
                 <p>
                     A efecto de conocer la opinión de las partes, se cede el uso de la voz de manera ordenada y respetuosa a los presentes en esta audiencia, con la finalidad de escuchar lo que 
                     tengan que expresar en torno a la propuesta y sus alcances, <b>haciendo de su conocimiento que no se podrán negociar derechos y prestaciones irrenunciables en términos de la Ley 
                     Federal del Trabajo,</b> y respetando los adquiridos; de no estar de acuerdo se podrá solicitar una nueva audiencia que tendrá verificativo dentro de los cinco días siguientes al 
                     cierre de esta diligencia.
-                </p><br>
+                </p>
 
                 <!--[RESOLUCION_SEGUNDA_MANIFESTACION]-->
-                <p><b>{{ $solicitud->resolucion_segunda }}</b></p>
+                <p><b>{{ $datosAudiencia->resolicion_segunda }}</b></p>
                 <p>
                     Por tanto, en caso de que las partes hayan expresado estar conformes con la propuesta sugerida, se procede a la celebración del convenio respectivo, el cual tendrá valor de cosa juzgada 
                     y, tendrá la calidad de un título para iniciar acciones ejecutivas sin necesidad de ratificación lo anterior con fundamento en el artículo 684-E fracción XIII de la Ley Federal del Trabajo.<br><br>
@@ -239,7 +239,7 @@
                 </table>
                 <br><br><br>
                 <p><center><b>___________________________________<br> {{ strtoupper($conciliador->name) }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
-                        DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>                    
+                        DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>                    
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

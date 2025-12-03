@@ -92,7 +92,17 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <button type="button" class="btn btn-primary w-100 mt-1 mb-1 text-nowrap open-modal" data-id="{{ $representante->id }}" data-bs-toggle="modal" data-bs-target="#modalCitados"> Registrar Comparecencia </button>
+                                                    @if($representante->id_abogado == null && $representante->id_fisica == null)
+                                                        <button type="button" class="btn btn-primary w-100 mt-1 mb-1 text-nowrap open-modal" data-id="{{ $representante->id }}" data-bs-toggle="modal" data-bs-target="#modalCitados"> Registrar Comparecencia </button>
+                                                    @else
+                                                        <form action="{{ route('representante.quitar') }}" method="POST" class="mt-1">
+                                                            @csrf
+                                                            <input type="hidden" name="id" value="{{ $representante->id }}">
+                                                            <button type="submit" class="btn btn-danger btn-sm w-100">
+                                                                Quitar representante
+                                                            </button>
+                                                        </form>
+                                                    @endif
                                                 </td>
                                                 <td>
                                                     {{--@if($representante->id_abogado != null)--}}
@@ -272,7 +282,7 @@
                             <th style="color: #fff;">Folio</th>
                             <th style="color: #fff;">Nombre</th>
                             <th style="color: #fff;">RFC</th>
-                            <th style="color: #fff;">Reprecentante</th>
+                            <th style="color: #fff;">Representante</th>
                             <th style="color: #fff;">Acciones</th>
                         </thead>
                         <tbody class="contenidobusqueda">

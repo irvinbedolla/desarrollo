@@ -55,22 +55,46 @@ class AdministracionController extends Controller
         $user = User::findOrFail($id);
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
-       
-        if (!empty($userRole) && $userRole[0] === "Super Usuario") {
+        $sede = $user->delegacion;
+
+        if (!empty($userRole) && ($userRole[0] === "Super Usuario" || $userRole[0] === "Administrador")) {
             $sedes = Sedes::all();
             $conciliadores = User::role('Conciliador')
             ->orderBy('delegacion')
             ->get();
             $bloqueos = DiasInhabiles::orderBy('fecha_inicio','desc')->get();
-        } else {
-            $sedes = collect([$user->delegacion]);
-            $conciliadores = User::role('Conciliador')
-            ->where('delegacion', $user->delegacion)
-            ->get();
-            $bloqueos = DiasInhabiles::where('centro', $user->delegacion)
-            ->orWhere('user_id', $user->id)
-            ->orderBy('fecha_inicio','desc')
-            ->get();
+        } 
+        else {
+            if($sede == "Morelia"){
+                $sedes = Sedes::whereIn('nombre',['Morelia', 'Zitácuaro'])->get();
+                $conciliadores = User::role('Conciliador')
+                ->whereIn('delegacion', ['Morelia', 'Zitácuaro'])
+                ->get();
+                $bloqueos = DiasInhabiles::whereIn('centro', ['Morelia', 'Zitácuaro'])
+                ->orWhere('user_id', $user->id)
+                ->orderBy('fecha_inicio','desc')
+                ->get();
+            }
+            else if($sede == "Uruapan"){
+                $sedes = Sedes::whereIn('nombre',['Uruapan', 'Lázaro Cárdenas'])->get();
+                $conciliadores = User::role('Conciliador')
+                ->whereIn('delegacion', ['Uruapan', 'Lázaro Cárdenas'])
+                ->get();
+                $bloqueos = DiasInhabiles::whereIn('centro', ['Uruapan', 'Lázaro Cárdenas'])
+                ->orWhere('user_id', $user->id)
+                ->orderBy('fecha_inicio','desc')
+                ->get();
+            }
+            else if($sede == "Zamora"){
+                $sedes = Sedes::whereIn('nombre',['Zamora', 'Sahuayo'])->get();
+                $conciliadores = User::role('Conciliador')
+                ->whereIn('delegacion', ['Zamora', 'Sahuayo'])
+                ->get();
+                $bloqueos = DiasInhabiles::whereIn('centro', ['Zamora', 'Sahuayo'])
+                ->orWhere('user_id', $user->id)
+                ->orderBy('fecha_inicio','desc')
+                ->get();
+            }
         }
 
         return view('administracion.index_sedes', compact('sedes','conciliadores','bloqueos'));
@@ -106,7 +130,7 @@ class AdministracionController extends Controller
                 ->with('tipo', $data["tipo"]); // La variable específica
             }
             else{
-                return back()->withErrors('Debes seleccionar al menos una Región.');
+                return back()->withErrors('No existe el folio y/o año ingresado.');
             }
         }
         else if($data["tipo"] == "Ratificación"){
@@ -130,7 +154,7 @@ class AdministracionController extends Controller
 
             if(count($folios) != 0){
                 return redirect()->back()
-                ->with('message', 'Ratificación Encontrados.') // Mensaje general
+                ->with('message', 'Ratificación Encontrada. Al realizar el retroceso se borran las Prestaiones,deduciones y dias de cumplimientos.') // Mensaje general
                 ->with('folios_generados', $folios)
                 ->with('tipo', $data["tipo"]); // La variable específica
             }
@@ -142,7 +166,7 @@ class AdministracionController extends Controller
 
     public function hacer_retroceso($id){
         Pagos::find($id)->update(['estatus'  => "Pendiente"]);
-        return redirect()->back()->with('success', 'Puedes realizar tu pago nuevamente.');
+        return redirect()->back()->with('success', 'Puedes realizar tu cumplimiento nuevamente.');
     }
 
     public function hacer_retroceso_ratificacion($id){
@@ -221,5 +245,131 @@ class AdministracionController extends Controller
 
         $bloqueo->delete();
         return back()->with('success', 'Bloqueo eliminado correctamente.');
+    }
+
+    public function configuracion_usuarios(){
+        $id = auth()->user()->id;
+        $user = User::findOrFail($id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+        $sede = $user->delegacion;
+
+        if($sede == "Morelia"){
+            $usuarios = User::role(['Notificador', 'Conciliador','Auxiliar','Excepcion','Delegado'])->whereIn('delegacion', ['Morelia', 'Zitácuaro'])->get();
+        }
+        else if($sede == "Uruapan"){
+            $usuarios = User::role(['Notificador', 'Conciliador','Auxiliar','Excepcion','Delegado'])->whereIn('delegacion', ['Uruapan', 'Lázaro Cárdenas'])->get();
+        }
+        else if($sede == "Zamora"){
+            $usuarios = User::role(['Notificador', 'Conciliador','Auxiliar','Excepcion','Delegado'])->whereIn('delegacion', ['Zamora', 'Sahuayo'])->get();
+        }
+            
+        return view('administracion.index_usuario', compact('usuarios'));
+    }
+
+    public function edit($id)
+    {
+        $user = User::find($id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name','name')->first();
+        
+        return view('administracion.editar_usuario', compact('user','roles','userRole'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $this->validate($request, [
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,'.$id,
+            'password' => 'same:confirm-password',
+        ]);
+
+        $input = $request->all();
+        if (!empty($input['password'])) {
+            $input['password'] = Hash::make($input['password']);
+        }else {
+            $input = Arr::except($input, array('password'));
+        }
+        
+        $user = User::find($id);
+        $user->update($input);
+
+        return redirect()->route('configuracion_usuarios');
+    }
+
+    public function destroy($id)
+    {
+        $user = User::find($id)->delete();
+        return redirect()->route('configuracion_usuarios');
+    }
+
+    public function consular_cumplimientos(){
+        return view('administracion.index_cumplimientos');
+    }
+
+    public function borrar_cumplimeinto(Request $request){
+        $data = $request->all();
+        if($data["tipo"] == "Audiencia"){
+            $folios = Pagos::where("id_solicitud",$data["folio"])
+            ->whereYear("fecha",$data["año"])
+            ->where('tipo_pago','Audiencia')
+            ->select('id','NUE','fecha','descripcion','estatus')
+            ->get()
+            ->map(function ($folio) {
+                return [
+                    'id' => $folio->id,
+                    'NUE' => $folio->NUE,
+                    'fecha' => $folio->fecha->format('Y-m-d H:i:s'),
+                    'descripcion' => $folio->descripcion,
+                    'estatus' => $folio->estatus,
+                ];
+            })
+            ->toArray();
+
+            if(count($folios) != 0){
+                return redirect()->back()
+                ->with('message', 'Cumplimientos Encontrados.') // Mensaje general
+                ->with('folios_generados', $folios)
+                ->with('tipo', $data["tipo"]); // La variable específica
+            }
+            else{
+                return back()->withErrors('No existe el folio y/o año ingresado.');
+            }
+        }
+        else if($data["tipo"] == "Ratificación"){
+            $folios = Pagos::where("id_solicitud",$data["folio"])
+            ->whereYear("fecha",$data["año"])
+            ->where('tipo_pago','Ratificacion')
+            ->select('id','NUE','fecha','descripcion','estatus')
+            ->get()
+            ->map(function ($folio) {
+                return [
+                    'id' => $folio->id,
+                    'NUE' => $folio->NUE,
+                    'fecha' => $folio->fecha->format('Y-m-d H:i:s'),
+                    'descripcion' => $folio->descripcion,
+                    'estatus' => $folio->estatus,
+                ];
+            })
+            ->toArray();
+
+            if(count($folios) != 0){
+                return redirect()->back()
+                ->with('message', 'Cumplimientos Encontrados.') // Mensaje general
+                ->with('folios_generados', $folios)
+                ->with('tipo', $data["tipo"]); // La variable específica
+            }
+            else{
+                return back()->withErrors('No existe el folio y/o año ingresado.');
+            }
+        }
+        else{
+            return back()->withErrors('Debes seleccionar un tipo de cumplimiento.');
+        }
+    }
+
+    public function destroy_cumplimientoA($id){
+        Pagos::find($id)->update(['tipo_pago'  => "Borrado"]);
+        return back()->with('success', 'Cumplimeinto borrado correctamente.');
     }
 }
