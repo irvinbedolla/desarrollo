@@ -3941,6 +3941,9 @@ class SeerController extends Controller
         ]);
 
        
+       if ($request->has('origen') && $request->origen === "previa") {
+            return redirect()->route('vista_previa', ['id_solicitud' => $id]);
+        }
         return redirect()->route('notificaciones');
     }
 
@@ -5307,8 +5310,10 @@ class SeerController extends Controller
         $motivos        = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
         ->where('id_solicitud',$id)
         ->select('catalogo_motivos.motivo','seer_motivos.id')->get();
-
-        return view('audiencias.revisar_audiencia', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores', 'isAudiencia','notificaciones'));
+        $historial_audiencias = Audiencias::where('id_solicitud', $id)
+        ->orderBy('fecha', 'desc')
+        ->get();
+        return view('audiencias.revisar_audiencia', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores', 'isAudiencia','notificaciones','historial_audiencias'));
     }
 
 
@@ -5829,19 +5834,60 @@ class SeerController extends Controller
     public function VerPDFAudiencia($id){
         $solicitud = SeerPerGeneral::find($id);
         $pagos = Pagos::where('id_solicitud',$id)->get();
-
+        $datosAudiencia = SeerPerConciliador::where('id_solicitud', $id)->first();
+        $solicitante = SeerSolicitante::where('id_solicitud',$solicitud["id"])->first();
+        $pagos = Pagos::where('id_solicitud', $id)->get();
+        $abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
+        ->where('id_solicitud',$id)
+        ->select('abogados.nombres_patronal','abogados.primer_apellido_patronal','abogados.segundo_apellido_patronal','abogados.descipcion_poder','abogados.tipo_identificacion','abogados.num_identificacion')
+        ->first();
         $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id")
         ->select('users.name')
         ->first();
-        $html = view('PDF/ActaAudiencia', compact('id','solicitud','conciliador','pagos'))->render();
+        /*$audiencia = Audiencias::where('id_solicitud', $id)
+        ->orderByDesc('id')
+        ->first();*/
+        $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
+        $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
+        ->first();
+
+        $prestaciones = Concepto::where('id_solicitud', $id)->get();
+        $deducciones = Deducciones::where('id_solicitud', $id)->get();
+
+        $conceptosTexto = [];
+        $deduccionesTexto = [];
+
+        foreach ($prestaciones as $concepto) {
+            $conceptosTexto[$concepto->id] = $this->convertirNumerosALetras($concepto->monto);
+        }
+
+        foreach ($deducciones as $deduccion) {
+            $deduccionesTexto[$deduccion->id] = $this->convertirNumerosALetras($deduccion->monto);
+        }
+
+        $totalPrestaciones = $prestaciones->sum('monto');
+        $totalDeducciones = $deducciones->sum('monto');
+        //Total a pagar
+        $pagoTotal= $totalPrestaciones-$totalDeducciones;
+        
+        //Descripción del tipo de identificación para los solicitantes
+        $identificacionSolicitante = $solicitante->identificacion;
+        $descripcionIdentificacionS = $this->descripcionIdentificacion($identificacionSolicitante);
+
+        //Descripción del tipo de identificación para los poderes
+        $identificacionPoder = $abogado->tipo_identificacion;
+        $descripcionIdentificacionP = $this->descripcionIdentificacion($identificacionPoder);
+
+        $html = view('PDF/Solicitudes/ActaAudiencia', compact('id','solicitud','conciliador','prestaciones','deducciones','deduccionesTexto','pagoTotal','descripcionIdentificacionS',
+        'descripcionIdentificacionP','abogado','conceptosTexto','solicitante','audiencia','datosAudiencia'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true); 
 
-        $nombreArchivo = 'constancia_de_pago_'  .'.pdf';
-        return $pdf->stream($nombreArchivo);         
+        $nombreArchivo = 'acta_de_audiencia_' . $solicitud->trabajador .'.pdf';
+        return $pdf->stream($nombreArchivo);            
     }
 
     public function audiencia_index(){
@@ -7322,7 +7368,40 @@ class SeerController extends Controller
                 if($user["delegacion"] == "Morelia"){
                     $audiencias = Audiencias::select('id_solicitud')->distinct()->whereIn('delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($audiencias as $audiencia) {
+                        $datosAudiencia = Audiencias::where('id_solicitud', $audiencia->id_solicitud)
+                        ->orderBy('numero_audiencia', 'DESC')
+                        ->first();
+                        $audienciaActual = Audiencias::where('id_solicitud', $audiencia->id_solicitud)
+                        ->orderBy('numero_audiencia', 'DESC')
+                        ->first();
+
+                        $audiencia->estatus_conciliacion = $audienciaActual->estatus_conciliacion;
+
+                        $audiencia->fecha = $datosAudiencia->fecha;
+                        $audiencia->hora = $datosAudiencia->hora;
+                        $audiencia->id_conciliador = $datosAudiencia->id_conciliador;
+                        $audiencia["fecha"] = date('d-m-Y', strtotime($audiencia["fecha"]));
+                        $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
+
                         $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
+                        $audiencia->nombre = $solicitante?->nombre ?? 'Sin solicitante';
+
+                        $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
+                        $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
+                        $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Sin estatus';
+                        $datosAudiencia = Audiencias::where('id_solicitud', $audiencia->id_solicitud)->first();
+                        $conciliador = User::find($datosAudiencia->id_conciliador);
+                        $audiencia->conciliador = $conciliador?->name ?? 'Sin Conciliador';
+                        
+                        $pendientes = Pagos::where('id_solicitud',$audiencia["id_solicitud"])->where('estatus',"Pendiente")->where('tipo_pago',"Audiencia")->get();
+                        if(count($pendientes) == 0){
+                            //Si la contancia es 0 no tiene pagos pendientes
+                            $audiencia->constancia = 0;
+                        }
+                        else{
+                            $audiencia->constancia = 1;
+                        }
+                        /*$solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
                         $audiencia->nombre = $solicitante?->nombre ?? 'Sin solicitante';
 
                         $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
@@ -7341,7 +7420,7 @@ class SeerController extends Controller
                         }
                         else{
                             $audiencia->constancia = 1;
-                        }
+                        }*/
                     }
                 }
                 if($user["delegacion"] == "Uruapan"){
@@ -8727,5 +8806,20 @@ class SeerController extends Controller
         }
 
         return redirect()->route('todas_audiencias'); 
+    }
+    // Eliminar/Quitar representante legal asiganado al de iniciar la audiencia
+    public function quitarRepresentante(Request $request)
+    {
+        $id = $request->id;
+        $citado = SeerCitados::findOrFail($id);
+        $citado->id_abogado = null;
+        $citado->id_fisica = null;
+        $citado->save();
+
+        return back()->with('success', 'Representante eliminado correctamente.');
+    }
+    public function eliminar_deduccion_audiencia($id_solicitud){
+        Deducciones::find($id_solicitud)->delete();
+        return back()->with('success', 'Pago Deducción Correctamente.');
     }
 }

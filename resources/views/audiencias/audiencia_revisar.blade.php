@@ -51,7 +51,7 @@
                                                 <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal1" data-id="{{ $id }}">Editar</a>
                                             </td>
                                         </tr>
-                                       
+                                        
                                         @foreach($representantes as $representante)
                                             <tr>
                                                 <td  style="display:none">{{$representante->id}}</td>
@@ -73,12 +73,23 @@
                                                 <td>
                                                     <input type="checkbox" name="aparece_convenio[{{ $representante->id }}]" value="1" {{ $representante->aparece_convenio == 1 ? 'checked' : '' }}>
                                                 </td>
-
-                                                <td><button type="button" class="btn btn-primary open-modal" data-id="{{ $representante->id }}" data-bs-toggle="modal" data-bs-target="#modalCitados"> Citado </button></td>
                                                 <td>
-                                                    @if($representante->id_abogado != null)
-                                                        <a class="btn btn-success" href="{{ route('PDFcompareceSP', $solicitud->id) }}"  target="_blank">Comparece sin poder</a>
+                                                    @if($representante->id_abogado == null && $representante->id_fisica == null)
+                                                        <button type="button" class="btn btn-primary open-modal" data-id="{{ $representante->id }}" data-bs-toggle="modal" data-bs-target="#modalCitados"> Registrar Comparecencia </button>
+                                                    @else
+                                                        <form action="{{ route('representante.quitar') }}" method="POST" class="mt-1">
+                                                            @csrf
+                                                            <input type="hidden" name="id" value="{{ $representante->id }}">
+                                                            <button type="submit" class="btn btn-danger btn-sm w-100">
+                                                                Quitar representante
+                                                            </button>
+                                                        </form>
                                                     @endif
+                                                </td>
+                                                <td>
+                                                    {{--@if($representante->id_abogado != null)--}}
+                                                        <a class="btn btn-success mb-1 w-100" href="{{ route('PDFcompareceSP', $solicitud->id) }}"  target="_blank">Comparecencia sin Acreditación de Facultades</a>
+                                                    {{--@endif--}}
                                                 </td>
                                             </tr>
                                             @php $contador++; @endphp
@@ -107,7 +118,7 @@
                                                         <td>{{ $concepto->descripcion}}</td>
                                                         <td>${{ number_format($concepto->monto,2) }}</td>
                                                         <td>
-                                                            <form method="POST" action="{{ route('concepto_eliminar_pago_ratificacion', $concepto->id) }} ">
+                                                            <form method="POST" action="{{ route('concepto_eliminar_pago', $concepto->id) }} ">
                                                                 @csrf
                                                                 <input type="hidden" name="_method" value="DELETE">
                                                                 <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
@@ -139,7 +150,7 @@
                                                         <td>{{ $concepto->descripcion}}</td>
                                                         <td>${{ number_format($concepto->monto,2) }}</td>
                                                         <td>
-                                                            <form method="POST" action="{{ route('concepto_eliminar_deduccion_ratificacion', $concepto->id) }} ">
+                                                            <form method="POST" action="{{ route('eliminar_deduccion_audiencia', $concepto->id) }} ">
                                                                 @csrf
                                                                 <input type="hidden" name="_method" value="DELETE">
                                                                 <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
@@ -169,7 +180,7 @@
                                                 @foreach($pagos as $pago)
                                                     <tr>
                                                         <td  style="display:none">{{$pago->id}}</td>
-                                                        <td>{{ $pago->hora }}</td>
+                                                        <td> {{ \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d/m/y') }}<br>{{ \Carbon\Carbon::parse($pago->hora)->format('H:i') }} hrs.</td>
                                                         <td>{{ $pago->descripcion}}</td>
                                                         <td>${{ number_format($pago->monto,2) }}</td>
                                                         <td>
@@ -188,16 +199,17 @@
                                 @csrf
                                 <input type="hidden" name="id" value="{{ $id }}">
                                 <div class="row">
-                                    <div class="col-xs-12 col-sm-12 col-md-12"  style="border:1px solid black;">
-                                        <div class="form-group">
-                                            <label for="name">PRIMERA MANIFESTACIÓN DE LAS PARTES</label>
-                                            <textarea name="primera" class="form-control"> {{$conciliadores->resolicion_primera}}</textarea>
-                                            <div class="invalid-feedback">
-                                                El campo es obligatorio.
+                                    <div id="justificacion"><br>
+                                        <div class="col-xs-12 col-sm-12 col-md-12"  style="border:1px solid black;">
+                                            <div class="form-group">
+                                                <label for="name">PRIMERA MANIFESTACIÓN DE LAS PARTES</label>
+                                                <textarea name="primera" class="form-control"> {{$conciliadores->resolicion_primera}}</textarea>
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <br>
+                                    </div><br>
                                     <div id="justificacion"><br>
                                         <div class="col-xs-12 col-sm-12 col-md-12" style="border:1px solid black;">
                                             <div class="form-group">
@@ -297,15 +309,15 @@
                                         </div>
                                        
                                         <div id="div_pagos_diferidos"></div>
-                                            <div class="row">
-                                                <div class="col-xs-12 col-sm-12 col-md-6"><br>
-                                                    <label for="name">Tipo de audiencia</label>
-                                                    <select name="tipo_audiencia" class="form-control" required> 
-                                                        <option value="">Seleccione</option>
-                                                        <option value="Presencial" {{ $conciliadores["tipo_audiencia"] == "Presencial" ? "selected" : '' }}>Presencial</option>
-                                                        <option value="Virtual" {{ $conciliadores["tipo_audiencia"] == "Virtual" ? "selected" : '' }}>Virtual</option>
-                                                    </select>
-                                                </div> 
+                                        <div class="row">
+                                            <div class="col-xs-12 col-sm-12 col-md-6"><br>
+                                                <label for="name">Tipo de audiencia</label>
+                                                <select name="tipo_audiencia" class="form-control" required> 
+                                                    <option value="">Seleccione</option>
+                                                    <option value="Presencial" {{ $conciliadores["tipo_audiencia"] == "Presencial" ? "selected" : '' }}>Presencial</option>
+                                                    <option value="Virtual" {{ $conciliadores["tipo_audiencia"] == "Virtual" ? "selected" : '' }}>Virtual</option>
+                                                </select>
+                                            </div> 
                                         </div>
                                     </div>
                                 </div>
@@ -322,7 +334,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-2">
                                         <br><a class="btn btn-success" href="{{ route('VerPDFAudiencia', $id) }}"  target="_blank">Acta de Audiencia</a></li>
                                     </div>
-                            </div>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -367,7 +379,7 @@
                         <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
                                 <label for="name">RFC del Solicitante (*)</label>
-                                <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()" value="<?=$solicitante["rfc"];?>" required> 
+                                <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()" value="<?=$solicitante["rfc"];?>"> 
                                 <div class="invalid-feedback">
                                     El campo RFC es obligatorio.
                                 </div>
@@ -476,7 +488,58 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Representante Legales</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Representantes Legales</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                <form method="POST" action="{{ route('seleccionar_abogado') }} ">
+                    @csrf
+                    <input type="hidden" id="modal-id" name="citado" value="">
+                    <input type="hidden" name="solicitud" value="{{$solicitud->id}}">
+                    <input type="hidden" name="origen" value="previa">
+                    <table id="tabla1" class="table-striped" style="width:100%">
+                        <thead style="background-color: #4A001F;">   
+                            <!--<th style="display: none;">ID</th>-->
+                            <th style="color: #fff;">Folio</th>
+                            <th style="color: #fff;">Nombre</th>
+                            <th style="color: #fff;">RFC</th>
+                            <th style="color: #fff;">Representante</th>
+                            <th style="color: #fff;">Acciones</th>
+                        </thead>
+                        <tbody class="contenidobusqueda">
+                            @foreach($abogados as $abogado)
+                                <tr>
+                                    <td>{{$abogado->idAbogado}}</td>
+                                    <td>{{$abogado->nombres_patronal}} {{$abogado->primer_apellido_patronal}} {{$abogado->segundo_apellido_patronal}}</td>
+                                    <td>{{$abogado->rfc_patronal}}</td>
+                                    <td>{{$abogado->nombre_representante}} {{$abogado->primer_apellido_representante}} {{$abogado->segundo_apellido_representante}}</td>
+                                    <td>
+                                        <button class="btn btn-info" onclick=editar_rol(); type="submit" name="abogado" value="{{$abogado->idAbogado}}">Seleccionar</button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarCitados">Agregar Registro Patronal</button>
+                <!--
+                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarDerecho">Agregar por propio derecho</button>
+                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalActualizaCitados">Actualizar citado</button>
+                -->
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{{--<div class="modal fade" id="modalCitados" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Representantes Legales</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -519,7 +582,7 @@
             </div>
         </div>
     </div>
-</div>
+</div>--}}
 <!-- Modal Agregar Citados -->
 <div class="modal fade" id="modalAgregarCitados" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <form class='needs-validation novalidate'  method='POST'  enctype="multipart/form-data" name="AgregarRepresentante" id="AgregarRepresentante" action="{{route('insertar_citados_audiencia')}}">
@@ -1053,6 +1116,10 @@
                     html +='<option value="GratificaciónF">Graficación F (Reconocimiento de derechos)</option>';
                     html +='<option value="Otras">Otros concepto de pago</option>';
                     html +='</select>';
+                    // Campo para escribir otra prestación (solo si se selecciona "Otras")
+                    html += '<div class="otra-prestacion-input" style="display: none; margin-top: 10px;">';
+                    html += '<input type="text" class="form-control" name="otra_prestacion[]" placeholder="Especifique la prestación" />';
+                    html += '</div>';
                     html +='<div class="invalid-feedback">El tipo de pago es obligatorio.</div>';
                     html += '</div> </div>';
 
@@ -1200,10 +1267,118 @@
                 input.value = partes[0] + '.' + partes.slice(1).join('');
             }
         }
+         //Muestra un input cuando en prestaciones se selecciona la opción Otros concepto de pago
+        $(document).on('change', '.tipo-pago-select', function () {
+            var selected = $(this).val();
+            var container = $(this).closest('.form-group').find('.otra-prestacion-input');
+
+            if (selected === 'Otras') {
+                container.show();
+                container.find('input').attr('required', true);
+            } else {
+                container.hide();
+                container.find('input').val('').removeAttr('required');
+            }
+        });
+        //Muestra el total a pagar en base a las prestaciones y deducciones capturadas
+        function formatoMoneda(num) {
+            return num.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+    
+        function calcularTotal() {
+            let totalPrestaciones = 0;
+            let totalDeducciones = 0;
+
+            // NUEVAS PRESTACIONES
+            $('input[name="monto_pago[]"]').each(function () {
+                let val = parseFloat($(this).val());
+                if (!isNaN(val)) totalPrestaciones += val;
+            });
+
+            // NUEVAS DEDUCCIONES
+            $('input[name="monto_deduccion[]"]').each(function () {
+                let val = parseFloat($(this).val());
+                if (!isNaN(val)) totalDeducciones += val;
+            });
+
+            // PRESTACIONES YA GUARDADAS
+            @foreach($conceptos as $c)
+                totalPrestaciones += {{ floatval($c->monto) }};
+            @endforeach
+
+            // DEDUCCIONES YA GUARDADAS
+            @foreach($deducciones as $d)
+                totalDeducciones += {{ floatval($d->monto) }};
+            @endforeach
+
+            let total = totalPrestaciones - totalDeducciones;
+            $("#totalCalculado").text('$' + formatoMoneda(total));
+        }
+
+        $(document).on('input', 'input[name="monto_pago[]"]', calcularTotal);
+        $(document).on('input', 'input[name="monto_deduccion[]"]', calcularTotal);
+        $(document).on('click', '.removeRow, .removeRow3', function () {
+            setTimeout(calcularTotal, 100);
+        });
+        calcularTotal();
     </script>
     <!--citados a mostrar en convenio -->
     <script>
-        document.getElementById('btn-terminar').addEventListener('click', function(e) {
+let yaGuardado = false;
+
+function clonarCheckboxes() {
+    let form = document.getElementById('form_roles');
+
+    // limpiar clones previos
+    document.querySelectorAll('.clon-checkbox').forEach(el => el.remove());
+
+    // clonar todos los checkboxes aparece_convenio
+    document.querySelectorAll('input[type=checkbox][name^="aparece_convenio"]').forEach(cb => {
+        let input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = cb.name;
+        input.value = cb.checked ? 1 : 0;
+        input.classList.add('clon-checkbox');
+        form.appendChild(input);
+    });
+
+    yaGuardado = true;
+}
+
+// Actualizar → guarda inmediatamente
+document.getElementById('btn-actualizar').addEventListener('click', function(e) {
+    clonarCheckboxes();
+});
+
+// Convenio → guarda antes de abrir PDF
+document.getElementById('btn-convenio').addEventListener('click', function(e) {
+    e.preventDefault();
+    clonarCheckboxes();
+    let form = document.getElementById('form_roles');
+    form.action = "{{ route('terminar_audiencia', $id) }}";
+    form.submit();
+    setTimeout(() => { window.open("{{ route('PDFconveniosolicitud', $id) }}", "_blank"); }, 700);
+});
+
+// Acta → guarda antes de abrir PDF
+document.getElementById('btn-acta').addEventListener('click', function(e) {
+    e.preventDefault();
+    clonarCheckboxes();
+    let form = document.getElementById('form_roles');
+    form.action = "{{ route('terminar_audiencia', $id) }}";
+    form.submit();
+    setTimeout(() => { window.open("{{ route('VerPDFAudiencia', $id) }}", "_blank"); }, 700);
+});
+
+// Terminar → guarda solo si no se guardó antes
+document.getElementById('btn-terminar').addEventListener('click', function(e) {
+    if (!yaGuardado) {
+        clonarCheckboxes();
+    }
+});
+
+
+        /*document.getElementById('btn-terminar').addEventListener('click', function(e) {
             var form = document.getElementById('form_roles');
 
             document.querySelectorAll('.clon-checkbox').forEach(function(el){
@@ -1220,7 +1395,7 @@
                 input.classList.add('clon-checkbox');
                 form.appendChild(input);
             });
-        });
+        });*/
     </script>
 
     <script src="../../public/assets/js/validaciones.js"></script> 

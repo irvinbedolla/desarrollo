@@ -49,7 +49,7 @@
                                             <tr>
                                                 <td>{{$audiencia->NUE}}</td>
                                                 <td>
-                                                    {{ \Carbon\Carbon::parse($audiencia->fecha)->format('Y-m-d') }} {{ \Carbon\Carbon::parse($audiencia->hora)->format('H:i:s') }}
+                                                    {{ \Carbon\Carbon::parse($audiencia->fecha)->format('d-m-y') }} {{ \Carbon\Carbon::parse($audiencia->hora)->format('H:i') }} hrs.
                                                 </td>
                                                 <td>{{$audiencia->nombre}}</td>
                                                 <td>{{$audiencia->conciliador}}</td>

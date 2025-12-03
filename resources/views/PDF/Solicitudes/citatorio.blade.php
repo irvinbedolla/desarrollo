@@ -118,7 +118,7 @@
                     regulan el procedimiento obligatorio prejudicial conciliatorio; se notifica al Representante legal de <b>C. {{ $citado->nombre }} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}</b> para 
                     que asista a la <b>Audiencia de Conciliación</b> 
                     de fecha <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las
-                    <b>{{$audiencia->hora}}</b> horas, en la <b>{{ $audiencia->sala }}</b> de la Delegación Regional de <b>{{ $solicitud->delegacion}}</b> del Centro de Conciliación Laboral del
+                    <b>{{ \Carbon\Carbon::parse($audiencia->hora)->format('H:i') }}</b> horas, en la <b>{{ $audiencia->sala }}</b> de la Delegación Regional de <b>{{ $solicitud->delegacion}}</b> del Centro de Conciliación Laboral del
                     Estado de Michoacán de Ocampo, con domicilio en <b>{{$direccion_sede}}.</b>
                 </p>
 
@@ -147,7 +147,7 @@
 
                 <br><br><br><br><br>
                 <p><center><b>___________________________________<br> {{strtoupper($conciliador->name)}} <br> FUNCIONARIO/A CONCILIADOR/A<br>
-                        DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></center> </p>
+                        DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center> </p>
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

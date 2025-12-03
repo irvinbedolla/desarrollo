@@ -413,6 +413,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/audienicas/cumplimietos/{id}',         [SeerController::class, 'ver_pagos_audiencia'])->name('audiencia_cumplimientos');
         Route::post('/guardar_edicion_audiencia',           [SeerController::class, 'audiencia_confirmar'])->name('audiencia_confirmar');
         Route::post('/audiencias/pagoA',                    [SeerController::class, 'pagoA_audiencia'])->name('pagoA_audiencia'); // cumplimiento en audiencias
+        Route::post('/representante/quitar',                [SeerController::class, 'quitarRepresentante'])->name('representante.quitar'); //Eliminar/Quitar representante legal asiganado al iniciar la audiencia
+        Route::delete('/audieniecias/deduccion_eliminar_pago/{id_solicitud}', [SeerController::class, 'eliminar_deduccion_audiencia'])->name('eliminar_deduccion_audiencia');
     //Fin de Audiencias
     //Citados
         Route::post('/solicitud/guardar_citadoC',           [SeerController::class, 'insertar_citados_con'])->name('insertar_citado');
