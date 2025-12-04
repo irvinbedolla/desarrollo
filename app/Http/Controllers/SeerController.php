@@ -7164,8 +7164,15 @@ class SeerController extends Controller
                 while ($slot < $finJornada) {
                     $slotStart = $slot->format('Y-m-d\TH:i:s');
 
-                    $ocupado = isset($ocupadosMap[$slotStart]);
+                    //$ocupado = isset($ocupadosMap[$slotStart]);
+                    //CAMBIO CLAVE 1: Obtener el conteo de ocupación para el slot**
+                    // Usamos el operador de coalescencia nula (??) para que sea 0 si no existe.
+                    $conteoOcupados = $ocupadosMap[$slotStart] ?? 0; 
                     
+                    // **CAMBIO CLAVE 2: Definir la condición de ocupación**
+                    // El slot está OCUPADO solo si el conteo actual es >= 2.
+                    $ocupado = ($conteoOcupados >= 2);
+
                     $esInhabil = false;
                     foreach($inhabiles as $dia){
                         $fechaInhabilInicio = $dia->fecha_inicio . 'T' . $dia->horario_inicio;
