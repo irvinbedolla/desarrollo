@@ -546,13 +546,13 @@
                                                 </div>
                                             </div>-->
                                             <div class="col-xs-12 col-sm-12 col-md-4">
-                                                <label for="name">Posible caso de excepción 
+                                                <label for="excepcion">Posible caso de excepción <span style="color:red;">(*)</span>
                                                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                                                         ?
                                                     </button>
                                                 </label>
                                                 
-                                                <select name="excepcion" class="form-control" onchange="cambiaExcepcion(this)">
+                                                <select name="excepcion" class="form-control" onchange="cambiaExcepcion(this)" required>
                                                     <option value="">Seleccione</option>
                                                     <option value="Si">Si</option>
                                                     <option value="No">No</option>
@@ -562,93 +562,146 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-3" id="tipoPersona_razon" style="display:none;">
-                                                <div class="form-group">
-                                                    
-                                            <div id="tipo_caso"  class="col-xs-12 col-sm-12 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="name">Tipo de caso de excepción</label>
-                                                    <select name="tipo_caso" class="form-control">
-                                                        <option value="">Seleccione</option>
-                                                        <option value="Discriminación">Maternidad</option>
-                                                        <option value="Acoso u hostigamiento sexual">Riesgos de trabajo</option>
-                                                        <option value="Discriminación">Accidentes de Trabajo</option>
-                                                        <option value="Discriminación">Invalidez</option>
-                                                        <option value="Discriminación">Seguros de Vida</option>
-                                                        <option value="Discriminación">Otras</option>
-                                                        <option value="Discriminación">Libertad y Asociación Sindical</option>
-                                                        <option value="Discriminación">Trata Laboral y Trabajo Forzoso</option>
-                                                        <option value="Discriminación">Trabajo Infantil</option>
-                                                        <option value="Discriminación">Disputa de titularidad de Contrato Coletivo y Contrato Ley</option>
-                                                        <option value="Discriminación">Impugnación de estatutos de Sindicato y su Modificación</option>
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        El campo es obligatorio.
+                                            <div id="tipoPersona_razon" class="row" style="margin-top:20px; width:100%;">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="frecuencia_hechos">Frecuencia con la que han sucedido los hechos <span style="color:red;">(*)</span></label>
+                                                        <select name="frecuencia_hechos" class="form-control">
+                                                            <option value="">Seleccione</option>
+                                                            <option value="Una vez">Una vez</option>
+                                                            <option value="Varias veces">Varias veces</option>
+                                                            <option value="De manera continua, hasta la fecha actual">De manera continua, hasta la fecha actual</option>
+                                                            <div class="invalid-feedback">
+                                                                El campo es obligatorio.
+                                                            </div>
+                                                        </select>
                                                     </div>
                                                 </div>
-                                            
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
+
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">Grupos vulnerables</label>
-                                                        <select name="vulnerables" class="form-control" required>
+                                                        <label for="cambios_situacionL">Cambios que se dieron en su situación laboral después de los hechos <span style="color:red;">(*)</span></label>
+                                                        <select name="cambios_situacionL" class="form-control">
                                                             <option value="">Seleccione</option>
-                                                            <option value="Menores de edad">Menores de edad</option>
-                                                            <option value="Adultos mayores">Adultos mayores</option>
-                                                            <option value="Personas con discapacidad">Personas con discapacidad</option>
-                                                            <option value="Población indígena">Población indígena</option>
-                                                            <option value="Personas Migrantes">Personas Migrantes</option>
-                                                            <option value="LGBTTTIQ">LGBTTTIQ+</option>
-                                                            <option value="No aplica">No aplica</option>
+                                                            <option value="Sigue igual">Menores de edad</option>
+                                                            <option value="Tensión, estrés e incomodidad en el área de trabajo">Adultos mayores</option>
+                                                            <option value="Le cambiarón de área">Personas con discapacidad</option>
+                                                            <option value="Otro">Población indígena</option>
                                                         </select>
                                                         <div class="invalid-feedback">
                                                             El campo es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
+
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">Requiere Asesoria/Orientación Juridica</label>
-                                                        <select name="orientacion" class="form-control">
+                                                        <label for="comunico_hechos">¿La persona afectada comunicó los hechos a alguien más de su área de trabajo?<br>Describir a quién o a quiénes <span style="color:red;">(*)</span></label>
+                                                        <textarea name="comunico_hechos" class="form-control"></textarea>
+                                                        <div class="invalid-feedback">
+                                                            El campo es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="descripcion_conducta">Descripción de las conductas manifestadas <span style="color:red;">(*)</span></label>
+                                                        <textarea name="descripcion_conducta" class="form-control"></textarea>
+                                                        <div class="invalid-feedback">
+                                                            El campo es obligatorio.
+                                                        </div>
+                                                    </div>                                                 
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="responsable_cargo">¿Quién o quiénes ejercieron los actos de acoso y hostigamiento sexual o laboral, discriminación y violencia laboral?<br>Especificar cargo y 
+                                                            nombres <span style="color:red;">(*)</span></label>
+                                                        <textarea name="responsable_cargo" class="form-control"></textarea>
+                                                        <div class="invalid-feedback">
+                                                            El campo es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="actos_cometidos">¿Qué actos se cometieron? <span style="color:red;">(*)</span></label>
+                                                        <textarea name="actos_cometidos" class="form-control"></textarea>
+                                                        <div class="invalid-feedback">
+                                                            El campo es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="momento_hechos">¿Cuándo sucedieron los hechos? <span style="color:red;">(*)</span></label>
+                                                        <textarea name="momento_hechos" class="form-control"></textarea>
+                                                        <div class="invalid-feedback">
+                                                            El campo es obligatorio.
+                                                        </div>
+                                                    </div>                                        
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="lugar_hechos">¿Donde ocurrieron los actos de acoso y hostigamiento sexual o laboral, discriminación y violencia laboral? <span style="color:red;">(*)</span></label>
+                                                        <textarea name="lugar_hechos" class="form-control"></textarea>
+                                                        <div class="invalid-feedback">
+                                                            El campo es obligatorio.
+                                                        </div>
+                                                    </div>                                         
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="constancia_hechos">¿Los actos han ocurrido anteriormente o de manera reiterada? <span style="color:red;">(*)</span></label>
+                                                        <textarea name="constancia_hechos" class="form-control"></textarea>
+                                                        <div class="invalid-feedback">
+                                                            El campo es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="solicito_apoyo">¿Ha acudido a su respectivo sindicato, o alguna unidad administrativa en busqueda de apoyo? <span style="color:red;">(*)</span></label>
+                                                        <select name="solicito_apoyo" class="form-control">
                                                             <option value="">Seleccione</option>
                                                             <option value="Si">Si</option>
                                                             <option value="No">No</option>
                                                         </select>
                                                         <div class="invalid-feedback">
-                                                            El campo sexo es obligatorio.
+                                                            El campo es obligatorio.
                                                         </div>
-                                                    </div>
+                                                    </div>                                       
                                                 </div>
-                                                
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">Delegación/Oficina</label>
-                                                        <select name="delegacion" class="form-control" required>
-                                                            <option value="">Seleccione</option>
-                                                            <option value="Morelia">Morelia</option>
-                                                            <option value="Zitácuaro">Zitácuaro</option>
-                                                            <option value="Uruapan">Uruapan</option>
-                                                            <option value="Lázaro Cárdenas">Lázaro Cárdenas</option>
-                                                            <option value="Zamora">Zamora</option>
-                                                            <option value="Sahuayo">Sahuayo</option>
-                                                        </select>
+                                                        <label for="continuacion_solicto_apoyo">¿Qué resultado obtuvo? <span style="color:red;">(*)</span></label>
+                                                        <textarea name="continuacion_solicto_apoyo" class="form-control"></textarea>
                                                         <div class="invalid-feedback">
                                                             El campo es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
-                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">Observaciones</label>
-                                                        <textarea name="conflicto" class="form-control"></textarea>
+                                                        <label for="incidencia_directa">¿Los hechos ocurridos han incidido en su centro de trabajo de manera directa(sobrecarga de trabajo, humillaciones, tratos indignos, negación de 
+                                                            prestaciones, entre otros)? <span style="color:red;">(*)</span></label>
+                                                        <textarea name="incidencia_directa" class="form-control"></textarea>
                                                         <div class="invalid-feedback">
                                                             El campo es obligatorio.
                                                         </div>
-                                                    </div>
+                                                    </div>                                      
+                                                </div>
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="recibio_atencion">Derivado de la problemática, ¿Ha recibido atención médica o de algún otro tipo? <span style="color:red;">(*)</span></label>
+                                                        <textarea name="recibio_atencion" class="form-control"></textarea>
+                                                        <div class="invalid-feedback">
+                                                            El campo es obligatorio.
+                                                        </div>
+                                                    </div>                                             
                                                 </div>
                                             </div>
-
+                                        </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div align="center">
                                                 <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>   
@@ -701,15 +754,15 @@
         </section>
     </div>
     <script>
-        document.getElementById("tipo_caso").style.display="none";
+        document.getElementById("tipoPersona_razon").style.display="none";
         
         function cambiaExcepcion(elemento){
             var valor = elemento.value;
             if(valor == "Si"){
-                document.getElementById("tipo_caso").style.display="block";
+                document.getElementById("tipoPersona_razon").style.display="flex";
             }
             else{
-                document.getElementById("tipo_caso").style.display="none";
+                document.getElementById("tipoPersona_razon").style.display="none";
             }
         }
 

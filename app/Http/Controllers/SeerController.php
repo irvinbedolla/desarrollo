@@ -34,6 +34,7 @@ use App\Models\SeerPerGeneral_old;
 use App\Models\SeerCitados_old;
 use App\Models\SeerPerConciliador_old;
 use App\Models\Asistencia;
+use App\Models\SeerCasosExcepcion;
 
 //Para sacar el Id del usuario
 use Illuminate\Support\Facades\Auth;
@@ -2029,6 +2030,20 @@ class SeerController extends Controller
             'documentoIdentificacion'   => 'required',
             'num_identificacion'        => 'required',
             'descripcionSolicitud'      => 'required',
+            'excepcion'                 => 'required',
+            'frecuencia_hechos' => 'required_if:excepcion,Si',
+            'cambios_situacionL' => 'required_if:excepcion,Si',
+            'comunico_hechos' => 'required_if:excepcion,Si',
+            'descripcion_conducta' => 'required_if:excepcion,Si',
+            'responsable_cargo' => 'required_if:excepcion,Si',
+            'actos_cometidos' => 'required_if:excepcion,Si',
+            'momento_hechos' => 'required_if:excepcion,Si',
+            'lugar_hechos' => 'required_if:excepcion,Si',
+            'constancia_hechos' => 'required_if:excepcion,Si',
+            'solicito_apoyo' => 'required_if:excepcion,Si',
+            'continuacion_solicto_apoyo' => 'required_if:excepcion,Si',
+            'incidencia_directa' => 'required_if:excepcion,Si',
+            'recibio_atencion' => 'required_if:excepcion,Si',
         ]);
         
         $data_insert=array(
@@ -2133,6 +2148,29 @@ class SeerController extends Controller
         $data_insert["documentoIdentificacion"] = $documentoidentificacion;
        
         SeerSolicitante::create($data_insert);
+        SeerPerGeneral::where('id', $id)
+        ->update([
+            'caso_excepcion' => $data["excepcion"]
+        ]);
+        
+        if ($data["excepcion"] === "Si") {
+            SeerCasosExcepcion::create([
+                'id_solicitud' => $id,
+                'frecuencia_hechos' => $data["frecuencia_hechos"] ?? null,
+                'cambios_situacionL' => $data["cambios_situacionL"] ?? null,
+                'comunico_hechos' => $data["comunico_hechos"] ?? null,
+                'descripcion_conducta' => $data["descripcion_conducta"] ?? null,
+                'responsable_cargo' => $data["responsable_cargo"] ?? null,
+                'actos_cometidos' => $data["actos_cometidos"] ?? null,
+                'momento_hechos' => $data["momento_hechos"] ?? null,
+                'lugar_hechos' => $data["lugar_hechos"] ?? null,
+                'constancia_hechos' => $data["constancia_hechos"] ?? null,
+                'solicito_apoyo' => $data["solicito_apoyo"] ?? null,
+                'continuacion_solicto_apoyo' => $data["continuacion_solicto_apoyo"] ?? null,
+                'incidencia_directa' => $data["incidencia_directa"] ?? null,
+                'recibio_atencion' => $data["recibio_atencion"] ?? null,
+            ]);
+        }
         //return view('solicitudes.aviso',compact('folio'));
     
         //$estados=Estados::all();
