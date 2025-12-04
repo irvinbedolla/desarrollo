@@ -7197,7 +7197,7 @@ class SeerController extends Controller
                     
                     // **CAMBIO CLAVE 2: Definir la condición de ocupación**
                     // El slot está OCUPADO solo si el conteo actual es >= 2.
-                    $ocupado = ($conteoOcupados >= 2);
+                    $ocupado = ($conteoOcupados >= 3);
 
                     $esInhabil = false;
                     foreach($inhabiles as $dia){
@@ -7250,7 +7250,7 @@ class SeerController extends Controller
                             break;
                     }
 
-                    $slot->modify('+15 minutes');
+                    $slot->modify('+30 minutes');
                 }
             }
             $fecha->modify('+1 day');
@@ -9008,6 +9008,7 @@ class SeerController extends Controller
         ];
         return $descripciones[$tipo];
     }
+
     public function pagoA_audiencia(Request $request){
         $data = $request->all();
         Pagos::find($data["id"])
@@ -9024,6 +9025,7 @@ class SeerController extends Controller
 
         return redirect()->route('todas_audiencias'); 
     }
+
     // Eliminar/Quitar representante legal asiganado al de iniciar la audiencia
     public function quitarRepresentante(Request $request)
     {
@@ -9035,8 +9037,19 @@ class SeerController extends Controller
 
         return back()->with('success', 'Representante eliminado correctamente.');
     }
+
     public function eliminar_deduccion_audiencia($id_solicitud){
         Deducciones::find($id_solicitud)->delete();
         return back()->with('success', 'Pago Deducción Correctamente.');
+    }
+
+    public function mostrar_citatorios($id) {
+        
+        // Obtener los citados
+        $citados = SeerCitados::select('id','nombre','primer_apellido','segundo_apellido')->where('id_solicitud', $id)->get();
+        if ($citados->isEmpty()) {
+            return redirect()->back()->with('error', 'No hay citados para esta solicitud.');
+        }
+        return response()->json($citados);
     }
 }
