@@ -7125,13 +7125,24 @@ class SeerController extends Controller
         $ocupados = Pagos::whereBetween('fecha', [$fecha_inicio_dt, $fecha_fin_dt])
             ->where('delegacion', $sede)
             ->get();
-            
+        /*    
         $ocupadosMap = [];
         foreach ($ocupados as $cumplimiento) {
             $slotKey = $cumplimiento->fecha->format('Y-m-d') . 'T' . $cumplimiento->hora->format('H:i:s');
             $ocupadosMap[$slotKey] = true;
         }
-
+        */
+        $ocupadosMap = [];
+        foreach ($ocupados as $cumplimiento) {
+            // Asume que $reserva tiene una propiedad 'start' con el formato 'Y-m-d\TH:i:s'
+            $slotKey = $cumplimiento->fecha->format('Y-m-d') . 'T' . $cumplimiento->hora->format('H:i:s');
+            
+            if (isset($ocupadosMap[$slotKey])) {
+                $ocupadosMap[$slotKey]++;
+            } else {
+                $ocupadosMap[$slotKey] = 1;
+            }
+        }
         $pagosPorDia = Pagos::where('tipo_pago', 'Audiencia')
             ->where('delegacion', $sede)
             ->whereBetween('fecha', [$fecha_inicio_dt, $fecha_fin_dt])
@@ -7186,7 +7197,7 @@ class SeerController extends Controller
                     $estado = '';
                     if ($diaEstaLleno) { 
                         $estado = 'ocupado';
-                    } elseif ($ocupado) { 
+                    } elseif ($ocupado) { // Usa la nueva variable $ocupado
                         $estado = 'ocupado';
                     } elseif ($esInhabil) {
                         $estado = 'inhabil';
