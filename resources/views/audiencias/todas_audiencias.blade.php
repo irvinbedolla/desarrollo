@@ -53,7 +53,7 @@
                                                 </td>
                                                 <td>{{$audiencia->nombre}}</td>
                                                 <td>{{$audiencia->conciliador}}</td>
-                                                <td>{{$audiencia->estatus}}</td>
+                                                <td>{{$audiencia->estatus_modelo}}</td>
                                                 <td><a class="btn btn-info" href="{{ route('solicitud_audiencia', $audiencia->id_solicitud) }}?isAudiencia=Si" onclick=editar_usuario();>Revisar</a></td>
                                                 <td>
                                                     @if($audiencia->estatus == "Confirmado")

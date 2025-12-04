@@ -53,7 +53,7 @@
                     </table>
                 </div>
                 <div class="text-center mt-3">
-                    <a href="{{ route('index_conciliadores') }}" class="btn btn-secondary" style="background-color:blue; border-color:blue;">Regresar</a>
+                    <a href="{{ route('firma_citatorio') }}" class="btn btn-secondary" style="background-color:blue; border-color:blue;">Regresar</a>
                 </div>
             </div>
         </div>

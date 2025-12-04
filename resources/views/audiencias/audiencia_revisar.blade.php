@@ -237,7 +237,7 @@
                                                 <option>Seleccione</option>
                                                 <option value="Conciliacion" {{ $conciliadores["conclucion"] == "Conciliacion" ? "selected" : '' }}>Hubo Convenio</option>
                                                 <option value="No conciliacion" {{ $conciliadores["conclucion"] == "No conciliacion" ? "selected" : '' }}>No hubo Convenio</option>
-                                                <option value="Archivada por incomparecencia" {{ $conciliadores["conclucion"] == "Archivada por incomparecencia" ? "selected" : '' }}>Archivar</option>
+                                                <!--option value="Archivada por incomparecencia" {{ $conciliadores["conclucion"] == "Archivada por incomparecencia" ? "selected" : '' }}>Archivar</!--option-->
                                             </select>
                                         </div>
                                     </div>
@@ -329,7 +329,7 @@
                                         <br><button id="btn-terminar" type="submit" class="btn btn-success" name="bandera" value="2">Actualizar</button>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-2">
-                                        <br><a class="btn btn-success" href="{{ route('PDFconveniosolicitud', $id) }}" target="_blank">Convenio</a>
+                                        <br><a class="btn btn-success" href="{{ route('PDFconveniosolicitud', $id) }}" id="btnConvenio" target="_blank">Convenio</a>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-2">
                                         <br><a class="btn btn-success" href="{{ route('VerPDFAudiencia', $id) }}"  target="_blank">Acta de Audiencia</a></li>
@@ -1396,6 +1396,52 @@ document.getElementById('btn-terminar').addEventListener('click', function(e) {
                 form.appendChild(input);
             });
         });*/
+    </script>
+
+    <script>
+        // Deshabilitar el botón "Terminar" si ningún checkbox está marcado
+        (function () {
+            const termBtn = document.querySelector('button[name="bandera"][value="1"]');
+            const convBtn = document.getElementById('btnConvenio');
+
+            function updateTerminar() {
+                if (!termBtn) return;
+                const checkboxes = document.querySelectorAll('input[type="checkbox"][name^="aparece_convenio"]');
+                const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+                termBtn.disabled = !anyChecked;
+            }
+
+            function updateConvenio() {
+                if (!convBtn) return;
+                const checkboxes = document.querySelectorAll('input[type="checkbox"][name^="aparece_convenio"]');
+                const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+                if (anyChecked) {
+                    convBtn.classList.remove('disabled');
+                    convBtn.style.pointerEvents = '';
+                    convBtn.removeAttribute('aria-disabled');
+                } else {
+                    convBtn.classList.add('disabled');
+                    convBtn.style.pointerEvents = 'none';
+                    convBtn.setAttribute('aria-disabled', 'true');
+                }
+            }
+
+            // Actualizar al cargar y cuando cambien checkboxes
+            document.addEventListener('DOMContentLoaded', function() {
+                updateTerminar();
+                updateConvenio();
+            });
+            document.addEventListener('change', function (e) {
+                if (e.target && e.target.matches('input[type="checkbox"][name^="aparece_convenio"]')) {
+                    updateTerminar();
+                    updateConvenio();
+                }
+            });
+
+            // Ejecutar inmediatamente por si el DOM ya está listo
+            updateTerminar();
+            updateConvenio();
+        })();
     </script>
 
     <script src="../../public/assets/js/validaciones.js"></script> 

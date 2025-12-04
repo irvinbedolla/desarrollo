@@ -411,7 +411,7 @@
                 html += '<div class="col-xs-12 col-sm-12 col-md-6">';
                 html += '<div class="form-group">';
                 html += '<label for="password">Monto a pagar</label>';
-                html +='<input type="text" class="form-control" name="monto_pago[]"  oninput="validarNumero(this)" placeholder="$">';
+                html +='<input type="text" class="form-control" name="monto_pago[]" required oninput="validarNumero(this)" placeholder="$">';
                 html += '<div class="invalid-feedback">El monto es obligatorio.</div>';
                 html += '</div> </div>';
 
@@ -469,7 +469,7 @@
             html += '<div class="form-group">';
             //Monto a pagar
             html += '<label for="password">Monto a pagar</label>';
-            html += '<input type="text" class="form-control" name="monto_pagos[]"   oninput="validarNumero(this)" >';
+            html += '<input type="text" class="form-control" name="monto_pagos[]" required oninput="validarNumero(this)" >';
             html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>';
             html += '</div></div>';
             // Tipo de Agenda
@@ -622,7 +622,7 @@
                     html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                     html += '<div class="form-group">';
                     html += '<label for="password">Monto a pagar</label>';
-                    html +='<input type="text" class="form-control" name="monto_deduccion[]"  oninput="validarNumero(this)" placeholder="$ Solo números y puntos" >';
+                    html +='<input type="text" class="form-control" name="monto_deduccion[]" oninput="validarNumero(this)" placeholder="$ Solo números y puntos" >';
                     html += '<div class="invalid-feedback">';
                     html += 'El monto es obligatorio.';
                     html += '</div> </div> </div>';
@@ -939,11 +939,69 @@
             });
 
             $('#totalCalculado').text("$" + formatoMoneda(total));
-            $("#totalPagosDiferidos").text('$' + formatoMoneda(totalPagosDiferidos));
-        }
-    </script>
-    <script>
-        const TIEMPO_FINAL_KEY = 'tiempoFinalTemporizador';
+                $("#totalPagosDiferidos").text('$' + formatoMoneda(totalPagosDiferidos));
+            }
+        </script>
+        <!--script>
+            // Validación: los montos de pago deben existir y ser numéricos > 0
+            (function(){
+                const form = document.getElementById('form_roles');
+                if(!form) return;
+                form.addEventListener('submit', function(e){
+                    // validar monto_pagos[] (pagos diferidos)
+                    const pagosDif = Array.from(document.querySelectorAll('input[name="monto_pagos[]"]'));
+                    for(let i=0;i<pagosDif.length;i++){
+                        const el = pagosDif[i];
+                        const val = el.value ? el.value.trim() : '';
+                        const num = parseFloat(val.replace(/,/g, '.'));
+                        if(val === '' || isNaN(num) || num <= 0){
+                            e.preventDefault();
+                            const msg = 'Todos los montos de pagos diferidos deben ser números mayores a cero.';
+                            if(window.Swal && typeof Swal.fire === 'function'){
+                                Swal.fire({ icon: 'warning', title: 'Valores inválidos', text: msg }).then(()=> el.focus());
+                            } else { alert(msg); el.focus(); }
+                            return false;
+                        }
+                    }
+
+                    // validar monto_pago[] (prestaciones)
+                    const pagos = Array.from(document.querySelectorAll('input[name="monto_pago[]"]'));
+                    for(let i=0;i<pagos.length;i++){
+                        const el = pagos[i];
+                        const val = el.value ? el.value.trim() : '';
+                        const num = parseFloat(val.replace(/,/g, '.'));
+                        if(val === '' || isNaN(num) || num <= 0){
+                            e.preventDefault();
+                            const msg = 'Todos los montos de prestaciones deben ser números mayores a cero.';
+                            if(window.Swal && typeof Swal.fire === 'function'){
+                                Swal.fire({ icon: 'warning', title: 'Valores inválidos', text: msg }).then(()=> el.focus());
+                            } else { alert(msg); el.focus(); }
+                            return false;
+                        }
+                    }
+
+                    // Validar que cada pago agendado tenga fecha y hora
+                    const paymentBlocks = Array.from(document.querySelectorAll('.inputFormRow2'));
+                    for (let i = 0; i < paymentBlocks.length; i++){
+                        const block = paymentBlocks[i];
+                        const diasInput = block.querySelector('input[name="dias_pagos[]"]');
+                        const horaInput = block.querySelector('input[name="hora_pagos[]"]');
+                        const montoInput = block.querySelector('input[name="monto_pagos[]"]') || block.querySelector('input[name="monto_pago[]"]');
+                        if (!diasInput || !horaInput || !diasInput.value || !horaInput.value){
+                            e.preventDefault();
+                            const msg = 'Para cada pago programado debes seleccionar una fecha y hora.';
+                            if(window.Swal && typeof Swal.fire === 'function'){
+                                Swal.fire({ icon: 'warning', title: 'Falta fecha/hora', text: msg }).then(()=> { if(montoInput) montoInput.focus(); });
+                            } else { alert(msg); if(montoInput) montoInput.focus(); }
+                            return false;
+                        }
+                    }
+                });
+            })();
+
+        </!script-->
+        <script>
+            const TIEMPO_FINAL_KEY = 'tiempoFinalTemporizador';
 
         // 1. Recuperar el Tiempo Final Guardado
         let tiempoFinalGuardado = localStorage.getItem(TIEMPO_FINAL_KEY);
@@ -989,7 +1047,7 @@
             if (calendarReagendar) { calendarReagendar.destroy(); }
             // Calcular fecha mínima (16 días hábiles) para posicionar el calendario directamente en la primera semana válida.
             const sede = $('#sede').val();
-            const conciliadorId = '{{ $conciliador->id ?? "" }}';
+            const conciliadorId = '{{ auth()->id() ?? "" }}';
             const hoy = new Date();
             hoy.setHours(0,0,0,0);
             let fechaCursor = new Date(hoy);
