@@ -2918,7 +2918,7 @@ class SeerController extends Controller
         }
         
         //Si se va confirmar si el valor es 2 solo se va editar lo anterior
-        if($data["toquen"] == 1){
+        /*if($data["toquen"] == 1){
             //Actualizar el estatus
             SeerPerGeneral::find($data["id"])->update(['estatus' => "Pendiente" ]);
 
@@ -2979,7 +2979,9 @@ class SeerController extends Controller
             Audiencias::create($audiencia_insert);
             
             SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $Audiencia[3], 'estatus' => 'Pendiente' ]);
-        }
+        }*/
+        
+        SeerPerGeneral::find($data["id"])->update(['estatus' => 'Pendiente']);
 
         return redirect()->route('mis_solicitudes'); 
     }
