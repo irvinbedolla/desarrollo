@@ -34,6 +34,7 @@ use App\Models\SeerPerGeneral_old;
 use App\Models\SeerCitados_old;
 use App\Models\SeerPerConciliador_old;
 use App\Models\Asistencia;
+use App\Models\SeerCasosExcepcion;
 
 //Para sacar el Id del usuario
 use Illuminate\Support\Facades\Auth;
@@ -1732,7 +1733,7 @@ class SeerController extends Controller
 
     public function store_enlace(Request $request){
         $data = $request->all();
-        SeerCitados::where('id', $data["id"])
+        $registrosActualizados = SeerCitados::where('id_solicitud', $data["id"])
         ->update(['id_notificador' => $data["notificador"], 'estatus' => "Pendiente"]);
         return redirect()->route('notificaciones');
     }
@@ -2029,6 +2030,20 @@ class SeerController extends Controller
             'documentoIdentificacion'   => 'required',
             'num_identificacion'        => 'required',
             'descripcionSolicitud'      => 'required',
+            'excepcion'                 => 'required',
+            'frecuencia_hechos' => 'required_if:excepcion,Si',
+            'cambios_situacionL' => 'required_if:excepcion,Si',
+            'comunico_hechos' => 'required_if:excepcion,Si',
+            'descripcion_conducta' => 'required_if:excepcion,Si',
+            'responsable_cargo' => 'required_if:excepcion,Si',
+            'actos_cometidos' => 'required_if:excepcion,Si',
+            'momento_hechos' => 'required_if:excepcion,Si',
+            'lugar_hechos' => 'required_if:excepcion,Si',
+            'constancia_hechos' => 'required_if:excepcion,Si',
+            'solicito_apoyo' => 'required_if:excepcion,Si',
+            'continuacion_solicto_apoyo' => 'required_if:excepcion,Si',
+            'incidencia_directa' => 'required_if:excepcion,Si',
+            'recibio_atencion' => 'required_if:excepcion,Si',
         ]);
         
         $data_insert=array(
@@ -2133,6 +2148,29 @@ class SeerController extends Controller
         $data_insert["documentoIdentificacion"] = $documentoidentificacion;
        
         SeerSolicitante::create($data_insert);
+        SeerPerGeneral::where('id', $id)
+        ->update([
+            'caso_excepcion' => $data["excepcion"]
+        ]);
+        
+        if ($data["excepcion"] === "Si") {
+            SeerCasosExcepcion::create([
+                'id_solicitud' => $id,
+                'frecuencia_hechos' => $data["frecuencia_hechos"] ?? null,
+                'cambios_situacionL' => $data["cambios_situacionL"] ?? null,
+                'comunico_hechos' => $data["comunico_hechos"] ?? null,
+                'descripcion_conducta' => $data["descripcion_conducta"] ?? null,
+                'responsable_cargo' => $data["responsable_cargo"] ?? null,
+                'actos_cometidos' => $data["actos_cometidos"] ?? null,
+                'momento_hechos' => $data["momento_hechos"] ?? null,
+                'lugar_hechos' => $data["lugar_hechos"] ?? null,
+                'constancia_hechos' => $data["constancia_hechos"] ?? null,
+                'solicito_apoyo' => $data["solicito_apoyo"] ?? null,
+                'continuacion_solicto_apoyo' => $data["continuacion_solicto_apoyo"] ?? null,
+                'incidencia_directa' => $data["incidencia_directa"] ?? null,
+                'recibio_atencion' => $data["recibio_atencion"] ?? null,
+            ]);
+        }
         //return view('solicitudes.aviso',compact('folio'));
     
         //$estados=Estados::all();
@@ -2880,7 +2918,7 @@ class SeerController extends Controller
         }
         
         //Si se va confirmar si el valor es 2 solo se va editar lo anterior
-        if($data["toquen"] == 1){
+        /*if($data["toquen"] == 1){
             //Actualizar el estatus
             SeerPerGeneral::find($data["id"])->update(['estatus' => "Pendiente" ]);
 
@@ -2941,7 +2979,9 @@ class SeerController extends Controller
             Audiencias::create($audiencia_insert);
             
             SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $Audiencia[3], 'estatus' => 'Pendiente' ]);
-        }
+        }*/
+        
+        SeerPerGeneral::find($data["id"])->update(['estatus' => 'Pendiente']);
 
         return redirect()->route('mis_solicitudes'); 
     }
@@ -3397,7 +3437,7 @@ class SeerController extends Controller
             'seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido',
             'seer_citados.colonia','seer_citados.tipo_vialidad','seer_citados.calle','seer_citados.n_ext','seer_citados.n_int',
             'seer_citados.municipio_citado','seer_citados.estado_citado','seer_citados.estatus','seer_citados.tipo_notificacion',
-            'municipios.nombre as municipio_nombre','estados.nombre as estado_nombre')
+            'municipios.nombre as municipio_nombre','estados.nombre as estado_nombre','seer_citados.id_notificador')
         ->where('seer_general.delegacion', $user["delegacion"])
         ->where('seer_citados.id_notificador', 0)
         ->where('seer_citados.notificacion',"!=", "Trabajador")
@@ -5649,10 +5689,10 @@ class SeerController extends Controller
         //$mostrarMotivos = SolicitudMotivo::all();
         $mostrarMotivos = SolicitudMotivo::where('tipo_solicitud', $general->tipo_solicitud)->get();
         //Motivos capturados
-        $motivos        = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
+        $motivos        = SeerMotivo::join('seer_general','seer_general.id','seer_motivos.id_solicitud')
+        ->join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
         ->where('id_solicitud',$id)
         ->select('catalogo_motivos.motivo','seer_motivos.id')->get();
-
         return view('solicitudes.editar_solicitud', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores'));
     }
 
@@ -7197,7 +7237,7 @@ class SeerController extends Controller
                     
                     // **CAMBIO CLAVE 2: Definir la condición de ocupación**
                     // El slot está OCUPADO solo si el conteo actual es >= 2.
-                    $ocupado = ($conteoOcupados >= 2);
+                    $ocupado = ($conteoOcupados >= 3);
 
                     $esInhabil = false;
                     foreach($inhabiles as $dia){
@@ -7250,7 +7290,7 @@ class SeerController extends Controller
                             break;
                     }
 
-                    $slot->modify('+15 minutes');
+                    $slot->modify('+30 minutes');
                 }
             }
             $fecha->modify('+1 day');
@@ -9008,6 +9048,7 @@ class SeerController extends Controller
         ];
         return $descripciones[$tipo];
     }
+
     public function pagoA_audiencia(Request $request){
         $data = $request->all();
         Pagos::find($data["id"])
@@ -9024,6 +9065,7 @@ class SeerController extends Controller
 
         return redirect()->route('todas_audiencias'); 
     }
+
     // Eliminar/Quitar representante legal asiganado al de iniciar la audiencia
     public function quitarRepresentante(Request $request)
     {
@@ -9035,8 +9077,19 @@ class SeerController extends Controller
 
         return back()->with('success', 'Representante eliminado correctamente.');
     }
+
     public function eliminar_deduccion_audiencia($id_solicitud){
         Deducciones::find($id_solicitud)->delete();
         return back()->with('success', 'Pago Deducción Correctamente.');
+    }
+
+    public function mostrar_citatorios($id) {
+        
+        // Obtener los citados
+        $citados = SeerCitados::select('id','nombre','primer_apellido','segundo_apellido')->where('id_solicitud', $id)->get();
+        if ($citados->isEmpty()) {
+            return redirect()->back()->with('error', 'No hay citados para esta solicitud.');
+        }
+        return response()->json($citados);
     }
 }

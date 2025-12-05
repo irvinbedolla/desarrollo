@@ -76,6 +76,7 @@
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Documentos Digitales</a></li>
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFfalltaInteres', $audiencia->id_solicitud) }}"        target="_blank">Acta de Archivo</a></li>
+                                                                    <li><button type="button" id="btnMostrarRegistros" class="btn btn-info" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
                                                         </div>
@@ -88,6 +89,7 @@
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Documentos Digitales</a></li>
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFincompetencia', $audiencia->id_solicitud) }}"        target="_blank">Incompetencia</a></li>
+                                                                    <li><button type="button" id="btnMostrarRegistros" class="btn btn-info" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
                                                         </div>
@@ -100,6 +102,7 @@
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Documentos Digitales</a></li>
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFinteres', $audiencia->id_solicitud) }}"              target="_blank">Acta de incomparecencia</a></li>
+                                                                    <li><button type="button" id="btnMostrarRegistros" class="btn btn-info" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
                                                         </div>
@@ -113,6 +116,7 @@
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"      target="_blank">Documentos Digitales</a></li>
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFnotificacion_solicitante', $audiencia->id_solicitud) }}" target="_blank">Notificación al solicitante</a></li>
                                                                     <li><button type="button" class="btn btn-info open-modal" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $audiencia->id_solicitud }}">Citatorios</button></li>
+                                                                    <li><button type="button" id="btnMostrarRegistros" class="btn btn-info" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
                                                         </div>                                                        
@@ -125,6 +129,7 @@
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Documentos Digitales</a></li>
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFno_conciliacion', $audiencia->id_solicitud) }}" target="_blank">Constancias de no conciliación</a></li>
+                                                                    <li><button type="button" id="btnMostrarRegistros" class="btn btn-info" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
                                                         </div> 
@@ -137,6 +142,7 @@
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Documentos Digitales</a></li>
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFincumplimientoAudiencia', $audiencia->id_solicitud) }}"      target="_blank">Constancia de Incumplimiento</a></li>
+                                                                    <li><button type="button" id="btnMostrarRegistros" class="btn btn-info" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
                                                         </div> 
@@ -153,7 +159,7 @@
                                                                     @if($audiencia->constancia == 0)
                                                                         <li><a class="dropdown-item" href="{{ route('PDFcumplimiento', $audiencia->id_solicitud) }}"  target="_blank">Constancia de cumplimiento</a></li>
                                                                     @endif
-                                                          <li><button type="button" class="btn open-modal" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $audiencia->id_solicitud }}">Citatorios</button></li>
+                                                                    <li><button type="button" id="btnMostrarRegistros" class="btn btn-info" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
                                                         </div> 
@@ -165,6 +171,7 @@
                                                                 </button>
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="dropdown-item" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Documentos Digitales</a></li>
+                                                                    <li><button type="button" id="btnMostrarRegistros" class="btn btn-info" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
                                                         </div> 
@@ -191,7 +198,7 @@
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="modalLabel">DOCUMENTOS</h5>
+          <h5 class="modal-title" id="modalLabel">Citatorios</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
         <div class="modal-body">
@@ -202,7 +209,7 @@
                     <th>Acción</th>
                   </tr>
                 </thead>
-                <tbody id="pdf-list"></tbody>
+                <tbody id="listaRegistros"></tbody>
             </table>
         </div>
         <div class="modal-footer">
@@ -263,63 +270,54 @@
     </script>
     <script>
         $(document).ready(function() {
-            $('.open-modal').click(function() {
+            $('#btnMostrarRegistros').on('click', function() {
+                const listaRegistros = $('#listaRegistros');
+                const pdfsUrlBase = "{{ url('ObtenerCitatorios') }}";
                 const id = $(this).data('id');
-                $('#pdf-list').empty();
+                const pdfRouteBase = '{{ route("PDFSolicitud", ["id" => "xxx"]) }}';
 
-                var myModal = new bootstrap.Modal(document.getElementById('documentos'));
-                myModal.show();
-
+                listaRegistros.empty(); // Limpiar lista
                 $.ajax({
                     url: `${pdfsUrlBase}/${id}`,
-                    method: 'GET',
-                    success: function(response) {
-                        if (response.length > 0) {
-                            response.forEach(pdf => {
-                                const pdfData = pdf.base64;
-                                const pdfName = pdf.nombre;
-
-                                const byteCharacters = atob(pdfData);
-                                const byteNumbers = new Array(byteCharacters.length);
-                                for (let i = 0; i < byteCharacters.length; i++) {
-                                    byteNumbers[i] = byteCharacters.charCodeAt(i);
-                                }
-                                const byteArray = new Uint8Array(byteNumbers);
-                                const blob = new Blob([byteArray], { type: 'application/pdf' });
-                                const url = URL.createObjectURL(blob);
-
-                                const row = `
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.length > 0) {
+                            // Iteramos sobre los datos recibidos (ya parseados por jQuery)
+                            $.each(data, function(index, registro) {
+                            const pdfUrl = pdfRouteBase.replace('xxx', registro.id);
+                                const listItem = `
                                 <tr>
-                                    <td style="text-align: left;">${pdfName}</td>
+                                    <td style="text-align: left;"> <strong>${registro.nombre} ${registro.primer_apellido} ${registro.segundo_apellido}</strong> </td>
                                     <td>
-                                        <a href="${url}" target="_blank" class="btn btn-primary btn-sm">Ver PDF</a>
+                                        <a href="${pdfUrl}">PDF</a>
                                     </td>
                                 </tr>`;
-                                $('#pdf-list').append(row);
+                                listaRegistros.append(listItem);
                             });
                         } else {
-                            $('#pdf-list').append('<tr><td colspan="2">No hay documentos disponibles.</td></tr>');
+                            listaRegistros.append('<li class="list-group-item">No se encontraron registros.</li>');
                         }
+                        
+                        // Mostrar el modal
+                        var myModal = new bootstrap.Modal(document.getElementById('modalListado'));
+                        myModal.show();
                     },
-                    error: function() {
-                        $('#pdf-list').append('<tr><td colspan="2">Error al cargar documentos.</td></tr>');
+                    error: function(xhr, status, error) {
+                        console.error("Error al obtener los datos:", error);
+                        listaRegistros.append('<li class="list-group-item text-danger">Error de conexión con el servidor.</li>');
+                        
+                        var myModal = new bootstrap.Modal(document.getElementById('modalListado'));
+                        myModal.show();
                     }
                 });
-            });
+             });
 
             $(document).on('click', '.open-expediente-modal', function() {
                 // 2. Capturar el 'data-id'
                 var idRegistro = $(this).data('id');            
                 document.getElementById('expediente_audiencia_id').value = idRegistro;
             });
-            /*
-            $('.open-expediente-modal').click(function () {
-                console.log("modal");
-                const id = $(this).data('id');
-                
-                $('#expediente_audiencia_id').val(id);
-            });
-            */
             // Limpiar backdrop y modal-open cuando modal se oculta
             $('#documentos').on('hidden.bs.modal', function () {
                 $('.modal-backdrop').remove();

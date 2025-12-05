@@ -230,6 +230,31 @@
                                                     <tbody></tbody>
                                                 </table>
                                             </div>
+                                            <div id="div1"  class="col-xs-12 col-sm-12 col-md-12"><br>
+                                                <table id="tabla" class="table table-striped mt-1" style="margin: 0 center; text-align:center;">
+                                                    <thead style="background-color: #D2D3D5;">
+                                                        <th style="color: black;">Audiencia</th>
+                                                        <th style="color: black;">Fecha</th>
+                                                        <th style="color: black;">Hora</th>
+
+                                                    </thead>
+                                                    <tbody>
+                                                        @forelse($historial_audiencias as $audiencia)
+                                                            <tr>
+                                                                <td>{{ $audiencia->folio_audiencia }}</td>                      
+                                                                <td>{{ \Carbon\Carbon::parse($audiencia->fecha)->format('d/m/y') }}</td>
+                                                                <td>{{ \Carbon\Carbon::parse($audiencia->hora)->format('H:i') }} hrs.</td>
+  
+                                                            </tr>
+                                                        @empty
+                                                            <tr>
+                                                                <td colspan="3">No hay audiencias registradas para esta solicitud.</td>
+                                                            </tr>
+                                                        @endforelse
+                                                    </tbody>
+
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                     <div id="solicitante" class="tabcontent">
@@ -1103,58 +1128,68 @@
                                                   
                                                 </div>
                                             @endforeach--}}
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <h4 class="text-center"><strong>Acuses</strong></h4>
+                                                    <hr>
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-6">
+                                                            <strong>Acuse de Confirmación</strong>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <a class="btn btn-info"
+                                                            href="{{ route('PDFacuseConfirmada', $general['id']) }}"
+                                                            target="_blank">Visualizar</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-6">
+                                                            <strong>Acuse de Solicitud</strong>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <a class="btn btn-info"
+                                                            href="{{ route('PDFacuse_solicitud', $general['id']) }}"
+                                                            target="_blank">Visualizar</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
+                                                <div class="col-md-6">
+                                                    <h4 class="text-center"><strong>Notificación al Solicitante</strong></h4>
+                                                    <hr>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-6"><br>
-                                                <div class="form-group">
-                                                    <h4 class="text-center">Acuses</h4>
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-6">
+                                                            <label><strong>Nombre Solicitante</strong></label><br>
+                                                            <span>{{ $solicitante->nombre }}</span>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <a class="btn btn-info"
+                                                            href="{{ route('PDFnotificacion_solicitante', $general['id']) }}"
+                                                            target="_blank">Visualizar</a>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
+                                           <div class="row mt-4">
+                                                <div class="col-md-6">
+                                                    <h4 class="text-center"><strong>Actas de Audiencia</strong></h4>
+                                                    <hr>
+                                                    @forelse($historial_audiencias as $audiencia)
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <div>
+                                                                <strong>Folio: {{ $audiencia->folio_audiencia }}</strong>
+                                                            </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-6"><br>
-                                                <div class="form-group">
-                                                    <h4 class="text-center">Notificación al solicitante</h4>
+                                                            <a class="btn btn-info"
+                                                            href="{{ route('VerPDFAudiencia', $audiencia->id_solicitud) }}"
+                                                            target="_blank">Visualizar</a>
+                                                        </div>
+                                                    @empty
+                                                        <p>No hay audiencias registradas para esta solicitud.</p>
+                                                    @endforelse
                                                 </div>
                                             </div>
-
-
-                                            <div class="col-xs-12 col-sm-3 col-md-3">
-                                                <div class="form-group">
-                                                    <label>­</label><br>
-                                                    <span>Acuse de Confirmación</span><br>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-xs-12 col-sm-12 col-md-3"><br>
-                                                <a class="btn btn-info"  href="{{ route('PDFacuseConfirmada', $general["id"]) }}"  target="_blank">Visualizar</a>
-                                            </div>
-
-
-                                            <div class="col-xs-12 col-sm-3 col-md-3">
-                                                <div class="form-group">
-                                                    <label>Nombre Solicitante</label><br>
-                                                    <span>{{ $solicitante->nombre }}</span>
-                                                </div>
-                                            </div>
-
-
-                                            <div class="col-xs-12 col-sm-12 col-md-3"><br>
-                                                <a class="btn btn-info"  href="{{ route('PDFnotificacion_solicitante', $general["id"]) }}" target="_blank">Visualizar</a>
-                                            </div>
-
-                                            <div class="col-xs-12 col-sm-3 col-md-3">
-                                                <div class="form-group">
-                                                    <label>­</label><br>
-                                                    <span>Acuse de Solicitud</span><br>
-                                                </div>
-                                            </div>
-
-
-                                            <div class="col-xs-12 col-sm-12 col-md-3"><br>
-                                                <a class="btn btn-info" href="{{ route('PDFacuse_solicitud', $general["id"]) }}"  target="_blank">Visualizar</a>
-                                            </div>
-
-
                                            {{-- @foreach($citados as $citado)
                                                 <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
