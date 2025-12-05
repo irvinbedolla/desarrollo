@@ -812,7 +812,7 @@
                     var sede = document.getElementById('sede').value;
                     // Hacer petición AJAX con parámetro sede
                     $.ajax({
-                        url: '../../api/obtenerCumplimientos',
+                        url: '{{ url("/api/obtenerCumplimientos") }}',
                         method: 'GET',
                         data: {
                             sede: sede,

@@ -56,7 +56,7 @@
                                                 <td>{{$audiencia->estatus_modelo}}</td>
                                                 <td><a class="btn btn-info" href="{{ route('solicitud_audiencia', $audiencia->id_solicitud) }}?isAudiencia=Si" onclick=editar_usuario();>Revisar</a></td>
                                                 <td>
-                                                    @if($audiencia->estatus == "Confirmado")
+                                                    @if($audiencia->estatus_modelo == "Pendiente")
                                                         <a class="btn btn-success" href="{{ route('inicioAudiencia', $audiencia->id_solicitud, 'Confirmado') }}">Iniciar</a><br>
                                                     @endif
                                                 </td>

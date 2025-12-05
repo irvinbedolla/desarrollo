@@ -4804,6 +4804,9 @@ class SeerController extends Controller
         $fecha_actual = date('y-m-d');
         $id = auth()->user()->id;
         $user = User::find($id);
+        $solicitudOriginal = SeerPerGeneral::find($data["id"]);
+        $sede_a_guardar = $solicitudOriginal->delegacion ?? $user->delegacion;
+
         if($data["conclucion"] == "Conciliacion"){
             //Revisar si existe
             if(isset($data["dias_pagos"])){
@@ -4817,7 +4820,8 @@ class SeerController extends Controller
                             'hora'          => $data["hora_pagos"][$i], 
                             'monto'         => $data["monto_pagos"][$i], 
                             'descripcion'   => $data["descripcion_pagos"][$i],
-                            'estatus'       => "Pendiente", 
+                            'estatus'       => "Pendiente",
+                            'delegacion'    => $sede_a_guardar,
                             'tipo_pago'     => $data["tipo_pagoAgenda"][$i],
                         ];
                         $monto = $monto + $data["monto_pagos"][$i];
@@ -4829,7 +4833,8 @@ class SeerController extends Controller
                             'hora'          => $data["hora_pagos"][$i], 
                             'monto'         => $data["monto_pagos"][$i], 
                             'descripcion'   => $data["descripcion_pagos"][$i],
-                            'estatus'       => "Pendiente", 
+                            'estatus'       => "Pendiente",
+                            'delegacion'    => $sede_a_guardar,
                             'tipo_pago'     => "Audiencia",
                         ];
                         $monto = $monto + $data["monto_pagos"][$i];
@@ -6751,7 +6756,7 @@ class SeerController extends Controller
     public function vista_previa($id){
         $id_usuario = auth()->user()->id;
         $user = User::find($id_usuario);           
-        $conciliadores  = SeerPerConciliador::where('id_solicitud',$id)->first();
+        $conciliadores  = SeerPerConciliador::where('id_solicitud',$id)->orderBy('id', 'desc')->first();
         $solicitud      = SeerPerGeneral::find($id);
         $conciliador    = User::select('name')->where('id', $solicitud->conciliador_id)->first();
 
