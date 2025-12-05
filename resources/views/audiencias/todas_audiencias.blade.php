@@ -159,7 +159,7 @@
                                                                     @if($audiencia->constancia == 0)
                                                                         <li><a class="dropdown-item" href="{{ route('PDFcumplimiento', $audiencia->id_solicitud) }}"  target="_blank">Constancia de cumplimiento</a></li>
                                                                     @endif
-                                                                    <li><button type="button" id="btnMostrarRegistros" class="btn btn-info" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
+                                                                    <li><button type="button" id="btnMostrarRegistros" class="btn btn-info" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $audiencia->id_solicitud }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
                                                         </div> 
@@ -171,7 +171,7 @@
                                                                 </button>
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="dropdown-item" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Documentos Digitales</a></li>
-                                                                    <li><button type="button" id="btnMostrarRegistros" class="btn btn-info" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
+                                                                    <li><button type="button" id="btnMostrarRegistros" class="btn btn-info" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $audiencia->id_solicitud }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
                                                         </div> 
