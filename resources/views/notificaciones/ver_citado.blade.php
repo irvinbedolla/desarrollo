@@ -42,7 +42,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    @if(!empty($folio['primer_apellido']))    
+                                    @if(($folio['resulte_responsable'] == "No"))    
                                         <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div class="form-group">
                                                 <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
@@ -52,8 +52,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    @endif
-                                    @if(!empty($folio['segundo_apellido']))
                                         <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div class="form-group">
                                                 <label for="name">Segundo apellido</label>

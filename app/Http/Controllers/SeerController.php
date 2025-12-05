@@ -1733,7 +1733,7 @@ class SeerController extends Controller
 
     public function store_enlace(Request $request){
         $data = $request->all();
-        SeerCitados::where('id', $data["id"])
+        $registrosActualizados = SeerCitados::where('id_solicitud', $data["id"])
         ->update(['id_notificador' => $data["notificador"], 'estatus' => "Pendiente"]);
         return redirect()->route('notificaciones');
     }
@@ -3437,7 +3437,7 @@ class SeerController extends Controller
             'seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido',
             'seer_citados.colonia','seer_citados.tipo_vialidad','seer_citados.calle','seer_citados.n_ext','seer_citados.n_int',
             'seer_citados.municipio_citado','seer_citados.estado_citado','seer_citados.estatus','seer_citados.tipo_notificacion',
-            'municipios.nombre as municipio_nombre','estados.nombre as estado_nombre')
+            'municipios.nombre as municipio_nombre','estados.nombre as estado_nombre','seer_citados.id_notificador')
         ->where('seer_general.delegacion', $user["delegacion"])
         ->where('seer_citados.id_notificador', 0)
         ->where('seer_citados.notificacion',"!=", "Trabajador")
@@ -5689,10 +5689,10 @@ class SeerController extends Controller
         //$mostrarMotivos = SolicitudMotivo::all();
         $mostrarMotivos = SolicitudMotivo::where('tipo_solicitud', $general->tipo_solicitud)->get();
         //Motivos capturados
-        $motivos        = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
+        $motivos        = SeerMotivo::join('seer_general','seer_general.id','seer_motivos.id_solicitud')
+        ->join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
         ->where('id_solicitud',$id)
         ->select('catalogo_motivos.motivo','seer_motivos.id')->get();
-
         return view('solicitudes.editar_solicitud', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores'));
     }
 
