@@ -19,7 +19,7 @@
                                     });
                                 </script>
                             @endif
-
+                            
                             <!--Se realiza la validación de campos para ver si dejó alguno vacío-->
                             @if ($errors->any())
                                 <div class="alert alert-dark alert-dismissible fade show" role="alert">
@@ -34,7 +34,6 @@
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-
                             @endif
 
                             <!--
@@ -65,7 +64,7 @@
                                     <div class="col-xs-2 col-sm-2 col-md-2"><br>
                                         <a class="btn btn-primary" onclick="mostrar_resolicion()">Continuar</a>
                                     </div>
-                                    <br>
+                                    <br>                                 
                                     <!--
                                     <div id="" class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
@@ -370,12 +369,16 @@
     <!-- FullCalendar JS -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js"></script>
     <script>
+
+        let filaActualParaAgendar = null; 
+
        document.getElementById("no_conciliacion").style.display = "none";
        document.getElementById("archivada").style.display = "none";
        document.getElementById("dias").style.display = "none";
        document.getElementById("pagos").style.display = "none";
        
         $( document ).ready(function() {
+
             // Agregar registro
             $("#addRow").click(function () {
                 var html = '';
@@ -406,7 +409,6 @@
                     html +='<div class="invalid-feedback">El tipo de pago es obligatorio.</div>';
                     html += '</div> </div>';
                 
-
                 // Monto a pagar
                 html += '<div class="col-xs-12 col-sm-12 col-md-6">';
                 html += '<div class="form-group">';
@@ -449,7 +451,7 @@
             } else {
                 //Botón de selección de horario
                 html += '<div class="col-12">';
-                html += '<button type="button" class="btn btn-custom-morado w-75" data-bs-toggle="modal" data-bs-target="#calendarModal"> Seleccionar Horario</button>';
+                html += '<button type="button" class="btn btn-custom-morado w-75 btn-open-calendar" data-bs-toggle="modal" data-bs-target="#calendarModal"> Seleccionar Horario</button>';
                 html += '</div>';
                 html += '</div>';
                 html += '<div class="row">';
@@ -512,12 +514,17 @@
                     });
                 } else if (opcionPago === "agendar") {
                     parent.append('<input type="hidden" name="tipo_pagoAgenda[]" value="Audiencia">');
-                    contenedor.replaceWith('<div class="contenedor-boton-pago col-12 mb-2 mt-2"><button type="button" class="btn btn-custom-morado w-75" data-bs-toggle="modal" data-bs-target="#calendarModal"> Seleccionar Horario</button></div>');
+                    contenedor.replaceWith('<div class="contenedor-boton-pago col-12 mb-2 mt-2"><button type="button" class="btn btn-custom-morado w-75 btn-open-calendar" data-bs-toggle="modal" data-bs-target="#calendarModal"> Seleccionar Horario</button></div>');
                     mostrarSelectHorasAudiencia();
                 } else {
                     contenedor.replaceWith('<div class="contenedor-boton-pago"></div>');
                 }
             });
+        });
+
+        $(document).on('click', '.btn-open-calendar', function() {
+            // Guardamos la referencia de la fila (inputFormRow2) específica donde se dio clic
+            filaActualParaAgendar = $(this).closest('.inputFormRow2');
         });
 
         window.mostrarSelectHorasAudiencia = function() {
@@ -599,7 +606,7 @@
         $(document).on('click', '.removeRow2', function () {
             $(this).closest('.inputFormRow2').remove();
         });*/
-
+       
         // Agregar deducción
         $("#addRetencion").click(function () {
                 var html = '';
@@ -607,8 +614,8 @@
                 
                 //TIPO DE PAGO
                 html +='<div class="col-xs-12 col-sm-12 col-md-12"><br>';
-                //html +='<div class="form-group">';
-
+                    //html +='<div class="form-group">';
+                
                     //DESCRIPCIÓN DE PAGO
                     html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                     html += '<div class="form-group">';
@@ -756,7 +763,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const select = document.getElementById('tipo_de_conclucion');
             const dias = document.getElementById('dias');
-        
+
             // Escuchar cuando se cambie la opción del select
             select.addEventListener('change', function () {
                 if (select.value === 'Conciliacion') {
@@ -873,12 +880,13 @@
         // Confirmar selección
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('confirmarSeleccion').addEventListener('click', function() {
-                if (window.selectedEvent) {
+                if (window.selectedEvent && filaActualParaAgendar) {
                     const fechaHora = new Date(window.selectedEvent.start);
                     const fecha = fechaHora.toISOString().split('T')[0];
                     const hora = fechaHora.toTimeString().substring(0, 8);
 
-                    var pagoBlock = $('.inputFormRow2').last();
+                    var pagoBlock = filaActualParaAgendar;
+                    
                     pagoBlock.find('input[name="dias_pagos[]"], input[name="hora_pagos[]"]').remove();
                     
                     pagoBlock.append('<input type="hidden" name="dias_pagos[]" value="'+fecha+'">');
@@ -891,11 +899,14 @@
                     // Cerrar modal
                     document.activeElement.blur();
                     $('#calendarModal').modal('hide');
+                
+                    filaActualParaAgendar = null;
                 } else {
                     alert('Por favor selecciona un horario disponible');
                 }
             });
         });
+
         //Muestra un input cuando en prestaciones se selecciona la opción Otros concepto de pago
         $(document).on('change', '.tipo-pago-select', function () {
             var selected = $(this).val();
@@ -1013,15 +1024,16 @@
             return; 
         }
         */
+        
         const tiempoFinal = parseInt(tiempoFinalGuardado);
 
         // 2. Iniciar el Intervalo de Actualización (¡Es la misma función!)
         function actualizarTemporizador() {
             const tiempoRestante = tiempoFinal - Date.now();
             const segundosRestantes = Math.max(0, Math.floor(tiempoRestante / 1000));
-            
-            // ... (resto del cálculo y display es exactamente igual a la Vista A) ...
 
+            // ... (resto del cálculo y display es exactamente igual a la Vista A) ...
+            
             const minutos = Math.floor(segundosRestantes / 60);
             const segundos = segundosRestantes % 60;
             
