@@ -18,7 +18,7 @@
                                         <th style="color: #fff;">Solicitante</th>
                                         <th style="color: #fff;">Rama IndustriaL</th>
                                         <th style="color: #fff;">Actividad Economica</th>
-                                        <th style="color: #fff;">Tipo Solicitud</th>
+                                        <th style="color: #fff;">Tipo Solicitante</th>
                                         <th style="color: #fff;">Estatus</th>
                                         <th style="color: #fff;">Acciones</th>
                                     </thead>
