@@ -45,8 +45,10 @@ class AdministracionController extends Controller
     {   
         $id = auth()->user()->id;
         $user = User::find($id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
        
-        return view('administracion.index_admin');
+        return view('administracion.index_admin', compact('userRole'));
     }
 
     public function configuracion_sedes()

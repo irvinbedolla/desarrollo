@@ -17,7 +17,7 @@
                                         <thead style="background-color: #4A001F;">
                                             <th style="color: #fff;">Folio</th>
                                             <th style="color: #fff;">Fecha</th>
-                                            <th style="color: #fff;">Trabajador(a)</th>
+                                            <th style="color: #fff;">Solicitante</th>
                                             <th style="color: #fff;">Estatus</th>
                                             <th style="color: #fff;">Resumen</th>
                                             <th style="color: #fff;">Documentos</th>
@@ -26,7 +26,7 @@
                                             @foreach($solicitudes as $solicitud)
                                                 <tr>
                                                     <td>{{$solicitud->id}}</td>
-                                                    <td>{{$solicitud->fecha}}</td> 
+                                                    <td>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d/m/y') }}</td> 
                                                     <td>{{$solicitud->nombre}}</td>
                                                     <td>{{$solicitud->estatus}}</td>
                                                     <td><a class="btn btn-primary" href="{{ route('consulta_solicitante', $solicitud->id) }}" onclick=consultar_estadistica();>Consultar</a></td>

@@ -49,16 +49,18 @@
                                         <a href="{{ route('configuracion_usuarios') }}" class="btn btn-primary" style="width: 100%">Usuarios</a>
                                     </div>
                                 </div>
-                                <div class="col-xs-4 col-sm-4 col-md-3">
-                                    <div align="center" class="mb-2">
-                                        <a href="{{ route('genera_retroceso') }}" class="btn btn-primary" style="width: 100%">Retrocesos</a>
+                                @if($userRole[0] == "Super Usuario")
+                                    <div class="col-xs-4 col-sm-4 col-md-3">
+                                        <div align="center" class="mb-2">
+                                            <a href="{{ route('genera_retroceso') }}" class="btn btn-primary" style="width: 100%">Retrocesos</a>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-xs-4 col-sm-4 col-md-3">
-                                    <div align="center" class="mb-2">
-                                        <a href="{{ route('configuracion_borrar_cumpli') }}" class="btn btn-primary" style="width: 100%">Borrar Cumplimientos</a>
+                                    <div class="col-xs-4 col-sm-4 col-md-3">
+                                        <div align="center" class="mb-2">
+                                            <a href="{{ route('configuracion_borrar_cumpli') }}" class="btn btn-primary" style="width: 100%">Borrar Cumplimientos</a>
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
                             </div>
                         </div>
                     </div>

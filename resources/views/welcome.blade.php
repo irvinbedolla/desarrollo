@@ -277,7 +277,7 @@
               </div>
             </div>
           </div>
-          <p><a class="boton" href="{{ route('login') }}">Ver más</a></p>   
+          <p><a class="boton" href="{{ route('login') }}">Ingresa aquí</a></p>   
         </div>
       </div>
       <div class="card">   <!-- Inicio Seer -->

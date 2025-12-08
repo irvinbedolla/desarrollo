@@ -127,7 +127,7 @@ body {font-family: Arial;}
                                         <a class="btn btn-info" onclick="openCity(event, 'documentos')">Citado(s)</a>
                                         <a class="btn btn-info" onclick="openCity(event, 'observaciones')">Observaciones</a>
                                         <a class="btn btn-info" onclick="openCity(event, 'citados')">Documentos</a>
-                                        <a class="btn btn-info" onclick="openCity(event, 'confirmacion')">Acciones</a>
+                                        <a class="btn btn-success" onclick="openCity(event, 'confirmacion')">Acciones</a>
                                     </div>
 
                                     <div id="detalles" class="tabcontent">
@@ -831,7 +831,7 @@ body {font-family: Arial;}
                                                     <div class="form-group">
                                                         <label for="name">¿Quién entregará las notificaciones?<span style="color:red;"> (*)</span></label>
                                                         <select name="notificacion[]" class="form-control" required>
-                                                            <option value="Trabajador"  {{ $citado['notificacion'] == 'Trabajador' ? "selected" : '' }}>Trabajador</option>
+                                                            <option value="Trabajador"  {{ $citado['notificacion'] == 'Trabajador' ? "selected" : '' }}>Solicitante</option>
                                                             <option value="Centro"      {{ $citado['notificacion'] == 'Centro' ? "selected" : '' }}>Centro de conciliación Laboral</option>
                                                         </select>
                                                         <div class="invalid-feedback">
@@ -949,65 +949,97 @@ body {font-family: Arial;}
 
         <script>
             
-        //No toquen esto, funciona :)
-        
-        // Manejador para mostrar feedback de validación en formularios con pestañas.
-        document.addEventListener('DOMContentLoaded', function () {
-            var forms = document.querySelectorAll('form.needs-validation');
-            if (!forms || forms.length === 0) return;
+            //No toquen esto, funciona :)
+            
+            // Manejador para mostrar feedback de validación en formularios con pestañas.
+            document.addEventListener('DOMContentLoaded', function () {
+                var forms = document.querySelectorAll('form.needs-validation');
+                if (!forms || forms.length === 0) return;
 
-            forms.forEach(function(form) {
-                // Capturar el evento invalid en fase de captura para abrir la pestaña
-                // que contiene el control inválido antes de que el navegador intente enfocarlo.
-                form.addEventListener('invalid', function (e) {
-                    try { e.preventDefault(); e.stopPropagation(); } catch (err) {}
-                    var invalidEl = e.target;
-                    var tabContainer = invalidEl.closest('.tabcontent');
-                    if (tabContainer && tabContainer.id) {
-                        var selector = '.tab a[onclick*="' + tabContainer.id + '"]';
-                        var tabBtn = document.querySelector(selector);
-                        if (tabBtn) {
-                            try { tabBtn.click(); } catch (err) { /* ignore */ }
-                        } else if (typeof openCity === 'function') {
-                            try { openCity(new Event('click'), tabContainer.id); } catch (err) { /* ignore */ }
-                        }
-                    }
-                    setTimeout(function () { try { invalidEl.focus(); } catch (err) { /* ignore */ } }, 80);
-                }, true);
-
-                form.addEventListener('submit', function (e) {
-                    if (!form.checkValidity()) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        form.classList.add('was-validated');
-
-                        // Mostrar SweetAlert (fallback a alert si no está disponible)
-                        if (typeof swal === 'function') {
-                            swal("Error", "Por favor corrija los campos obligatorios.", "error");
-                        } else {
-                            try { alert('Por favor corrija los campos obligatorios.'); } catch (err) { /* ignore */ }
-                        }
-
-                        var firstInvalid = form.querySelector(':invalid');
-                        if (firstInvalid) {
-                            var tabContainer = firstInvalid.closest('.tabcontent');
-                            if (tabContainer && tabContainer.id) {
-                                var selector = '.tab a[onclick*="' + tabContainer.id + '"]';
-                                var tabBtn = document.querySelector(selector);
-                                if (tabBtn) {
-                                    try { tabBtn.click(); } catch (err) { /* ignore */ }
-                                } else if (typeof openCity === 'function') {
-                                    try { openCity(new Event('click'), tabContainer.id); } catch (err) { /* ignore */ }
-                                }
+                forms.forEach(function(form) {
+                    // Capturar el evento invalid en fase de captura para abrir la pestaña
+                    // que contiene el control inválido antes de que el navegador intente enfocarlo.
+                    form.addEventListener('invalid', function (e) {
+                        try { e.preventDefault(); e.stopPropagation(); } catch (err) {}
+                        var invalidEl = e.target;
+                        var tabContainer = invalidEl.closest('.tabcontent');
+                        if (tabContainer && tabContainer.id) {
+                            var selector = '.tab a[onclick*="' + tabContainer.id + '"]';
+                            var tabBtn = document.querySelector(selector);
+                            if (tabBtn) {
+                                try { tabBtn.click(); } catch (err) { /* ignore */ }
+                            } else if (typeof openCity === 'function') {
+                                try { openCity(new Event('click'), tabContainer.id); } catch (err) { /* ignore */ }
                             }
-                            setTimeout(function () { try { firstInvalid.focus(); } catch (err) { /* ignore */ } }, 80);
                         }
-                    }
-                }, false);
-            });
-        });
-        </script>
+                        setTimeout(function () { try { invalidEl.focus(); } catch (err) { /* ignore */ } }, 80);
+                    }, true);
 
+                    form.addEventListener('submit', function (e) {
+                        if (!form.checkValidity()) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            form.classList.add('was-validated');
+
+                            // Mostrar SweetAlert (fallback a alert si no está disponible)
+                            if (typeof swal === 'function') {
+                                swal("Error", "Por favor corrija los campos obligatorios.", "error");
+                            } else {
+                                try { alert('Por favor corrija los campos obligatorios.'); } catch (err) { /* ignore */ }
+                            }
+
+                            var firstInvalid = form.querySelector(':invalid');
+                            if (firstInvalid) {
+                                var tabContainer = firstInvalid.closest('.tabcontent');
+                                if (tabContainer && tabContainer.id) {
+                                    var selector = '.tab a[onclick*="' + tabContainer.id + '"]';
+                                    var tabBtn = document.querySelector(selector);
+                                    if (tabBtn) {
+                                        try { tabBtn.click(); } catch (err) { /* ignore */ }
+                                    } else if (typeof openCity === 'function') {
+                                        try { openCity(new Event('click'), tabContainer.id); } catch (err) { /* ignore */ }
+                                    }
+                                }
+                                setTimeout(function () { try { firstInvalid.focus(); } catch (err) { /* ignore */ } }, 80);
+                            }
+                        }
+                    }, false);
+                });
+            });
+        
+            // Función genérica para convertir todo el texto a mayúsculas
+            function convertirAMayusculas() {
+                const elementos = document.querySelectorAll('input[type="text"], textarea');
+
+                elementos.forEach(elemento => {
+                    elemento.addEventListener('input', function() {
+                        this.value = this.value.toUpperCase();
+                    });
+                    if (elemento.value) {
+                        elemento.value = elemento.value.toUpperCase();
+                    }
+                });
+            }
+            // Ejecutar la función cuando el DOM esté completamente cargado 
+            document.addEventListener('DOMContentLoaded', (event) => {
+                convertirAMayusculas();
+                (function () {
+                    'use strict'
+                    var forms = document.querySelectorAll('.needs-validation')
+                    Array.prototype.slice.call(forms)
+                        .forEach(function (form) {
+                            form.addEventListener('submit', function (event) {
+                                if (!form.checkValidity()) {
+                                    event.preventDefault()
+                                    event.stopPropagation()
+                                }
+                                form.classList.add('was-validated')
+                            }, false)
+                        })
+                })()
+            });
+            //Fin convertir todo el texto a mayúsculas
+        </script>
     </section>
 @endsection
 
@@ -1042,7 +1074,7 @@ body {font-family: Arial;}
                                 <label for="name">¿Quién entregará las notificaciones? <span style="color:red;">(*)</span></label>
                                 <select name="notificacion" class="form-control" required>
                                     <option value="">SELECCIONE</option>
-                                    <option value="Trabajador">Trabajador</option>
+                                    <option value="Trabajador">Solicitante</option>
                                     <option value="Centro">Centro de conciliación Laboral</option>
                                 </select>
                                 <div class="invalid-feedback">

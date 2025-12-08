@@ -4847,12 +4847,18 @@ class SeerController extends Controller
                 return back()->withErrors('Debes agregar por lo menos una fecha de pago.');
             }
             if(isset($data["tipo_pago"])){
+                $tiposPago = $data["tipo_pago"];
                 $cont = count($data["monto_pago"]);
+                $otrasPrestaciones = $data["otra_prestacion"] ?? [];
                 for($i = 0; $i < $cont; $i++) {
+                    $descripcion = $tiposPago[$i];
+                    if ($descripcion === "Otras" && isset($otrasPrestaciones[$i]) && !empty(trim($otrasPrestaciones[$i]))) {
+                        $descripcion = trim($otrasPrestaciones[$i]);
+                    }
                     $data_citado = [
                         'id_solicitud'  => $data["id"], 
                         'monto'         => $data["monto_pago"][$i], 
-                        'descripcion'   => $data["tipo_pago"][$i],
+                        'descripcion'   => $descripcion,
                         'tipo_pago'     => "Audiencia"
                     ];
                     Concepto::create($data_citado);

@@ -253,10 +253,10 @@
                                         <div id="div_pagos_diferidos"></div>
                                     </div>
                                 </div><br><br>
-                                  <div class="col-xs-12 col-sm-12 col-md-12">
-                                            <h4 class="text-center" style="margin-top:20px;">Total a pagar:</h4>
-                                            <h3 id="totalCalculado" class="text-center" style="color:green;">$0.00</h3>
-                                        </div>
+                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                    <h4 class="text-center" style="margin-top:20px;">Total a pagar:</h4>
+                                    <h3 id="totalCalculado" class="text-center" style="color:green;">$0.00</h3>
+                                </div>
                                 <div class="row">    
                                     <div class="col-xs-12 col-sm-12 col-md-2">
                                         <a  class="btn btn-success"href="{{ route('PDFconvenioratificacion', $solicitud->id) }}"  target="_blank">Convenio</a>

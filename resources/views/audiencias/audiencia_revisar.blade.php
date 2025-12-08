@@ -309,6 +309,10 @@
                                         </div>
                                        
                                         <div id="div_pagos_diferidos"></div>
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <h4 class="text-center" style="margin-top:20px;">Total a pagar:</h4>
+                                            <h3 id="totalCalculado" class="text-center" style="color:green;">$0.00</h3>
+                                        </div>
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-6"><br>
                                                 <label for="name">Tipo de audiencia</label>
@@ -481,7 +485,7 @@
                 </div>
             </div>
         </div>
-    </form>
+    </form> 
 </div>
 <!-- Modal Citados -->
 <div class="modal fade" id="modalCitados" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -1102,7 +1106,7 @@
                 html +='<div class="col-xs-12 col-sm-12 col-md-12">';
                     html +='<div class="form-group">';
                     html +='<label for="confirm-password"><br>Prestación</label>';
-                    html +='<select class="form-control" name="tipo_pago[]" >';
+                    html +='<select class="form-control tipo-pago-select" name="tipo_pago[]" >';
                     html +='<option value="">Seleccione</option>';
                     html +='<option value="Aguinaldo">Días de aguinaldo</option>';
                     html +='<option value="DSueldo">Días de sueldo</option>';
@@ -1117,11 +1121,11 @@
                     html +='<option value="Otras">Otros concepto de pago</option>';
                     html +='</select>';
                     // Campo para escribir otra prestación (solo si se selecciona "Otras")
-                    html += '<div class="otra-prestacion-input" style="display: none; margin-top: 10px;">';
-                    html += '<input type="text" class="form-control" name="otra_prestacion[]" placeholder="Especifique la prestación" />';
-                    html += '</div>';
-                    html +='<div class="invalid-feedback">El tipo de pago es obligatorio.</div>';
-                    html += '</div> </div>';
+                        html += '<div class="otra-prestacion-input" style="display: none; margin-top: 10px;">';
+                        html += '<input type="text" class="form-control" name="otra_prestacion[]" placeholder="Especifique la prestación" />';
+                        html += '</div>';
+                        html +='<div class="invalid-feedback">El tipo de pago es obligatorio.</div>';
+                        html += '</div> </div>';
 
                 // Monto a pagar
                 html += '<div class="col-xs-12 col-sm-12 col-md-12">';
@@ -1143,7 +1147,6 @@
         $(document).on('click', '.removeRow', function () {
             $(this).closest('.col-xs-12').remove();
         });
-
         // Agregar pago
         $("#addPago").click(function () {
                 var html = '';
@@ -1267,7 +1270,7 @@
                 input.value = partes[0] + '.' + partes.slice(1).join('');
             }
         }
-         //Muestra un input cuando en prestaciones se selecciona la opción Otros concepto de pago
+        //Muestra un input cuando en prestaciones se selecciona la opción Otros concepto de pago
         $(document).on('change', '.tipo-pago-select', function () {
             var selected = $(this).val();
             var container = $(this).closest('.form-group').find('.otra-prestacion-input');

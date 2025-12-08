@@ -27,7 +27,7 @@
                                         <tbody>
                                             @foreach($solicitudes as $solicitud)
                                                 <tr>
-                                                    <td>{{$solicitud->fecha}}</td> 
+                                                    <td>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d/m/y') }}</td> 
                                                     <td>{{$solicitud->empresa}}</td>
                                                     <td>{{$solicitud->trabajador}}</td>
                                                     <td>{{$solicitud->telefono}}</td>

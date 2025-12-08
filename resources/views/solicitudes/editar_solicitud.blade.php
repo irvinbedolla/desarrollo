@@ -139,7 +139,7 @@ select[name="municipio_citado"] option {
                                         <a class="btn btn-info" onclick="openCity(event, 'documentos')">Citado(s)</a>
                                         <a class="btn btn-info" onclick="openCity(event, 'observaciones')">Observaciones</a>
                                         <a class="btn btn-info" onclick="openCity(event, 'citados')">Documentos</a>
-                                        <a class="btn btn-info" onclick="openCity(event, 'confirmacion')">Acciones</a>
+                                        <a class="btn btn-success" onclick="openCity(event, 'confirmacion')">Acciones</a>
                                     </div>
 
                                     <div id="detalles" class="tabcontent">

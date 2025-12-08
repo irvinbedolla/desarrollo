@@ -230,7 +230,7 @@
             </div>
         </div>
     </section>
-@endsection
+@endsection 
 
 <!-- Modal para archivar audiencia-->
 <div class="modal fade" id="ModalArchivar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -388,7 +388,7 @@
                 html +='<div class="col-xs-12 col-sm-12 col-md-6">';
                     html +='<div class="form-group">';
                     html +='<label for="confirm-password"><br>Prestación</label>';
-                    html +='<select class="form-control" name="tipo_pago[]" >';
+                    html +='<select class="form-control tipo-pago-select" name="tipo_pago[]" >';
                     html +='<option value="">Seleccione</option>';
                     html +='<option value="Aguinaldo">Días de aguinaldo</option>';
                     html +='<option value="DSueldo">Días de sueldo</option>';
