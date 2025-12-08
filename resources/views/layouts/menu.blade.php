@@ -98,6 +98,9 @@
             <a class="nav-link" href="{{ route('index_conciliadores') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Conciliadores</span>
             </a>
+            <a class="nav-link" href="{{ route('crear_inidencia') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Indidencia</span>
+            </a>
         @endrole
     @endauth
 
@@ -174,6 +177,9 @@
                     <span id="badge-pendiente-firma" class="menu-badge" style="display:none;">0</span>
                 </span>
             </a>
+            <a class="nav-link" href="{{ route('crear_inidencia') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Indidencia</span>
+            </a>
         @endrole
     @endauth
 
@@ -203,6 +209,9 @@
             <a class="nav-link" href="{{ route('seer') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">SEER</span>
             </a>
+            <a class="nav-link" href="{{ route('crear_inidencia') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Indidencia</span>
+            </a>
         @endrole
     @endauth
 
@@ -219,6 +228,9 @@
             </a>
             <a class="nav-link" href="{{ route('seer') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">SEER</span>
+            </a>
+            <a class="nav-link" href="{{ route('crear_inidencia') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Indidencia</span>
             </a>
         @endrole
     @endauth
@@ -280,6 +292,9 @@
             <a class="nav-link" href="{{ route('indexDireccionGeneral') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Dirección General</span>
             </a>
+            <a class="nav-link" href="{{ route('crear_inidencia') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Indidencia</span>
+            </a>
         @endrole
     @endauth
     
@@ -303,6 +318,9 @@
             <a class="nav-link" href="{{ route('seer') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">SEER</span>
             </a>
+            <a class="nav-link" href="{{ route('crear_inidencia') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Indidencia</span>
+            </a>
         @endrole
     @endauth
 
@@ -322,6 +340,9 @@
             </a>
             <a class="nav-link" href="{{ route('index_ratificacion') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Ratificaciones</span>
+            </a>
+            <a class="nav-link" href="{{ route('crear_inidencia') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Indidencia</span>
             </a>
         @endrole
     @endauth
@@ -358,6 +379,9 @@
             </a>
             <a class="nav-link" href="{{ route('genera_cumplimiento') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Registro de Cumplimientos</span>
+            </a>
+            <a class="nav-link" href="{{ route('crear_inidencia') }}">
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Indidencia</span>
             </a>
         @endrole
     @endauth

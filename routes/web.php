@@ -29,6 +29,7 @@ use App\Http\Controllers\AdministracionController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\SeerPerGeneral;
+use App\Http\Controllers\IncidenciasController;
 
 /*
 |--------------------------------------------------------------------------
@@ -513,8 +514,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/conciliador/firmaCitatorios',      [SeerController::class, 'firmaCitatorios_index'])->name('firma_citatorio'); //Citatorios a firmar por los conciliadores
         Route::get('/conciliador/prueba',               [TurnosController::class, 'actualizar_folio']);
         Route::get('/ObtenerCitatorios/{id}',           [SeerController::class, 'mostrar_citatorios']);
-
     //Fin Conciliadores
+    //Indidencias
+        Route::get('/indidencias/index',                [IncidenciasController::class, 'index_usuario'])->name('crear_inidencia');
+        Route::get('/indidencias/crear',                [IncidenciasController::class, 'crear_incidencia'])->name('incidencias_crear');
+        Route::post('/indidencias/guardar',             [IncidenciasController::class, 'incidencias_store'])->name('incidencias_store');
+        Route::get('/indidencias/atender/{id}',         [IncidenciasController::class, 'incidencia_atender'])->name('incidencia_atender');
+        Route::post('/indidencias/update',              [IncidenciasController::class, 'incidencias_update'])->name('incidencias_update');
+    //Fin de incidencias
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);
         Route::resource('/user-management/roles', RoleManagementController::class);
