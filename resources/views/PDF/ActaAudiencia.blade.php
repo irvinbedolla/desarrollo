@@ -136,7 +136,7 @@
                         <!--<p class="sangria">-->
                             @foreach($prestaciones as $concepto)
                                 <tr>
-                                    <td>{{ strtoupper($concepto->descripcion) }}</td>
+                                    <td>{{  mb_strtoupper($concepto->descripcion, 'UTF-8') }}</td>
                                     <td><b>${{ number_format($concepto->monto, 2) }}</b></td>
                                     <td>{{ $conceptosTexto[$concepto->id] }}</td> <!-- Aquí usamos el arreglo para obtener el texto -->
                                 </tr>

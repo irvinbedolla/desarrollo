@@ -261,15 +261,15 @@
                         html +='<select class="form-control tipo-pago-select" name="tipo_pago[]" required>';
                             html +='<option value="">Seleccione</option>';
                             html +='<option value="Aguinaldo">Días de aguinaldo</option>';
-                            html +='<option value="DSueldo">Días de sueldo</option>';
+                            html +='<option value="Días de sueldo">Días de sueldo</option>';
                             html +='<option value="Vacaciones">Días de vacaciones</option>';
-                            html +='<option value="PrimaVacacional">Prima vacacional</option>';
-                            html +='<option value="GratificaciónA">Gratificación A (Con base al salario integrado)</option>';
-                            html +='<option value="GratificaciónB">Gratificación B (20 Días por año cumplido)</option>';
-                            html +='<option value="GratificaciónC">Gratificación C (Prima de antigüedad topada)</option>';
-                            html +='<option value="GratificaciónD">Gratificación D (Incluye cualquier otra prestación)</option>';
-                            html +='<option value="GratificaciónE">Gratificación E (Prestaciones en especie)</option>';
-                            html +='<option value="GratificaciónF">Gratificación F (Reconocimiento de derechos)</option>';
+                            html +='<option value="Prima Vacacional">Prima vacacional</option>';
+                            html +='<option value="Gratificación A">Gratificación A (Con base al salario integrado)</option>';
+                            html +='<option value="Gratificación B">Gratificación B (20 Días por año cumplido)</option>';
+                            html +='<option value="Gratificación C">Gratificación C (Prima de antigüedad topada)</option>';
+                            html +='<option value="Gratificación D">Gratificación D (Incluye cualquier otra prestación)</option>';
+                            html +='<option value="Gratificación E">Gratificación E (Prestaciones en especie)</option>';
+                            html +='<option value="Gratificación F">Gratificación F (Reconocimiento de derechos)</option>';
                             html +='<option value="Otras">Otro concepto de pago</option>';
                         html +='</select>';
                         // Campo para escribir otra prestación (solo si se selecciona "Otras")

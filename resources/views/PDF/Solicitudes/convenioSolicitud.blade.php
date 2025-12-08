@@ -78,7 +78,7 @@
                             <td>{{ $solicitud->NUE }} </td>
                         </tr> 
                     </table>
-                </div><br><br><br>
+                </div><br><br><br><br>
                 <p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br>
                     SOLICITANTE: {{ $solicitante->nombre }}<br>
                     CITADO(S):
@@ -102,7 +102,7 @@
                 <p><b>PRIMERA.</b> La parte <b>TRABAJADORA {{ $solicitante->nombre }}</b> se identifica con <b>{{ strtoupper($solicitante->identificacion) }}</b>, de Número <b>{{ $solicitante->num_identificacion }}</b> 
                     expedida a su favor por <b>{{ $descripcionIdentificacionS }}</b> y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p> 
 
-                <p><b>SEGUNDA.</b> {{ $datosAudiencia->resolicion_segunda }}.</p>
+                <p><b>SEGUNDA.</b> <b>{{ $datosAudiencia->resolicion_segunda }}.</b></p>
 
                 <b>TERCERA.</b> Declara la parte <b>TRABAJADORA</b>:
                     <p class="sangria">
@@ -115,7 +115,7 @@
                             - Salario mensual: <b>${{ number_format($salario_mensual, 2) }} {{ $mensualTexto }} M.N</b>. <br>
                             - Vacaciones: <b>{{ $datosAudiencia->vacaciones}}</b> días al año.<br>
                             - Aguinaldo: <b>{{ $datosAudiencia->aguinaldo }}</b> días al año.<br>
-                            - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>{{ $datosAudiencia->otros }}</b>.
+                            - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>{{ $datosAudiencia->otros }}</b>
                     </p>
                     <p class="sangria">
                         c) Que desempeñaba sus actividades laborales en las siguientes condiciones: <br>
@@ -187,7 +187,7 @@
                                 <!--<p class="sangria">-->
                                 @foreach($prestaciones as $concepto)
                                     <tr>
-                                        <td>{{ strtoupper($concepto->descripcion) }}</td>
+                                        <td>{{ mb_strtoupper($concepto->descripcion, 'UTF-8') }}</td>
                                         <td><b>${{ number_format($concepto->monto, 2) }}</b></td>
                                         <td>{{ $conceptosTexto[$concepto->id] }}</td>
                                     </tr>

@@ -1109,15 +1109,15 @@
                     html +='<select class="form-control tipo-pago-select" name="tipo_pago[]" >';
                     html +='<option value="">Seleccione</option>';
                     html +='<option value="Aguinaldo">Días de aguinaldo</option>';
-                    html +='<option value="DSueldo">Días de sueldo</option>';
+                    html +='<option value="Días de sueldo">Días de sueldo</option>';
                     html +='<option value="Vacaciones">Días de vacaciones</option>';
-                    html +='<option value="PrimaVacacional">Prima vacacional</option>';
-                    html +='<option value="GratificaciónA">Graficación A (Con base al salario integrado)</option>';
-                    html +='<option value="GratificaciónB">Graficación B (20 Días por año cumplido)</option>';
-                    html +='<option value="GraficaciónC">Graficación C (Prima de antigüedad topada)</option>';
-                    html +='<option value="GratificaciónD">Graficación D (Incluye cualquier otra prestación)</option>';
-                    html +='<option value="GratificaciónE">Graficación E (Prestaciones en especie)</option>';
-                    html +='<option value="GratificaciónF">Graficación F (Reconocimiento de derechos)</option>';
+                    html +='<option value="Prima Vacacional">Prima vacacional</option>';
+                    html +='<option value="Gratificación A">Graficación A (Con base al salario integrado)</option>';
+                    html +='<option value="Gratificación B">Graficación B (20 Días por año cumplido)</option>';
+                    html +='<option value="Gratificación C">Graficación C (Prima de antigüedad topada)</option>';
+                    html +='<option value="Gratificación D">Graficación D (Incluye cualquier otra prestación)</option>';
+                    html +='<option value="Gratificación E">Graficación E (Prestaciones en especie)</option>';
+                    html +='<option value="Gratificación F">Graficación F (Reconocimiento de derechos)</option>';
                     html +='<option value="Otras">Otros concepto de pago</option>';
                     html +='</select>';
                     // Campo para escribir otra prestación (solo si se selecciona "Otras")

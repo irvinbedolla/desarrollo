@@ -4885,7 +4885,7 @@ class SeerController extends Controller
                 $estatus = "Concluida Pagos";
             }
             else{
-                $estatus = "Conluida";
+                $estatus = "Concluida";
             }
             
             $solicitante = SeerSolicitante::where('id_solicitud',$data["id"])->first();
@@ -5008,8 +5008,10 @@ class SeerController extends Controller
     
     // PDF Convenio para solicitudes
     public function VerPDFConvenioSol($id){
-       $solicitud = SeerPerGeneral::find($id); 
-        $datosAudiencia = SeerPerConciliador::where('id_solicitud', $id)->first();
+        $solicitud = SeerPerGeneral::find($id); 
+        $datosAudiencia = SeerPerConciliador::where('id_solicitud', $id)
+        ->orderBy('numero_audiencias', 'DESC')
+        ->first();
         $pagos = Pagos::where('id_solicitud', $id)->get();
         $municipio = Municipios::find($solicitud->municipio_rat);
         $municipioEmpresa = $municipio ? $municipio->nombre : 'No definido';
@@ -5038,13 +5040,6 @@ class SeerController extends Controller
         $totalDeducciones = $deducciones->sum('monto');
         $pagoTotal = $totalPrestaciones - $totalDeducciones;
         
-       // $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
-        $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
-        $salario_mensual = $salario_diario * 30;
-        $diarioTexto = $this->convertirNumerosALetras($salario_diario);
-        $mensualTexto = $this->convertirNumerosALetras($salario_mensual);
-        $montoTexto = $this->convertirNumerosALetras($solicitud->monto);
-        
         $pagosDif  = Pagos::join("turnos","turnos.id","=","pago_solicitud.id_solicitud");
         $pagosDif = $pagosDif->where("pago_solicitud.id_solicitud", "=", $id)
         ->select(DB::raw('count(pago_solicitud.id_solicitud) as C_pagos'))
@@ -5058,6 +5053,13 @@ class SeerController extends Controller
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
         ->first();
+
+        // $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
+        $salario_diario = $this->calcularSalarioDiario($solicitante->pago, $solicitante->periodo_pago);
+        $salario_mensual = $salario_diario * 30;
+        $diarioTexto = $this->convertirNumerosALetras($salario_diario);
+        $mensualTexto = $this->convertirNumerosALetras($salario_mensual);
+        $montoTexto = $this->convertirNumerosALetras($solicitante->monto);
 
         //$citados = SeerCitados::where('id_solicitud', $id)->get();
         $citados = SeerCitados::where('id_solicitud', $id)
@@ -7033,18 +7035,37 @@ class SeerController extends Controller
             }
             //Validar si existe un pago extra
             if(isset($data["tipo_pago"])){
+                $tiposPago = $data["tipo_pago"];
                 $cont = count($data["monto_pago"]);
+                $otrasPrestaciones = $data["otra_prestacion"] ?? [];
                 for($i = 0; $i < $cont; $i++) {
+                    $descripcion = $tiposPago[$i];
+                    if ($descripcion === "Otras" && isset($otrasPrestaciones[$i]) && !empty(trim($otrasPrestaciones[$i]))) {
+                        $descripcion = trim($otrasPrestaciones[$i]);
+                    }
+
                     $data_citado = [
                         'id_solicitud'  => $data["id"], 
                         'monto'         => $data["monto_pago"][$i], 
-                        'descripcion'   => $data["tipo_pago"][$i],
+                        'descripcion'   => $descripcion,
                         'tipo_pago'     => "Audiencia"
                     ];
                     Concepto::create($data_citado);
                 }
             }
-            
+            //Validar si existe una deducción extra
+            if(isset($data["descripcion_deduccion"])){
+                $cont = count($data["descripcion_deduccion"]);
+                for($i = 0; $i < $cont; $i++) {
+                    $data_deduccion = [
+                        'id_solicitud'  => $data["id"], 
+                        'monto'         => $data["monto_deduccion"][$i], 
+                        'descripcion'   => $data["descripcion_deduccion"][$i],
+                        'tipo_pago'     => "Audiencia"
+                    ];
+                    Deducciones::create($data_deduccion);
+                }
+            }
             //Actualizar Audiecia
             SeerPerConciliador::where('id_solicitud',$data["id"])
             ->orderBy('id', 'desc')
