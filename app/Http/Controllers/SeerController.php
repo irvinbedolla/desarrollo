@@ -345,7 +345,7 @@ class SeerController extends Controller
             ->get();
             $estadisticas = Sedes::all();
         }
-        else if($userRole[0] == "Enlace"){
+        else if($userRole[0] == "Enlace" || $userRole[0] == "Delegado"){
             $usuariosconciliador = User::whereHas($relacionEloquent, function ($query) {
                 return $query->where('name', '=', 'Conciliador');
             })
