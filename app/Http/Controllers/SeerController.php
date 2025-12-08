@@ -982,7 +982,7 @@ class SeerController extends Controller
                 }     
                 
                 
-            $pdf = \PDF::loadView('PDF/estadisticas/reporte_cuantitativo', compact('solicitudes','audiencias','notificaciones'));
+            $pdf = \PDF::loadView('PDF/Estadisticas/reporte_cuantitativo', compact('solicitudes','audiencias','notificaciones'));
             $pdf->setPaper('legal', 'landscape');
             return $pdf->stream('archivo.pdf');
         }
