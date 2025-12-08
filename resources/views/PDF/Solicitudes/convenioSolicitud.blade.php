@@ -121,7 +121,9 @@
                         c) Que desempeñaba sus actividades laborales en las siguientes condiciones: <br>
                             - Horario: <b>{{ $datosAudiencia->horario }}.</b><br>
                             - Horario de comida: <b>{{ $datosAudiencia->comida }}.</b><br>
-                            - Domicilio donde prestaba sus servicios: <b>{{ $datosAudiencia->domicilio }}.</b>
+                            - Domicilio donde prestaba sus servicios: <b>{{ $abogado->tipo_vialidad_patronal}} {{ $abogado->vialidad_patronal }} {{ $abogado->num_ext_patronal }} @if(!empty($abogado->mun_int_patronal))
+                                    int. {{ $abogado->mun_int_patronal }}
+                                @endif COLONIA {{ $abogado->colonia_patronal}}, {{ mb_strtoupper($abogado->municipio_patronal, 'UTF-8')}}, {{ mb_strtoupper($abogado->estado_patronal, 'UTF-8')}} C.P.{{ $abogado->cp_patronal }}.</b>
                     </p>
                         <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
                     <p class="sangria">

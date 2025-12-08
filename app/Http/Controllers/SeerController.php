@@ -5019,7 +5019,8 @@ class SeerController extends Controller
         $estadoEmpresa = $estado ? $estado->nombre : 'No definido';
         $abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
         ->where('id_solicitud',$id)
-        ->select('abogados.nombres_patronal','abogados.primer_apellido_patronal','abogados.segundo_apellido_patronal','abogados.descipcion_poder','abogados.tipo_identificacion','abogados.num_identificacion')
+        ->select('abogados.nombres_patronal','abogados.primer_apellido_patronal','abogados.segundo_apellido_patronal','abogados.descipcion_poder','abogados.tipo_identificacion',
+        'abogados.num_identificacion','estado_patronal','municipio_patronal','tipo_vialidad_patronal','vialidad_patronal','num_ext_patronal','mun_int_patronal','colonia_patronal','cp_patronal')
         ->first();
         // Obtener prestaciones y deducciones
         $prestaciones = Concepto::where('id_solicitud', $id)->get();
