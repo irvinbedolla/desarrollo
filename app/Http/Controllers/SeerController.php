@@ -7270,7 +7270,7 @@ class SeerController extends Controller
                     
                     // **CAMBIO CLAVE 2: Definir la condición de ocupación**
                     // El slot está OCUPADO solo si el conteo actual es >= 2.
-                    $ocupado = ($conteoOcupados >= 3);
+                    $ocupado = ($conteoOcupados >= 5);
 
                     $esInhabil = false;
                     foreach($inhabiles as $dia){
