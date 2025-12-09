@@ -25,14 +25,14 @@
                                             <th style="color: #fff;">Folio</th>
                                             <th style="color: #fff;">Tipo Persona</th>
                                             <th style="color: #fff;">Representante</th>
-                                            <th style="color: #fff;">Nombre/Razon</th>
-                                            <th style="color: #fff;">Telefono</th>
+                                            <th style="color: #fff;">Nombre/Razón</th>
+                                            <th style="color: #fff;">Teléfono</th>
                                             <th style="color: #fff;">Email</th>
                                             <th style="color: #fff;">Fecha Vigencia</th>
                                             <th style="color: #fff;">Vigencia Representación</th>
                                             <th style="color: #fff;">Estatus</th>
                                             <th style="color: #fff;">Identificación del patrón/Acta Constitutiva</th>
-                                            <th style="color: #fff;">Identificacion representante</th>
+                                            <th style="color: #fff;">Identificación representante</th>
                                             <th style="color: #fff;">Documento que acredite la personería</th>
                                             <th style="color: #fff;">Anexo</th>
                                             <th style="color: #fff;"></th>
@@ -66,7 +66,7 @@
                                                             {{$persona->correo_representante}}
                                                         @endif
                                                     </td>
-                                                    <td>{{$persona->fechaVigencia}}</td>
+                                                    <td>{{\Carbon\Carbon::parse($persona->fechaVigencia)->format('d/m/y')}}</td>
                                                     <td>
                                                         @if($persona->tipo == "Moral" || ($persona->tipo == "Fisica" && $persona->reprecentante == "Si"))
                                                             @if($persona->fechaVigencia >= $fechaActual)

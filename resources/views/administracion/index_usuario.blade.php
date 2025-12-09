@@ -15,9 +15,9 @@
                                         <thead style="background-color: #4A001F;">
                                             <th style="display: none;">ID</th>
                                             <th style="color: #fff;">Nombre</th>
-                                            <th style="color: #fff;">E-mail</th>
+                                            <th style="color: #fff;">Email</th>
                                             <th style="color: #fff;">Rol</th>
-                                            <th style="color: #fff;">Delegacíon</th>
+                                            <th style="color: #fff;">Delegación</th>
                                             <th style="color: #fff;">Acciones</th>
                                         </thead>
                                         <tbody class="contenidobusqueda">

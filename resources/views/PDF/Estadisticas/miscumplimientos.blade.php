@@ -71,7 +71,7 @@
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                             <tr>   
                                 <td><b>Centro de Conciliación Laboral </b></td>
-                                <td>{{ date_format($fecha_inicial,'d-m-y') }} a {{ date_format($fecha_final,'d-m-y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($fecha_inicial)->format('d/m/y') }} a {{ \Carbon\Carbon::parse($fecha_final)->format('d/m/y') }}</td>
                             </tr>
                     </table>
                 </div><br><br><br>
@@ -113,7 +113,7 @@
                         <tbody>
                             @foreach($Audiencias as $estadistica)
                                 <tr>
-                                    <td style=" text-align: center;">{{ date_format($estadistica->fecha,'d-m-y') }}</td>
+                                    <td style=" text-align: center;">{{ \Carbon\Carbon::parse($estadistica->fecha)->format('d/m/y') }}</td>
                                     <td style=" text-align: center;">{{ date_format($estadistica->hora, 'H:i') }}</td>
                                     <td style=" text-align: center;">{{ $estadistica->NUE }}</td>
                                     <td style=" text-align: center;">{{ $estadistica->empresa }} {{ $estadistica->primero_empresa }} {{ $estadistica->segundo_empresa }}</td>

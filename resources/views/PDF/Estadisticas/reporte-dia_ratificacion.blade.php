@@ -72,7 +72,7 @@
                             <tr>   
                                 <td><b>Centro de Conciliación Laboral </b></td>
                         
-                                <td>{{ date_format($fecha_inicial,'d-m-y') }} a {{ date_format($fecha_final,'d-m-y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($fecha_inicial)->format('d/m/y') }} a {{ \Carbon\Carbon::parse($fecha_final)->format('d/m/y') }}</td>
                             </tr>
                     </table>
                 </div><br><br><br>
@@ -88,7 +88,7 @@
                             @foreach($usuarios as $usuario)
                                 <tr>
                                     <td style=" text-align: center;">{{ $usuario->name }}</td>
-                                    <td style=" text-align: center;">{{ date_format($usuario->fecha,'d-m-y') }}</td>
+                                    <td style=" text-align: center;">{{ \Carbon\Carbon::parse($usuario->fecha)->format('d/m/y') }}</td>
                                     <td style=" text-align: center;">{{ $usuario->numero }}</td>
                                 </tr>
                             @endforeach

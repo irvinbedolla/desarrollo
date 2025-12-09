@@ -72,7 +72,7 @@
                             <tr>   
                                 <td><b>Centro de Conciliación Laboral </b></td>
                                 
-                                <td>{{ date_format($fecha_inicial,'d-m-y') }} a {{ date_format($fecha_final,'d-m-y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($fecha_inicial)->format('d/m/y') }} a {{ \Carbon\Carbon::parse($fecha_final)->format('d/m/y') }}</td>
                             </tr>
                     </table>
                 </div><br><br><br>
