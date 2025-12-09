@@ -70,8 +70,8 @@
                 <div class="table-responsive">
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                             <tr>   
-                                <td><b>Centro de conciliación: </b></td>
-                                <td>Morelia</td>
+                                <td><b>Centro de Conciliación Laboral: </b></td>
+                                <td>{{ $sede }}</td>
                             </tr>
                     </table>
                 </div><br><br><br>
@@ -143,16 +143,16 @@
                                     <thead style="background-color: #869b9c;">
                                         <th style="color: #fff;  text-align: center;">Nombre</th>
                                         <th style="color: #fff;  text-align: center;">N° de Audiencias</th>
-                                        <th style="color: #fff;  text-align: center;">N° Cumpliemientos en Audiencia</th>
+                                        <th style="color: #fff;  text-align: center;">N° Cumplimientos en Audiencia</th>
                                         <th style="color: #fff;  text-align: center;">Monto</th>
                                         <th style="color: #fff;  text-align: center;">Convenios</th>
-                                        <th style="color: #fff;  text-align: center;">Archivada por falta de interes</th>
-                                        <th style="color: #fff;  text-align: center;">Archivada por incopetencia</th>
+                                        <th style="color: #fff;  text-align: center;">Archivada por falta de interés</th>
+                                        <th style="color: #fff;  text-align: center;">Archivada por incompetencia</th>
                                         <th style="color: #fff;  text-align: center;">Número de Multas</th>
                                         <th style="color: #fff;  text-align: center;">Audiencias Virtuales</th>
                                         <th style="color: #fff;  text-align: center;">Concluida en una Audiencia</th>
-                                        <th style="color: #fff;  text-align: center;">Concluida en dos Audiencia</th>
-                                        <th style="color: #fff;  text-align: center;">Concluida en tres Audiencia</th>
+                                        <th style="color: #fff;  text-align: center;">Concluida en dos Audiencias</th>
+                                        <th style="color: #fff;  text-align: center;">Concluida en tres Audiencias</th>
                                     </thead>
                                     <tbody>
                                         @php

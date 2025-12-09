@@ -70,8 +70,9 @@
                 <div class="table-responsive">
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                             <tr>   
-                                <td><b>Centro de conciliación Laboral </b></td>
-                                <td>{{ $fecha_inicial }} a {{ $fecha_final }}</td>
+                                <td><b>Centro de Conciliación Laboral: </b></td>
+                                <td>{{ $sede }}</td>
+                                <td>{{ date_format($fecha_inicial,'d-m-y') }} a {{ date_format($fecha_final,'d-m-y') }}</td>
                             </tr>
                     </table>
                 </div><br><br><br>
@@ -85,17 +86,17 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td style=" text-align: center;">Comlimientos en atificaciones Totales</td>
+                                <td style=" text-align: center;">Cumplimientos en Ratificaciones Totales</td>
                                 <td style=" text-align: center;">{{ ($pagosRatificacionPagado->ratificaciones+$pagosRatificacionPendiente->ratificaciones) }}</td>
                                 <td style=" text-align: center;">${{ number_format(($pagosRatificacionMontoPendiente->ratificacionesMonto+$pagosRatificacionMontoPagado->ratificacionesMonto),2) }}</td>
                             </tr>
                             <tr>
-                                <td style=" text-align: center;">Comlimientos en ratificaciones Pagadas</td>
+                                <td style=" text-align: center;">Cumplimientos en Ratificaciones Pagadas</td>
                                 <td style=" text-align: center;">{{ $pagosRatificacionPagado->ratificaciones }}</td>
                                 <td style=" text-align: center;">${{ number_format($pagosRatificacionMontoPagado->ratificacionesMonto,2) }}</td>
                             </tr>
                             <tr>
-                                <td style=" text-align: center;">Comlimientos en ratificaciones Pendientes</td>
+                                <td style=" text-align: center;">Cumplimientos en Ratificaciones Pendientes</td>
                                 <td style=" text-align: center;">{{ $pagosRatificacionPendiente->ratificaciones }}</td>
                                 <td style=" text-align: center;">${{ number_format($pagosRatificacionMontoPendiente->ratificacionesMonto,2) }}</td>
                             </tr>
@@ -113,7 +114,7 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td style=" text-align: center;">Comlimientos en Audiencia</td>
+                                <td style=" text-align: center;">Cumplimientos en Audiencia</td>
                                 <td style=" text-align: center;">{{ $pagosAudiencias->audiencias }}</td>
                                 <td style=" text-align: center;">${{ number_format($pagosAudienciasMonto->audienciasMonto,2) }}</td>
                             </tr>

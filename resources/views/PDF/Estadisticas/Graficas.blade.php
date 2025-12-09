@@ -64,26 +64,19 @@
 
     </head>
     <body>
-        <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
-        <footer>
-            
-        </footer>
+        <img src="{{ public_path('../../assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
+        <footer></footer>
         <main>
             <div class="content">
                 <div class="table-responsive">
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                             <tr>   
-                                <td><b>Centro de conciliación Laboral del Estados de Michocanca de Ocampo.</b></td>
+                                <td><b>Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.</b></td>
                             </tr>
                     </table>
                 </div><br><br><br>
-
-
-                <div id="chart">
-                </div>
-                
+                <div id="chart"> </div>
             </div>
-
                 <script>
                 
                    var options = {
@@ -97,12 +90,10 @@
                         xaxis: {
                             categories: @json($labels)
                         }
-                        }
+                    }
 
-                        var chart = new ApexCharts(document.querySelector("#chart"), options);
-
-                        chart.render();
-
+                    var chart = new ApexCharts(document.querySelector("#chart"), options);
+                    chart.render();
 
                     function exportChartsAsPDF() {
                         const button = document.getElementById('exportButton');

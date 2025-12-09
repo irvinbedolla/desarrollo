@@ -70,8 +70,9 @@
                 <div class="table-responsive">
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                             <tr>   
-                                <td><b>Centro de conciliación Laboral </b></td>
-                                 <td>{{ $fecha_inicial }} a {{ $fecha_final }}</td>
+                                <td><b>Centro de Conciliación Laboral: </b></td>
+                                <td>{{ $sede }}</td>
+                                <td>{{ date_format($fecha_inicial,'d-m-y') }} a {{ date_format($fecha_final,'d-m-y') }}</td>
                             </tr>
                     </table>
                 </div><br><br><br>

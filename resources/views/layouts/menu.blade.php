@@ -24,7 +24,7 @@
                 <i class="bi bi-backpack4-fill"></i><span class="text-dark" onclick="capacitaciones()">Capacitaciones</span>
             </a>
             <a class="nav-link" href="{{ route('miscapacitaciones') }}">
-                <i class="bi bi-backpack4-fill"></i><span class="text-dark" onclick="mis_capacitaciones()">Mis capacitaciones</span>
+                <i class="bi bi-backpack4-fill"></i><span class="text-dark" onclick="mis_capacitaciones()">Mis Capacitaciones</span>
             </a>
             <a class="nav-link" href="{{ route('expedientes') }}">
             <i class="bi bi-graph-down"></i><span class="text-dark" onclick="expedientes()">Expediente</span>
@@ -33,16 +33,16 @@
                 <i class="bi bi-file-earmark-check"></i><span class="text-dark" onclick="revista()">Revista</span>
             </a>
             <a class="nav-link" href="{{ route('seer.estadistica') }}">
-                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadisticas</span>
+                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadísticas</span>
             </a>
             <a class="nav-link" href="{{ route('turnos') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="turnos()">Turnos</span>
             </a>
             <a class="nav-link" href="{{ route('misturnos') }}">
-                <i class="bi bi-file-person"></i><span class="text-dark" onclick="turnos()">Mis turnos</span>
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="turnos()">Mis Turnos</span>
             </a>
             <a class="nav-link" href="{{ route('turno_estadistica') }}">
-                <i class="bi bi-graph-up"></i><span class="text-dark" onclick="estadistica_turno()">Estadistica turno</span>
+                <i class="bi bi-graph-up"></i><span class="text-dark" onclick="estadistica_turno()">Estadística Turno</span>
             </a>
             <a class="nav-link" href="{{ route('persona.historial') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
@@ -81,7 +81,7 @@
                 <i class="bi bi-file-person"></i><span class="text-dark" >Cumplimientos en Audiencia</span>
             </a>
             <a class="nav-link" href="{{ route('notificaciones') }}">
-                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Por notificar</span>
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Por Notificar</span>
             </a>
             <a class="nav-link" href="{{ route('todas_notificaciones') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Busqueda Notificaciones</span>
@@ -99,7 +99,7 @@
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Conciliadores</span>
             </a>
             <a class="nav-link" href="{{ route('crear_inidencia') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Indidencia</span>
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Incidencia</span>
             </a>
         @endrole
     @endauth
@@ -119,7 +119,7 @@
                 <i class="bi bi-backpack4-fill"></i><span class="text-dark" onclick="capacitaciones()">Capacitaciones</span>
             </a>
             <a class="nav-link" href="{{ route('miscapacitaciones') }}">
-                <i class="bi bi-backpack4-fill"></i><span class="text-dark" onclick="mis_capacitaciones()">Mis capacitaciones</span>
+                <i class="bi bi-backpack4-fill"></i><span class="text-dark" onclick="mis_capacitaciones()">Mis Capacitaciones</span>
             </a>
             <a class="nav-link" href="{{ route('expedientes') }}">
             <i class="bi bi-graph-down"></i><span class="text-dark" onclick="expedientes()">Expediente</span>
@@ -128,16 +128,16 @@
                 <i class="bi bi-file-earmark-check"></i><span class="text-dark" onclick="revista()">Revista</span>
             </a>
             <a class="nav-link" href="{{ route('seer.estadistica') }}">
-                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadisticas</span>
+                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadísticas</span>
             </a>
             <a class="nav-link" href="{{ route('turnos') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="turnos()">Turnos</span>
             </a>
             <a class="nav-link" href="{{ route('misturnos') }}">
-                <i class="bi bi-file-person"></i><span class="text-dark" onclick="turnos()">Mis turnos</span>
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="turnos()">Mis Turnos</span>
             </a>
             <a class="nav-link" href="{{ route('turno_estadistica') }}">
-                <i class="bi bi-graph-up"></i><span class="text-dark" onclick="estadistica_turno()">Estadistica turno</span>
+                <i class="bi bi-graph-up"></i><span class="text-dark" onclick="estadistica_turno()">Estadística Turno</span>
             </a>
             <a class="nav-link" href="{{ route('persona.historial') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Historial</span>
@@ -154,7 +154,7 @@
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
             <a class="nav-link" href="{{ route('misturnos') }}">
-                <i class="bi bi-file-person"></i><span class="text-dark" onclick="turnos()">Mis turnos</span>
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="turnos()">Mis Turnos</span>
             </a>
             <a class="nav-link" href="{{ route('solicitudes_index') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Solicitudes</span>
@@ -166,7 +166,7 @@
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Ratificaciones</span>
             </a>
             <a class="nav-link" href="{{ route('misestadisticas') }}">
-                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadisticas</span>
+                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadísticas</span>
             </a>
             <a class="nav-link" href="{{ route('seer') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">SEER</span>
@@ -178,7 +178,7 @@
                 </span>
             </a>
             <a class="nav-link" href="{{ route('crear_inidencia') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Indidencia</span>
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Incidencia</span>
             </a>
         @endrole
     @endauth
@@ -210,7 +210,7 @@
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">SEER</span>
             </a>
             <a class="nav-link" href="{{ route('crear_inidencia') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Indidencia</span>
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Incidencia</span>
             </a>
         @endrole
     @endauth
@@ -221,16 +221,16 @@
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Agenda</span>
             </a>
             <a class="nav-link" href="{{ route('seer') }}">
-                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Por notificar</span>
+                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Por Notificar</span>
             </a>
             <a class="nav-link" href="{{ route('Historial_Notificacador') }}">
-                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Mis notificaciones</span>
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Mis Notificaciones</span>
             </a>
             <a class="nav-link" href="{{ route('seer') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">SEER</span>
             </a>
             <a class="nav-link" href="{{ route('crear_inidencia') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Indidencia</span>
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Incidencia</span>
             </a>
         @endrole
     @endauth
@@ -261,7 +261,7 @@
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
             <a class="nav-link" href="{{ route('seer.estadistica') }}">
-                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadisticas</span>
+                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadísticas</span>
             </a>
         @endrole
     @endauth
@@ -269,7 +269,7 @@
     @auth
         @role('Estadistica')
             <a class="nav-link" href="{{ route('seer.estadistica') }}">
-                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadisticas</span>
+                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadísticas</span>
             </a>
             <a class="nav-link" href="{{ route('index_tercer_encuentro') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Tercer Encuentro</span>
@@ -293,7 +293,7 @@
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Dirección General</span>
             </a>
             <a class="nav-link" href="{{ route('crear_inidencia') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Indidencia</span>
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Incidencia</span>
             </a>
         @endrole
     @endauth
@@ -307,7 +307,7 @@
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
             <a class="nav-link" href="{{ route('misturnos') }}">
-                <i class="bi bi-file-person"></i><span class="text-dark" onclick="turnos()">Mis turnos</span>
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="turnos()">Mis Turnos</span>
             </a>
             <a class="nav-link" href="{{ route('tarjeta_informativa') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="turnos()">Tarjeta Informativa</span>
@@ -319,7 +319,7 @@
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">SEER</span>
             </a>
             <a class="nav-link" href="{{ route('crear_inidencia') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Indidencia</span>
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Incidencia</span>
             </a>
         @endrole
     @endauth
@@ -330,10 +330,10 @@
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Agenda</span>
             </a>
             <a class="nav-link" href="{{ route('seer.estadistica') }}">
-                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadisticas</span>
+                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadísticas</span>
             </a>
             <a class="nav-link" href="{{ route('notificaciones') }}">
-                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Por notificar</span>
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Por Notificar</span>
             </a>
             <a class="nav-link" href="{{ route('notificaciones_consultar') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Busqueda</span>
@@ -342,7 +342,7 @@
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Ratificaciones</span>
             </a>
             <a class="nav-link" href="{{ route('crear_inidencia') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Indidencia</span>
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Incidencia</span>
             </a>
         @endrole
     @endauth
@@ -375,13 +375,13 @@
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
             <a class="nav-link" href="{{ route('misestadisticas') }}">
-                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadisticas</span>
+                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadísticas</span>
             </a>
             <a class="nav-link" href="{{ route('genera_cumplimiento') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Registro de Cumplimientos</span>
             </a>
             <a class="nav-link" href="{{ route('crear_inidencia') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Indidencia</span>
+                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Incidencia</span>
             </a>
         @endrole
     @endauth

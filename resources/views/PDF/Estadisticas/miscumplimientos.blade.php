@@ -70,8 +70,9 @@
                 <div class="table-responsive">
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                             <tr>   
-                                <td><b>Centro de conciliación Laboral </b></td>
-                                <td>{{ $fecha_inicial }} a {{ $fecha_final }}</td>
+                                <td><b>Centro de Conciliación Laboral: </b></td>
+                                <td>{{ $sede }}</td>
+                                <td>{{ date_format($fecha_inicial,'d-m-y') }} a {{ date_format($fecha_final,'d-m-y') }}</td>
                             </tr>
                     </table>
                 </div><br><br><br>
@@ -101,20 +102,20 @@
                         <thead style="background-color: #869b9c;">
                             <th style="color: #fff;  text-align: center;">Fecha</th>
                             <th style="color: #fff;  text-align: center;">Hora</th>
-                            <th style="color: #fff;  text-align: center;">NUE</th>
+                            <th style="color: #fff;  text-align: center;">Núm. Identificación Único</th>
                             <th style="color: #fff;  text-align: center;">Empleador</th>
                             <th style="color: #fff;  text-align: center;">Trabajador</th>
                             <th style="color: #fff;  text-align: center;">Descripción</th>
                             <th style="color: #fff;  text-align: center;">Monto</th>
-                            <th style="color: #fff;  text-align: center;">Delegacion</th>
+                            <th style="color: #fff;  text-align: center;">Delegación</th>
                             <th style="color: #fff;  text-align: center;">Conciliador</th>
                             <th style="color: #fff;  text-align: center;">Estatus</th>
                         </thead>
                         <tbody>
                             @foreach($Audiencias as $estadistica)
                                 <tr>
-                                    <td style=" text-align: center;">{{ date_format($estadistica->fecha,'d-m-Y') }}</td>
-                                    <td style=" text-align: center;">{{ date_format($estadistica->hora, 'H:i:s') }}</td>
+                                    <td style=" text-align: center;">{{ date_format($estadistica->fecha,'d-m-y') }}</td>
+                                    <td style=" text-align: center;">{{ date_format($estadistica->hora, 'H:i') }}</td>
                                     <td style=" text-align: center;">{{ $estadistica->NUE }}</td>
                                     <td style=" text-align: center;">{{ $estadistica->empresa }} {{ $estadistica->primero_empresa }} {{ $estadistica->segundo_empresa }}</td>
                                     <td style=" text-align: center;">{{ $estadistica->trabajador }} {{ $estadistica->primero_trabajador }} {{ $estadistica->segundo_trabajador }}</td>

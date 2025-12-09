@@ -70,7 +70,8 @@
                 <div class="table-responsive">
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                             <tr>   
-                                <td><b>Centro de conciliación: </b></td>
+                                <td><b>Centro de Conciliación Laboral: </b></td>
+                                <td>{{ $sede }}</td>
                             </tr>
                     </table>
                 </div><br><br><br>
@@ -79,17 +80,17 @@
                                 <table class="table table-striped mt-2">
                                     <thead style="background-color: #869b9c;">
                                         <th style="color: #fff;  text-align: center;">Consecutivo</th>
-                                        <th style="color: #fff;  text-align: center;">NUE</th>
+                                        <th style="color: #fff;  text-align: center;">Núm. Identificación Único</th>
                                         <th style="color: #fff;  text-align: center;">Mes</th>
                                         <th style="color: #fff;  text-align: center;">Año</th>
                                         <th style="color: #fff;  text-align: center;">Entidad de Registro</th>
                                         <th style="color: #fff;  text-align: center;">Municipio de Registro</th>
-                                        <th style="color: #fff;  text-align: center;">Municipio de ubicación del establecimiento</th>
-                                        <th style="color: #fff;  text-align: center;">Sexo de trabajador</th>
-                                        <th style="color: #fff;  text-align: center;">Actividad Economica/th>
-                                        <th style="color: #fff;  text-align: center;">Razón social</th>
+                                        <th style="color: #fff;  text-align: center;">Municipio de Ubicación del Establecimiento</th>
+                                        <th style="color: #fff;  text-align: center;">Sexo de Trabajador</th>
+                                        <th style="color: #fff;  text-align: center;">Actividad Económica</th>
+                                        <th style="color: #fff;  text-align: center;">Razón Social</th>
                                         <th style="color: #fff;  text-align: center;">Motivo del Convenio</th>
-                                        <th style="color: #fff;  text-align: center;">Monto del pago</th>
+                                        <th style="color: #fff;  text-align: center;">Monto del Pago</th>
                                         <th style="color: #fff;  text-align: center;">Estatus Expediente</th>
                                     </thead>
                                     <tbody>

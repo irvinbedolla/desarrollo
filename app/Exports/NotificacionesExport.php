@@ -58,7 +58,7 @@ class NotificacionesExport implements FromView
                 if($this->notificador != "Todos"){
                     $notificaciones = $notificaciones->where('seer_citados.id_notificador',$this->notificador);
                 }
-                $notificaciones = $notificaciones>join('users as auxiliar','auxiliar.id','seer_general.user_id')
+                $notificaciones = $notificaciones->join('users as auxiliar','auxiliar.id','seer_general.user_id')
                 ->leftjoin('users as notificador','notificador.id','seer_citados.id_notificador')
                 ->where('seer_general.delegacion', $this->sede)
                 ->select('seer_general.id','seer_general.NUE','seer_solicitante.nombre','seer_general.fecha','seer_citados.nombre'
