@@ -7912,7 +7912,7 @@ class SeerController extends Controller
                 }
             }
         }
-        else if($userRole[0] == "Delegado"){
+        else if($userRole[0] == "Delegado" || $userRole[0] == "Enlace"){
             if($user["delegacion"] == "Morelia"){
                     $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($solicitudes as $solicitud) {
@@ -8116,7 +8116,7 @@ class SeerController extends Controller
                     "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
                     DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
                     DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
-                    ->whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])
+                    ->whereIn('turnos.delegacion', ["Morelia", "Zitácuaro"])
                     ->orderBy('turnos.created_at', 'desc')->limit(500)
                     ->get();
 
@@ -8137,7 +8137,7 @@ class SeerController extends Controller
                     "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
                     DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
                     DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
-                    ->whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])
+                    ->whereIn('turnos.delegacion', ["Uruapan", "Lázaro Cárdenas"])
                     ->orderBy('turnos.created_at', 'desc')->limit(500)
                     ->get();
 
@@ -8158,7 +8158,7 @@ class SeerController extends Controller
                     "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
                     DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
                     DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
-                    ->whereIn('seer_general.delegacion', ["Zamora", "Sahuayo"])
+                    ->whereIn('turnos.delegacion', ["Zamora", "Sahuayo"])
                     ->orderBy('turnos.created_at', 'desc')->limit(500)
                     ->get();
 
@@ -8195,7 +8195,7 @@ class SeerController extends Controller
                 ->get();
                 }
         }
-        else if($userRole[0] == "Delegado"){
+        else if($userRole[0] == "Delegado" || $userRole[0] == "Enlace"){
             if($user["delegacion"] == "Morelia"){
                     $complimientos_ratificacion = Pagos::where("pago_solicitud.tipo_pago","Ratificacion")
                     ->join("turnos","turnos.id","pago_solicitud.id_solicitud")
@@ -8203,7 +8203,7 @@ class SeerController extends Controller
                     "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
                     DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
                     DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
-                    ->whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])
+                    ->whereIn('turnos.delegacion', ["Morelia", "Zitácuaro"])
                     ->orderBy('turnos.created_at', 'desc')->limit(500)
                     ->get();
 
@@ -8224,7 +8224,7 @@ class SeerController extends Controller
                     "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
                     DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
                     DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
-                    ->whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])
+                    ->whereIn('turnos.delegacion', ["Uruapan", "Lázaro Cárdenas"])
                     ->orderBy('turnos.created_at', 'desc')->limit(500)
                     ->get();
 
@@ -8245,7 +8245,7 @@ class SeerController extends Controller
                     "pago_solicitud.observaciones","pago_solicitud.estatus","turnos.NUE","turnos.id as id_solicitud",
                     DB::raw('CONCAT(turnos.nombre_empresa, " ", turnos.primero_empresa, " ", turnos.segundo_empresa) AS empresa'),
                     DB::raw('CONCAT(turnos.trabajador, " ", turnos.primero_trabajador, " ", turnos.segundo_trabajador) AS trabajador'))
-                    ->whereIn('seer_general.delegacion', ["Zamora", "Sahuayo"])
+                    ->whereIn('turnos.delegacion', ["Zamora", "Sahuayo"])
                     ->orderBy('turnos.created_at', 'desc')->limit(500)
                     ->get();
 
