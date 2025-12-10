@@ -19,7 +19,7 @@
                 padding-top: 85px;
             }
             main{
-                margin: 50px 50px 50px 40px; /*Para colocar el texto*/
+                margin: 50px 0 50px 0; /*Para colocar el texto*/
             }
             header {
                 position: fixed;
@@ -42,9 +42,10 @@
             }
             .content {
                 font-family: sans-serif;
-                font-size: 12px;
+                font-size: 14px;
                 text-align: justify;
-                margin-top: 50px;
+                margin-left: 3cm;     
+                margin-right: 2cm; 
             }
             .fondo-membrete {
                 position: fixed;
@@ -129,9 +130,20 @@
                     acciones pertinentes ante el Tribunal Laboral que corresponda. Se ordena el archivo del presente <b>asunto como concluido. Doy Fe.</b>
                 </p>
 
-                <br><br><br><br>       
-                <center><br><br> <p><b>___________________________________<br>{{ $conciliador->name}} <br>FUNCIONARIO/A CONCILIADOR/A</b></p></center>           
+                <br><br><br><br><br>     
+                <center><br><br> <p><b>___________________________________<br>{{mb_strtoupper($conciliador->name, 'UTF-8')}} <br>FUNCIONARIO/A CONCILIADOR/A<br>
+                    DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>             
             </div>
+            <script type="text/php">
+                if (isset($pdf)) {
+                    $font = $fontMetrics->get_font("Arial", "normal");
+                    $size = 10;
+                    $y = $pdf->get_height() - 44;
+                    $x = ($pdf->get_width() / 2) - 50;
+                    $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
+                    $pdf->page_text($x, $y, $text, $font, $size, array(0, 0, 0));
+                }
+            </script>
         </main>
     </body>
 </html>    

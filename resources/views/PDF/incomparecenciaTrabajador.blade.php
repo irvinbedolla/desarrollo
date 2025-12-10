@@ -16,10 +16,10 @@
                 margin: 0px 0px;
             }
             body{
-                padding-top: 85px;
+                padding-top: 95px;
             }
             main{
-                margin: 50px 50px 50px 40px; /*Para colocar el texto*/
+                margin: 50px 0 50px 0; /*Para colocar el texto*/
             }
             header {
                 position: fixed;
@@ -42,9 +42,10 @@
             }
             .content {
                 font-family: sans-serif;
-                font-size: 12px;
+                font-size: 14px;
                 text-align: justify;
-                margin-top: 50px;
+                margin-left: 3cm;     
+                margin-right: 2cm; 
             }
             .fondo-membrete {
                 position: fixed;
@@ -68,7 +69,7 @@
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                         <tr>   
                             <td><b>Oficina: </b></td>
-                            <td>{{ strtoupper($solicitud->delegacion) }} </td>
+                            <td>{{ strtoupper($solicitud->delegacion, 'UTF-8') }} </td>
                         </tr>
                         <tr>    
                             <td><b>Número de identificación único: </b></td>
@@ -77,8 +78,8 @@
                     </table>
                 </div><br><br><br>
                 <p><b>
-                    Trabajador(a): {{ strtoupper($solicitud->trabajador) }} {{ strtoupper($solicitud->primero_trabajador) }} {{ strtoupper($solicitud->segundo_trabajador) }}<br> 
-                    Empleador(a): {{ strtoupper($solicitud->empresa) }}<br>
+                    Trabajador(a): {{ mb_strtoupper($solicitud->trabajador, 'UTF-8') }} {{ mb_strtoupper($solicitud->primero_trabajador, 'UTF-8') }} {{ mb_strtoupper($solicitud->segundo_trabajador, 'UTF-8') }}<br> 
+                    Empleador(a): {{ mb_strtoupper($solicitud->empresa, 'UTF-8') }}<br>
                 </b></p>
                 <p><center><b>CONSTANCIA DE INCOMPARECENCIA DE LA PARTE TRABAJADORA AL INCUMPLIMIENTO DE CONVENIO</b></center></p><br>  
                 <p>
@@ -94,7 +95,7 @@
                 </p>
                 <p><center><b>CERTIFICACIÓN:</b></center></p><br>
                 <p>
-                    Que comparece ante está autoridad conciliadora la persona de nombre <b>{{strtoupper($solicitud->nombre_empresa)}} {{strtoupper($solicitud->primero_empresa)}} {{strtoupper($solicitud->segundo_empresa)}}</b>, en su carácter de representante 
+                    Que comparece ante está autoridad conciliadora la persona de nombre <b>{{mb_strtoupper($solicitud->nombre_empresa, 'UTF-8')}} {{mb_strtoupper($solicitud->primero_empresa, 'UTF-8')}} {{mb_strtoupper($solicitud->segundo_empresa, 'UTF-8')}}</b>, en su carácter de representante 
                     legal de la parte patronal, y quien se identifica con __________ misma que cuenta con foto y coincide con los rasgos físicos del ______ <b>{{$solicitud->empresa}}</b> a dar cumplimiento al Convenio celebrado entre las partes ante este Centro el día 
                     <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{ \Carbon\Carbon::parse($solicitud->hora)->translatedFormat('h:i') }}</b> hrs., 
                     ante este Centro de Conciliación, se hace constar la incomparecencia de la parte trabajadora, no obstante de encontrarse legal y debidamente notificada de la fecha y hora del cumplimiento de pago de convenio, 
@@ -108,14 +109,14 @@
                     
                 </p>
                 <br><br><br><br><br>     
-                <center><br><br> <p><b>___________________________________<br>{{$conciliador->name}}<br>FUNCIONARIO/A CONCILIADOR/A<br>
-                    DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>           
+                <center><br><br> <p><b>___________________________________<br>{{mb_strtoupper($conciliador->name, 'UTF-8')}} <br>FUNCIONARIO/A CONCILIADOR/A<br>
+                    DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>      
             </div>
             <script type="text/php">
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");
                     $size = 10;
-                    $y = $pdf->get_height() - 30;
+                    $y = $pdf->get_height() - 44;
                     $x = ($pdf->get_width() / 2) - 50;
                     $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
                     $pdf->page_text($x, $y, $text, $font, $size, array(0, 0, 0));

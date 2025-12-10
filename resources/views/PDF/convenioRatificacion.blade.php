@@ -18,7 +18,7 @@
                 padding-top: 95px;
             }
             main{
-                margin: 50px 50px 50px 40px; /*Para colocar el texto*/
+                margin: 50px 0 50px 0; /*Para colocar el texto*/
             }
             header {
                 position: fixed;
@@ -41,9 +41,10 @@
             }
             .content {
                 font-family: sans-serif;
-                font-size: 12px;
+                font-size: 14px;
                 text-align: justify;
-                margin-top: 50px;
+                margin-left: 3cm;     
+                margin-right: 2cm; 
             }
             .fondo-membrete {
                 position: fixed;
@@ -72,7 +73,7 @@
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                         <tr>   
                             <td><b>Oficina: </b></td>
-                            <td>{{ strtoupper($solicitud->delegacion) }} </td>
+                            <td>{{  mb_strtoupper($solicitud->delegacion, 'UTF-8') }} </td>
                         </tr>
                         <tr>    
                             <td><b>Número de identificación único: </b></td>
@@ -108,7 +109,7 @@
                     @else Declara <b>{{$abogado->nombre_representante}} {{$abogado->primer_apellido_representante}} {{$abogado->segundo_apellido_representante}}</b> quien se identifica con 
                         <b>{{ strtoupper($abogado->tipo_identificacion) }}</b>, de Número <b>{{ $abogado->num_identificacion }}</b> expedida a su favor por <b>{{ $descripcionIdentificacionP }}</b>, así como <b>{{$abogado->descipcion_poder}}</b>  
                     @endif
-                </p><br><br>
+                </p>
                 <b>TERCERA.</b> Declara la parte <b>TRABAJADORA</b>:
                     <p class="sangria">
                         a) Que fue contratada por la parte <b>EMPLEADORA</b> desde el <b>{{ \Carbon\Carbon::parse($solicitud->fecha_inicio)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, para prestar sus 
@@ -121,7 +122,7 @@
                             - Días de descanso: <b>{{ $dias_descanso }}</b><br>
                             - Vacaciones: <b>{{ $solicitud->vacaciones_dias }}</b> días al año.<br>
                             - Aguinaldo: <b>{{ $solicitud->aguinaldo_dias }}</b> días al año.<br>
-                            - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>{{ $solicitud->Otras }}</b>.
+                            - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>{{ $solicitud->Otras }}</b>
                     </p>
                     <p class="sangria">
                         c) Que desempeñaba sus actividades laborales en las siguientes condiciones: <br>
@@ -344,10 +345,10 @@
                         <tr>
                             <td colspan="2" style="text-align:center; vertical-align:top; padding:0 20px;">
                                 <div style="border-top: 2px solid #000; width:50%; margin: 0 auto 5px auto;"></div>
-                                <b>{{ strtoupper($conciliador->name) }}<br>
+                                <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}<br>
                                     FUNCIONARIO/A CONCILIADOR/A<br>
-                                    DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>
-                                    ESTADO DE MICHOACÁN DE OCAMPO
+                                    DEL CENTRO DE CONCILIACIÓN LABORAL<br>
+                                    DEL ESTADO DE MICHOACÁN DE OCAMPO
                                 </b>
                             </td>
                         </tr>
@@ -360,7 +361,7 @@
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");
                     $size = 10;
-                    $y = $pdf->get_height() - 30;
+                    $y = $pdf->get_height() - 44;
                     $x = ($pdf->get_width() / 2) - 50;
                     $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
                     $pdf->page_text($x, $y, $text, $font, $size, array(0, 0, 0));
