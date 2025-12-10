@@ -19,7 +19,7 @@
                 padding-top: 85px;
             }
             main{
-                margin: 50px 50px 50px 40px; /*Para colocar el texto*/
+                margin: 50px 0 50px 0; /*Para colocar el texto*/
             }
             header {
                 position: fixed;
@@ -42,9 +42,10 @@
             }
             .content {
                 font-family: sans-serif;
-                font-size: 12px;
+                font-size: 14px;
                 text-align: justify;
-                margin-top: 50px;
+                margin-left: 3cm;     
+                margin-right: 2cm; 
             }
             .fondo-membrete {
                 position: fixed;
@@ -68,7 +69,7 @@
                     <table id="tabla_pago" class="table-striped" style="width:60%; float: right;">
                         <tr>   
                             <td><b>Oficina: </b></td>
-                            <td>{{ strtoupper($solicitud->delegacion) }} </td>
+                            <td>{{ mb_strtoupper($solicitud->delegacion, 'UTF-8') }} </td>
                         </tr>
                         <tr>    
                             <td><b>Número de identificación único: </b></td>
@@ -77,7 +78,7 @@
                     </table>
                 </div><br><br><br><br><br>
                 <p><b>
-                    Trabajador(a): {{ strtoupper($solicitud->trabajador) }} {{ strtoupper($solicitud->primero_trabajador) }} {{ strtoupper($solicitud->segundo_trabajador) }} <br> 
+                    Trabajador(a): {{ mb_strtoupper($solicitud->trabajador, 'UTF-8') }} {{ mb_strtoupper($solicitud->primero_trabajador, 'UTF-8') }} {{ mb_strtoupper($solicitud->segundo_trabajador, 'UTF-8') }} <br> 
                     Empleador(a): @if(is_null($solicitud->nombre_empresa) && is_null($solicitud->primero_empresa))
                                       {{ $solicitud->empresa }}
                                  @else {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }} @endif<br>
@@ -131,14 +132,14 @@
                 </p>
 
                 <br><br><br><br>       
-                <center><br><br> <p><b>___________________________________<br>{{$conciliador->name}} <br>FUNCIONARIO/A CONCILIADOR/A<br>
-                DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>           
+                <center><br><br> <p><b>___________________________________<br>{{mb_strtoupper($conciliador->name, 'UTF-8')}} <br>FUNCIONARIO/A CONCILIADOR/A<br>
+                DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>           
             </div>
             <script type="text/php">
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");
                     $size = 10;
-                    $y = $pdf->get_height() - 30;
+                    $y = $pdf->get_height() - 44;
                     $x = ($pdf->get_width() / 2) - 50;
                     $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
                     $pdf->page_text($x, $y, $text, $font, $size, array(0, 0, 0));

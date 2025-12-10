@@ -39,7 +39,7 @@
                                                             <a class="btn btn-info" href="{{ route('administrador_usuarios_edit', $usuario->id)}}" onclick=editar_usuario();>Editar</a>
                                                         @endcan
                                                         @can('borrar-usuario')
-                                                            <form method="POST" action="{{ route('usuarios_destroy', $usuario->id) }} ">
+                                                            <form method="POST" action="{{ route('usuarios_destroy', $usuario->id) }}">
                                                             @csrf
                                                                 <input type="hidden" name="_method" value="DELETE">
                                                                 <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>

@@ -3,7 +3,7 @@
 @section('content')
     <section class="section">
         <div class="section-header">
-            <h3 class="page__heading">Estadisticas</h3>
+            <h3 class="page__heading">Estadísticas</h3>
         </div>
         <div class="section-body">
             <?php $fecha_actual = date('d-m-Y');?>
@@ -105,7 +105,7 @@
                                                 <label for="name">Tipo de persona</label>
                                                 <select  class="form-control" name="tipo_persona">
                                                     <option value="">Todos</option>
-                                                    <option value="Solictudes">Fisica</option>
+                                                    <option value="Solictudes">Física</option>
                                                     <option value="Ratificaciones">Moral</option>
                                                     </select>
                                             </div>
@@ -118,9 +118,9 @@
                                                     <option value="">Todos</option>
                                                     <option value="Despido">Despido</option>
                                                     <option value="Pago de prestaciones">Pago de prestaciones</option>
-                                                    <option value="Recision de la relación laboral">Recision de la relación laboral</option>
+                                                    <option value="Recision de la relación laboral">Recisión de la relación laboral</option>
                                                     <option value="Derecho de preferencia">Derecho de preferencia</option>
-                                                    <option value="Derecho de antiguedad">Derecho de antiguedad</option>
+                                                    <option value="Derecho de antiguedad">Derecho de antigüedad</option>
                                                     <option value="Derecho de ascesnso">Derecho de ascesnso</option>
                                                     <option value="Terminación voluntaria de relación laboral">Terminación voluntaria de relación laboral</option>  
                                                     <option value="Falta de acuerdo">Falta de acuerdo</select>

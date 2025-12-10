@@ -19,7 +19,7 @@
                 padding-top: 95px;
             }
             main{
-                margin: 50px 50px 50px 40px; /*Para colocar el texto*/
+                margin: 50px 0 50px 0; /*Para colocar el texto*/
             }
             header {
                 position: fixed;
@@ -30,7 +30,7 @@
                 text-align: center;
                 font-size: 14px;
             }
-
+            
             footer {
                 position: fixed;
                 bottom: -60px;
@@ -42,9 +42,10 @@
             }
             .content {
                 font-family: sans-serif;
-                font-size: 12px;
+                font-size: 14px;
                 text-align: justify;
-                margin-top: 50px;
+                margin-left: 3cm;     
+                margin-right: 2cm; 
             }
             .fondo-membrete {
                 position: fixed;
@@ -67,17 +68,17 @@
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                         <tr>   
                             <td><b>Oficina: </b></td>
-                            <td>{{ strtoupper($solicitud->delegacion) }} </td>
+                            <td>{{ mb_strtoupper($solicitud->delegacion, 'UTF-8') }} </td>
                         </tr>
                         <tr>    
                             <td><b>Número de identificación único: </b></td>
                             <td>{{ $solicitud->NUE }} </td>
                         </tr> 
                     </table>
-                </div><br><br><br>
+                </div><br><br><br><br>
                 <p><center><b>
-                    CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br><br><br>
-                    ACTA DE AUDIENCIA DE CONCILIACIÓN     </b></center></p><br><br> 
+                    CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br><br>
+                    ACTA DE AUDIENCIA DE CONCILIACIÓN     </b></center></p><br>
 
                 <p>
                     En el <b>Centro de Conciliación Laboral del Estado de Michoacán de Ocampo con sede en {{ $solicitud->delegacion }}</b>, siendo las <b>{{ \Carbon\Carbon::parse($solicitud->hora)->format('H:i') }} horas del
@@ -89,12 +90,12 @@
                     Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, <b>declara abierta</b> la Audiencia de Conciliación Prejudicial en la que comparecen: <br><br>
 
                     La parte citada <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}</b> quien se identifica con 
-                    <b>{{ strtoupper($solicitud->tipo_identificacion) }}</b>, de Número <b>{{ $solicitud->num_identificacion }}</b> expedida a su favor por 
+                    <b>{{ mb_strtoupper($solicitud->tipo_identificacion, 'UTF-8') }}</b>, de Número <b>{{ $solicitud->num_identificacion }}</b> expedida a su favor por 
                     <b>{{ $descripcionIdentificacionS }}</b> y, por la parte solicitante
                     <b>@if(is_null($solicitud->nombre_empresa) && is_null($solicitud->primero_empresa))
                            {{ $solicitud->empresa }}
                        @else {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }} @endif</b>se identifica con 
-                    <b>{{ strtoupper($abogado->tipo_identificacion) }}</b>, de Número <b>{{ $abogado->num_identificacion }}</b> expedida a su favor por 
+                    <b>{{ mb_strtoupper($abogado->tipo_identificacion, 'UTF-8') }}</b>, de Número <b>{{ $abogado->num_identificacion }}</b> expedida a su favor por 
                     <b>{{ $descripcionIdentificacionP }}</b>, identificaciones que concuerdan fisionómicamente con las partes y, que, en este acto, se agrega copia cotejada al 
                     expediente electrónico para que conste como corresponda; documentos que les son devueltos por ser innecesaria su retención. <br><br>
 
@@ -113,12 +114,12 @@
                     jurisdiccional, máxime que en el procedimiento ni el patrón ni el trabajador puede estar seguro de ganar el juicio, mientras que en la conciliación se llega a un acuerdo en el que 
                     se benefician ambas partes.<br><br>
 
-                    A continuación, se cede el uso de la voz de manera ordenada y respetuosa a los presentes en esta audiencia, para manifestar en relación al proceso de conciliación: <br><br>
-                    
+                    A continuación, se cede el uso de la voz de manera ordenada y respetuosa a los presentes en esta audiencia, para manifestar en relación al proceso de conciliación:
+                </p> 
                     <!--[RESOLUCION_PRIMERA_MANIFESTACION]-->
-                    <b>{{ $solicitud->resolucion_primera }}</b><br><br>
+                    <p><b>{{ $solicitud->resolucion_primera }}</b></p>
 
-                    Así, resulta procedente exponer a los presentes la propuesta de un acuerdo conciliatorio justo y equitativo que beneficie a ambas partes del conflicto; haciendo de su conocimiento 
+                <p> Así, resulta procedente exponer a los presentes la propuesta de un acuerdo conciliatorio justo y equitativo que beneficie a ambas partes del conflicto; haciendo de su conocimiento 
                     que, en el caso de estar conformes con dicho acuerdo, se procederá a realizar el convenio por escrito, mismo que deberá ratificarse en el presente acto y, posteriormente, se les 
                     entregará copia certificada del mismo en el que conste su cumplimiento en términos de los artículos 684-E fracción XIV y 684-I, de la ley Federal del Trabajo.<br><br>
 
@@ -144,7 +145,7 @@
                             <!--</p>-->
                         </tbody>
                     </table>      
-            <!-- Para las deducciones -->
+                    <!-- Para las deducciones -->
                     @if(!empty($deducciones) && count($deducciones) > 0)
                         <b>Deducciones</b>
                         <table class="table table-bordered">
@@ -186,7 +187,7 @@
                     tengan que expresar en torno a la propuesta y sus alcances, <b>haciendo de su conocimiento que no se podrán negociar derechos y prestaciones irrenunciables en términos de la Ley 
                     Federal del Trabajo,</b> y respetando los adquiridos; de no estar de acuerdo se podrá solicitar una nueva audiencia que tendrá verificativo dentro de los cinco días siguientes al 
                     cierre de esta diligencia.
-                </p><br>
+                </p>
 
                 <!--[RESOLUCION_SEGUNDA_MANIFESTACION]-->
                 <p><b>{{ $solicitud->resolucion_segunda }}</b></p>
@@ -208,7 +209,7 @@
 
                     Asimismo, se informa que sus datos no podrán ser difundidos sin el consentimiento expreso, salvo las excepciones previstas en ley.<br><br>
 
-                    Así lo proveyó, <b>{{ strtoupper($conciliador->name) }}</b>, Funcionario(a) Conciliador(a) adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
+                    Así lo proveyó, <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}</b>, Funcionario(a) Conciliador(a) adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
                 </p>
 
                 <br><br>
@@ -231,10 +232,10 @@
                     <tr>
                         <td colspan="2" style="text-align:center; vertical-align:top; padding:0 20px;">
                             <div style="border-top: 2px solid #000; width:50%; margin: 0 auto 5px auto;"></div>
-                            <b>{{ strtoupper($conciliador->name) }}<br>
+                            <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}<br>
                                     FUNCIONARIO/A CONCILIADOR/A<br>
-                                    DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>
-                                    ESTADO DE MICHOACÁN DE OCAMPO
+                                    DEL CENTRO DE CONCILIACIÓN LABORAL<br>
+                                    DEL ESTADO DE MICHOACÁN DE OCAMPO
                             </b>
                         </td>
                     </tr>
@@ -244,7 +245,7 @@
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");
                     $size = 10;
-                    $y = $pdf->get_height() - 30;
+                    $y = $pdf->get_height() - 44;
                     $x = ($pdf->get_width() / 2) - 50;
                     $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
                     $pdf->page_text($x, $y, $text, $font, $size, array(0, 0, 0));
