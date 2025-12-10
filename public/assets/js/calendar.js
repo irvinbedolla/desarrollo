@@ -249,9 +249,11 @@ function handleEventClick(info, calendarType) {
 
     if (calendarType === 'pagos') {
         modalContent = `
+            <strong>NUE:</strong> ${props.nue}<br>
             <strong>Descripción:</strong> ${props.descripcion}<br>
             <strong>Fecha:</strong> ${props.fecha}<br>
             <strong>Hora:</strong> ${props.hora}<br>
+            <strong>Conciliador:</strong> ${props.conciliador}<br>
             <strong>Trabajador:</strong> ${props.trabajador}<br>
             <strong>Patronal:</strong> ${props.empresa}<br>
             <strong>Estatus:</strong> ${props.estatus}<br>
@@ -265,9 +267,11 @@ function handleEventClick(info, calendarType) {
     }
     else if (calendarType === 'conciliador') {
         modalContent = `
+            <strong>NUE:</strong> ${props.nue}<br>
             <strong>Descripción:</strong> ${props.descripcion}<br>
             <strong>Fecha:</strong> ${props.fecha}<br>
             <strong>Hora:</strong> ${props.hora}<br>
+            <strong>Conciliador:</strong> ${props.conciliador}<br>
             <strong>Trabajador:</strong> ${props.trabajador}<br>
             <strong>Patronal:</strong> ${props.empresa}<br>
             <strong>Estatus:</strong> ${props.estatus}<br>
@@ -311,9 +315,11 @@ function handleEventClick(info, calendarType) {
     }
     else if (calendarType === 'citas') {
         modalContent = `
+            <strong>NUE:</strong> ${props.nue}<br>
             <strong>Descripción:</strong> ${props.descripcion}<br>
             <strong>Fecha:</strong> ${props.fecha}<br>
             <strong>Hora:</strong> ${props.hora}<br>
+            <strong>Conciliador:</strong> ${props.conciliador}<br>
             <strong>Estatus:</strong> ${props.estatus}<br>
             <strong>Monto:</strong> ${props.monto}<br>
             <strong>Observaciones:</strong> ${props.observaciones}<br>
