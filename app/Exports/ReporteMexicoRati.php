@@ -28,10 +28,10 @@ class ReporteMexicoRati implements FromView
         //Pagos de ratificacion(Turnos)
         if($this->sede === "Todos"){
             $reportes = Turnos::whereBetween('turnos.fecha',[$this->fecha_inicial,$this->fecha_final])
-                ->join('users','users.id','turnos.user_id')
+                ->leftjoin('users','users.id','turnos.user_id')
                 ->leftjoin('estados','estados.id','turnos.estado_rat')
                 ->leftjoin('municipios','municipios.id','turnos.municipio_rat')
-                ->join('abogados','abogados.idAbogado','turnos.idAbogado')
+                ->leftjoin('abogados','abogados.idAbogado','turnos.idAbogado')
                 ->leftjoin('municipios as mun_abogado','mun_abogado.id','abogados.municipio_patronal')
                 ->select('turnos.NUE',DB::raw('MONTH(turnos.fecha) as mes'),DB::raw('YEAR(turnos.fecha) as año'),'estados.nombre as estado','municipios.nombre as municipio','mun_abogado.nombre as municipio_abogado',
                 'abogados.giroComercial','abogados.nombres_patronal','abogados.primer_apellido_patronal','abogados.segundo_apellido_patronal','turnos.motivo','turnos.user_id','turnos.estatus','turnos.id','users.sexo')
@@ -62,6 +62,7 @@ class ReporteMexicoRati implements FromView
                     $solicitud->total = count($totalSuma) != 0 ? $totalSuma[0]->monto : '0';
                 }
         }
+        dd($reportes);
         return view('excel.reporte-mexico', ['reportes' => $reportes]);
     }
 }

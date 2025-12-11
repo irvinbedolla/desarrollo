@@ -123,10 +123,7 @@ body {font-family: Arial;}
                                     <input type="hidden" name="id" value="{{$id}}">
                                     <div class="tab">
                                         <a class="btn btn-info" onclick="openCity(event, 'detalles')">Detalles</a>
-                                        <a class="btn btn-info" onclick="openCity(event, 'solicitante')">Solicitante</a>
-                                        <a class="btn btn-info" onclick="openCity(event, 'documentos')">Citado(s)</a>
-                                        <a class="btn btn-info" onclick="openCity(event, 'observaciones')">Observaciones</a>
-                                        <a class="btn btn-info" onclick="openCity(event, 'citados')">Documentos</a>
+                                        <a class="btn btn-info" onclick="openCity(event, 'observaciones')">Prevención</a>
                                         <a class="btn btn-success" onclick="openCity(event, 'confirmacion')">Acciones</a>
                                     </div>
 
@@ -213,8 +210,6 @@ body {font-family: Arial;}
                                                 </div>
                                             @endif
                                         </div>
-                                    </div>
-                                    <div id="solicitante" class="tabcontent">
                                         <div id="tabla_solicitante" class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
@@ -595,8 +590,6 @@ body {font-family: Arial;}
                                                 </div>
                                             @endforeach
                                         </div>
-                                    </div>
-                                    <div id="documentos" class="tabcontent">
                                         <div id="tabla_documentos" class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
@@ -871,9 +864,6 @@ body {font-family: Arial;}
                                                 </div>
                                             @endif
                                         </div>
-                                    </div>
-
-                                    <div id="citados" class="tabcontent">
                                         <div id="tabla_citados" class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
@@ -900,6 +890,7 @@ body {font-family: Arial;}
                                             @endif
                                         </div>
                                     </div>
+                                    
 
                                     <div id="observaciones" class="tabcontent">
                                         <div id="tabla_citados" class="row">

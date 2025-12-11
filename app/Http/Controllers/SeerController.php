@@ -409,7 +409,7 @@ class SeerController extends Controller
                 if($sede === "Todos"){
                     $pagosRatificacion = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
                     ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                    ->join('users','users.id','turnos.id_conciliador')
+                    ->leftjoin('users','users.id','turnos.id_conciliador')
                     ->where('pago_solicitud.tipo_pago',"Ratificacion")
                     ->select('pago_solicitud.id_solicitud','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion'
                     ,'pago_solicitud.estatus','pago_solicitud.tipo_pago','turnos.delegacion','turnos.NUE',
@@ -421,7 +421,7 @@ class SeerController extends Controller
                     $pagosRatificacion = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
                     ->where('pago_solicitud.delegacion',$sede)
                     ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                    ->join('users','users.id','turnos.id_conciliador')
+                    ->leftjoin('users','users.id','turnos.id_conciliador')
                     ->where('pago_solicitud.tipo_pago',"Ratificacion")
                     ->select('pago_solicitud.id_solicitud','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion'
                     ,'pago_solicitud.estatus','pago_solicitud.tipo_pago','pago_solicitud.delegacion','turnos.NUE',
@@ -443,7 +443,7 @@ class SeerController extends Controller
                     ->where('pago_solicitud.tipo_pago',"Audiencia")
                     ->get(); 
                 }
-
+                
                 $pdf = \PDF::loadView('PDF/Estadisticas/reporte-Cumplimientos', compact('fecha_inicial','fecha_final','pagosRatificacion','pagosAudiencias'));
                 $pdf->setPaper('a4', 'landscape');
                 return $pdf->stream('archivo.pdf');
@@ -7257,7 +7257,7 @@ class SeerController extends Controller
         
                 $fecha_str = $fecha->format('Y-m-d');
                 $conteoDiario = $pagosPorDiaMap[$fecha_str] ?? 0; 
-                $diaEstaLleno = ($conteoDiario > 13); 
+                $diaEstaLleno = ($conteoDiario > 60); 
 
                 $slot = clone $inicioJornada;
                 while ($slot < $finJornada) {

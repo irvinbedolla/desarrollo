@@ -69,11 +69,15 @@
                                                     <td>{{\Carbon\Carbon::parse($persona->fechaVigencia)->format('d/m/y')}}</td>
                                                     <td>
                                                         @if($persona->tipo == "Moral" || ($persona->tipo == "Fisica" && $persona->reprecentante == "Si"))
-                                                            @if($persona->fechaVigencia >= $fechaActual)
+                                                            @if($persona->fechaVigencia == NULL)
+                                                                Sin Validar
+                                                            @elseif($persona->fechaVigencia >= $fechaActual)
                                                                 Vigente
                                                             @elseif($persona->fechaVigencia  < $fechaActual) 
                                                                 Vencido
                                                             @endif
+                                                        @else
+                                                            No Aplica
                                                         @endif
                                                     </td>
                                                     <td>{{$persona->estatus}}</td>
