@@ -45,7 +45,7 @@
                                                 <br/>
                                                 @foreach($permission as $value)
                                                     <label>
-                                                        <input class="form-check-input" name="permission[]" type="checkbox" value="{{ $value->id }}" {{ $value->id == $rolePermission ? "checked" : '' }}>
+                                                        <input class="form-check-input" name="permission[]" type="checkbox" value="{{ $value->id }}" {{ isset($rolePermission[$value->id]) ? 'checked' : '' }}>
                                                         <label class="form-check-label" for="flexCheckDefault">{{ $value->name }}</label>
                                                     </label>
                                                 <br/>

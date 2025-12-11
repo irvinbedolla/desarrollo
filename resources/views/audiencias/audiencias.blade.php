@@ -1886,6 +1886,20 @@
                 return toYMD(dt);
             }
 
+            function addBusinessDaysYMD(ymd, n) {
+                const [y, m, d] = ymd.split('-').map(Number);
+                let dt = new Date(y, m - 1, d); // local
+                let added = 0;
+                while (added < n) {
+                    dt.setDate(dt.getDate() + 1);
+                    if (typeof esInhabil === 'function' && esInhabil(dt)) {
+                        continue;
+                    }
+                    added++;
+                }
+                return toYMD(dt);
+            }
+
             cargarInhabilesSync().then(()=>{
 
                 const fechaMinima = calcularFechaMinima();
@@ -1897,7 +1911,8 @@
                 const startOfWeekStr = fechaSemanaInicio.toISOString().slice(0,10);
 
                 const fechaConfirmacion = document.getElementById('fechaConfirmacion').value;
-                const fechaLimite = fechaConfirmacion ? addDaysYMD(fechaConfirmacion, 46) : null;
+                // Calcula la fecha límite sumando 46 días hábiles (excluye inhábiles cargados)
+                const fechaLimite = fechaConfirmacion ? addBusinessDaysYMD(fechaConfirmacion, 46) : null;
 
 
                 calendar = new FullCalendar.Calendar(calEl, {

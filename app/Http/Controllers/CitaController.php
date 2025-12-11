@@ -119,7 +119,7 @@ class CitaController extends Controller
 
             $tipo = 6;
 
-            $conciliador = User::where('id', $pago->id_conciliador)->select('name')->first();
+            $conciliadorName = User::where('id', $pago->id_conciliador)->value('name') ?: '';
 
             if ($pago->estatus === 'Pendiente') {
                 $color = '#EAE300';
@@ -143,7 +143,7 @@ class CitaController extends Controller
                     'fecha' => $pago->fecha->format('d/m/Y'),
                     'empresa' => $pago->empresa_representante,
                     'trabajador' => $pago->nombre_trabajador,
-                    'conciliador' => $conciliador->name,
+                    'conciliador' => $conciliadorName,
                     'estatus' => $pago->estatus,
                     'monto' => $pago->monto,
                     'observaciones' => $pago->observaciones,
@@ -213,8 +213,8 @@ class CitaController extends Controller
             $segundo_apellido_turno = $turno ? $turno->segundo_trabajador : null;
 
             $tipo = 6;
-
-            $conciliador = User::where('id', $pago->id_conciliador)->select('name')->first();
+            
+            $conciliadorName = User::where('id', $pago->id_conciliador)->value('name') ?: '';
 
             if ($pago->estatus === 'Pendiente') {
                 $color = '#EAE300';
@@ -238,7 +238,7 @@ class CitaController extends Controller
                     'fecha' => $pago->fecha->format('d/m/Y'),
                     'empresa' => $pago->empresa_representante,
                     'trabajador' => $pago->nombre_trabajador,
-                    'conciliador' => $conciliador->name,
+                    'conciliador' => $conciliadorName,
                     'estatus' => $pago->estatus,
                     'monto' => $pago->monto,
                     'observaciones' => $pago->observaciones,
@@ -306,7 +306,7 @@ class CitaController extends Controller
 
             $tipo = 6;
 
-            $conciliador = User::where('id', $pago->id_conciliador)->select('name')->first();
+            $conciliadorName = User::where('id', $pago->id_conciliador)->value('name') ?: '';
 
             if ($pago->estatus === 'Pendiente') {
                 $color = '#EAE300';
@@ -330,7 +330,7 @@ class CitaController extends Controller
                     'fecha' => $pago->fecha->format('d/m/Y'),
                     'empresa' => $pago->empresa_representante,
                     'trabajador' => $pago->nombre_trabajador,
-                    'conciliador' => $conciliador->name,
+                    'conciliador' => $conciliadorName,
                     'estatus' => $pago->estatus,
                     'monto' => $pago->monto,
                     'observaciones' => $pago->observaciones,
