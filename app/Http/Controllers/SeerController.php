@@ -3196,6 +3196,12 @@ class SeerController extends Controller
                     $sala = "Pendiente"; break;
             }
             $fecha_audiencia = date('Y-m-d', strtotime($Audiencia[0]."+7 day"));
+            $cuarenta_dias = $delegacion["fecha_confirmacion"]->diffInDays($fecha_audiencia);
+
+
+            if($cuarenta_dias >= 45){
+                return back()->withErrors('Ya Excede los 45 dias no puede ser confirmada.');
+            }
 
             $audiencia_insert=array(
                 'id_solicitud'      => $data["id"],
@@ -3227,7 +3233,7 @@ class SeerController extends Controller
                 'mensaje'   => "Tu solicitud fue aceptada revisa tu buzón electronico en: https://siconcilio.cclmichoacan.gob.mx/ para continuar tu tramite." ,
             ];
             // El método Mail::to() toma el email del destinatario
-            //Mail::to($user['email'])->send(new MailAceptacionRechazo($user));
+            Mail::to($user['email'])->send(new MailAceptacionRechazo($user));
         }
 
         return redirect()->route('solicitudes_pendientes'); 
