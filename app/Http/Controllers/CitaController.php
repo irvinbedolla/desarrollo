@@ -69,7 +69,7 @@ class CitaController extends Controller
         $userRole = $user->roles->pluck('name')->all();
 
         if ($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador") {
-            $pagos = Pagos::where('tipo_pago','Audiencia')->get();
+            $recepciones = Pagos::where('tipo_pago','Ratificacion')->get();
         }
         else if($userRole[0] == "Conciliador" || $userRole[0] == "Delegado"){
             $tipo_conciliador = PermisosConciliador::where('id_conciliador',$id_usuario)->first();
@@ -141,8 +141,8 @@ class CitaController extends Controller
                     'hora' => $pago->hora->format('h:i A'),
                     'color' => $color,
                     'fecha' => $pago->fecha->format('d/m/Y'),
-                    'empresa' => $pago->empresa_turno,
-                    'trabajador' => $pago->nombre_turno,
+                    'empresa' => $pago->empresa_representante,
+                    'trabajador' => $pago->nombre_trabajador,
                     'conciliador' => $conciliador->name,
                     'estatus' => $pago->estatus,
                     'monto' => $pago->monto,
@@ -258,7 +258,7 @@ class CitaController extends Controller
         $userRole = $user->roles->pluck('name')->all();
 
        if ($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador") {
-            $pagos = Pagos::where('tipo_pago','Audiencia')->get();
+            $pagos = Pagos::where('tipo_pago','Conciliador')->get();
         }
         else if($userRole[0] == "Conciliador" || $userRole[0] == "Delegado"){
             $tipo_conciliador = PermisosConciliador::where('id_conciliador',$id_usuario)->first();

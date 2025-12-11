@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return {
                 html: `
                     <div class="fc-event-content">
+                        <div class="fc-event-title">${info.event.extendedProps.nue}</div>
                         <div class="fc-event-title">${info.event.title}</div>
                         <div class="fc-event-time">
                             <div class="color-indicator" style="background:${info.event.extendedProps.color}"></div>
@@ -143,7 +144,8 @@ document.addEventListener('DOMContentLoaded', function () {
             return {
                 html: `
                     <div class="fc-event-content">
-                        <div class="fc-event-title">${info.event.title}</div>
+                        <div class="fc-event-title">${info.event.extendedProps.nue}</div>
+                        <div class="fc-event-title">${info.event.extendedProps.trabajador}</div>
                         <div class="fc-event-time">
                             <div class="color-indicator" style="background:${info.event.extendedProps.color}"></div>
                             ${info.event.extendedProps.hora}
@@ -182,6 +184,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return {
                 html: `
                     <div class="fc-event-content">
+                    <div class="fc-event-title">${info.event.extendedProps.nue}</div>
                         <div class="fc-event-title">${info.event.title}</div>
                         <div class="fc-event-time">
                             <div class="color-indicator" style="background:${info.event.extendedProps.color}"></div>
@@ -336,9 +339,26 @@ function handleEventClick(info, calendarType) {
 
 // Función para estilizar los eventos
 function styleEvent(info) {
-    const titleElement = info.el.querySelector('.fc-event-title');
-    if (titleElement) {
-        titleElement.style.whiteSpace = 'normal';
-        titleElement.style.textAlign = 'left';
+    const titleElements = info.el.querySelectorAll('.fc-event-title, .fc-list-item-title, .fc-list-item-title a');
+    if (titleElements && titleElements.length) {
+        titleElements.forEach(function (titleElement) {
+            titleElement.style.whiteSpace = 'normal';
+            titleElement.style.textAlign = 'left';
+            titleElement.style.fontSize = '11px';
+            titleElement.style.lineHeight = '1.1';
+            titleElement.style.fontWeight = '600';
+        });
+    }
+
+    const timeElement = info.el.querySelector('.fc-event-time, .fc-list-item-time');
+    if (timeElement) {
+        timeElement.style.fontSize = '11px';
+        timeElement.style.opacity = '0.95';
+        timeElement.style.fontWeight = '800';
+    }
+    if (info.el && info.el.style) {
+        info.el.style.padding = '4px 6px';
+        info.el.style.boxSizing = 'border-box';
     }
 }
+

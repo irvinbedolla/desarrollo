@@ -1294,9 +1294,9 @@ class TurnosController extends Controller
         $id = auth()->user()->id;
         $user = User::find($id);
 
-        $solicitudes = Turnos::where('tipo','Ratificación')
-        ->join('users','turnos.curp_solicitante','=','users.profile_photo_path')
-        ->where('curp_solicitante',$user["profile_photo_path"])
+        $solicitudes = Turnos::join('users','turnos.curp_solicitante','=','users.profile_photo_path')
+        ->where('turnos.tipo','Ratificación')
+        ->where('turnos.curp_solicitante',$user["profile_photo_path"])
         ->select('turnos.id','turnos.fecha','turnos.empresa','turnos.trabajador','turnos.telefono','turnos.email','turnos.estatus')
         ->get();
         return view('/solicitudes/misratificaciones',compact('solicitudes'));
