@@ -4501,13 +4501,16 @@ class SeerController extends Controller
         $bandera = 0;
 
         if($delegacion == "Morelia" || $delegacion == "Uruapan" || $delegacion == "Zamora"){
-            //Vamos a contar cuandos auxiliares existen en el CCL
             $conciliadores = User::whereHas($relacionEloquent, function ($query) {
-                return $query->where('name', '=', 'Conciliador');
+                $query->where('name', '=', 'Conciliador');
             })
-            ->join('permisos_conciliador','permisos_conciliador.id_conciliador','users.id')
             ->where('users.delegacion', $delegacion)
-            ->whereIn('permisos_conciliador.tipo', ["Ambos","Precencial"])
+            ->whereExists(function($q) {
+                $q->select(DB::raw(1))
+                  ->from('permisos_conciliador')
+                  ->whereColumn('permisos_conciliador.id_conciliador', 'users.id')
+                  ->whereIn('permisos_conciliador.tipo', ["Ambos","Precencial"]);
+            })
             ->get();
         }else{
             //Voy a revisar la sede para saber si hay conciliadores que tengan estatus de ambos
@@ -4520,14 +4523,17 @@ class SeerController extends Controller
             if($delegacion == "Sahuayo"){
                 $oficina_apoyo = "Zamora";
             }
-
-            //Vamos a contar cuandos auxiliares existen en el CCL
+            // Obtener conciliadores desde la oficina de apoyo con permisos de tipo Virtual/Ambos
             $conciliadores = User::whereHas($relacionEloquent, function ($query) {
-                return $query->where('name', '=', 'Conciliador');
+                $query->where('name', '=', 'Conciliador');
             })
-            ->join('permisos_conciliador','permisos_conciliador.id_conciliador','users.id')
             ->where('users.delegacion', $oficina_apoyo)
-            ->whereIn('permisos_conciliador.tipo', ["Ambos","Virtual"])
+            ->whereExists(function($q) {
+                $q->select(DB::raw(1))
+                  ->from('permisos_conciliador')
+                  ->whereColumn('permisos_conciliador.id_conciliador', 'users.id')
+                  ->whereIn('permisos_conciliador.tipo', ["Ambos","Virtual"]);
+            })
             ->get();
         }
 
