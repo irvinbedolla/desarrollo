@@ -29,6 +29,7 @@ use App\Models\Sedes;
 use App\Models\Pagos;
 use App\Models\Concepto; 
 use App\Models\Deducciones;
+use App\Models\SeerPerGeneral;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -149,6 +150,36 @@ class AdministracionController extends Controller
                     'fecha' => $folio->fecha,
                     'empresa' => $folio->empresa,
                     'trabajador' => $folio->trabajador,
+                    'estatus' => $folio->estatus,
+                ];
+            })
+            ->toArray();
+
+            if(count($folios) != 0){
+                return redirect()->back()
+                ->with('message', 'Ratificación Encontrada. Al realizar el retroceso se borran las Prestaiones,deduciones y dias de cumplimientos.') // Mensaje general
+                ->with('folios_generados', $folios)
+                ->with('tipo', $data["tipo"]); // La variable específica
+            }
+            else{
+                return back()->withErrors('Debes seleccionar al menos una Región.');
+            }
+        }
+        else if($data["tipo"] == "Solicitudes"){
+            $folios = SeerPerGeneral::where('seer_general.id',$data["folio"])
+            ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+            ->whereYear("fecha",$data["año"])
+            ->select('seer_general.id','seer_general.NUE','seer_general.fecha','seer_general.estatus','seer_general.estatus','seer_solicitante.nombre')
+            //->selectRaw("CONCAT(empresa,' ',primero_empresa,' ',segundo_empresa) as empresa")
+            //->selectRaw("CONCAT(trabajador,' ',primero_trabajador,' ',segundo_trabajador) as trabajador")
+            ->get()
+            ->map(function ($folio) {
+                return [
+                    'id' => $folio->id,
+                    'NUE' => $folio->NUE,
+                    'fecha' => $folio->fecha,
+                    'empresa' => "Citados",
+                    'trabajador' => $folio->nombre,
                     'estatus' => $folio->estatus,
                 ];
             })

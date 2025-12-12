@@ -134,6 +134,7 @@
                                 <option value="">Seleccione</option>
                                 <option value="Cumplimiento">Cumplimiento</option>
                                 <option value="Ratificación">Ratificación</option>
+                                <option value="Solicitudes">Solicitudes</option>
                             </select>
                         </div>
                         <div class="col-xs-4 col-sm-4 col-md-4">
