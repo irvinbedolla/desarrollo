@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Arr;
 use App\Models\Municipios;
 use App\Models\Estados;
+use App\Models\User;
+use Spatie\Permission\Models\Role;
 
 //Para sacar el Id del usuario
 use Illuminate\Support\Facades\Auth;
@@ -20,8 +22,12 @@ class PoderController extends Controller
 
     public function index()
     {
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
         $poderes = Poder::all();
-        return view('poderes.index', compact('poderes'));
+        return view('poderes.index', compact('poderes','userRole'));
     }
 
     public function create()

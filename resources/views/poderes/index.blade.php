@@ -118,7 +118,9 @@
                                                             <form method="POST" action="{{ route('poderes.destroy', $persona->idAbogado) }} ">
                                                                 @csrf
                                                                 <input type="hidden" name="_method" value="DELETE">
-                                                                <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
+                                                                @if($userRole[0] == "Super Usuario")
+                                                                    <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
+                                                                @endif
                                                             </form>
                                                         @endcan
                                                     </td>
