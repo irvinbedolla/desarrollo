@@ -3195,14 +3195,15 @@ class SeerController extends Controller
                 default:
                     $sala = "Pendiente"; break;
             }
+            $fecha_confirmacion = date('Y-m-d', strtotime($delegacion["fecha_confirmacion"]));
             $fecha_audiencia = date('Y-m-d', strtotime($Audiencia[0]."+7 day"));
-            $cuarenta_dias = $delegacion["fecha_confirmacion"]->diffInDays($fecha_audiencia);
+            /*$cuarenta_dias = $fecha_confirmacion->diffInDays($fecha_audiencia);
 
 
             if($cuarenta_dias >= 45){
                 return back()->withErrors('Ya Excede los 45 dias no puede ser confirmada.');
             }
-
+            */
             $audiencia_insert=array(
                 'id_solicitud'      => $data["id"],
                 'numero_audiencia'  => $num_audi,
@@ -3230,7 +3231,7 @@ class SeerController extends Controller
                 'fecha'     => date('d-m-Y'),
                 'email'     => $data["email_solicitante"],
                 'id'        => $data["id"],
-                'mensaje'   => "Tu solicitud fue aceptada revisa tu buzón electronico en: https://siconcilio.cclmichoacan.gob.mx/ para continuar tu tramite." ,
+                'mensaje'   => "Tu solicitud fue aceptada revisa tu buzón electrónico en: https://siconcilio.cclmichoacan.gob.mx/ para continuar tu tramite." ,
             ];
             // El método Mail::to() toma el email del destinatario
             Mail::to($user['email'])->send(new MailAceptacionRechazo($user));
@@ -4532,10 +4533,8 @@ class SeerController extends Controller
 
         //Numero de conciliadores
         $contador_conciliadores = count($conciliadores);
-        //dd($contador_conciliadores);
         //Obtener la ultima fecha y hora
         $fecha_reciente = Audiencias::where('delegacion',$delegacion)->select('fecha','hora')->orderBy('fecha', 'desc')->first();
-        //dd($fecha_reciente);
         $fecha_revisar = date('Y-m-d', strtotime($fecha_reciente["fecha"]));
         $fecha_audiencia = $fecha_revisar;
         $fecha_hora = date('H:i:s', strtotime($fecha_reciente["hora"]));
@@ -7021,6 +7020,7 @@ class SeerController extends Controller
         $fecha_actual = date('y-m-d');
         $id = auth()->user()->id;
         $user = User::find($id);
+        $sede = $user->delegacion;
         
         if($data["conclucion"] == "Conciliacion"){
             //Revisar si existe
@@ -7034,7 +7034,8 @@ class SeerController extends Controller
                         'monto'         => $data["monto_pagos"][$i], 
                         'descripcion'   => $data["descripcion_pagos"][$i],
                         'estatus'       => "Pendiente", 
-                        'tipo_pago'     => "Audiencia"
+                        'tipo_pago'     => "Audiencia",
+                        'delegacion'    => $sede,
                     ];
                     $monto = $monto + $data["monto_pagos"][$i];
                     Pagos::create($data_pagos);
@@ -7163,6 +7164,8 @@ class SeerController extends Controller
     public function guardar_cumplimiento(Request $request){
         $data = $request->all();
         $id = auth()->user()->id;
+        $user = User::find($id);
+        $sede = $user->delegacion;
 
         $request->validate([
             'NUE'           => 'required',
@@ -7190,6 +7193,7 @@ class SeerController extends Controller
             'empresa_representante' => $data["empresa"],
             'nombre_trabajador'     => $data["trabajador"],
             'forma_pago'            => $data["forma_pago"],
+            'delegacion'            => $sede,
         );
 
         Pagos::create($data_insert);
@@ -8435,6 +8439,8 @@ class SeerController extends Controller
     public function guardar_cumplimiento_cumplimientos(Request $request){
         $data = $request->all();
         $id = auth()->user()->id;
+        $user = User::find($id);
+        $sede = $user->delegacion;
 
         $request->validate([
             'NUE'           => 'required',
@@ -8462,6 +8468,7 @@ class SeerController extends Controller
             'empresa_representante' => $data["empresa"],
             'nombre_trabajador'     => $data["trabajador"],
             'forma_pago'            => $data["forma_pago"],
+            'delegacion'            => $sede,
         );
 
         Pagos::create($data_insert);
@@ -8477,7 +8484,9 @@ class SeerController extends Controller
     public function guardar_cumplimiento_conciliadores(Request $request){
         $data = $request->all();
         $id = auth()->user()->id;
-
+        $user = User::find($id);
+        $sede = $user->delegacion;
+        
         $request->validate([
             'NUE'           => 'required',
             'empresa'       => 'required',
@@ -8504,6 +8513,7 @@ class SeerController extends Controller
             'empresa_representante' => $data["empresa"],
             'nombre_trabajador'     => $data["trabajador"],
             'forma_pago'            => $data["forma_pago"],
+            'delegacion'            => $sede,
         );
 
         Pagos::create($data_insert);

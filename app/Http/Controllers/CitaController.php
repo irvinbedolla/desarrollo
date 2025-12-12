@@ -69,7 +69,13 @@ class CitaController extends Controller
         $userRole = $user->roles->pluck('name')->all();
 
         if ($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador") {
-            $recepciones = Pagos::where('tipo_pago','Ratificacion')->get();
+            $recepciones = Pagos::join('turnos','turnos.id','pago_solicitud.id_solicitud')
+            ->where('pago_solicitud.tipo_pago','Ratificacion')
+            ->select('turnos.NUE','pago_solicitud.descripcion','pago_solicitud.hora','pago_solicitud.fecha','turnos.empresa'
+            ,'pago_solicitud.nombre_trabajador','pago_solicitud.estatus','pago_solicitud.monto','pago_solicitud.observaciones',
+            'pago_solicitud.id','pago_solicitud.id_solicitud')
+            ->selectRaw("CONCAT(turnos.trabajador, ' ', turnos.primero_trabajador, ' ', turnos.segundo_trabajador) as nombre_completo")
+            ->get();
         }
         else if($userRole[0] == "Conciliador" || $userRole[0] == "Delegado"){
             $tipo_conciliador = PermisosConciliador::where('id_conciliador',$id_usuario)->first();
@@ -78,27 +84,47 @@ class CitaController extends Controller
                     //Validar la sede y agregar la oficina de apoyo
                     if($sede == "Morelia"){
                         $delegaciones = ['Morelia', 'Zitácuaro'];
-                        $recepciones = Pagos::where('tipo_pago','Ratificacion')
+                        $recepciones = Pagos::join('turnos','turnos.id','pago_solicitud.id_solicitud')
+                        ->where('pago_solicitud.tipo_pago','Ratificacion')
                         ->whereIn('delegacion', $delegaciones)
+                        ->select('turnos.NUE','pago_solicitud.descripcion','pago_solicitud.hora','pago_solicitud.fecha','turnos.empresa'
+                        ,'pago_solicitud.nombre_trabajador','pago_solicitud.estatus','pago_solicitud.monto','pago_solicitud.observaciones',
+                        'pago_solicitud.id','pago_solicitud.id_solicitud')
+                        ->selectRaw("CONCAT(turnos.trabajador, ' ', turnos.primero_trabajador, ' ', turnos.segundo_trabajador) as nombre_completo")
                         ->get();
                     }
                     else if($sede == "Uruapan"){
                         $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
-                        $recepciones = Pagos::where('tipo_pago','Ratificacion')
+                        $recepciones = Pagos::join('turnos','turnos.id','pago_solicitud.id_solicitud')
+                        ->where('pago_solicitud.tipo_pago','Ratificacion')
                         ->whereIn('delegacion', $delegaciones)
+                        ->select('turnos.NUE','pago_solicitud.descripcion','pago_solicitud.hora','pago_solicitud.fecha','turnos.empresa'
+                        ,'pago_solicitud.nombre_trabajador','pago_solicitud.estatus','pago_solicitud.monto','pago_solicitud.observaciones',
+                        'pago_solicitud.id','pago_solicitud.id_solicitud')
+                        ->selectRaw("CONCAT(turnos.trabajador, ' ', turnos.primero_trabajador, ' ', turnos.segundo_trabajador) as nombre_completo")
                         ->get();
                     }
                     else if($sede == "Zamora"){
                         $delegaciones = ['Zamora', 'Sahuayo'];
-                        $recepciones = Pagos::where('tipo_pago','Ratificacion')
+                        $recepciones = Pagos::join('turnos','turnos.id','pago_solicitud.id_solicitud')
+                        ->where('pago_solicitud.tipo_pago','Ratificacion')
                         ->whereIn('delegacion', $delegaciones)
+                        ->select('turnos.NUE','pago_solicitud.descripcion','pago_solicitud.hora','pago_solicitud.fecha','turnos.empresa'
+                        ,'pago_solicitud.nombre_trabajador','pago_solicitud.estatus','pago_solicitud.monto','pago_solicitud.observaciones',
+                        'pago_solicitud.id','pago_solicitud.id_solicitud')
+                        ->selectRaw("CONCAT(turnos.trabajador, ' ', turnos.primero_trabajador, ' ', turnos.segundo_trabajador) as nombre_completo")
                         ->get();
                     }
                 }
             }
             else{
-                $recepciones = Pagos::where('tipo_pago','Ratificacion')
-                ->where('delegacion', $user["delegacion"])
+                $recepciones = Pagos::join('turnos','turnos.id','pago_solicitud.id_solicitud')
+                ->where('pago_solicitud.tipo_pago','Ratificacion')
+                ->where('pago_solicitud.delegacion', $user["delegacion"])
+                ->select('turnos.NUE','pago_solicitud.descripcion','pago_solicitud.hora','pago_solicitud.fecha','turnos.empresa'
+                ,'pago_solicitud.nombre_trabajador','pago_solicitud.estatus','pago_solicitud.monto','pago_solicitud.observaciones',
+                'pago_solicitud.id','pago_solicitud.id_solicitud')
+                ->selectRaw("CONCAT(turnos.trabajador, ' ', turnos.primero_trabajador, ' ', turnos.segundo_trabajador) as nombre_completo")
                 ->get();
             }
         }
@@ -112,10 +138,11 @@ class CitaController extends Controller
         $eventos = [];
         foreach ($recepciones as $pago) {
             $turno = $pago->turno;
-            $empresa_turno = $turno ? $turno->empresa : null;
-            $nombre_turno = $turno ? $turno->nombre_trabajador : null;
-            $primer_apellido_turno = $turno ? $turno->primero_trabajador : null;
-            $segundo_apellido_turno = $turno ? $turno->segundo_trabajador : null;
+ 
+            $empresa_turno = $pago ? $pago->empresa : "S/E";
+            $nombre_trabajador = $pago ? $pago->nombre_completo : "S/N";
+            //$primer_apellido_turno = $turno ? $turno->primero_trabajador : null;
+            //$segundo_apellido_turno = $turno ? $turno->segundo_trabajador : null;
 
             $tipo = 6;
 
@@ -133,7 +160,7 @@ class CitaController extends Controller
 
             $eventos[] = [
                 'id' => $pago->id,
-                'title' => $pago->descripcion,
+                'title' => $pago->NUE,
                 'start' => $pago->fecha->format('Y-m-d') . 'T' . $pago->hora->format('H:i:s'),
                 'extendedProps' => [
                     'nue' => $pago->NUE,
@@ -141,8 +168,8 @@ class CitaController extends Controller
                     'hora' => $pago->hora->format('h:i A'),
                     'color' => $color,
                     'fecha' => $pago->fecha->format('d/m/Y'),
-                    'empresa' => $pago->empresa_representante,
-                    'trabajador' => $pago->nombre_trabajador,
+                    'empresa' => $empresa_turno,
+                    'trabajador' => $nombre_trabajador,
                     'conciliador' => $conciliadorName,
                     'estatus' => $pago->estatus,
                     'monto' => $pago->monto,
@@ -167,7 +194,7 @@ class CitaController extends Controller
         if ($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador") {
             $pagos = Pagos::where('tipo_pago','Audiencia')->get();
         }
-        else if($userRole[0] == "Conciliador" || $userRole[0] == "Delegado"){
+        else if($userRole[0] == "Conciliador" || $userRole[0] == "Delegado" || $userRole[0] == "Enlace"){
             $tipo_conciliador = PermisosConciliador::where('id_conciliador',$id_usuario)->first();
             if(!empty($tipo_conciliador)){
                 if($tipo_conciliador["tipo"] == "Ambos"){

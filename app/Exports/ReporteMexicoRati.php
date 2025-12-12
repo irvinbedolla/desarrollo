@@ -62,7 +62,6 @@ class ReporteMexicoRati implements FromView
                     $solicitud->total = count($totalSuma) != 0 ? $totalSuma[0]->monto : '0';
                 }
         }
-        dd($reportes);
         return view('excel.reporte-mexico', ['reportes' => $reportes]);
     }
 }

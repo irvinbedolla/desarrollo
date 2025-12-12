@@ -95,7 +95,7 @@
                             @foreach($Ratificacion as $estadistica)
                                 <tr>
                                     <td style=" text-align: center;">{{ \Carbon\Carbon::parse($estadistica->fecha)->format('d/m/y') }}</td>
-                                    <td style=" text-align: center;">{{ date_format($estadistica->hora,'H:i')}}</td>
+                                    <td style=" text-align: center;">{{ $estadistica->hora}}</td>
                                     <td style=" text-align: center;">{{ $estadistica->NUE }}</td>
                                     <td style=" text-align: center;">{{ $estadistica->empresa }} {{ $estadistica->primero_empresa }} {{ $estadistica->segundo_empresa }}</td>
                                     <td style=" text-align: center;">{{ $estadistica->trabajador }} {{ $estadistica->primero_trabajador }} {{ $estadistica->segundo_trabajador }}</td>

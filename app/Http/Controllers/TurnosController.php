@@ -1564,7 +1564,9 @@ class TurnosController extends Controller
     public function guardar_manifestacion(Request $request){
         $data = $request->all();
         $id_usuario = auth()->user()->id;
-        
+        $user = User::find($id_usuario);
+        $sede = $user->delegacion;
+
         //Revisar si existe
         if(isset($data["dias_pagos"])){
             $conteo = count($data["dias_pagos"]);
@@ -1576,7 +1578,8 @@ class TurnosController extends Controller
                     'monto'         => $data["monto_pagos"][$i], 
                     'descripcion'   => $data["descripcion_pagos"][$i],
                     'estatus'       => "Pendiente", 
-                    'tipo_pago'     => "Ratificacion"
+                    'tipo_pago'     => "Ratificacion",
+                    'delegacion'    => $sede,              
                 ];
                 Pagos::create($data_citado);
             }
@@ -2096,7 +2099,7 @@ class TurnosController extends Controller
         $fecha_actual = date('y-m-d');
         $id = auth()->user()->id;
         $user = User::find($id);
-        
+        $sede = $user->delegacion;
 
         //Revisar si existe
         if(isset($data["dias_pagos"])){
@@ -2109,7 +2112,8 @@ class TurnosController extends Controller
                     'monto'         => $data["monto_pagos"][$i], 
                     'descripcion'   => "Pago Parcial ".$i,
                     'estatus'       => "Pendiente", 
-                    'tipo_pago'     => "Ratificacion"
+                    'tipo_pago'     => "Ratificacion",
+                    'delegacion'    => $sede,
                 ];
                 $monto = $monto + $data["monto_pagos"][$i];
                 Pagos::create($data_pagos);
@@ -2143,7 +2147,7 @@ class TurnosController extends Controller
                     'id_solicitud'  => $data["id"], 
                     'monto'         => $data["monto_pago"][$i], 
                     'descripcion'   => $descripcion,
-                    'tipo_pago'     => "Ratificacion"
+                    'tipo_pago'     => "Ratificacion",
                 ];
                 Concepto::create($data_citado);
             }
