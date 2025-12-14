@@ -201,7 +201,7 @@
               </div>
             </div> 
           </div> 
-          <p><a class="boton" href="{{ route('solicitud') }}">Ver más</a></p> 
+          <p><a class="boton" href="{{ route('solicitudEnLinea') }}">Ver más</a></p> 
         </div> 
       </div><!-- Inicio solicitud en línea -->
     </div>

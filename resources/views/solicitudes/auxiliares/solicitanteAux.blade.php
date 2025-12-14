@@ -1,26 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="csrf-token" content="{{ csrf_token() }}"/>
-    <title></title>
-    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
-    <!-- Bootstrap 5.3.3 -->
-    <link href="public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-    <!-- Ionicons -->
-    <link rel="icon" href="public/assets/images/ccl-r.png" type="image/x-icon">
-    <link href="//fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
-    <link href="public/assets/css/all.css" rel="stylesheet" type="text/css">
-    <link href="public/assets/css/iziToast.min.css" rel="stylesheet">
-    <link href="public/assets/css/sweetalert.css" rel="stylesheet" type="text/css"/>
-    <link href="public/assets/css/select2.min.css" rel="stylesheet" type="text/css"/>
-    
-    <!-- Agregados para los Select del Formulario Personas-->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-
+@extends('layouts.app_1')
     <style>
         .loader {
             position: fixed;
@@ -30,7 +8,6 @@
             height: 100%;
             z-index: 9999;
             background: url('public/assets/images/pageLoader.gif') 50% 50% no-repeat rgb(249,249,249);
-           /* background-color: #6A0F49;/<p style="color: #CEA845 */
             opacity: .8;
         }
         #resultado {
@@ -41,33 +18,25 @@
         #resultado.ok {
             background-color: green;
         }
+        .form-control {
+            border: 1px solid #ced4da !important;
+            box-shadow: none !important;
+        }
+
+        .form-control:focus {
+            border-color: #80bdff !important;
+            outline: 0 !important;
+        }
     </style>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-        <div class="">
-            <img src="public/assets/images/Logos 2.png" class="img" style="" width="250" height="90"></a>&nbsp;&nbsp;
-        </div> 
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent" >
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="{{ route('publico') }}" style="color: black;">INICIO<span class="sr-only"></span></a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-    <div class="container">
-        <br><br><br><br>
-    </div>
-</head>
-<body>
-    <div id="app">  
+    @section('content')
         <section class="section">
+            <div class="section-header">
+                <h3 class="page__heading">Solicitud</h3>
+            </div>
             <div class="section-body">
                 <div class="row"> 
                     <div class="col-lg-12" >
-                        <div class="card">
+                        <!--<div class="card">-->
                             <div class="card-body">
                                     @if(session()->has('success'))
                                         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -198,7 +167,7 @@
                                             </div>
                                             <div class="col-xs-6 col-sm-12 col-md-3"><br>
                                                 <spam for="btncheck1">¿Requiere traductor?</spam>
-                                                <input type="checkbox" class="btn-check" id="check_lenguaje" name="traductor" autocomplete="off">
+                                                <input type="checkbox" id="check_lenguaje" name="traductor" autocomplete="off">
                                             </div>
                                             <div class="col-xs-6 col-sm-12 col-md-6" id="lenguaje_señas">
                                                 <div class="form-group">
@@ -211,7 +180,7 @@
                                             </div> 
                                             <div class="col-xs-6 col-sm-12 col-md-3"><br>
                                                 <spam for="btncheck1">¿Tiene alguna discapacidad?</spam>
-                                                <input type="checkbox" class="btn-check" id="check_discapacidad" name="discapacidad" autocomplete="off">
+                                                <input type="checkbox" id="check_discapacidad" name="discapacidad" autocomplete="off">
                                             </div>   
                                             <div class="col-xs-6 col-sm-12 col-md-6" id="discapacidad">
                                                 <div class="form-group">
@@ -439,7 +408,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-1">
                                                 <div class="form-group">
                                                     <label for="btncheck1">¿Laboras actualmente?</label><br>
-                                                    <input name="labora" type="checkbox" class="btn-check" id="check_fecha" autocomplete="off"/>
+                                                    <input name="labora" type="checkbox" id="check_fecha" autocomplete="off"/>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
@@ -719,10 +688,9 @@
                                     </form>
                                 </div>
                             </div>
-                        </div>
+                        <!--</div>-->
                     </div>
                 </div>
-            </div>
             <!-- Modal para la captura de la ine-->
             <div class="modal fade" id="helpModal" aria-labelledby="helpModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" style="max-height: 80vh;">
@@ -828,17 +796,8 @@
             })()
         });
     </script>
-</body>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <div id="crear_poder" style ="display: none;">
-        <div>.</div>
-        <div class="loader"></div>
-    </div>
-
-    @section('scripts')
-        <script src="public/assets/js/poderes/general.js"></script>
-    @endsection
+@section('scripts')
+    <script src="public/assets/js/poderes/general.js"></script>
 
     <script src="public/assets/js/jquery.min.js"></script>
     <script src="public/assets/js/popper.min.js"></script>
@@ -860,7 +819,7 @@
 
 
     @yield('scripts')
-    <script src="./public/assets/js/validaciones.js"></script> 
+    <script src="./public/assets/js/validaciones.js"></script>
     <script> 
         function sedes(){
             document.getElementById("fecha").removeAttribute("disabled");
@@ -977,3 +936,5 @@
             });
         });
     </script>
+    @endsection
+@endsection

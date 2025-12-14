@@ -51,7 +51,7 @@ use App\Http\Controllers\IncidenciasController;
         return view('../public/welcome');
     });
 
-    Route::get('solicitudes',                           [SeerController::class, 'solicitudesLinea'])->name('solicitud');
+    Route::get('levantar_solicitud',                    [SeerController::class, 'solicitudesLinea'])->name('solicitudEnLinea');
     Route::get('tipoIndustria/{tipo_solicitud}',        [SeerController::class, 'Industrias'])->name('solicitud.industria');
     Route::get('/registro_tercer_encuentro',            [SeerController::class, 'registro_tercer_encuentro'])->name('registro_tercer_encuentro');
     Route::post('/registro_tercer_encuentro/guardar',   [SeerController::class, 'tercer_encuentro_registro'])->name('tercer_encuentro_registro');
@@ -303,6 +303,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/solicitudes/actualiza',               [SeerController::class, 'actualiza_citados'])->name('actualiza_citados');
         Route::get('/solicitudes/historialSolicitante',     [SeerController::class, 'Historial_Solicitante'])->name('historial_solicitante');
         Route::post('/solicitud/guardarCitatoriosT',        [SeerController::class, 'guardar_citatoriosT'])->name('subir_citatoriosT'); //Subir los citatorios entregados por el trabajador ya firmados
+        Route::get('solicitudes',                           [SeerController::class, 'solicitudesAuxiliares'])->name('solicitud');
+        Route::get('tipoIndustriaA/{tipo_solicitud}',       [SeerController::class, 'IndustriasAux'])->name('solicitud.industriaAuxiliar');
+        Route::get('TrabajadorA/{tipo_solicitud}',          [SeerController::class, 'inicioSolicitud_auxiliar'])->name('trabajadorAuxiliar');
+        Route::post('agregar_solicitanteA',                 [SeerController::class, 'solicitud_parte1'])->name('agregaSolicitanteA');
+        Route::post('guardar_solicitanteA',                 [SeerController::class, 'solicitud_parte2'])->name('guardaSolicitanteA');
+        Route::get('/agrega_citadoA/{id}',                  [SeerController::class, 'vista_citado'])->name('agrega_citadoAux');
+        Route::post('/guardar_citadoA',                     [SeerController::class, 'guardar_citado'])->name('seer.citadosAux');
+        Route::get('/finalizaAux/{id}',                     [SeerController::class, 'guardar_solicitud'])->name('seer.finalizaAux');
     //Fin de Solicitudes
     //PDF Solicitudes    
         Route::get('/Verpdfincompetencias/{id}',                        [SeerController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');

@@ -824,7 +824,7 @@ body {font-family: Arial;}
                                                     <div class="form-group">
                                                         <label for="name">¿Quién entregará las notificaciones?<span style="color:red;"> (*)</span></label>
                                                         <select name="notificacion[]" class="form-control" required>
-                                                            <option value="Trabajador"  {{ $citado['notificacion'] == 'Trabajador' ? "selected" : '' }}>Solicitante</option>
+                                                            <!--<option value="Trabajador"  {{ $citado['notificacion'] == 'Trabajador' ? "selected" : '' }}>Solicitante</option>-->
                                                             <option value="Centro"      {{ $citado['notificacion'] == 'Centro' ? "selected" : '' }}>Centro de conciliación Laboral</option>
                                                         </select>
                                                         <div class="invalid-feedback">
@@ -1065,7 +1065,7 @@ body {font-family: Arial;}
                                 <label for="name">¿Quién entregará las notificaciones? <span style="color:red;">(*)</span></label>
                                 <select name="notificacion" class="form-control" required>
                                     <option value="">SELECCIONE</option>
-                                    <option value="Trabajador">Solicitante</option>
+                                    <!--<option value="Trabajador">Solicitante</option>-->
                                     <option value="Centro">Centro de conciliación Laboral</option>
                                 </select>
                                 <div class="invalid-feedback">

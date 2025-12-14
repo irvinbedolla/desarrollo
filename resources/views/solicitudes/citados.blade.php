@@ -216,7 +216,7 @@
                                                     <label for="name">¿Quién entregará los citatorios? <span style="color:red;">(*)</span></label>
                                                     <select name="notificacion" class="form-control" required>
                                                         <option value="">SELECCIONE</option>
-                                                        <option value="Trabajador">Yo</option>
+                                                        <!--<option value="Trabajador">Yo</option>-->
                                                         <option value="Centro">Centro de conciliación Laboral</option>
                                                     </select>
                                                     <div class="invalid-feedback">
@@ -473,9 +473,12 @@
 
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div align="center">
-                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar otro(s) citado(s)</button>
+                                                @if($citados == 0)
+                                                    <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar citado</button>
+                                                @endif
                                                 @if($citados > 0)
                                                     <a href="{{ route('seer.finaliza',$id); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Concluir solicitud</a> 
+                                                    <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar citado</button>
                                                 @endif  
                                                 </div>
                                         </div>    

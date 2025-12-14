@@ -1974,11 +1974,14 @@ class SeerController extends Controller
             'actividad'       =>  $data["actividad_economica"],
             'delegacion'      =>  $data["delegacion"],
             'tipo_solicitud'  =>  $data["tipo_solicitud"],
+            'tipo_generacion' => auth()->check() ? auth()->id() :0,
         );
        
         SeerPerGeneral::create($data_insert); 
         $id_general  = SeerPerGeneral::latest('id')->first();
         $id=$id_general["id"];
+        $tipo_generacion=$id_general->tipo_generacion;
+
         if (!empty($data["motivo_solicitud"])) {
             foreach ($data["motivo_solicitud"] as $motivoId) {
                 SeerMotivo::create([
@@ -1990,6 +1993,10 @@ class SeerController extends Controller
         }
         $estados = Estados::all();
         $municipios = Municipios::where('estado',16)->get();
+
+        if($tipo_generacion != 0){
+            return view('solicitudes.auxiliares.solicitanteAux', compact('estados','municipios','id'));
+        }
         return view('solicitudes.solicitante', compact('estados','municipios','id'));
     }
     
@@ -2042,7 +2049,7 @@ class SeerController extends Controller
             'constancia_hechos' => 'required_if:excepcion,Si',
             'solicito_apoyo' => 'required_if:excepcion,Si',
             'continuacion_solicto_apoyo' => 'required_if:excepcion,Si',
-            'incidencia_directa' => 'required_if:excepcion,Si',
+            'incidencia_directa' => 'required_if:solicito_apoyo,Si',
             'recibio_atencion' => 'required_if:excepcion,Si',
         ]);
         
@@ -2171,8 +2178,15 @@ class SeerController extends Controller
                 'recibio_atencion' => $data["recibio_atencion"] ?? null,
             ]);
         }
+
+        $id_general  = SeerPerGeneral::latest('id')->first();
+        $id=$id_general["id"];
+        $tipo_generacion=$id_general->tipo_generacion;
+        
         //return view('solicitudes.aviso',compact('folio'));
-    
+        if($tipo_generacion != 0){
+            return redirect()->route('agrega_citadoAux', ['id' => $id] );
+        }
         //$estados=Estados::all();
         return redirect()->route('agregar_citado', ['id' => $id] ); 
     }
@@ -2306,8 +2320,6 @@ class SeerController extends Controller
         if (!$existe) {
             SeerCitados::create($data_insert);
         }
-
-
         return back()->with('success', 'Citado agregado correctamente, puedes agregar otro o continuar.');
     }
 
@@ -2315,7 +2327,14 @@ class SeerController extends Controller
         $estados = Estados::all();
         $municipios = Municipios::where('estado',16)->get();
         $citados = SeerCitados::where('id_solicitud', $id)->count(); //LLeva el conteo de los citados agregados
-
+        $id_general  = SeerPerGeneral::latest('id')->first();
+        $id=$id_general["id"];
+        $tipo_generacion=$id_general->tipo_generacion;
+        
+        //return view('solicitudes.aviso',compact('folio'));
+        if($tipo_generacion != 0){
+            return view('solicitudes.auxiliares.citadosAux',compact('estados','id','citados','municipios'));
+        }
         return view('solicitudes.citados',compact('estados','id','citados','municipios'));
     }
 
@@ -9146,5 +9165,37 @@ class SeerController extends Controller
             return redirect()->back()->with('error', 'No hay citados para esta solicitud.');
         }
         return response()->json($citados);
+    }
+    public function solicitudesAuxiliares(){
+        return view('solicitudes.auxiliares.solicitudAuxiliares');
+    }
+
+    public function IndustriasAux($tipo_solicitud){
+        return view('solicitudes.auxiliares.tipoIndustriaAux', compact('tipo_solicitud'));
+    } 
+    public function inicioSolicitud_auxiliar($tipo_solicitud){  
+        if ($tipo_solicitud == "1") {
+            $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '1') ->get();
+        }
+        elseif ($tipo_solicitud == "2") {
+            $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '2') ->get();
+        }
+        elseif ($tipo_solicitud == "3") {
+            $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '3') ->get();
+        }
+        elseif ($tipo_solicitud == "4") {
+            $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '4') ->get();
+        }
+        $ramas = SolicitudRama::all();
+       // $actividad=SolicitudEconomica::all();
+        $del=Sedes::all();
+        $municipios=Municipios::where('estado',16)->get();
+       /* if($tipo_solicitud[0] == "1"){
+            //$personas = null;
+            $motivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '1')
+            ->select('catalogo_motivos.motivo','seer_general.NUE','seer_general.solicitante','seer_citados.nombre','seer_citados.direccion','seer_citados.estatus')
+            ->get();
+        }*/
+        return view('solicitudes.auxiliares.inicioSolicitud', compact('ramas','del','municipios','tipo_solicitud','mostrarMotivos'));
     }
 }
