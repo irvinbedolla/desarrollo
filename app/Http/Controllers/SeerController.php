@@ -2408,7 +2408,14 @@ class SeerController extends Controller
             ];
             Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
         }
-
+        $id_general  = SeerPerGeneral::latest('id')->first();
+        $id=$id_general["id"];
+        $tipo_generacion=$id_general->tipo_generacion;
+        
+        //return view('solicitudes.aviso',compact('folio'));
+        if($tipo_generacion != 0){
+            return view('solicitudes.auxiliares.avisoAux',compact('id','mensaje','delegacion'));
+        }
         return view('solicitudes.aviso',compact('id','mensaje','delegacion'));
     }
 

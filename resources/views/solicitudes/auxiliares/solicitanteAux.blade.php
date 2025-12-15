@@ -516,7 +516,7 @@
                                             </div>-->
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <label for="excepcion">Posible caso de excepción <span style="color:red;">(*)</span>
-                                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                                         ?
                                                     </button>
                                                 </label>
@@ -691,6 +691,8 @@
                         <!--</div>-->
                     </div>
                 </div>
+            </section>
+        @endsection
             <!-- Modal para la captura de la ine-->
             <div class="modal fade" id="helpModal" aria-labelledby="helpModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" style="max-height: 80vh;">
@@ -706,30 +708,27 @@
                 </div>
             </div>
 
-            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">Posibles Casos</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                         </div>
                         <div class="modal-body">
                             La Ley Federal del Trabajo en el articulo 685-Ter establece que no estas obligado a agotar la etapa conciliatoria en estos supuestos<br>
-                            -Discriminación<br>
-                            -Acoso u hostigamiento sexual<br>
-                            -Designación de beneficiarios<br>
-                            -Prestaciones de Seguridad Social
+                            - Discriminación<br>
+                            - Acoso u hostigamiento sexual<br>
+                            - Designación de beneficiarios<br>
+                            - Prestaciones de Seguridad Social
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
-    </div>
+
     <script>
         document.getElementById("tipoPersona_razon").style.display="none";
         
@@ -796,7 +795,6 @@
             })()
         });
     </script>
-@section('scripts')
     <script src="public/assets/js/poderes/general.js"></script>
 
     <script src="public/assets/js/jquery.min.js"></script>
@@ -936,5 +934,3 @@
             });
         });
     </script>
-    @endsection
-@endsection

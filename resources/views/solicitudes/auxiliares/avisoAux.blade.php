@@ -59,7 +59,7 @@
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Terminar</a>        
+                            <a href="{{ route('solicitudes_index'); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Terminar</a>        
                         <!--</div>-->
                     </div>
                 </div>
