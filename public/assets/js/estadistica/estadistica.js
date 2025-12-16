@@ -15,7 +15,7 @@
                     setTimeout(function() {
                         $('#menu_carga').hide();
 
-                    }, 3000);
+                    }, 6000);
                 }
             }, false);
         });
