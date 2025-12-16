@@ -51,8 +51,11 @@
                                                 <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal1" data-id="{{ $id }}">Editar</a>
                                             </td>
                                         </tr>
-                                        
+                                        @php $bandera = 0; @endphp
                                         @foreach($representantes as $representante)
+                                            @if($representante->tipo_identificacion == "")
+                                                @php $bandera = 1; @endphp
+                                            @endif
                                             <tr>
                                                 <td  style="display:none">{{$representante->id}}</td>
                                                 <td style="color: #000000;"><b>Citado</b></td>
@@ -70,8 +73,12 @@
                                                         @endif
                                                     @endif
                                                 </td>
-                                                <td>
+                                                <td>   
+                                                @if($representante->id_abogado != null)
                                                     <input type="checkbox" name="aparece_convenio[{{ $representante->id }}]" value="1" {{ $representante->aparece_convenio == 1 ? 'checked' : '' }}>
+                                                @else
+                                                    Sin representante asignado
+                                                @endif
                                                 </td>
                                                 <td>
                                                     @if($representante->id_abogado == null && $representante->id_fisica == null)
@@ -335,9 +342,11 @@
                                     <div class="col-xs-12 col-sm-12 col-md-2">
                                         <br><a class="btn btn-success" href="{{ route('PDFconveniosolicitud', $id) }}" id="btnConvenio" target="_blank">Convenio</a>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-2">
-                                        <br><a class="btn btn-success" href="{{ route('VerPDFAudiencia', $id) }}"  target="_blank">Acta de Audiencia</a></li>
-                                    </div>
+                                    @if($bandera == 0)
+                                        <div class="col-xs-12 col-sm-12 col-md-2">
+                                            <br><a class="btn btn-success" href="{{ route('VerPDFAudiencia', $id) }}"  target="_blank">Acta de Audiencia</a></li>
+                                        </div>
+                                    @endif
                                 </div>
                             </form>
                         </div>
@@ -497,7 +506,7 @@
             </div>
             <div class="modal-body">
                 <div class="table-responsive">
-                <form method="POST" action="{{ route('seleccionar_abogado') }} ">
+                <form method="POST" action="{{ route('seleccionar_abogado_audiencia') }} ">
                     @csrf
                     <input type="hidden" id="modal-id" name="citado" value="">
                     <input type="hidden" name="solicitud" value="{{$solicitud->id}}">

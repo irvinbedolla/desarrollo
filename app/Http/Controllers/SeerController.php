@@ -6112,7 +6112,7 @@ class SeerController extends Controller
         $totalDeducciones = $deducciones->sum('monto');
         //Total a pagar
         $pagoTotal= $totalPrestaciones-$totalDeducciones;
-        
+
         //Descripción del tipo de identificación para los solicitantes
         $identificacionSolicitante = $solicitante->identificacion;
         $descripcionIdentificacionS = $this->descripcionIdentificacion($identificacionSolicitante);
@@ -6813,7 +6813,7 @@ class SeerController extends Controller
         ->select('seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido','seer_citados.rfc',
         'abogados.nombres_patronal as nombre_abogado','abogados.primer_apellido_patronal as primero_abogado','abogados.segundo_apellido_patronal as segundo_abogado',
         'persona_fisica.nombre as nombre_fisica','persona_fisica.primer_apellido as primer_fisica','persona_fisica.segundo_apellido as segundo_fisica',
-        'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus')
+        'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus','abogados.tipo_identificacion')
         ->get();
         $solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
         $abogados = Poder::all();
@@ -6821,7 +6821,7 @@ class SeerController extends Controller
         $estados        = Estados::all();
         $municipios     = Municipios::where('estado',16)->get();
         $conceptos      = Concepto::where('id_solicitud',$id)->where('tipo_pago','Audiencia')->get();
-        $pagos          = Pagos::where('id_solicitud',$id)->where('tipo_pago','Audiencia')->orWhere('tipo_pago', 'Conciliador')->get();
+        $pagos          = Pagos::where('id_solicitud',$id)->whereIN('tipo_pago',['Audiencia','Conciliador'])->get();
         $deducciones    = Deducciones::where('id_solicitud',$id)->where('tipo_pago','Audiencia')->get();
 
         return view('/audiencias/audiencia_revisar',compact('id','conciliadores','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios','conceptos','pagos','deducciones'));
