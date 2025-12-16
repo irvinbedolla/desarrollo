@@ -130,22 +130,22 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:25px;">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 dqr-group" style="background-color:#D2D3D5; width:100%; height:25px;">
                                         <h5 class="text-center" style="color:black">Datos de quien recibe</h5>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-6 dqr-group">
                                         <div class="form-group">
                                             <label for="name">Nombre <span style="color:red;">(*)</span></label>
-                                            <input type="text" name="nombre_notificacion" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                            <input type="text" name="nombre_notificacion" class="form-control" oninput="this.value = this.value.toUpperCase()" required data-required-default="true"> 
                                             <div class="invalid-feedback">
                                                 El campo nombre es obligatorio.
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-6 dqr-group">
                                         <div class="form-group">
                                             <label for="name">Relación (respecto al domicilio) <span style="color:red;">(*)</span></label>
-                                            <select name="relacion_notificacion" class="form-control">
+                                            <select name="relacion_notificacion" class="form-control" required data-required-default="true">
                                                 <option value="">Selecciona</option>
                                                 <option value="RESIDE">Reside</option>
                                                 <option value="TRABAJA">Trabaja</option>
@@ -155,19 +155,19 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-6 dqr-group">
                                         <div class="form-group">
                                             <label for="name">Puesto <span style="color:red;">(*)</span> </label>
-                                            <input type="text" name="puesto" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                            <input type="text" name="puesto" class="form-control" oninput="this.value = this.value.toUpperCase()" required data-required-default="true"> 
                                             <div class="invalid-feedback">
                                                 El campo puesto es obligatorio.
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-6 dqr-group">
                                         <div class="form-group">
                                             <label for="name">Identificación <span style="color:red;">(*)</span></label>
-                                            <select name="identificacion_notificacion" id="identificacion_notificacion" class="form-control">
+                                            <select name="identificacion_notificacion" id="identificacion_notificacion" class="form-control" required data-required-default="true">
                                                 <option value="">Selecciona</option>
                                                 <option value="NO PROPORCIONA">No proporciona</option>
                                                 <option value="NO ATIENDE PRESENCIALMENTE">No atiende presencialmente (Persona no visible)</option>
@@ -188,13 +188,13 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="motivo_identificacion" class="col-xs-12 col-sm-12 col-md-12">
+                                    <div id="motivo_identificacion" class="col-xs-12 col-sm-12 col-md-12 dqr-group">
                                         <div class="form-group">
                                             <label for="name">Motivo de la no identificación</label>
                                             <input type="text" name="motivo_identificacion" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                         </div>
                                     </div>
-                                    <div id="media-filiacion" style="display: none;">
+                                    <div id="media-filiacion" class="dqr-group" style="display: none;">
                                         <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:25px;">
                                             <h5 class="text-center" style="color:black">Media filiación de persona que recibe</h5>
                                         </div>
@@ -202,7 +202,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Género <span style="color:red;">(*)</span></label>
-                                                    <select name="genero" class="form-control">
+                                                    <select name="genero" class="form-control" required data-required-default="true">
                                                         <option value="">Selecciona</option>
                                                         <option value="MASCULINO">MASCULINO</option>
                                                         <option value="FEMENINO">FEMENINO</option>
@@ -215,7 +215,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Tez <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="tez" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                    <input type="text" name="tez" class="form-control" oninput="this.value = this.value.toUpperCase()" required data-required-default="true"> 
                                                     <div class="invalid-feedback">
                                                         El campo tez es obligatorio.
                                                     </div>
@@ -224,7 +224,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Edad <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="edad_filiacion" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                    <input type="text" name="edad_filiacion" class="form-control" oninput="this.value = this.value.toUpperCase()" required data-required-default="true"> 
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatorio.
                                                     </div>
@@ -234,7 +234,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Altura <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="altura" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                    <input type="text" name="altura" class="form-control" oninput="this.value = this.value.toUpperCase()" required data-required-default="true"> 
                                                     <div class="invalid-feedback">
                                                         El campo altura es obligatorio.
                                                     </div>
@@ -244,7 +244,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Complexión <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="complexion" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                    <input type="text" name="complexion" class="form-control" oninput="this.value = this.value.toUpperCase()" required data-required-default="true"> 
                                                     <div class="invalid-feedback">
                                                         El campo complexión es obligatorio.
                                                     </div>
@@ -254,7 +254,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Cabello <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="cabello" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                    <input type="text" name="cabello" class="form-control" oninput="this.value = this.value.toUpperCase()" required data-required-default="true"> 
                                                     <div class="invalid-feedback">
                                                         El campo cabello es obligatorio.
                                                     </div>
@@ -264,7 +264,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Ojos <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="ojos" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                    <input type="text" name="ojos" class="form-control" oninput="this.value = this.value.toUpperCase()" required data-required-default="true"> 
                                                     <div class="invalid-feedback">
                                                         El campo ojos es obligatorio.
                                                     </div>
@@ -274,7 +274,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-9">
                                                 <div class="form-group">
                                                     <label for="name">Señas particulares<span style="color:red;">(*)</span> </label>
-                                                    <input type="text" name="particulares" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                    <input type="text" name="particulares" class="form-control" oninput="this.value = this.value.toUpperCase()" required data-required-default="true"> 
                                                 </div>
                                             </div>
                                         </div>    
@@ -283,7 +283,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
                                             <label>Firma <span style="color:red;">(*)</span></label>
-                                            <select name="firma" class="form-control">
+                                            <select name="firma" class="form-control" required>
                                                 <option value="">Selecciona</option>
                                                 <option value="NO FIRMA">No firma</option>
                                                 <option value="FIRMA">Firma</option>
@@ -413,17 +413,60 @@
         document.addEventListener('DOMContentLoaded', function () {
             const selectQuienAtiende = document.querySelector('select[name="quien_atiende"]');
             const mediaFiliacionDiv = document.getElementById('media-filiacion');
+            const dqrGroups = Array.from(document.querySelectorAll('.dqr-group'));
+
+            function setRequiredInGroups(groups, enabled) {
+                groups.forEach(sectionEl => {
+                    const fields = sectionEl.querySelectorAll('input, select, textarea');
+                    fields.forEach(el => {
+                        const shouldBeRequiredByDefault = el.hasAttribute('data-required-default');
+                        if (enabled) {
+                            if (shouldBeRequiredByDefault) el.setAttribute('required', '');
+                        } else {
+                            el.removeAttribute('required');
+                        }
+                    });
+                });
+            }
 
             if (selectQuienAtiende) {
                 console.log("Select encontrado");
                 selectQuienAtiende.addEventListener('change', function () {
                     console.log("Cambio:", this.value);
+                        dqrGroups.forEach(el => el.style.display = 'none');
+                        setRequiredInGroups(dqrGroups, false);
+                    } else {
+                        dqrGroups.forEach(el => el.style.display = '');
+                        setRequiredInGroups(dqrGroups, true);
+                    }
+
                     if (this.value === 'OTRA PERSONA') {
                         mediaFiliacionDiv.style.display = 'block';
+                        setRequiredInGroups([mediaFiliacionDiv], true);
                     } else {
                         mediaFiliacionDiv.style.display = 'none';
+                        setRequiredInGroups([mediaFiliacionDiv], false);
                     }
                 });
+
+                // Estado inicial al cargar
+                const initial = selectQuienAtiende.value;
+                if (initial === 'NADIE') {
+                    dqrGroups.forEach(el => el.style.display = 'none');
+                    setRequiredInGroups(dqrGroups, false);
+                } else {
+                    dqrGroups.forEach(el => el.style.display = '');
+                    setRequiredInGroups(dqrGroups, true);
+                }
+
+                // Aplicar estado inicial específico de Media filiación
+                if (initial === 'OTRA PERSONA') {
+                    mediaFiliacionDiv.style.display = 'block';
+                    setRequiredInGroups([mediaFiliacionDiv], true);
+                } else {
+                    mediaFiliacionDiv.style.display = 'none';
+                    setRequiredInGroups([mediaFiliacionDiv], false);
+                }
             } else {
                 console.warn("No se encontró el select[name='quien_atiende']");
             }  
