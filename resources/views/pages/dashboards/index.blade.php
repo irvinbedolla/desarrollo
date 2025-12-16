@@ -136,7 +136,7 @@
                                                 <img src="public/assets/images/ccl-r.png" alt="" style="max-width: 50%; height: auto;">
                                             </li>
                                         </ul>
-                                            @if($userRole[0] != 'Solicitante' || $userRole[0] != 'Notificador')
+                                            @if($userRole[0] != 'Solicitante')
                                                     <h1>Agenda</h1>
                                                     <div class="mt-3 mb-3 text-left">
                                                         <button id="btn-actualizar" class="btn btn-lg btn-custom-morado">Actualizar</button>   

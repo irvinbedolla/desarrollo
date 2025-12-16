@@ -1934,7 +1934,7 @@ class SeerController extends Controller
         $ramas = SolicitudRama::all();
        // $actividad=SolicitudEconomica::all();
         $del=Sedes::all();
-        $municipios=Municipios::where('estado',16);
+        $municipios=Municipios::where('estado',16)->get();
        /* if($tipo_solicitud[0] == "1"){
             //$personas = null;
             $motivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '1')
@@ -1950,7 +1950,7 @@ class SeerController extends Controller
 
     public function solicitud_parte1(Request $request){
         $data = $request->all();
-
+        /*
         if($data["delegacion"] == "Lázaro Cárdenas"){
             $data["delegacion"] = "Uruapan";
         }
@@ -1960,6 +1960,7 @@ class SeerController extends Controller
         if($data["delegacion"] == "Sahuayo"){
             $data["delegacion"] = "Zamora";
         }
+        */
         //validando información
         
         $request->validate([
@@ -3262,7 +3263,7 @@ class SeerController extends Controller
                 'fecha'     => date('d-m-Y'),
                 'email'     => $data["email_solicitante"],
                 'id'        => $data["id"],
-                'mensaje'   => "Tu solicitud fue aceptada revisa tu buzón electrónico en: https://siconcilio.cclmichoacan.gob.mx/ para continuar tu tramite." ,
+                'mensaje'   => "Tu solicitud ha sido confirmada exitosamente revisa tu buzón electrónico en: https://siconcilio.cclmichoacan.gob.mx/ para continuar tu tramite." ,
             ];
             // El método Mail::to() toma el email del destinatario
             Mail::to($user['email'])->send(new MailAceptacionRechazo($user));
@@ -6175,7 +6176,7 @@ class SeerController extends Controller
             'fecha'     => date('d-m-Y'),
             'email'     => $solicitante["email"],
             'id'        => $data["id"],
-            'mensaje'   => "Debes revisar: ".$data["observaciones"] ." ingresa a tu buzón electronico en: https://siconcilio.cclmichoacan.gob.mx/ para corregir tu solicitus." ,
+            'mensaje'   => $data["observaciones"] ,
         ];
 
         // El método Mail::to() toma el email del destinatario

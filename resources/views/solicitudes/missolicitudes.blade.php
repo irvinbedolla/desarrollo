@@ -28,7 +28,13 @@
                                                     <td>{{$solicitud->id}}</td>
                                                     <td>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d/m/y') }}</td> 
                                                     <td>{{$solicitud->nombre}}</td>
-                                                    <td>{{$solicitud->estatus}}</td>
+                                                    <td>
+                                                        @if($solicitud->estatus == "Prevencion")
+                                                            <p style="color: red;">Prevención</p>
+                                                        @else
+                                                            {{$solicitud->estatus}}
+                                                        @endif
+                                                    </td>
                                                     <td><a class="btn btn-primary" href="{{ route('consulta_solicitante', $solicitud->id) }}" onclick=consultar_estadistica();>Consultar</a></td>
                                                     <td>
                                                         @if(($solicitud->estatus !== "Pendiente") && ($solicitud->estatus !== "Prevencion"))
@@ -37,11 +43,11 @@
                                                                     Documentos
                                                                 </button>
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownCitatoriosBtn-{{ $solicitud->id }}">
-                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}" >Citatorios</a></li>
+                                                                    <li><button type="button" id="btnMostrarRegistros" class="btn btn-info" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $solicitud->id }}">Citatorios</button></li>
                                                                     @if(($solicitud->estatus !== "Pendiente") && ($solicitud->estatus !== "Prevencion"))
                                                                         <li><a class="btn btn-info" style="width: 100%"  href="{{ route('PDFnotificacion_solicitante', $solicitud->id) }}" target="_blank">Notificación al solicitante</a></li>
                                                                         <li><a class="btn btn-info" style="width: 100%"  href="{{ route('PDFacuseConfirmada', $solicitud->id) }}"  target="_blank">Acuse de solicitud confirmada</a></li>
-                                                                        <li><a class="btn btn-info" href="{{ route('PDFacuse_solicitud', $solicitud->id) }}"  target="_blank">Acuse de solicitud</a></li>
+                                                                        <li><a class="btn btn-info" style="width: 100%"  href="{{ route('PDFacuse_solicitud', $solicitud->id) }}"  target="_blank">Acuse de solicitud</a></li>
                                                                     @endif
                                                                 </ul>
                                                             </div>                                           
@@ -74,52 +80,94 @@
     <div class="loader"></div>
 </div>
 
+<!-- Modal Documentos -->
+<div class="modal fade" id="documentos" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalLabel">Citatorios</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+            <table class="table table-striped" style="width: 100%; text-align: center;">
+                <thead style="background-color: #D2D3D5;">
+                  <tr>
+                    <th>Citatorios</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="listaRegistros"></tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+</div>
+
 @section('scripts')
+
 <script src="../public/assets/js/poderes/general.js"></script>
 <script>
-    const pdfsUrlBase = "{{ url('solicitud/pdfs') }}";
-</script>
-<script>
-    $(document).ready(function () {
-        $('.load-pdfs').click(function () {
-            const id = $(this).data('id');
-            const $listContainer = $(`#citatorios-list-${id}`);
-            $listContainer.html('<li class="dropdown-item text-muted">Cargando citatorios...</li>');
+        const pdfsUrlBase = "{{ url('solicitud/pdfs') }}";
 
-            $.ajax({
-                url: `${pdfsUrlBase}/${id}`,
-                method: 'GET',
-                success: function (response) {
-                    $listContainer.empty();
+        $(document).ready(function() {
+            $('#btnMostrarRegistros').on('click', function() {
+                const listaRegistros = $('#listaRegistros');
+                const pdfsUrlBase = "{{ url('ObtenerCitatorios') }}";
+                const id = $(this).data('id');
+                const pdfRouteBase = '{{ route("PDFSolicitud", ["id" => "xxx"]) }}';
 
-                    if (response.length > 0) {
-                        response.forEach(pdf => {
-                            const pdfData = pdf.base64;
-                            const pdfName = pdf.nombre;
-
-                            const byteCharacters = atob(pdfData);
-                            const byteNumbers = new Array(byteCharacters.length);
-                            for (let i = 0; i < byteCharacters.length; i++) {
-                                byteNumbers[i] = byteCharacters.charCodeAt(i);
-                            }
-                            const byteArray = new Uint8Array(byteNumbers);
-                            const blob = new Blob([byteArray], { type: 'application/pdf' });
-                            const url = URL.createObjectURL(blob);
-
-                            $listContainer.append(`
-                                <li><a class="dropdown-item" href="${url}" target="_blank">${pdfName}</a></li>
-                            `);
-                        });
-                    } else {
-                        $listContainer.append('<li class="dropdown-item text-muted">No hay citatorios disponibles.</li>');
+                listaRegistros.empty(); // Limpiar lista
+                $.ajax({
+                    url: `${pdfsUrlBase}/${id}`,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.length > 0) {
+                            // Iteramos sobre los datos recibidos (ya parseados por jQuery)
+                            $.each(data, function(index, registro) {
+                            const pdfUrl = pdfRouteBase.replace('xxx', registro.id);
+                                const listItem = `
+                                <tr>
+                                    <td style="text-align: left;"> <strong>${registro.nombre} ${registro.primer_apellido} ${registro.segundo_apellido}</strong> </td>
+                                    <td>
+                                        <a href="${pdfUrl}">PDF</a>
+                                    </td>
+                                </tr>`;
+                                listaRegistros.append(listItem);
+                            });
+                        } else {
+                            listaRegistros.append('<li class="list-group-item">No se encontraron registros.</li>');
+                        }
+                        
+                        // Mostrar el modal
+                        var myModal = new bootstrap.Modal(document.getElementById('modalListado'));
+                        myModal.show();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error al obtener los datos:", error);
+                        listaRegistros.append('<li class="list-group-item text-danger">Error de conexión con el servidor.</li>');
+                        
+                        var myModal = new bootstrap.Modal(document.getElementById('modalListado'));
+                        myModal.show();
                     }
-                },
-                error: function () {
-                    $listContainer.html('<li class="dropdown-item text-danger">Error al cargar citatorios.</li>');
-                }
+                });
+             });
+
+            $(document).on('click', '.open-expediente-modal', function() {
+                // 2. Capturar el 'data-id'
+                var idRegistro = $(this).data('id');            
+                document.getElementById('expediente_audiencia_id').value = idRegistro;
+            });
+            // Limpiar backdrop y modal-open cuando modal se oculta
+            $('#documentos').on('hidden.bs.modal', function () {
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open');
             });
         });
-    });
+    </script>
 </script>
 @endsection
 
