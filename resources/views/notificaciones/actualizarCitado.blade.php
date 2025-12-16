@@ -433,6 +433,7 @@
                 console.log("Select encontrado");
                 selectQuienAtiende.addEventListener('change', function () {
                     console.log("Cambio:", this.value);
+                    if(this.value === 'NADIE'){
                         dqrGroups.forEach(el => el.style.display = 'none');
                         setRequiredInGroups(dqrGroups, false);
                     } else {
