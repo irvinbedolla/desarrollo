@@ -2355,7 +2355,9 @@ class SeerController extends Controller
         $nombre = $solicitante["nombre"]." ".$solicitante["primer_apellido"]." ".$solicitante["segundo_apellido"];
         $folio = $solicitante["id_solicitud"];
         $delegacion = SeerPerGeneral::find($id);
-        $usuario = User::where('email',$solicitante["email"])->first();
+        $usuario = User::
+        where('profile_photo_path',$solicitante["CURP"])
+        ->where('email',$solicitante["email"])->first();
 
         if(!isset($usuario)){
             $data_insertar_user= array(

@@ -13,6 +13,17 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
+
+                                <div class="col-xs-12 col-sm-4 col-md-4">
+                                    <div align="center">
+                                        <a href="{{ route('todas_ratificaciones') }}" class="btn btn-primary"  style="width: 100%">Ratificaciones</a>
+                                    </div>
+                                </div>
+                                <div class="col-xs-4 col-sm-4 col-md-4">
+                                    <div align="center">
+                                        <a href="{{ route('create_cita') }}" class="btn btn-primary" target="_blank" style="width: 100%">Nueva Ratificación</a>
+                                    </div>
+                                </div>
 <!--
                                 <div class="col-xs-4 col-sm-4 col-md-2">
                                     <div align="center">
@@ -29,18 +40,8 @@
                                     <div align="center">
                                         <a href="{{ route('ratificacion_atender') }}" class="btn btn-primary" style="width: 100%">Ratificaciones hoy</a>
                                     </div>
-                                </div>
--->
-                                <div class="col-xs-12 col-sm-4 col-md-2">
-                                    <div align="center">
-                                        <a href="{{ route('todas_ratificaciones') }}" class="btn btn-primary"  style="width: 100%">Ratificaciones</a>
-                                    </div>
-                                </div>
-                                <div class="col-xs-4 col-sm-4 col-md-2">
-                                    <div align="center">
-                                        <a href="{{ route('create_cita') }}" class="btn btn-primary" target="_blank" style="width: 100%">Nueva Ratificación</a>
-                                    </div>
-                                </div>
+                                </div>                                
+
                                 <div class="col-xs-4 col-sm-4 col-md-2">
                                     <div align="center">
                                        <button type="button" class="btn btn-primary open-modal" data-bs-toggle="modal" data-bs-target="#ModalArchivar" style="width: 100%">
@@ -66,6 +67,7 @@
                                     </div>
                                 </div>
                             </div>
+                            -->
                         </div>
                     </div>
                 </div>

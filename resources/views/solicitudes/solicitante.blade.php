@@ -257,7 +257,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="password">Entidad Federativa del Solicitante <span style="color:red;">(*)</span></label>
+                                                    <label for="password">Estado <span style="color:red;">(*)</span></label>
                                                     <select id="estado_solicitante" class="form-control" name="estado_solicitante" required>
                                                         <option value="">Seleccione</option>
                                                         @foreach($estados as $est)
@@ -269,6 +269,22 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">Municipio o Alcaldía <span style="color:red;">(*)</span></label>
+                                                    <select id="municipio_solicitante" class="form-control" name="municipio_solicitante" required>
+                                                        <option value="">Seleccione</option>
+                                                        @foreach($municipios as $mun)
+                                                            <option value="{{$mun['id']}}">{{$mun['nombre']}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo municipio o alcaldía es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Tipo de Vialidad <span style="color:red;">(*)</span></label><br>
@@ -309,6 +325,17 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">Colonia <span style="color:red;">(*)</span></label>
+                                                    <input type="text" name="colonia_solicitante" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo colonia es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Número Exterior <span style="color:red;">(*)</span></label><br>
@@ -322,29 +349,6 @@
                                                 <div class="form-group">
                                                     <label for="name">Número Interior (Campo opcional)</label>
                                                     <input type="text" name="numInt" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
-                                                <div class="form-group">
-                                                    <label for="name">Colonia <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="colonia_solicitante" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
-                                                    <div class="invalid-feedback">
-                                                        El campo colonia es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
-                                                <div class="form-group">
-                                                    <label for="name">Nombre del Municipio o Alcaldía <span style="color:red;">(*)</span></label>
-                                                    <select id="municipio_solicitante" class="form-control" name="municipio_solicitante" required>
-                                                        <option value="">Seleccione</option>
-                                                        @foreach($municipios as $mun)
-                                                            <option value="{{$mun['id']}}">{{$mun['nombre']}}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        El campo municipio o alcaldía es obligatorio.
-                                                    </div>
                                                 </div>
                                             </div>
                                             <div id="div1"  class="col-xs-12 col-sm-12 col-md-3">
@@ -407,11 +411,11 @@
                                                 <div class="form-group">
                                                     <label for="name">Salario</label>
                                                     <select name="periodo_pago" class="form-control">
-                                                        <!--<option value="">SELECCIONE</option>-->
+                                                        <option value="">SELECCIONE</option>
                                                         <option value="Diario">DIARIO</option>
-                                                        <!--<option value="Semana">SEMANAL</option>
+                                                        <option value="Semana">SEMANAL</option>
                                                         <option value="Quincenal">QUINCENAL</option>
-                                                        <option value="Mensual">MENSUAL</option>-->
+                                                        <option value="Mensual">MENSUAL</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El campo frecuencia de pago es obligatorio.
