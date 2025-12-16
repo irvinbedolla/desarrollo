@@ -365,7 +365,7 @@ class SeerController extends Controller
             $estadisticas = Sedes::where('nombre', $user["delegacion"])->ORwhere('oficina_apoyo', $esta["id"])->get();
         }
         $estados = Estados::all();
-        $municipios = Municipios::where('estado',16)->get();
+        $municipios = Municipios::all();
 
         return view('estadisticas.estadistica', compact('user','userRole','estadisticas','usuariosconciliador','usuariosauxiliares','usuariosnotificadores','estados','municipios'));
     }
@@ -1092,7 +1092,7 @@ class SeerController extends Controller
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
         $estados = Estados::all();
-        $municipios = Municipios::where('estado',16)->get();
+        $municipios = Municipios::all();
         $relacionEloquent = 'roles';
 
         $conciliadores = User::whereHas($relacionEloquent, function ($query) {
@@ -1110,7 +1110,7 @@ class SeerController extends Controller
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
         $estados = Estados::all();
-        $municipios = Municipios::where('estado',16)->get();
+        $municipios = Municipios::all();
         $relacionEloquent = 'roles';
 
         $conciliadores = User::whereHas($relacionEloquent, function ($query) {
@@ -1387,7 +1387,7 @@ class SeerController extends Controller
 
         //Voy a mandar todos las variables
         $estados            = Estados::all();
-        $municipios         = Municipios::where('estado',16)->get();
+        $municipios         = Municipios::all();
         $estado_solicitante = Estados::find($general["estado_solicitante"]);
         $mun_solicitante    = Municipios::find($general["mun_solicitante"]);
         $conciliador        = User::find($general["conciliador_id"]);
@@ -1783,7 +1783,7 @@ class SeerController extends Controller
         $general    = SeerPerGeneral_old::find($id);
         $auxiliar   = SeerPerAuxiliar::where("id_solicitud",$id)->first();
         $estados    = Estados::all();
-        $municipios = Municipios::where('estado',16)->get();
+        $municipios = Municipios::all();
         $citados    = SeerCitados_old::where("id_solicitud",$id)->get();
         $conciliador= User::find($general["conciliador_id"]);
         $conciliadores = User::whereHas($relacionEloquent, function ($query) {
@@ -1934,7 +1934,7 @@ class SeerController extends Controller
         $ramas = SolicitudRama::all();
        // $actividad=SolicitudEconomica::all();
         $del=Sedes::all();
-        $municipios=Municipios::where('estado',16)->get();
+        $municipios=Municipios::where('estado',16);
        /* if($tipo_solicitud[0] == "1"){
             //$personas = null;
             $motivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '1')
@@ -1992,7 +1992,7 @@ class SeerController extends Controller
             }
         }
         $estados = Estados::all();
-        $municipios = Municipios::where('estado',16)->get();
+        $municipios = Municipios::all();
 
         if($tipo_generacion != 0){
             return view('solicitudes.auxiliares.solicitanteAux', compact('estados','municipios','id'));
@@ -2325,7 +2325,7 @@ class SeerController extends Controller
 
     public function vista_citado($id){
         $estados = Estados::all();
-        $municipios = Municipios::where('estado',16)->get();
+        $municipios = Municipios::all();
         $citados = SeerCitados::where('id_solicitud', $id)->count(); //LLeva el conteo de los citados agregados
         $id_general  = SeerPerGeneral::latest('id')->first();
         $id=$id_general["id"];
@@ -2355,10 +2355,13 @@ class SeerController extends Controller
         $nombre = $solicitante["nombre"]." ".$solicitante["primer_apellido"]." ".$solicitante["segundo_apellido"];
         $folio = $solicitante["id_solicitud"];
         $delegacion = SeerPerGeneral::find($id);
+        //dd($solicitante);
         $usuario = User::
-        where('profile_photo_path',$solicitante["CURP"])
+        where('profile_photo_path',$solicitante["curp"])
         ->where('email',$solicitante["email"])->first();
 
+        //dd($usuario);
+        //dd("el correo:".$usuario["email"]." ya esta registrado en Si Concilio por lo que de no modificar el mismo su solicitud sera asignado al usuario existente.");
         if(!isset($usuario)){
             $data_insertar_user= array(
                 'name'              => $nombre,
@@ -2394,7 +2397,7 @@ class SeerController extends Controller
             Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
         }
         else{
-            $mensaje = " el correo:".$usuario["email"]." para continuar tú trámite.";
+            $mensaje = " el correo:".$usuario["email"]." ya esta registrado en Si Concilio su solicitud sera asignado al usuario existente.";
             $solicitud = SeerPerGeneral::find($id);
             $citados = SeerCitados::where('id_solicitud', $id)->get();
             $pdf = \PDF::loadView('PDF/Solicitudes/acuseSolicitud', compact('id','solicitud','solicitante','citados'))->setPaper('a4', 'portrait')
@@ -2508,7 +2511,7 @@ class SeerController extends Controller
         $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
         $citados        = SeerCitados::where("id_solicitud",$id)->get();
         $estados        = Estados::all();
-        $municipios     = Municipios::where('estado',16)->get();
+        $municipios     = Municipios::all();
         $conciliadores  = User::find($general["conciliador_id"]);
         $audiencia      = SeerPerConciliador::where("id_solicitud",$id)->get();
         //Catalogo de motivos
@@ -2543,7 +2546,7 @@ class SeerController extends Controller
         $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
         $citados        = SeerCitados::where("id_solicitud",$id)->get();
         $estados        = Estados::all();
-        $municipios     = Municipios::where('estado',16)->get();
+        $municipios     = Municipios::all();
         
         //Catalogo de motivos
         //$mostrarMotivos = SolicitudMotivo::all();
@@ -3560,7 +3563,7 @@ class SeerController extends Controller
         $abogados = Poder::all();
         SeerPerGeneral::find($id)->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
         $estados        = Estados::all();
-        $municipios     = Municipios::where('estado',16)->get();
+        $municipios     = Municipios::all();
         return view('/audiencias/audiencias',compact('id','solicitudes','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios', 'fechaConfirmacion', 'allCentro', 'NUE'));
     }
 
@@ -6192,7 +6195,7 @@ class SeerController extends Controller
         $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
         $citados        = SeerCitados::where("id_solicitud",$id)->get();
         $estados        = Estados::all();
-        $municipios     = Municipios::where('estado',16)->get();
+        $municipios     = Municipios::all();
         $conciliadores = User::whereHas('roles', function ($query) {
             return $query->where('name', '=', 'Conciliador');
         })
@@ -6821,7 +6824,7 @@ class SeerController extends Controller
         $abogados = Poder::all();
         SeerPerGeneral::find($id)->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
         $estados        = Estados::all();
-        $municipios     = Municipios::where('estado',16)->get();
+        $municipios     = Municipios::all();
         $conceptos      = Concepto::where('id_solicitud',$id)->where('tipo_pago','Audiencia')->get();
         $pagos          = Pagos::where('id_solicitud',$id)->whereIN('tipo_pago',['Audiencia','Conciliador'])->get();
         $deducciones    = Deducciones::where('id_solicitud',$id)->where('tipo_pago','Audiencia')->get();
