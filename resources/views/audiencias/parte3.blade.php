@@ -427,7 +427,8 @@
 
             // Borrar concepto
             $(document).on('click', '.removeRow', function () {
-                $(this).closest('.col-xs-12').remove();
+                $(this).closest('#inputFormRow1').remove();
+                //calcularTotal();
             });
 
         // Agregar pago
@@ -1011,45 +1012,7 @@
             })();
 
         </!script-->
-        <script>
-            const TIEMPO_FINAL_KEY = 'tiempoFinalTemporizador';
-
-        // 1. Recuperar el Tiempo Final Guardado
-        let tiempoFinalGuardado = localStorage.getItem(TIEMPO_FINAL_KEY);
-        console.log(tiempoFinalGuardado);
-        /*
-        if (!tiempoFinalGuardado) {
-            // Si no hay tiempo guardado (ej. la sesión expiró o se acabó el tiempo)
-            document.getElementById('temporizador').innerHTML = "No hay temporizador activo.";
-            return; 
-        }
-        */
         
-        const tiempoFinal = parseInt(tiempoFinalGuardado);
-
-        // 2. Iniciar el Intervalo de Actualización (¡Es la misma función!)
-        function actualizarTemporizador() {
-            const tiempoRestante = tiempoFinal - Date.now();
-            const segundosRestantes = Math.max(0, Math.floor(tiempoRestante / 1000));
-
-            // ... (resto del cálculo y display es exactamente igual a la Vista A) ...
-            
-            const minutos = Math.floor(segundosRestantes / 60);
-            const segundos = segundosRestantes % 60;
-            
-            const display = `${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
-            document.getElementById('temporizador').innerHTML = display;
-
-            if (segundosRestantes <= 0) {
-                clearInterval(intervalo);
-                document.getElementById('temporizador').innerHTML = "¡Tiempo terminado!";
-                localStorage.removeItem(TIEMPO_FINAL_KEY);
-            }
-        }
-
-        const intervalo = setInterval(actualizarTemporizador, 1000);
-        actualizarTemporizador();
-    </script>
 
     <script>
         let calendarReagendar;

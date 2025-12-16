@@ -1334,7 +1334,7 @@
                         <!--span>Si no seleccionas todos los representantes debes seleccionar una fecha para que próxima audiencia.<br>
                         Notificará el centro</!--span>
                         <input type="date" name="fecha" class="form-control"-->
-                        Se multará a los citados que no tengan un representante asignado.
+                        Si no se presenta el representante puedes reagendar la audiencia.
                     @else
                         Continuar con la audiencia.
                     @endif
@@ -1789,49 +1789,6 @@
         }
     </script>
 
-    <script>
-        /*if(!window.Swal){
-            const swScript = document.createElement('script');
-            swScript.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js';
-            document.head.appendChild(swScript);
-        }*/
-        const DURACION_SEGUNDOS = 4500; // 5 minutos
-        const TIEMPO_FINAL_KEY = 'tiempoFinalTemporizador';
-
-        // 1. Cargar o Calcular el Tiempo Final
-        let tiempoFinal;
-        let tiempoFinalGuardado = localStorage.getItem(TIEMPO_FINAL_KEY);
-
-        if (tiempoFinalGuardado) {
-            // Si ya existe, usa el tiempo guardado (útil si la página se recarga)
-            tiempoFinal = parseInt(tiempoFinalGuardado);
-        } else {
-            // Si no existe, calcula el tiempo final y guárdalo
-            tiempoFinal = Date.now() + DURACION_SEGUNDOS * 1000;
-            localStorage.setItem(TIEMPO_FINAL_KEY, tiempoFinal);
-        }
-
-        // 2. Iniciar el Intervalo de Actualización
-        function actualizarTemporizador() {
-            const tiempoRestante = tiempoFinal - Date.now();
-            const segundosRestantes = Math.max(0, Math.floor(tiempoRestante / 1000));
-
-            const minutos = Math.floor(segundosRestantes / 60);
-            const segundos = segundosRestantes % 60;
-            
-            const display = `${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
-            document.getElementById('temporizador').innerHTML = display;
-
-            if (segundosRestantes <= 0) {
-                clearInterval(intervalo);
-                document.getElementById('temporizador').innerHTML = "¡Tiempo terminado!";
-                localStorage.removeItem(TIEMPO_FINAL_KEY); // Limpiar la clave
-            }
-        }
-
-        const intervalo = setInterval(actualizarTemporizador, 1000);
-        actualizarTemporizador();
-    </script>
 
     <script>
         let calendar;
