@@ -166,10 +166,10 @@
                                                 </div>
                                             </div>
                                             <div class="col-xs-6 col-sm-12 col-md-3"><br>
-                                                <spam for="btncheck1">¿Requiere traductor?</spam>
+                                                <label for="btncheck1">¿Requiere traductor?</label>
                                                 <input type="checkbox" id="check_lenguaje" name="traductor" autocomplete="off">
                                             </div>
-                                            <div class="col-xs-6 col-sm-12 col-md-6" id="lenguaje_señas">
+                                            <div class="col-xs-6 col-sm-12 col-md-6" id="lenguaje_señas" style="display:none">
                                                 <div class="form-group">
                                                     <label for="name">¿Qué tipo de lenguaje require?</label>
                                                     <input type="text" name="lenguaje" class="form-control" id="lenguajeRequerido" oninput="this.value = this.value.toUpperCase()">
@@ -179,10 +179,10 @@
                                                 </div>
                                             </div> 
                                             <div class="col-xs-6 col-sm-12 col-md-3"><br>
-                                                <spam for="btncheck1">¿Tiene alguna discapacidad?</spam>
+                                                <label for="btncheck1">¿Tiene alguna discapacidad?</label>
                                                 <input type="checkbox" id="check_discapacidad" name="discapacidad" autocomplete="off">
                                             </div>   
-                                            <div class="col-xs-6 col-sm-12 col-md-6" id="discapacidad">
+                                            <div class="col-xs-6 col-sm-12 col-md-6" id="discapacidad" style="display:none">
                                                 <div class="form-group">
                                                     <label for="name">¿Cuál es su discapacidad?</label>
                                                     <input type="text" name="tipo_discapacidad" class="form-control" id="discapacidadRequerida" oninput="this.value = this.value.toUpperCase()">
@@ -763,7 +763,7 @@
                 </div>
             </div>
 
-    <script>
+    <!--<script>
         document.getElementById("tipoPersona_razon").style.display="none";
         
         function cambiaExcepcion(elemento){
@@ -795,7 +795,7 @@
             });
 
         });
-    </script>
+    </script>-->
     <script src="public/assets/js/poderes/general.js"></script>
 
     <script src="public/assets/js/jquery.min.js"></script>
@@ -909,7 +909,7 @@
                     valid = false;
                 }
 
-                const checkLanguage = document.getElementById('check_lenguaje');
+                /*const checkLanguage = document.getElementById('check_lenguaje');
                 if (checkLanguage.checked) {
                     const languageRequired = document.getElementById('lenguajeRequerido');
                     languageRequired.required = true;
@@ -927,7 +927,7 @@
                 else {
                     const languageRequired = document.getElementById('discapacidadRequerida');
                     languageRequired.required = false;
-                }
+                }*/
                 
                 if (!valid) {
                     e.preventDefault();
