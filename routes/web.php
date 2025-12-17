@@ -106,6 +106,7 @@ use App\Http\Controllers\IncidenciasController;
     //Solicitudes en línea trabajador
     Route::get('Trabajador/{tipo_solicitud}',   [SeerController::class, 'trabajador'])->name('solicitud_trabajador');
     Route::post('guardar_trabajador',           [SeerController::class, 'solicitud_parte1'])->name('parte1');
+    Route::get('solicitud_continuar',      [SeerController::class, 'vista_parte2'])->name('parte2.ver');
     Route::post('solicitud_solicitante',        [SeerController::class, 'solicitud_parte2'])->name('parte2');
     Route::get('vista_solicitante/{id}' ,       [SeerController::class, 'vista_solicitante'])->name('solicitante');
     Route::post('/delegacion/{municipioId}',    [SeerController::class, 'DelegacionPorMunicipio']); //Muestra la delegación que le corresponde según el municipio seleccionado

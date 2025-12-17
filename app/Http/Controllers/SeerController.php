@@ -2003,12 +2003,38 @@ class SeerController extends Controller
                 ]);
             }
         }
+        /*$estados = Estados::all();
+        $municipios = Municipios::all();
+
+        if($tipo_generacion != 0){
+            return view('solicitudes.auxiliares.solicitanteAux', compact('estados','municipios','id'));
+        }
+        return view('solicitudes.solicitante', compact('estados','municipios','id'));*/
+        return redirect()->route('parte2.ver', ['id' => $id]);
+    }
+
+    public function vista_parte2(Request $request)
+    {
+        $id = $request->input('id');
+
+        if (!$id) {
+            return redirect()->route('publico');
+        }
+
+        $solicitud = SeerPerGeneral::find($id);
+
+        if (!$solicitud) {
+            return redirect()->route('publico')->with('error', 'La solicitud no existe.');
+        }
+
+        $tipo_generacion = $solicitud->tipo_generacion;
         $estados = Estados::all();
         $municipios = Municipios::all();
 
         if($tipo_generacion != 0){
             return view('solicitudes.auxiliares.solicitanteAux', compact('estados','municipios','id'));
         }
+        
         return view('solicitudes.solicitante', compact('estados','municipios','id'));
     }
     
