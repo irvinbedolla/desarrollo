@@ -15,7 +15,7 @@
               }
           }, false);
       });
-  }, false);
+  },false);
 })();
 
 
@@ -285,6 +285,17 @@ input.addEventListener('input', () => {
 
 
 //Inicializacion variables
-document.getElementById("lenguaje_señas").style.display = "none";
-document.getElementById("discapacidad").style.display = "none";
-fecha_nacimiento.max = new Date().toISOString().split("T")[0];
+const elemento = document.getElementById("lenguaje_señas");
+if (elemento) {
+  // Si existe, inicializa su estilo para ocultarlo
+  elemento.style.display = "none";
+}
+const elemento1 = document.getElementById("discapacidad");
+if (elemento) {
+  // Si existe, inicializa su estilo para ocultarlo
+  elemento1.style.display = "none";
+}
+const elemento2 = document.getElementById("fecha_nacimiento");
+if (elemento2) {
+  fecha_nacimiento.max = new Date().toISOString().split("T")[0];
+}

@@ -51,11 +51,26 @@
                                                 <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal1" data-id="{{ $id }}">Editar</a>
                                             </td>
                                         </tr>
-                                        @php $bandera = 0; @endphp
+                                        @php
+                                            $fechaActual = date('Y-m-d');
+                                            $contador = 0;
+                                            
+
+                                            // 1. Inicializar la bandera que controlará la visibilidad de los botones
+                                            // 0 = Mostrar los botones "Acta" y "Convenio" (se asume que todo está bien o no aplica la restricción)
+                                            // 1 = Ocultar los botones "Acta" y "Convenio" (la condición de restricción se cumple)
+                                            $ocultarBotonesFinales = 0;
+                                            foreach($representantes as $representante){
+                                                if ($representante->tipo_identificacion == "") {
+                                                    // Si la identificación está vacía en AL MENOS UN REPRESENTANTE, 
+                                                    // establecemos la bandera para ocultar los botones y detenemos el bucle.
+                                                    $ocultarBotonesFinales = 1; 
+                                                    break;
+                                                }
+                                                $bandera = $ocultarBotonesFinales;
+                                            }
+                                        @endphp
                                         @foreach($representantes as $representante)
-                                            @if($representante->tipo_identificacion == "")
-                                                @php $bandera = 1; @endphp
-                                            @endif
                                             <tr>
                                                 <td  style="display:none">{{$representante->id}}</td>
                                                 <td style="color: #000000;"><b>Citado</b></td>
@@ -339,12 +354,12 @@
                                     <div class="col-xs-12 col-sm-12 col-md-2">
                                         <br><button id="btn-terminar" type="submit" class="btn btn-success" name="bandera" value="2">Actualizar</button>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-2">
-                                        <br><a class="btn btn-success" href="{{ route('PDFconveniosolicitud', $id) }}" id="btnConvenio" target="_blank">Convenio</a>
-                                    </div>
                                     @if($bandera == 0)
                                         <div class="col-xs-12 col-sm-12 col-md-2">
-                                            <br><a class="btn btn-success" href="{{ route('VerPDFAudiencia', $id) }}"  target="_blank">Acta de Audiencia</a></li>
+                                            <br><a class="btn btn-success" href="{{ route('PDFconveniosolicitud', $id) }}" id="btnConvenio" target="_blank">Convenio</a>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-2">
+                                            <br><a class="btn btn-success" href="{{ route('VerPDFAudiencia', $id) }}"  id="btn-acta" target="_blank">Acta de Audiencia</a></li>
                                         </div>
                                     @endif
                                 </div>
@@ -1357,64 +1372,91 @@ function clonarCheckboxes() {
     yaGuardado = true;
 }
 
-// Actualizar → guarda inmediatamente
-document.getElementById('btn-actualizar').addEventListener('click', function(e) {
-    clonarCheckboxes();
-});
-
-// Convenio → guarda antes de abrir PDF
-document.getElementById('btn-convenio').addEventListener('click', function(e) {
-    e.preventDefault();
-    clonarCheckboxes();
-    let form = document.getElementById('form_roles');
-    form.action = "{{ route('terminar_audiencia', $id) }}";
-    form.submit();
-    setTimeout(() => { window.open("{{ route('PDFconveniosolicitud', $id) }}", "_blank"); }, 700);
-});
-
-// Acta → guarda antes de abrir PDF
-document.getElementById('btn-acta').addEventListener('click', function(e) {
-    e.preventDefault();
-    clonarCheckboxes();
-    let form = document.getElementById('form_roles');
-    form.action = "{{ route('terminar_audiencia', $id) }}";
-    form.submit();
-    setTimeout(() => { window.open("{{ route('VerPDFAudiencia', $id) }}", "_blank"); }, 700);
-});
-
-// Terminar → guarda solo si no se guardó antes
-document.getElementById('btn-terminar').addEventListener('click', function(e) {
-    if (!yaGuardado) {
+    // Actualizar → guarda inmediatamente
+    document.getElementById('btn-actualizar').addEventListener('click', function(e) {
         clonarCheckboxes();
-    }
-});
+    });
 
+    // Convenio → guarda antes de abrir PDF
+    document.getElementById('btn-convenio').addEventListener('click', function(e) {
+        e.preventDefault();
+        clonarCheckboxes();
+        let form = document.getElementById('form_roles');
+        form.action = "{{ route('terminar_audiencia', $id) }}";
+        form.submit();
+        setTimeout(() => { window.open("{{ route('PDFconveniosolicitud', $id) }}", "_blank"); }, 700);
+    });
 
-        /*document.getElementById('btn-terminar').addEventListener('click', function(e) {
-            var form = document.getElementById('form_roles');
+    // Acta → guarda antes de abrir PDF
+    document.getElementById('btn-acta').addEventListener('click', function(e) {
+        e.preventDefault();
+        clonarCheckboxes();
+        let form = document.getElementById('form_roles');
+        form.action = "{{ route('terminar_audiencia', $id) }}";
+        form.submit();
+        setTimeout(() => { window.open("{{ route('VerPDFAudiencia', $id) }}", "_blank"); }, 700);
+    });
 
-            document.querySelectorAll('.clon-checkbox').forEach(function(el){
-                el.remove();
-            });
-
-            var checkboxes = document.querySelectorAll('input[type=checkbox][name^="aparece_convenio"]');
-
-            checkboxes.forEach(function(checkbox) {
-                var input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = checkbox.name;
-                input.value = checkbox.checked ? 1 : 0; // enviar 0 si no está marcado 1 si lo marcaron
-                input.classList.add('clon-checkbox');
-                form.appendChild(input);
-            });
-        });*/
+    // Terminar → guarda solo si no se guardó antes
+    document.getElementById('btn-terminar').addEventListener('click', function(e) {
+        if (!yaGuardado) {
+            clonarCheckboxes();
+        }
+    });
     </script>
+<script>
+    // Deshabilitar los botones "Terminar", "Convenio" y "Acta" si ningún checkbox está marcado
+    (function () {
+    // Obtener referencias a los botones
+        const termBtn = document.querySelector('button[name="bandera"][value="1"]');
+        const convBtn = document.getElementById('btn-convenio'); // Asumo que el ID es btn-convenio
+        const actaBtn = document.getElementById('btn-acta');     // Nuevo: ID del botón Acta de Audiencia
 
+      function updateVisibilidadBotones() {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"][name^="aparece_convenio"]');
+        const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+        
+                // Array de botones a habilitar/deshabilitar (Convenio y Acta)
+                const buttonsToControl = [convBtn, actaBtn];
+
+                buttonsToControl.forEach(btn => {
+                    if (!btn) return;
+
+                    if (anyChecked) {
+                        btn.classList.remove('disabled');
+                        btn.style.pointerEvents = '';
+                        btn.removeAttribute('aria-disabled');
+                    } else {
+                        btn.classList.add('disabled');
+                        btn.style.pointerEvents = 'none';
+                        btn.setAttribute('aria-disabled', 'true');
+                    }
+                });
+
+        // Control del botón Terminar
+        if (termBtn) {
+          termBtn.disabled = !anyChecked;
+        }
+      }
+
+      // Actualizar al cargar y cuando cambien checkboxes
+      document.addEventListener('DOMContentLoaded', updateVisibilidadBotones);
+      document.addEventListener('change', function (e) {
+        if (e.target && e.target.matches('input[type="checkbox"][name^="aparece_convenio"]')) {
+          updateVisibilidadBotones();
+        }
+      });
+
+      // Ejecutar inmediatamente por si el DOM ya está listo
+      updateVisibilidadBotones();
+    })();
+  </script>
     <script>
         // Deshabilitar el botón "Terminar" si ningún checkbox está marcado
         (function () {
             const termBtn = document.querySelector('button[name="bandera"][value="1"]');
             const convBtn = document.getElementById('btnConvenio');
+            const actaBtn = document.getElementById('btn-acta');
 
             function updateTerminar() {
                 if (!termBtn) return;

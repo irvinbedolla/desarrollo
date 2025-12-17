@@ -15,7 +15,7 @@
                     setTimeout(function() {
                         $('#menu_carga').hide();
 
-                    }, 6000);
+                    }, 14000);
                 }
             }, false);
         });
@@ -53,7 +53,7 @@ function onSelectestadoChange1(){
         for(var i=0; i<data.length; ++i)
             html_select += '<option value= "'+data[i].id+'">'+data[i].nombre+'</option>';
             $('#municipio_citado').html(html_select);
-    });
+        });
 }
 
 function nuevo_estadistica() {
@@ -169,8 +169,8 @@ function buscarCCT(cct){
             console.log(jqXHR);
             console.log(textStatus);
             console.log(errorThrown);
-        }
-    });
+        }
+    });
 }
 
 //Solicitud en línea trabajadores

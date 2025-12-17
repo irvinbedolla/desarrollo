@@ -1778,7 +1778,6 @@ select[name="municipio_citado"] option {
         });
     </script>
     
-    <script src="../public/assets/js/poderes/general.js"></script>
 @endsection
 
 
