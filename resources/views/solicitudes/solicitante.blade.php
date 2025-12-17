@@ -939,7 +939,7 @@
 
             const form = document.querySelector('form.needs-validation');
             form.addEventListener('submit', function(e) {
-                let tel1 = form.querySelector('input[name="telefono1"]');
+                /*let tel1 = form.querySelector('input[name="telefono1"]');
                 let tel2 = form.querySelector('input[name="telefono2"]');
                 let valid = true;
                 // Validar teléfono celular (obligatorio)
@@ -953,7 +953,9 @@
                     swal("Error", "El teléfono fijo debe tener exactamente 10 dígitos.", "error");
                     tel2.focus();
                     valid = false;
-                }
+                }*/
+
+                let valid = true;
 
                 const checkLanguage = document.getElementById('check_lenguaje');
                 if (checkLanguage.checked) {
