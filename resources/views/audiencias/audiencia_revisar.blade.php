@@ -354,14 +354,12 @@
                                     <div class="col-xs-12 col-sm-12 col-md-2">
                                         <br><button id="btn-terminar" type="submit" class="btn btn-success" name="bandera" value="2">Actualizar</button>
                                     </div>
-                                    @if($bandera == 0)
-                                        <div class="col-xs-12 col-sm-12 col-md-2">
-                                            <br><a class="btn btn-success" href="{{ route('PDFconveniosolicitud', $id) }}" id="btnConvenio" target="_blank">Convenio</a>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-2">
-                                            <br><a class="btn btn-success" href="{{ route('VerPDFAudiencia', $id) }}"  id="btn-acta" target="_blank">Acta de Audiencia</a></li>
-                                        </div>
-                                    @endif
+                                    <div class="col-xs-12 col-sm-12 col-md-2">
+                                        <br><button class="btn btn-success" type="submit" class="btn btn-success" name="bandera" value="3" target="_blank">Convenio</button>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-2">
+                                        <br><button id="btn-terminar" type="submit" class="btn btn-success" name="bandera" value="4">Acta de Audiencia</button>
+                                    </div>
                                 </div>
                             </form>
                         </div>

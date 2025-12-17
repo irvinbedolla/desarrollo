@@ -38,7 +38,8 @@ class UsuarioController extends Controller
             'password'  => 'required|same:confirm-password',
             'roles'     => 'required',
             'delegacion'=> 'required',
-            'type'      => 'required' 
+            'type'      => 'required',
+            'profile_photo_path'      => 'required' 
         ], $data);
 
 

@@ -2376,7 +2376,9 @@ class SeerController extends Controller
         $delegacion = SeerPerGeneral::find($id);
         //dd($solicitante);
         $usuario = User::
-        where('email',$solicitante["email"])->first();
+        where('profile_photo_path',$solicitante['curp'])
+        //->where('email',$solicitante["email"])
+         ->first();
 
         //dd($usuario);
         //dd("el correo:".$usuario["email"]." ya esta registrado en Si Concilio por lo que de no modificar el mismo su solicitud sera asignado al usuario existente.");
@@ -2431,6 +2433,27 @@ class SeerController extends Controller
             ];
             Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
         }
+        /*
+        return view('solicitudes.aviso', [
+            'url' => route('aviso'),
+            'datos' => [
+                'id' => $id,
+                'mensaje' => $mensaje,
+                'delegacion' => $delegacion
+            ]
+        ]);
+        */
+
+        return view('solicitudes.aviso',compact('id','mensaje','delegacion'));
+    }
+
+    public function aviso(Request $request){
+        $data = $request->all();
+        dd($data);
+        $id = $data["id"];
+        $mensaje = $data["mensaje"];
+        $delegacion = $data["delegacion"];
+
         return view('solicitudes.aviso',compact('id','mensaje','delegacion'));
     }
 
@@ -7047,6 +7070,7 @@ class SeerController extends Controller
     public function terminar_audiencia(Request $request){
         $data = $request->all();
         if (isset($data['aparece_convenio']) && is_array($data['aparece_convenio'])) {
+            dd($data['aparece_convenio']);
             foreach ($data['aparece_convenio'] as $id_representante => $valor) {
                 SeerCitados::where('id', $id_representante)
                     ->update(['aparece_convenio' => $valor == 1 ? 1 : 0]);
@@ -7058,7 +7082,7 @@ class SeerController extends Controller
         $id = auth()->user()->id;
         $user = User::find($id);
         $sede = $user->delegacion;
-        
+
         if($data["conclucion"] == "Conciliacion"){
             //Revisar si existe
             if(isset($data["dias_pagos"])){
@@ -7150,6 +7174,13 @@ class SeerController extends Controller
             }
             else if($data["bandera"] == 2){
                 return redirect()->route('vista_previa',compact('id_solicitud'));
+            }
+            else if($data["bandera"] == 3 || $data["bandera"] == 4){
+                
+                //$this->VerPDFAudiencia($data["id"]);
+                $this->VerPDFConvenioSol($data["id"]);
+                dd("llego");
+                //return redirect()->route('vista_previa',compact('id_solicitud'));
             }
         }
         else{
@@ -9131,6 +9162,7 @@ class SeerController extends Controller
             'Documento migratorio'    => 'Instituto Nacional de Migración',
             'Constancia de identidad' => 'Autoridad Correspondiente',
             'Otro'                    => 'Autoridad Correspondiente',
+            ''                        => 'Sin identificación',
         ];
         return $descripciones[$tipo];
     }

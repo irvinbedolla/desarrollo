@@ -56,6 +56,7 @@ use App\Http\Controllers\IncidenciasController;
     Route::get('/registro_tercer_encuentro',            [SeerController::class, 'registro_tercer_encuentro'])->name('registro_tercer_encuentro');
     Route::post('/registro_tercer_encuentro/guardar',   [SeerController::class, 'tercer_encuentro_registro'])->name('tercer_encuentro_registro');
     Route::get('GeneraConstancia',                      [SeerController::class, 'genera_constancia']);
+    Route::post('aviso',                                [SeerController::class, 'aviso'])->name('aviso');
     
     //Rutas para el chat
         Route::post('/chat/crear',      [Controller::class, 'store_chat'])->name('RespuestasChat.store');
@@ -396,7 +397,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/administracion/destroy/{id}',       [AdministracionController::class, 'destroy'])->name('usuarios_destroy');
         Route::get('/administracion/borrarCumplimientos',   [AdministracionController::class, 'consular_cumplimientos'])->name('configuracion_borrar_cumpli');
         Route::post('/administracion/borrarCumplimiento',   [AdministracionController::class, 'borrar_cumplimeinto'])->name('borrar_cumplimeinto');
-        Route::delete('/administracion/destroy/{id}',       [AdministracionController::class, 'destroy_cumplimientoA'])->name('borrar_cumplimeintoA');
+        Route::delete('/administracion/borrar/{id}',       [AdministracionController::class, 'destroy_cumplimientoA'])->name('borrar_cumplimeintoA');
     //Fin de Administración  
     //Audiencias
         Route::get('/audiencias/index',                     [SeerController::class, 'audiencia_index'])->name('audiencia_index');

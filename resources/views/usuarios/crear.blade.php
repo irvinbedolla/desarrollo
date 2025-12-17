@@ -107,6 +107,16 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
+                                            <label for="confirm-password">CURP</label>
+                                            <input type="text" class="form-control" name="profile_photo_path" required>
+                                            <div class="invalid-feedback">
+                                                La CURP es obligatoria.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
                                             <label for="name">Tipo</label>
                                             <select name="type" class="form-control" required>
                                                 <option value="">Seleccione</option>
