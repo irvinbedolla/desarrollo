@@ -110,10 +110,21 @@ class SeerController extends Controller
             $estadisticas = null;
         }
         if($userRole[0] == "Enlace"){
+            if($delegacion == "Morelia"){
+                $delegaciones = ["Morelia", "Zítacuaro"];
+            }
+            else if($delegacion == "Uruapan"){
+                $delegaciones = ["Uruapan", "Lázaro Cárdenas"];
+            }
+            else if($delegacion == "Zamora"){
+                $delegaciones = ["Zamora", "Sahuayo"];
+            }
+
+            
             $personas = User::whereHas('roles', function ($query) {
                 return $query->where('name', '=', 'Notificador');
             })
-            ->where('delegacion', $user["delegacion"])
+            ->whereIn('delegacion', $delegaciones)
             ->get();
 
             $estadisticas = SeerPerGeneral_old::join('seer_citados_old', 'seer_citados_old.id_solicitud', '=', 'seer_general_old.id')
@@ -1692,7 +1703,7 @@ class SeerController extends Controller
         }
         else{
             $solicitud = SeerCitados::find($data["id"]);
-            $citados = SeerCitados::where('id_solicitud',$solicitud["id_solicitud"])->get();
+            $citados = SeerCitados::where('id_solicitud',$data["id"])->get();
             foreach($citados as $citado){
                 SeerCitados::find($citado["id"])
                 ->update([
@@ -2358,8 +2369,7 @@ class SeerController extends Controller
         $delegacion = SeerPerGeneral::find($id);
         //dd($solicitante);
         $usuario = User::
-        where('profile_photo_path',$solicitante["curp"])
-        ->where('email',$solicitante["email"])->first();
+        where('email',$solicitante["email"])->first();
 
         //dd($usuario);
         //dd("el correo:".$usuario["email"]." ya esta registrado en Si Concilio por lo que de no modificar el mismo su solicitud sera asignado al usuario existente.");
@@ -4549,12 +4559,13 @@ class SeerController extends Controller
             if($delegacion == "Zitácuaro"){
                 $oficina_apoyo = "Morelia";
             }
-            if($delegacion == "Lárazo Cárdenas"){
+            else if($delegacion == "Lázaro Cárdenas"){
                 $oficina_apoyo = "Uruapan";
             }
-            if($delegacion == "Sahuayo"){
+            else if($delegacion == "Sahuayo"){
                 $oficina_apoyo = "Zamora";
             }
+            //dd($oficina_apoyo);
             // Obtener conciliadores desde la oficina de apoyo con permisos de tipo Virtual/Ambos
             $conciliadores = User::whereHas($relacionEloquent, function ($query) {
                 $query->where('name', '=', 'Conciliador');
@@ -4568,7 +4579,7 @@ class SeerController extends Controller
             })
             ->get();
         }
-
+//dd($conciliadores);
         //Numero de conciliadores
         $contador_conciliadores = count($conciliadores);
         //Obtener la ultima fecha y hora
