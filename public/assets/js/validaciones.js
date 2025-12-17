@@ -216,22 +216,40 @@ document.querySelectorAll('.soloNumeros').forEach(input => {
 
 //Valida los números teléfonicos
 document.querySelectorAll('.numeroTelefonico').forEach(input => {
+  const errorNode = (input.nextElementSibling && input.nextElementSibling.classList.contains('invalid-feedback'))
+    ? input.nextElementSibling
+    : null;
+
   // Permitir solo números mientras escribes
   input.addEventListener('input', () => {
     input.value = input.value.replace(/[^0-9]/g, '');
+    if (errorNode) {
+      errorNode.textContent = '';
+      errorNode.style.display = 'none';
+    }
+    input.classList.remove('is-invalid');
+    input.classList.remove('is-valid');
   });
 
-  // Validar al perder foco
+  // Validar al perder foco (solo si se marca data-exact-10="true")
   input.addEventListener('blur', () => {
-    let mensajeError = input.nextElementSibling; // asumiendo que el .invalid-feedback está justo después
+    const requiresExact10 = input.dataset.exact10 === 'true';
+    if (!requiresExact10) {
+      return;
+    }
+
     if (input.value.length !== 10) {
-      mensajeError.textContent = 'El número debe contener 10 dígitos';
-      mensajeError.style.display = 'block';
+      if (errorNode) {
+        errorNode.textContent = 'El número debe contener 10 dígitos';
+        errorNode.style.display = 'block';
+      }
       input.classList.add('is-invalid');
       input.classList.remove('is-valid');
     } else {
-      mensajeError.textContent = '';
-      mensajeError.style.display = 'none';
+      if (errorNode) {
+        errorNode.textContent = '';
+        errorNode.style.display = 'none';
+      }
       input.classList.remove('is-invalid');
       input.classList.add('is-valid');
     }
