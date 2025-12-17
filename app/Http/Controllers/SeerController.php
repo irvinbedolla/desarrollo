@@ -1984,14 +1984,14 @@ class SeerController extends Controller
                 ]);
             }
         }
-        /*$estados = Estados::all();
+        $estados = Estados::all();
         $municipios = Municipios::all();
 
-        if($tipo_generacion != 0){
+        /*if($tipo_generacion != 0){
             return view('solicitudes.auxiliares.solicitanteAux', compact('estados','municipios','id'));
-        }
-        return view('solicitudes.solicitante', compact('estados','municipios','id'));*/
-        return redirect()->route('parte2.ver', ['id' => $id]);
+        }*/
+        return view('solicitudes.solicitante', compact('estados','municipios','id'));
+        //return redirect()->route('parte2.ver', ['id' => $id]);
     }
 
     public function vista_parte2(Request $request)
@@ -2198,7 +2198,7 @@ class SeerController extends Controller
             ]);
         }
 
-        $id_general  = SeerPerGeneral::latest('id')->first();
+       /* $id_general  = SeerPerGeneral::latest('id')->first();
         $id=$id_general["id"];
         $tipo_generacion=$id_general->tipo_generacion;
         
@@ -2206,7 +2206,7 @@ class SeerController extends Controller
         if($tipo_generacion != 0){
             return redirect()->route('agrega_citadoAux', ['id' => $id] );
         }
-        //$estados=Estados::all();
+        //$estados=Estados::all();*/
         return redirect()->route('agregar_citado', ['id' => $id] ); 
     }
 
@@ -2346,14 +2346,14 @@ class SeerController extends Controller
         $estados = Estados::all();
         $municipios = Municipios::all();
         $citados = SeerCitados::where('id_solicitud', $id)->count(); //LLeva el conteo de los citados agregados
-        $id_general  = SeerPerGeneral::latest('id')->first();
+       /* $id_general  = SeerPerGeneral::latest('id')->first();
         $id=$id_general["id"];
         $tipo_generacion=$id_general->tipo_generacion;
         
         //return view('solicitudes.aviso',compact('folio'));
-        if($tipo_generacion != 0){
+        /*if($tipo_generacion != 0){
             return view('solicitudes.auxiliares.citadosAux',compact('estados','id','citados','municipios'));
-        }
+        }*/
         return view('solicitudes.citados',compact('estados','id','citados','municipios'));
     }
 
@@ -2430,14 +2430,6 @@ class SeerController extends Controller
                 'NumFolio'         => $folio,
             ];
             Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
-        }
-        $id_general  = SeerPerGeneral::latest('id')->first();
-        $id=$id_general["id"];
-        $tipo_generacion=$id_general->tipo_generacion;
-        
-        //return view('solicitudes.aviso',compact('folio'));
-        if($tipo_generacion != 0){
-            return view('solicitudes.auxiliares.avisoAux',compact('id','mensaje','delegacion'));
         }
         return view('solicitudes.aviso',compact('id','mensaje','delegacion'));
     }
@@ -4390,7 +4382,7 @@ class SeerController extends Controller
             $citado->aparece_convenio = $tiene_representante ? 1 : 0;
             $citado->save();
         }
-
+ 
         //Si la bandera es 0 selecciono a todos los representantes puede avanzar
         if($data["bandera"] == 0){
             return redirect()->route('audiencias.parte3',compact('id'));
@@ -4848,17 +4840,6 @@ class SeerController extends Controller
 
     public function concluir_audiencia_conciliador(Request $request){    
         $data = $request->all();
-
-        $apareceConvenio = isset($data['aparece_convenio']) && is_array($data['aparece_convenio'])
-        ? array_keys($data['aparece_convenio'])
-        : [];
-
-        $representantes = SeerCitados::where('id_solicitud', $request->id)->pluck('id');
-        SeerCitados::whereIn('id', $representantes)->update(['aparece_convenio' => 0]);
-        
-        if (!empty($apareceConvenio)) {
-            SeerCitados::whereIn('id', $apareceConvenio)->update(['aparece_convenio' => 1]);
-        }
 
         $id_solicitud = $data["id"];
         $monto = 0;
@@ -9221,12 +9202,459 @@ class SeerController extends Controller
        // $actividad=SolicitudEconomica::all();
         $del=Sedes::all();
         $municipios=Municipios::where('estado',16)->get();
-       /* if($tipo_solicitud[0] == "1"){
-            //$personas = null;
-            $motivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '1')
-            ->select('catalogo_motivos.motivo','seer_general.NUE','seer_general.solicitante','seer_citados.nombre','seer_citados.direccion','seer_citados.estatus')
-            ->get();
-        }*/
         return view('solicitudes.auxiliares.inicioSolicitud', compact('ramas','del','municipios','tipo_solicitud','mostrarMotivos'));
+    }
+    public function guardar_solicitudAux($id){
+        //Revisar si ya existe el correo
+        $solicitante = SeerSolicitante::where('id_solicitud',$id)->first();
+        $nombre = $solicitante["nombre"]." ".$solicitante["primer_apellido"]." ".$solicitante["segundo_apellido"];
+        $folio = $solicitante["id_solicitud"];
+        $delegacion = SeerPerGeneral::find($id);
+        //dd($solicitante);
+        $usuario = User::
+        where('email',$solicitante["email"])->first();
+
+        //dd($usuario);
+        //dd("el correo:".$usuario["email"]." ya esta registrado en Si Concilio por lo que de no modificar el mismo su solicitud sera asignado al usuario existente.");
+        if(!isset($usuario)){
+            $data_insertar_user= array(
+                'name'              => $nombre,
+                'email'             => $solicitante["email"],
+                'delegacion'        => $delegacion["delegacion"],
+                'type'              => "Seer",
+                'remember_token'    => $solicitante["curp"],
+                'profile_photo_path'=> $solicitante["curp"]
+            ); 
+            //Genrar un random del uno al 100 y agregarlo a la contraseña
+            $numero_aleatorio = mt_rand(1, 1000);
+
+            //Hacemos un hash del campo que tiene el password
+            $data_insertar_user['password'] = Hash::make("CCLMICHOACAN".$numero_aleatorio);
+            $usuario = User::create($data_insertar_user);
+            $usuario->assignRole(('Solicitante'));
+            $mensaje = " el correo:".$usuario["email"]." y la contraseña:CCLMICHOACAN".$numero_aleatorio." para continuar tú trámite.";
+
+            $solicitud = SeerPerGeneral::find($id);
+            $citados = SeerCitados::where('id_solicitud', $id)->get();
+
+            $pdf = \PDF::loadView('PDF/Solicitudes/acuseSolicitud', compact('id','solicitud','solicitante','citados'))->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)->setOption('isPhpEnabled', true);
+            $nombreArchivo = 'acuse_solicitud_' . $nombre .'.pdf';
+            $pdfContent = $pdf->output();
+
+            $variables = [
+                'Nombre'           => $nombre,
+                'Contraseña'       => "CCLMICHOACAN".$numero_aleatorio,
+                'email'            => $usuario["email"],
+                'NumFolio'         => $folio,
+            ];
+            Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
+        }
+        else{
+            $mensaje = " el correo:".$usuario["email"]." ya esta registrado en Si Concilio su solicitud sera asignado al usuario existente.";
+            $solicitud = SeerPerGeneral::find($id);
+            $citados = SeerCitados::where('id_solicitud', $id)->get();
+            $pdf = \PDF::loadView('PDF/Solicitudes/acuseSolicitud', compact('id','solicitud','solicitante','citados'))->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)->setOption('isPhpEnabled', true);
+            $nombreArchivo = 'acuse_solicitud_' . $nombre .'.pdf';
+            $pdfContent = $pdf->output();
+
+            $variables = [
+                'Nombre'           => $nombre,
+                'Contraseña'       => "Ya esta registrada",
+                'email'            => $usuario["email"],
+                'NumFolio'         => $folio,
+            ];
+            Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
+        }
+        return view('solicitudes.auxiliares.avisoAux',compact('id','mensaje','delegacion'));
+    }
+    public function solicitud_parte1Aux(Request $request){
+        $data = $request->all();
+        /*
+        if($data["delegacion"] == "Lázaro Cárdenas"){
+            $data["delegacion"] = "Uruapan";
+        }
+        if($data["delegacion"] == "Zitácuaro"){
+            $data["delegacion"] = "Morelia";
+        }
+        if($data["delegacion"] == "Sahuayo"){
+            $data["delegacion"] = "Zamora";
+        }
+        */
+        //validando información
+        
+        $request->validate([
+            'ramaIndustrial'      => 'required',
+            'actividad_economica' => 'required',
+            'motivo_solicitud'    => 'required',
+
+        ]);
+        
+        $data_insert=array(
+            'id_rama'         =>  $data["ramaIndustrial"],
+            'actividad'       =>  $data["actividad_economica"],
+            'delegacion'      =>  $data["delegacion"],
+            'tipo_solicitud'  =>  $data["tipo_solicitud"],
+            'tipo_generacion' => auth()->check() ? auth()->id() :0,
+        );
+       
+        SeerPerGeneral::create($data_insert); 
+        $id_general  = SeerPerGeneral::latest('id')->first();
+        $id=$id_general["id"];
+        $tipo_generacion=$id_general->tipo_generacion;
+
+        if (!empty($data["motivo_solicitud"])) {
+            foreach ($data["motivo_solicitud"] as $motivoId) {
+                SeerMotivo::create([
+                    'id_solicitud'    => $id_general["id"],
+                    'id_motivo'       => $motivoId,
+                    
+                ]);
+            }
+        }
+        $estados = Estados::all();
+        $municipios = Municipios::all();
+
+       /* if($tipo_generacion != 0){*/
+            return view('solicitudes.auxiliares.solicitanteAux', compact('estados','municipios','id'));
+       /* }
+        return view('solicitudes.solicitante', compact('estados','municipios','id'));*/
+        //return redirect()->route('parte2.ver', ['id' => $id]);
+    }
+    public function solicitud_parte2Aux(Request $request){
+        $data = $request->all();
+        $id = $data['id'];
+
+        //validando información
+       $request->validate([
+            /*'tipo'                      => 'required|in:Fisica,Moral',*/
+            'curp'                      => 'required|min:18|max:18',
+            'nombre'                    => 'required',
+            'fecha_nacimiento'          => 'required|date',
+            'edad'                      => 'required|numeric',
+            'genero'                    => 'required|in:H,M,NC',
+            'nacionalidad'              => 'required|in:Mexicana,Otra',
+            'estado_nacimiento'         => 'required',
+            'telefono1'                 => 'required|min:10|max:10',
+            'correo'                    => 'required',
+            'estado_solicitante'        => 'required',
+            'vialidad'                  => 'required',
+            'vialidad_calle'            => 'required',
+            'numExt'                    => 'required',
+            'colonia_solicitante'       => 'required',
+            'municipio_solicitante'     => 'required',
+            'cp'                        => 'required|numeric',
+            /*'referencias'               => 'required|string|max:300',
+            'calle1'                    => 'required',
+            'calle2'                    => 'required',*/
+            'puesto'                    => 'required', 
+            'periodo_pago'              => 'required',
+            'pago'                      => 'required',
+            'horas'                     => 'required',
+            'fecha_ingreso'             => 'required',
+            'jornada'                   => 'required',
+            'identificacion'            => 'required',
+            //'documentoCurp'             => 'required',
+            'documentoIdentificacion'   => 'required',
+            'num_identificacion'        => 'required',
+            'descripcionSolicitud'      => 'required',
+            'excepcion'                 => 'required',
+            'frecuencia_hechos' => 'required_if:excepcion,Si',
+            'cambios_situacionL' => 'required_if:excepcion,Si',
+            'comunico_hechos' => 'required_if:excepcion,Si',
+            'descripcion_conducta' => 'required_if:excepcion,Si',
+            'responsable_cargo' => 'required_if:excepcion,Si',
+            'actos_cometidos' => 'required_if:excepcion,Si',
+            'momento_hechos' => 'required_if:excepcion,Si',
+            'lugar_hechos' => 'required_if:excepcion,Si',
+            'constancia_hechos' => 'required_if:excepcion,Si',
+            'solicito_apoyo' => 'required_if:excepcion,Si',
+            'continuacion_solicto_apoyo' => 'required_if:excepcion,Si',
+            'incidencia_directa' => 'required_if:solicito_apoyo,Si',
+            'recibio_atencion' => 'required_if:excepcion,Si',
+        ]);
+        
+        $data_insert=array(
+            'id_solicitud'         => $data["id"],
+            /*'tipo_persona'         => $data["tipo"],*/
+            'curp'                 => $data["curp"],
+            'nombre'               => $data["nombre"],
+            'fecha_nacimiento'     => $data["fecha_nacimiento"],
+            'sexo'                 => $data["genero"],
+            'nacionalidad'         => $data["nacionalidad"],
+            'estado'               => $data["estado_nacimiento"],
+            'edad'                 => $data["edad"],
+            'telefono1'            => $data["telefono1"],
+            'email'                => $data["correo"],
+            'estado_domicilio'     => $data["estado_solicitante"],
+            'tipo_vialidad'        => $data["vialidad"],
+            'calle'                => $data["vialidad_calle"],
+            'num_ext'              => $data["numExt"],
+            'colonia'              => $data["colonia_solicitante"],
+            'municipio_domicilio'  => $data["municipio_solicitante"],
+            'codigo_postal'        => $data["cp"],
+            /*'referencia'           => $data["referencias"],
+            'calle2'               => $data["calle1"],
+            'calle3'               => $data["calle2"],*/
+            'puesto'               => $data["puesto"],
+            'pago'                 => $data["pago"],
+            'periodo_pago'         => $data["periodo_pago"],
+            'horas_semana'         => $data["horas"],
+            'fecha_ingreso'        => $data["fecha_ingreso"],
+            'jornada'              => $data["jornada"],
+            'identificacion'       => $data["identificacion"],
+            'num_identificacion'   => $data["num_identificacion"],
+            'descripcionSolicitud' => $data["descripcionSolicitud"],
+        ); 
+
+        if(isset($data["rfc"])){
+            $data_insert["rfc"] =  $data["rfc"];
+        }
+        if(isset($data["traductor"])){
+            $val = $data["traductor"];
+            $requires = ($val === 'Si' || $val === '1' || $val === 1 || $val === 'on' || $val === true);
+            $data_insert["traductor"] = $requires ? 1 : 0;
+            if (isset($data["lenguaje"])) {
+                if (is_array($data["lenguaje"])) {
+                    $data_insert["lenguaje"] = $data["lenguaje"][0] ?? null;
+                } else {
+                    $data_insert["lenguaje"] = $data["lenguaje"] ?? null;
+                }
+            } else {
+                $data_insert["lenguaje"] = null;
+            }
+        }
+        if(isset($data["numInt"])){
+            $data_insert["num_int"] =  $data["numInt"];
+        }
+        if(isset($data["discapacidad"])){
+            $data_insert["discapacidad"] =  "Si";
+            $data_insert["tipo_discapacidad"] =  $data["tipo_discapacidad"];
+        }
+        if(isset($data["labora"])){
+            $data_insert["labora"] =  "Si";
+            //$data_insert["fecha_salida"]  =  $data["fecha_salida"];
+        }
+        if(isset($data["telefono2"])){
+            $data_insert["telefono2"] =  $data["telefono2"];
+        }
+        if(isset($data["seguro"])){
+            $data_insert["nss"] =  $data["seguro"];
+        }
+        if(isset($data["fecha_salida"])){
+            $data_insert["fecha_salida"] =  $data["fecha_salida"];
+        }
+        if(isset($data["referencias"])){
+            $data_insert["referencia"] =  $data["referencias"];
+        }
+        if(isset($data["calle1"])){
+            $data_insert["calle2"] =  $data["calle1"];
+        }
+        if(isset($data["calle2"])){
+            $data_insert["calle3"] =  $data["calle2"];
+        } 
+        //CURP
+        $documento = $data["curp"]."_CURP.pdf";
+        /*$path = Storage::putFileAs(
+            'documentosSolicitud', $request->file('documentoCurp'), $documento
+        );*/
+        //Acta de nacimiento
+        if(isset($data["documentoIdentificacion"])){
+            $documentoidentificacion = $data["curp"]."_Identificacion.pdf";
+            $path = Storage::putFileAs(
+                'documentosSolicitud', $request->file('documentoIdentificacion'), $documentoidentificacion
+        );
+        }
+        else{
+            $documentoidentificacion = $data["curp"]."_Acta.pdf";
+            $path = Storage::putFileAs(
+                'documentosSolicitud', $request->file('documentoActa'), $documentoidentificacion
+            );
+        }
+
+        //$data_insert["documentoCurp"] = $documento;
+        $data_insert["documentoIdentificacion"] = $documentoidentificacion;
+       
+        SeerSolicitante::create($data_insert);
+        SeerPerGeneral::where('id', $id)
+        ->update([
+            'caso_excepcion' => $data["excepcion"]
+        ]);
+        
+        if ($data["excepcion"] === "Si") {
+            SeerCasosExcepcion::create([
+                'id_solicitud' => $id,
+                'frecuencia_hechos' => $data["frecuencia_hechos"] ?? null,
+                'cambios_situacionL' => $data["cambios_situacionL"] ?? null,
+                'comunico_hechos' => $data["comunico_hechos"] ?? null,
+                'descripcion_conducta' => $data["descripcion_conducta"] ?? null,
+                'responsable_cargo' => $data["responsable_cargo"] ?? null,
+                'actos_cometidos' => $data["actos_cometidos"] ?? null,
+                'momento_hechos' => $data["momento_hechos"] ?? null,
+                'lugar_hechos' => $data["lugar_hechos"] ?? null,
+                'constancia_hechos' => $data["constancia_hechos"] ?? null,
+                'solicito_apoyo' => $data["solicito_apoyo"] ?? null,
+                'continuacion_solicto_apoyo' => $data["continuacion_solicto_apoyo"] ?? null,
+                'incidencia_directa' => $data["incidencia_directa"] ?? null,
+                'recibio_atencion' => $data["recibio_atencion"] ?? null,
+            ]);
+        }
+
+        /*$id_general  = SeerPerGeneral::latest('id')->first();
+        $id=$id_general["id"];
+        $tipo_generacion=$id_general->tipo_generacion;
+        
+        //return view('solicitudes.aviso',compact('folio'));
+        if($tipo_generacion != 0){*/
+            return redirect()->route('agrega_citadoAux', ['id' => $id] );
+        //}
+        //$estados=Estados::all();
+        //return redirect()->route('agregar_citado', ['id' => $id] ); 
+    }
+    public function vista_citadoAux($id){
+        $estados = Estados::all();
+        $municipios = Municipios::all();
+        $citados = SeerCitados::where('id_solicitud', $id)->count(); //LLeva el conteo de los citados agregados
+       /* $id_general  = SeerPerGeneral::latest('id')->first();
+        $id=$id_general["id"];
+        $tipo_generacion=$id_general->tipo_generacion;
+        
+        //return view('solicitudes.aviso',compact('folio'));
+        if($tipo_generacion != 0){*/
+            return view('solicitudes.auxiliares.citadosAux',compact('estados','id','citados','municipios'));
+        /*}
+        return view('solicitudes.citados',compact('estados','id','citados','municipios'));*/
+    }
+    public function guardar_citadoAux(Request $request){
+        $data = $request->all();
+        $imagen_domicilio1 = "Sin documento";
+        $imagen_domicilio2 = "Sin documento";
+
+        if ($request->hasFile('foto1')) {
+            $imagen_domicilio1 = $data["id"] . "-domicilio_Citado1.jpg" . Str::random(8) . ".jpg";
+            Storage::putFileAs('documentosSolicitud', $request->file('foto1'), $imagen_domicilio1);
+        }
+        
+        if ($request->hasFile('foto2')) {
+            $imagen_domicilio2 = $data["id"] . "-domicilio_Citado2.jpg" . Str::random(8) . ".jpg";
+            Storage::putFileAs('documentosSolicitud', $request->file('foto2'), $imagen_domicilio2);
+        }
+        $foto1 = $imagen_domicilio1;
+        $foto2 = $imagen_domicilio2;
+        //validando información
+        $request->validate([
+            'id'                => 'required',
+            'colonia'           => 'required',
+            'vialidad'          => 'required',
+            'cp'                => 'required|numeric',
+            'calle'             => 'required',
+            'exterior'          => 'required',
+            'referencia'        => 'required',
+            'municipio_citado'  => 'required',
+            'estado_citado'     => 'required',
+            'vialidad'          => 'required'
+        ]);
+        
+        $data_insert=array(
+            'id_solicitud'      => $data["id"],
+            'colonia'           => $data["colonia"],
+            'cp'                => $data["cp"],
+            'n_ext'             => $data["exterior"],
+            'calle'             => $data["calle"],
+            'tipo_vialidad'     => $data["vialidad"],
+            'referencia'        => $data["referencia"],
+            'municipio_citado'  => $data["municipio_citado"],
+            'imagen_domicilio1' => $foto1,
+            'imagen_domicilio2' => $foto2, 
+            'estado_citado'     => $data["estado_citado"],
+        );
+        $data_insert["notificacion"] =  $data["notificacion"];
+
+        if(isset($data["rfc"])){
+            $data_insert["rfc"] =  $data["rfc"];
+        }
+        if(isset($data["curp"])){
+            $data_insert["curp"] =  $data["curp"];
+        }
+        if(isset($data["traductor"])){
+            $val = $data["traductor"];
+            $requires = ($val === 'Si' || $val === '1' || $val === 1 || $val === 'on' || $val === true);
+            $data_insert["traductor"] = $requires ? 1 : 0;
+            if (isset($data["lenguaje"])) {
+                $data_insert["lenguaje"] = is_array($data["lenguaje"]) ? ($data["lenguaje"][0] ?? null) : ($data["lenguaje"] ?? null);
+            } else {
+                $data_insert["lenguaje"] = null;
+            }
+        }
+        if(isset($data["interior"])){
+            $data_insert["n_int"] =  $data["interior"];
+        }
+        if(isset($data["calle1"])){
+            $data_insert["calle1"] =  $data["calle1"];
+        }
+        if(isset($data["calle2"])){
+            $data_insert["calle2"] =  $data["calle2"];
+        }
+        if(isset($data["nombre"])){
+            $data_insert["nombre"] =  $data["nombre"];
+        }
+        if(isset($data["curp"])){
+            $data_insert["curp"] =  $data["curp"];
+        }
+        if(isset($data["nombre"])){
+            $data_insert["nombre"] =  $data["nombre"];
+        }
+        if(isset($data["primer_apellido"])){
+            $data_insert["primer_apellido"] =  $data["primer_apellido"];
+        }
+        if(isset($data["segundo_apellido"])){
+            $data_insert["segundo_apellido"] =  $data["segundo_apellido"];
+        }
+        if (isset($data["tipo"])) {
+            $data_insert["tipo_persona"] = $data["tipo"];
+        
+            if ($data["tipo"] == "Moral" && isset($data["razon"])) {
+                $data_insert["nombre"] = $data["razon"];
+            }
+        
+            if ($data["tipo"] == "Fisica" && isset($data["nombre"])) {
+                $data_insert["nombre"] = $data["nombre"];
+            }
+        }
+
+        //Se van a generar el citatorio
+        $data_insert['resulte_responsable'] = 'No';
+        SeerCitados::create($data_insert); 
+        // Si es persona física, elimina los apellidos para este citado
+        if (isset($data["tipo"]) && $data["tipo"] === "Fisica") {
+            unset($data_insert["primer_apellido"], $data_insert["segundo_apellido"]);
+        }
+
+        $municipio = Municipios::find($data["municipio_citado"]); 
+        $estado = Estados::find($data["estado_citado"]);
+        $municipioNombre = $municipio ? mb_strtoupper($municipio->nombre, 'UTF-8') : '';
+        $estadoNombre = $estado ? mb_strtoupper($estado->nombre, 'UTF-8') : '';
+
+        //Validar si existe quien resulta responsable con la misma direccion
+
+        $data_insert["nombre"] = "QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN " .
+        $data["vialidad"] . " " . $data["calle"] . ", NÚMERO " . $data["exterior"];
+        if (!empty($data["interior"])) {
+            $data_insert["nombre"] .= " INT. " . $data["interior"];
+        }
+        $data_insert["nombre"] .= " COLONIA " . $data["colonia"] . ", " . $municipioNombre . ", " . $estadoNombre . ", C.P. " . $data["cp"] . ".";
+
+        // Marcar este nuevo registro como el "quien resulte" y crear solo si no existe ya uno igual
+        $data_insert['resulte_responsable'] = 'Si';
+        $direccionNombre = $data_insert["nombre"];
+        $existe = SeerCitados::where('id_solicitud', $data['id'])
+                    ->where('nombre', $direccionNombre)
+                    ->where('resulte_responsable', 'Si')
+                    ->exists();
+        if (!$existe) {
+            SeerCitados::create($data_insert);
+        }
+        return back()->with('success', 'Citado agregado correctamente, puedes agregar otro o continuar.');
     }
 }

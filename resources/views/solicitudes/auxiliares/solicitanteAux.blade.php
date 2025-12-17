@@ -67,7 +67,7 @@
                                         <h3 class="text-center" style="color:black">Datos del Solicitante</h3>
                                     </div>    
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                    <form class="needs-validation" novalidate method="POST" action="{{route('parte2')}}" enctype='multipart/form-data'>
+                                    <form class="needs-validation" novalidate method="POST" action="{{route('guardaSolicitanteA')}}" enctype='multipart/form-data'>
                                         @csrf
                                         <input type="hidden" name="id" value="{{$id}}">
                                         <div class="row">
@@ -531,7 +531,7 @@
                                                 </div>
                                             </div>
 
-                                            <div id="tipoPersona_razon" class="row" style="margin-top:20px; width:100%;">
+                                            <!--<div id="tipoPersona_razon" class="row" style="margin-top:20px; width:100%;">
                                                 <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label for="frecuencia_hechos">Frecuencia con la que han sucedido los hechos <span style="color:red;">(*)</span></label>
@@ -679,7 +679,7 @@
                                                     </div>                                             
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div>-->
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div align="center">
                                                 <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>   
@@ -692,6 +692,40 @@
                     </div>
                 </div>
             </section>
+            <script>
+                // Función genérica para convertir todo el texto a mayúsculas
+                function convertirAMayusculas() {
+                    const elementos = document.querySelectorAll('input[type="text"], textarea');
+
+                    elementos.forEach(elemento => {
+                        elemento.addEventListener('input', function() {
+                            this.value = this.value.toUpperCase();
+                        });
+                        if (elemento.value) {
+                            elemento.value = elemento.value.toUpperCase();
+                        }
+                    });
+                }
+
+                // Ejecutar la función cuando el DOM esté completamente cargado
+                document.addEventListener('DOMContentLoaded', (event) => {
+                    convertirAMayusculas();
+                    (function () {
+                        'use strict'
+                        var forms = document.querySelectorAll('.needs-validation')
+                        Array.prototype.slice.call(forms)
+                            .forEach(function (form) {
+                                form.addEventListener('submit', function (event) {
+                                    if (!form.checkValidity()) {
+                                        event.preventDefault()
+                                        event.stopPropagation()
+                                    }
+                                    form.classList.add('was-validated')
+                                }, false)
+                            })
+                    })()
+                });
+            </script>
         @endsection
             <!-- Modal para la captura de la ine-->
             <div class="modal fade" id="helpModal" aria-labelledby="helpModalLabel" aria-hidden="true">
@@ -760,39 +794,6 @@
                 }
             });
 
-        });
-
-        // Función genérica para convertir todo el texto a mayúsculas
-        function convertirAMayusculas() {
-            const elementos = document.querySelectorAll('input[type="text"], textarea');
-
-            elementos.forEach(elemento => {
-                elemento.addEventListener('input', function() {
-                    this.value = this.value.toUpperCase();
-                });
-                if (elemento.value) {
-                    elemento.value = elemento.value.toUpperCase();
-                }
-            });
-        }
-
-        // Ejecutar la función cuando el DOM esté completamente cargado
-        document.addEventListener('DOMContentLoaded', (event) => {
-            convertirAMayusculas();
-            (function () {
-                'use strict'
-                var forms = document.querySelectorAll('.needs-validation')
-                Array.prototype.slice.call(forms)
-                    .forEach(function (form) {
-                        form.addEventListener('submit', function (event) {
-                            if (!form.checkValidity()) {
-                                event.preventDefault()
-                                event.stopPropagation()
-                            }
-                            form.classList.add('was-validated')
-                        }, false)
-                    })
-            })()
         });
     </script>
     <script src="public/assets/js/poderes/general.js"></script>

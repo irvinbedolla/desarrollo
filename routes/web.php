@@ -106,7 +106,7 @@ use App\Http\Controllers\IncidenciasController;
     //Solicitudes en línea trabajador
     Route::get('Trabajador/{tipo_solicitud}',   [SeerController::class, 'trabajador'])->name('solicitud_trabajador');
     Route::post('guardar_trabajador',           [SeerController::class, 'solicitud_parte1'])->name('parte1');
-    Route::get('solicitud_continuar',      [SeerController::class, 'vista_parte2'])->name('parte2.ver');
+    //Route::get('solicitud_continuar',      [SeerController::class, 'vista_parte2'])->name('parte2.ver');  REVISAR ANA
     Route::post('solicitud_solicitante',        [SeerController::class, 'solicitud_parte2'])->name('parte2');
     Route::get('vista_solicitante/{id}' ,       [SeerController::class, 'vista_solicitante'])->name('solicitante');
     Route::post('/delegacion/{municipioId}',    [SeerController::class, 'DelegacionPorMunicipio']); //Muestra la delegación que le corresponde según el municipio seleccionado
@@ -285,7 +285,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Solicitudes
         Route::get('/solicitudes/pedientes',                [SeerController::class, 'solicitudes_pendientes'])->name('solicitudes_pendientes');
         Route::get('/solicitud/index',                      [SeerController::class, 'mis_solicitudes'])->name('mis_solicitudes');
-        Route::get('/solicitudes_revisar/{id}',             [SeerController::class, 'solicitudes_pendientes_revisar'])->name('solicitud_revisar');
+        Route::get('/solicitudes_revisar/{id}',             [SeerController::class, 'solicitudes_pendientes_revisar'])->name('solicitud_revisar'); 
         Route::get('/solicitudes_editar/{id}',              [SeerController::class, 'solicitudes_pendientes_editar'])->name('solicitud_editar'); 
         Route::post('/confirmar_solicitudes',               [SeerController::class, 'solicitud_confirmar'])->name('confirmar_solicitud');
         Route::get('/eliminar_motivo/{id}/{id_motivo}',     [SeerController::class, 'eliminar_motivo'])->name('eliminar_motivo');
@@ -307,11 +307,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('solicitudes',                           [SeerController::class, 'solicitudesAuxiliares'])->name('solicitud');
         Route::get('tipoIndustriaA/{tipo_solicitud}',       [SeerController::class, 'IndustriasAux'])->name('solicitud.industriaAuxiliar');
         Route::get('TrabajadorA/{tipo_solicitud}',          [SeerController::class, 'inicioSolicitud_auxiliar'])->name('trabajadorAuxiliar');
-        Route::post('agregar_solicitanteA',                 [SeerController::class, 'solicitud_parte1'])->name('agregaSolicitanteA');
-        Route::post('guardar_solicitanteA',                 [SeerController::class, 'solicitud_parte2'])->name('guardaSolicitanteA');
-        Route::get('/agrega_citadoA/{id}',                  [SeerController::class, 'vista_citado'])->name('agrega_citadoAux');
-        Route::post('/guardar_citadoA',                     [SeerController::class, 'guardar_citado'])->name('seer.citadosAux');
-        Route::get('/finalizaAux/{id}',                     [SeerController::class, 'guardar_solicitud'])->name('seer.finalizaAux');
+        Route::post('/agregar_solicitanteA',                [SeerController::class, 'solicitud_parte1Aux'])->name('agregaSolicitanteA');
+        Route::post('guardar_solicitanteA',                 [SeerController::class, 'solicitud_parte2Aux'])->name('guardaSolicitanteA');
+        Route::get('/agrega_citadoA/{id}',                  [SeerController::class, 'vista_citadoAux'])->name('agrega_citadoAux');
+        Route::post('/guardar_citadoA',                     [SeerController::class, 'guardar_citadoAux'])->name('seer.citadosAux');
+        Route::get('/finalizaAux/{id}',                     [SeerController::class, 'guardar_solicitudAux'])->name('seer.finalizaAux');
     //Fin de Solicitudes
     //PDF Solicitudes    
         Route::get('/Verpdfincompetencias/{id}',                        [SeerController::class, 'VerPDFIncompetencia'])->name('PDFincompetencia');
