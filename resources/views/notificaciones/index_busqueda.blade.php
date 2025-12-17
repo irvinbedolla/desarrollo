@@ -73,7 +73,12 @@
                                                                     </ul>
                                                                 @endif                                      
                                                                 @if($notificacion->estatus === "No exitosa no se constituye")
-                                                                    <a class="btn btn-success" href="{{ route('PDFNoExitosaInt', [$notificacion->id, $notificacion->id]) }}" target="_blank">Notificación</a>
+                                                                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                        Documentos
+                                                                    </button>
+                                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                        <li class="mb-2"><a class="btn btn-info" style="width: 100%" href="{{ route('PDFNoExitosaInt', [$notificacion->id, $notificacion->id]) }}" target="_blank">Notificación</a></li>
+                                                                    </ul>
                                                                 @endif
                                                             </div> 
                                                         </td>
