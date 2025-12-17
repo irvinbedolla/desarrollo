@@ -171,12 +171,6 @@
             <a class="nav-link" href="{{ route('seer') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">SEER</span>
             </a>
-            <a id="menu-pendiente-firma" class="nav-link" href="{{ route('firma_citatorio') }}">
-                <i class="bi bi-bank"></i>
-                <span class="text-dark" onclick="mis_citas()">Pendiente de Firma
-                    <span id="badge-pendiente-firma" class="menu-badge" style="display:none;">0</span>
-                </span>
-            </a>
             <a class="nav-link" href="{{ route('crear_inidencia') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Incidencia</span>
             </a>
@@ -190,6 +184,12 @@
             </a>
             <a class="nav-link" href="{{ route('poderes') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
+            </a>
+            <a id="menu-pendiente-firma" class="nav-link" href="{{ route('firma_citatorio') }}">
+                <i class="bi bi-bank"></i>
+                <span class="text-dark" onclick="mis_citas()">Pendiente de Firma
+                    <span id="badge-pendiente-firma" class="menu-badge" style="display:none;">0</span>
+                </span>
             </a>
             <a class="nav-link" href="{{ route('audiencia_index') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" >Audiencias</span>

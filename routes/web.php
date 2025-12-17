@@ -107,7 +107,7 @@ use App\Http\Controllers\IncidenciasController;
     //Solicitudes en línea trabajador
     Route::get('Trabajador/{tipo_solicitud}',   [SeerController::class, 'trabajador'])->name('solicitud_trabajador');
     Route::post('guardar_trabajador',           [SeerController::class, 'solicitud_parte1'])->name('parte1');
-    //Route::get('solicitud_continuar',      [SeerController::class, 'vista_parte2'])->name('parte2.ver');  REVISAR ANA
+    Route::get('solicitud_continuar',      [SeerController::class, 'vista_parte2'])->name('parte2.ver');
     Route::post('solicitud_solicitante',        [SeerController::class, 'solicitud_parte2'])->name('parte2');
     Route::get('vista_solicitante/{id}' ,       [SeerController::class, 'vista_solicitante'])->name('solicitante');
     Route::post('/delegacion/{municipioId}',    [SeerController::class, 'DelegacionPorMunicipio']); //Muestra la delegación que le corresponde según el municipio seleccionado
@@ -417,6 +417,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/solicitud/guardarExpediente',         [SeerController::class, 'guardar_expediente'])->name('subir_expediente'); //Subir expediente 
         Route::post('/solicitud/guardarExpedienteR',        [TurnosController::class, 'guardar_expediente'])->name('subir_expediente_ratificacion'); //Subir expediente ratificacion
         Route::get('/audieniecias/vista_previa/{id_solicitud}',             [SeerController::class, 'vista_previa'])->name('vista_previa');
+        // Ruta para guardar temporalmente la selección de citados para el convenio
+        Route::post('/audiencia/guardar-seleccion-convenio', [SeerController::class, 'guardarSeleccionConvenioSession'])->name('guardar_seleccion_convenio');
         Route::post('/solicitud/editar_audiencia',          [SeerController::class, 'editar_solicitud_audiencia'])->name('editar_solicitud_audiencia');
         Route::post('/seleccionar_abogado_audiencia',       [SeerController::class, 'seleccionar_abogado_audiencia'])->name('seleccionar_abogado_audiencia');
         Route::post('/audieencia/guardar_citadoC',          [SeerController::class, 'insertar_citados_audiencia'])->name('insertar_citados_audiencia');

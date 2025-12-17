@@ -355,7 +355,7 @@
                                         <br><button id="btn-terminar" type="submit" class="btn btn-success" name="bandera" value="2">Actualizar</button>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-2">
-                                        <br><button class="btn btn-success" type="submit" class="btn btn-success" name="bandera" value="3" target="_blank">Convenio</button>
+                                        <br><button id="btn-convenio1" class="btn btn-success" type="button" class="btn btn-success" name="bandera" value="3" target="_blank">Convenio</button>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-2">
                                         <br><button id="btn-terminar" type="submit" class="btn btn-success" name="bandera" value="4">Acta de Audiencia</button>
@@ -1376,14 +1376,14 @@ function clonarCheckboxes() {
     });
 
     // Convenio → guarda antes de abrir PDF
-    document.getElementById('btn-convenio').addEventListener('click', function(e) {
+    /*document.getElementById('btn-convenio').addEventListener('click', function(e) {
         e.preventDefault();
         clonarCheckboxes();
         let form = document.getElementById('form_roles');
         form.action = "{{ route('terminar_audiencia', $id) }}";
         form.submit();
         setTimeout(() => { window.open("{{ route('PDFconveniosolicitud', $id) }}", "_blank"); }, 700);
-    });
+    });*/
 
     // Acta → guarda antes de abrir PDF
     document.getElementById('btn-acta').addEventListener('click', function(e) {
@@ -1407,7 +1407,7 @@ function clonarCheckboxes() {
     (function () {
     // Obtener referencias a los botones
         const termBtn = document.querySelector('button[name="bandera"][value="1"]');
-        const convBtn = document.getElementById('btn-convenio'); // Asumo que el ID es btn-convenio
+        const convBtn = document.getElementById('btn-convenio1'); // Asumo que el ID es btn-convenio
         const actaBtn = document.getElementById('btn-acta');     // Nuevo: ID del botón Acta de Audiencia
 
       function updateVisibilidadBotones() {
@@ -1494,6 +1494,82 @@ function clonarCheckboxes() {
             updateTerminar();
             updateConvenio();
         })();
+    </script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Lógica para el botón CONVENIO con AJAX
+            const btnConvenio = document.getElementById('btn-convenio1');
+            
+            if(btnConvenio){
+                btnConvenio.addEventListener('click', function(e) {
+                    e.preventDefault(); // Prevenir cualquier envío tradicional
+                    
+                    // 1. Obtener ID de la solicitud
+                    // Buscamos el input hidden del form principal. Ajusta el selector si tienes múltiples forms.
+                    // En tu archivo veo <input type="hidden" name="id" value="{{ $id }}"> dentro del form 'form_roles'
+                    let inputId = document.querySelector('#form_roles input[name="id"]');
+                    if(!inputId) { 
+                        alert("No se encontró el ID de la solicitud"); 
+                        return; 
+                    }
+                    let idSolicitud = inputId.value;
+
+                    // 2. Recolectar IDs de los checkboxes marcados
+                    let idsSeleccionados = [];
+                    // Buscamos los checkboxes que empiezan con "aparece_convenio" y están marcados
+                    document.querySelectorAll('input[type=checkbox][name^="aparece_convenio"]:checked').forEach(cb => {
+                        // El name es "aparece_convenio[123]". Usamos Regex para sacar el ID (123).
+                        let match = cb.name.match(/\[(\d+)\]/);
+                        if(match && match[1]) {
+                            idsSeleccionados.push(match[1]);
+                        }
+                    });
+
+                    if(idsSeleccionados.length === 0){
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Atención',
+                            text: 'Debes seleccionar al menos un citado para generar el convenio.'
+                        });
+                        return;
+                    }
+
+                    // 3. Enviar a Laravel vía AJAX (Fetch) para guardar en sesión
+                    fetch("{{ route('guardar_seleccion_convenio') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            id_solicitud: idSolicitud,
+                            ids_seleccionados: idsSeleccionados
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.status === 'success') {
+                            // 4. Si se guardó en sesión exitosamente, abrimos el PDF en nueva pestaña
+                            // Usamos la ruta existente 'PDFconveniosolicitud' (VerPDFConvenioSol)
+                            // Ajusta la URL base si tu ruta tiene prefijos
+                            let urlPdf = "{{ route('PDFconveniosolicitud', ':id') }}";
+                            urlPdf = urlPdf.replace(':id', idSolicitud);
+                            
+                            window.open(urlPdf, "_blank");
+                        } else {
+                            Swal.fire('Error', 'No se pudo procesar la selección.', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire('Error', 'Ocurrió un error de conexión.', 'error');
+                    });
+                });
+            }
+        });
     </script>
 
     <script src="../../public/assets/js/validaciones.js"></script> 
