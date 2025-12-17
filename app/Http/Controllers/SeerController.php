@@ -2374,14 +2374,11 @@ class SeerController extends Controller
         $nombre = $solicitante["nombre"]." ".$solicitante["primer_apellido"]." ".$solicitante["segundo_apellido"];
         $folio = $solicitante["id_solicitud"];
         $delegacion = SeerPerGeneral::find($id);
-        //dd($solicitante);
         $usuario = User::
         where('profile_photo_path',$solicitante['curp'])
         //->where('email',$solicitante["email"])
          ->first();
 
-        //dd($usuario);
-        //dd("el correo:".$usuario["email"]." ya esta registrado en Si Concilio por lo que de no modificar el mismo su solicitud sera asignado al usuario existente.");
         if(!isset($usuario)){
             $data_insertar_user= array(
                 'name'              => $nombre,
@@ -2449,7 +2446,6 @@ class SeerController extends Controller
 
     public function aviso(Request $request){
         $data = $request->all();
-        dd($data);
         $id = $data["id"];
         $mensaje = $data["mensaje"];
         $delegacion = $data["delegacion"];
@@ -4587,7 +4583,6 @@ class SeerController extends Controller
             else if($delegacion == "Sahuayo"){
                 $oficina_apoyo = "Zamora";
             }
-            //dd($oficina_apoyo);
             // Obtener conciliadores desde la oficina de apoyo con permisos de tipo Virtual/Ambos
             $conciliadores = User::whereHas($relacionEloquent, function ($query) {
                 $query->where('name', '=', 'Conciliador');
@@ -4601,7 +4596,6 @@ class SeerController extends Controller
             })
             ->get();
         }
-//dd($conciliadores);
         //Numero de conciliadores
         $contador_conciliadores = count($conciliadores);
         //Obtener la ultima fecha y hora
@@ -7070,7 +7064,6 @@ class SeerController extends Controller
     public function terminar_audiencia(Request $request){
         $data = $request->all();
         if (isset($data['aparece_convenio']) && is_array($data['aparece_convenio'])) {
-            dd($data['aparece_convenio']);
             foreach ($data['aparece_convenio'] as $id_representante => $valor) {
                 SeerCitados::where('id', $id_representante)
                     ->update(['aparece_convenio' => $valor == 1 ? 1 : 0]);
@@ -7179,7 +7172,6 @@ class SeerController extends Controller
                 
                 //$this->VerPDFAudiencia($data["id"]);
                 $this->VerPDFConvenioSol($data["id"]);
-                dd("llego");
                 //return redirect()->route('vista_previa',compact('id_solicitud'));
             }
         }
@@ -9242,12 +9234,9 @@ class SeerController extends Controller
         $nombre = $solicitante["nombre"]." ".$solicitante["primer_apellido"]." ".$solicitante["segundo_apellido"];
         $folio = $solicitante["id_solicitud"];
         $delegacion = SeerPerGeneral::find($id);
-        //dd($solicitante);
         $usuario = User::
         where('email',$solicitante["email"])->first();
 
-        //dd($usuario);
-        //dd("el correo:".$usuario["email"]." ya esta registrado en Si Concilio por lo que de no modificar el mismo su solicitud sera asignado al usuario existente.");
         if(!isset($usuario)){
             $data_insertar_user= array(
                 'name'              => $nombre,
