@@ -1622,25 +1622,6 @@ class SeerController extends Controller
             $documento2 = $data["id"] . "-foto3.jpg";
             Storage::putFileAs('documentos_notificacion', $request->file('foto2'), $documento2);
         }
-        /*if(!isset($foto)){
-            $documento = $data["id"]."-foto1.jpg";
-            $path = Storage::putFileAs(
-                'documentos_notificacion', $request->file('foto'), $documento
-            );
-        }
-        
-        if($request->hasFile($foto1)){
-            $documento1 = $data["id"]."-foto2.jpg";
-            $path = Storage::putFileAs(
-                'documentos_notificacion', $request->file('foto1'), $documento1
-            );
-        }
-        if($request->hasFile($foto2)){
-            $documento2 = $data["id"]."-foto3.jpg";
-            $path = Storage::putFileAs(
-                'documentos_notificacion', $request->file('foto2'), $documento2
-            );
-        }*/
         
         $request->validate([
             'quien_atiende'               => 'nullable',
@@ -1703,7 +1684,7 @@ class SeerController extends Controller
         }
         else{
             $solicitud = SeerCitados::find($data["id"]);
-            $citados = SeerCitados::where('id_solicitud',$data["id"])->get();
+            $citados = SeerCitados::where('id_solicitud',$solicitud["id_solicitud"])->get();
             foreach($citados as $citado){
                 SeerCitados::find($citado["id"])
                 ->update([
