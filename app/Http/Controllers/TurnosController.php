@@ -1932,7 +1932,7 @@ class TurnosController extends Controller
         $documento_general = Turnos::find($id); 
         //Documentos del abogado y citados
         $documento_abogado = Poder::find($documento_general["idAbogado"]);
-        $documento_subidos = DocumentosSolicitud::where('id_solicitud',$id)->get();
+        $documento_subidos = DocumentosSolicitud::where('id_solicitud',$id)->where('tramite','Ratificacion')->get();
 
        return view('ratificaciones/verDocumentos',compact('documento_general','documento_abogado','documento_subidos'));
     }

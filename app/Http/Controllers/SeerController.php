@@ -6652,7 +6652,7 @@ class SeerController extends Controller
         ->get();
         
          //Documentos subidos
-        $documento_subidos = DocumentosSolicitud::where('id_solicitud',$id)->get();
+        $documento_subidos = DocumentosSolicitud::where('id_solicitud',$id)->where('tramite','Audiencia')->get();
 
  
         return view('solicitudes.verDocumentos',compact('documento_general','documento_solicitante','documento_abogado','documento_fisica','documento_subidos'));
@@ -8694,6 +8694,7 @@ class SeerController extends Controller
 
                 $totalCitados = SeerCitados::where('id_solicitud', $solicitudId)->count();
                 $totalCitatoriosSubidos = DocumentosSolicitud::where('id_solicitud', $solicitudId)
+                ->where('tramite','Audiencia')
                 ->where('nombre_documento', 'like', '%Citatorio%')
                 ->count();
                 if ($totalCitatoriosSubidos >= $totalCitados && $totalCitados > 0) {
