@@ -1393,7 +1393,7 @@ select[name="municipio_citado"] option {
 </div>
 
 @section('scripts')
-    <script src="../public/assets/js/estadistica/estadistica.js"></script>
+    <script src="../public/assets/js/estadistica/estadisticaConfirmar.js"></script>
         <script>
             $(function(){
                 $('#motivo_solicitud').on('change', validarcheckfolio);
