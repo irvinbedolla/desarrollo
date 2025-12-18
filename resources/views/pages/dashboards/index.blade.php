@@ -143,17 +143,10 @@
                                                         <button id="btn-pagos" class="btn btn-lg btn-custom-morado float-right">Cumplimientos</button>
                                                         @if( $userRole[0] == 'Super Usuario' || $userRole[0] == 'Administrador' || $userRole[0] == 'Delegado' || $userRole[0] == 'Conciliador' || 
                                                         $userRole[0] == 'Enlace' || $userRole[0] == 'Auxiliar' || $userRole[0] == 'Excepcion' )
-                                                            @if($userRole[0] == 'Auxiliar' || $userRole[0] == 'Excepcion')
-                                                                <button class="btn btn-lg btn-custom-morado  float-right">Audiencias</button>
-                                                                <button class="btn btn-lg btn-custom-morado float-right">Cumplimientos en Audiencia</button>
-                                                                <button id="btn-citas" class="btn btn-lg btn-custom-morado float-right">Cumplimientos de Ratificación</button>
-                                                                <button id="btn-ratificaciones" class="btn btn-lg btn-custom-morado float-right">Ratificaciones</button>
-                                                            @else
-                                                                <button id="btn-audiencias" class="btn btn-lg btn-custom-morado  float-right">Audiencias</button>
-                                                                <button id="btn-conciliador" class="btn btn-lg btn-custom-morado float-right">Cumplimientos en Audiencia</button>
-                                                                <button id="btn-citas" class="btn btn-lg btn-custom-morado float-right">Cumplimientos de Ratificación</button>
-                                                                <button id="btn-ratificaciones" class="btn btn-lg btn-custom-morado float-right">Ratificaciones</button>
-                                                            @endif
+                                                            <button id="btn-audiencias" class="btn btn-lg btn-custom-morado  float-right">Audiencias</button>
+                                                            <button id="btn-conciliador" class="btn btn-lg btn-custom-morado float-right">Cumplimientos en Audiencia</button>
+                                                            <button id="btn-citas" class="btn btn-lg btn-custom-morado float-right">Cumplimientos de Ratificación</button>
+                                                            <button id="btn-ratificaciones" class="btn btn-lg btn-custom-morado float-right">Ratificaciones</button>
                                                         @else
                                                             <button class="btn btn-lg btn-custom-morado  float-right">Audiencias</button>
                                                             <button class="btn btn-lg btn-custom-morado float-right">Cumplimientos en Audiencia</button>

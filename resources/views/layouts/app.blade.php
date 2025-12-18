@@ -17,8 +17,8 @@
         <link href="../public/assets/css/all.css" rel="stylesheet" type="text/css">
         <link href="../public/assets/css/iziToast.min.css" rel="stylesheet">
         <link href="../public/assets/css/sweetalert.css" rel="stylesheet" type="text/css"/>
-    <link href="../public/assets/css/select2.min.css" rel="stylesheet" type="text/css"/>
-    <link href="../public/assets/css/realtime.css" rel="stylesheet" type="text/css"/>
+        <link href="../public/assets/css/select2.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../public/assets/css/realtime.css" rel="stylesheet" type="text/css"/>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         
         <!-- Agregados para los Select del Formulario Personas-->

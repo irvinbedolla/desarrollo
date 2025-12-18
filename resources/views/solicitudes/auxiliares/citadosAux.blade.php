@@ -29,6 +29,15 @@
         select[name="municipio_citado"] option {
             text-transform: uppercase;
         }
+        .form-control {
+            border: 1px solid #ced4da !important;
+            box-shadow: none !important;
+        }
+
+        .form-control:focus {
+            border-color: #80bdff !important;
+            outline: 0 !important;
+        }
     </style>
     @section('content')
         <section class="section">
@@ -114,11 +123,11 @@
                                         </div>
 
                                         <div class="col-xs-12 col-sm-12 col-md-2">
-                                            <spam for="btncheck1">¿Requiere Traductor?</spam>
-                                            <input type="checkbox" class="btn-check" id="check_lenguaje" name="traductor" autocomplete="off">
+                                            <label for="btncheck1">¿Requiere Traductor?</label>
+                                            <input type="checkbox" id="check_lenguaje" name="traductor" autocomplete="off">
                                         </div>
 
-                                        <div class="col-xs-12 col-sm-12 col-md-4" id="lenguaje_señas">
+                                        <div class="col-xs-12 col-sm-12 col-md-4" id="lenguaje_señas" tyle="display:none">
                                             <div class="form-group">
                                                 <label for="name">¿Qué tipo de lenguaje require?</label>
                                                 <input type="text" name="lenguaje" class="form-control" id="lenguajeRequerido" oninput="this.value = this.value.toUpperCase()">

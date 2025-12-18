@@ -1,4 +1,8 @@
-<x-auth-layout>
+@extends('layouts.auth_app')
+@section('title')
+    Si Concilio
+@endsection
+@section('content')
 
     <!--begin::Form-->
     <form class="form w-100" novalidate="novalidate" id="kt_password_reset_form" data-kt-redirect-url="{{ route('login') }}" action="{{ route('password.request') }}">
@@ -38,4 +42,4 @@
     </form>
     <!--end::Form-->
 
-</x-auth-layout>
+    @endsection
