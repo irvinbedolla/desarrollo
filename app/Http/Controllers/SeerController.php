@@ -2024,8 +2024,8 @@ class SeerController extends Controller
         $id = $data['id'];
 
         //validando información
-       $request->validate([
-            /*'tipo'                      => 'required|in:Fisica,Moral',*/
+       /*$request->validate([
+            //'tipo'                      => 'required|in:Fisica,Moral',
             'curp'                      => 'required|min:18|max:18',
             'nombre'                    => 'required',
             'fecha_nacimiento'          => 'required|date',
@@ -2042,9 +2042,9 @@ class SeerController extends Controller
             'colonia_solicitante'       => 'required',
             'municipio_solicitante'     => 'required',
             'cp'                        => 'required|numeric',
-            /*'referencias'               => 'required|string|max:300',
-            'calle1'                    => 'required',
-            'calle2'                    => 'required',*/
+            //'referencias'               => 'required|string|max:300',
+            //'calle1'                    => 'required',
+            //'calle2'                    => 'required',
             'puesto'                    => 'required', 
             'periodo_pago'              => 'required',
             'pago'                      => 'required',
@@ -2070,7 +2070,7 @@ class SeerController extends Controller
             'continuacion_solicto_apoyo' => 'required_if:excepcion,Si',
             'incidencia_directa' => 'required_if:solicito_apoyo,Si',
             'recibio_atencion' => 'required_if:excepcion,Si',
-        ]);
+        ]);*/
         
         $data_insert=array(
             'id_solicitud'         => $data["id"],

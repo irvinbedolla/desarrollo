@@ -98,7 +98,7 @@
                                         <h3 class="text-center" style="color:black">Datos del Solicitante</h3>
                                     </div>    
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                    <form class="needs-validation" novalidate method="POST" action="{{route('parte2')}}" enctype='multipart/form-data'>
+                                    <form id="form-solicitante" novalidate method="POST" action="{{route('parte2')}}" enctype='multipart/form-data'>
                                         @csrf
                                         <input type="hidden" name="id" value="{{$id}}">
                                         <div class="row">
@@ -228,7 +228,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Teléfono Celular <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="telefono1" minlength="10" maxlength="10" class="form-control numeroTelefonico" required>
+                                                    <input type="text" name="telefono1" class="form-control numeroTelefonico" required>
                                                     <div class="invalid-feedback">
                                                         El campo teléfono es obligatorio.
                                                     </div>
@@ -237,11 +237,8 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Teléfono Fijo (Campo opcional)</label>
-                                                    <input type="text" name="telefono2" minlength="10" maxlength="10" class="form-control numeroTelefonico"> 
+                                                    <input type="text" name="telefono2" class="form-control numeroTelefonico"> 
                                                 </div>
-                                                 <div class="invalid-feedback">
-                                                        El teléfono fijo debe tener 10 dígitos
-                                                </div>  
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
@@ -937,48 +934,202 @@
             inicio.addEventListener("blur", validarFechas);
             termino.addEventListener("blur", validarFechas);
 
-            const form = document.querySelector('form.needs-validation');
-            form.addEventListener('submit', function(e) {
-                /*let tel1 = form.querySelector('input[name="telefono1"]');
-                let tel2 = form.querySelector('input[name="telefono2"]');
-                let valid = true;
-                // Validar teléfono celular (obligatorio)
-                if (tel1 && tel1.value.replace(/\D/g, '').length !== 10) {
-                    swal("Error", "El teléfono celular debe tener exactamente 10 dígitos.", "error");
-                    tel1.focus();
-                    valid = false;
-                }
-                // Validar teléfono fijo (opcional, solo si tiene valor)
-                if (tel2 && tel2.value && tel2.value.replace(/\D/g, '').length !== 10) {
-                    swal("Error", "El teléfono fijo debe tener exactamente 10 dígitos.", "error");
-                    tel2.focus();
-                    valid = false;
-                }*/
+            const form = document.querySelector('form#form-solicitante');
 
-                let valid = true;
+            function getFeedback(input) {
+                const group = input.closest('.form-group');
+                if (!group) return null;
+                return group.querySelector('.invalid-feedback');
+            }
+
+            function markInvalid(input, message) {
+                const fb = getFeedback(input);
+                if (fb) {
+                    fb.textContent = message || fb.textContent || 'Campo obligatorio';
+                    fb.style.display = 'block';
+                }
+                input.classList.add('is-invalid');
+                input.classList.remove('is-valid');
+            }
+
+            function markValid(input) {
+                const fb = getFeedback(input);
+                if (fb) {
+                    fb.style.display = 'none';
+                }
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+            }
+
+            function requiredFilled(input) {
+                return input && input.value && input.value.trim() !== '';
+            }
+
+            function validateEmail(input) {
+                const val = input.value.trim();
+                if (!val) return false;
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(val);
+            }
+
+            function validateCurp(input) {
+                const val = input.value.trim();
+                return val.length === 18;
+            }
+
+            function validateCP(input) {
+                const val = input.value.trim();
+                return val.length === 5 && /^\d{5}$/.test(val);
+            }
+
+            function validateTelefono(input) {
+                const val = input.value.trim();
+                return val.length === 10 && /^\d{10}$/.test(val);
+            }
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                let ok = true;
+                let firstInvalid = null;
+
+                function checkAndMark(input, validator, message) {
+                    if (!validator(input)) {
+                        ok = false;
+                        markInvalid(input, message);
+                        if (!firstInvalid) firstInvalid = input;
+                    } else {
+                        markValid(input);
+                    }
+                }
+
+                const curp = form.querySelector('input[name="curp"]');
+                checkAndMark(curp, validateCurp, 'La CURP debe tener 18 caracteres.');
+
+                const nombre = form.querySelector('input[name="nombre"]');
+                checkAndMark(nombre, requiredFilled);
+
+                const fechaN = form.querySelector('input[name="fecha_nacimiento"]');
+                checkAndMark(fechaN, requiredFilled);
+
+                const edad = form.querySelector('input[name="edad"]');
+                checkAndMark(edad, requiredFilled);
+
+                const genero = form.querySelector('select[name="genero"]');
+                checkAndMark(genero, requiredFilled);
+
+                const nacionalidad = form.querySelector('select[name="nacionalidad"]');
+                checkAndMark(nacionalidad, requiredFilled);
+
+                const estadoN = form.querySelector('select[name="estado_nacimiento"]');
+                checkAndMark(estadoN, requiredFilled);
+
+                const telefono1 = form.querySelector('input[name="telefono1"]');
+                checkAndMark(telefono1, validateTelefono, 'El teléfono debe tener exactamente 10 dígitos.');
+
+                const correo = form.querySelector('input[name="correo"]');
+                checkAndMark(correo, validateEmail, 'Debe ingresar un correo válido.');
+
+                const estadoDom = form.querySelector('select[name="estado_solicitante"]');
+                checkAndMark(estadoDom, requiredFilled);
+
+                const municipio = form.querySelector('select[name="municipio_solicitante"]');
+                checkAndMark(municipio, requiredFilled);
+
+                const vialidad = form.querySelector('select[name="vialidad"]');
+                checkAndMark(vialidad, requiredFilled);
+
+                const calle = form.querySelector('input[name="vialidad_calle"]');
+                checkAndMark(calle, requiredFilled);
+
+                const numExt = form.querySelector('input[name="numExt"]');
+                checkAndMark(numExt, requiredFilled);
+
+                const colonia = form.querySelector('input[name="colonia_solicitante"]');
+                checkAndMark(colonia, requiredFilled);
+
+                const cp = form.querySelector('input[name="cp"]');
+                checkAndMark(cp, validateCP, 'El código postal debe tener 5 dígitos.');
+
+                const puesto = form.querySelector('input[name="puesto"]');
+                checkAndMark(puesto, requiredFilled);
+
+                const periodoPago = form.querySelector('select[name="periodo_pago"]');
+                checkAndMark(periodoPago, requiredFilled);
+
+                const pago = form.querySelector('input[name="pago"]');
+                checkAndMark(pago, requiredFilled);
+
+                const horas = form.querySelector('input[name="horas"]');
+                checkAndMark(horas, requiredFilled);
+
+                const fechaIngreso = form.querySelector('input[name="fecha_ingreso"]');
+                checkAndMark(fechaIngreso, requiredFilled);
+
+                const jornada = form.querySelector('input[name="jornada"]');
+                checkAndMark(jornada, requiredFilled);
+
+                const identificacion = form.querySelector('select[name="identificacion"]');
+                checkAndMark(identificacion, requiredFilled);
+
+                const numIdent = form.querySelector('input[name="num_identificacion"]');
+                checkAndMark(numIdent, requiredFilled);
+
+                const docIdent = form.querySelector('input[name="documentoIdentificacion"]');
+                if (!docIdent || !docIdent.files || docIdent.files.length === 0) {
+                    ok = false;
+                    markInvalid(docIdent, 'La Identificación es obligatoria.');
+                    if (!firstInvalid) firstInvalid = docIdent;
+                } else {
+                    markValid(docIdent);
+                }
+
+                const descripcion = form.querySelector('textarea[name="descripcionSolicitud"]');
+                checkAndMark(descripcion, requiredFilled);
+
+                const excepcion = form.querySelector('select[name="excepcion"]');
+                checkAndMark(excepcion, requiredFilled);
+
+                const necesitaExcepcion = excepcion && excepcion.value === 'Si';
+                if (necesitaExcepcion) {
+                    ['frecuencia_hechos','cambios_situacionL','comunico_hechos','descripcion_conducta','responsable_cargo','actos_cometidos','momento_hechos','lugar_hechos','constancia_hechos','solicito_apoyo','continuacion_solicto_apoyo','recibio_atencion'].forEach(name => {
+                        const input = form.querySelector(`[name="${name}"]`);
+                        checkAndMark(input, requiredFilled);
+                    });
+                }
+
+                const solicitoApoyo = form.querySelector('select[name="solicito_apoyo"]');
+                const requiereApoyo = solicitoApoyo && solicitoApoyo.value === 'Si';
+                if (requiereApoyo) {
+                    const incidencia = form.querySelector('textarea[name="incidencia_directa"]');
+                    checkAndMark(incidencia, requiredFilled);
+                }
 
                 const checkLanguage = document.getElementById('check_lenguaje');
-                if (checkLanguage.checked) {
-                    const languageRequired = document.getElementById('lenguajeRequerido');
-                    languageRequired.required = true;
-                }
-                else {
-                    const languageRequired = document.getElementById('lenguajeRequerido');
-                    languageRequired.required = false;
+                const lenguajeInput = document.getElementById('lenguajeRequerido');
+                if (checkLanguage && checkLanguage.checked) {
+                    checkAndMark(lenguajeInput, requiredFilled);
+                } else if (lenguajeInput) {
+                    markValid(lenguajeInput);
                 }
 
                 const checkDisability = document.getElementById('check_discapacidad');
-                if (checkDisability.checked) {
-                    const languageRequired = document.getElementById('discapacidadRequerida');
-                    languageRequired.required = true;
+                const discapacidadInput = document.getElementById('discapacidadRequerida');
+                if (checkDisability && checkDisability.checked) {
+                    checkAndMark(discapacidadInput, requiredFilled);
+                } else if (discapacidadInput) {
+                    markValid(discapacidadInput);
                 }
-                else {
-                    const languageRequired = document.getElementById('discapacidadRequerida');
-                    languageRequired.required = false;
-                }
-                
-                if (!valid) {
-                    e.preventDefault();
+
+                if (!ok) {
+                    if (firstInvalid) {
+                        firstInvalid.focus();
+                        firstInvalid.scrollIntoView({behavior: 'smooth', block: 'center'});
+                    }
+                } else {
+                    $('#crear_poder').show();
+                    form.submit();
                 }
             });
         });
