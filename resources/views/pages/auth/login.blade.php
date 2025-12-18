@@ -41,6 +41,8 @@
                     </div>
                 </div>
 
+                <a href="{{ route('olvidaste_contraseña') }}">¿Olvidaste tu contraseña?</a>
+
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4" style="background-color: #6A0F49" id="boton_login">
                         Ingresar
