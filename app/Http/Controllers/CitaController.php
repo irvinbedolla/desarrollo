@@ -77,7 +77,7 @@ class CitaController extends Controller
             ->selectRaw("CONCAT(turnos.trabajador, ' ', turnos.primero_trabajador, ' ', turnos.segundo_trabajador) as nombre_completo")
             ->get();
         }
-        else if($userRole[0] == "Conciliador" || $userRole[0] == "Delegado" || $userRole[0] == "Enlace"){
+        else if($userRole[0] == "Conciliador" || $userRole[0] == "Delegado" || $userRole[0] == "Enlace" || $userRole[0] == "Auxiliar"){
             $tipo_conciliador = PermisosConciliador::where('id_conciliador',$id_usuario)->first();
             if(!empty($tipo_conciliador)){
                 if($tipo_conciliador["tipo"] == "Ambos"){

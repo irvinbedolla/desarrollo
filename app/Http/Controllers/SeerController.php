@@ -1830,7 +1830,7 @@ class SeerController extends Controller
                 'direccion'     => $data["direccion"][$i], 
                 'id_municipio'  => 0, 
                 'id_estado'     => 0,
-                'observaciones' => ''
+                'observaciones' => '',
             ];
             SeerCitados::create($data_citado);
         }
@@ -2408,7 +2408,7 @@ class SeerController extends Controller
             $variables = [
                 'Nombre'           => $nombre,
                 'Contraseña'       => "CCLMICHOACAN".$numero_aleatorio,
-                'email'            => $usuario["email"],
+                'email'            => $email,
                 'NumFolio'         => $folio,
             ];
             Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
@@ -2425,7 +2425,7 @@ class SeerController extends Controller
             $variables = [
                 'Nombre'           => $nombre,
                 'Contraseña'       => "Ya esta registrada",
-                'email'            => $usuario["email"],
+                'email'            => $solicitante["email"],
                 'NumFolio'         => $folio,
             ];
             Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
@@ -9235,7 +9235,9 @@ class SeerController extends Controller
         $folio = $solicitante["id_solicitud"];
         $delegacion = SeerPerGeneral::find($id);
         $usuario = User::
-        where('email',$solicitante["email"])->first();
+        where('profile_photo_path',$solicitante['curp'])
+        //->where('email',$solicitante["email"])
+         ->first();
 
         if(!isset($usuario)){
             $data_insertar_user= array(
@@ -9283,7 +9285,7 @@ class SeerController extends Controller
             $variables = [
                 'Nombre'           => $nombre,
                 'Contraseña'       => "Ya esta registrada",
-                'email'            => $usuario["email"],
+                'email'             => $solicitante["email"],
                 'NumFolio'         => $folio,
             ];
             Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
