@@ -112,6 +112,8 @@ use App\Http\Controllers\IncidenciasController;
     Route::post('solicitud_solicitante',        [SeerController::class, 'solicitud_parte2'])->name('parte2');
     Route::get('vista_solicitante/{id}' ,       [SeerController::class, 'vista_solicitante'])->name('solicitante');
     Route::post('/delegacion/{municipioId}',    [SeerController::class, 'DelegacionPorMunicipio']); //Muestra la delegación que le corresponde según el municipio seleccionado
+    Route::get('/munSolicitante/{id}',  [SeerController::class, 'obtenerMunicipio']);
+    Route::get('/munCitado/{id}',       [SeerController::class, 'obtenerMunicipio']);
     //Ruta de agregar citados
     Route::get('/agrega_citado/{id}',           [SeerController::class, 'vista_citado'])->name('agregar_citado');
     Route::post('/agrega_citado',               [SeerController::class, 'guardar_citado'])->name('seer.citados');

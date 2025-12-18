@@ -38,6 +38,7 @@ use App\Models\SeerCasosExcepcion;
 
 //Para sacar el Id del usuario
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str; //Se utiliza en la imágenes que se suben en los citados
@@ -1134,7 +1135,14 @@ class SeerController extends Controller
     }
 
     public function obtenerMunicipio($id){
-        return Municipios::where('estado', $id)->get();
+        try {
+            $municipios = Municipios::where('estado', $id)->get(['id','nombre']);
+            //Log::info('obtenerMunicipio called', ['estado_id' => $id, 'count' => count($municipios)]);
+            return response()->json($municipios);
+        } catch (\Exception $e) {
+            //Log::error('obtenerMunicipio error', ['estado_id' => $id, 'error' => $e->getMessage()]);
+            return response()->json([], 500);
+        }
     }
 
     public function auxiliar_persona(Request $request){

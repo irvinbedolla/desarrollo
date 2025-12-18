@@ -122,7 +122,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
                                                     <label for="name">Tipo de persona <span style="color:red;">(*)</span></label>
-                                                    <select name="tipo" id="tipo" class="form-control">
+                                                    <select name="tipo" id="tipo" class="form-control" required>
                                                         <option value="">Seleccione</option>
                                                         <option value="Fisica">Física</option>
                                                         <option value="Moral">Moral</option>
@@ -194,9 +194,9 @@
                                                         <div class="form-group">
                                                             <label for="name">Segundo apellido</label>
                                                             <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
-                                                            <div class="invalid-feedback">
+                                                            <!--div class="invalid-feedback">
                                                                 El segundo apellido es obligatorio.
-                                                            </div>
+                                                            </!--div-->
                                                         </div>
                                                     </div>
                                                 </div>
@@ -524,6 +524,60 @@
             })()
         });
     </script>
+    <script>
+        // Carga dinámica de municipios según el estado seleccionado (citados)
+        document.addEventListener('DOMContentLoaded', function () {
+            function cargarMunicipiosCitado(estadoId) {
+                var $municipio = $('#municipio_citado');
+                if (!$municipio.length) return;
+                $municipio.html('<option value="">Cargando...</option>');
+                if (!estadoId) {
+                    $municipio.html('<option value="">Seleccione</option>');
+                    return;
+                }
+                // Intentar la ruta API primero (con base_url), si falla intentar la ruta web
+                $.get(base_url + '/api/munCitado/' + estadoId, function (data) {
+                    var html = '<option value="">Seleccione</option>';
+                    data.forEach(function (m) {
+                        html += '<option value="' + m.id + '">' + m.nombre + '</option>';
+                    });
+                    $municipio.html(html);
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    // Intentar ruta sin prefijo /api
+                    $.get(base_url + '/munCitado/' + estadoId, function (data) {
+                        var html = '<option value="">Seleccione</option>';
+                        data.forEach(function (m) {
+                            html += '<option value="' + m.id + '">' + m.nombre + '</option>';
+                        });
+                        $municipio.html(html);
+                    }).fail(function (jq2, t2, e2) {
+                        $municipio.html('<option value="">Error cargando municipios</option>');
+                        if (typeof iziToast !== 'undefined') {
+                            iziToast.error({
+                                title: 'Error',
+                                message: 'No se pudieron cargar los municipios. HTTP: ' + (jqXHR.status || jq2.status || 'N/A') + ' - ' + (errorThrown || e2 || textStatus),
+                                position: 'topRight'
+                            });
+                        } else {
+                            alert('No se pudieron cargar los municipios.');
+                        }
+                    });
+                });
+            }
+
+            var base_url = "{{ url('') }}";
+
+            var $estadoCitado = $('#estado_citado');
+            if ($estadoCitado.length) {
+                $estadoCitado.on('change', function () {
+                    cargarMunicipiosCitado(this.value);
+                });
+                // Si ya viene seleccionado (edición/old), cargar municipios al inicio
+                var inicial = $estadoCitado.val();
+                if (inicial) cargarMunicipiosCitado(inicial);
+            }
+        });
+    </script>
 </body>
     <div id="crear_poder" style ="display: none;">
         <div>.</div>
@@ -587,11 +641,32 @@
                 razonDiv.style.display = 'none';
                 curpDiv.style.display = 'none';
 
+                // Reset required state
+                const inputNombre = document.querySelector('input[name="nombre"]');
+                const inputPrimer = document.querySelector('input[name="primer_apellido"]');
+                const inputSegundo = document.querySelector('input[name="segundo_apellido"]');
+                const inputRazon = document.querySelector('input[name="razon"]');
+
+                if (inputNombre) inputNombre.required = false;
+                if (inputPrimer) inputPrimer.required = false;
+                if (inputSegundo) inputSegundo.required = false;
+                if (inputRazon) inputRazon.required = false;
+
                 if (valor === 'Fisica') {
+                    // Persona física: pedir nombre y primer apellido (segundo opcional), mostrar CURP
                     nombreDiv.style.display = 'block';
                     curpDiv.style.display = 'block';
+                    if (inputNombre) inputNombre.required = true;
+                    if (inputPrimer) inputPrimer.required = true;
+                    if (inputSegundo) inputSegundo.required = false;
+                    if (inputRazon) inputRazon.required = false;
                 } else if (valor === 'Moral') {
+                    // Persona moral: pedir razón social, ocultar campos de nombre
                     razonDiv.style.display = 'block';
+                    if (inputRazon) inputRazon.required = true;
+                    if (inputNombre) inputNombre.required = false;
+                    if (inputPrimer) inputPrimer.required = false;
+                    if (inputSegundo) inputSegundo.required = false;
                 }
             }
 
