@@ -5559,10 +5559,33 @@ class SeerController extends Controller
         $motivos        = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
         ->where('id_solicitud',$id)
         ->select('catalogo_motivos.motivo','seer_motivos.id')->get();
+
         $historial_audiencias = Audiencias::where('id_solicitud', $id)
         ->orderBy('fecha', 'desc')
         ->get();
-        return view('audiencias.revisar_audiencia', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores', 'isAudiencia','notificaciones','historial_audiencias'));
+
+        $idsAbogados = SeerCitados::where('id_solicitud', $id)
+        ->whereNotNull('id_abogado')
+        ->pluck('id_abogado');
+
+        $datosIncompletos = SeerSolicitante::where('id_solicitud', $id)
+        ->where(fn($q) =>
+            $q->whereNull('identificacion')
+            ->orWhereNull('num_identificacion')
+            ->orWhere('identificacion', '')
+            ->orWhere('num_identificacion', '')
+        )
+        ->exists();
+        $datosIncompletos = $datosIncompletos || Poder::whereIn('idAbogado', $idsAbogados)
+        ->where(fn($q) =>
+            $q->whereNull('tipo_identificacion')
+            ->orWhereNull('num_identificacion')
+            ->orWhere('tipo_identificacion', '')
+            ->orWhere('num_identificacion', '')
+        )
+        ->exists();
+
+        return view('audiencias.revisar_audiencia', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores', 'isAudiencia','notificaciones','historial_audiencias','datosIncompletos'));
     }
 
 

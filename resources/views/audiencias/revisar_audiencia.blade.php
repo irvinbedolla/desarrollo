@@ -1171,7 +1171,34 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                           <div class="row mt-4">
+                                            <div class="row mt-4">
+                                                <div class="col-md-6">
+                                                    <h4 class="text-center"><strong>Actas de Audiencia</strong></h4>
+                                                    <hr>
+                                                    @forelse($historial_audiencias as $audiencia)
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <div>
+                                                                <strong>Folio: {{ $audiencia->folio_audiencia }}</strong>
+                                                            </div>
+
+                                                            <div>
+                                                                <strong>
+                                                                    Estatus:
+                                                                    {{ $audiencia->estatus_conciliacion ?? 'Pendiente' }}
+                                                                </strong>
+                                                            </div>
+
+                                                            @if(!empty($audiencia->estatus_conciliacion) && !($audiencia->estatus_conciliacion === 'Pendiente' && $datosIncompletos ))
+                                                                <a class="btn btn-info" href="{{ route('VerPDFAudiencia', $audiencia->id_solicitud) }}" target="_blank"> Visualizar </a>
+                                                            @endif
+                                                        </div>
+                                                    @empty
+                                                        <p>No hay audiencias registradas para esta solicitud.</p>
+                                                    @endforelse
+                                                </div>
+                                            </div>
+
+                                            {{--<div class="row mt-4">
                                                 <div class="col-md-6">
                                                     <h4 class="text-center"><strong>Actas de Audiencia</strong></h4>
                                                     <hr>
@@ -1180,16 +1207,26 @@
                                                             <div>
                                                                 <strong>Folio: {{ $audiencia->folio_audiencia }}</strong>
                                                             </div>
-
-                                                            <a class="btn btn-info"
+                                                            <div>
+                                                                <strong>Estatus: {{ $audiencia->estatus_conciliacion }}  @if($audiencia->estatus_conciliacion === 'Pendiente')<span>Pendiente</span></strong>
+                                                            </div>
+                                                        {{--<a class="btn btn-info"
                                                             href="{{ route('VerPDFAudiencia', $audiencia->id_solicitud) }}"
-                                                            target="_blank">Visualizar</a>
+                                                            target="_blank">Visualizar</a>--}}
+                                                           {{-- @if(!($audiencia->estatus_conciliacion === 'Pendiente' && $datosIncompletos))
+                                                                <a class="btn btn-info"
+                                                                href="{{ route('VerPDFAudiencia', $audiencia->id_solicitud) }}"
+                                                                target="_blank">
+                                                                    Visualizar
+                                                                </a>
+                                                            @endif
                                                         </div>
                                                     @empty
                                                         <p>No hay audiencias registradas para esta solicitud.</p>
                                                     @endforelse
                                                 </div>
-                                            </div>
+                                            </div>--}}
+                                            
                                            {{-- @foreach($citados as $citado)
                                                 <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">

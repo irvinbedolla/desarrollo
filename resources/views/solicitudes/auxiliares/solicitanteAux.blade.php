@@ -215,7 +215,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Correo Electrónico <span style="color:red;">(*)</span></label>
-                                                    <input type="mail" name="correo" class="form-control correoElectronico" required> 
+                                                    <input type="email" name="correo" class="form-control correoElectronico" required> 
                                                     <div class="invalid-feedback">
                                                         El campo correo electrónico es obligatorio.
                                                     </div>
@@ -319,7 +319,7 @@
                                             <div id="div1"  class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Código Postal <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="cp" id="cp" class="form-control soloNumeros" maxlength="5" required>
+                                                    <input type="number" name="cp" id="cp" class="form-control soloNumeros" maxlength="5" required>
                                                     <!--<input type="number" name="cp" class="form-control soloNumeros" minlength="5" maxlength="5" required>--> 
                                                     <div class="invalid-feedback">
                                                         El campo código postal es obligatorio. Debe tener 5 dígitos
@@ -924,61 +924,72 @@
 
             //NUEVAS VALIDACIONES
             const form = document.querySelector('form.needs-validation');
+                form.addEventListener('submit', function (e) {
+                    let valid = true; 
 
-            form.addEventListener('submit', function (e) {
+                    const tel1 = form.querySelector('input[name="telefono1"]');
+                    if (tel1) {
+                        const celular = tel1.value.replace(/\D/g, '');
+                        if (celular.length !== 10) {
+                            swal("Error", "El teléfono celular debe tener exactamente 10 dígitos.", "error");
+                            tel1.focus();
+                            tel1.classList.add('is-invalid');
+                            valid = false;
+                        } else {
+                            tel1.classList.remove('is-invalid');
+                        }
+                    }
 
-                let tel1 = form.querySelector('input[name="telefono1"]');
-                let tel2 = form.querySelector('input[name="telefono2"]');
-                let cp   = form.querySelector('input[name="cp"]');
+                    const tel2 = form.querySelector('input[name="telefono2"]');
+                    if (tel2 && tel2.value) {
+                        const fijo = tel2.value.replace(/\D/g, '');
+                        if (fijo.length !== 10) {
+                            swal("Error", "El teléfono fijo debe tener exactamente 10 dígitos.", "error");
+                            tel2.focus();
+                            tel2.classList.add('is-invalid');
+                            valid = false;
+                        } else {
+                            tel2.classList.remove('is-invalid');
+                        }
+                    }
 
-                if (tel1) {
-                    const celular = tel1.value.replace(/\D/g, '');
+                    const cp = form.querySelector('input[name="cp"]');
+                    if (cp) {
+                        const codigoPostal = cp.value.replace(/\D/g, '');
+                        if (codigoPostal.length !== 5) {
+                            swal("Error", "El código postal debe tener exactamente 5 dígitos.", "error");
+                            cp.focus();
+                            cp.classList.add('is-invalid');
+                            valid = false;
+                        } else {
+                            cp.classList.remove('is-invalid');
+                        }
+                    }
 
-                    if (celular.length !== 10) {
+                    const correo = form.querySelector('input[name="correo"]');
+                    if (correo) {
+                        const correoVal = correo.value.trim();
+                        const correoRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                        if (!correoVal || !correoRegex.test(correoVal)) {
+                            swal("Error", "Debe ingresar un correo válido.", "error");
+                            correo.focus();
+                            correo.classList.add('is-invalid');
+                            valid = false;
+                        } else {
+                            correo.classList.remove('is-invalid');
+                        }
+                    }
+
+                    if (!valid) {
                         e.preventDefault();
                         e.stopPropagation();
-
-                        swal("Error", "El teléfono celular debe tener exactamente 10 dígitos.", "error");
-                        tel1.focus();
-                        tel1.classList.add('is-invalid');
-                        return;
                     } else {
-                        tel1.classList.remove('is-invalid');
+                        form.classList.add('was-validated');
                     }
-                }
-
-                if (tel2 && tel2.value !== '') {
-                    const fijo = tel2.value.replace(/\D/g, '');
-
-                    if (fijo.length !== 10) {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        swal("Error", "El teléfono fijo debe tener exactamente 10 dígitos.", "error");
-                        tel2.focus();
-                        tel2.classList.add('is-invalid');
-                        return;
-                    } else {
-                        tel2.classList.remove('is-invalid');
-                    }
-                }
-
-                // Código Postal (obligatorio)
-                if (cp) {
-                    const codigoPostal = cp.value.replace(/\D/g, '');
-                    if (codigoPostal.length !== 5) {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        swal("Error", "El código postal debe tener exactamente 5 dígitos.", "error");
-                        cp.focus();
-                        cp.classList.add('is-invalid');
-                        return;
-                    } else {
-                        cp.classList.remove('is-invalid');
-                    }
-                }
+                });
             });
+
             //FIN NUEVAS VALIDACIONES
             
             /*const form = document.querySelector('form.needs-validation');
@@ -1023,5 +1034,4 @@
                     e.preventDefault();
                 }*/
             //});
-        });
     </script>
