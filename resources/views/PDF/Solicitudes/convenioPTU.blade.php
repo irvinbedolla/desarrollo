@@ -70,7 +70,7 @@
                 ESTADO, POR LA CLÍNICA DEL IMSS NO.76.';
         }
         if($solicitud->delegacion === 'Zamora') {
-            $direccion_sede='JUSTO SIERRA PONIENTE NO. 290, COL. JARDINES DE CATEDRAL, C.P.59600 ZAMORA, MICHOACÁN DE OCAMPO.';
+            $direccion_sede='JUSTO SIERRA ORIENTE NO. 290, COL. JARDINES DE CATEDRAL, C.P.59670 ZAMORA, MICHOACÁN DE OCAMPO.';
         }  
         if($solicitud->delegacion === 'Zitácuaro') {
             $direccion_sede='CUAUHTEMOC ORIENTE NO. 15, COL. CUAUHTEMOC, C.P. 61506ZITÁCUARO, MICHOACÁN DE OCAMPO.';
