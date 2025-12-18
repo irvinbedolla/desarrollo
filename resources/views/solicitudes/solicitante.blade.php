@@ -767,13 +767,10 @@
         document.getElementById("tipoPersona_razon").style.display="none";
         
         function cambiaExcepcion(elemento){
-            var valor = elemento.value;
-            if(valor == "Si"){
-                document.getElementById("tipoPersona_razon").style.display="flex";
-            }
-            else{
-                document.getElementById("tipoPersona_razon").style.display="none";
-            }
+            // Intencionalmente no mostramos los campos adicionales cuando se selecciona 'Si'
+            // El flujo requiere solo seleccionar Si o No; los campos extras permanecen ocultos.
+            var el = document.getElementById("tipoPersona_razon");
+            if(el) el.style.display = "none";
         }
 
         // Casos de excepción "Oculta el campo que resultado obtuvo al solicitar apoyo, cuando se elige la opción no"
@@ -1091,13 +1088,8 @@
                 const excepcion = form.querySelector('select[name="excepcion"]');
                 checkAndMark(excepcion, requiredFilled);
 
-                const necesitaExcepcion = excepcion && excepcion.value === 'Si';
-                if (necesitaExcepcion) {
-                    ['frecuencia_hechos','cambios_situacionL','comunico_hechos','descripcion_conducta','responsable_cargo','actos_cometidos','momento_hechos','lugar_hechos','constancia_hechos','solicito_apoyo','continuacion_solicto_apoyo','recibio_atencion'].forEach(name => {
-                        const input = form.querySelector(`[name="${name}"]`);
-                        checkAndMark(input, requiredFilled);
-                    });
-                }
+                // Nota: no validamos ni mostramos campos adicionales de excepción.
+                // El requisito actual es únicamente seleccionar Si o No en el campo 'excepcion'.
 
                 const solicitoApoyo = form.querySelector('select[name="solicito_apoyo"]');
                 const requiereApoyo = solicitoApoyo && solicitoApoyo.value === 'Si';

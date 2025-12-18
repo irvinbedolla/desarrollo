@@ -308,7 +308,6 @@
                             <td style="width:50%; vertical-align:top; padding:0 20px;">
                             <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
                             <b>
-                                {{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido }}<br>
                                 LA PARTE EMPLEADORA
                             </b>
                             </td>

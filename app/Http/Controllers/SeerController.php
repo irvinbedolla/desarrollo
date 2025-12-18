@@ -5121,10 +5121,24 @@ class SeerController extends Controller
         $mensualTexto = $this->convertirNumerosALetras($salario_mensual);
         $montoTexto = $this->convertirNumerosALetras($solicitante->monto);
 
+        $idsSession = session()->get('convenio_citados_' . $id);
+
+        if ($idsSession !== null) {
+        // Si existen en sesión, filtramos por esos IDs específicos
+        $citados = SeerCitados::whereIn('id', $idsSession)
+                    ->where('id_solicitud', $id)
+                    ->get();
+        } else {
+            // Si no hay sesión (ej. el usuario recargó o entró directo), usamos la lógica de BD
+            $citados = SeerCitados::where('id_solicitud', $id)
+                        ->where('aparece_convenio', 1)
+                        ->get();
+        }
+
         //$citados = SeerCitados::where('id_solicitud', $id)->get();
-        $citados = SeerCitados::where('id_solicitud', $id)
+        /*$citados = SeerCitados::where('id_solicitud', $id)
         ->where('aparece_convenio', 1)
-        ->get();
+        ->get();*/
 
         $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
         $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
@@ -6819,6 +6833,18 @@ class SeerController extends Controller
             'success' => true,
             'delegacion_id' => $municipio->delegacion_id,
         ]);
+    }
+
+    public function guardarSeleccionConvenioSession(Request $request)
+    {
+        $idSolicitud = $request->input('id_solicitud');
+        // Esto será un array con los IDs de los citados seleccionados (ej: [5, 8, 12])
+        $idsSeleccionados = $request->input('ids_seleccionados', []); 
+
+        // Guardamos en sesión con una llave única para esta solicitud
+        session()->put('convenio_citados_' . $idSolicitud, $idsSeleccionados);
+
+        return response()->json(['status' => 'success']);
     }
 
     public function vista_previa($id){
