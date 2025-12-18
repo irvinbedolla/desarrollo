@@ -9333,12 +9333,12 @@ class SeerController extends Controller
         */
         //validando información
         
-        $request->validate([
+        /*$request->validate([
             'ramaIndustrial'      => 'required',
             'actividad_economica' => 'required',
             'motivo_solicitud'    => 'required',
 
-        ]);
+        ]);*/
         
         $data_insert=array(
             'id_rama'         =>  $data["ramaIndustrial"],
@@ -9376,9 +9376,9 @@ class SeerController extends Controller
         $id = $data['id'];
 
         //validando información
-       $request->validate([
+       /*$request->validate([
             /*'tipo'                      => 'required|in:Fisica,Moral',*/
-            'curp'                      => 'required|min:18|max:18',
+           /* 'curp'                      => 'required|min:18|max:18',
             'nombre'                    => 'required',
             'fecha_nacimiento'          => 'required|date',
             'edad'                      => 'required|numeric',
@@ -9397,7 +9397,7 @@ class SeerController extends Controller
             /*'referencias'               => 'required|string|max:300',
             'calle1'                    => 'required',
             'calle2'                    => 'required',*/
-            'puesto'                    => 'required', 
+           /* 'puesto'                    => 'required', 
             'periodo_pago'              => 'required',
             'pago'                      => 'required',
             'horas'                     => 'required',
@@ -9422,7 +9422,7 @@ class SeerController extends Controller
             'continuacion_solicto_apoyo' => 'required_if:excepcion,Si',
             'incidencia_directa' => 'required_if:solicito_apoyo,Si',
             'recibio_atencion' => 'required_if:excepcion,Si',
-        ]);
+        ]);*/
         
         $data_insert=array(
             'id_solicitud'         => $data["id"],
@@ -9531,7 +9531,7 @@ class SeerController extends Controller
             'caso_excepcion' => $data["excepcion"]
         ]);
         
-        if ($data["excepcion"] === "Si") {
+       /* if ($data["excepcion"] === "Si") {
             SeerCasosExcepcion::create([
                 'id_solicitud' => $id,
                 'frecuencia_hechos' => $data["frecuencia_hechos"] ?? null,
@@ -9548,7 +9548,7 @@ class SeerController extends Controller
                 'incidencia_directa' => $data["incidencia_directa"] ?? null,
                 'recibio_atencion' => $data["recibio_atencion"] ?? null,
             ]);
-        }
+        }*/
 
         /*$id_general  = SeerPerGeneral::latest('id')->first();
         $id=$id_general["id"];
@@ -9592,7 +9592,7 @@ class SeerController extends Controller
         $foto1 = $imagen_domicilio1;
         $foto2 = $imagen_domicilio2;
         //validando información
-        $request->validate([
+        /*$request->validate([
             'id'                => 'required',
             'colonia'           => 'required',
             'vialidad'          => 'required',
@@ -9603,7 +9603,7 @@ class SeerController extends Controller
             'municipio_citado'  => 'required',
             'estado_citado'     => 'required',
             'vialidad'          => 'required'
-        ]);
+        ]);*/
         
         $data_insert=array(
             'id_solicitud'      => $data["id"],

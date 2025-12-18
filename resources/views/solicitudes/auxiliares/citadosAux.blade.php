@@ -87,7 +87,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-2">
                                             <div class="form-group">
                                                 <label for="name">Tipo de persona <span style="color:red;">(*)</span></label>
-                                                <select name="tipo" id="tipo" class="form-control">
+                                                <select name="tipo" id="tipo" class="form-control" required>
                                                     <option value="">Seleccione</option>
                                                     <option value="Fisica">Física</option>
                                                     <option value="Moral">Moral</option>
@@ -109,7 +109,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-3" id="tipoPersona_razon" style="display:none;">
                                             <div class="form-group">
                                                 <label for="name">Razón social <span style="color:red;">(*)</span></label>
-                                                <input type="text" name="razon" id="razon" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                <input type="text" name="razon" id="razon" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                 <div class="invalid-feedback">
                                                     La razón social es obligatorio.
                                                 </div>
@@ -119,6 +119,9 @@
                                             <div class="form-group">
                                                 <label for="name">RFC (Opcional)</label>
                                                 <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()">   
+                                                <!--<div class="invalid-feedback">
+                                                    Debes ingresar 13 caracteres.
+                                                </div>-->
                                             </div>
                                         </div>
 
@@ -138,7 +141,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Nombre(s) <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="nombre" id="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" name="nombre" id="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                         <div class="invalid-feedback">
                                                             El nombre es obligatorio.
                                                         </div>
@@ -148,7 +151,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                         <div class="invalid-feedback">
                                                             El primer apellido es obligatorio.
                                                         </div>
@@ -159,9 +162,9 @@
                                                     <div class="form-group">
                                                         <label for="name">Segundo apellido</label>
                                                         <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
-                                                        <div class="invalid-feedback">
+                                                        <!--<div class="invalid-feedback">
                                                             El segundo apellido es obligatorio.
-                                                        </div>
+                                                        </div>-->
                                                     </div>
                                                 </div>
                                             </div>
@@ -226,7 +229,7 @@
                                             <label for="name">Nombre de la vialidad <span style="color:red;">(*)</span></label>
                                             <input type="text" name="calle" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                             <div class="invalid-feedback">
-                                                El campo calle es obligatorio.
+                                                El campo nombre de la vialidad es obligatorio.
                                             </div>
                                         </div>
                                     </div>
@@ -244,9 +247,9 @@
                                     <div class="col-xs-12 col-sm-12 col-md-1">
                                         <div class="form-group">
                                             <label for="name">Código postal <span style="color:red;">(*)</span></label>
-                                            <input type="text" name="cp" class="form-control soloNumeros" minlength="5" maxlength="5" required> 
+                                            <input type="text" name="cp" id="cp" class="form-control" maxlength="5">
                                             <div class="invalid-feedback">
-                                                El campo Código Postal es obligatorio.
+                                                El campo Código Postal es obligatorio. Debes ingresar 5 caracteres.
                                             </div>
                                         </div>
                                     </div>
@@ -255,9 +258,9 @@
                                         <div class="form-group">
                                             <label for="name">Entre calle (Opcional)</label>
                                             <input type="text" name="calle1" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
-                                            <div class="invalid-feedback">
+                                            <!--<div class="invalid-feedback">
                                                 El campo entre calle es obligatorio.
-                                            </div>
+                                            </div>-->
                                         </div>
                                     </div>
 
@@ -265,9 +268,9 @@
                                         <div class="form-group">
                                             <label for="name">y calle (Opcional)</label>
                                             <input type="text" name="calle2" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
-                                            <div class="invalid-feedback">
+                                            <!--<div class="invalid-feedback">
                                                 El campo y calle es obligatorio.
-                                            </div>
+                                            </div>-->
                                         </div>
                                     </div>
 
@@ -320,7 +323,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <label for="floatingTextarea">Referencias del domicilio <span style="color:red;">(*)</span></label>
-                                            <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencia" style="height: 100px;" oninput="this.value = this.value.toUpperCase()" required></textarea>
+                                            <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencia" style="height: 100px;" required></textarea>
                                             <div class="invalid-feedback">
                                                 El campo referencias es obligatorio.
                                             </div>
@@ -405,6 +408,15 @@
                     })
             })()
         });
+
+        //Validacion de documentos
+        document.querySelector('input[name="foto1"]').addEventListener('change', function () {
+            const file = this.files[0];
+            if (file && !file.type.startsWith('image/')) {
+                alert('Solo se permiten imágenes');
+                this.value = '';
+            }
+        });
     </script>
     <div id="crear_poder" style ="display: none;">
         <div>.</div>
@@ -412,7 +424,7 @@
     </div>
 
 @section('scripts')
-    <script src="../public/assets/js/poderes/general.js"></script>
+    <!--<script src="../public/assets/js/poderes/general.js"></script>-->
 
 
     <script src="../public/assets/js/jquery.min.js"></script>
@@ -453,65 +465,74 @@
                 document.getElementById("div_datos_citado").style.display = "none";
             }
         }*/
+    document.addEventListener('DOMContentLoaded', function () {
+    const selectTipo = document.getElementById('tipo');
+    const nombreDiv = document.getElementById('tipoPersona_nombre');
+    const razonDiv = document.getElementById('tipoPersona_razon');
+    const curpDiv = document.getElementById('campo_curp');
+    const form = document.querySelector('form.needs-validation');
 
-        document.addEventListener('DOMContentLoaded', function () {
-            const selectTipo = document.getElementById('tipo');
-            const nombreDiv = document.getElementById('tipoPersona_nombre');
-            const razonDiv = document.getElementById('tipoPersona_razon');
-            const curpDiv = document.getElementById('campo_curp');
+    function actualizarTipoPersona() {
+        if (!selectTipo) return;
+        const valor = selectTipo.value;
 
-            function actualizarTipoPersona() {
-                const valor = selectTipo.value;
+        if (nombreDiv) nombreDiv.style.display = (valor === 'Fisica') ? 'block' : 'none';
+        if (curpDiv) curpDiv.style.display = (valor === 'Fisica') ? 'block' : 'none';
+        if (razonDiv) razonDiv.style.display = (valor === 'Moral') ? 'block' : 'none';
+    }
 
-                // Oculta ambos inicialmente
-                nombreDiv.style.display = 'none';
-                razonDiv.style.display = 'none';
-                curpDiv.style.display = 'none';
+    if (selectTipo) {
+        selectTipo.addEventListener('change', actualizarTipoPersona);
+        actualizarTipoPersona(); 
+    }
 
-                if (valor === 'Fisica') {
-                    nombreDiv.style.display = 'block';
-                    curpDiv.style.display = 'block';
-                } else if (valor === 'Moral') {
-                    razonDiv.style.display = 'block';
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            let esValido = true;
+            const tipo = selectTipo ? selectTipo.value : '';
+
+            const inputNombre = document.getElementById('nombre');
+            const inputApellido = document.querySelector('input[name="primer_apellido"]');
+            const inputRazon = document.getElementById('razon');
+            const inputCP = document.getElementById('cp');
+
+            [inputNombre, inputApellido, inputRazon, inputCP].forEach(el => el?.classList.remove('is-invalid'));
+
+            if (inputCP) {
+                if (inputCP.value.length !== 5) {
+                    console.log("Fallo en CP");
+                    inputCP.classList.add('is-invalid');
+                    swal("Error", "El Código Postal debe tener 5 dígitos", "error");
+                    esValido = false;
                 }
             }
 
-            if (selectTipo) {
-                selectTipo.addEventListener('change', actualizarTipoPersona);
-                // Ejecutar al cargar por si ya tiene valor
-                actualizarTipoPersona();
+            if (tipo === 'Fisica') {
+                if (!inputNombre?.value.trim() || !inputApellido?.value.trim()) {
+                    console.log("Fallo en campos de Persona Física");
+                    if (!inputNombre?.value.trim()) inputNombre?.classList.add('is-invalid');
+                    if (!inputApellido?.value.trim()) inputApellido?.classList.add('is-invalid');
+                    swal("Error", "Nombre y Apellido son obligatorios", "warning");
+                    esValido = false;
+                }
+            } else if (tipo === 'Moral') {
+                if (!inputRazon?.value.trim()) {
+                    console.log("Fallo en Razón Social");
+                    inputRazon?.classList.add('is-invalid');
+                    swal("Error", "La Razón Social es obligatoria", "warning");
+                    esValido = false;
+                }
             }
 
-            const form = document.querySelector('form.needs-validation');
-            form.addEventListener('submit', function(e) {
-
-                const checkLanguage = document.getElementById('check_lenguaje');
-                if (checkLanguage.checked) {
-                    const languageRequired = document.getElementById('lenguajeRequerido');
-                    languageRequired.required = true;
-                }
-                else {
-                    const languageRequired = document.getElementById('lenguajeRequerido');
-                    languageRequired.required = false;
-                }
-            });
-        });
-        
-        function sedes(){
-            document.getElementById("fecha").removeAttribute("disabled");
-        }
-        function diaSemana() {
-            var dia_semana  = document.getElementById("fecha").value;
-            var sede        = document.getElementById("sede").value;
-
-            $.get('api/obtenerHorario/'+dia_semana+'/'+sede, function (data){
-                var html_select = '<option value="">--Seleccione un horario --</option>';  
-                for(var i=0; i<data.length; ++i)
-                    html_select += '<option value= "'+data[i].hora+'">'+data[i].hora+'</option>';
-                    $('#horarios').html(html_select);
-
-            });
-        }
+            if (!esValido) {
+                e.preventDefault();
+                e.stopPropagation();
+            } else {
+            
+                if (typeof loading === 'function') loading();
+            }
+        }, false);    }
+    });
     </script>
 @endsection
 @endsection

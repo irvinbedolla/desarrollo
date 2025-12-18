@@ -105,6 +105,9 @@
                                             </thead>
                                             <tbody></tbody>
                                         </table>
+                                        <div id="errorMotivo" class="text-danger mt-2" style="display:none;">
+                                            Debes agregar al menos un objeto de la solicitud.
+                                        </div>
                                     </div>
                                     <div id="div1"  class="col-xs-12 col-sm-12 col-md-5">
                                         <p>Rama Industrial del Negocio</p>
@@ -224,6 +227,42 @@
                             delegacionSelect.appendChild(option);
                         });
                     }
+                });
+            });
+        </script>
+        <!-- Nuevas validaciones para motivos-->
+        <script>
+            $(document).ready(function () {
+
+                // Cuando se selecciona un motivo
+                $('#motivo_solicitud').change(function () {
+                    document.getElementById('tabla').classList.remove('table-danger');
+                    document.getElementById('errorMotivo').style.display = 'none';
+                });
+
+                // Validación al enviar el formulario
+                document.querySelector('form.needs-validation').addEventListener('submit', function (e) {
+
+                    const motivos = document.querySelectorAll('input[name="motivo_solicitud[]"]');
+                    const tabla = document.getElementById('tabla');
+                    const errorDiv = document.getElementById('errorMotivo');
+
+                    if (motivos.length === 0) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        tabla.classList.add('table-danger'); // Marca la tabla
+                        errorDiv.style.display = 'block';
+
+                        tabla.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+
+                        return false;
+                    }
+                    tabla.classList.remove('table-danger');
+                    errorDiv.style.display = 'none';
                 });
             });
         </script>
