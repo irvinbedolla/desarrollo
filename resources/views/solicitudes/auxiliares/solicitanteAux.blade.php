@@ -96,7 +96,7 @@
                                                     <input type="text" name="curp" id="curp_input" oninput="validarInput(this)"class="form-control" required> 
                                                     <pre id="resultado"></pre>
                                                     <div class="invalid-feedback">
-                                                        El campo curp es obligatorio.
+                                                        El campo CURP es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
@@ -197,16 +197,16 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Teléfono Celular <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="telefono1" minlength="10" maxlength="10" class="form-control numeroTelefonico" required>
+                                                    <input type="number" name="telefono1" minlength="10" maxlength="10" class="form-control numeroTelefonico" required>
                                                     <div class="invalid-feedback">
-                                                        El campo teléfono es obligatorio.
+                                                        El campo teléfono es obligatorio. Debe tener 10 dígitos
                                                     </div>
                                                 </div>   
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Teléfono Fijo (Campo opcional)</label>
-                                                    <input type="text" name="telefono2" minlength="10" maxlength="10" class="form-control numeroTelefonico"> 
+                                                    <input type="number" name="telefono2" minlength="10" maxlength="10" class="form-control numeroTelefonico"> 
                                                 </div>
                                                  <div class="invalid-feedback">
                                                         El teléfono fijo debe tener 10 dígitos
@@ -319,9 +319,10 @@
                                             <div id="div1"  class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Código Postal <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="cp" class="form-control soloNumeros" minlength="5" maxlength="5" required> 
+                                                    <input type="text" name="cp" id="cp" class="form-control soloNumeros" maxlength="5" required>
+                                                    <!--<input type="number" name="cp" class="form-control soloNumeros" minlength="5" maxlength="5" required>--> 
                                                     <div class="invalid-feedback">
-                                                        El campo código postal es obligatorio.
+                                                        El campo código postal es obligatorio. Debe tener 5 dígitos
                                                     </div>
                                                 </div>
                                             </div>
@@ -358,8 +359,9 @@
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Número de Seguro Social (Opcional)</label>
-                                                    <input type="text" name="seguro" minlength="11" maxlength="12" class="form-control soloNumeros"> 
+                                                    <input type="number" name="seguro" minlength="11" maxlength="12" class="form-control soloNumeros"> 
                                                     <div class="invalid-feedback">
+                                                        Debe tener 12 dígitos su número de seguridad social
                                                     </div>
                                                 </div>
                                             </div>
@@ -416,7 +418,7 @@
                                                     <label for="name">Horario laboral <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="jornada" class="form-control" placeholder="Ejemplo: De lunes a viernes de 9AM a 5PM y Sábados de 9 AM a 2 PM" required>
                                                     <div class="invalid-feedback">
-                                                        El campo jornada laboral es obligatoria.
+                                                        El campo horario laboral es obligatoria.
                                                     </div>
                                                 </div>
                                             </div>
@@ -496,7 +498,7 @@
                                                     <label>Subir Identificación oficial <span style="color:red;">(*)</span></label>
                                                     <input type="file" name="documentoIdentificacion" class="form-control" accept=".pdf" required>
                                                     <div class="invalid-feedback">
-                                                        La Identificación es obligatoria.
+                                                        El documento con la identificación es obligatorio.
                                                     </div>
                                                 </div>
                                             </div>
@@ -527,7 +529,7 @@
                                                     <option value="No">No</option>
                                                 </select>
                                                 <div class="invalid-feedback">
-                                                    El campo es obligatorio.
+                                                    El campo posible caso de excepción es obligatorio.
                                                 </div>
                                             </div>
 
@@ -725,6 +727,35 @@
                             })
                     })()
                 });
+                //Validacion de documentos
+                document.querySelector('input[name="foto1"]').addEventListener('change', function () {
+                    const file = this.files[0];
+                    if (file && !file.type.startsWith('image/')) {
+                        alert('Solo se permiten imágenes');
+                        this.value = '';
+                    }
+                });
+                //Valida required, minlength, maxlength, Muestra .invalid-feedback, Evita el envío si hay errores
+                (() => {
+                    'use strict';
+
+                    const forms = document.querySelectorAll('.needs-validation');
+
+                    Array.from(forms).forEach(form => {
+                        form.addEventListener('submit', event => {
+
+                            // Validación manual adicional
+                            validarTipos();
+
+                            if (!form.checkValidity()) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }
+
+                            form.classList.add('was-validated');
+                        }, false);
+                    });
+                })();
             </script>
         @endsection
             <!-- Modal para la captura de la ine-->
@@ -891,7 +922,66 @@
             inicio.addEventListener("blur", validarFechas);
             termino.addEventListener("blur", validarFechas);
 
+            //NUEVAS VALIDACIONES
             const form = document.querySelector('form.needs-validation');
+
+            form.addEventListener('submit', function (e) {
+
+                let tel1 = form.querySelector('input[name="telefono1"]');
+                let tel2 = form.querySelector('input[name="telefono2"]');
+                let cp   = form.querySelector('input[name="cp"]');
+
+                if (tel1) {
+                    const celular = tel1.value.replace(/\D/g, '');
+
+                    if (celular.length !== 10) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        swal("Error", "El teléfono celular debe tener exactamente 10 dígitos.", "error");
+                        tel1.focus();
+                        tel1.classList.add('is-invalid');
+                        return;
+                    } else {
+                        tel1.classList.remove('is-invalid');
+                    }
+                }
+
+                if (tel2 && tel2.value !== '') {
+                    const fijo = tel2.value.replace(/\D/g, '');
+
+                    if (fijo.length !== 10) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        swal("Error", "El teléfono fijo debe tener exactamente 10 dígitos.", "error");
+                        tel2.focus();
+                        tel2.classList.add('is-invalid');
+                        return;
+                    } else {
+                        tel2.classList.remove('is-invalid');
+                    }
+                }
+
+                // Código Postal (obligatorio)
+                if (cp) {
+                    const codigoPostal = cp.value.replace(/\D/g, '');
+                    if (codigoPostal.length !== 5) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        swal("Error", "El código postal debe tener exactamente 5 dígitos.", "error");
+                        cp.focus();
+                        cp.classList.add('is-invalid');
+                        return;
+                    } else {
+                        cp.classList.remove('is-invalid');
+                    }
+                }
+            });
+            //FIN NUEVAS VALIDACIONES
+            
+            /*const form = document.querySelector('form.needs-validation');
             form.addEventListener('submit', function(e) {
                 let tel1 = form.querySelector('input[name="telefono1"]');
                 let tel2 = form.querySelector('input[name="telefono2"]');
@@ -908,7 +998,7 @@
                     tel2.focus();
                     valid = false;
                 }
-
+                
                 /*const checkLanguage = document.getElementById('check_lenguaje');
                 if (checkLanguage.checked) {
                     const languageRequired = document.getElementById('lenguajeRequerido');
@@ -929,9 +1019,9 @@
                     languageRequired.required = false;
                 }*/
                 
-                if (!valid) {
+                /*if (!valid) {
                     e.preventDefault();
-                }
-            });
+                }*/
+            //});
         });
     </script>
