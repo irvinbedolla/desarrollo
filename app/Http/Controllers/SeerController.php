@@ -4810,44 +4810,6 @@ class SeerController extends Controller
                             $fecha_hora = "15:15:00";
                         }
                     case ($fecha_hora == "15:15:00"):
-                        foreach($conciliadores as $token ){
-                            $revisar = Audiencias::where('delegacion',$delegacion)
-                            ->where('fecha',$fecha_revisar)
-                            ->where('hora' ,$fecha_hora)
-                            ->where('id_conciliador' ,$token["id"])
-                            ->select('id_conciliador')->first();
-                            
-                            $revisar_centro = DiasInhabiles::
-                            where('fecha_inicio', $fecha_revisar)
-                            ->where('centro',$user["delegacion"])
-                            ->whereNull('user_id')
-                            ->first();
-
-                            $revisar_disponible = DiasInhabiles::
-                            where('fecha_inicio', $fecha_revisar)
-                            ->where('horario_inicio',"<=",$fecha_hora)
-                            ->where('horario_final',">=",$fecha_hora)
-                            ->where('user_id',$token["id"])
-                            ->first();
-                            
-                            //Si no tiene audiencia lo voy agregar
-                            if(empty($revisar) && empty($revisar_disponible) && empty($revisar_centro)){
-                                array_push($listado_auxiliares, $token["id"]);
-                                $bandera = 1;
-                            }
-                        }
-                        if($bandera == 1){
-                            $random = array_rand($listado_auxiliares);
-                            $array_horarios[0] = $fecha_revisar;
-                            $array_horarios[1] = $fecha_hora;
-                            $array_horarios[2] = $fecha_audiencia;
-                            $array_horarios[3] = $listado_auxiliares[$random];
-                            return $array_horarios;
-                        }
-                        else{
-                            $fecha_hora = "18:00:00";
-                        }
-                    case ($fecha_hora == "18:00:00"):
                         $fecha_revisar = $fecha_tomorrow;
                         $fecha_hora = "09:00:00";
                 }
