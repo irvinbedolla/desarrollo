@@ -2408,7 +2408,7 @@ class SeerController extends Controller
             $variables = [
                 'Nombre'           => $nombre,
                 'Contraseña'       => "CCLMICHOACAN".$numero_aleatorio,
-                'email'            => $email,
+                'email'            => $solicitante["email"],
                 'NumFolio'         => $folio,
             ];
             Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));

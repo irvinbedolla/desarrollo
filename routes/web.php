@@ -57,6 +57,7 @@ use App\Http\Controllers\IncidenciasController;
     Route::post('/registro_tercer_encuentro/guardar',   [SeerController::class, 'tercer_encuentro_registro'])->name('tercer_encuentro_registro');
     Route::get('GeneraConstancia',                      [SeerController::class, 'genera_constancia']);
     Route::post('aviso',                                [SeerController::class, 'aviso'])->name('aviso');
+    Route::get('olvidaste_contraseña',                  [SeerController::class, 'olvidaste_contraseña'])->name('olvidaste_contraseña');
     
     //Rutas para el chat
         Route::post('/chat/crear',      [Controller::class, 'store_chat'])->name('RespuestasChat.store');
