@@ -560,7 +560,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label>Anexo (Documentos Complementarios)</label><br>
-                                                        <input type="file" name="documentoAnexo_pF" class="form-control" accept=".pdf">
+                                                        <input type="file" name="documentoAnexo_pF" id="documentoAnexo_pF" class="form-control" accept=".pdf">
                                                     </div>
                                                 </div>
                                                 
@@ -620,7 +620,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label>Anexo (Documentos Complementarios)</label><br>
-                                                        <input type="file" name="documentoAnexo_pFSR" class="form-control" accept=".pdf">
+                                                        <input type="file" name="documentoAnexo_pFSR" id="documentoAnexo_pFSR" class="form-control" accept=".pdf">
                                                     </div>
                                                 </div>
                                             </div>
@@ -988,7 +988,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label>Anexo (Documentos Complementarios)</label><br>
-                                                        <input type="file" name="documentoAnexo" class="form-control" accept=".pdf">
+                                                        <input type="file" name="documentoAnexo" id="documentoAnexo" class="form-control" accept=".pdf">
                                                     </div>
                                                 </div>
 
@@ -1286,6 +1286,189 @@
             }
         }
 
+    </script>
+    <script>
+        // Esperamos a que el DOM esté listo para evitar el error "Cannot read properties of null"
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputDocumento = document.querySelector('input[name="documentoIne_pFSR"]');
+            if (inputDocumento) {
+                inputDocumento.addEventListener('change', function(e) {
+                    // Accedemos al archivo cargado
+                    const archivo = e.target.files[0];
+
+                    if (archivo) {
+                        // Aquí puedes ejecutar tu validación de 10MB
+                        const limite = 10 * 1024 * 1024;
+                        if (archivo.size > limite) {
+                            alert("El archivo no puede pasar de 10 Megas");
+                            this.value = ""; // Limpiar el input
+                        }
+                    }
+                });
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputDocumento = document.querySelector('input[name="documentoAnexo_pFSR"]');
+            if (inputDocumento) {
+                inputDocumento.addEventListener('change', function(e) {
+                    // Accedemos al archivo cargado
+                    const archivo = e.target.files[0];
+
+                    if (archivo) {
+                        // Aquí puedes ejecutar tu validación de 10MB
+                        const limite = 10 * 1024 * 1024;
+                        if (archivo.size > limite) {
+                            alert("El archivo no puede pasar de 10 Megas");
+                            this.value = ""; // Limpiar el input
+                        }
+                    }
+                });
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputDocumento = document.querySelector('input[name="documentoRepresentacion_pF"]');
+            if (inputDocumento) {
+                inputDocumento.addEventListener('change', function(e) {
+                    // Accedemos al archivo cargado
+                    const archivo = e.target.files[0];
+
+                    if (archivo) {
+                        // Aquí puedes ejecutar tu validación de 10MB
+                        const limite = 10 * 1024 * 1024;
+                        if (archivo.size > limite) {
+                            alert("El archivo no puede pasar de 10 Megas");
+                            this.value = ""; // Limpiar el input
+                        }
+                    }
+                });
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputDocumento = document.querySelector('input[name="documentoIne_pF"]');
+            if (inputDocumento) {
+                inputDocumento.addEventListener('change', function(e) {
+                    // Accedemos al archivo cargado
+                    const archivo = e.target.files[0];
+
+                    if (archivo) {
+                        // Aquí puedes ejecutar tu validación de 10MB
+                        const limite = 10 * 1024 * 1024;
+                        if (archivo.size > limite) {
+                            alert("El archivo no puede pasar de 10 Megas");
+                            this.value = ""; // Limpiar el input
+                        }
+                    }
+                });
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputDocumento = document.querySelector('input[name="documentoPoder_pF"]');
+            if (inputDocumento) {
+                inputDocumento.addEventListener('change', function(e) {
+                    // Accedemos al archivo cargado
+                    const archivo = e.target.files[0];
+
+                    if (archivo) {
+                        // Aquí puedes ejecutar tu validación de 10MB
+                        const limite = 10 * 1024 * 1024;
+                        if (archivo.size > limite) {
+                            alert("El archivo no puede pasar de 10 Megas");
+                            this.value = ""; // Limpiar el input
+                        }
+                    }
+                });
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputDocumento = document.querySelector('input[name="documentoAnexo_pF"]');
+            if (inputDocumento) {
+                inputDocumento.addEventListener('change', function(e) {
+                    // Accedemos al archivo cargado
+                    const archivo = e.target.files[0];
+
+                    if (archivo) {
+                        // Aquí puedes ejecutar tu validación de 10MB
+                        const limite = 10 * 1024 * 1024;
+                        if (archivo.size > limite) {
+                            alert("El archivo no puede pasar de 10 Megas");
+                            this.value = ""; // Limpiar el input
+                        }
+                    }
+                });
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputDocumento = document.querySelector('input[name="documentoIne_Moral"]');
+            if (inputDocumento) {
+                inputDocumento.addEventListener('change', function(e) {
+                    // Accedemos al archivo cargado
+                    const archivo = e.target.files[0];
+
+                    if (archivo) {
+                        // Aquí puedes ejecutar tu validación de 10MB
+                        const limite = 10 * 1024 * 1024;
+                        if (archivo.size > limite) {
+                            alert("El archivo no puede pasar de 10 Megas");
+                            this.value = ""; // Limpiar el input
+                        }
+                    }
+                });
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputDocumento = document.querySelector('input[name="documentoRepresentacion_Moral"]');
+            if (inputDocumento) {
+                inputDocumento.addEventListener('change', function(e) {
+                    // Accedemos al archivo cargado
+                    const archivo = e.target.files[0];
+
+                    if (archivo) {
+                        // Aquí puedes ejecutar tu validación de 10MB
+                        const limite = 10 * 1024 * 1024;
+                        if (archivo.size > limite) {
+                            alert("El archivo no puede pasar de 10 Megas");
+                            this.value = ""; // Limpiar el input
+                        }
+                    }
+                });
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputDocumento = document.querySelector('input[name="documentoPoder"]');
+            if (inputDocumento) {
+                inputDocumento.addEventListener('change', function(e) {
+                    // Accedemos al archivo cargado
+                    const archivo = e.target.files[0];
+
+                    if (archivo) {
+                        // Aquí puedes ejecutar tu validación de 10MB
+                        const limite = 10 * 1024 * 1024;
+                        if (archivo.size > limite) {
+                            alert("El archivo no puede pasar de 10 Megas");
+                            this.value = ""; // Limpiar el input
+                        }
+                    }
+                });
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputDocumento = document.querySelector('input[name="documentoAnexo"]');
+            if (inputDocumento) {
+                inputDocumento.addEventListener('change', function(e) {
+                    // Accedemos al archivo cargado
+                    const archivo = e.target.files[0];
+
+                    if (archivo) {
+                        // Aquí puedes ejecutar tu validación de 10MB
+                        const limite = 10 * 1024 * 1024;
+                        if (archivo.size > limite) {
+                            alert("El archivo no puede pasar de 10 Megas");
+                            this.value = ""; // Limpiar el input
+                        }
+                    }
+                });
+            }
+        });
     </script>
 
 @section('scripts')

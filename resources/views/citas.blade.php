@@ -254,7 +254,7 @@
                                                 <div  class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Documento de la CURP (Opcional)</span></label>
-                                                        <input type="file" name="documentoCurp" class="form-control" accept=".pdf"> 
+                                                        <input type="file" id="documentoCurp" name="documentoCurp" class="form-control" accept=".pdf"> 
                                                         <div class="invalid-feedback">
                                                             El campo edad es obligatorio.
                                                         </div>
@@ -301,7 +301,7 @@
                                                 <div  class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Subir Identificación Oficial <span style="color:red;">(*)</span></label>
-                                                        <input type="file" name="documentoidentificacion" class="form-control" accept=".pdf" required> 
+                                                        <input type="file" id="documentoidentificacion" name="documentoidentificacion" class="form-control" accept=".pdf" required> 
                                                         <div class="invalid-feedback">
                                                             El campo es obligatorio.
                                                         </div>
@@ -610,7 +610,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Sube tu cuantificación (Opcional)</label>
-                                                        <input type="file" name="cuantificacion" class="form-control" accept=".pdf"> 
+                                                        <input type="file" id="cuantificacion" name="cuantificacion" class="form-control" accept=".pdf"> 
                                                         <div class="invalid-feedback">
                                                             El campo edad es obligatorio.
                                                         </div>
@@ -998,7 +998,63 @@
             }
         });
     </script>
+    <script>
+        // Esperamos a que el DOM esté listo para evitar el error "Cannot read properties of null"
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputDocumento = document.querySelector('input[name="cuantificacion"]');
+            if (inputDocumento) {
+                inputDocumento.addEventListener('change', function(e) {
+                    // Accedemos al archivo cargado
+                    const archivo = e.target.files[0];
 
+                    if (archivo) {
+                        // Aquí puedes ejecutar tu validación de 10MB
+                        const limite = 10 * 1024 * 1024;
+                        if (archivo.size > limite) {
+                            alert("El archivo no puede pasar de 10 Megas");
+                            this.value = ""; // Limpiar el input
+                        }
+                    }
+                });
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputDocumento = document.querySelector('input[name="documentoCurp"]');
+            if (inputDocumento) {
+                inputDocumento.addEventListener('change', function(e) {
+                    // Accedemos al archivo cargado
+                    const archivo = e.target.files[0];
+
+                    if (archivo) {
+                        // Aquí puedes ejecutar tu validación de 10MB
+                        const limite = 10 * 1024 * 1024;
+                        if (archivo.size > limite) {
+                            alert("El archivo no puede pasar de 10 Megas");
+                            this.value = ""; // Limpiar el input
+                        }
+                    }
+                });
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputDocumento = document.querySelector('input[name="documentoidentificacion"]');
+            if (inputDocumento) {
+                inputDocumento.addEventListener('change', function(e) {
+                    // Accedemos al archivo cargado
+                    const archivo = e.target.files[0];
+
+                    if (archivo) {
+                        // Aquí puedes ejecutar tu validación de 10MB
+                        const limite = 10 * 1024 * 1024;
+                        if (archivo.size > limite) {
+                            alert("El archivo no puede pasar de 10 Megas");
+                            this.value = ""; // Limpiar el input
+                        }
+                    }
+                });
+            }
+        });
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');

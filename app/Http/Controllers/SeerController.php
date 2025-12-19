@@ -2384,7 +2384,7 @@ class SeerController extends Controller
         $delegacion = SeerPerGeneral::find($id);
         $usuario = User::
         where('profile_photo_path',$solicitante['curp'])
-        //->where('email',$solicitante["email"])
+        ->orWhere('email',$solicitante["email"])
          ->first();
 
         if(!isset($usuario)){
@@ -9264,7 +9264,7 @@ class SeerController extends Controller
         $delegacion = SeerPerGeneral::find($id);
         $usuario = User::
         where('profile_photo_path',$solicitante['curp'])
-        //->where('email',$solicitante["email"])
+        ->orWhere('email',$solicitante["email"])
          ->first();
 
         if(!isset($usuario)){

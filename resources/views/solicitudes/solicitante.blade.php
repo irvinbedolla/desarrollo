@@ -143,7 +143,7 @@
                                             <div id="div1" class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
                                                     <label for="name">Edad<span style="color:red;">(*)</span></label>
-                                                    <input type="number" min="0" name="edad" class="form-control" id="años_edad" required> 
+                                                    <input type="number" min="0" name="edad" class="form-control" id="años_edad" readonly  required> 
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatoria.
                                                     </div>
@@ -528,7 +528,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label>Subir Identificación oficial <span style="color:red;">(*)</span></label>
-                                                    <input type="file" name="documentoIdentificacion" class="form-control" accept=".pdf" required>
+                                                    <input type="file" id="documentoIdentificacion" name="documentoIdentificacion" class="form-control" accept=".pdf" required>
                                                     <div class="invalid-feedback">
                                                         La Identificación es obligatoria.
                                                     </div>
@@ -1173,6 +1173,27 @@
                 });
                 var inicial = $estadoSolicitante.val();
                 if (inicial) cargarMunicipiosSolicitante(inicial);
+            }
+        });
+    </script>
+    <script>
+        // Esperamos a que el DOM esté listo para evitar el error "Cannot read properties of null"
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputDocumento = document.querySelector('input[name="documentoIdentificacion"]');
+            if (inputDocumento) {
+                inputDocumento.addEventListener('change', function(e) {
+                    // Accedemos al archivo cargado
+                    const archivo = e.target.files[0];
+
+                    if (archivo) {
+                        // Aquí puedes ejecutar tu validación de 10MB
+                        const limite = 10 * 1024 * 1024;
+                        if (archivo.size > limite) {
+                            alert("El archivo no puede pasar de 10 Megas");
+                            this.value = ""; // Limpiar el input
+                        }
+                    }
+                });
             }
         });
     </script>
