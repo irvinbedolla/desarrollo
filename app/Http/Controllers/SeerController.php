@@ -4553,273 +4553,106 @@ class SeerController extends Controller
         return view('solicitudes.solicitudes', compact('solicitudes'));
     }
     
-    public function ObtenerAudiencia($delegacion){
-
-        $fecha_actual = date('y-m-d');
-        $hora_actual  = date("H:i:s");
-        $array_final = array();
+    public function ObtenerAudiencia($delegacion) {
         $array_horarios = array();
         $relacionEloquent = 'roles';
-        $listado_auxiliares = array();
         $id = auth()->user()->id;
         $user = User::find($id);
         $bandera = 0;
 
-        if($delegacion == "Morelia" || $delegacion == "Uruapan" || $delegacion == "Zamora"){
-            $conciliadores = User::whereHas($relacionEloquent, function ($query) {
-                $query->where('name', '=', 'Conciliador');
-            })
-            ->where('users.delegacion', $delegacion)
-            ->whereExists(function($q) {
-                $q->select(DB::raw(1))
-                  ->from('permisos_conciliador')
-                  ->whereColumn('permisos_conciliador.id_conciliador', 'users.id')
-                  ->whereIn('permisos_conciliador.tipo', ["Ambos","Precencial"]);
-            })
-            ->get();
-        }else{
-            //Voy a revisar la sede para saber si hay conciliadores que tengan estatus de ambos
-            if($delegacion == "Zitácuaro"){
-                $oficina_apoyo = "Morelia";
-            }
-            else if($delegacion == "Lázaro Cárdenas"){
-                $oficina_apoyo = "Uruapan";
-            }
-            else if($delegacion == "Sahuayo"){
-                $oficina_apoyo = "Zamora";
-            }
-            // Obtener conciliadores desde la oficina de apoyo con permisos de tipo Virtual/Ambos
-            $conciliadores = User::whereHas($relacionEloquent, function ($query) {
-                $query->where('name', '=', 'Conciliador');
-            })
-            ->where('users.delegacion', $oficina_apoyo)
-            ->whereExists(function($q) {
-                $q->select(DB::raw(1))
-                  ->from('permisos_conciliador')
-                  ->whereColumn('permisos_conciliador.id_conciliador', 'users.id')
-                  ->whereIn('permisos_conciliador.tipo', ["Ambos","Virtual"]);
-            })
-            ->get();
-        }
-        //Numero de conciliadores
-        $contador_conciliadores = count($conciliadores);
-        //Obtener la ultima fecha y hora
-        $fecha_reciente = Audiencias::where('delegacion',$delegacion)->select('fecha','hora')->orderBy('fecha', 'desc')->first();
-        $fecha_revisar = date('Y-m-d', strtotime($fecha_reciente["fecha"]));
-        $fecha_audiencia = $fecha_revisar;
-        $fecha_hora = date('H:i:s', strtotime($fecha_reciente["hora"]));
-        //Validar cuantas audiencias hay en ese horario y eas hora
-        $conteo = Audiencias::where('delegacion',$delegacion)
-        ->where("fecha",$fecha_revisar)
-        ->where("hora",$fecha_hora)
-        ->selectRaw('count(id) as total')->first();
-        //Validar si hay espacio a esa hora
-        do {   
-            $tomorrow = strtotime($fecha_revisar." +1 day");
-            $fecha_dia = date('l', $tomorrow);
-            $fecha_tomorrow = date('Y-m-d', $tomorrow);
+        // 1. Obtención de Conciliadores (Simplificado)
+        $tipo_permiso = in_array($delegacion, ["Morelia", "Uruapan", "Zamora"]) ? ["Ambos", "Precencial"] : ["Ambos", "Virtual"];
+        
+        // Lógica de oficina de apoyo
+        $oficina = $delegacion;
+        if ($delegacion == "Zitácuaro") $oficina = "Morelia";
+        else if ($delegacion == "Lázaro Cárdenas") $oficina = "Uruapan";
+        else if ($delegacion == "Sahuayo") $oficina = "Zamora";
 
-            if ($fecha_dia == 'Saturday') {
-                $fechasuma = strtotime($fecha_revisar." +3 day");
-                $fecha_revisar = date('Y-m-d', $fechasuma);
+        $conciliadores = User::whereHas($relacionEloquent, function ($query) {
+                $query->where('name', 'Conciliador');
+            })
+            ->where('delegacion', $oficina)
+            ->whereExists(function($q) use ($tipo_permiso) {
+                $q->select(DB::raw(1))
+                ->from('permisos_conciliador')
+                ->whereColumn('permisos_conciliador.id_conciliador', 'users.id')
+                ->whereIn('tipo', $tipo_permiso);
+            })->get();
+
+        if ($conciliadores->isEmpty()) return response()->json(['error' => 'No hay conciliadores disponibles'], 404);
+
+        // 2. Determinar punto de inicio
+        $reciente = Audiencias::where('delegacion', $delegacion)->orderBy('fecha', 'desc')->orderBy('hora', 'desc')->first();
+        
+        $fecha_revisar = $reciente ? date('Y-m-d', strtotime($reciente->fecha)) : date('Y-m-d');
+        $fecha_hora = $reciente ? date('H:i:s', strtotime($reciente->hora)) : "09:00:00";
+        $horarios_disponibles = ["09:00:00", "10:15:00", "11:30:00", "12:45:00", "14:00:00"];
+
+        // 3. Bucle de búsqueda de espacio
+        do {
+            $dia_semana = date('l', strtotime($fecha_revisar));
+
+            // Saltamos fines de semana
+            if ($dia_semana == 'Saturday' || $dia_semana == 'Sunday') {
+                $fecha_revisar = date('Y-m-d', strtotime($fecha_revisar . ' +1 day'));
                 $fecha_hora = "09:00:00";
+                continue;
             }
-            else{
-                switch($fecha_hora){
-                    case ($fecha_hora == "09:00:00") :
-                        foreach($conciliadores as $token ){
-                            $revisar = Audiencias::where('delegacion',$delegacion)
-                            ->where('fecha',$fecha_revisar)
-                            ->where('hora' ,$fecha_hora)
-                            ->where('id_conciliador' ,$token["id"])
-                            ->select('id_conciliador')->first();
 
-                            $revisar_centro = DiasInhabiles::
-                            where('fecha_inicio', $fecha_revisar)
-                            ->where('centro',$user["delegacion"])
-                            ->whereNull('user_id')
-                            ->first();
+            // Revisar si el centro tiene día inhábil general
+            $revisar_centro = DiasInhabiles::where('fecha_inicio', $fecha_revisar)
+                ->where('centro', $user->delegacion)
+                ->whereNull('user_id')
+                ->exists();
 
-                            $revisar_disponible = DiasInhabiles::
-                            where('fecha_inicio', $fecha_revisar)
-                            ->where('horario_inicio',"<=",$fecha_hora)
-                            ->where('horario_final',">=",$fecha_hora)
-                            ->where('user_id',$token["id"])
-                            ->first();
+            if ($revisar_centro) {
+                $fecha_revisar = date('Y-m-d', strtotime($fecha_revisar . ' +1 day'));
+                $fecha_hora = "09:00:00";
+                continue;
+            }
 
-                            //Si no tiene audiencia  ni dias inahibles o centro lo voy agregar
-                            if(empty($revisar) && empty($revisar_disponible) && empty($revisar_centro)){
-                                array_push($listado_auxiliares, $token["id"]);
-                                $bandera = 1;
-                            }
-                        }
-                        if($bandera == 1){
-                            $random = array_rand($listado_auxiliares);
-                            $array_horarios[0] = $fecha_revisar;
-                            $array_horarios[1] = $fecha_hora;
-                            $array_horarios[2] = $fecha_audiencia;
-                            $array_horarios[3] = $listado_auxiliares[$random];
-                            return $array_horarios;
-                        }
-                        else{
-                            $fecha_hora = "10:15:00";
-                        }
-                    case ($fecha_hora == "10:15:00"):
-                        foreach($conciliadores as $token ){
-                            $revisar = Audiencias::where('delegacion',$delegacion)
-                            ->where('fecha',$fecha_revisar)
-                            ->where('hora' ,$fecha_hora)
-                            ->where('id_conciliador' ,$token["id"])
-                            ->select('id_conciliador')->first();
-                            
-                            $revisar_centro = DiasInhabiles::
-                            where('fecha_inicio', $fecha_revisar)
-                            ->where('centro',$user["delegacion"])
-                            ->whereNull('user_id')
-                            ->first();
+            // Buscamos en cada horario
+            foreach ($horarios_disponibles as $h) {
+                // Si la fecha es la "reciente", solo buscamos horarios posteriores a la última audiencia
+                if ($fecha_revisar == date('Y-m-d', strtotime($reciente->fecha ?? '')) && $h <= $fecha_hora) {
+                    continue;
+                }
 
-                            $revisar_disponible = DiasInhabiles::
-                            where('fecha_inicio', $fecha_revisar)
-                            ->where('horario_inicio',"<=",$fecha_hora)
-                            ->where('horario_final',">=",$fecha_hora)
-                            ->where('user_id',$token["id"])
-                            ->first();
-                                
-                            //Si no tiene audiencia lo voy agregar
-                            if(empty($revisar) && empty($revisar_disponible) && empty($revisar_centro)){
-                                array_push($listado_auxiliares, $token["id"]);
-                                $bandera = 1;
-                            }
-                        }
-                        if($bandera == 1){
-                            $random = array_rand($listado_auxiliares);
-                            $array_horarios[0] = $fecha_revisar;
-                            $array_horarios[1] = $fecha_hora;
-                            $array_horarios[2] = $fecha_audiencia;
-                            $array_horarios[3] = $listado_auxiliares[$random];
-                            return $array_horarios;
-                        }
-                        else{
-                            $fecha_hora = "11:30:00";
-                        }
-                    case ($fecha_hora == "11:30:00"):
-                        foreach($conciliadores as $token ){
-                            $revisar = Audiencias::where('delegacion',$delegacion)
-                            ->where('fecha',$fecha_revisar)
-                            ->where('hora' ,$fecha_hora)
-                            ->where('id_conciliador' ,$token["id"])
-                            ->select('id_conciliador')->first();
-                            
-                            $revisar_centro = DiasInhabiles::
-                            where('fecha_inicio', $fecha_revisar)
-                            ->where('centro',$user["delegacion"])
-                            ->whereNull('user_id')
-                            ->first();
+                $listado_auxiliares = [];
 
-                            $revisar_disponible = DiasInhabiles::
-                            where('fecha_inicio', $fecha_revisar)
-                            ->where('horario_inicio',"<=",$fecha_hora)
-                            ->where('horario_final',">=",$fecha_hora)
-                            ->where('user_id',$token["id"])
-                            ->first();
-                                
-                            //Si no tiene audiencia lo voy agregar
-                            if(empty($revisar) && empty($revisar_disponible) && empty($revisar_centro)){
-                                array_push($listado_auxiliares, $token["id"]);
-                                $bandera = 1;
-                            }
-                        }
-                        if($bandera == 1){
-                            $random = array_rand($listado_auxiliares);
-                            $array_horarios[0] = $fecha_revisar;
-                            $array_horarios[1] = $fecha_hora;
-                             $array_horarios[2] = $fecha_audiencia;
-                            $array_horarios[3] = $listado_auxiliares[$random];
-                            return $array_horarios;
-                        }
-                        else{
-                            $fecha_hora = "12:45:00";
-                        }
-                    case ($fecha_hora == "12:45:00"):
-                        foreach($conciliadores as $token ){
-                            $revisar = Audiencias::where('delegacion',$delegacion)
-                            ->where('fecha',$fecha_revisar)
-                            ->where('hora' ,$fecha_hora)
-                            ->where('id_conciliador' ,$token["id"])
-                            ->select('id_conciliador')->first();
-                            
-                            $revisar_centro = DiasInhabiles::
-                            where('fecha_inicio', $fecha_revisar)
-                            ->where('centro',$user["delegacion"])
-                            ->first();
+                foreach ($conciliadores as $conciliador) {
+                    // Verificamos si el conciliador está ocupado (Audiencia o Día Inhábil)
+                    $ocupado = Audiencias::where('fecha', $fecha_revisar)->where('hora', $h)->where('id_conciliador', $conciliador->id)->exists();
+                    
+                    $dia_libre = DiasInhabiles::where('fecha_inicio', $fecha_revisar)
+                        ->where('user_id', $conciliador->id)
+                        ->where('horario_inicio', '<=', $h)
+                        ->where('horario_final', '>=', $h)
+                        ->exists();
 
-                            $revisar_disponible = DiasInhabiles::
-                            where('fecha_inicio', $fecha_revisar)
-                            ->where('horario_inicio',"<=",$fecha_hora)
-                            ->where('horario_final',">=",$fecha_hora)
-                            ->where('user_id',$token["id"])
-                            ->first();
-                                
-                            //Si no tiene audiencia lo voy agregar
-                            if(empty($revisar) && empty($revisar_disponible) && empty($revisar_centro)){
-                                array_push($listado_auxiliares, $token["id"]);
-                                $bandera = 1;
-                            }
-                        }
-                        if($bandera == 1){
-                            $random = array_rand($listado_auxiliares);
-                            $array_horarios[0] = $fecha_revisar;
-                            $array_horarios[1] = $fecha_hora;
-                            $array_horarios[2] = $fecha_audiencia;
-                            $array_horarios[3] = $listado_auxiliares[$random];
-                            return $array_horarios;
-                        }
-                        else{
-                            $fecha_hora = "14:00:00";
-                        }
-                    case ($fecha_hora == "14:00:00"):
-                        foreach($conciliadores as $token ){
-                            $revisar = Audiencias::where('delegacion',$delegacion)
-                            ->where('fecha',$fecha_revisar)
-                            ->where('hora' ,$fecha_hora)
-                            ->where('id_conciliador' ,$token["id"])
-                            ->select('id_conciliador')->first();
-                            
-                            $revisar_centro = DiasInhabiles::
-                            where('fecha_inicio', $fecha_revisar)
-                            ->where('centro',$user["delegacion"])
-                            ->first();
+                    if (!$ocupado && !$dia_libre) {
+                        $listado_auxiliares[] = $conciliador->id;
+                    }
+                }
 
-                            $revisar_disponible = DiasInhabiles::
-                            where('fecha_inicio', $fecha_revisar)
-                            ->where('horario_inicio',"<=",$fecha_hora)
-                            ->where('horario_final',">=",$fecha_hora)
-                            ->where('user_id',$token["id"])
-                            ->first();
-                                
-                            //Si no tiene audiencia lo voy agregar
-                            if(empty($revisar) && empty($revisar_disponible) && empty($revisar_centro)){
-                                array_push($listado_auxiliares, $token["id"]);
-                                $bandera = 1;
-                            }
-                        }
-                        if($bandera == 1){
-                            $random = array_rand($listado_auxiliares);
-                            $array_horarios[0] = $fecha_revisar;
-                            $array_horarios[1] = $fecha_hora;
-                            $array_horarios[2] = $fecha_audiencia;
-                            $array_horarios[3] = $listado_auxiliares[$random];
-                            return $array_horarios;
-                        }
-                        else{
-                            $fecha_hora = "15:15:00";
-                        }
-                    case ($fecha_hora == "15:15:00"):
-                        $fecha_revisar = $fecha_tomorrow;
-                        $fecha_hora = "09:00:00";
+                if (!empty($listado_auxiliares)) {
+                    $bandera = 1;
+                    $random_id = $listado_auxiliares[array_rand($listado_auxiliares)];
+                    return [
+                        $fecha_revisar,   // [0] Fecha sugerida
+                        $h,               // [1] Hora sugerida
+                        $fecha_revisar,   // [2] Originalmente tenías fecha_audiencia aquí
+                        $random_id        // [3] ID del Conciliador
+                    ];
                 }
             }
-        }while ($bandera != 1);
+
+            // Si terminamos los horarios del día y no hubo éxito, pasamos al siguiente día
+            $fecha_revisar = date('Y-m-d', strtotime($fecha_revisar . ' +1 day'));
+            $fecha_hora = "09:00:00";
+
+        } while ($bandera == 0);
     }
 
     public function concluir_audiencia_conciliador(Request $request){    
