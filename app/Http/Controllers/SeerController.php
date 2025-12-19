@@ -5248,6 +5248,10 @@ class SeerController extends Controller
                 ->where("seer_general.conciliador_id", "=", $solicitud->conciliador_id)
                 ->select('users.name')
                 ->first();
+            $municipio = Municipios::find($citado->municipio_citado);
+            $estado = Estados::find($citado->estado_citado);
+            $municipioNombre = $municipio ? mb_strtoupper($municipio->nombre, 'UTF-8') : '';
+            $estadoNombre = $estado ? mb_strtoupper($estado->nombre, 'UTF-8') : '';
 
             $nombreArchivo = 'citatorio_' . $citado->nombre . '_' . $citado->primer_apellido . '.pdf';
             $nombreArchivo = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $nombreArchivo); //Elimina los caracteres especiales no permitidos en archivos
@@ -5258,7 +5262,7 @@ class SeerController extends Controller
                 'citado',
                 'motivos',
                 'audiencia',
-                'conciliador'
+                'conciliador','municipioNombre','estadoNombre'
             ))
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
@@ -5599,8 +5603,12 @@ class SeerController extends Controller
         ->where("audiencias.id_solicitud", "=", $solicitud["id"])->first();
         $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
         $conciliador = $conciliador->where("seer_general.conciliador_id", "=", $solicitud["conciliador_id"])->select('users.name')->first();
-     
-        $html = view('PDF/Solicitudes/citatorio', compact('solicitud','solicitante','citado','motivos','audiencia','conciliador'))->render();
+        $municipio = Municipios::find($citado->municipio_citado);
+        $estado = Estados::find($citado->estado_citado);
+        $municipioNombre = $municipio ? mb_strtoupper($municipio->nombre, 'UTF-8') : '';
+        $estadoNombre = $estado ? mb_strtoupper($estado->nombre, 'UTF-8') : '';
+
+        $html = view('PDF/Solicitudes/citatorio', compact('solicitud','solicitante','citado','motivos','audiencia','conciliador','municipioNombre','estadoNombre'))->render();
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
