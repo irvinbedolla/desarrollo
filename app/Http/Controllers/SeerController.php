@@ -3217,10 +3217,7 @@ class SeerController extends Controller
         }
         
         //Si se va confirmar si el valor es 2 solo se va editar lo anterior
-        if($data["toquen"] == 1){
-            //Actualizar el estatus
-            SeerPerGeneral::find($data["id"])->update(['estatus' => "Confirmado" ]);
-
+        //if($data["toquen"] == 1){
             $numero_audiencia = $this->GeneraAudiencia($data["id"]);
             $numero_audiencias = SeerPerConciliador::find($data["id"]);
             if(!isset($numero_audiencias)){
@@ -3303,7 +3300,7 @@ class SeerController extends Controller
             ];
             // El método Mail::to() toma el email del destinatario
             Mail::to($user['email'])->send(new MailAceptacionRechazo($user));
-        }
+        //}
 
         return redirect()->route('solicitudes_pendientes'); 
     }
