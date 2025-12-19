@@ -199,7 +199,7 @@
                                                     <option value="">SELECCIONE</option>
                                                     <option value="AMPLIACIÓN">Ampliación</option>
                                                     <option value="ANDADOR">Andador</option>
-                                                    <option value="AUTOPISTA">Autopista</option>
+                                                    <option value="AUTOPISTA">Autopista</option> 
                                                     <option value="AVENIDA">Avenida</option>
                                                     <option value="BOULEVARD">Boulevard</option>
                                                     <option value="CALLE">Calle</option>
@@ -415,6 +415,60 @@
             if (file && !file.type.startsWith('image/')) {
                 alert('Solo se permiten imágenes');
                 this.value = '';
+            }
+        });
+    </script>
+    <script>
+        // Carga dinámica de municipios según el estado seleccionado (citados)
+        document.addEventListener('DOMContentLoaded', function () {
+            function cargarMunicipiosCitado(estadoId) {
+                var $municipio = $('#municipio_citado');
+                if (!$municipio.length) return;
+                $municipio.html('<option value="">Cargando...</option>');
+                if (!estadoId) {
+                    $municipio.html('<option value="">Seleccione</option>');
+                    return;
+                }
+                // Intentar la ruta API primero (con base_url), si falla intentar la ruta web
+                $.get(base_url + '/api/munCitado/' + estadoId, function (data) {
+                    var html = '<option value="">Seleccione</option>';
+                    data.forEach(function (m) {
+                        html += '<option value="' + m.id + '">' + m.nombre + '</option>';
+                    });
+                    $municipio.html(html);
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    // Intentar ruta sin prefijo /api
+                    $.get(base_url + '/munCitado/' + estadoId, function (data) {
+                        var html = '<option value="">Seleccione</option>';
+                        data.forEach(function (m) {
+                            html += '<option value="' + m.id + '">' + m.nombre + '</option>';
+                        });
+                        $municipio.html(html);
+                    }).fail(function (jq2, t2, e2) {
+                        $municipio.html('<option value="">Error cargando municipios</option>');
+                        if (typeof iziToast !== 'undefined') {
+                            iziToast.error({
+                                title: 'Error',
+                                message: 'No se pudieron cargar los municipios. HTTP: ' + (jqXHR.status || jq2.status || 'N/A') + ' - ' + (errorThrown || e2 || textStatus),
+                                position: 'topRight'
+                            });
+                        } else {
+                            alert('No se pudieron cargar los municipios.');
+                        }
+                    });
+                });
+            }
+
+            var base_url = "{{ url('') }}";
+
+            var $estadoCitado = $('#estado_citado');
+            if ($estadoCitado.length) {
+                $estadoCitado.on('change', function () {
+                    cargarMunicipiosCitado(this.value);
+                });
+                // Si ya viene seleccionado (edición/old), cargar municipios al inicio
+                var inicial = $estadoCitado.val();
+                if (inicial) cargarMunicipiosCitado(inicial);
             }
         });
     </script>
