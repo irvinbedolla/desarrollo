@@ -497,6 +497,7 @@ class TurnosController extends Controller
     public function store_publico(Request $request)
     {
         $data = $request->all();
+        $año_actual = date('Y');
         $fecha_actual = date('Y-m-d');
         $hora_actual =  date("H:i:s");
         if(isset($data["folio"])){
@@ -548,8 +549,10 @@ class TurnosController extends Controller
         */
         //Buscar la proxima fecha disponible de la sede
         $numero_consecutivo = 0;
-        $consecutivo  = Turnos::latest('consecutivo')->where('delegacion',$data["sede"])->first();
-        
+        $consecutivo  = Turnos::latest('consecutivo')
+        ->where('delegacion',$data["sede"])
+        ->where('año',$año_actual)->
+        first();
         if(empty($consecutivo)){
             $numero_consecutivo = 1;
         }
@@ -621,7 +624,7 @@ class TurnosController extends Controller
                 'hora_fin'          => $data["hora"],
                 'num_identificacion'=> $data["num_identificacion"],
                 'estado_rat'        => $data["estado_rat"],
-                //'sede'              => $data["sede"],
+                'año'               => $año_actual,
             ); 
             $nombre = $data["trabajador"];
             
@@ -676,6 +679,7 @@ class TurnosController extends Controller
                 'num_ext'                   => $data["N_Ext"],
                 'codigo_postal'             => $data["cp"],
                 'estado_rat'                => $data["estado_rat"],
+                'año'                       => $año_actual,
             ); 
             $nombre = $data["trabajador"];
             $email  = $data["email"];

@@ -1970,12 +1970,29 @@ class SeerController extends Controller
 
         ]);
         
+        $año_actual = date('Y');
+        $numero_consecutivo = 0;
+        $consecutivo  = SeerPerGeneral::latest('consecutivo')
+        ->where('delegacion',$data["delegacion"])
+        ->where('año',$año_actual)->
+        first();
+
+        if(empty($consecutivo)){
+            $numero_consecutivo = 1;
+        }
+        else{
+            $numero_consecutivo = $consecutivo["consecutivo"];
+            $numero_consecutivo++;
+        }
+
         $data_insert=array(
             'id_rama'         =>  $data["ramaIndustrial"],
             'actividad'       =>  $data["actividad_economica"],
             'delegacion'      =>  $data["delegacion"],
             'tipo_solicitud'  =>  $data["tipo_solicitud"],
             'tipo_generacion' => auth()->check() ? auth()->id() :0,
+            'consecutivo'    => $numero_consecutivo,    
+            'año'            => $año_actual,
         );
        
         SeerPerGeneral::create($data_insert); 
@@ -9171,13 +9188,30 @@ class SeerController extends Controller
             'motivo_solicitud'    => 'required',
 
         ]);*/
+
+        $año_actual = date('Y');
+        $numero_consecutivo = 0;
+        $consecutivo  = SeerPerGeneral::latest('consecutivo')
+        ->where('delegacion',$data["delegacion"])
+        ->where('año',$año_actual)->
+        first();
         
+        if(empty($consecutivo)){
+            $numero_consecutivo = 1;
+        }
+        else{
+            $numero_consecutivo = $consecutivo["consecutivo"];
+            $numero_consecutivo++;
+        }
+
         $data_insert=array(
             'id_rama'         =>  $data["ramaIndustrial"],
             'actividad'       =>  $data["actividad_economica"],
             'delegacion'      =>  $data["delegacion"],
             'tipo_solicitud'  =>  $data["tipo_solicitud"],
             'tipo_generacion' => auth()->check() ? auth()->id() :0,
+            'consecutivo'    => $numero_consecutivo,    
+            'año'            => $año_actual,
         );
        
         SeerPerGeneral::create($data_insert); 
@@ -9203,6 +9237,7 @@ class SeerController extends Controller
         return view('solicitudes.solicitante', compact('estados','municipios','id'));*/
         //return redirect()->route('parte2.ver', ['id' => $id]);
     }
+
     public function solicitud_parte2Aux(Request $request){
         $data = $request->all();
         $id = $data['id'];
