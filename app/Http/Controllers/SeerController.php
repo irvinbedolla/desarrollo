@@ -2017,6 +2017,8 @@ class SeerController extends Controller
             'delegacion'      =>  $data["delegacion"],
             'tipo_solicitud'  =>  $data["tipo_solicitud"],
             'tipo_generacion' => auth()->check() ? auth()->id() : 0,
+            'consecutivo'     => $numero_consecutivo,
+            'año'             => $año_actual,
             'motivo_solicitud' => $data["motivo_solicitud"] ?? []
         );
        
@@ -2623,6 +2625,8 @@ class SeerController extends Controller
                     'delegacion'      =>  $solicitud_data["delegacion"],
                     'tipo_solicitud'  =>  $solicitud_data["tipo_solicitud"],
                     'tipo_generacion' =>  $solicitud_data["tipo_generacion"],
+                    'consecutivo'     =>  $solicitud_data["consecutivo"],
+                    'año'             =>  $solicitud_data["año"],
                     'caso_excepcion'  =>  $solicitante_data['excepcion']
                  ];
                  SeerPerGeneral::create($general_insert);
