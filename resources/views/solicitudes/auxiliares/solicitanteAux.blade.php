@@ -112,7 +112,7 @@
                                             <div id="div1" class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
                                                     <label for="name">Edad<span style="color:red;">(*)</span></label>
-                                                    <input type="number" min="0" name="edad" class="form-control" id="años_edad" readonly  required> 
+                                                    <input type="number" min="0" name="edad" class="form-control" id="años_edad" required> 
                                                     <div class="invalid-feedback">
                                                         El campo edad es obligatoria.
                                                     </div>

@@ -174,7 +174,7 @@ body {font-family: Arial;}
                                                                 </td>  
                                                                 <td>
                                                                     @if($general['estatus'] == 'Prevencion')
-                                                                        <a href="{{ route('eliminar_motivo_buzon', ['id' => $id, 'id_motivo' => $motivo->id] ) }}" class="eliminar btn btn-danger btn-sm">Eliminar</button>
+                                                                        <a href="{{ route('eliminar_motivo_buzon', ['id' => $id, 'id_motivo' => $motivo->id] ) }}" class="eliminar btn btn-danger btn-sm">Eliminar</a>
                                                                     @endif
                                                                 </td>   
                                                             </tr>
@@ -926,7 +926,7 @@ body {font-family: Arial;}
                                                         <div class="text-muted mt-2">Debe agregar al menos un citado para poder guardar.</div>
                                                     @endif
                                                 @endif
-                                                <a class="btn btn-primary" href="{{ url()->previous() }}">Regresar</a>
+                                                <a class="btn btn-primary" href="{{ route('cancelar_edicion', ['redirect_to' => 'mis_solicitudes']) }}">Regresar</a>
                                             </div>
                                         </div>
                                     </div>

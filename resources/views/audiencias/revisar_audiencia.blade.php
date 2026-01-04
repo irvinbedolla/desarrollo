@@ -198,7 +198,7 @@
                                                                     <option value="{{$motivo['id']}}">{{$motivo['motivo']}}</option>
                                                                 </td>  
                                                                 <td>
-                                                                   <a href="{{ route('eliminar_motivo', ['id' => $id, 'id_motivo' => $motivo->id] ) }}" class="eliminar btn btn-danger btn-sm">Eliminar</button>
+                                                                   <a href="{{ route('eliminar_motivo', ['id' => $id, 'id_motivo' => $motivo->id] ) }}" class="eliminar btn btn-danger btn-sm">Eliminar</a>
                                                                 </td>   
                                                             </tr>
                                                         @endforeach
@@ -993,16 +993,20 @@
                                                                     
                                                                     <div class="col-sm-3">
                                                                         <label>Estado de la Notificación</label><br>
-                                                                        @if($notificado->notificacion === "Trabajador")
-                                                                            <span style="color:blue">Notificación Entregada por el Solicitante</span>
-                                                                        @elseif($notificado->estatus === "No exitosa se constituye")
-                                                                            <span style="color:blue">Se Constituye</span>
-                                                                        @elseif($notificado->estatus === "Finalizado exitosamente")
-                                                                            <span style="color:blue">Notificado Exitosamente</span>
-                                                                        @elseif($notificado->estatus === "No notificada")
-                                                                            <span style="color:blue">No Notificado</span>
-                                                                        @elseif($notificado->estatus === "No exitosa no se constituye")
-                                                                            <span style="color:blue">No se Constituye</span>
+                                                                        @if($notificado)
+                                                                            @if($notificado->notificacion === "Trabajador")
+                                                                                <span style="color:blue">Notificación Entregada por el Solicitante</span>
+                                                                            @elseif($notificado->estatus === "No exitosa se constituye")
+                                                                                <span style="color:blue">Se Constituye</span>
+                                                                            @elseif($notificado->estatus === "Finalizado exitosamente")
+                                                                                <span style="color:blue">Notificado Exitosamente</span>
+                                                                            @elseif($notificado->estatus === "No notificada")
+                                                                                <span style="color:blue">No Notificado</span>
+                                                                            @elseif($notificado->estatus === "No exitosa no se constituye")
+                                                                                <span style="color:blue">No se Constituye</span>
+                                                                            @else
+                                                                                <span style="color:blue">Sin Notificar</span>
+                                                                            @endif
                                                                         @else
                                                                             <span style="color:blue">Sin Notificar</span>
                                                                         @endif
@@ -1010,16 +1014,20 @@
 
                                                                     <div class="col-sm-3">
                                                                         <label>Notificación</label><br>
-                                                                        @if($notificado->notificacion === "Trabajador")
-                                                                            <a class="btn btn-secondary btn-xs" disabled>Visualizar</a>
-                                                                        @elseif($notificado->estatus === "No exitosa se constituye")
-                                                                            <a class="btn btn-success btn-xs" href="{{ route('PDFNoExitosa', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}" target="_blank">Visualizar</a>
-                                                                        @elseif($notificado->estatus === "Finalizado exitosamente")
-                                                                            <a class="btn btn-success btn-xs" href="{{ route('PDFRazonNoticacion', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}" target="_blank">Visualizar</a>
-                                                                        @elseif($notificado->estatus === "No notificada")
-                                                                            <a class="btn btn-success btn-xs" href="{{ route('PDFInstructivo', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}" target="_blank">Visualizar</a>
-                                                                        @elseif($notificado->estatus === "No exitosa no se constituye")
-                                                                            <a class="btn btn-success btn-xs" href="{{ route('PDFNoExitosaInt', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}" target="_blank">Visualizar</a>
+                                                                        @if($notificado)
+                                                                            @if($notificado->notificacion === "Trabajador")
+                                                                                <a class="btn btn-secondary btn-xs" disabled>Visualizar</a>
+                                                                            @elseif($notificado->estatus === "No exitosa se constituye")
+                                                                                <a class="btn btn-success btn-xs" href="{{ route('PDFNoExitosa', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}" target="_blank">Visualizar</a>
+                                                                            @elseif($notificado->estatus === "Finalizado exitosamente")
+                                                                                <a class="btn btn-success btn-xs" href="{{ route('PDFRazonNoticacion', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}" target="_blank">Visualizar</a>
+                                                                            @elseif($notificado->estatus === "No notificada")
+                                                                                <a class="btn btn-success btn-xs" href="{{ route('PDFInstructivo', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}" target="_blank">Visualizar</a>
+                                                                            @elseif($notificado->estatus === "No exitosa no se constituye")
+                                                                                <a class="btn btn-success btn-xs" href="{{ route('PDFNoExitosaInt', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}" target="_blank">Visualizar</a>
+                                                                            @else
+                                                                                <a class="btn btn-secondary btn-xs" disabled>Visualizar</a>
+                                                                            @endif
                                                                         @else
                                                                             <a class="btn btn-secondary btn-xs" disabled>Visualizar</a>
                                                                         @endif
@@ -1267,8 +1275,12 @@
                                                         <div class="text-muted mt-2">Debe agregar al menos un citado para poder guardar.</div>
                                                     @endif
                                                 @endif
-                                                <a type="button" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;" href="{{ route('todas_audiencias') }}"> Regresar </a>
-                                                
+                                                @if( $isAudiencia == 'Si')
+                                                <a type="button" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;" href="{{ route('cancelar_edicion', ['redirect_to' => 'todas_audiencias']) }}"> Regresar </a>
+                                                @else
+                                                <a type="button" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;" href="{{ route('cancelar_edicion', ['redirect_to' => 'todas_solicitudes']) }}"> Regresar </a>
+                                                @endif
+
                                             </div>
                                         </div>
                                     </div>
