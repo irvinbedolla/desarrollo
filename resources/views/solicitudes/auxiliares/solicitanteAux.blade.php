@@ -516,18 +516,21 @@
                                                     </div>
                                                 </div>
                                             </div>-->
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-4" style="display:none;">
                                                 <label for="excepcion">Posible caso de excepción <span style="color:red;">(*)</span>
                                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                                         ?
                                                     </button>
                                                 </label>
                                                 
+                                                <input type="hidden" name="excepcion" value="No">
+                                                <!--
                                                 <select name="excepcion" class="form-control" onchange="cambiaExcepcion(this)" required>
                                                     <option value="">Seleccione</option>
                                                     <option value="Si">Si</option>
                                                     <option value="No">No</option>
                                                 </select>
+                                                -->
                                                 <div class="invalid-feedback">
                                                     El campo posible caso de excepción es obligatorio.
                                                 </div>
