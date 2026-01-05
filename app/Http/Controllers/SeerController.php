@@ -3694,6 +3694,11 @@ class SeerController extends Controller
     public function cancelar_edicion(Request $request){
         session()->forget(['citados_edicion_new', 'citados_edicion_delete', 'motivos_edicion_delete']);
         
+        if ($request->has('id')) {
+            $id = $request->input('id');
+            session()->forget("audiencia_data_{$id}");
+        }
+        
         $redirectTo = $request->input('redirect_to');
         
         if ($redirectTo) {
@@ -3936,6 +3941,10 @@ class SeerController extends Controller
     }
 
     public function iniciar_audiencia($id){
+        if (!session('preserve_edit_session')) {
+            session()->forget("audiencia_data_{$id}");
+        }
+
         $id_usuario = auth()->user()->id;
         $user = User::find($id_usuario);
 
@@ -3978,18 +3987,60 @@ class SeerController extends Controller
         }
 
 
-        $representantes = SeerCitados::
-        leftjoin('abogados', 'abogados.idAbogado', '=', 'seer_citados.id_abogado')
-        ->leftJoin('persona_fisica', 'persona_fisica.id', '=', 'seer_citados.id_fisica')
-        ->where('seer_citados.id_solicitud', $id)
-        ->select('seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido','seer_citados.rfc',
-        'abogados.nombres_patronal as nombre_abogado','abogados.primer_apellido_patronal as primero_abogado','abogados.segundo_apellido_patronal as segundo_abogado',
-        'persona_fisica.nombre as nombre_fisica','persona_fisica.primer_apellido as primer_fisica','persona_fisica.segundo_apellido as segundo_fisica',
-        'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus')
-        ->get();
+        $sessionKey = "audiencia_data_{$id}";
+        if (!session()->has($sessionKey)) {
+            $solicitanteDB = SeerSolicitante::where('id_solicitud', $id)->first();
+            $citadosDB = SeerCitados::where('id_solicitud', $id)->get();
+            
+            session([$sessionKey => [
+                'solicitante' => $solicitanteDB,
+                'citados' => $citadosDB
+            ]]);
+        }
 
-
-        $solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
+        $sessionData = session($sessionKey);
+        $solicitante = $sessionData['solicitante'];
+        
+        // Reconstruir $representantes desde la sesión
+        $representantes = collect();
+        foreach ($sessionData['citados'] as $citado) {
+             $rep = new \stdClass();
+             $rep->id = $citado->id;
+             $rep->nombre = $citado->nombre;
+             $rep->primer_apellido = $citado->primer_apellido;
+             $rep->segundo_apellido = $citado->segundo_apellido;
+             $rep->rfc = $citado->rfc;
+             $rep->id_abogado = $citado->id_abogado;
+             $rep->id_fisica = $citado->id_fisica;
+             $rep->notificacion = $citado->notificacion;
+             $rep->estatus = $citado->estatus;
+             
+             $rep->nombre_abogado = null;
+             $rep->primero_abogado = null;
+             $rep->segundo_abogado = null;
+             if ($citado->id_abogado) {
+                 $abogado = Poder::find($citado->id_abogado);
+                 if ($abogado) {
+                     $rep->nombre_abogado = $abogado->nombres_patronal;
+                     $rep->primero_abogado = $abogado->primer_apellido_patronal;
+                     $rep->segundo_abogado = $abogado->segundo_apellido_patronal;
+                 }
+             }
+             
+             $rep->nombre_fisica = null;
+             $rep->primer_fisica = null;
+             $rep->segundo_fisica = null;
+             if ($citado->id_fisica) {
+                 $fisica = PersonaFisica::find($citado->id_fisica);
+                 if ($fisica) {
+                     $rep->nombre_fisica = $fisica->nombre;
+                     $rep->primer_fisica = $fisica->primer_apellido;
+                     $rep->segundo_fisica = $fisica->segundo_apellido;
+                 }
+             }
+             
+             $representantes->push($rep);
+        }
         $abogados = Poder::all();
         SeerPerGeneral::find($id)->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
         $estados        = Estados::all();
@@ -4056,25 +4107,51 @@ class SeerController extends Controller
 
         $solicitante = SeerSolicitante::where('id_solicitud', $data['id'])->first();
     
-        //Actualizar Solicitante
-        SeerSolicitante::where('id_solicitud', $data["id"])
-        ->update([
-            'curp'                  => $data["curp"],
-            'rfc'                   => $data["rfc"],
-            'nombre'                => $data["nombre"],
-            'puesto'                => $data["puesto"],
-            'pago'                  => $data["pago"],
-            'periodo_pago'          => $data["periodo_pago"],
-            'fecha_ingreso'         => $data["fecha_ingreso"],
-            'fecha_salida'          => $data["fecha_salida"],
-            'jornada'               => $data["jornada"],
-            'horas_semana'          => $data["horas"],
-        ]);
+        $sessionKey = "audiencia_data_{$data['id']}";
+        
+        if (session()->has($sessionKey)) {
+            $sessionData = session($sessionKey);
+            $solicitante = $sessionData['solicitante'];
+            
+            $solicitante->curp = $data["curp"];
+            $solicitante->rfc = $data["rfc"];
+            $solicitante->nombre = $data["nombre"];
+            $solicitante->puesto = $data["puesto"];
+            $solicitante->pago = $data["pago"];
+            $solicitante->periodo_pago = $data["periodo_pago"];
+            $solicitante->fecha_ingreso = $data["fecha_ingreso"];
+            $solicitante->fecha_salida = $data["fecha_salida"];
+            $solicitante->jornada = $data["jornada"];
+            $solicitante->horas_semana = $data["horas"];
+            
+            if(isset($data["seguro"])){
+                $solicitante->nss = $data["seguro"];
+            }
 
-        if(isset($data["seguro"])){
-            SeerSolicitante::where('id_solicitud', $data["id"])->update(['nss' => $data["seguro"] ]);
+            $sessionData['solicitante'] = $solicitante;
+            session([$sessionKey => $sessionData]);
+        } else {
+            //Actualizar Solicitante
+            SeerSolicitante::where('id_solicitud', $data["id"])
+            ->update([
+                'curp'                  => $data["curp"],
+                'rfc'                   => $data["rfc"],
+                'nombre'                => $data["nombre"],
+                'puesto'                => $data["puesto"],
+                'pago'                  => $data["pago"],
+                'periodo_pago'          => $data["periodo_pago"],
+                'fecha_ingreso'         => $data["fecha_ingreso"],
+                'fecha_salida'          => $data["fecha_salida"],
+                'jornada'               => $data["jornada"],
+                'horas_semana'          => $data["horas"],
+            ]);
+
+            if(isset($data["seguro"])){
+                SeerSolicitante::where('id_solicitud', $data["id"])->update(['nss' => $data["seguro"] ]);
+            }
         }
             
+        session()->flash('preserve_edit_session', true);
         return redirect()->route('inicioAudiencia', ['id' => $data['id']]);
       
     }
@@ -4461,11 +4538,29 @@ class SeerController extends Controller
         $data = $request->all();
         $id = $data["solicitud"];
 
-        SeerCitados::find($data["citado"])
-        ->update([
-            'id_abogado'  => $data["abogado"],
-        ]);
+        $sessionKey = "audiencia_data_{$id}";
 
+        if (session()->has($sessionKey)) {
+            $sessionData = session($sessionKey);
+            $citados = $sessionData['citados'];
+            
+            $citados = $citados->map(function ($citado) use ($data) {
+                if ((int)$citado->id == (int)$data["citado"]) {
+                    $citado->id_abogado = $data["abogado"];
+                }
+                return $citado;
+            });
+
+            $sessionData['citados'] = $citados;
+            session([$sessionKey => $sessionData]);
+        } else {
+            SeerCitados::find($data["citado"])
+            ->update([
+                'id_abogado'  => $data["abogado"],
+            ]);
+        }
+
+        session()->flash('preserve_edit_session', true);
         return redirect()->route('inicioAudiencia',compact('id'));
         
     }
@@ -4787,6 +4882,40 @@ class SeerController extends Controller
     public function audiencia_parte2(Request $request){
         $data = $request->all();
         $id = $data["id"];
+        
+        $sessionKey = "audiencia_data_{$id}";
+        
+        if (session()->has($sessionKey)) {
+            $sessionData = session($sessionKey);
+            
+            $solicitanteData = $sessionData['solicitante'];
+            SeerSolicitante::where('id', $solicitanteData->id)->update([
+                'curp' => $solicitanteData->curp,
+                'rfc' => $solicitanteData->rfc,
+                'nombre' => $solicitanteData->nombre,
+                'puesto' => $solicitanteData->puesto,
+                'pago' => $solicitanteData->pago,
+                'periodo_pago' => $solicitanteData->periodo_pago,
+                'fecha_ingreso' => $solicitanteData->fecha_ingreso,
+                'fecha_salida' => $solicitanteData->fecha_salida,
+                'jornada' => $solicitanteData->jornada,
+                'horas_semana' => $solicitanteData->horas_semana,
+                'nss' => $solicitanteData->nss
+            ]);
+            
+            foreach ($sessionData['citados'] as $citado) {
+                SeerCitados::where('id', $citado->id)->update([
+                    'id_abogado' => $citado->id_abogado,
+                    'id_fisica' => $citado->id_fisica,
+                    'nombre' => $citado->nombre,
+                    'primer_apellido' => $citado->primer_apellido,
+                    'segundo_apellido' => $citado->segundo_apellido
+                ]);
+            }
+            
+            session()->forget($sessionKey);
+        }
+
         //Revisar si los citattorios son por el centro o por le trabajador
         $citados = SeerCitados::where('id_solicitud',$data["id"])->select('notificacion')->orderBy('id', 'desc')->first();
         $user = auth()->user();
@@ -5661,30 +5790,70 @@ class SeerController extends Controller
         $data = $request->all();
         //$citados = SeerCitados::find($data["id_citado_pf"]);
        
-        $data_insertar= array(
-            'id_solicitud'              => $data["id"],
-            'id_citado'                 => $data["id_citado_pf"],
-            'nombre'                    => $data["nombre"],
-            'primer_apellido'           => $data["primer_apellido"], 
-            'segundo_apellido'          => $data["segundo_apellido"],
-            'identificacion'            => $data["identificacionAlta"],
-        );
-        
-        $documento = $data["nombre"]."-".$data["primer_apellido"]."-".$data["segundo_apellido"]."_Identificacion.pdf";
-        $path = Storage::putFileAs(
-            'documentosSolicitud', $request->file('documentoIdentificacion'), $documento
-        );
-        $data_insertar["documentoIdentificacion"] = $documento;
+        $sessionKey = "audiencia_data_{$data['id']}";
 
-        PersonaFisica::create($data_insertar);   
-        $id_adiencia = PersonaFisica::select('id')->orderBy('id', 'desc')->first();
-        SeerCitados::find($data['id_citado_pf'])->update([
-            'id_fisica'         => $id_adiencia["id"],
-            'nombre'            => $data["nombre"],
-            'primer_apellido'   => $data["primer_apellido"], 
-            'segundo_apellido'  => $data["segundo_apellido"]
-        ]);
+        if (session()->has($sessionKey)) {
+            $sessionData = session($sessionKey);
+            $citados = $sessionData['citados'];
 
+            $data_insertar= array(
+                'id_solicitud'              => $data["id"],
+                'id_citado'                 => $data["id_citado_pf"],
+                'nombre'                    => $data["nombre"],
+                'primer_apellido'           => $data["primer_apellido"], 
+                'segundo_apellido'          => $data["segundo_apellido"],
+                'identificacion'            => $data["identificacionAlta"],
+            );
+            
+            $documento = $data["nombre"]."-".$data["primer_apellido"]."-".$data["segundo_apellido"]."_Identificacion.pdf";
+            $path = Storage::putFileAs(
+                'documentosSolicitud', $request->file('documentoIdentificacion'), $documento
+            );
+            $data_insertar["documentoIdentificacion"] = $documento;
+
+            PersonaFisica::create($data_insertar);   
+            $id_adiencia = PersonaFisica::select('id')->orderBy('id', 'desc')->first();
+            
+            $citados = $citados->map(function ($citado) use ($data, $id_adiencia) {
+                if ((int)$citado->id == (int)$data['id_citado_pf']) {
+                    $citado->id_fisica = $id_adiencia["id"];
+                    $citado->nombre = $data["nombre"];
+                    $citado->primer_apellido = $data["primer_apellido"];
+                    $citado->segundo_apellido = $data["segundo_apellido"];
+                }
+                return $citado;
+            });
+
+            $sessionData['citados'] = $citados;
+            session([$sessionKey => $sessionData]);
+
+        } else {
+            $data_insertar= array(
+                'id_solicitud'              => $data["id"],
+                'id_citado'                 => $data["id_citado_pf"],
+                'nombre'                    => $data["nombre"],
+                'primer_apellido'           => $data["primer_apellido"], 
+                'segundo_apellido'          => $data["segundo_apellido"],
+                'identificacion'            => $data["identificacionAlta"],
+            );
+            
+            $documento = $data["nombre"]."-".$data["primer_apellido"]."-".$data["segundo_apellido"]."_Identificacion.pdf";
+            $path = Storage::putFileAs(
+                'documentosSolicitud', $request->file('documentoIdentificacion'), $documento
+            );
+            $data_insertar["documentoIdentificacion"] = $documento;
+
+            PersonaFisica::create($data_insertar);   
+            $id_adiencia = PersonaFisica::select('id')->orderBy('id', 'desc')->first();
+            SeerCitados::find($data['id_citado_pf'])->update([
+                'id_fisica'         => $id_adiencia["id"],
+                'nombre'            => $data["nombre"],
+                'primer_apellido'   => $data["primer_apellido"], 
+                'segundo_apellido'  => $data["segundo_apellido"]
+            ]);
+        }
+
+        session()->flash('preserve_edit_session', true);
         return back()->with('success', 'Representante legal registrado y asignado correctamente al citado.');
     }
 
@@ -6923,11 +7092,32 @@ class SeerController extends Controller
     public function actualiza_citados(Request $request){
         $data = $request->all();
 
-        SeerCitados::find($data['id_citado_pf'])->update([
-            'nombre'            => $data["nombre"],
-            'primer_apellido'   => $data["primer_apellido"], 
-            'segundo_apellido'  => $data["segundo_apellido"]
-        ]);
+        $citado = SeerCitados::find($data['id_citado_pf']);
+        $id_solicitud = $citado->id_solicitud;
+        $sessionKey = "audiencia_data_{$id_solicitud}";
+
+        if (session()->has($sessionKey)) {
+            $sessionData = session($sessionKey);
+            $citados = $sessionData['citados'];
+            
+            $citados = $citados->map(function ($c) use ($data) {
+                if ($c->id == $data['id_citado_pf']) {
+                    $c->nombre = $data["nombre"];
+                    $c->primer_apellido = $data["primer_apellido"];
+                    $c->segundo_apellido = $data["segundo_apellido"];
+                }
+                return $c;
+            });
+
+            $sessionData['citados'] = $citados;
+            session([$sessionKey => $sessionData]);
+        } else {
+            SeerCitados::find($data['id_citado_pf'])->update([
+                'nombre'            => $data["nombre"],
+                'primer_apellido'   => $data["primer_apellido"], 
+                'segundo_apellido'  => $data["segundo_apellido"]
+            ]);
+        }
 
         return back()->with('success', 'Nombre del Citado Actualizado Correctamente.');
     }
@@ -9521,11 +9711,32 @@ class SeerController extends Controller
     public function quitarRepresentante(Request $request)
     {
         $id = $request->id;
-        $citado = SeerCitados::findOrFail($id);
-        $citado->id_abogado = null;
-        $citado->id_fisica = null;
-        $citado->save();
+        
+        // Need to find solicitud id. 
+        $citadoDB = SeerCitados::find($id);
+        if (!$citadoDB) return back();
+        
+        $solicitudId = $citadoDB->id_solicitud;
+        $sessionKey = "audiencia_data_{$solicitudId}";
+        
+        if (session()->has($sessionKey)) {
+            $sessionData = session($sessionKey);
+            $sessionData['citados'] = $sessionData['citados']->map(function($citado) use ($id) {
+                if ($citado->id == $id) {
+                    $citado->id_abogado = null;
+                    $citado->id_fisica = null;
+                }
+                return $citado;
+            });
+            session([$sessionKey => $sessionData]);
+        } else {
+            $citado = SeerCitados::findOrFail($id);
+            $citado->id_abogado = null;
+            $citado->id_fisica = null;
+            $citado->save();
+        }
 
+        session()->flash('preserve_edit_session', true);
         return back()->with('success', 'Representante eliminado correctamente.');
     }
 

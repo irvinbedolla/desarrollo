@@ -143,7 +143,7 @@
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-8">
                             <div class="form-group">
-                                <label for="name">Nombre(s) y Apellidos del Solicitante</label>
+                                <label for="name">Nombre(s) y Apellidos del Solicitante<span style="color:red;"> (*)</span></label>
                                 <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" value="<?=$solicitante["nombre"];?>" required> 
                                 <div class="invalid-feedback">
                                     El campo nombre es obligatorio.
@@ -152,7 +152,7 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
-                                <label for="name">CURP del Solicitante</label>
+                                <label for="name">CURP del Solicitante<span style="color:red;"> (*)</span></label>
                                 <input type="text" name="curp" id="curp_input" oninput="validarInput(this)"class="form-control" value="<?=$solicitante["curp"];?>" required> 
                                 <pre id="resultado"></pre>
                                 <div class="invalid-feedback">
@@ -179,7 +179,7 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
-                                <label for="name">Puesto</label>
+                                <label for="name">Puesto<span style="color:red;"> (*)</span></label>
                                 <input type="text" class="form-control" name="puesto" value="<?=$solicitante["puesto"];?>" oninput="this.value = this.value.toUpperCase()" required> 
                                 <div class="invalid-feedback">
                                     El campo puesto es obligatorio.
@@ -188,7 +188,7 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
-                                <label for="name">Frecuencia de Pago</label>
+                                <label for="name">Frecuencia de Pago<span style="color:red;"> (*)</span></label>
                                 <select name="periodo_pago" class="form-control" value="<?=$solicitante["periodo_pago"];?>" required>
                                     <option value="">SELECCIONE</option>
                                     <option value="Diario" {{ $solicitante['periodo_pago'] == 'Diario' ? "selected" : '' }}>DIARIO</option>
@@ -203,7 +203,7 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
-                                <label for="name">Salario</label>
+                                <label for="name">Salario<span style="color:red;"> (*)</span></label>
                                 <input type="text" name="pago" class="form-control" value="<?=$solicitante["pago"];?>" required> 
                                 <div class="invalid-feedback">
                                     El campo salario es obligatorio.
@@ -212,22 +212,22 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
-                                <label for="name">Cantidad total de horas trabajadas por semana</label>
+                                <label for="name">Cantidad total de horas trabajadas por semana<span style="color:red;"> (*)</span></label>
                                 <input type="number" name="horas" class="form-control" value="<?=$solicitante["horas_semana"];?>" required> 
                                 <div class="invalid-feedback">
                                     El campo cantidad de horas trabajadas es obligatorio.
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12">
+                        <!--div class="col-xs-12 col-sm-12 col-md-12">
                             <div class="form-group">
                                 <label for="password">¿Laboras actualmente?</label>
                                 <input type="text" class="form-control" name="labora" value="<?=$solicitante["labora"];?>">   
                             </div>  
-                        </div>    
+                        </div-->    
                         <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
-                                <label for="name">Fecha de Ingreso</label>
+                                <label for="name">Fecha de Ingreso<span style="color:red;"> (*)</span></label>
                                 <input type="date" name="fecha_ingreso" class="form-control" value="<?=$solicitante["fecha_ingreso"];?>" required> 
                                 <div class="invalid-feedback">
                                     El campo fecha de ingreso es obligatoria.
@@ -236,7 +236,7 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-4">
                             <div class="form-group">
-                                <label for="name">Jornada</label>
+                                <label for="name">Jornada<span style="color:red;"> (*)</span></label>
                                 <input name="jornada" class="form-control" value="<?=$solicitante["jornada"];?>" required>
                                    {{-- <option value="">SELECCIONE</option>
                                     <option value="Diurna" {{ $solicitante['jornada'] == 'Diurna' ? "selected" : '' }}>DIURNA</option>
@@ -348,7 +348,7 @@
                                             </div>
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-2">
-                                            <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845; border-color: #CEA845">Regresar</a>    
+                                            <a href="{{ route('cancelar_edicion', ['id' => $id, 'redirect_to' => 'publico']) }}" class="btn btn-primary" style=" background-color:#CEA845; border-color: #CEA845">Regresar</a>    
                                         </div>
                                     </div>
 
@@ -790,7 +790,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div align="center">
                                                         <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
-                                                        <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845; border-color:#CEA845;">Regresar</a>    
+                                                        <a href="{{ route('cancelar_edicion', ['id' => $id, 'redirect_to' => 'publico']) }}" class="btn btn-primary" style=" background-color:#CEA845; border-color:#CEA845;">Regresar</a>    
                                                     </div>
                                                 </div> 
                                             </div>
@@ -851,7 +851,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div align="center">
                                                     <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
-                                                    <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845; border-color:#CEA845;">Regresar</a>    
+                                                    <a href="{{ route('cancelar_edicion', ['id' => $id, 'redirect_to' => 'publico']) }}" class="btn btn-primary" style=" background-color:#CEA845; border-color:#CEA845;">Regresar</a>    
                                                 </div>
                                             </div> 
                                         </div>
@@ -1219,7 +1219,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div align="center">
                                                         <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>
-                                                        <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845; border-color:#CEA845;">Regresar</a>    
+                                                        <a href="{{ route('cancelar_edicion', ['id' => $id, 'redirect_to' => 'publico']) }}" class="btn btn-primary" style=" background-color:#CEA845; border-color:#CEA845;">Regresar</a>    
                                                     </div>
                                                 </div> 
                                             </div>
