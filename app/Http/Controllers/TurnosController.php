@@ -1332,7 +1332,7 @@ class TurnosController extends Controller
         $random = array_rand($listado_auxiliares);
         $conciliador = $listado_auxiliares[$random];        
         $user = User::find($conciliador);
-        $expediente = $this->GeneraExpediente($turno["id"],$turno["delegacion"]);
+        $expediente = $this->GeneraExpediente($turno["consecutivo"],$turno["delegacion"]);
 
         Turnos::find($id)->update(['auxiliar' => $user["id"],'lugar_auxiliar' => $user["name"],'estatus' => 'Confirmado','NUE' => $expediente, 'id_conciliador' => $user["id"]]);
         return redirect()->route('Ratificacion');
@@ -1639,23 +1639,24 @@ class TurnosController extends Controller
 
         //Generar numero de expediente
         $delegacion = Turnos::find($data["id"]);
-        $expediente = $this->GeneraExpediente($data["id"],$delegacion["delegacion"]);
+        $expediente = $this->GeneraExpediente($delegacion["consecutivo"],$delegacion["delegacion"]);
 
         $rechazar = Turnos::find($data["id"])
         ->update(['resolucion_primera'  => $data["primera"],
-        //'resolucion_trabajadores'       => $data["trabajadores"],
-        'resolucion_justificacion'      => $data["justificacion"],
-        'resolucion_segunda'            => $data["segunda"],
-        'vacaciones_dias'               => $data["vacaciones"],
-        'aguinaldo_dias'                => $data["aguinaldo"],
-        'otros_dias'                    => $data["otros"],
-        'horario'                       => $data["horario"],
-        'comida'                        => $data["comida"],
-        /*'domicilio'                     => $data["domicilio"],*/
-        'NUE'                           => $expediente,
-        'id_conciliador'                => $data["conciliador_id"],
-        'user_id'                       => $id_usuario,
-        'estatus'                       => $estatus]);
+            //'resolucion_trabajadores'       => $data["trabajadores"],
+            'resolucion_justificacion'      => $data["justificacion"],
+            'resolucion_segunda'            => $data["segunda"],
+            'vacaciones_dias'               => $data["vacaciones"],
+            'aguinaldo_dias'                => $data["aguinaldo"],
+            'otros_dias'                    => $data["otros"],
+            'horario'                       => $data["horario"],
+            'comida'                        => $data["comida"],
+            /*'domicilio'                     => $data["domicilio"],*/
+            'NUE'                           => $expediente,
+            'id_conciliador'                => $data["conciliador_id"],
+            'user_id'                       => $id_usuario,
+            'estatus'                       => $estatus]
+        );
         
         $id_solicitud =  $data["id"];
         if($data["valor"] == 1){
@@ -1722,7 +1723,7 @@ class TurnosController extends Controller
         $user = User::find($id_usuario);
 
         $turno = Turnos::find($data["id"]);
-        $expediente = $this->GeneraExpediente($turno["id"],$turno["delegacion"]);
+        $expediente = $this->GeneraExpediente($turno["consecutivo"],$turno["delegacion"]);
         Turnos::find($turno["id"])->update(['auxiliar' => $user["id"],'lugar_auxiliar' => $user["name"],'estatus' => 'Archivada','NUE' => $expediente, 'id_conciliador' => $user["id"], 'observaciones' => $data["observaciones"]]);
 
         return redirect()->route('ratificacion_atender');
