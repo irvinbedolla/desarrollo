@@ -2670,10 +2670,50 @@ class SeerController extends Controller
                  
                  $id = $new_id; // Actualizar ID para el resto del flujo
                  
-             } catch (\Exception $e) {
-                 DB::rollBack();
-                 return back()->with('error', 'Error al guardar la solicitud: ' . $e->getMessage());
-             }
+            } catch (\Exception $e) {
+                DB::rollBack();
+                    $solicitanteSess = session('solicitante_trabajador_data', []);
+                    if (!empty($solicitanteSess) && is_array($solicitanteSess)) {
+                        $solicitanteArr = [];
+                        if (isset($solicitanteSess['solicitante']) && is_array($solicitanteSess['solicitante'])) {
+                            $solicitanteArr = $solicitanteSess['solicitante'];
+                        } else {
+                            $solicitanteArr = $solicitanteSess;
+                        }
+                        $fileKeys = ['documentoIdentificacion', 'documentoCurp', 'documentoCurpPath', 'documentoIdentificacionPath'];
+                        foreach ($fileKeys as $key) {
+                            if (!empty($solicitanteArr[$key]) && is_string($solicitanteArr[$key])) {
+                                $filename = basename($solicitanteArr[$key]);
+                                $path = 'documentosSolicitud/' . $filename;
+                                    if (\Storage::exists($path)) {
+                                        \Storage::delete($path);
+                                    }
+                                
+                            }
+                        }
+                    }
+
+                    $citados = session('citados_trabajador_data', []);
+                    if (!empty($citados) && is_array($citados)) {
+                        foreach ($citados as $citado) {
+                            if (is_array($citado)) {
+                                foreach ($citado as $k => $v) {
+                                    if (is_string($v) && preg_match('/\.(pdf|jpg|jpeg|png)$/i', $v)) {
+                                        $filename = basename($v);
+                                        $path = 'documentosSolicitud/' . $filename;
+                                            if (\Storage::exists($path)) {
+                                                \Storage::delete($path);
+                                            }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    session()->forget(['solicitud_trabajador_data', 'solicitante_trabajador_data', 'citados_trabajador_data']);
+
+                return redirect()->route('solicitudEnLinea')->with('error', 'Ocurrió un error al guardar la solicitud. Se descartaron los datos de captura.');
+            }
         }
 
         //Revisar si ya existe el correo
@@ -10012,7 +10052,41 @@ class SeerController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Ocurrió un error al guardar la solicitud: ' . $e->getMessage());
+                $solicitante = session('solicitante_data', []);
+                if (!empty($solicitante) && is_array($solicitante)) {
+                    $fileKeys = ['documentoIdentificacion', 'documentoCurp'];
+                    foreach ($fileKeys as $key) {
+                        if (!empty($solicitante[$key]) && is_string($solicitante[$key])) {
+                            $filename = basename($solicitante[$key]);
+                            $path = 'documentosSolicitud/' . $filename;
+                            if (\Storage::exists($path)) {
+                                \Storage::delete($path);
+                            }
+                        }
+                    }
+                }
+
+                $citados = session('citados_data', []);
+                if (!empty($citados) && is_array($citados)) {
+                    foreach ($citados as $citado) {
+                        if (is_array($citado)) {
+                            foreach ($citado as $k => $v) {
+                                if (is_string($v) && preg_match('/\.(pdf|jpg|jpeg|png)$/i', $v)) {
+                                    $filename = basename($v);
+                                    $path = 'documentosSolicitud/' . $filename;
+                                    if (\Storage::exists($path)) {
+                                        \Storage::delete($path);
+                                    }
+                                    
+                                }
+                            }
+                        }
+                    }
+                }
+                session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
+            
+
+            return redirect()->route('solicitudes_index')->with('error', 'Ocurrió un error al finalizar la solicitud. Se descartaron los datos de captura.');
         }
 
         //Revisar si ya existe el correo

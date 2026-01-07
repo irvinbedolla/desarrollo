@@ -158,4 +158,26 @@
 
 @yield('scripts')
 
+@if(session('error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var errorMsg = @json(session('error'));
+            try {
+                if (typeof swal === 'function') {
+                    swal({
+                        title: 'Error',
+                        text: errorMsg,
+                        icon: 'error',
+                        button: 'OK'
+                    });
+                } else {
+                    alert('Error: ' + errorMsg);
+                }
+            } catch (e) {
+                console.error('Error showing flash message:', e);
+            }
+        });
+    </script>
+@endif
+
 </html>
