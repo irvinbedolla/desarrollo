@@ -29,7 +29,7 @@
                                         <tbody>
                                             @foreach($solicitudes as $solicitud)
                                                 <tr>
-                                                    <td>{{$solicitud->id}}</td>
+                                                    <td>{{$solicitud->consecutivo}}</td>
                                                     <td>{{$solicitud->fecha}}</td> 
                                                     <td>{{$solicitud->empresa}}</td>
                                                     <td>{{$solicitud->telefono}}</td>

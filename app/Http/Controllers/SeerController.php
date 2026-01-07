@@ -2965,7 +2965,7 @@ class SeerController extends Controller
         
         //Actualizar SEER GENERAL
         $delegacion = SeerPerGeneral::find($data["id"]);
-        $NUE = $this->GeneraExpediente($data["id"],$delegacion["delegacion"]);
+        $NUE = $this->GeneraExpediente($delegacion["consecutivo"],$delegacion["delegacion"]);
 
         $motivosDelete = session('motivos_edicion_delete', []);
         if (!empty($motivosDelete)) {
@@ -3212,7 +3212,7 @@ class SeerController extends Controller
         
         //Actualizar SEER GENERAL
         $delegacion = SeerPerGeneral::find($data["id"]);
-        $NUE = $this->GeneraExpediente($data["id"],$delegacion["delegacion"]);
+        $NUE = $this->GeneraExpediente($data["consecutivo"],$delegacion["delegacion"]);
 
         SeerPerGeneral::where('id', $data["id"])
         ->update(['NUE' => $NUE, 'actividad' => $data["actividad_economica"],'id_rama' => $data["ramaIndustrial"], 'fecha_confirmacion' => $fecha_actual,]);
@@ -3446,7 +3446,7 @@ class SeerController extends Controller
         
         //Actualizar SEER GENERAL
         $delegacion = SeerPerGeneral::find($data["id"]);
-        $NUE = $this->GeneraExpediente($data["id"],$delegacion["delegacion"]);
+        $NUE = $this->GeneraExpediente($data["consecutivo"],$delegacion["delegacion"]);
 
         $motivosDelete = session('motivos_edicion_delete', []);
         if (!empty($motivosDelete)) {
@@ -6777,7 +6777,7 @@ class SeerController extends Controller
             
         //Actualizar SEER GENERAL
         $delegacion = SeerPerGeneral::find($data["id"]);
-        $NUE = $this->GeneraExpediente($data["id"],$delegacion["delegacion"]);
+        $NUE = $this->GeneraExpediente($data["consecutivo"],$delegacion["delegacion"]);
 
         $motivosDelete = session('motivos_edicion_delete', []);
         if (!empty($motivosDelete)) {
@@ -8192,9 +8192,9 @@ class SeerController extends Controller
 
         $id_conciliador = $request->input('conciliador') ?? auth()->id();
 
-    // Calcular fecha mínima para reagendar: permitir desde el siguiente día natural
-    $fechaMinima = (new \DateTime())->setTime(0,0,0)->modify('+1 day');
-    $minDateStr = $fechaMinima->format('Y-m-d');
+        // Calcular fecha mínima para reagendar: permitir desde el siguiente día natural
+        $fechaMinima = (new \DateTime())->setTime(0,0,0)->modify('+1 day');
+        $minDateStr = $fechaMinima->format('Y-m-d');
 
         $inhabiles = DiasInhabiles::where('centro', $sede)
             ->where(function($query) use ($fecha_inicio, $fecha_fin) {
