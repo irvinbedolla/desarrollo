@@ -5192,6 +5192,17 @@ class SeerController extends Controller
         $sede_a_guardar = $solicitudOriginal->delegacion ?? $user->delegacion;
 
         if($data["conclucion"] == "Conciliacion"){
+             // --- BLOQUE VISTA PREVIA ---
+            if(!isset($data["dias_pagos"])) return back()->withErrors('Debes agregar por lo menos una fecha de pago.');
+            if(!isset($data["tipo_pago"])) return back()->withErrors('Debes agregar por lo menos un concepto de pago.');
+
+            if(isset($data["valor"]) && $data["valor"] == 1){
+                 $sessionKey = 'audiencia_conclucion_data_' . $id_solicitud;
+                 session([$sessionKey => $data]);
+                 return redirect()->route('vista_previa', ['id_solicitud' => $id_solicitud]);
+            }
+            // ---------------------------
+
             //Revisar si existe
             if(isset($data["dias_pagos"])){
                 $conteo = count($data["dias_pagos"]);
@@ -7376,6 +7387,85 @@ class SeerController extends Controller
         $pagos          = Pagos::where('id_solicitud',$id)->whereIN('tipo_pago',['Audiencia','Conciliador'])->get();
         $deducciones    = Deducciones::where('id_solicitud',$id)->where('tipo_pago','Audiencia')->get();
 
+        // --- VISTA PREVIA LOGIC ---
+        $sessionKey = 'audiencia_conclucion_data_' . $id;
+        
+        // Si no existe registro en BD, iniciamos uno vacío para no romper la vista
+        if(!$conciliadores) {
+            $conciliadores = new SeerPerConciliador();
+            // Inicializar valores por defecto para evitar warnings en la vista
+            $conciliadores->resolicion_primera = '';
+            $conciliadores->resolicion_justificacion = '';
+            $conciliadores->resolicion_segunda = '';
+            $conciliadores->conclucion = '';
+            $conciliadores->vacaciones = '';
+            $conciliadores->aguinaldo = '';
+            $conciliadores->otros = '';
+            $conciliadores->horario = '';
+            $conciliadores->comida = '';
+            $conciliadores->tipo_audiencia = '';
+        }
+
+        if(session()->has($sessionKey)){
+            $sData = session($sessionKey);
+
+            $conceptos = collect();
+            if(isset($sData['tipo_pago'])){
+                foreach($sData['tipo_pago'] as $k => $desc){
+                     $obj = new \stdClass();
+                     $obj->id = null;
+                     if($desc == "Otras" && isset($sData['otra_prestacion'][$k])) $desc = $sData['otra_prestacion'][$k];
+                     $obj->descripcion = $desc;
+                     $obj->monto = $sData['monto_pago'][$k] ?? 0;
+                     // Importante: session_index para eliminar
+                     $obj->session_index = $k;
+                     $conceptos->push($obj);
+                }
+            }
+
+            $deducciones = collect();
+            if(isset($sData['descripcion_deduccion'])){
+                foreach($sData['descripcion_deduccion'] as $k => $desc){
+                    $obj = new \stdClass();
+                    $obj->id = null;
+                    $obj->descripcion = $desc;
+                    $obj->monto = $sData['monto_deduccion'][$k] ?? 0;
+                    $obj->session_index = $k;
+                    $deducciones->push($obj);
+                }
+            }
+
+            $pagos = collect();
+            if(isset($sData['dias_pagos'])){
+                foreach($sData['dias_pagos'] as $k => $fecha){
+                    $obj = new \stdClass();
+                    $obj->id = null;
+                    $obj->fecha = $fecha;
+                    $obj->hora = $sData['hora_pagos'][$k] ?? '';
+                    $obj->monto = $sData['monto_pagos'][$k] ?? 0;
+                    $obj->descripcion = $sData['descripcion_pagos'][$k] ?? '';
+                    $obj->tipo_pago = $sData['tipo_pagoAgenda'][$k] ?? 'Audiencia'; 
+                    $obj->session_index = $k;
+                    $pagos->push($obj);
+                }
+            }
+            
+            // Hydrate Conciliadores fields from Session
+            $conciliadores->resolicion_primera = $sData['primera'] ?? $conciliadores->resolicion_primera;
+            $conciliadores->resolicion_justificacion = $sData['justificacion'] ?? $conciliadores->resolicion_justificacion;
+            $conciliadores->resolicion_segunda = $sData['segunda'] ?? $conciliadores->resolicion_segunda;
+            $conciliadores->conclucion = $sData['conclucion'] ?? $conciliadores->conclucion;
+            $conciliadores->vacaciones = $sData['vacaciones'] ?? $conciliadores->vacaciones;
+            $conciliadores->aguinaldo = $sData['aguinaldo'] ?? $conciliadores->aguinaldo;
+            $conciliadores->otros = $sData['otros'] ?? $conciliadores->otros;
+            $conciliadores->horario = $sData['horario'] ?? $conciliadores->horario;
+            $conciliadores->comida = $sData['comida'] ?? $conciliadores->comida;
+            $conciliadores->tipo_audiencia = $sData['tipo_audiencia'] ?? $conciliadores->tipo_audiencia;
+            // Ensure compatibility if view uses 'tipo'
+            $conciliadores->tipo = $conciliadores->tipo_audiencia;
+        }
+        // --------------------------
+
         return view('/audiencias/audiencia_revisar',compact('id','conciliadores','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios','conceptos','pagos','deducciones'));
     }
 
@@ -7591,20 +7681,73 @@ class SeerController extends Controller
         return back()->with('success', 'Pago Borrado Correctamente.');
     }
     
+    public function eliminar_item_sesion(Request $request, $id){
+        $sessionKey = 'audiencia_conclucion_data_' . $id;
+        if(session()->has($sessionKey)){
+            $data = session($sessionKey);
+            $type = $request->type; // 'pago', 'concepto', 'deduccion'
+            $index = $request->index;
+            
+            $arrays = [];
+            if($type == 'concepto'){
+                 $arrays = ['tipo_pago', 'monto_pago', 'otra_prestacion']; 
+            } elseif($type == 'deduccion'){
+                 $arrays = ['descripcion_deduccion', 'monto_deduccion'];
+            } elseif($type == 'pago'){ // Cumplimientos
+                 $arrays = ['dias_pagos', 'hora_pagos', 'monto_pagos', 'descripcion_pagos', 'tipo_pagoAgenda'];
+            }
+            
+            foreach($arrays as $arr){
+                if(isset($data[$arr]) && array_key_exists($index, $data[$arr])){
+                    unset($data[$arr][$index]);
+                    // Reindexar array
+                    $data[$arr] = array_values($data[$arr]);
+                }
+            }
+            session([$sessionKey => $data]);
+        }
+        return back();
+    }
+
     public function terminar_audiencia(Request $request){
         $data = $request->all();
+        $id_solicitud = $data["id"];
+
+        // --- MERGE SESSION (Vista Previa) ---
+        $sessionKey = "audiencia_conclucion_data_{$data['id']}";
+        if(session()->has($sessionKey)){
+            $sessionData = session($sessionKey);
+            $arraysToMerge = [
+                'dias_pagos', 'hora_pagos', 'monto_pagos', 'descripcion_pagos', 'tipo_pagoAgenda', 
+                'tipo_pago', 'monto_pago', 'otra_prestacion', 
+                'descripcion_deduccion', 'monto_deduccion'
+            ];
+            foreach($arraysToMerge as $key){
+                if(isset($sessionData[$key])){
+                     if(isset($data[$key])) {
+                         $data[$key] = array_merge($sessionData[$key], $data[$key]);
+                     } else {
+                         $data[$key] = $sessionData[$key];
+                     }
+                }
+            }
+            $data = array_merge($sessionData, $data); 
+        }
+        // ------------------------------------
+
         if (isset($data['aparece_convenio']) && is_array($data['aparece_convenio'])) {
             foreach ($data['aparece_convenio'] as $id_representante => $valor) {
                 SeerCitados::where('id', $id_representante)
                     ->update(['aparece_convenio' => $valor == 1 ? 1 : 0]);
             }
         }
-        $id_solicitud = $data["id"];
+        
         $monto = 0;
         $fecha_actual = date('y-m-d');
         $id = auth()->user()->id;
         $user = User::find($id);
-        $sede = $user->delegacion;
+        $solicitudOriginal = SeerPerGeneral::find($data["id"]);
+        $sede = $solicitudOriginal->delegacion ?? $user->delegacion;
 
         if($data["conclucion"] == "Conciliacion"){
             //Revisar si existe
@@ -7658,23 +7801,55 @@ class SeerController extends Controller
                     Deducciones::create($data_deduccion);
                 }
             }
-            //Actualizar Audiecia
-            SeerPerConciliador::where('id_solicitud',$data["id"])
-            ->orderBy('id', 'desc')
-            ->first()
-            ->update([
-                'tipo'                      =>  $data["tipo_audiencia"],
-                'resolicion_primera'        =>  $data["primera"],
-                'resolicion_justificacion'  =>  $data["justificacion"],
-                'resolicion_segunda'        =>  $data["segunda"],
-                'conclucion'                =>  $data["conclucion"],
-                'vacaciones'                =>  $data["vacaciones"],
-                'aguinaldo'                 =>  $data["aguinaldo"],
-                'otros'                     =>  $data["otros"],
-                'horario'                   =>  $data["horario"],
-                'comida'                    =>  $data["comida"],
-                'tipo_audiencia'            =>  $data["tipo_audiencia"],
-            ]);
+            //Actualizar o Crear Audiencia Conciliador
+            $conciliadorRecord = SeerPerConciliador::where('id_solicitud',$data["id"])->orderBy('id', 'desc')->first();
+            
+            $data_conciliador = [
+                'id_solicitud'          => $data["id"],
+                'estatus_conciliacion'  => $data["conclucion"],
+                'monto'                 => $monto,
+                'tipo'                  => $data["tipo_audiencia"],
+                'resolicion_primera'    =>  $data["primera"] ?? ($conciliadorRecord->resolicion_primera ?? ''),
+                'resolicion_justificacion'=>  $data["justificacion"] ?? ($conciliadorRecord->resolicion_justificacion ?? ''),
+                'resolicion_segunda'    =>  $data["segunda"] ?? ($conciliadorRecord->resolicion_segunda ?? ''),
+                'conclucion'            =>  $data["conclucion"],
+                'vacaciones'            =>  (isset($data["vacaciones"]) && $data["vacaciones"] !== '') ? $data["vacaciones"] : ($conciliadorRecord->vacaciones ?? 0),
+                'aguinaldo'             =>  (isset($data["aguinaldo"]) && $data["aguinaldo"] !== '') ? $data["aguinaldo"] : ($conciliadorRecord->aguinaldo ?? 0),
+                'otros'                 =>  (isset($data["otros"]) && $data["otros"] !== '') ? $data["otros"] : ($conciliadorRecord->otros ?? 0),
+                'horario'               =>  $data["horario"] ?? ($conciliadorRecord->horario ?? ''),
+                'comida'                =>  $data["comida"] ?? ($conciliadorRecord->comida ?? ''),
+                'tipo_audiencia'        =>  $data["tipo_audiencia"],
+            ];
+            
+            if($conciliadorRecord){
+                $conciliadorRecord->update($data_conciliador);
+            } else {
+                 $solicitante = SeerSolicitante::where('id_solicitud',$data["id"])->first();
+                 $numero_audiencia = $this->GeneraAudiencia($data["id"]);
+                 
+                 $data_conciliador['numero_audiencia'] = $numero_audiencia["0"];
+                 $data_conciliador['numero_audiencias'] = $numero_audiencia["1"];
+                 $data_conciliador['consecutivo'] = $numero_audiencia[1];
+                 $data_conciliador['rfc'] = $solicitante["rfc"];
+                 $data_conciliador['NSS'] = $solicitante["nss"];
+                 $data_conciliador['multa'] = 'No';
+                 $data_conciliador['validado'] = 'Validado';
+                 
+                 SeerPerConciliador::create($data_conciliador);
+                 
+                 // Actualizar tabla Audiencias con el folio generado (solo si es nuevo)
+                 $numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
+                 Audiencias::where('id_solicitud',$data["id"])
+                    ->orderBy('id_solicitud','desc')
+                    ->update([
+                        'numero_audiencia'  =>  $numAudiencia+1,
+                        'folio_audiencia'   =>  $numero_audiencia[0],
+                        'estatus'           => 'Archivada',
+                    ]);
+            }
+            if(session()->has("audiencia_conclucion_data_{$data['id']}")) {
+                session()->forget("audiencia_conclucion_data_{$data['id']}");
+            }
 
             SeerPerGeneral::find($data["id"])
             ->update([

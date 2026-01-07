@@ -430,6 +430,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/audieniecias/concepto_eliminar_pago/{id_solicitud}',  [SeerController::class, 'concepto_eliminar_pago'])->name('concepto_eliminar_pago');
         Route::delete('/audieniecias/pago_eliminar_pago/{id_solicitud}',      [SeerController::class, 'pago_eliminar_pago'])->name('pago_eliminar_pago');
         Route::post('/solicitudes/terminar_audiencia',      [SeerController::class, 'terminar_audiencia'])->name('terminar_audiencia');
+        Route::post('/audiencias/eliminar_item_sesion/{id}', [SeerController::class, 'eliminar_item_sesion'])->name('eliminar_item_sesion');
         Route::get('/audienicas/cumplimietos/{id}',         [SeerController::class, 'ver_pagos_audiencia'])->name('audiencia_cumplimientos');
         Route::post('/guardar_edicion_audiencia',           [SeerController::class, 'audiencia_confirmar'])->name('audiencia_confirmar');
         Route::post('/audiencias/pagoA',                    [SeerController::class, 'pagoA_audiencia'])->name('pagoA_audiencia'); // cumplimiento en audiencias

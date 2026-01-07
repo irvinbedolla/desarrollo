@@ -145,11 +145,20 @@
                                                         <td>{{ $concepto->descripcion}}</td>
                                                         <td>${{ number_format($concepto->monto,2) }}</td>
                                                         <td>
-                                                            <form method="POST" action="{{ route('concepto_eliminar_pago', $concepto->id) }} ">
-                                                                @csrf
-                                                                <input type="hidden" name="_method" value="DELETE">
-                                                                <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
-                                                            </form>
+                                                            @if($concepto->id)
+                                                                <form method="POST" action="{{ route('concepto_eliminar_pago', $concepto->id) }} ">
+                                                                    @csrf
+                                                                    <input type="hidden" name="_method" value="DELETE">
+                                                                    <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
+                                                                </form>
+                                                            @elseif(isset($concepto->session_index))
+                                                                <form method="POST" action="{{ route('eliminar_item_sesion', $id) }}">
+                                                                    @csrf
+                                                                    <input type="hidden" name="type" value="concepto">
+                                                                    <input type="hidden" name="index" value="{{ $concepto->session_index }}">
+                                                                    <button class="btn btn-secondary" style="background-color:#6c757d; border-color:#6c757d;" type="submit">Quitar (V)</button>
+                                                                </form>
+                                                            @endif
                                                         </td>
                                                     </tr>
                                                     @php $contador++; @endphp
@@ -177,11 +186,20 @@
                                                         <td>{{ $concepto->descripcion}}</td>
                                                         <td>${{ number_format($concepto->monto,2) }}</td>
                                                         <td>
-                                                            <form method="POST" action="{{ route('eliminar_deduccion_audiencia', $concepto->id) }} ">
-                                                                @csrf
-                                                                <input type="hidden" name="_method" value="DELETE">
-                                                                <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
-                                                            </form>
+                                                            @if($concepto->id)
+                                                                <form method="POST" action="{{ route('eliminar_deduccion_audiencia', $concepto->id) }} ">
+                                                                    @csrf
+                                                                    <input type="hidden" name="_method" value="DELETE">
+                                                                    <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
+                                                                </form>
+                                                            @elseif(isset($concepto->session_index))
+                                                                <form method="POST" action="{{ route('eliminar_item_sesion', $id) }}">
+                                                                    @csrf
+                                                                    <input type="hidden" name="type" value="deduccion">
+                                                                    <input type="hidden" name="index" value="{{ $concepto->session_index }}">
+                                                                    <button class="btn btn-secondary" style="background-color:#6c757d; border-color:#6c757d;" type="submit">Quitar (V)</button>
+                                                                </form>
+                                                            @endif
                                                         </td>
                                                     </tr>
                                                     @php $contador++; @endphp
@@ -211,11 +229,20 @@
                                                         <td>{{ $pago->descripcion}}</td>
                                                         <td>${{ number_format($pago->monto,2) }}</td>
                                                         <td>
-                                                            <form method="POST" action="{{ route('pago_eliminar_pago', $pago->id) }} ">
-                                                                @csrf
-                                                                <input type="hidden" name="_method" value="DELETE">
-                                                                <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
-                                                            </form>
+                                                            @if($pago->id)
+                                                                <form method="POST" action="{{ route('pago_eliminar_pago', $pago->id) }} ">
+                                                                    @csrf
+                                                                    <input type="hidden" name="_method" value="DELETE">
+                                                                    <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
+                                                                </form>
+                                                            @elseif(isset($pago->session_index))
+                                                                <form method="POST" action="{{ route('eliminar_item_sesion', $id) }}">
+                                                                    @csrf
+                                                                    <input type="hidden" name="type" value="pago">
+                                                                    <input type="hidden" name="index" value="{{ $pago->session_index }}">
+                                                                    <button class="btn btn-secondary" style="background-color:#6c757d; border-color:#6c757d;" type="submit">Quitar (V)</button>
+                                                                </form>
+                                                            @endif
                                                         </td>
                                                     </tr>
                                                     @php $contador++; @endphp
@@ -353,6 +380,9 @@
                                     </div>
                                 </div>
                                 <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-2">
+                                        <br><a href="{{ route('audiencias.parte3', $id) }}" class="btn btn-danger">Regresar</a>
+                                    </div>
                                     <div class="col-xs-12 col-sm-12 col-md-2">
                                         <br><button id="btn-terminar" type="submit" class="btn btn-success" name="bandera" value="1">Terminar</button>
                                     </div>
