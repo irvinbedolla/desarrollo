@@ -8032,7 +8032,7 @@ class SeerController extends Controller
         
                 $fecha_str = $fecha->format('Y-m-d');
                 $conteoDiario = $pagosPorDiaMap[$fecha_str] ?? 0; 
-                $diaEstaLleno = ($conteoDiario > 60); 
+                $diaEstaLleno = ($conteoDiario > 16); 
 
                 $slot = clone $inicioJornada;
                 while ($slot < $finJornada) {
@@ -8045,7 +8045,7 @@ class SeerController extends Controller
                     
                     // **CAMBIO CLAVE 2: Definir la condición de ocupación**
                     // El slot está OCUPADO solo si el conteo actual es >= 2.
-                    $ocupado = ($conteoOcupados >= 5);
+                    $ocupado = ($conteoOcupados >= 1);
 
                     $esInhabil = false;
                     foreach($inhabiles as $dia){
