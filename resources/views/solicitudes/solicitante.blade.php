@@ -408,10 +408,8 @@
                                                 <div class="form-group">
                                                     <label for="name">Frecuencia de pago</label>
                                                     <select name="periodo_pago" class="form-control">
-                                                        
-                                                        <option value="Diario">DIARIO</option>
-                                                        <!--
                                                         <option value="">SELECCIONE</option>
+                                                        <option value="Diario">DIARIO</option>
                                                         <option value="Semana">SEMANAL</option>
                                                         <option value="Quincenal">QUINCENAL</option>
                                                         <option value="Mensual">MENSUAL</option>-->

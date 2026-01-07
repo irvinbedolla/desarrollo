@@ -26,7 +26,7 @@
                                     <tbody class="contenidobusqueda">
                                         @foreach($solicitudes as $solicitud)
                                             <tr>
-                                                <td>{{$solicitud->id}}</td>
+                                                <td>{{$solicitud->consecutivo}}</td>
                                                 <td>{{$solicitud->fecha}}</td>
                                                 <td>{{$solicitud->NUE}}</td>
                                                 <td>{{$solicitud->nombre}}</td>
