@@ -336,7 +336,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Número Exterior <span style="color:red;">(*)</span></label><br>
-                                                    <input type="text" name="numExt" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <input type="text" name="numExt" maxlength="50" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo número exterior es obligatorio.
                                                     </div>
@@ -345,7 +345,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Número Interior (Campo opcional)</label>
-                                                    <input type="text" name="numInt" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                    <input type="text" name="numInt" maxlength="50" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                 </div>
                                             </div>
                                             <div id="div1"  class="col-xs-12 col-sm-12 col-md-3">
