@@ -5142,9 +5142,14 @@ class SeerController extends Controller
 
         if ($conciliadores->isEmpty()) return response()->json(['error' => 'No hay conciliadores'], 404);
 
-        // 2. Punto de inicio: SIEMPRE desde hoy para encontrar huecos
-        // Puedes sumar +1 día si no quieres agendar para el mismo día
-        $fecha_revisar = date('Y-m-d'); 
+        
+        $ultima_fecha = Audiencias::max('fecha');
+        if ($ultima_fecha && $ultima_fecha > date('Y-m-d')) {
+            $fecha_revisar = date('Y-m-d', strtotime($ultima_fecha));
+        } else {
+            // Si no hay última fecha o ésta ya pasó, empezamos desde hoy
+            $fecha_revisar = date('Y-m-d');
+        }
         $horarios_disponibles = ["09:00:00", "10:15:00", "11:30:00", "12:45:00", "14:00:00"];
         
         $encontrado = false;
