@@ -3446,7 +3446,7 @@ class SeerController extends Controller
         
         //Actualizar SEER GENERAL
         $delegacion = SeerPerGeneral::find($data["id"]);
-        $NUE = $this->GeneraExpediente($data["consecutivo"],$delegacion["delegacion"]);
+        $NUE = $this->GeneraExpediente($delegacion["consecutivo"],$delegacion["delegacion"]);
 
         $motivosDelete = session('motivos_edicion_delete', []);
         if (!empty($motivosDelete)) {
