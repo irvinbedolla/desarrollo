@@ -5119,22 +5119,17 @@ class SeerController extends Controller
     }
     
     public function ObtenerAudiencia($delegacion) {
-        $array_horarios = array();
-        $relacionEloquent = 'roles';
         $id = auth()->user()->id;
         $user = User::find($id);
-        $bandera = 0;
-
-        // 1. Obtención de Conciliadores (Simplificado)
-        $tipo_permiso = in_array($delegacion, ["Morelia", "Uruapan", "Zamora"]) ? ["Ambos", "Precencial"] : ["Ambos", "Virtual"];
         
-        // Lógica de oficina de apoyo
+        // 1. Obtención de Conciliadores (Mantenemos tu lógica de oficina)
+        $tipo_permiso = in_array($delegacion, ["Morelia", "Uruapan", "Zamora"]) ? ["Ambos", "Precencial"] : ["Ambos", "Virtual"];
         $oficina = $delegacion;
         if ($delegacion == "Zitácuaro") $oficina = "Morelia";
         else if ($delegacion == "Lázaro Cárdenas") $oficina = "Uruapan";
         else if ($delegacion == "Sahuayo") $oficina = "Zamora";
 
-        $conciliadores = User::whereHas($relacionEloquent, function ($query) {
+        $conciliadores = User::whereHas('roles', function ($query) {
                 $query->where('name', 'Conciliador');
             })
             ->where('delegacion', $oficina)
@@ -5145,51 +5140,45 @@ class SeerController extends Controller
                 ->whereIn('tipo', $tipo_permiso);
             })->get();
 
-        if ($conciliadores->isEmpty()) return response()->json(['error' => 'No hay conciliadores disponibles'], 404);
+        if ($conciliadores->isEmpty()) return response()->json(['error' => 'No hay conciliadores'], 404);
 
-        // 2. Determinar punto de inicio
-        $reciente = Audiencias::where('delegacion', $delegacion)->orderBy('fecha', 'desc')->orderBy('hora', 'desc')->first();
-        
-        $fecha_revisar = $reciente ? date('Y-m-d', strtotime($reciente->fecha)) : date('Y-m-d');
-        $fecha_hora = $reciente ? date('H:i:s', strtotime($reciente->hora)) : "09:00:00";
+        // 2. Punto de inicio: SIEMPRE desde hoy para encontrar huecos
+        // Puedes sumar +1 día si no quieres agendar para el mismo día
+        $fecha_revisar = date('Y-m-d'); 
         $horarios_disponibles = ["09:00:00", "10:15:00", "11:30:00", "12:45:00", "14:00:00"];
+        
+        $encontrado = false;
+        $limite_busqueda = 0; // Para evitar bucles infinitos (ej. buscar 60 días al futuro)
 
-        // 3. Bucle de búsqueda de espacio
-        do {
+        while (!$encontrado && $limite_busqueda < 60) {
             $dia_semana = date('l', strtotime($fecha_revisar));
 
-            // Saltamos fines de semana
-            if ($dia_semana == 'Saturday' || $dia_semana == 'Sunday') {
-                $fecha_revisar = date('Y-m-d', strtotime($fecha_revisar . ' +1 day'));
-                $fecha_hora = "09:00:00";
-                continue;
-            }
-
-            // Revisar si el centro tiene día inhábil general
-            $revisar_centro = DiasInhabiles::where('fecha_inicio', $fecha_revisar)
+            // Saltamos fines de semana y días inhábiles de la delegación
+            $es_inhabil_centro = DiasInhabiles::where('fecha_inicio', $fecha_revisar)
                 ->where('centro', $user->delegacion)
                 ->whereNull('user_id')
                 ->exists();
 
-            if ($revisar_centro) {
+            if ($dia_semana == 'Saturday' || $dia_semana == 'Sunday' || $es_inhabil_centro) {
                 $fecha_revisar = date('Y-m-d', strtotime($fecha_revisar . ' +1 day'));
-                $fecha_hora = "09:00:00";
+                $limite_busqueda++;
                 continue;
             }
 
-            // Buscamos en cada horario
             foreach ($horarios_disponibles as $h) {
-                // Si la fecha es la "reciente", solo buscamos horarios posteriores a la última audiencia
-                if ($fecha_revisar == date('Y-m-d', strtotime($reciente->fecha ?? '')) && $h <= $fecha_hora) {
-                    continue;
-                }
+                // OPCIONAL: Si es hoy, saltar horarios que ya pasaron
+                if ($fecha_revisar == date('Y-m-d') && $h <= date('H:i:s')) continue;
 
                 $listado_auxiliares = [];
 
                 foreach ($conciliadores as $conciliador) {
-                    // Verificamos si el conciliador está ocupado (Audiencia o Día Inhábil)
-                    $ocupado = Audiencias::where('fecha', $fecha_revisar)->where('hora', $h)->where('id_conciliador', $conciliador->id)->exists();
+                    // 1. ¿Tiene audiencia en este bloque?
+                    $ocupado = Audiencias::where('fecha', $fecha_revisar)
+                        ->where('hora', $h)
+                        ->where('id_conciliador', $conciliador->id)
+                        ->exists();
                     
+                    // 2. ¿Tiene el conciliador un permiso personal (Día inhábil individual)?
                     $dia_libre = DiasInhabiles::where('fecha_inicio', $fecha_revisar)
                         ->where('user_id', $conciliador->id)
                         ->where('horario_inicio', '<=', $h)
@@ -5201,23 +5190,24 @@ class SeerController extends Controller
                     }
                 }
 
+                // Si encontramos al menos un conciliador libre en este horario...
                 if (!empty($listado_auxiliares)) {
-                    $bandera = 1;
                     $random_id = $listado_auxiliares[array_rand($listado_auxiliares)];
                     return [
-                        $fecha_revisar,   // [0] Fecha sugerida
-                        $h,               // [1] Hora sugerida
-                        $fecha_revisar,   // [2] Originalmente tenías fecha_audiencia aquí
-                        $random_id        // [3] ID del Conciliador
+                        $fecha_revisar, 
+                        $h,             
+                        $fecha_revisar, 
+                        $random_id      
                     ];
                 }
             }
 
-            // Si terminamos los horarios del día y no hubo éxito, pasamos al siguiente día
+            // Si no hay huecos en ningún horario de este día, pasamos al siguiente
             $fecha_revisar = date('Y-m-d', strtotime($fecha_revisar . ' +1 day'));
-            $fecha_hora = "09:00:00";
+            $limite_busqueda++;
+        }
 
-        } while ($bandera == 0);
+        return response()->json(['error' => 'No se encontraron espacios en los próximos 60 días'], 404);
     }
 
     public function concluir_audiencia_conciliador(Request $request){    
