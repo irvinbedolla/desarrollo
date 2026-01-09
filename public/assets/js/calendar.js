@@ -287,10 +287,8 @@ function handleEventClick(info, calendarType) {
         `;
     } else if (calendarType === 'audiencias') {
         modalContent = `
-            <strong>Motivo:</strong> ${info.event.title}<br>
-            <strong>Numero:</strong> ${props.numero_audiencia}<br>
-            <strong>ID:</strong> ${info.event.id}<br>
-            <strong>Folio:</strong> ${props.folio_audiencia}<br>
+            <strong>NUE:</strong> ${info.event.title}<br>
+            <strong>Conciliador:</strong> ${props.conciliador}<br>
             <strong>Fecha:</strong> ${props.fecha}<br>
             <strong>Hora:</strong> ${props.hora}<br>
             <strong>Estatus:</strong> ${props.estatus}<br>
@@ -298,13 +296,13 @@ function handleEventClick(info, calendarType) {
             <strong>Sala:</strong> ${props.sala}<br>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <a href="cumplimiento/consulta${info.event.id}/${props.tipo}" class="btn btn-info">Ver detalle</a>
+                <a href="cumplimiento/consulta/${info.event.id}/${props.tipo}" class="btn btn-info">Ir Audiencia</a>
             </div>
         `;
     }
     else if (calendarType === 'ratificaciones') {
         modalContent = `
-            <strong>Motivo:</strong> ${info.event.title}<br>
+            <strong>NUE:</strong> ${info.event.title}<br>
             <strong>Folio:</strong> ${info.event.id}<br>
             <strong>Fecha:</strong> ${props.fecha}<br>
             <strong>Hora:</strong> ${props.hora}<br>

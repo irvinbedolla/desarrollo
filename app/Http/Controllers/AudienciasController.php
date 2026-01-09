@@ -23,7 +23,8 @@ class AudienciasController extends Controller
 
         if ($userRole[0] == "Super Usuario" || $userRole[0] == "Administardor") {
             $audiencias = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
-            ->select('audiencias.*','seer_general.NUE','seer_general.estatus')->get();
+            ->join('users','users.id','audiencias.id_conciliador')
+            ->select('audiencias.*','seer_general.NUE','seer_general.estatus','users.name')->get();
 
             $eventos = [];
             foreach ($audiencias as $audiencia) {
@@ -60,7 +61,8 @@ class AudienciasController extends Controller
                         'delegacion' => $audiencia->delegacion,
                         'sala' => $audiencia->sala,
                         'usuario' => $userID,
-                        'tipo' => $tipo
+                        'tipo' => $tipo,
+                        'conciliador' => $audiencia->name,
                     ]
                 ];
             }
