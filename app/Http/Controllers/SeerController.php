@@ -466,27 +466,28 @@ class SeerController extends Controller
             if($sede === "Todos"){
                 $pagosRatificacion = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
                 ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                ->join('users','users.id','turnos.id_conciliador')
+                //->join('users','users.id','turnos.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Ratificacion")
                 ->selectRaw('count(pago_solicitud.id) as ratificaciones')
                 ->first();
+
                 $pagosRatificacionMonto = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
                 ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                ->join('users','users.id','turnos.id_conciliador')
+                //->join('users','users.id','turnos.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Ratificacion")
                 ->selectRaw('sum(pago_solicitud.monto) as ratificacionesMonto')
                 ->first();
 
                 $pagosRatificacionPagado = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
                 ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                ->join('users','users.id','turnos.id_conciliador')
+                //->join('users','users.id','turnos.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Ratificacion")
                 ->where('pago_solicitud.estatus',"Pagado")
                 ->selectRaw('count(pago_solicitud.id) as ratificaciones')
                 ->first();
                 $pagosRatificacionMontoPagado = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
                 ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                ->join('users','users.id','turnos.id_conciliador')
+                //->join('users','users.id','turnos.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Ratificacion")
                 ->where('pago_solicitud.estatus',"Pagado")
                 ->selectRaw('sum(pago_solicitud.monto) as ratificacionesMonto')
@@ -494,14 +495,14 @@ class SeerController extends Controller
 
                 $pagosRatificacionPendiente = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
                 ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                ->join('users','users.id','turnos.id_conciliador')
+                //->join('users','users.id','turnos.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Ratificacion")
                 ->where('pago_solicitud.estatus',"Pendiente")
                 ->selectRaw('count(pago_solicitud.id) as ratificaciones')
                 ->first();
                 $pagosRatificacionMontoPendiente = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
                 ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                ->join('users','users.id','turnos.id_conciliador')
+               // ->join('users','users.id','turnos.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Ratificacion")
                 ->where('pago_solicitud.estatus',"Pendiente")
                 ->selectRaw('sum(pago_solicitud.monto) as ratificacionesMonto')
@@ -510,28 +511,28 @@ class SeerController extends Controller
                 $pagosRatificacion = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
                 ->where('pago_solicitud.delegacion',$sede)
                 ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                ->join('users','users.id','turnos.id_conciliador')
+                //->join('users','users.id','turnos.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Ratificacion")
                 ->selectRaw('count(pago_solicitud.id) as ratificaciones')
                 ->first();
                 $pagosRatificacionMonto = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
                 ->where('pago_solicitud.delegacion',$sede)
                 ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                ->join('users','users.id','turnos.id_conciliador')
+                //->join('users','users.id','turnos.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Ratificacion")
                 ->selectRaw('sum(pago_solicitud.monto) as ratificacionesMonto')
                 ->first();
 
                 $pagosRatificacionPagado = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
                 ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                ->join('users','users.id','turnos.id_conciliador')
+                //->join('users','users.id','turnos.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Ratificacion")
                 ->where('pago_solicitud.estatus',"Pagado")
                 ->selectRaw('count(pago_solicitud.id) as ratificaciones')
                 ->first();
                 $pagosRatificacionMontoPagado = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
                 ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                ->join('users','users.id','turnos.id_conciliador')
+                //->join('users','users.id','turnos.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Ratificacion")
                 ->where('pago_solicitud.estatus',"Pagado")
                 ->selectRaw('sum(pago_solicitud.monto) as ratificacionesMonto')
@@ -539,14 +540,14 @@ class SeerController extends Controller
 
                 $pagosRatificacionPendiente = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
                 ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                ->join('users','users.id','turnos.id_conciliador')
+                //->join('users','users.id','turnos.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Ratificacion")
                 ->where('pago_solicitud.estatus',"Pendiente")
                 ->selectRaw('count(pago_solicitud.id) as ratificaciones')
                 ->first();
                 $pagosRatificacionMontoPendiente = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
                 ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                ->join('users','users.id','turnos.id_conciliador')
+                //->join('users','users.id','turnos.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Ratificacion")
                 ->where('pago_solicitud.estatus',"Pendiente")
                 ->selectRaw('sum(pago_solicitud.monto) as ratificacionesMonto')
@@ -556,24 +557,24 @@ class SeerController extends Controller
             //Pagos de audiencias
             if($sede === "Todos"){
                 $pagosAudiencias = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                ->join('users','users.id','pago_solicitud.id_conciliador')
+                //->join('users','users.id','pago_solicitud.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Audiencia")
                 ->selectRaw('count(pago_solicitud.id) as audiencias')
                 ->first();
                 $pagosAudienciasMonto = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                ->join('users','users.id','pago_solicitud.id_conciliador')
+                //->join('users','users.id','pago_solicitud.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Audiencia")
                 ->selectRaw('sum(pago_solicitud.monto) as audienciasMonto')
                 ->first();
             }else{
                 $pagosAudiencias = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
                 ->where('pago_solicitud.delegacion',$sede)
-                ->join('users','users.id','pago_solicitud.id_conciliador')
+                //->join('users','users.id','pago_solicitud.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Audiencia")
                 ->selectRaw('count(pago_solicitud.id) as audiencias')
                 ->first();
                 $pagosAudienciasMonto = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                ->join('users','users.id','pago_solicitud.id_conciliador')
+                //->join('users','users.id','pago_solicitud.id_conciliador')
                 ->where('pago_solicitud.tipo_pago',"Audiencia")
                 ->selectRaw('sum(pago_solicitud.monto) as audienciasMonto')
                 ->first();
@@ -5112,7 +5113,8 @@ class SeerController extends Controller
         ->select('seer_general.id','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
         'catalogo_rama.rama_industrial','seer_general.tipo_solicitud')
         //->where('seer_general.estatus','Pendiente')
-        ->orderBy('seer_general.fecha')
+        ->orderBy('seer_general.consecutivo', 'asc') // Primer criterio
+        ->orderBy('seer_general.fecha', 'desc')       // Segundo criterio (puedes usar 'asc' o 'desc')
         ->get();
 
         return view('solicitudes.solicitudes', compact('solicitudes'));

@@ -73,19 +73,20 @@ class AudienciasController extends Controller
                 $delegaciones = ['Morelia', 'Zitácuaro'];
                 $audiencias = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
                 ->select('audiencias.*','seer_general.NUE','seer_general.estatus')
-                ->where('delegacion', $delegaciones)->get();
+                ->where('audiencias.delegacion', $delegaciones)->get();
             }
             else if($sede == "Uruapan"){
                 $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
                 $audiencias = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
                 ->select('audiencias.*','seer_general.NUE','seer_general.estatus')
-                ->where('delegacion', $delegaciones)->get();
+                ->where('audiencias.delegacion', $delegaciones)->get();
             }
             else if($sede == "Zamora"){
                 $delegaciones = ['Zamora', 'Sahuayo'];
                 $audiencias = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
-                ->select('audiencias.*','seer_general.NUE','seer_general.estatus')
-                ->where('delegacion', $delegaciones)->get();
+                ->join('users','users.id','audiencias.id_conciliador')
+                ->select('audiencias.*','seer_general.NUE','seer_general.estatus','users.name')
+                ->where('audiencias.delegacion', $delegaciones)->get();
             }
 
             $eventos = [];
@@ -93,7 +94,7 @@ class AudienciasController extends Controller
 
                 $tipo = 5;
 
-                if ($audiencias->estatus === 'Incompetencia') {
+                if ($audiencia->estatus === 'Incompetencia') {
                     $color = '#DA0909';
                 } elseif ($audiencia->estatus === 'Archivada') {
                     $color = '#EAE300';
@@ -109,7 +110,7 @@ class AudienciasController extends Controller
                 $eventos[] = [
                     'id' => $audiencia->id,
                     'id_solicitud' => $audiencia->id_solicitud,
-                    'title' => $audiencia->tipo,
+                    'title' => $audiencia->NUE,
                     'start' => $audiencia->fecha->format('Y-m-d') . 'T' . $audiencia->hora->format('H:i:s'),
                     'extendedProps' => [
                         'hora' => $audiencia->hora->format('h:i A'),
@@ -141,7 +142,7 @@ class AudienciasController extends Controller
 
                 $tipo = 5;
 
-                if ($audiencias->estatus === 'Incompetencia') {
+                if ($audiencia->estatus === 'Incompetencia') {
                     $color = '#DA0909';
                 } elseif ($audiencia->estatus === 'Archivada') {
                     $color = '#EAE300';
@@ -157,7 +158,7 @@ class AudienciasController extends Controller
                 $eventos[] = [
                     'id' => $audiencia->id,
                     'id_solicitud' => $audiencia->id_solicitud,
-                    'title' => $audiencia->tipo,
+                    'title' => $audiencia->NUE,
                     'start' => $audiencia->fecha->format('Y-m-d') . 'T' . $audiencia->hora->format('H:i:s'),
                     'extendedProps' => [
                         'hora' => $audiencia->hora->format('h:i A'),
