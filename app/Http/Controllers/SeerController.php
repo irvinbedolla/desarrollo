@@ -2670,50 +2670,10 @@ class SeerController extends Controller
                  
                  $id = $new_id; // Actualizar ID para el resto del flujo
                  
-            } catch (\Exception $e) {
-                DB::rollBack();
-                    $solicitanteSess = session('solicitante_trabajador_data', []);
-                    if (!empty($solicitanteSess) && is_array($solicitanteSess)) {
-                        $solicitanteArr = [];
-                        if (isset($solicitanteSess['solicitante']) && is_array($solicitanteSess['solicitante'])) {
-                            $solicitanteArr = $solicitanteSess['solicitante'];
-                        } else {
-                            $solicitanteArr = $solicitanteSess;
-                        }
-                        $fileKeys = ['documentoIdentificacion', 'documentoCurp', 'documentoCurpPath', 'documentoIdentificacionPath'];
-                        foreach ($fileKeys as $key) {
-                            if (!empty($solicitanteArr[$key]) && is_string($solicitanteArr[$key])) {
-                                $filename = basename($solicitanteArr[$key]);
-                                $path = 'documentosSolicitud/' . $filename;
-                                    if (\Storage::exists($path)) {
-                                        \Storage::delete($path);
-                                    }
-                                
-                            }
-                        }
-                    }
-
-                    $citados = session('citados_trabajador_data', []);
-                    if (!empty($citados) && is_array($citados)) {
-                        foreach ($citados as $citado) {
-                            if (is_array($citado)) {
-                                foreach ($citado as $k => $v) {
-                                    if (is_string($v) && preg_match('/\.(pdf|jpg|jpeg|png)$/i', $v)) {
-                                        $filename = basename($v);
-                                        $path = 'documentosSolicitud/' . $filename;
-                                            if (\Storage::exists($path)) {
-                                                \Storage::delete($path);
-                                            }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    session()->forget(['solicitud_trabajador_data', 'solicitante_trabajador_data', 'citados_trabajador_data']);
-
-                return redirect()->route('solicitudEnLinea')->with('error', 'Ocurrió un error al guardar la solicitud. Se descartaron los datos de captura.');
-            }
+             } catch (\Exception $e) {
+                 DB::rollBack();
+                 return back()->with('error', 'Error al guardar la solicitud: ' . $e->getMessage());
+             }
         }
 
         //Revisar si ya existe el correo
@@ -3446,7 +3406,7 @@ class SeerController extends Controller
         
         //Actualizar SEER GENERAL
         $delegacion = SeerPerGeneral::find($data["id"]);
-        $NUE = $this->GeneraExpediente($delegacion["consecutivo"],$delegacion["delegacion"]);
+        $NUE = $this->GeneraExpediente($data["consecutivo"],$delegacion["delegacion"]);
 
         $motivosDelete = session('motivos_edicion_delete', []);
         if (!empty($motivosDelete)) {
@@ -5119,17 +5079,22 @@ class SeerController extends Controller
     }
     
     public function ObtenerAudiencia($delegacion) {
+        $array_horarios = array();
+        $relacionEloquent = 'roles';
         $id = auth()->user()->id;
         $user = User::find($id);
-        
-        // 1. Obtención de Conciliadores (Mantenemos tu lógica de oficina)
+        $bandera = 0;
+
+        // 1. Obtención de Conciliadores (Simplificado)
         $tipo_permiso = in_array($delegacion, ["Morelia", "Uruapan", "Zamora"]) ? ["Ambos", "Precencial"] : ["Ambos", "Virtual"];
+        
+        // Lógica de oficina de apoyo
         $oficina = $delegacion;
         if ($delegacion == "Zitácuaro") $oficina = "Morelia";
         else if ($delegacion == "Lázaro Cárdenas") $oficina = "Uruapan";
         else if ($delegacion == "Sahuayo") $oficina = "Zamora";
 
-        $conciliadores = User::whereHas('roles', function ($query) {
+        $conciliadores = User::whereHas($relacionEloquent, function ($query) {
                 $query->where('name', 'Conciliador');
             })
             ->where('delegacion', $oficina)
@@ -5140,50 +5105,51 @@ class SeerController extends Controller
                 ->whereIn('tipo', $tipo_permiso);
             })->get();
 
-        if ($conciliadores->isEmpty()) return response()->json(['error' => 'No hay conciliadores'], 404);
+        if ($conciliadores->isEmpty()) return response()->json(['error' => 'No hay conciliadores disponibles'], 404);
 
+        // 2. Determinar punto de inicio
+        $reciente = Audiencias::where('delegacion', $delegacion)->orderBy('fecha', 'desc')->orderBy('hora', 'desc')->first();
         
-        $ultima_fecha = Audiencias::max('fecha');
-        if ($ultima_fecha && $ultima_fecha > date('Y-m-d')) {
-            $fecha_revisar = date('Y-m-d', strtotime($ultima_fecha));
-        } else {
-            // Si no hay última fecha o ésta ya pasó, empezamos desde hoy
-            $fecha_revisar = date('Y-m-d');
-        }
+        $fecha_revisar = $reciente ? date('Y-m-d', strtotime($reciente->fecha)) : date('Y-m-d');
+        $fecha_hora = $reciente ? date('H:i:s', strtotime($reciente->hora)) : "09:00:00";
         $horarios_disponibles = ["09:00:00", "10:15:00", "11:30:00", "12:45:00", "14:00:00"];
-        
-        $encontrado = false;
-        $limite_busqueda = 0; // Para evitar bucles infinitos (ej. buscar 60 días al futuro)
 
-        while (!$encontrado && $limite_busqueda < 60) {
+        // 3. Bucle de búsqueda de espacio
+        do {
             $dia_semana = date('l', strtotime($fecha_revisar));
 
-            // Saltamos fines de semana y días inhábiles de la delegación
-            $es_inhabil_centro = DiasInhabiles::where('fecha_inicio', $fecha_revisar)
+            // Saltamos fines de semana
+            if ($dia_semana == 'Saturday' || $dia_semana == 'Sunday') {
+                $fecha_revisar = date('Y-m-d', strtotime($fecha_revisar . ' +1 day'));
+                $fecha_hora = "09:00:00";
+                continue;
+            }
+
+            // Revisar si el centro tiene día inhábil general
+            $revisar_centro = DiasInhabiles::where('fecha_inicio', $fecha_revisar)
                 ->where('centro', $user->delegacion)
                 ->whereNull('user_id')
                 ->exists();
 
-            if ($dia_semana == 'Saturday' || $dia_semana == 'Sunday' || $es_inhabil_centro) {
+            if ($revisar_centro) {
                 $fecha_revisar = date('Y-m-d', strtotime($fecha_revisar . ' +1 day'));
-                $limite_busqueda++;
+                $fecha_hora = "09:00:00";
                 continue;
             }
 
+            // Buscamos en cada horario
             foreach ($horarios_disponibles as $h) {
-                // OPCIONAL: Si es hoy, saltar horarios que ya pasaron
-                if ($fecha_revisar == date('Y-m-d') && $h <= date('H:i:s')) continue;
+                // Si la fecha es la "reciente", solo buscamos horarios posteriores a la última audiencia
+                if ($fecha_revisar == date('Y-m-d', strtotime($reciente->fecha ?? '')) && $h <= $fecha_hora) {
+                    continue;
+                }
 
                 $listado_auxiliares = [];
 
                 foreach ($conciliadores as $conciliador) {
-                    // 1. ¿Tiene audiencia en este bloque?
-                    $ocupado = Audiencias::where('fecha', $fecha_revisar)
-                        ->where('hora', $h)
-                        ->where('id_conciliador', $conciliador->id)
-                        ->exists();
+                    // Verificamos si el conciliador está ocupado (Audiencia o Día Inhábil)
+                    $ocupado = Audiencias::where('fecha', $fecha_revisar)->where('hora', $h)->where('id_conciliador', $conciliador->id)->exists();
                     
-                    // 2. ¿Tiene el conciliador un permiso personal (Día inhábil individual)?
                     $dia_libre = DiasInhabiles::where('fecha_inicio', $fecha_revisar)
                         ->where('user_id', $conciliador->id)
                         ->where('horario_inicio', '<=', $h)
@@ -5195,24 +5161,23 @@ class SeerController extends Controller
                     }
                 }
 
-                // Si encontramos al menos un conciliador libre en este horario...
                 if (!empty($listado_auxiliares)) {
+                    $bandera = 1;
                     $random_id = $listado_auxiliares[array_rand($listado_auxiliares)];
                     return [
-                        $fecha_revisar, 
-                        $h,             
-                        $fecha_revisar, 
-                        $random_id      
+                        $fecha_revisar,   // [0] Fecha sugerida
+                        $h,               // [1] Hora sugerida
+                        $fecha_revisar,   // [2] Originalmente tenías fecha_audiencia aquí
+                        $random_id        // [3] ID del Conciliador
                     ];
                 }
             }
 
-            // Si no hay huecos en ningún horario de este día, pasamos al siguiente
+            // Si terminamos los horarios del día y no hubo éxito, pasamos al siguiente día
             $fecha_revisar = date('Y-m-d', strtotime($fecha_revisar . ' +1 day'));
-            $limite_busqueda++;
-        }
+            $fecha_hora = "09:00:00";
 
-        return response()->json(['error' => 'No se encontraron espacios en los próximos 60 días'], 404);
+        } while ($bandera == 0);
     }
 
     public function concluir_audiencia_conciliador(Request $request){    
@@ -8446,7 +8411,7 @@ class SeerController extends Controller
             $permisos = PermisosConciliador::where('id_conciliador',$id)->first();
             if($permisos["tipo"] == "Ambos"){
                 if($user["delegacion"] == "Morelia"){
-                    $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->whereIn('delegacion', ["Morelia", "Zitácuaro"])->where('id_conciliador', $id)->orderBy('created_at', 'desc')->limit(500)->get();
+                    $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->whereIn('delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($audiencias as $audiencia) {
                         $datosAudiencia = Audiencias::where('id_solicitud', $audiencia->id_solicitud)
                         ->orderBy('numero_audiencia', 'DESC')
@@ -8505,7 +8470,7 @@ class SeerController extends Controller
                     }
                 }
                 if($user["delegacion"] == "Uruapan"){
-                    $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->where('id_conciliador', $id)->orderBy('created_at', 'desc')->limit(500)->get();
+                    $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($audiencias as $audiencia) {
                         $audiencia->estatus_modelo = $audiencia->estatus;
                         $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
@@ -8528,7 +8493,7 @@ class SeerController extends Controller
                     }
                 }
                 if($user["delegacion"] == "Zamora"){
-                    $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->whereIn('delegacion', ["Sahuayo", "Zamora"])->where('id_conciliador', $id)->orderBy('created_at', 'desc')->limit(500)->get();
+                    $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->whereIn('delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($audiencias as $audiencia) {
                         $audiencia->estatus_modelo = $audiencia->estatus;
                         $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
@@ -8706,7 +8671,7 @@ class SeerController extends Controller
                         $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
                     }
                 }
-                if($user["delegacion"] == "Zamora"){
+                if($user["delegacion"] == "Sahuayo"){
                     $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($solicitudes as $solicitud) {
                         $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
@@ -9990,6 +9955,7 @@ class SeerController extends Controller
         $municipios=Municipios::where('estado',16)->get();
         return view('solicitudes.auxiliares.inicioSolicitud', compact('ramas','del','municipios','tipo_solicitud','mostrarMotivos'));
     }
+
     public function guardar_solicitudAux($id){
         
         DB::beginTransaction();
@@ -10006,10 +9972,28 @@ class SeerController extends Controller
                     return redirect()->back()->with('error', 'No hay datos de solicitud en la sesión.');
                 }
 
-                // 1. Guardar SeerPerGeneral
-                SeerPerGeneral::create($solicitudData);
-                $general = SeerPerGeneral::latest('id')->first();
+               // 1. Guardar SeerPerGeneral inicial
+                $solicitudData = session('solicitud_data');
+                $general = SeerPerGeneral::create($solicitudData);
                 $id = $general->id;
+
+                $consecutivo = $general->consecutivo;
+                $delegacion = $general->delegacion;
+                
+                // Generamos el primer NUE para probar
+                $NUE = $this->GeneraExpediente($consecutivo, $delegacion);
+
+                //Revisamos que el NUE no exista
+                while (SeerPerGeneral::where('nue', $NUE)->exists()) {
+                    $consecutivo++;
+                    $NUE = $this->GeneraExpediente($consecutivo, $delegacion);
+                }
+
+                // Actualizamos el registro con el NUE final y el consecutivo real usado
+                $general->update([
+                    'NUE' => $NUE,
+                    'consecutivo' => $consecutivo
+                ]);
 
                 // 2. Guardar Motivos
                 if (!empty($solicitudMotivos)) {
@@ -10047,43 +10031,63 @@ class SeerController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-                $solicitante = session('solicitante_data', []);
-                if (!empty($solicitante) && is_array($solicitante)) {
-                    $fileKeys = ['documentoIdentificacion', 'documentoCurp'];
-                    foreach ($fileKeys as $key) {
-                        if (!empty($solicitante[$key]) && is_string($solicitante[$key])) {
-                            $filename = basename($solicitante[$key]);
-                            $path = 'documentosSolicitud/' . $filename;
-                            if (\Storage::exists($path)) {
-                                \Storage::delete($path);
-                            }
-                        }
-                    }
-                }
-
-                $citados = session('citados_data', []);
-                if (!empty($citados) && is_array($citados)) {
-                    foreach ($citados as $citado) {
-                        if (is_array($citado)) {
-                            foreach ($citado as $k => $v) {
-                                if (is_string($v) && preg_match('/\.(pdf|jpg|jpeg|png)$/i', $v)) {
-                                    $filename = basename($v);
-                                    $path = 'documentosSolicitud/' . $filename;
-                                    if (\Storage::exists($path)) {
-                                        \Storage::delete($path);
-                                    }
-                                    
-                                }
-                            }
-                        }
-                    }
-                }
-                session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
-            
-
-            return redirect()->route('solicitudes_index')->with('error', 'Ocurrió un error al finalizar la solicitud. Se descartaron los datos de captura.');
+            return redirect()->back()->with('error', 'Ocurrió un error al guardar la solicitud: ' . $e->getMessage());
         }
 
+        $delegacion = SeerPerGeneral::find($id);
+        // 1. Carga de relaciones necesarias (Eager Loading para evitar múltiples consultas)
+        $solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
+        $solicitud = SeerPerGeneral::find($id);
+        $citados = SeerCitados::where('id_solicitud', $id)->get();
+        $nombreCompleto = "{$solicitante->nombre} {$solicitante->primer_apellido} {$solicitante->segundo_apellido}";
+
+        // 2. Buscar usuario existente por CURP o Email
+        $usuario = User::where('profile_photo_path', $solicitante->curp)
+        ->orWhere('email', $solicitante->email)
+        ->first();
+
+        // Inicializamos variables para el flujo de correo
+        $passwordPlana = "Ya está registrada";
+        if (!$usuario) {
+            // Generar contraseña temporal
+            $numero_aleatorio = mt_rand(1, 1000);
+            $passwordPlana = "CCLMICHOACAN" . $numero_aleatorio;
+        
+            $usuario = User::create([
+                'name'               => $nombreCompleto,
+                'email'              => $solicitante->email,
+                'delegacion'         => $solicitud->delegacion,
+                'type'               => "Seer",
+                'remember_token'     => $solicitante->curp,
+                'profile_photo_path' => $solicitante->curp,
+                'password'           => Hash::make($passwordPlana),
+            ]);
+            
+            $usuario->assignRole('Solicitante');
+            $mensaje = " el correo: {$usuario->email} y la contraseña: {$passwordPlana} para continuar tú trámite.";
+        } else {
+            $mensaje = " el correo: {$usuario->email} ya está registrado en Si Concilio. Su solicitud será asignada al usuario existente.";
+        }
+
+        // 3. Generación de PDF (Se hace una sola vez, fuera del IF)
+        $pdf = \PDF::loadView('PDF/Solicitudes/acuseSolicitud', compact('id', 'solicitud', 'solicitante', 'citados'))
+        ->setPaper('a4', 'portrait')
+        ->setOptions(['isHtml5ParserEnabled' => true, 'isPhpEnabled' => true]);
+
+        $pdfContent = $pdf->output();
+
+        // 4. Envío de Correo (Se hace una sola vez)
+        $variables = [
+        'Nombre'     => $nombreCompleto,
+        'Contraseña' => $passwordPlana,
+        'email'      => $solicitante->email,
+        'NumFolio'   => $id,
+        ];
+
+        Mail::to($solicitante->email)->send(new SolicitudMail($pdfContent, $variables));
+
+
+        /*
         //Revisar si ya existe el correo
         $solicitante = SeerSolicitante::where('id_solicitud',$id)->first();
         $nombre = $solicitante["nombre"]." ".$solicitante["primer_apellido"]." ".$solicitante["segundo_apellido"];
@@ -10145,8 +10149,10 @@ class SeerController extends Controller
             ];
             Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
         }
+        */
         return view('solicitudes.auxiliares.avisoAux',compact('id','mensaje','delegacion'));
     }
+
     public function solicitud_parte1Aux(Request $request){
         $data = $request->all();
         /*
