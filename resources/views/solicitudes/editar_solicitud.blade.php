@@ -628,7 +628,7 @@ select[name="municipio_citado"] option {
                                                 <div class="col-xs-12 col-sm-6 col-md-4" id="nombre_wrap_{{$loop->index}}">
                                                     <div class="form-group">
                                                         <label for="password">Nombre<span style="color:red;"> (*)</span></label>
-                                                        <input type="text" class="form-control" name="nombre_citado[]" value="<?=$citado["nombre"];?>" required>
+                                                        <input type="text" class="form-control" name="nombre_citado[]" value="{{ $citado['nombre'] ?? '' }}" required>
                                                         <input type="hidden" name="resulte_responsable[]" value="{{ $esResulte }}">
                                                         <div class="invalid-feedback">
                                                             El campo nombre es obligatorio.
@@ -638,7 +638,7 @@ select[name="municipio_citado"] option {
                                                     <div class="col-xs-12 col-sm-6 col-md-4" id="primer_wrap_{{$loop->index}}" style="{{ $esResulte == 'Si' ? 'display:none;' : '' }}">
                                                         <div class="form-group">
                                                            <label for="password">Primer apellido<span style="color:red;"> (*)</span></label>
-                                                           <input type="text" class="form-control" name="primer_apellido[]" value="<?= $citado["primer_apellido"] ?? '';?>" @if($esResulte == 'Si') @else required @endif>
+                                                           <input type="text" class="form-control" name="primer_apellido[]" value="{{ $citado['primer_apellido'] ?? '' }}" @if($esResulte == 'Si') @else required @endif>
                                                            <div class="invalid-feedback">
                                                                 El campo primer apellido es obligatorio.
                                                         </div>   
@@ -647,7 +647,7 @@ select[name="municipio_citado"] option {
                                                     <div class="col-xs-12 col-sm-6 col-md-4" id="segundo_wrap_{{$loop->index}}" style="{{ $esResulte == 'Si' ? 'display:none;' : '' }}">
                                                         <div class="form-group">
                                                            <label for="password">Segundo apellido</label>
-                                                           <input type="text" class="form-control" name="segundo_apellido[]" value="<?= $citado["segundo_apellido"] ?? '';?>">
+                                                           <input type="text" class="form-control" name="segundo_apellido[]" value="{{ $citado['segundo_apellido'] ?? '' }}">
                                                            <div class="invalid-feedback">
                                                                 El campo segundo apellido es obligatorio.
                                                             </div>   
@@ -670,14 +670,14 @@ select[name="municipio_citado"] option {
                                                     <div class="col-xs-12 col-sm-6 col-md-4" id="campo_curp">
                                                         <div class="form-group">
                                                            <label for="password">CURP</label>
-                                                           <input type="text" class="form-control" name="curp_citado[]" value="<?=$citado["curp"];?>" maxlength="18">   
+                                                           <input type="text" class="form-control" name="curp_citado[]" value="{{ $citado['curp'] ?? '' }}" maxlength="18">   
                                                         </div>
                                                     </div>
                                                 @endif
                                                 <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">RFC</label>
-                                                        <input type="text" class="form-control" name="rfc_citado[]" value="<?=$citado["rfc"];?>">   
+                                                        <input type="text" class="form-control" name="rfc_citado[]" value="{{ $citado['rfc'] ?? '' }}">   
                                                     </div>
                                                 </div>
 
@@ -768,7 +768,7 @@ select[name="municipio_citado"] option {
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="password">Nombre de la vialidad<span style="color:red;"> (*)</span></label>
-                                                        <input type="text" class="form-control" name="calle_citado[]" value="<?=$citado["calle"];?>" required>
+                                                        <input type="text" class="form-control" name="calle_citado[]" value="{{ $citado['calle'] ?? '' }}" required>
                                                         <div class="invalid-feedback">
                                                             El campo nombre de la vialidad es obligatorio.
                                                         </div>   
@@ -778,7 +778,7 @@ select[name="municipio_citado"] option {
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="password">N° Ext.<span style="color:red;"> (*)</span></label>
-                                                        <input type="text" class="form-control" name="n_ext_citado[]" value="<?=$citado["n_ext"];?>" required>
+                                                        <input type="text" class="form-control" name="n_ext_citado[]" value="{{ $citado['n_ext'] ?? '' }}" required>
                                                         <div class="invalid-feedback">
                                                             El campo Núm. Ext. es obligatorio.
                                                         </div>     
@@ -787,14 +787,14 @@ select[name="municipio_citado"] option {
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="password">N° Int.</label>
-                                                        <input type="text" class="form-control" name="n_int_citado[]" value="<?=$citado["n_int"];?>">   
+                                                        <input type="text" class="form-control" name="n_int_citado[]" value="{{ $citado['n_int'] ?? '' }}">   
                                                     </div>
                                                 </div>
 
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="password">Colonia<span style="color:red;"> (*)</span></label>
-                                                        <input type="text" class="form-control" name="colonia_citado[]" value="<?=$citado["colonia"];?>" required>
+                                                        <input type="text" class="form-control" name="colonia_citado[]" value="{{ $citado['colonia'] ?? '' }}" required>
                                                         <div class="invalid-feedback">
                                                             El campo colonia es obligatorio.
                                                         </div>   
@@ -804,7 +804,7 @@ select[name="municipio_citado"] option {
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="password">Código postal<span style="color:red;"> (*)</span></label>
-                                                        <input type="text" class="form-control" name="cp_citado[]" value="<?=$citado["cp"];?>" required>
+                                                        <input type="text" class="form-control" name="cp_citado[]" value="{{ $citado['cp'] ?? '' }}" required>
                                                         <div class="invalid-feedback">
                                                             El campo código postal es obligatorio.
                                                         </div>   
@@ -814,7 +814,7 @@ select[name="municipio_citado"] option {
                                                 <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">Referencia<span style="color:red;"> (*)</span></label>
-                                                        <input type="text" class="form-control" name="referencia_citado[]" value="<?=$citado["referencia"];?>" required>
+                                                        <input type="text" class="form-control" name="referencia_citado[]" value="{{ $citado['referencia'] ?? '' }}" required>
                                                         <div class="invalid-feedback">
                                                             El campo referencia es obligatorio.
                                                         </div>   
@@ -824,14 +824,14 @@ select[name="municipio_citado"] option {
                                                 <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">Entre Calle</label>
-                                                        <input type="text" class="form-control" name="calle1_citado[]" value="<?=$citado["calle1"];?>">   
+                                                        <input type="text" class="form-control" name="calle1_citado[]" value="{{ $citado['calle1'] ?? '' }}">   
                                                     </div>
                                                 </div>
 
                                                 <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="password">Y calle</label>
-                                                        <input type="text" class="form-control" name="calle2_citado[]" value="<?=$citado["calle2"];?>">   
+                                                        <input type="text" class="form-control" name="calle2_citado[]" value="{{ $citado['calle2'] ?? '' }}">   
                                                     </div>
                                                 </div>
                                                 
