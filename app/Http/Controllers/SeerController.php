@@ -3120,69 +3120,6 @@ class SeerController extends Controller
             SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoIdentificacion' => $documentoidentificacion ]);
         }
         
-        //Si se va confirmar si el valor es 2 solo se va editar lo anterior
-        /*if($data["toquen"] == 1){
-            //Actualizar el estatus
-            SeerPerGeneral::find($data["id"])->update(['estatus' => "Confirmado" ]);
-
-            $numero_audiencia = $this->GeneraAudiencia($data["id"]);
-            $numero_audiencias = SeerPerConciliador::find($data["id"]);
-            if(!isset($numero_audiencias)){
-                $num_audi = 0;
-            }
-            else{
-                $num_audi = $numero_audiencias->numero_audiencias;
-            }
-            $num_audi = $num_audi+1;
-
-            $Audiencia = $this->ObtenerAudiencia($delegacion["delegacion"]);
-
-            $sala = 1;
-            switch($Audiencia[3]){
-            //Morelia
-                case 16:
-                    $sala = "Sala 2"; break;
-                case 22:
-                    $sala = "Sala 11"; break;
-                case 25:
-                    $sala = "Sala 12"; break;
-                case 33:
-                    $sala = "Sala 8"; break;
-                case 35:
-                    $sala = "Sala 9"; break;
-                case 36:
-                    $sala = "Sala 7"; break;
-                case 38:
-                    $sala = "Sala 5"; break;
-                //Uruapan
-                case 41:
-                    $sala = "Sala 10"; break;
-                case 42:
-                    $sala = "Sala 4"; break;
-                case 45:
-                    $sala = "Sala 1"; break;
-                //Zamora
-                case 51:
-                    $sala = "Sala 3"; break;
-                case 54:
-                    $sala = "Sala 6"; break;
-                default:
-                    $sala = "Pendiente"; break;
-            }
-            $audiencia_insert=array(
-                'id_solicitud'      => $data["id"],
-                'numero_audiencia'  => $num_audi,
-                'folio_audiencia'   => $numero_audiencia[0],
-                'fecha'             => $Audiencia[0],
-                'hora'              => $Audiencia[1],
-                'id_conciliador'    => $Audiencia[3],
-                'sala'              => $sala,
-                'delegacion'        => $delegacion["delegacion"]
-            );
-            //Audiencias::create($audiencia_insert);
-            //Actualizar genera
-        }*/
-
             DB::commit();
             session()->forget(['citados_edicion_new', 'citados_edicion_delete']);
             return redirect()->route('todas_audiencias'); 
@@ -3360,70 +3297,6 @@ class SeerController extends Controller
             $path = Storage::putFileAs('documentosSolicitud', $request->file('indetificacion'), $documentoidentificacion);
             SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoIdentificacion' => $documentoidentificacion ]);
         }
-        
-        //Si se va confirmar si el valor es 2 solo se va editar lo anterior
-        /*if($data["toquen"] == 1){
-            //Actualizar el estatus
-            SeerPerGeneral::find($data["id"])->update(['estatus' => "Pendiente" ]);
-
-            $numero_audiencia = $this->GeneraAudiencia($data["id"]);
-            $numero_audiencias = SeerPerConciliador::find($data["id"]);
-            if(!isset($numero_audiencias)){
-                $num_audi = 0;
-            }
-            else{
-                $num_audi = $numero_audiencias->numero_audiencias;
-            }
-            $num_audi = $num_audi+1;
-
-            $Audiencia = $this->ObtenerAudiencia($delegacion["delegacion"]);
-
-            $sala = 1;
-            switch($Audiencia[3]){
-            //Morelia
-                case 16:
-                    $sala = "Sala 2"; break;
-                case 22:
-                    $sala = "Sala 11"; break;
-                case 25:
-                    $sala = "Sala 12"; break;
-                case 33:
-                    $sala = "Sala 8"; break;
-                case 35:
-                    $sala = "Sala 9"; break;
-                case 36:
-                    $sala = "Sala 7"; break;
-                case 38:
-                    $sala = "Sala 5"; break;
-                //Uruapan
-                case 41:
-                    $sala = "Sala 10"; break;
-                case 42:
-                    $sala = "Sala 4"; break;
-                case 45:
-                    $sala = "Sala 1"; break;
-                //Zamora
-                case 51:
-                    $sala = "Sala 3"; break;
-                case 54:
-                    $sala = "Sala 6"; break;
-                default:
-                    $sala = "Pendiente"; break;
-            }
-            $audiencia_insert=array(
-                'id_solicitud'      => $data["id"],
-                'numero_audiencia'  => $num_audi,
-                'folio_audiencia'   => $numero_audiencia[0],
-                'fecha'             => $Audiencia[0],
-                'hora'              => $Audiencia[1],
-                'id_conciliador'    => $Audiencia[3],
-                'sala'              => $sala,
-                'delegacion'        => $delegacion["delegacion"]
-            );
-            Audiencias::create($audiencia_insert);
-            
-            SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $Audiencia[3], 'estatus' => 'Pendiente' ]);
-        }*/
         
         SeerPerGeneral::find($data["id"])->update(['estatus' => 'Pendiente']);
 
@@ -3613,7 +3486,7 @@ class SeerController extends Controller
             }
             $num_audi = $num_audi+1;
             $Audiencia = $this->ObtenerAudiencia($delegacion["delegacion"]);
-
+//dd($Audiencia);
             if ($Audiencia instanceof \Illuminate\Http\JsonResponse) {
                 DB::rollBack();
                 return back()->withErrors('No hay conciliadores disponibles en la delegación para asignar audiencia.');
@@ -5151,9 +5024,13 @@ class SeerController extends Controller
 
         // 2. Determinar punto de inicio
         $reciente = Audiencias::where('delegacion', $delegacion)->orderBy('fecha', 'desc')->orderBy('hora', 'desc')->first();
-        
+        // Definimos la fecha mínima permitida
+        //$fecha_minima = "2026-02-03";
+        //$fecha_revisar = "2026-02-12";
+        $fecha_hora = "09:00:00";
         $fecha_revisar = $reciente ? date('Y-m-d', strtotime($reciente->fecha)) : date('Y-m-d');
-        $fecha_hora = $reciente ? date('H:i:s', strtotime($reciente->hora)) : "09:00:00";
+        //dd($fecha_revisar);
+        //$fecha_hora = $reciente ? date('H:i:s', strtotime($reciente->hora)) : "09:00:00";
         $horarios_disponibles = ["09:00:00", "10:15:00", "11:30:00", "12:45:00", "14:00:00"];
 
         // 3. Bucle de búsqueda de espacio
@@ -6378,6 +6255,13 @@ class SeerController extends Controller
             return view('/cumplimientos/pagar_busqueda',compact('solicitudes'));
         }
         else if($tipo == 4){
+            $solicitudes = Pagos::join('seer_general','seer_general.id',"=",'pago_solicitud.id_solicitud')
+            ->where('pago_solicitud.id',$id)
+            ->select('pago_solicitud.id','seer_general.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
+            ->get();
+            return view('/cumplimientos/pagar_busqueda',compact('solicitudes'));
+        }
+        else if($tipo == 5){
             $solicitudes = Pagos::join('seer_general','seer_general.id',"=",'pago_solicitud.id_solicitud')
             ->where('pago_solicitud.id',$id)
             ->select('pago_solicitud.id','seer_general.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
@@ -8744,7 +8628,7 @@ class SeerController extends Controller
                         $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
                     }
                 }
-                if($user["delegacion"] == "Sahuayo"){
+                if($user["delegacion"] == "Zamora"){
                     $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($solicitudes as $solicitud) {
                         $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();

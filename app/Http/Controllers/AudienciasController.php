@@ -74,12 +74,14 @@ class AudienciasController extends Controller
             if($sede == "Morelia"){
                 $delegaciones = ['Morelia', 'Zitácuaro'];
                 $audiencias = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
+                ->join('users','users.id','audiencias.id_conciliador')
                 ->select('audiencias.*','seer_general.NUE','seer_general.estatus')
                 ->where('audiencias.delegacion', $delegaciones)->get();
             }
             else if($sede == "Uruapan"){
                 $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
                 $audiencias = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
+                ->join('users','users.id','audiencias.id_conciliador')
                 ->select('audiencias.*','seer_general.NUE','seer_general.estatus')
                 ->where('audiencias.delegacion', $delegaciones)->get();
             }
@@ -88,7 +90,7 @@ class AudienciasController extends Controller
                 $audiencias = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
                 ->join('users','users.id','audiencias.id_conciliador')
                 ->select('audiencias.*','seer_general.NUE','seer_general.estatus','users.name')
-                ->where('audiencias.delegacion', $delegaciones)->get();
+                ->whereIn('audiencias.delegacion', $delegaciones)->get();
             }
 
             $eventos = [];
@@ -126,7 +128,8 @@ class AudienciasController extends Controller
                         'delegacion' => $audiencia->delegacion,
                         'sala' => $audiencia->sala,
                         'usuario' => $userID,
-                        'tipo' => $tipo
+                        'tipo' => $tipo,
+                        'conciliador' => $audiencia->name,
                     ]
                 ];
             }
@@ -241,7 +244,7 @@ class AudienciasController extends Controller
                         'estatus' => $rati->estatus,
                         'delegacion' => $rati->delegacion,
                         'usuario' => $userID,
-                        'tipo' => $tipo
+                        'tipo' => $tipo,
                     ]
                 ];
         }

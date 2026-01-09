@@ -59,7 +59,7 @@
             <a class="nav-link" href="{{ route('audiencia_index') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" >Audiencias</span>
             </a>
-             <a class="nav-link" href="{{ route('solicitudes_index') }}">
+            <a class="nav-link" href="{{ route('solicitudes_index') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Solicitudes</span>
             </a>
             <a class="nav-link" href="{{ route('index_ratificacion') }}">
@@ -331,6 +331,9 @@
             </a>
             <a class="nav-link" href="{{ route('seer.estadistica') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadísticas</span>
+            </a>
+            <a class="nav-link" href="{{ route('solicitudes_index') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Solicitudes</span>
             </a>
             <a class="nav-link" href="{{ route('notificaciones') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Por Notificar</span>
