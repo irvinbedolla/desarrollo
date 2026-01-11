@@ -74,4 +74,13 @@ class User extends Authenticatable
     {
         return $this->addresses?->first();
     }
+
+    public function solicitudes() {
+        return $this->hasMany(SeerPerGeneral::class, 'user_id');
+    }
+    
+    public function audiencias() {
+        // Relación a través de seer_general
+        return $this->hasManyThrough(Audiencias::class, SeerPerGeneral::class, 'conciliador_id', 'id_solicitud');
+    }
 }

@@ -71,49 +71,31 @@
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                             <tr>   
                                 <td><b>Centro de Conciliación Laboral </b></td>
-                                
+                        
                                 <td>{{ \Carbon\Carbon::parse($fecha_inicial)->format('d/m/y') }} a {{ \Carbon\Carbon::parse($fecha_final)->format('d/m/y') }}</td>
                             </tr>
                     </table>
                 </div><br><br><br>
                 <div class="table-responsive">
-                    <spam>Ratificaciones por usuario</spam>
+                    <spam>Ratificaciones</spam>
                     <table class="table table-striped mt-2">
                         <thead style="background-color: #869b9c;">
                             <th style="color: #fff;  text-align: center;">Usuario</th>
-                            <th style="color: #fff;  text-align: center;">Cantidad</th>
-                            <th style="color: #fff;  text-align: center;">Monto</th>
+                            <th style="color: #fff;  text-align: center;">Solicitudes</th>
+                            <th style="color: #fff;  text-align: center;">Confirmadas</th>
                         </thead>
                         <tbody> 
-                            @foreach($usuariosTotal as $usuario)
+                            @foreach($solicitudes as $usuario)
                                 <tr>
                                     <td style=" text-align: center;">{{ $usuario->name }}</td>
-                                    <td style=" text-align: center;">{{ $usuario->ratificacion }}</td>
-                                    <td style=" text-align: center;">${{ number_format($usuario->ratificacionesMonto, 2) }}</td>
+                                    <td style=" text-align: center;">{{ $usuario->solicitudes }}</td>
+                                    <td style=" text-align: center;">{{ $usuario->confirmadas }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
-                <div class="table-responsive">
-                    <spam>Ratificaciones por dia</spam>
-                    <table class="table table-striped mt-2">
-                        <thead style="background-color: #869b9c;">
-                            <th style="color: #fff;  text-align: center;">Usuario</th>
-                            <th style="color: #fff;  text-align: center;">Fecha</th>
-                            <th style="color: #fff;  text-align: center;">Monto</th>
-                        </thead>
-                        <tbody> 
-                            @foreach($usuariosDias as $usuario)
-                                <tr>
-                                    <td style=" text-align: center;">{{ $usuario->name }}</td>
-                                    <td style=" text-align: center;">{{ \Carbon\Carbon::parse($usuario->fecha)->format('d/m/y') }}</td>
-                                    <td style=" text-align: center;">{{ $usuario->numero }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

@@ -76,14 +76,14 @@ class AudienciasController extends Controller
                 $audiencias = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
                 ->join('users','users.id','audiencias.id_conciliador')
                 ->select('audiencias.*','seer_general.NUE','seer_general.estatus')
-                ->where('audiencias.delegacion', $delegaciones)->get();
+                ->whereIn('audiencias.delegacion', $delegaciones)->get();
             }
             else if($sede == "Uruapan"){
                 $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
                 $audiencias = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
                 ->join('users','users.id','audiencias.id_conciliador')
                 ->select('audiencias.*','seer_general.NUE','seer_general.estatus')
-                ->where('audiencias.delegacion', $delegaciones)->get();
+                ->whereIn('audiencias.delegacion', $delegaciones)->get();
             }
             else if($sede == "Zamora"){
                 $delegaciones = ['Zamora', 'Sahuayo'];

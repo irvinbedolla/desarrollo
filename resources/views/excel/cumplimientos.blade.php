@@ -8,17 +8,19 @@
     <div>Cumplimiento en Ratificación</div>
     <table>
         <thead style="background-color: #869b9c;">
-            <th style="color: #fff;  text-align: center;">Fecha</th>
-            <th style="color: #fff;  text-align: center;">Hora</th>
-            <th style="color: #fff;  text-align: center;">NUE</th>
-            <th style="color: #fff;  text-align: center;">Empleador</th>
-            <th style="color: #fff;  text-align: center;">Trabajador</th>
-            <th style="color: #fff;  text-align: center;">Descripción</th>
-            <th style="color: #fff;  text-align: center;">Monto</th>
-            <th style="color: #fff;  text-align: center;">Giro Comercial</th>
-            <th style="color: #fff;  text-align: center;">Delegacion</th>
-            <th style="color: #fff;  text-align: center;">Conciliador</th>
-            <th style="color: #fff;  text-align: center;">Estatus</th>
+            <tr>
+                <th style="color: #fff;  text-align: center;">Fecha</th>
+                <th style="color: #fff;  text-align: center;">Hora</th>
+                <th style="color: #fff;  text-align: center;">NUE</th>
+                <th style="color: #fff;  text-align: center;">Empleador</th>
+                <th style="color: #fff;  text-align: center;">Trabajador</th>
+                <th style="color: #fff;  text-align: center;">Descripción</th>
+                <th style="color: #fff;  text-align: center;">Monto</th>
+                <th style="color: #fff;  text-align: center;">Giro Comercial</th>
+                <th style="color: #fff;  text-align: center;">Delegacion</th>
+                <th style="color: #fff;  text-align: center;">Conciliador</th>
+                <th style="color: #fff;  text-align: center;">Estatus</th>
+            </tr>
         </thead>
         <tbody>
             @php
@@ -33,9 +35,9 @@
                     <td style=" text-align: center;">{{ $estadistica->trabajador }} {{ $estadistica->primero_trabajador }} {{ $estadistica->segundo_trabajador }}</td>
                     <td style=" text-align: center;">{{ $estadistica->descripcion }}</td>
                     <td style=" text-align: center;">${{ number_format($estadistica->monto, 2) }}</td>
-                    <td style=" text-align: center;">{{ $estadistica->name }}</td>
+                    <td style=" text-align: center;">{{ $estadistica->conciliador_name }}</td>
                     <td style=" text-align: center;">{{ $estadistica->giroComercial }}</td>
-                    <td style=" text-align: center;">{{ $estadistica->delegacion }}</td>
+                    <td style=" text-align: center;">{{ $estadistica->turno_delegacion }}</td>
                     <td style=" text-align: center;">{{ $estadistica->estatus }}</td>
                 </tr>
                 @php
@@ -84,8 +86,8 @@
                     <td style=" text-align: center;">{{ $estadistica->nombre_trabajador }}</td>
                     <td style=" text-align: center;">{{ $estadistica->descripcion }}</td>
                     <td style=" text-align: center;">${{ number_format($estadistica->monto, 2) }}</td>
-                    <td style=" text-align: center;">{{ $estadistica->delegacion }}</td>
-                    <td style=" text-align: center;">{{ $estadistica->name }}</td>
+                    <td style=" text-align: center;">{{ $estadistica->turno_delegacion }}</td>
+                    <td style=" text-align: center;">{{ $estadistica->conciliador_name }}</td>
                     <td style=" text-align: center;">{{ $estadistica->estatus }}</td>
                 </tr>
                 @php

@@ -71,31 +71,35 @@
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                             <tr>   
                                 <td><b>Centro de Conciliación Laboral </b></td>
-                        
+                                
                                 <td>{{ \Carbon\Carbon::parse($fecha_inicial)->format('d/m/y') }} a {{ \Carbon\Carbon::parse($fecha_final)->format('d/m/y') }}</td>
                             </tr>
                     </table>
                 </div><br><br><br>
-                <div class="table-responsive">
-                    <spam>Ratificaciones</spam>
-                    <table class="table table-striped mt-2">
-                        <thead style="background-color: #869b9c;">
-                            <th style="color: #fff;  text-align: center;">Usuario</th>
+                <table class="table table-striped mt-2">
+                    <thead style="background-color: #869b9c;">
+                        <tr>
+                            <th style="color: #fff;  text-align: center;">Auxiliar</th>
+                            <th style="color: #fff;  text-align: center;">Folio</th>
                             <th style="color: #fff;  text-align: center;">Fecha</th>
-                            <th style="color: #fff;  text-align: center;">Monto</th>
-                        </thead>
-                        <tbody> 
-                            @foreach($usuarios as $usuario)
-                                <tr>
-                                    <td style=" text-align: center;">{{ $usuario->name }}</td>
-                                    <td style=" text-align: center;">{{ \Carbon\Carbon::parse($usuario->fecha)->format('d/m/y') }}</td>
-                                    <td style=" text-align: center;">{{ $usuario->numero }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-
+                            <th style="color: #fff;  text-align: center;">Estatus Solicitud</th>
+                            <th style="color: #fff;  text-align: center;">Solicitante</th>
+                            <th style="color: #fff;  text-align: center;">Actividad Economica</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($detalleSolicitantes as $registro)
+                            <tr>
+                                <td style="text-align: center;">{{ $registro->auxiliar }}</td>
+                                <td style="text-align: center;">{{ $registro->folio }}</td>
+                                <td style="text-align: center;">{{ $registro->fecha }}</td>
+                                <td style="text-align: center;">{{ $registro->estatus }}</td>
+                                <td style="text-align: center;">{{ $registro->nombre}}</td>
+                                <td style="text-align: center;">{{ $registro->actividad}}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

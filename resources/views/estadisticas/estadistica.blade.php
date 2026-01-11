@@ -41,11 +41,20 @@
                                                 <select id="reporte" class="form-control" name="tipo_reporte" required>
                                                     <option value="">Seleccione</option>
                                                     <option value="Cumplimientos">Cumplimientos Detallado</option>
-                                                    <option value="CumplimientosResumen">Cumplimientos Resumen</option>
-                                                    <option value="Ratificaciones">Ratificaciones</option>
+                                                    <option value="CumplimientosResumen">Cumplimientos Montos</option>
+                                                    <option value="CumplimientosGrafica">Cumplimientos Graficas</option>
+
+                                                    <option value="Ratificaciones">Ratificaciones Detallado</option>
                                                     <option value="RatificacionesUsuario">Ratificaciones Por Usuario</option>
-                                                    <option value="RatificacionesDias">Ratificaciones Por Días</option> 
-                                                    <option value="Notificaciones">Notificaciones Detallado</option>
+                                                    <option value="RatificacionesGraficas">Ratificaciones Grafica</option> 
+
+                                                    <option value="Notificaciones">Notificaciones</option>
+
+                                                    <option value="Solicitudes">Solicitudes Detallado</option>
+                                                    <option value="SolicitudesResumen">Solicitudes Cantidades</option>
+                                                    <option value="SolicitudesGraficas">Solicitudes Graficas</option>
+
+
                                                     <option value="EstadisticaMexico">INEGI</option> 
                                                     <option value="Concentrado">General</option>
                                                     <option value="CCIRSJL">CCIRSJL</option>
@@ -90,6 +99,8 @@
                                                     <option value="">Seleccione</option>
                                                     @if($userRole[0] == "Super Usuario")
                                                         <option value="Todos">Todos</option>
+                                                    @elseif($userRole[0] == "Delegado")
+                                                        <option value="TodosDelegado">Todos</option>
                                                     @endif
                                                     @foreach($estadisticas as $aSport)
                                                         <option value="{{$aSport['nombre']}}">{{$aSport['nombre']}}</option>
@@ -138,6 +149,11 @@
                                                 <button type="submit" name="tipo" value="2" class="btn btn-success">Excel</button>
                                             </div>
                                         </div>
+                                        <div id="Grafica" style="display:none">
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <button type="submit" name="tipo" value="2" class="btn btn-success">Grafica</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </form>
                             @endcan
@@ -167,12 +183,21 @@
                 $('#Excel').css('display','none');
                 $('#Excel-PDF').css('display','block');
                 $('#reporte-notificador').css('display','none');
+                $('#Grafica').css('display','none');
             }
             else if(valorCambiado == "CumplimientosResumen"){
                 $('#PDF').css('display','block');
                 $('#Excel').css('display','none');
                 $('#Excel-PDF').css('display','none');
                 $('#reporte-notificador').css('display','none');
+                $('#Grafica').css('display','none');
+            }
+            else if(valorCambiado == "CumplimientosGrafica"){
+                $('#PDF').css('display','none');
+                $('#Excel').css('display','none');
+                $('#Excel-PDF').css('display','none');
+                $('#reporte-notificador').css('display','none');
+                $('#Grafica').css('display','block');
             }
             else if(valorCambiado == "Ratificaciones"){
                 $('#PDF').css('display','none');
@@ -198,6 +223,8 @@
                 $('#Excel-PDF').css('display','none');
                 $('#reporte-notificador').css('display','none');
             }
+
+            Grafica
         });
     </script>
 @endsection

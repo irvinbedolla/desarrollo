@@ -102,7 +102,7 @@
                                     <td style=" text-align: center;">{{ $estadistica->descripcion }}</td>
                                     <td style=" text-align: center;">${{ number_format($estadistica->monto, 2) }}</td>
                                     <td style=" text-align: center;">{{ $estadistica->delegacion }}</td>
-                                    <td style=" text-align: center;">{{ $estadistica->name }}</td>
+                                    <td style=" text-align: center;">{{ $estadistica->conciliador_name }}</td>
                                     <td style=" text-align: center;">{{ $estadistica->estatus }}</td>
                                 </tr>
                             @endforeach
@@ -136,7 +136,7 @@
                                     <td style=" text-align: center;">{{ $estadistica->descripcion }}</td>
                                     <td style=" text-align: center;">${{ number_format($estadistica->monto, 2) }}</td>
                                     <td style=" text-align: center;">{{ $estadistica->delegacion }}</td>
-                                    <td style=" text-align: center;">{{ $estadistica->name }}</td>
+                                    <td style=" text-align: center;">{{ $estadistica->conciliador_name }}</td>
                                     <td style=" text-align: center;">{{ $estadistica->estatus }}</td>
                                 </tr>
                             @endforeach

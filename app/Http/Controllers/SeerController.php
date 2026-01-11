@@ -388,7 +388,9 @@ class SeerController extends Controller
         //Validar documentacion
         request()->validate([
             //General
-            'tipo_reporte'  => 'required|in:Cumplimientos,CumplimientosResumen,Ratificaciones,RatificacionesResumen,CCIRSJL,Concentrado,RatificacionesUsuario,Notificaciones,EstadisticaMexico,RatificacionesDias,Graficas',
+            'tipo_reporte'  => 'required|in:Cumplimientos,CumplimientosResumen,Ratificaciones,RatificacionesResumen,CCIRSJL,
+            Concentrado,RatificacionesUsuario,Notificaciones,EstadisticaMexico,RatificacionesGraficas,Graficas,
+            CumplimientosGrafica,Solicitudes,SolicitudesResumen,SolicitudesGraficas'
         ], $data);
         if(isset($data["sede"]))
             $sede = $data["sede"];
@@ -405,180 +407,130 @@ class SeerController extends Controller
 
         $fecha_inicial = $data["fecha_inicial"];
         $fecha_final   = $data["fecha_final"];
-        $id = auth()->user()->id;
-        $user = User::find($id);
         $relacionEloquent = "roles";
 
         //Primeramente reporte detallado
         if($data["tipo_reporte"] == "Cumplimientos"){
-            //Para los excel
-            if($data["tipo"] == "2"){
-                return Excel::download(new ProductsFromViewExport($fecha_inicial, $fecha_final,$sede), 'productos.xlsx');
+            // 1. Manejo de Excel
+            if ($data["tipo"] == "2") {
+                return Excel::download(new ProductsFromViewExport($fecha_inicial, $fecha_final, $sede), 'productos.xlsx');
             }
-            //Para el PDF
-            else{
-                //Pagos de ratificacion
-                if($sede === "Todos"){
-                    $pagosRatificacion = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                    ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                    ->leftjoin('users','users.id','turnos.id_conciliador')
-                    ->where('pago_solicitud.tipo_pago',"Ratificacion")
-                    ->select('pago_solicitud.id_solicitud','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion'
-                    ,'pago_solicitud.estatus','pago_solicitud.tipo_pago','turnos.delegacion','turnos.NUE',
-                    'turnos.empresa','turnos.primero_empresa','turnos.segundo_empresa','turnos.trabajador','turnos.primero_trabajador','turnos.segundo_trabajador'
-                    ,'users.name')
-                    ->orderby('users.name')
-                    ->get();
-                }else{
-                    $pagosRatificacion = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                    ->where('pago_solicitud.delegacion',$sede)
-                    ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                    ->leftjoin('users','users.id','turnos.id_conciliador')
-                    ->where('pago_solicitud.tipo_pago',"Ratificacion")
-                    ->select('pago_solicitud.id_solicitud','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion'
-                    ,'pago_solicitud.estatus','pago_solicitud.tipo_pago','pago_solicitud.delegacion','turnos.NUE',
-                    'turnos.empresa','turnos.primero_empresa','turnos.segundo_empresa','turnos.trabajador','turnos.primero_trabajador','turnos.segundo_trabajador'
-                    ,'users.name')
-                    ->orderby('users.name')
-                    ->get(); 
+            
+            // Consulta Base para Pagos
+            $queryBase = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
+            ->when($sede !== "Todos", function ($q) use ($sede) {
+                // Si es el caso especial de Delegado, filtramos por el array de sedes
+                if ($sede === "TodosDelegado") {
+                    $id = auth()->user()->id;
+                    $user = User::find($id);
+                    $sedeUsuario = $user->delegacion;
+
+                    if($sedeUsuario == "Morelia"){
+                        $delegaciones = ['Morelia', 'Zitácuaro'];
+                        return $q->whereIn('pago_solicitud.delegacion', $delegaciones);
+                    }
+                    else if($sedeUsuario == "Uruapan"){
+                        $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
+                        return $q->whereIn('pago_solicitud.delegacion', $delegaciones);
+                    }
+                    else if($sedeUsuario == "Zamora"){
+                        $delegaciones = ['Zamora', 'Sahuayo'];
+                        return $q->whereIn('pago_solicitud.delegacion', $delegaciones);
+                    }
                 }
-                //Pagos de audiencias
-                if($sede === "Todos"){
-                    $pagosAudiencias = Pagos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
-                    ->join('users','users.id','pago_solicitud.id_conciliador')
-                    ->where('pago_solicitud.tipo_pago',"Audiencia")
-                    ->get();
-                }else{
-                    $pagosAudiencias = Pagos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
-                    ->where('pago_solicitud.delegacion',$sede)
-                    ->join('users','users.id','pago_solicitud.id_conciliador')
-                    ->where('pago_solicitud.tipo_pago',"Audiencia")
-                    ->get(); 
-                }
-                
-                $pdf = \PDF::loadView('PDF/Estadisticas/reporte-Cumplimientos', compact('fecha_inicial','fecha_final','pagosRatificacion','pagosAudiencias'));
-                $pdf->setPaper('a4', 'landscape');
-                return $pdf->stream('archivo.pdf');
-            }
+                // De lo contrario, filtramos por la sede individual seleccionada
+                return $q->where('pago_solicitud.delegacion', $sede);
+            });
+            
+            // --- Pagos de Ratificación ---
+            $pagosRatificacion = (clone $queryBase)
+                ->where('pago_solicitud.tipo_pago', "Ratificacion")
+                ->join('turnos', 'turnos.id', 'pago_solicitud.id_solicitud')
+                ->leftJoin('users', 'users.id', 'turnos.id_conciliador')
+                ->select(
+                    'pago_solicitud.*', // O selecciona campos específicos si prefieres
+                    'turnos.NUE', 'turnos.empresa', 'turnos.primero_empresa', 'turnos.segundo_empresa',
+                    'turnos.trabajador', 'turnos.primero_trabajador', 'turnos.segundo_trabajador', 'turnos.delegacion as turno_delegacion',
+                    'users.name as conciliador_name'
+                )
+                ->orderBy('users.name')
+                ->get();
+
+            // --- Pagos de Audiencias ---
+            $pagosAudiencias = (clone $queryBase)
+                ->where('pago_solicitud.tipo_pago', "Audiencia")
+                ->join('users', 'users.id', 'pago_solicitud.id_conciliador')
+                ->select('pago_solicitud.*', 'users.name as conciliador_name')
+                ->get();
+            
+            // 3. Generación del PDF
+            return \PDF::loadView('PDF/Estadisticas/reporte-Cumplimientos', compact(
+                    'fecha_inicial', 'fecha_final', 'pagosRatificacion', 'pagosAudiencias'
+                ))
+                ->setPaper('a4', 'landscape')
+                ->stream('CumplimientosDetalles.pdf');
+            
         }
         else if($data["tipo_reporte"] == "CumplimientosResumen"){
-            //Pagos de ratificacion
-            if($sede === "Todos"){
-                $pagosRatificacion = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                //->join('users','users.id','turnos.id_conciliador')
-                ->where('pago_solicitud.tipo_pago',"Ratificacion")
-                ->selectRaw('count(pago_solicitud.id) as ratificaciones')
-                ->first();
+            // 1. Consulta Unificada para Ratificaciones
+            $ratificacionesData = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
+            ->join('turnos', 'turnos.id', 'pago_solicitud.id_solicitud')
+            ->where('pago_solicitud.tipo_pago', 'Ratificacion')
+            ->when($sede !== "Todos", function ($q) use ($sede) {
+                // Si es el caso especial de Delegado, filtramos por el array de sedes
+                if ($sede === "TodosDelegado") {
+                    $id = auth()->user()->id;
+                    $user = User::find($id);
+                    $sedeUsuario = $user->delegacion;
 
-                $pagosRatificacionMonto = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                //->join('users','users.id','turnos.id_conciliador')
-                ->where('pago_solicitud.tipo_pago',"Ratificacion")
-                ->selectRaw('sum(pago_solicitud.monto) as ratificacionesMonto')
-                ->first();
+                    if($sedeUsuario == "Morelia"){
+                        $delegaciones = ['Morelia', 'Zitácuaro'];
+                        return $q->whereIn('pago_solicitud.delegacion', $delegaciones);
+                    }
+                    else if($sedeUsuario == "Uruapan"){
+                        $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
+                        return $q->whereIn('pago_solicitud.delegacion', $delegaciones);
+                    }
+                    else if($sedeUsuario == "Zamora"){
+                        $delegaciones = ['Zamora', 'Sahuayo'];
+                        return $q->whereIn('pago_solicitud.delegacion', $delegaciones);
+                    }
+                }
+                return $q->where('pago_solicitud.delegacion', $sede);
+            })
+            ->selectRaw("
+                COUNT(pago_solicitud.id) as total_count,
+                SUM(pago_solicitud.monto) as total_monto,
+                COUNT(CASE WHEN pago_solicitud.estatus = 'Pagado' THEN 1 END) as pagado_count,
+                SUM(CASE WHEN pago_solicitud.estatus = 'Pagado' THEN pago_solicitud.monto ELSE 0 END) as pagado_monto,
+                COUNT(CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN 1 END) as pendiente_count,
+                SUM(CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN pago_solicitud.monto ELSE 0 END) as pendiente_monto
+            ")
+            ->first();
 
-                $pagosRatificacionPagado = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                //->join('users','users.id','turnos.id_conciliador')
-                ->where('pago_solicitud.tipo_pago',"Ratificacion")
-                ->where('pago_solicitud.estatus',"Pagado")
-                ->selectRaw('count(pago_solicitud.id) as ratificaciones')
-                ->first();
-                $pagosRatificacionMontoPagado = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                //->join('users','users.id','turnos.id_conciliador')
-                ->where('pago_solicitud.tipo_pago',"Ratificacion")
-                ->where('pago_solicitud.estatus',"Pagado")
-                ->selectRaw('sum(pago_solicitud.monto) as ratificacionesMonto')
-                ->first();
+            // Reasignar a tus variables originales para no romper la vista Blade
+            $pagosRatificacion               = (object)['ratificaciones' => $ratificacionesData->total_count];
+            $pagosRatificacionMonto          = (object)['ratificacionesMonto' => $ratificacionesData->total_monto];
+            $pagosRatificacionPagado         = (object)['ratificaciones' => $ratificacionesData->pagado_count];
+            $pagosRatificacionMontoPagado    = (object)['ratificacionesMonto' => $ratificacionesData->pagado_monto];
+            $pagosRatificacionPendiente      = (object)['ratificaciones' => $ratificacionesData->pendiente_count];
+            $pagosRatificacionMontoPendiente = (object)['ratificacionesMonto' => $ratificacionesData->pendiente_monto];
 
-                $pagosRatificacionPendiente = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                //->join('users','users.id','turnos.id_conciliador')
-                ->where('pago_solicitud.tipo_pago',"Ratificacion")
-                ->where('pago_solicitud.estatus',"Pendiente")
-                ->selectRaw('count(pago_solicitud.id) as ratificaciones')
-                ->first();
-                $pagosRatificacionMontoPendiente = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-               // ->join('users','users.id','turnos.id_conciliador')
-                ->where('pago_solicitud.tipo_pago',"Ratificacion")
-                ->where('pago_solicitud.estatus',"Pendiente")
-                ->selectRaw('sum(pago_solicitud.monto) as ratificacionesMonto')
-                ->first();
-            }else{
-                $pagosRatificacion = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                ->where('pago_solicitud.delegacion',$sede)
-                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                //->join('users','users.id','turnos.id_conciliador')
-                ->where('pago_solicitud.tipo_pago',"Ratificacion")
-                ->selectRaw('count(pago_solicitud.id) as ratificaciones')
-                ->first();
-                $pagosRatificacionMonto = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                ->where('pago_solicitud.delegacion',$sede)
-                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                //->join('users','users.id','turnos.id_conciliador')
-                ->where('pago_solicitud.tipo_pago',"Ratificacion")
-                ->selectRaw('sum(pago_solicitud.monto) as ratificacionesMonto')
-                ->first();
+            // 2. Consulta Unificada para Audiencias
+            $audienciasData = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
+            ->where('pago_solicitud.tipo_pago', 'Audiencia')
+            ->when($sede !== "Todos", function ($q) use ($sede) {
+                return $q->where('pago_solicitud.delegacion', $sede);
+            })
+            ->selectRaw("
+                COUNT(pago_solicitud.id) as total_count,
+                SUM(pago_solicitud.monto) as total_monto
+            ")
+            ->first();
 
-                $pagosRatificacionPagado = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                //->join('users','users.id','turnos.id_conciliador')
-                ->where('pago_solicitud.tipo_pago',"Ratificacion")
-                ->where('pago_solicitud.estatus',"Pagado")
-                ->selectRaw('count(pago_solicitud.id) as ratificaciones')
-                ->first();
-                $pagosRatificacionMontoPagado = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                //->join('users','users.id','turnos.id_conciliador')
-                ->where('pago_solicitud.tipo_pago',"Ratificacion")
-                ->where('pago_solicitud.estatus',"Pagado")
-                ->selectRaw('sum(pago_solicitud.monto) as ratificacionesMonto')
-                ->first();
-
-                $pagosRatificacionPendiente = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                //->join('users','users.id','turnos.id_conciliador')
-                ->where('pago_solicitud.tipo_pago',"Ratificacion")
-                ->where('pago_solicitud.estatus',"Pendiente")
-                ->selectRaw('count(pago_solicitud.id) as ratificaciones')
-                ->first();
-                $pagosRatificacionMontoPendiente = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                ->join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                //->join('users','users.id','turnos.id_conciliador')
-                ->where('pago_solicitud.tipo_pago',"Ratificacion")
-                ->where('pago_solicitud.estatus',"Pendiente")
-                ->selectRaw('sum(pago_solicitud.monto) as ratificacionesMonto')
-                ->first();
-            }
-
-            //Pagos de audiencias
-            if($sede === "Todos"){
-                $pagosAudiencias = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                //->join('users','users.id','pago_solicitud.id_conciliador')
-                ->where('pago_solicitud.tipo_pago',"Audiencia")
-                ->selectRaw('count(pago_solicitud.id) as audiencias')
-                ->first();
-                $pagosAudienciasMonto = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                //->join('users','users.id','pago_solicitud.id_conciliador')
-                ->where('pago_solicitud.tipo_pago',"Audiencia")
-                ->selectRaw('sum(pago_solicitud.monto) as audienciasMonto')
-                ->first();
-            }else{
-                $pagosAudiencias = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                ->where('pago_solicitud.delegacion',$sede)
-                //->join('users','users.id','pago_solicitud.id_conciliador')
-                ->where('pago_solicitud.tipo_pago',"Audiencia")
-                ->selectRaw('count(pago_solicitud.id) as audiencias')
-                ->first();
-                $pagosAudienciasMonto = Pagos::whereBetween('pago_solicitud.fecha',[$fecha_inicial,$fecha_final])
-                //->join('users','users.id','pago_solicitud.id_conciliador')
-                ->where('pago_solicitud.tipo_pago',"Audiencia")
-                ->selectRaw('sum(pago_solicitud.monto) as audienciasMonto')
-                ->first();
-            }
+            // Reasignar a tus variables originales
+            $pagosAudiencias      = (object)['audiencias' => $audienciasData->total_count];
+            $pagosAudienciasMonto = (object)['audienciasMonto' => $audienciasData->total_monto];
 
             $pdf = \PDF::loadView('PDF/Estadisticas/reporte-CumplimientosMonto', 
             compact('fecha_inicial','fecha_final','pagosRatificacion','pagosRatificacionMonto',
@@ -586,57 +538,235 @@ class SeerController extends Controller
             'pagosRatificacionPendiente','pagosRatificacionMontoPendiente'));
             return $pdf->stream('archivo.pdf');
         }
-        else if($data["tipo_reporte"] == "Ratificaciones"){
-            if($data["tipo"] == "2"){
-                return Excel::download(new RatificacionesFromViewExport($fecha_inicial, $fecha_final,$sede), 'productos.xlsx');
-            }
-            //Para el PDF
-            else{
-                //Pagos de ratificacion(Turnos)
-                if($sede === "Todos"){
-                    $Ratificacion = Turnos::whereBetween('turnos.fecha',[$fecha_inicial,$fecha_final])
-                    ->join('users','users.id','turnos.id_conciliador')
-                    ->join('users as user_usuario','user_usuario.id','turnos.user_id')
-                    ->select('turnos.*','users.name','user_usuario.name as auxiliar')
-                    ->orderby('user_usuario.name')
-                    ->get();
-                }else{
-                    $Ratificacion = Turnos::whereBetween('fecha',[$fecha_inicial,$fecha_final])
-                    ->where('turnos.delegacion',$sede)
-                    ->join('users','users.id','turnos.id_conciliador')
-                    ->join('users as user_usuario','user_usuario.id','turnos.user_id')
-                    ->select('turnos.*','users.name','user_usuario.name as auxiliar')
-                    ->orderby('user_usuario.name')
-                    ->get();
+        else if ($data["tipo_reporte"] == "CumplimientosGrafica"){
+            // 1. Consulta Unificada para Ratificaciones
+            $ratificacionesData = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
+            ->join('turnos', 'turnos.id', 'pago_solicitud.id_solicitud')
+            ->where('pago_solicitud.tipo_pago', 'Ratificacion')
+            ->when($sede !== "Todos", function ($q) use ($sede) {
+                // Si es el caso especial de Delegado, filtramos por el array de sedes
+                if ($sede === "TodosDelegado") {
+                    $id = auth()->user()->id;
+                    $user = User::find($id);
+                    $sedeUsuario = $user->delegacion;
+
+                    if($sedeUsuario == "Morelia"){
+                        $delegaciones = ['Morelia', 'Zitácuaro'];
+                        return $q->whereIn('pago_solicitud.delegacion', $delegaciones);
+                    }
+                    else if($sedeUsuario == "Uruapan"){
+                        $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
+                        return $q->whereIn('pago_solicitud.delegacion', $delegaciones);
+                    }
+                    else if($sedeUsuario == "Zamora"){
+                        $delegaciones = ['Zamora', 'Sahuayo'];
+                        return $q->whereIn('pago_solicitud.delegacion', $delegaciones);
+                    }
                 }
+                return $q->where('pago_solicitud.delegacion', $sede);
+            })
+            ->selectRaw("
+                COUNT(pago_solicitud.id) as total_count,
+                SUM(pago_solicitud.monto) as total_monto,
+                COUNT(CASE WHEN pago_solicitud.estatus = 'Pagado' THEN 1 END) as pagado_count,
+                SUM(CASE WHEN pago_solicitud.estatus = 'Pagado' THEN pago_solicitud.monto ELSE 0 END) as pagado_monto,
+                COUNT(CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN 1 END) as pendiente_count,
+                SUM(CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN pago_solicitud.monto ELSE 0 END) as pendiente_monto
+            ")
+            ->first();
 
-                $pdf = \PDF::loadView('PDF/Estadisticas/Ratificaciones',compact('fecha_inicial','fecha_final','Ratificacion'));
-                $pdf->setPaper('a4', 'landscape');
-                return $pdf->stream('archivo.pdf');
-            }
+            // Reasignar a tus variables originales para no romper la vista Blade
+            $pagosRatificacion               = (object)['ratificaciones' => $ratificacionesData->total_count];
+            $pagosRatificacionMonto          = (object)['ratificacionesMonto' => $ratificacionesData->total_monto];
+            $pagosRatificacionPagado         = (object)['ratificaciones' => $ratificacionesData->pagado_count];
+            $pagosRatificacionMontoPagado    = (object)['ratificacionesMonto' => $ratificacionesData->pagado_monto];
+            $pagosRatificacionPendiente      = (object)['ratificaciones' => $ratificacionesData->pendiente_count];
+            $pagosRatificacionMontoPendiente = (object)['ratificacionesMonto' => $ratificacionesData->pendiente_monto];
+
+            // 2. Consulta Unificada para Audiencias
+            $audienciasData = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
+            ->whereIn('pago_solicitud.tipo_pago', ["Audiencia","Conciliador"])
+            ->when($sede !== "Todos", function ($q) use ($sede) {
+                return $q->where('pago_solicitud.delegacion', $sede);
+            })
+            ->selectRaw("
+                COUNT(pago_solicitud.id) as total_count,
+                SUM(pago_solicitud.monto) as total_monto,
+                COUNT(CASE WHEN pago_solicitud.estatus = 'Pagado' THEN 1 END) as pagado_count,
+                SUM(CASE WHEN pago_solicitud.estatus = 'Pagado' THEN pago_solicitud.monto ELSE 0 END) as pagado_monto,
+                COUNT(CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN 1 END) as pendiente_count,
+                SUM(CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN pago_solicitud.monto ELSE 0 END) as pendiente_monto
+            ")
+            ->first();
+
+            // Reasignar a tus variables originales
+            $pagosAudiencias              = (object)['audiencias' => $audienciasData->total_count];
+            $pagosAudienciasMonto         = (object)['audienciasMonto' => $audienciasData->total_monto];
+            $pagosAudienciaPagado         = (object)['audiencias' => $audienciasData->pagado_count];
+            $pagosAudienciaMontoPagado    = (object)['audienciasMonto' => $audienciasData->pagado_monto];
+            $pagosAudienciaPendiente      = (object)['audiencias' => $audienciasData->pendiente_count];
+            $pagosAudienciaMontoPendiente = (object)['audienciasMonto' => $audienciasData->pendiente_monto];
+
+
+            return view('PDF.Estadisticas.graficaCumplimientos', compact('ratificacionesData', 'audienciasData'));
         }
-        else if($data["tipo_reporte"] == "RatificacionesUsuario"){
-            //Pagos de ratificacion(Turnos)
-            if($sede === "Todos"){
-                $usuarios = Turnos::whereBetween('turnos.fecha',[$fecha_inicial,$fecha_final])
-                ->join('users','users.id','turnos.user_id')
-                ->select('users.name', DB::raw('count(turnos.id) as ratificacion'), DB::raw('SUM(turnos.monto) as ratificacionesMonto') )
-                ->groupBy('users.id', 'users.name')
-                ->get();
-
-            } else {
-                $usuarios = Turnos::whereBetween('turnos.fecha',[$fecha_inicial,$fecha_final])
-                ->where('turnos.delegacion',$sede)
-                ->join('users','users.id','turnos.user_id')
-                ->select('users.name', DB::raw('count(turnos.id) as ratificacion'), DB::raw('SUM(turnos.monto) as ratificacionesMonto') )
-                ->groupBy('users.id', 'users.name')
-                ->get();
+        else if($data["tipo_reporte"] == "Ratificaciones"){
+            if ($data["tipo"] == "2") {
+                return Excel::download(new RatificacionesFromViewExport($fecha_inicial, $fecha_final, $sede), 'productos.xlsx');
             }
             
-            $pdf = \PDF::loadView('PDF/Estadisticas/RatificacionUsuario',compact('fecha_inicial','fecha_final','usuarios'));
+            // 1. Construir la consulta base
+            $query = Turnos::whereBetween('turnos.fecha', [$fecha_inicial, $fecha_final])
+                ->join('users', 'users.id', 'turnos.id_conciliador')
+                ->join('users as user_usuario', 'user_usuario.id', 'turnos.user_id')
+                // Aplicar filtro de sede solo si no es "Todos"
+                ->when($sede !== "Todos", function ($q) use ($sede) {
+                    return $q->where('turnos.delegacion', $sede);
+                })
+                ->select(
+                    'turnos.*', 
+                    'users.name as conciliador_name', 
+                    'user_usuario.name as auxiliar_name'
+                )
+                ->orderBy('user_usuario.name');
+            
+            // 2. Ejecutar la consulta
+            $Ratificacion = $query->get();
+            
+            // 3. Generar y retornar PDF
+            return \PDF::loadView('PDF/Estadisticas/Ratificaciones', compact('fecha_inicial', 'fecha_final', 'Ratificacion'))
+                ->setPaper('a4', 'landscape')
+                ->stream('ratificaciones.pdf');
+        }
+        else if($data["tipo_reporte"] == "RatificacionesUsuario"){
+            $usuariosTotal = Turnos::whereBetween('turnos.fecha', [$fecha_inicial, $fecha_final])
+                ->join('users', 'users.id', 'turnos.user_id')
+                // Aplicamos el filtro de sede solo si no es "Todos"
+                ->when($sede !== "Todos", function ($query) use ($sede) {
+                    return $query->where('turnos.delegacion', $sede);
+                })
+                ->select(
+                    'users.name', 
+                    DB::raw('COUNT(turnos.id) as ratificacion'), 
+                    DB::raw('SUM(turnos.monto) as ratificacionesMonto')
+                )
+                ->groupBy('users.id', 'users.name')
+                ->get();
+
+            $usuariosDias = Turnos::whereBetween('turnos.fecha', [$fecha_inicial, $fecha_final])
+                ->join('users', 'users.id', 'turnos.user_id')
+                // Filtro condicional de sede
+                ->when($sede !== "Todos", function ($query) use ($sede) {
+                    return $query->where('turnos.delegacion', $sede);
+                })
+                ->select(
+                    'users.name',
+                    'turnos.fecha', 
+                    DB::raw('COUNT(turnos.id) as numero')
+                )
+                // Agrupamos por fecha y por usuario para obtener el conteo diario por persona
+                ->groupBy('turnos.fecha', 'users.id', 'users.name')
+                ->orderBy('turnos.fecha', 'asc') // Opcional: ordena por fecha para facilitar la lectura
+                ->get();
+
+            $pdf = \PDF::loadView('PDF/Estadisticas/RatificacionUsuario',compact('fecha_inicial','fecha_final','usuariosTotal','usuariosDias'));
             //$pdf->setPaper('a4', 'landscape');
             return $pdf->stream('archivo.pdf');
         }
+        else if($data["tipo_reporte"] == "RatificacionesGraficas"){
+            $usuarios = Turnos::whereBetween('turnos.fecha', [$fecha_inicial, $fecha_final])
+                ->join('users', 'users.id', 'turnos.user_id')
+                // Aplicamos el filtro de sede solo si no es "Todos"
+                ->when($sede !== "Todos", function ($query) use ($sede) {
+                    return $query->where('turnos.delegacion', $sede);
+                })
+                ->select(
+                    'users.name', 
+                    DB::raw('COUNT(turnos.id) as ratificacion'), 
+                    DB::raw('SUM(turnos.monto) as ratificacionesMonto')
+                )
+                ->groupBy('users.id', 'users.name')
+                ->get();
+
+                // Extraemos los nombres para las etiquetas del eje X
+                $nombres = $usuarios->pluck('name')->toArray();
+
+                // Extraemos las cantidades para las barras
+                $totales = $usuarios->pluck('ratificacion')->toArray();
+
+            return view('PDF.Estadisticas.graficaRatificaciones', compact('nombres', 'totales'));
+        }
+        else if($data["tipo_reporte"] == "Solicitudes"){
+            // Obtenemos los usuarios con sus solicitudes y pagos filtrados por fecha y sede
+            $detalleSolicitantes = DB::table('seer_general')
+            ->join('users', 'users.id', '=', 'seer_general.user_id')
+            ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
+            ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
+            ->when($sede !== "Todos", function ($q) use ($sede) {
+                return $q->where("seer_general.delegacion", $sede);
+            })
+            ->select(
+                'users.name as auxiliar',
+                'seer_general.id as folio',
+                'seer_general.fecha',
+                'seer_general.estatus',
+                'seer_general.delegacion',
+                'seer_general.actividad',
+                'seer_solicitante.nombre',
+            )
+            ->orderBy('seer_general.fecha', 'desc')
+            ->get();
+
+            $pdf = \PDF::loadView('PDF/Estadisticas/SolicitudesDetallado',compact('fecha_inicial','fecha_final','detalleSolicitantes'));
+            $pdf->setPaper('a4', 'landscape');
+            return $pdf->stream('solicitudes.pdf');
+        }
+        else if($data["tipo_reporte"] == "SolicitudesResumen"){
+            $solicitudes = SeerPerGeneral::join("users", "users.id", "=", "seer_general.user_id")
+            ->leftJoin('pago_solicitud', 'seer_general.id', '=', 'pago_solicitud.id_solicitud')
+            ->leftJoin('turnos', 'users.id', '=', 'turnos.user_id') // Join para ratificaciones
+            ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
+            ->when($sede !== "Todos", function ($q) use ($sede) {
+                return $q->where("seer_general.delegacion", $sede);
+            })
+            ->select(
+                'users.id as user_id', 
+                'users.name',
+                // Conteo total de solicitudes
+                DB::raw('COUNT(DISTINCT seer_general.id) as solicitudes'),
+                // Solicitudes Confirmadas (No Pendiente, Prevencion, Rechazado)
+                DB::raw("COUNT(DISTINCT CASE WHEN seer_general.estatus NOT IN ('Pendiente','Prevencion','Rechazado') THEN seer_general.id END) as confirmadas"),
+            )
+            ->groupBy('users.id', 'users.name')
+            ->get(); 
+            
+            $pdf = \PDF::loadView('PDF/Estadisticas/SolicitudesCantidad',compact('fecha_inicial','fecha_final','solicitudes'));
+            return $pdf->stream('solicitudes.pdf');
+        }
+        else if($data["tipo_reporte"] == "SolicitudesGraficas"){
+            // 1. Obtenemos los datos detallados (usando la consulta anterior)
+            $detalleSolicitantes = DB::table('seer_general')
+            ->join('users', 'users.id', '=', 'seer_general.user_id')
+            ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
+            ->when($sede !== "Todos", function ($q) use ($sede) {
+                return $q->where("seer_general.delegacion", $sede);
+            })
+            ->select('users.name as auxiliar', 'seer_general.id')
+            ->get();
+
+            // 2. Procesar los datos para la gráfica usando colecciones de Laravel
+            // Contamos cuántas veces aparece cada nombre de auxiliar
+            $conteoPorUsuario = $detalleSolicitantes->countBy('auxiliar');
+
+            $nombres = $conteoPorUsuario->keys();  
+            $totales = $conteoPorUsuario->values(); 
+
+            return view('PDF.Estadisticas.graficaSolicitudes', compact('nombres', 'totales', 'detalleSolicitantes'));
+        }
+        
+
+
+
         else if($data["tipo_reporte"] == "Notificaciones"){
             //Notificaciones
             return Excel::download(new NotificacionesExport($fecha_inicial, $fecha_final, $sede, $auxiliar , $notificador), 'notificaciones.xlsx');
@@ -678,6 +808,62 @@ class SeerController extends Controller
             return view('PDF/Estadisticas/Graficas',compact('labels','data'));
         }
         else if($data["tipo_reporte"] == "Concentrado"){
+            $solicitudes = SeerPerGeneral::join("users", "users.id", "=", "seer_general.user_id")
+            ->leftJoin('pago_solicitud', 'seer_general.id', '=', 'pago_solicitud.id_solicitud')
+            ->leftJoin('turnos', 'users.id', '=', 'turnos.user_id') // Join para ratificaciones
+            ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
+            ->when($sede !== "Todos", function ($q) use ($sede) {
+                return $q->where("seer_general.delegacion", $sede);
+            })
+            ->select(
+                'users.id as user_id', 
+                'users.name',
+                // Conteo total de solicitudes
+                DB::raw('COUNT(DISTINCT seer_general.id) as solicitudes'),
+                // Solicitudes Confirmadas (No Pendiente, Prevencion, Rechazado)
+                DB::raw("COUNT(DISTINCT CASE WHEN seer_general.estatus NOT IN ('Pendiente','Prevencion','Rechazado') THEN seer_general.id END) as confirmadas"),
+                // Incompetencias
+                DB::raw("COUNT(DISTINCT CASE WHEN seer_general.estatus = 'Incompetencia' THEN seer_general.id END) as incopetencia"),
+                // Cumplimiento Audiencia Total
+                DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' THEN pago_solicitud.id END) as cumplimientoAudiencia"),
+                DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoAudienciaMonto"),
+                // Cumplimiento Audiencia Pagado
+                DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.id END) as cumplimientoAudienciaPagado"),
+                DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoAudienciaMontPagado"),
+                // Ratificaciones (desde pagos)
+                DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' THEN pago_solicitud.id END) as cumplimientoRatificacion"),
+                DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoRatificacionMonto")
+            )
+            ->groupBy('users.id', 'users.name')
+            ->get(); 
+            /*    
+            $audiencias = Audiencias::join("seer_general", "seer_general.id", "audiencias.id_solicitud")
+            ->join("users", "users.id", "=", "seer_general.conciliador_id")
+            ->leftJoin('pago_solicitud', 'seer_general.id', '=', 'pago_solicitud.id_solicitud')
+            ->leftJoin('seer_citados', 'seer_general.id', '=', 'seer_citados.id_solicitud')
+            ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
+            ->when($sede !== "Todos", function ($q) use ($sede) {
+                return $q->where("seer_general.delegacion", $sede);
+            })
+            ->select(
+                'users.id as user_id', 
+                'users.name',
+                DB::raw('COUNT(DISTINCT audiencias.id) as total_audiencias'),
+                // Estatus específicos
+                DB::raw("COUNT(DISTINCT CASE WHEN seer_general.estatus IN ('Concluida','Conciliacion') THEN seer_general.id END) as cumplimientoAudienciaConvenio"),
+                DB::raw("COUNT(DISTINCT CASE WHEN seer_general.estatus = 'Archivada' THEN seer_general.id END) as cumplimientoAudienciaFalta"),
+                DB::raw("COUNT(DISTINCT CASE WHEN seer_general.estatus = 'Incompetencia' THEN seer_general.id END) as cumplimientoAudienciaIncompetencia"),
+                // Multas y Virtuales
+                DB::raw("COUNT(DISTINCT CASE WHEN seer_citados.tipo_notificacion = 'Multa' THEN seer_citados.id END) as multas"),
+                DB::raw("COUNT(DISTINCT CASE WHEN seer_general.tipo = 'Virtual' THEN seer_general.id END) as audiencias_virtuales"),
+                // Pagos Conciliador
+                DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Conciliador' THEN pago_solicitud.id END) as cumplimientoAudiencia"),
+                DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Conciliador' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoAudienciaMonto")
+            )
+            ->groupBy('users.id', 'users.name')
+            ->get();
+            */
+
             //Auxiliares
                 $solicitudes  = SeerPerGeneral::join("users","users.id","=","seer_general.user_id")->whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final]);
                 if($sede !== "Todos"){
@@ -997,28 +1183,6 @@ class SeerController extends Controller
                 
             $pdf = \PDF::loadView('PDF/Estadisticas/reporte_cuantitativo', compact('solicitudes','audiencias','notificaciones'));
             $pdf->setPaper('legal', 'landscape');
-            return $pdf->stream('archivo.pdf');
-        }
-        else if($data["tipo_reporte"] == "RatificacionesDias"){
-            //Pagos de ratificacion(Turnos)
-            if($sede === "Todos"){
-                $usuarios = Turnos::whereBetween('turnos.fecha',[$fecha_inicial,$fecha_final])
-                ->join('users','users.id','turnos.user_id')
-                ->select('users.name','turnos.fecha', DB::raw('count(turnos.id) as numero') )
-                ->groupBy('turnos.fecha','users.id')
-                ->get();
-
-            } else {
-                $usuarios = Turnos::whereBetween('turnos.fecha',[$fecha_inicial,$fecha_final])
-                ->join('users','users.id','turnos.user_id')
-                ->where('turnos.delegacion',$sede)
-                ->select('users.name','turnos.fecha', DB::raw('count(turnos.id) as numero') )
-                ->groupBy('turnos.fecha','users.id','users.name')
-                ->get();
-            }
-            
-            $pdf = \PDF::loadView('PDF/Estadisticas/reporte-dia_ratificacion',compact('fecha_inicial','fecha_final','usuarios'));
-            //$pdf->setPaper('a4', 'landscape');
             return $pdf->stream('archivo.pdf');
         }
         else if($data["tipo_reporte"] == "EstadisticaMexico"){
