@@ -14,7 +14,7 @@
                     <th>Municipio de Registro</th>
                     <th>Municipio de ubicación del establecimiento</th>
                     <th>Sexo de trabajador</th>
-                    <th>Actividad Economica/th>
+                    <th>Actividad Economica</th>
                     <th>Razón social</th>
                     <th>Motivo del Convenio</th>
                     <th>Monto del pago</th>

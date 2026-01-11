@@ -110,6 +110,7 @@
                                         </div>
 
                                         <div id="reporte-notificador"  style="display:none">
+                                        <!--
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Auxiliar</label>
@@ -121,6 +122,8 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                        -->
+                                        <input type="hidden" name="auxiliar" value="Todos">
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Notificador</label>
@@ -151,7 +154,7 @@
                                         </div>
                                         <div id="Grafica" style="display:none">
                                             <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <button type="submit" name="tipo" value="2" class="btn btn-success">Grafica</button>
+                                                <button type="submit" name="tipo" value="3" class="btn btn-success">Grafica</button>
                                             </div>
                                         </div>
                                     </div>
@@ -204,27 +207,47 @@
                 $('#Excel').css('display','none');
                 $('#Excel-PDF').css('display','block');
                 $('#reporte-notificador').css('display','none');
+                $('#Grafica').css('display','none');
             }
             else if(valorCambiado == "RatificacionesUsuario"){
                 $('#PDF').css('display','block');
                 $('#Excel').css('display','none');
                 $('#Excel-PDF').css('display','none');
                 $('#reporte-notificador').css('display','none');
+                $('#Grafica').css('display','none');
+            }
+            else if(valorCambiado == "RatificacionesGraficas"){
+                $('#PDF').css('display','none');
+                $('#Excel').css('display','none');
+                $('#Excel-PDF').css('display','none');
+                $('#reporte-notificador').css('display','none');
+                $('#Grafica').css('display','block');
             }
             else if(valorCambiado == "Notificaciones"){
                 $('#PDF').css('display','none');
                 $('#Excel').css('display','block');
                 $('#Excel-PDF').css('display','none');
                 $('#reporte-notificador').css('display','block');
+                $('#Grafica').css('display','none');
             }
-            else if(valorCambiado == "Concentrado" || valorCambiado == "Detallado" || valorCambiado == "EstadisticaMexico" || valorCambiado == "RatificacionesDias"){
+            else if(valorCambiado == "Concentrado" || valorCambiado == "Detallado" 
+            || valorCambiado == "EstadisticaMexico" 
+            || valorCambiado == "RatificacionesDias"
+            || valorCambiado == "Solicitudes"
+            || valorCambiado == "SolicitudesResumen"){
                 $('#PDF').css('display','block');
                 $('#Excel').css('display','none');
                 $('#Excel-PDF').css('display','none');
                 $('#reporte-notificador').css('display','none');
+                $('#Grafica').css('display','none');
             }
-
-            Grafica
+            else if(valorCambiado == "SolicitudesGraficas"){
+                $('#PDF').css('display','none');
+                $('#Excel').css('display','none');
+                $('#Excel-PDF').css('display','none');
+                $('#reporte-notificador').css('display','none');
+                $('#Grafica').css('display','block');
+            }
         });
     </script>
 @endsection

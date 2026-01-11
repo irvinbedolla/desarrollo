@@ -83,9 +83,9 @@
                     // Audiencias usualmente no tienen estatus en tu consulta anterior, 
                     // ajustamos según lo que necesites mostrar
                     data: [
-                        datosAudiencia.total_count, 
-                        datosAudiencia.pagado_count, 
-                        datosAudiencia.pendiente_count
+                        datosAudiencia.total_monto, 
+                        datosAudiencia.pagado_monto, 
+                        datosAudiencia.pendiente_monto
                     ],
                     backgroundColor: 'rgba(255, 99, 132, 0.5)',
                     borderColor: 'rgba(255, 99, 132, 1)',
