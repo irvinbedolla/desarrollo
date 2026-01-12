@@ -46,7 +46,7 @@
                                 </div>
                                 <div class="col-xs-4 col-sm-4 col-md-4">
                                     <div align="center">
-                                        <a href="{{ route('solicitud') }}" class="btn btn-primary" target="_blank" style="width: 100%">Nueva Solicitud</a>
+                                        <a href="{{ route('solicitud') }}" class="btn btn-primary" style="width: 100%">Nueva Solicitud</a>
                                     </div>
                                 </div>
                                 <!--

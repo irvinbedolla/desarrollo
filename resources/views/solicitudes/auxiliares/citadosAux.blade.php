@@ -230,7 +230,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Nombre de la vialidad <span style="color:red;">(*)</span></label>
                                             <input type="text" name="calle" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
@@ -242,46 +242,6 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
-                                            <label for="name">Colonia <span style="color:red;">(*)</span></label>
-                                            <input type="text" name="colonia" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
-                                            <div class="invalid-feedback">
-                                                El campo colonia es obligatorio.
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-xs-12 col-sm-12 col-md-1">
-                                        <div class="form-group">
-                                            <label for="name">Código postal <span style="color:red;">(*)</span></label>
-                                            <input type="text" name="cp" id="cp" class="form-control" maxlength="5">
-                                            <div class="invalid-feedback">
-                                                El campo Código Postal es obligatorio. Debes ingresar 5 caracteres.
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-xs-12 col-sm-12 col-md-2">
-                                        <div class="form-group">
-                                            <label for="name">Entre calle (Opcional)</label>
-                                            <input type="text" name="calle1" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
-                                            <!--<div class="invalid-feedback">
-                                                El campo entre calle es obligatorio.
-                                            </div>-->
-                                        </div>
-                                    </div>
-
-                                    <div class="col-xs-12 col-sm-12 col-md-2">
-                                        <div class="form-group">
-                                            <label for="name">y calle (Opcional)</label>
-                                            <input type="text" name="calle2" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
-                                            <!--<div class="invalid-feedback">
-                                                El campo y calle es obligatorio.
-                                            </div>-->
-                                        </div>
-                                    </div>
-
-                                    <div class="col-xs-12 col-sm-12 col-md-1">
-                                        <div class="form-group">
                                             <label for="text">Núm. ext. <span style="color:red;">(*)</span></label>
                                             <input type="text" name="exterior" min="0" maxlength="50" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                             <div class="invalid-feedback">
@@ -290,13 +250,24 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-1">
+                                    <div class="col-xs-12 col-sm-12 col-md-3">
                                         <div class="form-group">
                                             <label for="name">Núm. int.</label>
                                             <input type="text" name="interior" min="0" maxlength="50" class="form-control"  oninput="this.value = this.value.toUpperCase()"> 
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-3">
+
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="name">Colonia <span style="color:red;">(*)</span></label>
+                                            <input type="text" name="colonia" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                            <div class="invalid-feedback">
+                                                El campo colonia es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
                                             <label for="name">Estado <span style="color:red;">(*)</span></label>
                                             <select id="estado_citado" class="form-control" name="estado_citado" required>
@@ -311,7 +282,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-2">
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
                                             <label for="name">Municipio o Alcaldía <span style="color:red;">(*)</span></label>
                                             <select id="municipio_citado" class="form-control" name="municipio_citado" required>
@@ -323,6 +294,36 @@
                                             <div class="invalid-feedback">
                                                 El campo municipio o alcaldía es obligatorio.
                                             </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
+                                            <label for="name">Código postal <span style="color:red;">(*)</span></label>
+                                            <input type="text" name="cp" id="cp" class="form-control" maxlength="5">
+                                            <div class="invalid-feedback">
+                                                El campo Código Postal es obligatorio. Debes ingresar 5 caracteres.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="name">Entre calle (Opcional)</label>
+                                            <input type="text" name="calle1" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                            <!--<div class="invalid-feedback">
+                                                El campo entre calle es obligatorio.
+                                            </div>-->
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="name">y calle (Opcional)</label>
+                                            <input type="text" name="calle2" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                            <!--<div class="invalid-feedback">
+                                                El campo y calle es obligatorio.
+                                            </div>-->
                                         </div>
                                     </div>
 

@@ -105,7 +105,7 @@
                                                 <td style=" text-align: center;">{{ $solicitud->solicitudes}}</td>
                                                 <td style=" text-align: center;">{{ $solicitud->confirmadas}}</td>
                                                 <td style=" text-align: center;">{{ $solicitud->ratificaciones}}</td>
-                                                <td style=" text-align: center;">{{ $solicitud->incopetencia}}</td>
+                                                <td style=" text-align: center;">{{ $solicitud->incompetencia}}</td>
                                                 <th style=" text-align: center;">{{ $solicitud->cumplimientoRatificacion + $solicitud->cumplimientoAudiencia }}</th>
                                                 <td style=" text-align: center;">${{ number_format($solicitud->cumplimientoAudienciaMonto, 2) }}</td>
                                                 <td style=" text-align: center;">${{ number_format($solicitud->cumplimientoRatificacionMonto, 2) }}</td>
@@ -113,7 +113,7 @@
                                                     $total_solicitudes = $total_solicitudes + $solicitud->solicitudes;
                                                     $total_confirmadas = $total_confirmadas + $solicitud->confirmadas;
                                                     $total_ratificaciones = $total_ratificaciones + $solicitud->ratificaciones;
-                                                    $total_incopetencia = $total_incopetencia + $solicitud->incopetencia;
+                                                    $total_incopetencia = $total_incopetencia + $solicitud->incompetencia;
                                                     $total_cumplimientos = $total_cumplimientos + $solicitud->cumplimientoRatificacion + $solicitud->cumplimientoAudiencia;
                                                     $total_audiencia = $total_audiencia + $solicitud->cumplimientoAudienciaMonto;
                                                     $total_monto_ratificacion = $total_monto_ratificacion + $solicitud->cumplimientoRatificacionMonto;
