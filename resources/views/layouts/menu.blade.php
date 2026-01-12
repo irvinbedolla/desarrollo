@@ -271,9 +271,6 @@
             <a class="nav-link" href="{{ route('seer.estadistica') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadísticas</span>
             </a>
-            <a class="nav-link" href="{{ route('index_tercer_encuentro') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Tercer Encuentro</span>
-            </a>
         @endrole
     @endauth    
 

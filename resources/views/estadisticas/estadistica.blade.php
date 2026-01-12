@@ -13,7 +13,7 @@
                         <div class="card-body">
                             <h3 class="text-center">Obligatorios</h3>
                             
-                            @can('ver-reporte-estadistica')
+                            
                                 <!--Se realiza la validación de campos para ver si dejó alguno vacío-->
                                 @if ($errors->any())
                                     <div class="alert alert-dark alert-dismissible fade show" role="alert">
@@ -57,8 +57,8 @@
 
                                                     <option value="EstadisticaMexico">INEGI</option> 
                                                     <option value="Concentrado">General</option>
+                                                    <option value="GeneralSede">General por Sede</option>
                                                     <option value="CCIRSJL">CCIRSJL</option>
-                                                    <option value="Graficas">Efectividad</option>
                                                 </select>
                                                 <div class="invalid-feedback">
                                                     Debes seleccionar un tipo de reporte.
@@ -97,9 +97,9 @@
                                                 <label for="name">Sede</label>
                                                 <select class="form-control" name="sede" required>
                                                     <option value="">Seleccione</option>
-                                                    @if($userRole[0] == "Super Usuario")
+                                                    @if($userRole[0] == "Super Usuario" || $userRole[0] == "Estadisticas")
                                                         <option value="Todos">Todos</option>
-                                                    @elseif($userRole[0] == "Delegado")
+                                                    @elseif($userRole[0] == "Delegado" || $userRole[0] == "Enlace")
                                                         <option value="TodosDelegado">Todos</option>
                                                     @endif
                                                     @foreach($estadisticas as $aSport)
@@ -159,7 +159,7 @@
                                         </div>
                                     </div>
                                 </form>
-                            @endcan
+                            
                         </div>
                     </div>
                 </div>

@@ -273,6 +273,23 @@
                                                 </div>
                                             </div>
 
+                                            <div class="col-xs-12 col-sm-12 col-md-1">
+                                                <div class="form-group">
+                                                    <label for="text">Núm. ext. <span style="color:red;">(*)</span></label>
+                                                    <input type="text" name="exterior" min="0" maxlength="50" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <div class="invalid-feedback">
+                                                        El núm. exterior es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-12 col-md-1">
+                                                <div class="form-group">
+                                                    <label for="name">Núm. int.</label>
+                                                    <input type="text" name="interior" min="0" maxlength="50" class="form-control"  oninput="this.value = this.value.toUpperCase()"> 
+                                                </div>
+                                            </div>
+                                            
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Colonia <span style="color:red;">(*)</span></label>
@@ -313,22 +330,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-1">
-                                                <div class="form-group">
-                                                    <label for="text">Núm. ext. <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="exterior" min="0" maxlength="50" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
-                                                    <div class="invalid-feedback">
-                                                        El núm. exterior es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-xs-12 col-sm-12 col-md-1">
-                                                <div class="form-group">
-                                                    <label for="name">Núm. int.</label>
-                                                    <input type="text" name="interior" min="0" maxlength="50" class="form-control"  oninput="this.value = this.value.toUpperCase()"> 
-                                                </div>
-                                            </div>
+                                            
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Estado <span style="color:red;">(*)</span></label>
