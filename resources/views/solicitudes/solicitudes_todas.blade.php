@@ -285,7 +285,7 @@
                                 <tr>
                                     <td style="text-align: left;"> <strong>${registro.nombre} ${registro.primer_apellido} ${registro.segundo_apellido}</strong> </td>
                                     <td>
-                                        <a href="${pdfUrl}">PDF</a>
+                                       <a href="${pdfUrl}" target="_blank" class="btn btn-primary"> Ver PDF </a>
                                     </td>
                                 </tr>`;
                                 listaRegistros.append(listItem);

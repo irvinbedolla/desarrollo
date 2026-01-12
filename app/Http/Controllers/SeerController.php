@@ -3648,6 +3648,38 @@ class SeerController extends Controller
             $sala = 1;
             switch($Audiencia[3]){
             //Morelia
+                case 45:
+                    $sala = "Sala 1"; break; //Daniel Buitron
+                case 16:
+                    $sala = "Sala 2"; break; //Rosa Isela
+                case 14:
+                    $sala = "Sala 3"; break; //Natalia Itzel
+                case 42:
+                    $sala = "Sala 4"; break; //Rocio Estefania
+                case 38:
+                    $sala = "Sala 5"; break; //Luz Ireri
+                case 54:
+                    $sala = "Sala 6"; break; //Juan Rosales
+                case 36:
+                    $sala = "Sala 7"; break; //Susy Areli
+            //Uruapan
+                case 33:
+                    $sala = "Sala 8"; break; //Eduardo Israel
+                case 35:
+                    $sala = "Sala 9"; break; //Diana Guadalupe
+                case 41:
+                    $sala = "Sala 10"; break; //Hugo Mundo                       
+            //Zamora
+                case 22:
+                    $sala = "Sala 11"; break; //Victor Ándres
+                case 25:
+                    $sala = "Sala 12"; break; //Beatriz Adriana
+                /*case 51:
+                    $sala = "Sala 3"; break; //No existe*/
+               
+                default:
+                    $sala = "Pendiente"; break;
+           /* //Morelia
                 case 16:
                     $sala = "Sala 2"; break;
                 case 22:
@@ -3675,7 +3707,7 @@ class SeerController extends Controller
                 case 54:
                     $sala = "Sala 6"; break;
                 default:
-                    $sala = "Pendiente"; break;
+                    $sala = "Pendiente"; break;*/
             }
             $fecha_confirmacion = date('Y-m-d', strtotime($delegacion["fecha_confirmacion"]));
             $fecha_audiencia = date('Y-m-d', strtotime($Audiencia[0]."+7 day"));
@@ -5706,7 +5738,7 @@ class SeerController extends Controller
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true);
 
-            return $pdf->download($nombreArchivo);
+            return $pdf->stream($nombreArchivo); //Visualiza los citatorios
 
         } catch (\Exception $e) {
             return response()->json([
