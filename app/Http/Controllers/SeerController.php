@@ -3409,8 +3409,17 @@ class SeerController extends Controller
         }
         session()->forget('motivos_edicion_delete');
 
+        $userToSet = !empty($delegacion->user_id) ? $delegacion->user_id : $id_user;
+
         SeerPerGeneral::where('id', $data["id"])
-        ->update(['NUE' => $NUE, 'actividad' => $data["actividad_economica"],'id_rama' => $data["ramaIndustrial"], 'fecha_confirmacion' => $fecha_actual, 'pendiente_firma' => 'Si']);
+        ->update([
+            'NUE' => $NUE,
+            'actividad' => $data["actividad_economica"],
+            'id_rama' => $data["ramaIndustrial"],
+            'fecha_confirmacion' => $fecha_actual,
+            'pendiente_firma' => 'Si',
+            'user_id' => $userToSet,
+        ]);
 
         if (!empty($data["motivo_solicitud"])) {
             foreach ($data["motivo_solicitud"] as $motivoId) {
@@ -9964,7 +9973,7 @@ class SeerController extends Controller
     }
 
     public function guardar_solicitudAux($id){
-        
+        $id_usuario = auth()->user()->id;
         DB::beginTransaction();
         try {
             if ($id == 'session') {
@@ -9998,6 +10007,7 @@ class SeerController extends Controller
 
                 // Actualizamos el registro con el NUE final y el consecutivo real usado
                 $general->update([
+                    'user_id' => $id_usuario,
                     'NUE' => $NUE,
                     'consecutivo' => $consecutivo
                 ]);

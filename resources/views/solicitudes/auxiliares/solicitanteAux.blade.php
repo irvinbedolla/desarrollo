@@ -215,7 +215,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Correo Electrónico <span style="color:red;">(*)</span></label>
-                                                    <input type="email" name="correo" class="form-control correoElectronico" required> 
+                                                    <input type="email" name="correo" maxlength="50" class="form-control correoElectronico" required> 
                                                     <div class="invalid-feedback">
                                                         El campo correo electrónico es obligatorio.
                                                     </div>

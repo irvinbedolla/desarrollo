@@ -21,7 +21,7 @@ class AudienciasController extends Controller
         $userRole = Auth::user()->roles->pluck('name')->all();
         $sede = Auth::user()->delegacion;
 
-        if ($userRole[0] == "Super Usuario" || $userRole[0] == "Administardor") {
+        if ($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador") {
             $audiencias = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
             ->join('users','users.id','audiencias.id_conciliador')
             ->select('audiencias.*','seer_general.NUE','seer_general.estatus','users.name')->get();
