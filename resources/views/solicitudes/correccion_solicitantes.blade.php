@@ -414,6 +414,7 @@ body {font-family: Arial;}
                                                             <option value="PROLONGACIÓN"   {{ $solicitante['tipo_vialidad'] == 'PROLONGACIÓN' ? "selected" : '' }} >Prolongación</option>
                                                             <option value="RETORNO"        {{ $solicitante['tipo_vialidad'] == 'RETORNO' ? "selected" : '' }} >Retorno</option>
                                                             <option value="VIADUCTO"       {{ $solicitante['tipo_vialidad'] == 'VIADUCTO' ? "selected" : '' }} >Viaducto</option>
+                                                            <option value="PRIVADA"        {{ $solicitante['tipo_vialidad'] == 'PRIVADA' ? "selected" : '' }} >Privada</option>
                                                         </select>
                                                         <div class="invalid-feedback">
                                                             El campo tipo de vialidad es obligatorio.
@@ -743,6 +744,7 @@ body {font-family: Arial;}
                                                             <option value="PROLONGACIÓN"   {{ $citado['tipo_vialidad'] == 'PROLONGACIÓN' ? "selected" : '' }} >Prolongación</option>
                                                             <option value="RETORNO"        {{ $citado['tipo_vialidad'] == 'RETORNO' ? "selected" : '' }} >Retorno</option>
                                                             <option value="VIADUCTO"       {{ $citado['tipo_vialidad'] == 'VIADUCTO' ? "selected" : '' }} >Viaducto</option>
+                                                            <option value="PRIVADA"        {{ $citado['tipo_vialidad'] == 'PRIVADA' ? "selected" : '' }} >Privada</option>
                                                         </select>
                                                         <div class="invalid-feedback">
                                                             El campo vialidad es obligatorio.
@@ -1198,6 +1200,7 @@ body {font-family: Arial;}
                                     <option value="PROLONGACIÓN">Prolongación</option>
                                     <option value="RETORNO">Retorno</option>
                                     <option value="VIADUCTO">Viaducto</option>
+                                    <option value="VIADUCTO">Privada</option>
                                 </select>
                                 <div class="invalid-feedback">
                                     El campo vialidad es obligatorio.

@@ -589,6 +589,7 @@
                                                             <option value="PROLONGACIÓN"   {{ $citado['tipo_vialidad'] == 'PROLONGACIÓN' ? "selected" : '' }} >Prolongación</option>
                                                             <option value="RETORNO"        {{ $citado['tipo_vialidad'] == 'RETORNO' ? "selected" : '' }} >Retorno</option>
                                                             <option value="VIADUCTO"       {{ $citado['tipo_vialidad'] == 'VIADUCTO' ? "selected" : '' }} >Viaducto</option>
+                                                            <option value="PRIVADA"       {{ $citado['tipo_vialidad'] == 'PRIVADA' ? "selected" : '' }} >Privada</option>
                                                         </select>
                                                         <div class="invalid-feedback">
                                                             El campo vialidad es obligatorio.
@@ -809,6 +810,7 @@
                                         <option value="PROLONGACIÓN">Prolongación</option>
                                         <option value="RETORNO">Retorno</option>
                                         <option value="VIADUCTO">Viaducto</option>
+                                        <option value="PRIVADA">Privada</option>
                                     </select>
                                     <div class="invalid-feedback">
                                         El campo vialidad es obligatorio.

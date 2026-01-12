@@ -54,6 +54,11 @@
         select[name="municipio_citado"] option {
             text-transform: uppercase;
         }
+        .btn-disabled {
+            pointer-events: none;
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
     </style>
 
    
@@ -473,14 +478,21 @@
                                         </div>-->
 
                                         <div class="col-xs-12 col-sm-12 col-md-12">
-                                            <div align="center">
-                                                @if($citados == 0)
-                                                    <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar citado</button>
-                                                @endif
-                                                @if($citados > 0)
-                                                    <a href="{{ route('seer.finaliza',$id); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Concluir solicitud</a> 
-                                                    <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar citado</button>
-                                                @endif  
+                                            <div style="display:flex; justify-content:space-between; gap:12px; align-items:center; width:100%;">
+                                                    <div>
+                                                        @if($citados == 0)
+                                                            <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar citado</button>
+                                                        @endif
+                                                        @if($citados > 0)
+                                                            <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar citado</button>
+                                                        @endif
+                                                    </div>
+                                                    <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                                                        @if($citados > 0)
+                                                            <a href="{{ route('seer.finaliza',$id) }}" id="btn-conclude" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Concluir solicitud</a>
+                                                            <div id="conclude-warning" class="text-danger" style="display:none; margin-top:6px;">Guarde el citado antes de concluir</div>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                         </div>    
                                     </form>
@@ -523,6 +535,59 @@
                         }, false)
                     })
             })()
+        });
+    </script>
+    <script>
+        // Deshabilitar/activar el botón "Concluir solicitud" si hay inputs con datos sin guardar
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form.needs-validation');
+            const conclude = document.getElementById('btn-conclude');
+            const concludeWarning = document.getElementById('conclude-warning');
+            if (!form || !conclude) return;
+
+            function updateConcludeState() {
+                try {
+                    const elements = form.querySelectorAll('input:not([type=hidden]):not([type=submit]), textarea, select');
+                    let hasValue = false;
+                    elements.forEach(function (el) {
+                        if (!el) return;
+                        if (el.tagName.toLowerCase() === 'select') {
+                            if (el.value && el.value !== '') hasValue = true;
+                            return;
+                        }
+                        const t = (el.type || '').toLowerCase();
+                        if (t === 'checkbox' || t === 'radio') {
+                            if (el.checked) hasValue = true;
+                        } else if (t === 'file') {
+                            if (el.files && el.files.length) hasValue = true;
+                        } else {
+                            if (el.value && el.value.trim() !== '') hasValue = true;
+                        }
+                    });
+
+                    if (hasValue) {
+                        conclude.classList.add('btn-disabled');
+                        conclude.setAttribute('aria-disabled', 'true');
+                        if (concludeWarning) concludeWarning.style.display = '';
+                    } else {
+                        conclude.classList.remove('btn-disabled');
+                        conclude.removeAttribute('aria-disabled');
+                        if (concludeWarning) concludeWarning.style.display = 'none';
+                    }
+                } catch (err) { console.warn('updateConcludeState', err); }
+            }
+
+            updateConcludeState();
+
+            form.addEventListener('input', updateConcludeState);
+            form.addEventListener('change', updateConcludeState);
+
+            conclude.addEventListener('click', function (e) {
+                if (conclude.getAttribute('aria-disabled') === 'true') {
+                    e.preventDefault();
+                    return false;
+                }
+            });
         });
     </script>
     <script>
