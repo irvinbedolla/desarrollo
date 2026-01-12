@@ -422,7 +422,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Salario diario <span style="color:red;">(*)</span></label>
+                                                    <label for="name">Salario <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="pago" class="form-control soloMontos" required> 
                                                     <div class="invalid-feedback">
                                                         El campo salario es obligatorio.

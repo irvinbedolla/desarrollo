@@ -10008,7 +10008,6 @@ class SeerController extends Controller
                 // Actualizamos el registro con el NUE final y el consecutivo real usado
                 $general->update([
                     'user_id' => $id_usuario,
-                    'NUE' => $NUE,
                     'consecutivo' => $consecutivo
                 ]);
 

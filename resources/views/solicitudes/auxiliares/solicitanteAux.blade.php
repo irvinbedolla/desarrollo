@@ -377,13 +377,13 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Salario</label>
+                                                    <label for="name">Frecuencia de Pago</label>
                                                     <select name="periodo_pago" class="form-control">
-                                                        <!--<option value="">SELECCIONE</option>-->
+                                                        <option value="">SELECCIONE</option>
                                                         <option value="Diario">DIARIO</option>
-                                                        <!--<option value="Semana">SEMANAL</option>
+                                                        <option value="Semana">SEMANAL</option>
                                                         <option value="Quincenal">QUINCENAL</option>
-                                                        <option value="Mensual">MENSUAL</option>-->
+                                                        <option value="Mensual">MENSUAL</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El campo frecuencia de pago es obligatorio.
@@ -392,7 +392,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Salario diario <span style="color:red;">(*)</span></label>
+                                                    <label for="name">Salario <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="pago" class="form-control soloMontos" required> 
                                                     <div class="invalid-feedback">
                                                         El campo salario es obligatorio.
