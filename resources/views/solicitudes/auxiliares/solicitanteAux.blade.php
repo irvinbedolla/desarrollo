@@ -385,8 +385,8 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
-                                                    <label for="name">Frecuencia de Pago</label>
-                                                    <select name="periodo_pago" class="form-control">
+                                                    <label for="name">Frecuencia de Pago <span style="color:red;">(*)</span></label>
+                                                    <select name="periodo_pago" class="form-control" required>
                                                         <option value="">SELECCIONE</option>
                                                         <option value="Diario">DIARIO</option>
                                                         <option value="Semana">SEMANAL</option>
