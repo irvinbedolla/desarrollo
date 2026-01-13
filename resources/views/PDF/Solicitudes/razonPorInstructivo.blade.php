@@ -100,7 +100,7 @@
                             <td>{{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</td>
                         </tr>
                     </table>
-                </div><br><br><br><br><br><br><br><br><br>
+                </div><br><br><br><br><br><br><br><br>
 
                 <p><center><b>RAZÓN DE NOTIFICACIÓN POR INSTRUCTIVO</b></center></p><br> 
                            

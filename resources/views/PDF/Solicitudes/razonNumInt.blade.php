@@ -101,7 +101,7 @@
                             <td>{{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</td>
                         </tr>
                     </table>
-                </div><br><br><br><br><br><br><br><br><br><br><br>
+                </div><br><br><br><br><br><br><br><br><br>
                 <!-- DELIGENCIA NO EXITOSA, NO SE LOCALIZA INTERIOR -->
                 <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p><br>
                            
