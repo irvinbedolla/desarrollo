@@ -36,7 +36,7 @@
                                 <input type="hidden" name="id" value="{{ $folio->id }}">
                                 
                                 <div class="row">
-                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Nombre(s) <span style="color:red;">(*)</span></label>
                                             <input type="text" name="nombre" class="form-control" value="<?=$folio["nombre"];?>" oninput="this.value = this.value.toUpperCase()" > 
@@ -46,7 +46,7 @@
                                         </div>
                                     </div>
                                     @if(!empty($folio['primer_apellido']))         
-                                        <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div class="form-group">
                                                 <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
                                                 <input type="text" name="primer_apellido" class="form-control" value="<?=$folio["primer_apellido"];?>" oninput="this.value = this.value.toUpperCase()" > 
@@ -57,7 +57,7 @@
                                         </div>
                                     @endif
                                     @if(!empty($folio['segundo_apellido'])) 
-                                        <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div class="form-group">
                                                 <label for="name">Segundo apellido</label>
                                                 <input type="text" name="segundo_apellido" class="form-control" value="<?=$folio["segundo_apellido"];?>"oninput="this.value = this.value.toUpperCase()" > 
@@ -67,7 +67,7 @@
                                             </div>
                                         </div>
                                     @endif
-                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">RFC</label>
                                             <input type="text" name="rfc" class="form-control" value="<?=$folio["rfc"];?>"minlength="13" maxlength="13" > 
@@ -77,7 +77,7 @@
                                         </div>
                                     </div>
                                     @if(!empty($folio['curp'])) 
-                                        <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div class="form-group">
                                                 <label for="name">CURP</label>
                                                 <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control" value="<?=$folio["curp"];?>"> 
@@ -89,7 +89,7 @@
                                         </div>
                                     @endif
 
-                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Tipo de vialidad <span style="color:red;">(*)</span></label>
                                             <select name="vialidad" class="form-control" required>
@@ -114,6 +114,7 @@
                                                 <option value="PROLONGACIÓN"   @php if($folio->tipo_vialidad === 'PROLONGACIÓN') echo "selected"  @endphp>Prolongación</option>
                                                 <option value="RETORNO"        @php if($folio->tipo_vialidad === 'RETORNO') echo "selected"  @endphp>Retorno</option>
                                                 <option value="VIADUCTO"       @php if($folio->tipo_vialidad === 'VIADUCTO') echo "selected"  @endphp>Viaducto</option>
+                                                <option value="PRIVADA"        @php if($folio->tipo_vialidad === 'PRIVADA') echo "selected"  @endphp>Privada</option>
                                                 </select>
                                             <div class="invalid-feedback">
                                                 El campo vialidad es obligatorio.
@@ -121,7 +122,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Nombre de la vialidad <span style="color:red;">(*)</span></label>
                                             <input type="text" name="calle" class="form-control" value="<?=$folio["calle"];?>"required> 
@@ -131,7 +132,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Colonia <span style="color:red;">(*)</span></label>
                                             <input type="text" name="colonia" class="form-control" value="<?=$folio["colonia"];?>"required> 
@@ -141,7 +142,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-2">
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Código postal <span style="color:red;">(*)</span></label>
                                             <input type="text" name="cp" class="form-control" value="<?=$folio["cp"];?>" minlength="5" maxlength="5" required> 
@@ -151,7 +152,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Entre calle</label>
                                             <input type="text" name="calle1" class="form-control" value="<?=$folio["calle1"];?>">
@@ -161,7 +162,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Y calle</label>
                                             <input type="text" name="calle2" class="form-control" value="<?=$folio["calle2"];?>"> 
@@ -171,7 +172,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-1">
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Núm. Ext. <span style="color:red;">(*)</span></label>
                                             <input type="text" name="exterior" class="form-control" value="<?=$folio["n_ext"];?>" required> 
@@ -181,7 +182,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-1">
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Núm. Int.</label>
                                             <input type="text" name="interior" class="form-control" value="<?=$folio["n_int"];?>" > 
@@ -190,7 +191,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-4">
+                                    <div class="col-xs-12 col-sm-6 col-md-6">
                                         <div class="form-group">
                                             <label for="password">Estado <span style="color:red;">(*)</span></label>
                                             <select class="form-control" name="estado_citado" id="estado_citado">
@@ -203,7 +204,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-3">
+                                    <div class="col-xs-12 col-sm-6 col-md-6">
                                         <div class="form-group">
                                             <label for="password">Municipio <span style="color:red;">(*)</span></label>
                                             <select class="form-control" name="municipio_citado" id="municipio_citado">

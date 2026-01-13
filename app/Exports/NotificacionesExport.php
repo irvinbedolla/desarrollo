@@ -3,18 +3,13 @@
 namespace App\Exports;
 
 use App\Models\SeerPerGeneral;
-use Illuminate\Contracts\View\View;
-use Maatwebsite\Excel\Concerns\FromView;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
-class NotificacionesExport implements FromView
+class NotificacionesExport implements WithMultipleSheets
 {
-    protected $fecha_inicial;
-    protected $fecha_final;
-    protected $sede;
-    protected $auxiliar;
-    protected $notificador;
+    protected $fecha_inicial, $fecha_final, $sede, $auxiliar, $notificador;
 
-    public function __construct(string $fecha_inicial, string $fecha_final, string $sede, string $auxiliar, string $notificador)
+    public function __construct($fecha_inicial, $fecha_final, $sede, $auxiliar, $notificador)
     {
         $this->fecha_inicial = $fecha_inicial;
         $this->fecha_final = $fecha_final;
@@ -23,9 +18,9 @@ class NotificacionesExport implements FromView
         $this->notificador = $notificador;
     }
 
-    public function view(): View
+    public function sheets(): array
     {
-        // Optimizamos la obtención del usuario
+        // 1. Ejecutamos tu lógica de consulta una sola vez
         $user = auth()->user();
         $sedeUsuario = $user->delegacion;
 
@@ -35,57 +30,32 @@ class NotificacionesExport implements FromView
             ->join('seer_solicitante', 'seer_general.id', '=', 'seer_solicitante.id_solicitud')
             ->join('users as auxiliar', 'auxiliar.id', '=', 'seer_general.user_id')
             ->leftJoin('users as notificador', 'notificador.id', '=', 'seer_citados.id_notificador')
-            
-            // --- Filtro de Sede (Incluyendo TodosDelegado) ---
             ->when($this->sede !== "Todos", function ($q) use ($sedeUsuario) {
                 if ($this->sede === "TodosDelegado") {
-                    
-                    // Definimos los grupos de delegaciones
-                    $grupos = [
-                        'Morelia' => ['Morelia', 'Zitácuaro'],
-                        'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
-                        'Zamora'  => ['Zamora', 'Sahuayo']
-                    ];
-
-                    // Si la sede del usuario existe en nuestros grupos, filtramos por ese array
-                    if (array_key_exists($sedeUsuario, $grupos)) {
-                        return $q->whereIn('seer_general.delegacion', $grupos[$sedeUsuario]);
-                    }
+                    $grupos = ['Morelia' => ['Morelia', 'Zitácuaro'], 'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'], 'Zamora' => ['Zamora', 'Sahuayo']];
+                    if (array_key_exists($sedeUsuario, $grupos)) return $q->whereIn('seer_general.delegacion', $grupos[$sedeUsuario]);
                 }
                 return $q->where('seer_general.delegacion', $this->sede);
             })
-
-            // --- Filtro de Auxiliar ---
-            ->when($this->auxiliar !== "Todos", function ($q) {
-                return $q->where('seer_general.user_id', $this->auxiliar);
-            })
-
-            // --- Filtro de Notificador ---
-            ->when($this->notificador !== "Todos", function ($q) {
-                return $q->where('seer_citados.id_notificador', $this->notificador);
-            })
-
-            ->select(
-                'seer_general.id',
-                'seer_general.NUE',
-                'seer_solicitante.nombre as nombre_solicitante',
-                'seer_general.fecha',
-                'seer_citados.nombre',
-                'seer_citados.primer_apellido',
-                'seer_citados.segundo_apellido',
-                'seer_citados.colonia',
-                'seer_citados.calle',
-                'seer_citados.n_ext',
-                'seer_citados.n_int',
-                'seer_citados.estatus',
-                'seer_general.actividad',
-                'catalogo_rama.rama_industrial',
-                'seer_general.delegacion',
-                'notificador.name as notificador',
-                'auxiliar.name as auxiliar'
-            )
+            ->when($this->auxiliar !== "Todos", function ($q) { return $q->where('seer_general.user_id', $this->auxiliar); })
+            ->when($this->notificador !== "Todos", function ($q) { return $q->where('seer_citados.id_notificador', $this->notificador); })
+            ->select('seer_general.*', 'seer_citados.*', 'seer_solicitante.nombre as nombre_solicitante', 'notificador.name as nombre_notificador', 'auxiliar.name as auxiliar')
             ->get();
 
-        return view('excel.notificaciones', ['notificaciones' => $notificaciones]);
+        // 2. Calculamos los totales
+        $totalesPorNotificador = $notificaciones->groupBy('nombre_notificador')->map(function ($row) {
+            return [
+                'nombre' => $row->first()->nombre_notificador ?? 'Sin asignar',
+                'total' => $row->count(),
+                'notificadas' => $row->where('estatus', 'Notificada')->count(),
+                'no_notificadas' => $row->where('estatus', 'No notificada')->count(),
+            ];
+        });
+
+        // 3. Retornamos las hojas pasando los datos específicos a cada una
+        return [
+            new NotificacionesTotalesSheet($totalesPorNotificador), // Hoja 1
+            new NotificacionesDetalleSheet($notificaciones),       // Hoja 2
+        ];
     }
 }
