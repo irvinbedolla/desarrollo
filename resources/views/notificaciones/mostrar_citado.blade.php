@@ -33,7 +33,7 @@
                                 <input type="hidden" name="id" value="{{ $folio->id }}">
                                 
                                 <div class="row">
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <label for="name">Nombre(s) <span style="color:red;">(*)</span></label>
                                             <input type="text" name="nombre" class="form-control" value="<?=$folio["nombre"];?>" oninput="this.value = this.value.toUpperCase()" readonly> 
@@ -99,6 +99,7 @@
                                                 <option value="PROLONGACIÓN"   @php if($folio->tipo_vialidad === 'PROLONGACIÓN') echo "selected"  @endphp>Prolongación</option>
                                                 <option value="RETORNO"        @php if($folio->tipo_vialidad === 'RETORNO') echo "selected"  @endphp>Retorno</option>
                                                 <option value="VIADUCTO"       @php if($folio->tipo_vialidad === 'VIADUCTO') echo "selected"  @endphp>Viaducto</option>
+                                                <option value="PRIVADA"        @php if($folio->tipo_vialidad === 'PRIVADA') echo "selected"  @endphp>Privada</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 El campo vialidad es obligatorio.
