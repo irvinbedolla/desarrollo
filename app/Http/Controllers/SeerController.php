@@ -3108,9 +3108,6 @@ class SeerController extends Controller
 
         $isAudiencia = '';
         
-        //Actualizar SEER GENERAL
-        $delegacion = SeerPerGeneral::find($data["id"]);
-        $NUE = $this->GeneraExpediente($delegacion["consecutivo"],$delegacion["delegacion"]);
 
         $motivosDelete = session('motivos_edicion_delete', []);
         if (!empty($motivosDelete)) {
@@ -3119,7 +3116,7 @@ class SeerController extends Controller
         session()->forget('motivos_edicion_delete');
 
         SeerPerGeneral::where('id', $data["id"])
-        ->update(['NUE' => $NUE, 'actividad' => $data["actividad_economica"],'id_rama' => $data["ramaIndustrial"], 'fecha_confirmacion' => $fecha_actual,]);
+        ->update(['actividad' => $data["actividad_economica"],'id_rama' => $data["ramaIndustrial"], 'fecha_confirmacion' => $fecha_actual,]);
 
         if (!empty($data["motivo_solicitud"])) {
             foreach ($data["motivo_solicitud"] as $motivoId) {
@@ -3292,13 +3289,9 @@ class SeerController extends Controller
             SeerMotivo::whereIn('id', $motivosDelete)->delete();
         }
         session()->forget('motivos_edicion_delete');
-        
-        //Actualizar SEER GENERAL
-        $delegacion = SeerPerGeneral::find($data["id"]);
-        $NUE = $this->GeneraExpediente($data["consecutivo"],$delegacion["delegacion"]);
 
         SeerPerGeneral::where('id', $data["id"])
-        ->update(['NUE' => $NUE, 'actividad' => $data["actividad_economica"],'id_rama' => $data["ramaIndustrial"], 'fecha_confirmacion' => $fecha_actual,]);
+        ->update(['actividad' => $data["actividad_economica"],'id_rama' => $data["ramaIndustrial"], 'fecha_confirmacion' => $fecha_actual,]);
 
         if (!empty($data["motivo_solicitud"])) {
             foreach ($data["motivo_solicitud"] as $motivoId) {
@@ -3467,7 +3460,22 @@ class SeerController extends Controller
         
         //Actualizar SEER GENERAL
         $delegacion = SeerPerGeneral::find($data["id"]);
-        $NUE = $this->GeneraExpediente($data["consecutivo"],$delegacion["delegacion"]);
+        $consecutivo = $delegacion->consecutivo;
+        $delegacionUser = $delegacion->delegacion;
+
+        $NUE = $this->GeneraExpediente($consecutivo,$delegacionUser);
+
+        //Revisamos que el NUE no exista
+        while (SeerPerGeneral::where('NUE', $NUE)->exists()) {
+            $consecutivo++;
+            $NUE = $this->GeneraExpediente($consecutivo, $delegacionUser);
+        }
+
+        // Actualizamos el registro con el NUE final y el consecutivo real usado
+        $delegacion->update([
+            'user_id' => $id_user,
+            'consecutivo' => $consecutivo,
+        ]);
 
         $motivosDelete = session('motivos_edicion_delete', []);
         if (!empty($motivosDelete)) {
@@ -6913,10 +6921,6 @@ class SeerController extends Controller
         $relacionEloquent = 'roles';
         $fecha_actual = date('y-m-d');
             
-        //Actualizar SEER GENERAL
-        $delegacion = SeerPerGeneral::find($data["id"]);
-        $NUE = $this->GeneraExpediente($data["consecutivo"],$delegacion["delegacion"]);
-
         $motivosDelete = session('motivos_edicion_delete', []);
         if (!empty($motivosDelete)) {
             SeerMotivo::whereIn('id', $motivosDelete)->delete();
@@ -6924,7 +6928,7 @@ class SeerController extends Controller
         session()->forget('motivos_edicion_delete');
 
         SeerPerGeneral::where('id', $data["id"])
-        ->update(['NUE' => $NUE, 'actividad' => $data["actividad_economica"],'id_rama' => $data["ramaIndustrial"] ]);
+        ->update(['actividad' => $data["actividad_economica"],'id_rama' => $data["ramaIndustrial"] ]);
 
         if (!empty($data["motivo_solicitud"])) {
             foreach ($data["motivo_solicitud"] as $motivoId) {
@@ -10158,21 +10162,6 @@ class SeerController extends Controller
                 $consecutivo = $general->consecutivo;
                 $delegacion = $general->delegacion;
                 
-                // Generamos el primer NUE para probar
-                $NUE = $this->GeneraExpediente($consecutivo, $delegacion);
-
-                //Revisamos que el NUE no exista
-                while (SeerPerGeneral::where('nue', $NUE)->exists()) {
-                    $consecutivo++;
-                    $NUE = $this->GeneraExpediente($consecutivo, $delegacion);
-                }
-
-                // Actualizamos el registro con el NUE final y el consecutivo real usado
-                $general->update([
-                    'user_id' => $id_usuario,
-                    'consecutivo' => $consecutivo
-                ]);
-
                 // 2. Guardar Motivos
                 if (!empty($solicitudMotivos)) {
                     foreach ($solicitudMotivos as $motivoId) {
