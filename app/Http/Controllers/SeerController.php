@@ -5509,6 +5509,68 @@ class SeerController extends Controller
             return redirect()->route('audiencias.conciliador');
         }
     }
+
+    public function concluir_audiencia_no_conciliacion(Request $request){
+        $data = $request->all();
+
+        $id_solicitud = $data["id"];
+        $monto = 0;
+        $fecha_actual = date('y-m-d');
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        $solicitudOriginal = SeerPerGeneral::find($data["id"]);
+        $sede_a_guardar = $solicitudOriginal->delegacion ?? $user->delegacion;
+
+        $solicitante = SeerSolicitante::where('id_solicitud',$data["id"])->first();
+        $numero_audiencia = $this->GeneraAudiencia($data["id"]);
+        //Actualizar Audiencia
+        $data_conciliador = [
+            'id_solicitud'          => $data["id"],
+            'numero_audiencia'      => $numero_audiencia["0"],
+            'numero_audiencias'     => $numero_audiencia["1"],
+            'estatus_conciliacion'  => $data["conclucion"],
+            'monto'                 => 0,
+            'rfc'                   => $solicitante["rfc"],
+            'NSS'                   => $solicitante["nss"],
+            'multa'                 => 'No',
+            'tipo'                  => "Presencial",
+            'validado'              => 'Validado',
+            'consecutivo'           => $numero_audiencia[1],
+            'resolicion_primera'    => $data["primera"],
+            'resolicion_justificacion'  => $data["justificacion"],
+            'resolicion_segunda'    => $data["segunda"],
+            'conclucion'            => $data["conclucion"],
+            /*
+            'vacaciones'            => $data[""],
+            'aguinaldo'             => $data[""],
+            'otros'                 => $data[""],
+            'horario'               => $data[""],
+            'comida'                => $data[""],
+            'tipo_audiencia'        => $data[""]
+            */
+        ];
+        SeerPerConciliador::create($data_conciliador);
+
+        SeerPerGeneral::find($data["id"])
+        ->update([
+            'tipo'                  => "Presencial",
+            'fecha_terminacion'     => $fecha_actual, 
+            'conciliador_id'        => $user->id,
+            'observaciones'         => $data["observaciones"], 
+            'estatus'               => $data["conclucion"]
+        ]);
+
+        $numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
+        Audiencias::where('id_solicitud',$data["id"])
+        ->orderBy('id_solicitud','desc')
+        ->update([
+            'numero_audiencia'  =>  $numAudiencia+1,
+            'folio_audiencia'   =>  $numero_audiencia[0],
+            'estatus'           => 'No conciliacion',
+        ]);
+
+        return redirect()->route('audiencia_index');
+    }
     
     // PDF Convenio para solicitudes
     public function VerPDFConvenioSol($id){
@@ -8527,7 +8589,7 @@ class SeerController extends Controller
             $permisos = PermisosConciliador::where('id_conciliador',$id)->first();
             if($permisos["tipo"] == "Ambos"){
                 if($user["delegacion"] == "Morelia"){
-                    $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->whereIn('delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->whereIn('delegacion', ["Morelia", "Zitácuaro"])->where('id_conciliador', $id)->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($audiencias as $audiencia) {
                         $datosAudiencia = Audiencias::where('id_solicitud', $audiencia->id_solicitud)
                         ->orderBy('numero_audiencia', 'DESC')
@@ -8586,7 +8648,7 @@ class SeerController extends Controller
                     }
                 }
                 if($user["delegacion"] == "Uruapan"){
-                    $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->where('id_conciliador', $id)->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($audiencias as $audiencia) {
                         $audiencia->estatus_modelo = $audiencia->estatus;
                         $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
@@ -8609,7 +8671,7 @@ class SeerController extends Controller
                     }
                 }
                 if($user["delegacion"] == "Zamora"){
-                    $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->whereIn('delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->whereIn('delegacion', ["Sahuayo", "Zamora"])->where('id_conciliador', $id)->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($audiencias as $audiencia) {
                         $audiencia->estatus_modelo = $audiencia->estatus;
                         $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
@@ -8633,7 +8695,7 @@ class SeerController extends Controller
                 }
             }
             else{
-                $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(500)->get();
+                $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->where('seer_general.delegacion', $user["delegacion"])->where('id_conciliador', $id)->orderBy('created_at', 'desc')->limit(500)->get();
                 foreach ($audiencias as $audiencia) {
                     $audiencia->estatus_modelo = $audiencia->estatus;
                     $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
