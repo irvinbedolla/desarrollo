@@ -101,7 +101,7 @@
                             <td>{{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</td>
                         </tr>
                     </table>
-                </div><br><br><br><br><br><br><br><br><br><br><br><br><br>
+                </div><br><br><br><br><br><br><br><br><br>
                 <!-- DELIGENCIA EXITOSA, ATIENDE OTRA PERSONA -->
                 <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p>
                            

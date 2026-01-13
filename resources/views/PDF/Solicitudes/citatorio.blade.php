@@ -112,7 +112,7 @@
                     <b>{{ $citado->tipo_vialidad}} {{ $citado->calle }} #{{ $citado->n_ext }} @if(!empty($citado->n_int))
                                     INT. {{ $citado->n_int }}
                                 @endif COLONIA {{ $citado->colonia}}, {{ mb_strtoupper($municipioNombre, 'UTF-8')}}, {{ mb_strtoupper($estadoNombre, 'UTF-8')}} C.P. {{ $citado->cp }}.</b><br><br>
-                    FECHA DE EMISIÓN DEL CITATORIO:  {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}
+                    FECHA DE EMISIÓN DEL CITATORIO:  {{ $citado->updated_at->translatedFormat('d \d\e F \d\e\l Y') }}
                 </b></p>  
                            
                 <p><b>P R E S E N T E</b></p>
