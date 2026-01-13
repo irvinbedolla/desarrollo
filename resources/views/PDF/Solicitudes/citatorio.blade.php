@@ -110,7 +110,7 @@
                     SOLICITANTE: {{ $solicitante->nombre }}<br>
                     CITADO: {{ $citado->nombre}} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}<br>
                     <b>{{ $citado->tipo_vialidad}} {{ $citado->calle }} #{{ $citado->n_ext }} @if(!empty($citado->n_int))
-                                    int. {{ $citado->n_int }}
+                                    INT. {{ $citado->n_int }}
                                 @endif COLONIA {{ $citado->colonia}}, {{ mb_strtoupper($municipioNombre, 'UTF-8')}}, {{ mb_strtoupper($estadoNombre, 'UTF-8')}} C.P. {{ $citado->cp }}.</b><br><br>
                     FECHA DE EMISIÓN DEL CITATORIO:  {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}
                 </b></p>  

@@ -17,5 +17,9 @@ class SeerCitados extends Model
     'firma','problema_diligencia','genero','tez','edad_filiacion','altura','complexion','cabello','ojos','particulares','especificar','imagen_domicilio1','imagen_domicilio2',
     'estado_citado','aparece_convenio', 'resulte_responsable'
     ];
+    
+    protected $casts = [
+        'medio' => 'array',
+    ];
                      
 }
