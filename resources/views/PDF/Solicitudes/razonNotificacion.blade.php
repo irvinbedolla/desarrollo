@@ -105,13 +105,13 @@
                 <!-- DELIGENCIA EXITOSA, ATIENDE OTRA PERSONA -->
                 <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p>
                            
-                <p>Siendo las <b>{{ \Carbon\Carbon::now()->format('H') }} HORAS CON {{ \Carbon\Carbon::now()->format('i') }} MINUTOS
-                    DEL DÍA {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}, LIC. {{$notificador->name}}</b> en mi
+                <p>Siendo las <b>{{ $citado->updated_at->format('H') }} HORAS CON {{ $citado->updated_at->format('i') }} MINUTOS
+                    DEL DÍA {{ $citado->updated_at->translatedFormat('d \d\e F \d\e\l Y') }}, LIC. {{$notificador->name}}</b> en mi
                     calidad de notificador(a) adscrito al Centro de Conciliación Laboral, oficina estatal {{ $solicitud->delegacion }}, en 
                     ejercicio de las facultades conferidas en los artículos de la Ley Orgánica del Centro de Conciliación Laboral del 
                     Estado de Michoacán de Ocampo y 21 del reglamento interior del Centro de Conciliación Laboral del Estado de Michoacán 
                     de Ocampo, a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN, me constituyo física y legalmente en el
-                    domicilio ubicado en <b>{{strtoupper($citado->tipo_vialidad)}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) int. {{$citado->n_int}}@endif, COLONIA {{$citado->colonia}}, 
+                    domicilio ubicado en <b>{{strtoupper($citado->tipo_vialidad)}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) INT. {{$citado->n_int}}@endif, COLONIA {{$citado->colonia}}, 
                     {{mb_strtoupper($municipioCitado, 'UTF-8')}}, CP {{$citado->cp}}, {{mb_strtoupper($estadoCitado,'UTF-8')}}</b>, siendo este el domicilio señalado en la solicitud de Conciliación como el del <b>CITADO:
                     {{$citado->nombre}} @if($citado->primer_apellido!=null){{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null){{$citado->segundo_apellido}}@endif.</b> Todo ello a efecto 
                     de dar cumplimiento al CITATORIO DE CONCILIACIÓN de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> en el expediente citado.<br><br>
@@ -119,15 +119,25 @@
                     Y cerciorándo de ser este el domicilio correcto y completo, apegándome en los siguientes elementos de convicción:
                     <b>
                         @php
-                            $letras = range('A', 'Z'); // Para incisos: a), b), c), ...
+                            $letras = range('A', 'Z');
                             $index = 0;
-                            $medios = is_array($citado->medio) ? $citado->medio : explode(',', $citado->medio);
+
+                            if (is_array($citado->medio)) {
+                                $medios = $citado->medio;
+                            } elseif (is_string($citado->medio)) {
+                                $decoded = json_decode($citado->medio, true);
+                                $medios = is_array($decoded)
+                                    ? $decoded
+                                    : array_map('trim', explode(',', $citado->medio));
+                            } else {
+                                $medios = [];
+                            }
                         @endphp
 
                         @foreach($medios as $medioSeleccionado)
-                            @php $medioSeleccionado = trim($medioSeleccionado); @endphp
                             @if(isset($descripcionesMedio[$medioSeleccionado]))
-                                <strong>{{ $letras[$index] }})</strong> {{ $descripcionesMedio[$medioSeleccionado] }}
+                                <strong>{{ $letras[$index] }})</strong>
+                                {{ $descripcionesMedio[$medioSeleccionado] }}
                                 @php $index++; @endphp
                             @endif
                         @endforeach

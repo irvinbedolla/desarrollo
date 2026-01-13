@@ -104,15 +104,53 @@
 
                 <p><center><b>RAZÓN DE NOTIFICACIÓN POR INSTRUCTIVO</b></center></p><br> 
                            
-                <p>Siendo las <b>{{ \Carbon\Carbon::now()->format('H') }} HORAS CON {{ \Carbon\Carbon::now()->format('i') }} MINUTOS
-                    DEL DÍA {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}, LIC. {{$notificador->name}}</b> en mi
-                    calidad de notificador(a) adscrito al Centro de Conciliación Laboral, oficina estatal {{ $solicitud->delegacion }}, en ejercicio de las facultades conferidas en el artículo 28 de la Ley Orgánica del 
+                <p>Siendo las <b>{{ $citado->updated_at->format('H') }} HORAS CON {{ $citado->updated_at->format('i') }} MINUTOS
+                    DEL DÍA {{ $citado->updated_at->translatedFormat('d \d\e F \d\e\l Y') }}, LIC. {{$notificador->name}}</b> en mi
+                    calidad de notificador(a) adscrito al Centro de Conciliación Laboral, oficina estatal {{ $solicitud->delegacion }}, me constituyo física y legalmente en el domicilio ubicado en
+                    <b>{{strtoupper($citado->tipo_vialidad)}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) INT. {{$citado->n_int}}@endif, COLONIA {{$citado->colonia}}, {{strtoupper($municipioCitado)}}, CP {{$citado->cp}}, 
+                    ESTADO {{mb_strtoupper($estadoCitado, 'UTF-8')}}</b>, siendo este el domicilio señalado en la solicitud de conciliación como el del <b>CITADO: {{$citado->nombre}}@if($citado->primer_apellido!=null) {{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null) {{$citado->segundo_apellido}}@endif</b>
+                    Todo ello a efecto de dar cumplimiento al <b>CITATORIO DE CONCILIACIÓN</b> de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> en el expediente citado. Y cerciorando de ser 
+                    este el domicilio correcto y completo, apegándome en los siguientes elementos de convicción: 
+                    <b> 
+                       @php
+                            $letras = range('A', 'Z');
+                            $index = 0;
+
+                            if (is_array($citado->medio)) {
+                                $medios = $citado->medio;
+                            } elseif (is_string($citado->medio)) {
+                                $decoded = json_decode($citado->medio, true);
+                                $medios = is_array($decoded)
+                                    ? $decoded
+                                    : array_map('trim', explode(',', $citado->medio));
+                            } else {
+                                $medios = [];
+                            }
+                        @endphp
+
+                        @foreach($medios as $medioSeleccionado)
+                            @if(isset($descripcionesMedio[$medioSeleccionado]))
+                                <strong>{{ $letras[$index] }})</strong>
+                                {{ $descripcionesMedio[$medioSeleccionado] }}
+                                @php $index++; @endphp
+                            @endif
+                        @endforeach
+                    </b>  A mayor abundamiento, verifico que cerca del domicilio se encuentran los siguientes puntos  
+                    de referencia: {{$citado->abundar_inmueble}}. De igual forma, he constatado que se trata de un inmueble con las siguientes características: {{$citado->abundar_area}}.</b> Procedí a tocar en repetidas ocasiones, 
+                    sin recibir respuesta. Y después de haber esperado un tiempo prudente, lógico y razonable, nadie acude a mi llamado, sin emabargo cuento con los medios de cercioramiento antes mencionados de que el domicilio 
+                    es el correcto y que el citado labora, habita o tiene su asiento de negocios en este domicilio con base en <b>{{$citado->observaciones}}</b>
+                
+                    en ejercicio de las facultades conferidas en el artículo 28 de la Ley Orgánica del 
                     Centro de Conciliación Laboral del Estado de Michoacán de Ocampo y 21 del Reglamento Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, a efecto de dar cumplimiento 
                     al CITATORIO DE CONCILIACIÓN de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> en el expediente citado, en el que se ordena NOTIFICAR 
                     <b>AL CITADO: {{$citado->nombre}}@if($citado->primer_apellido!=null) {{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null) {{$citado->segundo_apellido}}@endif,</b> en el domicilio señalado
                     en <b>{{strtoupper($citado->tipo_vialidad)}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) int. {{$citado->n_int}}@endif, COLONIA {{$citado->colonia}}, {{strtoupper($municipioCitado)}}, CP {{$citado->cp}}, 
-                    ESTADO MICHOACÁN DE OCAMPO.</b><br><br>
-
+                    ESTADO {{mb_strtoupper($estadoCitado, 'UTF-8')}}.</b> Por todo lo anterior en términos de lo previsto en los artículos 741, 742 fracción XIII, 743 y 751 de la Ley Federal del Trabajo procedo a notificar por 
+                    instructivo pegando <b>CITATORIO Y CÉDULA DE LEY POR INSTRUCTIVO</b> en la puerta de entrada del domicilio.<br><br>
+                    
+                    Anexando impresión fotográfica para constancia legal. <br><br>
+                    
+                    <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. Doy fe.</b> 
                     Cerciorándome de que me encuentro en el Municipio, Colonia y Vialidad correctas, señaladas en la solicitud de Conciliación, apegándome a los siguientes elementos de convicción
                     <b> 
                         @php
@@ -132,25 +170,8 @@
                     de referencia: {{$citado->abundar_inmueble}}. De igual forma, he constatado que se trata de un inmueble con las 
                     siguientes características:  {{$citado->abundar_area}}.</b>
                 </p>
-
-                <p>Fui atendido por una persona a la cual le solicite que me proporcionara su nombre y una identificación oficial, pero se negó a hacerlo, por lo que procedo a 
-                    especificar su media filiación, que contiene los siguientes rasgos: <b>SEXO {{$citado->genero}}, TEZ {{$citado->tez}}, EDAD {{$citado->edad_filiacion}} AÑOS, ALTURA {{$citado->altura}} M.,
-                    COMPLEXIÓN {{$citado->complexion}}, CABELLO {{$citado->cabello}}, OJOS {{$citado->ojos}} Y SEÑAS PARTICULARES: {{$citado->particulares}}. LO ANTERIOR SE HACE DE
-                    MANERA APROXIMADA, YA QUE EL SUSCRITO NO ES PERITO EN LA MATERIA</b>. Sin embargo, cuento con los medios de cercioramiento antes mencionados de que el domicilio es el correcto y que el citado labora, 
-                    habita o tiene su asiento de negocios en este domicilio con base en que 
-                    <b>{{$citado->observaciones}} ME CONSTITUÍ EN LEGAL Y DEBIDA FORMA EN EL DOMICILIO SEÑALADO EN EL CITATORIO A REFERENCIA, EN DONDE DESPUÉS DE UBICAR 
-                    EL NÚMERO 90 PROCEDÍ A TOCAR LA PUERTA EN REPETIDAS OCASIONES, SIN EMBARGO NADIE ACUDIÓ A MI LLAMADO; PREGUNTÉ CON LOS VECINOS DE AL LADO, QUIENES 
-                    CONFIRMAN QUE EFECTIVAMENTE LA CITADA OCUPA EL INMUEBLE, POR LO QUE PROCEDO A NOTIFICAR EL CITATORIO POR INSTRUCTIVO</b>.
-                </p>
-
-                <p> Por todo lo anterior en términos de lo previsto en los artículos 741, 742 fracción XIII, 743 fracción V y 751 de la Ley Federal del Trabajo procedo a notificar 
-                    por instructivo pegando <b>CITATORIO</b> Y CÉDULA DE LEY POR INSTRUCTIVO en la puerta de entrada del domicilio.<br><br>
-
-                    <b>Anexando impresión fotográfica para constancia legal.<br>
-                    Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. Doy fe.</b> 
-                </p>
                 <br>
-                <p><center><b>___________________________________<br>LIC. {{$notificador->name}} <br> FUNCIONARIO/A NOTIFICADOR/A</b></center></p>
+                <p><center><b>___________________________________<br>LIC. {{ mb_strtoupper($notificador->name, 'UTF-8')}} <br> FUNCIONARIO/A NOTIFICADOR/A</b></center></p>
                 <div class="page-break"></div> <!-- Genera un salto de línea-->
                 @foreach($imagenes as $index => $imagen) <!--Muestra una fotografía por hoja, númerando por anexos-->
                     @if($imagen)
@@ -182,7 +203,7 @@
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");
                     $size = 10;
-                    $y = $pdf->get_height() - 30;
+                    $y = $pdf->get_height() - 44;
                     $x = ($pdf->get_width() / 2) - 50;
                     $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
                     $pdf->page_text($x, $y, $text, $font, $size, array(0, 0, 0));

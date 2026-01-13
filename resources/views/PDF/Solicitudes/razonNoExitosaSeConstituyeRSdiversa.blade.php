@@ -105,43 +105,54 @@
                 <!-- DELIGENCIA NO EXITOSA, SE CONSTITUYE, CERRADO -->
                 <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p>
                            
-                <p>Siendo las <b>{{ \Carbon\Carbon::now()->format('H') }} HORAS CON {{ \Carbon\Carbon::now()->format('i') }} MINUTOS
-                    DEL DÍA {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}, LIC. {{$notificador->name}}</b>, en mi
+                <p>Siendo las <b>{{ $citado->updated_at->format('H') }} HORAS CON {{ $citado->updated_at->format('i') }} MINUTOS
+                    DEL DÍA {{ $citado->updated_at->translatedFormat('d \d\e F \d\e\l Y') }}, LIC. {{$notificador->name}}</b>, en mi
                     calidad de notificador(a) adscrito al Centro de Conciliación Laboral, oficina estatal {{ $solicitud->delegacion }}, a efecto de dar cumplimiento al <b>CITATORIO DE CONCILIACIÓN</b> de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
                     en el expediente citado, en el que se ordena NOTIFICAR <b>AL CITADO: {{$citado->nombre}}@if($citado->primer_apellido!=null) {{$citado->primer_apellido}}@endif
-                    @if($citado->segundo_apellido!=null) {{$citado->segundo_apellido}}@endif</b>en el domicilio señalado en <b>{{$citado->tipo_vialidad}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) int. {{$citado->n_int}}@endif, 
-                    COLONIA {{$citado->colonia}},  C.P. {{$citado->cp}}, {{mb_strtoupper($municipioCitado, 'UTF-8')}}, {{mb_strtoupper($estadoCitado, 'UTF-8')}}. </b>Cerciorándome de ser el domicilio correcto por así indicarlo<br><br>
-                    <b>@php
-                            $letras = range('A', 'Z'); // Para incisos: a), b), c), ...
+                    @if($citado->segundo_apellido!=null) {{$citado->segundo_apellido}}@endif</b>en el domicilio señalado en <b>{{$citado->tipo_vialidad}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) INT. {{$citado->n_int}}@endif, 
+                    COLONIA {{$citado->colonia}}, C.P. {{$citado->cp}}, {{mb_strtoupper($municipioCitado, 'UTF-8')}}, ESTADO {{mb_strtoupper($estadoCitado, 'UTF-8')}}. </b>Cerciorándome de ser el domicilio correcto por así indicarlo<br><br>
+                    <b>
+                        @php
+                            $letras = range('A', 'Z');
                             $index = 0;
-                            $medios = is_array($citado->medio) ? $citado->medio : explode(',', $citado->medio);
+
+                            if (is_array($citado->medio)) {
+                                $medios = $citado->medio;
+                            } elseif (is_string($citado->medio)) {
+                                $decoded = json_decode($citado->medio, true);
+                                $medios = is_array($decoded)
+                                    ? $decoded
+                                    : array_map('trim', explode(',', $citado->medio));
+                            } else {
+                                $medios = [];
+                            }
                         @endphp
 
                         @foreach($medios as $medioSeleccionado)
-                            @php $medioSeleccionado = trim($medioSeleccionado); @endphp
                             @if(isset($descripcionesMedio[$medioSeleccionado]))
-                                <strong>{{ $letras[$index] }})</strong> {{ $descripcionesMedio[$medioSeleccionado] }}
+                                <strong>{{ $letras[$index] }})</strong>
+                                {{ $descripcionesMedio[$medioSeleccionado] }}
                                 @php $index++; @endphp
                             @endif
                         @endforeach
-                    </b> 
+                    </b> <br><br>
                     A mayor abundamiento, verifico que cerca del domicilio se encuentran los siguientes puntos  
-                    de referencia: <b>{{$citado->abundar_area}}</b>. De igual forma, he constatado que se trata de un inmueble con las 
-                    siguientes características: <b>{{$citado->abundar_inmueble}}</b>.<br><br>
+                    de referencia: <b>{{$citado->abundar_area}}.</b> De igual forma, he constatado que se trata de un inmueble con las 
+                    siguientes características: <b>{{$citado->abundar_inmueble}}.</b><br><br>
 
-                    Mismos que coinciden con las señaladas en la solicictud de conciliación.  Asimismo, por los informes que en tal sentido me proporciona la persona con quien se entiende la presente diligencia quien dice llamarse <b>{{ $citado->nombre_notificacion }}, QUIEN NO SE INDENTIFICA, ALEGANDO QUE {{ $citado->motivo_identificacion }}</b>.
-                    Procedo a especificar su media filiación, que incluye los siguientes rasgos: <b>SEXO {{ $citado->genero }}, TEZ {{ $citado->tez }}, EDAD {{ $citado->edad_filiacion }}, ALTURA {{ $citado->altura }}, COMPLEXIÓN {{ $citado->complexion }}, CABELLO {{ $citado->cabello }}, OJOS {{ $citado->ojos }} Y SEÑAS PARTICULARES: {{ $citado->particulares }}, quien {{ $citado->relacion_notificacion }} en el domicilio en que se actua. LO ANTERIOR SE HACE DE MANERA APROXIMADA, YA QUE EL SUSCRITO NO ES PERITO EN LA MATERIA</b>.
-
+                    Mismos que coinciden con las señaladas en la solicictud de conciliación. Asimismo, por los informes que en tal sentido me proporciona la persona con quien se entiende la presente diligencia quien dice llamarse <b>{{ $citado->nombre_notificacion }}, QUIEN NO SE INDENTIFICA, ALEGANDO QUE {{ $citado->motivo_identificacion }}</b>.
+                    Procedo a especificar su media filiación, que incluye los siguientes rasgos: <b>SEXO {{ $citado->genero }}, TEZ {{ $citado->tez }}, EDAD {{ $citado->edad_filiacion }}, ALTURA {{ $citado->altura }}, COMPLEXIÓN {{ $citado->complexion }}, CABELLO {{ $citado->cabello }}, OJOS {{ $citado->ojos }} Y SEÑAS PARTICULARES: {{ $citado->particulares }}, quien {{ $citado->relacion_notificacion }} en el domicilio en que se actua. LO ANTERIOR SE HACE DE MANERA APROXIMADA, YA QUE EL SUSCRITO NO ES PERITO EN LA MATERIA.</b>
+                    <br><br>
                     Enseguida me identifico en este acto con credencial expedida por el Centro de Conciliación Laboral, oficina estatal MORELIA, que me acredita como Notificador y le informo el motivo de mi visita, mediante lectura del <b>CITATORIO DE CONCILIACIÓN</b> antes mencionado, requiriéndole así la presencia del REPRESENTANTE LEGAL
                     <b> DE LOS CITADOS: {{$citado->nombre}}@if($citado->primer_apellido!=null) {{$citado->primer_apellido}}@endif
                     @if($citado->segundo_apellido!=null) {{$citado->segundo_apellido}}@endif</b>, a fin de NOTIFICARLOS, en cumplimiento a lo ordenado; la persona que me atiende manifiesta que los solicitados citados no habitan, 
                     laboran ni tienen su principal asiento de negocios en el domicilio en el que se actúa.<br><br>
 
-                    En esa razón, me encuentro imposibilitado para dar cumplimiento a lo ordenado en el <b>CITATORIO DE CONCILIACIÓN</b> ; toda vez que no 
+                    En esa razón, me encuentro imposibilitado para dar cumplimiento a lo ordenado en el <b>CITATORIO DE CONCILIACIÓN</b>; toda vez que no 
                     cuento con los elementos de cercioramiento requeridos por el Artículo 743 Fracción I de la Ley Federal del Trabajo, por lo que me es 
                     imposible dar cumplimiento al <b>CITATORIO</b> antes citado.<br><br>
 
-                    Anexando impresión fotográfica para constancia legal.<br>
+                    Anexando impresión fotográfica para constancia legal.
                 </p>
 
                 <p>
@@ -150,7 +161,7 @@
                 </p>
                 
                 <br><br><br>
-                <p><center><b>___________________________________<br> LIC. {{$notificador->name}}<br> FUNCIONARIO/A NOTIFICADOR/A</b></center> </p>
+                <p><center><b>___________________________________<br> LIC. {{ mb_strtoupper($notificador->name, 'UTF-8')}}<br> FUNCIONARIO/A NOTIFICADOR/A</b></center> </p>
                 <div class="page-break"></div> <!-- Genera un salto de línea-->
                 @foreach($imagenes as $index => $imagen) <!--Muestra una fotografía por hoja, númerando por anexos-->
                     @if($imagen)
@@ -182,7 +193,7 @@
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");
                     $size = 10;
-                    $y = $pdf->get_height() - 30;
+                    $y = $pdf->get_height() - 44;
                     $x = ($pdf->get_width() / 2) - 50;
                     $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
                     $pdf->page_text($x, $y, $text, $font, $size, array(0, 0, 0));
