@@ -10812,4 +10812,53 @@ class SeerController extends Controller
         }
         return back()->with('success', 'Citado agregado correctamente, puedes agregar otro o continuar.');
     }
+    
+    //PDF Notificación de multa
+    public function VerPDFMultaNotificacion($id, $id_solicitud){
+        $solicitud = SeerPerGeneral::find($id_solicitud);
+        $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
+        $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
+        ->first();
+
+        $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
+        ->where("seer_citados.id", $id)
+        ->first();
+
+        $municipioCitado = null;
+        if ($citado && $citado->municipio_citado) {
+            $municipio = \App\Models\Municipios::find($citado->municipio_citado);
+            $municipioCitado = $municipio ? $municipio->nombre : null;
+        }
+        $estadoCitado = null;
+        if ($citado && $citado->estado_citado) {
+            $estado = \App\Models\Estados::find($citado->estado_citado);
+            $estadoCitado = $estado ? $estado->nombre : null;
+        }
+        $id_notificador = $citado->id_notificador;
+
+        $notificador = User::where('id', $id_notificador)
+            ->select('name')
+            ->first();
+
+        $imagenes = [];
+
+        for ($i = 1; $i <= 3; $i++) {
+            $path = storage_path("app/documentos_notificacion/{$citado->id}-foto{$i}.jpg");
+
+            if (file_exists($path)) {
+                $imagenes[] = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($path));
+            } else {
+                $imagenes[] = null;
+            }
+        }
+        $html = view('PDF/Solicitudes/multaNotificaciones', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'multaNotificada_' . $solicitud->empresa .'.pdf';
+        return $pdf->stream($nombreArchivo); 
+    }
 }

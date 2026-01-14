@@ -104,6 +104,7 @@
                                                 <option value="EJE VIAL">Eje vial</option>
                                                 <option value="PERIFÉRICO">Periférico</option>
                                                 <option value="PROLONGACIÓN">Prolongación</option>
+                                                <option value="PRIVADA">Privada</option>
                                                 <option value="RETORNO">Retorno</option>
                                                 <option value="VIADUCTO">Viaducto</option>
                                             </select>
@@ -498,7 +499,73 @@
                 actualizarTipoProblema();
             }
         });
-        const tipo_iden = document.getElementById('identificacion_notificacion');
+        //Ocultar media filiación cuando si se presenta una identificación
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectQuienAtiende = document.querySelector('select[name="quien_atiende"]');
+            const selectIdentificacion = document.getElementById('identificacion_notificacion');
+            const mediaFiliacionDiv = document.getElementById('media-filiacion');
+            const motivoIdenDiv = document.getElementById('motivo_identificacion');
+            const dqrGroups = Array.from(document.querySelectorAll('.dqr-group'));
+
+            function setRequiredInGroups(groups, enabled) {
+                groups.forEach(sectionEl => {
+                    if (!sectionEl) return;
+                    const fields = sectionEl.querySelectorAll('input, select, textarea');
+                    fields.forEach(el => {
+                        const shouldBeRequiredByDefault = el.hasAttribute('data-required-default') || el.hasAttribute('required');
+                        if (enabled) {
+                            if (shouldBeRequiredByDefault) el.setAttribute('required', '');
+                        } else {
+                            el.removeAttribute('required');
+                        }
+                    });
+                });
+            }
+            const identificacionesValidas = [
+                "CREDENCIAL PARA VOTAR", "LICENCIA O PERMISO PARA CONDUCIR", 
+                "CREDENCIAL DE IDENTIFICACION LABORAL", "CREDENCIAL DE INSTITUCIÓN DE SALUD",
+                "CREDENCIAL DE INSTITUCIÓN ESCOLAR", "CARTILLA DE SERVICIO MILITAR",
+                "PASAPORTE", "CÉDULA PROFESIONAL", "RFC", "OTRA IDENTIFICACIÓN"
+            ];
+
+            function actualizarFormulario() {
+                const quienAtiende = selectQuienAtiende ? selectQuienAtiende.value : '';
+                const idenValor = selectIdentificacion ? selectIdentificacion.value : '';
+
+                if (idenValor === 'NO PROPORCIONA' || idenValor === 'NO ATIENDE PRESENCIALMENTE') {
+                    motivoIdenDiv.style.display = "block";
+                } else {
+                    motivoIdenDiv.style.display = "none";
+                }
+                if (quienAtiende === 'OTRA PERSONA' && identificacionesValidas.includes(idenValor)) {
+                    mediaFiliacionDiv.style.display = 'block';
+                    setRequiredInGroups([mediaFiliacionDiv], true);
+                } else {
+                    mediaFiliacionDiv.style.display = 'none';
+                    setRequiredInGroups([mediaFiliacionDiv], false);
+                }
+                if (quienAtiende === 'NADIE') {
+                    dqrGroups.forEach(el => el.style.display = 'none');
+                    setRequiredInGroups(dqrGroups, false);
+                    motivoIdenDiv.style.display = "none";
+                    mediaFiliacionDiv.style.display = "none";
+                } else {
+                    dqrGroups.forEach(el => {
+                        if (el.id !== 'media-filiacion' && el.id !== 'motivo_identificacion') {
+                            el.style.display = '';
+                        }
+                    });
+                }
+            }
+            if (selectQuienAtiende) {
+                selectQuienAtiende.addEventListener('change', actualizarFormulario);
+            }
+            if (selectIdentificacion) {
+                selectIdentificacion.addEventListener('change', actualizarFormulario);
+            }
+            actualizarFormulario();
+        });
+        /*const tipo_iden = document.getElementById('identificacion_notificacion');
         tipo_iden.addEventListener('change', function() {
             const valorSeleccionado = this.value;
             // Realiza la validación o acciones necesarias
@@ -508,7 +575,7 @@
             else {
                 document.getElementById('motivo_identificacion').style.display = "none";
             }
-        });
+        });*/
     </script>
 @endsection
 

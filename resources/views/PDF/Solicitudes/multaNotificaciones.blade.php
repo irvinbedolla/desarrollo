@@ -94,15 +94,15 @@
         </style>
         @php
             $descripcionesMedio = [
-                'PLACAS OFICIALES' => 'LA(S) PLACAS DE SEÑALIZACIÓN OFICIAL MÁS PRÓXIMA(S) AL DOMICILIO EN QUE SE ACTÚA, CON EL RESPECTIVO NOMBRE DE LA ALCALDÍA, COLONIA Y CALLE,',
-                'NÚMERO VISIBLE' => 'EL MÚMERO VISIBLE DEL INMUEBLE,',
-                'NUMERACIÓN CONSISTENTE' => 'EL NÚMERO DEL INMUEBLE ES CONSISTENTE CON LA NUMERACIÓN DE LA CALLE,',
-                'INFORMES DE VECINOS' => 'LOS INFORMES DE VECINOS DEL LUGAR, QUIENES CONFIRMAN QUE SE TRATA DEL DOMICILIO CORRECTO,',
+                'PLACAS OFICIALES' => 'LA(S) PLACAS DE SEÑALIZACIÓN OFICIAL MÁS PRÓXIMA(S) AL DOMICILIO EN QUE SE ACTÚA, CON EL RESPECTIVO NOMBRE DE LA ALCALDÍA, COLONIA Y CALLE',
+                'NÚMERO VISIBLE' => 'EL MÚMERO VISIBLE DEL INMUEBLE',
+                'NUMERACIÓN CONSISTENTE' => 'EL NÚMERO DEL INMUEBLE ES CONSISTENTE CON LA NUMERACIÓN DE LA CALLE',
+                'INFORMES DE VECINOS' => 'LOS INFORMES DE VECINOS DEL LUGAR, QUIENES CONFIRMAN QUE SE TRATA DEL DOMICILIO CORRECTO',
                 'RÓTULOS VISIBLES' => 'LOS RÓTULOS VISIBLES EN EL INMUEBLE'
             ];
         @endphp
     </head>
-
+    
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
         <footer></footer>
@@ -128,19 +128,20 @@
                         </tr>
                     </table>
                 </div>
-                <!-- DELIGENCIA NO EXITOSA, NO SE LOCALIZA INTERIOR -->
+                <!-- MULTA -->
                 <div class="razon-notificacion">
-                    <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p><br>
+                    <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p>
                             
                     <p>Siendo las <b>{{ $citado->updated_at->format('H') }} HORAS CON {{ $citado->updated_at->format('i') }} MINUTOS
                         DEL DÍA {{ $citado->updated_at->translatedFormat('d \d\e F \d\e\l Y') }}, LIC. {{$notificador->name}}</b> en mi
-                        calidad de notificador(a) adscrito al Centro de Conciliación Laboral, oficina estatal {{ $solicitud->delegacion }}, en 
-                        ejercicio de las facultades conferidas en los artículos de la Ley Orgánica del Centro de Conciliación Laboral del 
-                        Estado de Michoacán de Ocampo y 21 del reglamento interior del Centro de Conciliación Laboral del Estado de Michoacán 
-                        de Ocampo, a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
-                        en el expediente citado, en el que se ordena NOTIFICAR <b>AL CITADO: {{$citado->nombre}}@if($citado->primer_apellido!=null) {{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null) {{$citado->segundo_apellido}}@endif</b>, 
-                        en el domicilio señalado en <b>{{strtoupper($citado->tipo_vialidad)}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) INT. {{$citado->n_int}}@endif, COLONIA {{$citado->colonia}}, 
-                        {{strtoupper($municipioCitado, 'UTF-8')}}, CP {{$citado->cp}}, {{mb_strtoupper($estadoCitado, 'UTF-8')}}.</b> Cerciorándome de ser el domicilio correcto por
+                        calidad de notificador(a) adscrito al Centro de Conciliación Laboral, oficina estatal {{ $solicitud->delegacion }}, 
+                        me constituyo física y legalmente en el domicilio ubicado en <b>{{strtoupper($citado->tipo_vialidad)}} {{$citado->calle}} 
+                        {{$citado->n_ext}}@if($citado->n_int!=null) INT. {{$citado->n_int}}@endif, 
+                        COLONIA {{$citado->colonia}}, {{mb_strtoupper($municipioCitado, 'UTF-8')}}, CP {{$citado->cp}}, {{mb_strtoupper($estadoCitado,'UTF-8')}}</b>, 
+                        siendo este el domicilio señalado en la solicitud de Conciliación como el del <b>CITADO:
+                        {{$citado->nombre}} @if($citado->primer_apellido!=null){{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null){{$citado->segundo_apellido}}@endif.</b> Todo ello a efecto 
+                        de dar cumplimiento al <b>ACUERDO DE MULTA</b> de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> en el expediente citado. 
+                        Y cerciorando de ser este el domicilio correcto y completo, apegándome en los siguientes elementos de convicción:
                         <b>
                             @php
                                 $letras = range('A', 'Z');
@@ -165,17 +166,28 @@
                                     @php $index++; @endphp
                                 @endif
                             @endforeach
-                        </b><br><br>
+                        </b>
+                        A mayor abundamiento, verifico que cerca del domicilio se encuentran los siguientes puntos de referencia:
+                        <b>{{$citado->abundar_area}}.</b> De igual forma, he constatado que se trata de un inmueble con las siguientes características: <b>{{$citado->abundar_inmueble}}.</b><br><br>
 
-                        Hago constar a la autoridad conciliadora competente que al recorrer la parte señalada del inmueble, no logro localizar el número interior proporcionado 
-                        por la parte solicitante; adicionalmente hago constar que <b>{{$citado->abundar_area}}.</b><br><br>
-                        
-                        En esa razón, me encuentro imposibilitado para dar cumplimiento a lo ordenado en el citatorio de conciliación; toda vez que no cuento 
-                        con los elementos de cercioramiento requeridos por el artículo 743 fracción I de la Ley Federal del Trabajo, por lo que me es imposible 
-                        dar cumplimiento al citatorio antes citado.
+                        Asimismo, por los informes que me proporciona la persona con quien se entiende la presente diligencia, quien dijo llamarse <b>{{$citado->nombre_notificacion}},
+                        QUIEN @if($citado->identificacion_notificacion=="NO PROPORCIONA")NO SE IDENTIFICA,@elseif($citado->identificacion_notificacion=="NO ATIENDE PRESENCIALMENTE")NO ATIENDE PRESENCIALMENTE,@else SE IDENTIFICA CON {{$citado->identificacion_notificacion}}.@endif 
+                        @if($citado->motivo_identificacion!=null){{$citado->motivo_identificacion}}.@endif</b>@if($citado->genero!=null && $citado->cabello!=null && $citado->ojos!=null && 
+                        $citado->tez!=null && $citado->edad_filiacion!=null && $citado->altura!=null &&  $citado->complexion!=null &&  $citado->particulares!=null)
+                        Procedo a especificar su media filiación, que incluye los siguientes rasgos: <b>SEXO {{$citado->genero}}, 
+                        TEZ {{$citado->tez}}, EDAD {{$citado->edad_filiacion}} AÑOS, ALTURA {{$citado->altura}} M., COMPLEXIÓN {{$citado->complexion}}, CABELLO {{$citado->cabello}}, OJOS {{$citado->ojos}} 
+                        Y SEÑAS PARTICULARES: {{$citado->particulares}}. LO ANTERIOR SE HACE DE MANERA APROXIMADA, YA QUE EL SUSCRITO NO ES PERITO EN LA MATERIA</b>.@endif Quien manifiesta que <b>OCUPA EL PUESTO DE 
+                        {{$citado->puesto}}</b> en el domicilio en que se actúa. Enseguida me identifico con credencial vigente expedida por el Centro Conciliación Laboral, oficina estatal <b>{{$solicitud->delegacion}}</b> que me acredita como Notificador y le informo el 
+                        motivo de mi visita, mediante lectura del <b>ACUERDO DE MULTA</b> antes mencionado, requiriendo así la presencia <b>DEL REPRESENTANTE LEGAL DEL CITADO: {{$citado->nombre}}@if($citado->primer_apellido!=null) {{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null) {{$citado->segundo_apellido}}@endif</b>
+                        a fin de NOTIFICARLO; <b>{{$citado->observaciones}}</b> Por todo lo anterior, y de conformidad con lo dispuesto en los artículos 741. 742 fracción XIII, 743 y 751 de la Ley Federal del Trabajo procedo a dejar <b>ACUERDO DE MULTA DE LEY</b> para 
+                        <b>EL REPRESENTANTE LEGAL DEL CITADO</b>.
                     </p>
-                    <div class="espaciador-firma">
-                        <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. Doy fe.</b> 
+                        <!--<div class="page-break"></div>--> <!-- Genera un salto de línea-->
+                        <!--<br><br><br><br><br><br><br>-->
+                    <div class="seccion-firma">
+                        <b>FIRMA PARA CONSTANCIA LEGAL.</b><br>
+                        Anexando impresión fotográfica para constancia legal.<br>
+                        <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. Doy fe.</b>
                         <div class="espaciador-firma"><br>
                             <center><b>___________________________________<br> LIC. {{mb_strtoupper($notificador->name,'UTF-8')}}<br> FUNCIONARIO/A NOTIFICADOR/A</b></center>
                         </div>
