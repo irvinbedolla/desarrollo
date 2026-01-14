@@ -59,6 +59,7 @@ use App\Mail\CorreoAcuseConfirmacion;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\MailAceptacionRechazo;
 use App\Exports\ReporteMexicoRati;
+use Illuminate\Support\Carbon;
 
 class SeerController extends Controller
 {   
@@ -2955,7 +2956,7 @@ class SeerController extends Controller
             $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
             ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
             ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
-            ->select('seer_general.id','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
+            ->select('seer_general.id','seer_general.consecutivo','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
             'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
             ->where('seer_general.delegacion', $user["delegacion"])
             ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
@@ -2969,7 +2970,7 @@ class SeerController extends Controller
                     $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
                     ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
                     ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
-                    ->select('seer_general.id','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
+                    ->select('seer_general.id','seer_general.consecutivo','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
                     'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
                     ->whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])
                     ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
@@ -2980,7 +2981,7 @@ class SeerController extends Controller
                     $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
                     ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
                     ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
-                    ->select('seer_general.id','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
+                    ->select('seer_general.id','seer_general.consecutivo','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
                     'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
                     ->whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])
                     ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
@@ -2991,7 +2992,7 @@ class SeerController extends Controller
                     $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
                     ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
                     ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
-                    ->select('seer_general.id','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
+                    ->select('seer_general.id','seer_general.consecutivo','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
                     'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
                     ->whereIn('seer_general.delegacion', ["Sahuayo", "Zamora"])
                     ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
@@ -3002,7 +3003,7 @@ class SeerController extends Controller
                 $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
                 ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
                 ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
-                ->select('seer_general.id','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
+                ->select('seer_general.id','seer_general.consecutivo','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
                 'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
                 ->where('seer_general.delegacion', $user["delegacion"])
                 ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
@@ -3014,7 +3015,7 @@ class SeerController extends Controller
             $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
             ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
             ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
-            ->select('seer_general.id','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
+            ->select('seer_general.id','seer_general.consecutivo','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
             'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
             ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
             ->orderBy('seer_general.fecha')
@@ -3652,7 +3653,7 @@ class SeerController extends Controller
             }
             $num_audi = $num_audi+1;
             $Audiencia = $this->ObtenerAudiencia($delegacion["delegacion"]);
-//dd($Audiencia);
+
             if ($Audiencia instanceof \Illuminate\Http\JsonResponse) {
                 DB::rollBack();
                 return back()->withErrors('No hay conciliadores disponibles en la delegación para asignar audiencia.');
@@ -5223,11 +5224,9 @@ class SeerController extends Controller
         // 2. Determinar punto de inicio
         $reciente = Audiencias::where('delegacion', $delegacion)->orderBy('fecha', 'desc')->orderBy('hora', 'desc')->first();
         // Definimos la fecha mínima permitida
-        //$fecha_minima = "2026-02-03";
-        //$fecha_revisar = "2026-02-12";
+        $fecha_revisar = "2026-02-12";
         $fecha_hora = "09:00:00";
-        $fecha_revisar = $reciente ? date('Y-m-d', strtotime($reciente->fecha)) : date('Y-m-d');
-        //dd($fecha_revisar);
+        //$fecha_revisar = $reciente ? date('Y-m-d', strtotime($reciente->fecha)) : date('Y-m-d');
         //$fecha_hora = $reciente ? date('H:i:s', strtotime($reciente->hora)) : "09:00:00";
         $horarios_disponibles = ["09:00:00", "10:15:00", "11:30:00", "12:45:00", "14:00:00"];
 
@@ -6136,6 +6135,7 @@ class SeerController extends Controller
         $citados        = SeerCitados::where("id_solicitud",$id)->get();
 
         $citadosNew = session('citados_edicion_new', []);
+        //dd($citadosNew);
         $citadosDelete = session('citados_edicion_delete', []);
         
         $citados = $citados->filter(function($c) use ($citadosDelete) {
@@ -6522,7 +6522,7 @@ class SeerController extends Controller
             return view('/cumplimientos/pagar_busqueda',compact('solicitudes'));
         }
         else if($tipo == 5){
-            $solicitudes = Pagos::join('seer_general','seer_general.id',"=",'pago_solicitud.id_solicitud')
+            $audiencia = Audiencias::join('seer_general','seer_general.id',"=",'pago_solicitud.id_solicitud')
             ->where('pago_solicitud.id',$id)
             ->select('pago_solicitud.id','seer_general.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
             ->get();
@@ -6992,6 +6992,7 @@ class SeerController extends Controller
         //Citados
         SeerCitados::where('id_solicitud',$data["id"])->delete();
         $cont = count($data["colonia_citado"]);
+        dd($cont);
         for($i = 0; $i < $cont; $i++) {
                 $foto1 = $data["imagen_domicilio1"][$i] ?? 'Sin documento';
                 $foto2 = $data["imagen_domicilio2"][$i] ?? 'Sin documento';
@@ -7031,36 +7032,33 @@ class SeerController extends Controller
             if(isset($data["rfc"])){
                 $data_insert["rfc"] =  $data["rfc_citado"][$i];
             }
-                    /*if(isset($data["curp"])){
-                        $data_insert["curp"] =  $data["curp_citado"][$i];
-                    }*/
-                    if(isset($data["interior"])){
-                        $data_insert["n_int"] =  $data["n_int_citado"][$i];
-                    }
-                    if(isset($data["calle1"])){
-                        $data_insert["calle1"] =  $data["calle1_citado"][$i];
-                    }
-                    if(isset($data["calle2"])){
-                        $data_insert["calle2"] =  $data["calle2_citado"][$i];
-                    }
-                    if(isset($data["tipo"])){
-                        $data_insert["tipo_persona"] =  $data["tipo_persona_citado"][$i];
-                    }
-                    if(isset($data["curp"][$i])){
-                        $data_insert["curp"] =  $data["curp_citado"][$i];
-                    }
-                    if(isset($data["nombre"])){
-                        $data_insert["nombre"] =  $data["nombre_citado"][$i];
-                    }
-                    if(isset($data["primer_apellido"][$i])){
-                        $data_insert["primer_apellido"] =  $data["primer_apellido"][$i];
-                    }
-                    if(isset($data["segundo_apellido"][$i])){
-                        $data_insert["segundo_apellido"] =  $data["segundo_apellido"][$i];
-                    }
-                    if(isset($data["rfc"])){
-                        $data_insert["rfc"] =  $data["rfc"][$i];
-                    }
+            if(isset($data["interior"])){
+                $data_insert["n_int"] =  $data["n_int_citado"][$i];
+            }
+            if(isset($data["calle1"])){
+                $data_insert["calle1"] =  $data["calle1_citado"][$i];
+            }
+            if(isset($data["calle2"])){
+                $data_insert["calle2"] =  $data["calle2_citado"][$i];
+            }
+            if(isset($data["tipo"])){
+                $data_insert["tipo_persona"] =  $data["tipo_persona_citado"][$i];
+            }
+            if(isset($data["curp"][$i])){
+                $data_insert["curp"] =  $data["curp_citado"][$i];
+            }
+            if(isset($data["nombre"])){
+                $data_insert["nombre"] =  $data["nombre_citado"][$i];
+            }
+            if(isset($data["primer_apellido"][$i])){
+                $data_insert["primer_apellido"] =  $data["primer_apellido"][$i];
+            }
+            if(isset($data["segundo_apellido"][$i])){
+                $data_insert["segundo_apellido"] =  $data["segundo_apellido"][$i];
+            }
+            if(isset($data["rfc"])){
+                $data_insert["rfc"] =  $data["rfc"][$i];
+            }
             SeerCitados::create($data_insert);
         }
             
@@ -9275,7 +9273,8 @@ class SeerController extends Controller
         } else {
             $foto2 = $folio->imagen_domicilio2;
         }
-        $data_update = SeerCitados::find($data["id"])
+        $fecha_actualizar = Carbon::parse($data["fecha"])->setTimeFrom(Carbon::now());
+        DB::table('seer_citados')->where('id', $data["id"])
         ->update([
             //'tipo_persona'             => $data["tipo"],
             'curp'                     => $data["curp"] ?? null,
@@ -9296,6 +9295,7 @@ class SeerController extends Controller
             'imagen_domicilio1'        => $foto1,
             'imagen_domicilio2'        => $foto2,
             'estado_citado'            => $data["estado_citado"],
+            'updated_at'               => $fecha_actualizar,
         ]);
 
         if($data["estatus"] == "Sin asignar"){
