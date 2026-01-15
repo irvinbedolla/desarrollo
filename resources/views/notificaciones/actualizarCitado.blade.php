@@ -50,7 +50,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
                                             <label>¿Quién atiende? <span style="color:red;">(*)</span></label>
-                                            <select name="quien_atiende" class="form-control" required>
+                                            <select name="quien_atiende" id="quien_atiende"class="form-control" required>
                                                 <option value="">Selecciona</option>
                                                 <option value="CITADO O REPRESENTANTE">El citado o representante legal</option>
                                                 <option value="OTRA PERSONA">Otra persona</option>
@@ -451,7 +451,6 @@
                     }
                 });
 
-                // Estado inicial al cargar
                 const initial = selectQuienAtiende.value;
                 if (initial === 'NADIE') {
                     dqrGroups.forEach(el => el.style.display = 'none');
@@ -461,7 +460,6 @@
                     setRequiredInGroups(dqrGroups, true);
                 }
 
-                // Aplicar estado inicial específico de Media filiación
                 if (initial === 'OTRA PERSONA') {
                     mediaFiliacionDiv.style.display = 'block';
                     setRequiredInGroups([mediaFiliacionDiv], true);
@@ -521,13 +519,6 @@
                     });
                 });
             }
-            const identificacionesValidas = [
-                "CREDENCIAL PARA VOTAR", "LICENCIA O PERMISO PARA CONDUCIR", 
-                "CREDENCIAL DE IDENTIFICACION LABORAL", "CREDENCIAL DE INSTITUCIÓN DE SALUD",
-                "CREDENCIAL DE INSTITUCIÓN ESCOLAR", "CARTILLA DE SERVICIO MILITAR",
-                "PASAPORTE", "CÉDULA PROFESIONAL", "RFC", "OTRA IDENTIFICACIÓN"
-            ];
-
             function actualizarFormulario() {
                 const quienAtiende = selectQuienAtiende ? selectQuienAtiende.value : '';
                 const idenValor = selectIdentificacion ? selectIdentificacion.value : '';
@@ -537,32 +528,26 @@
                 } else {
                     motivoIdenDiv.style.display = "none";
                 }
-                if (quienAtiende === 'OTRA PERSONA' && identificacionesValidas.includes(idenValor)) {
+
+                const personasQuePuedenRecibir = ['OTRA PERSONA', 'CITADO O REPRESENTANTE'];
+                const sinIdentificacionValida = ['NO PROPORCIONA'];
+
+                if (personasQuePuedenRecibir.includes(quienAtiende) && sinIdentificacionValida.includes(idenValor)) {
                     mediaFiliacionDiv.style.display = 'block';
                     setRequiredInGroups([mediaFiliacionDiv], true);
                 } else {
                     mediaFiliacionDiv.style.display = 'none';
                     setRequiredInGroups([mediaFiliacionDiv], false);
                 }
-                if (quienAtiende === 'NADIE') {
-                    dqrGroups.forEach(el => el.style.display = 'none');
-                    setRequiredInGroups(dqrGroups, false);
-                    motivoIdenDiv.style.display = "none";
-                    mediaFiliacionDiv.style.display = "none";
-                } else {
-                    dqrGroups.forEach(el => {
-                        if (el.id !== 'media-filiacion' && el.id !== 'motivo_identificacion') {
-                            el.style.display = '';
-                        }
-                    });
-                }
             }
+
             if (selectQuienAtiende) {
                 selectQuienAtiende.addEventListener('change', actualizarFormulario);
             }
             if (selectIdentificacion) {
                 selectIdentificacion.addEventListener('change', actualizarFormulario);
             }
+
             actualizarFormulario();
         });
         /*const tipo_iden = document.getElementById('identificacion_notificacion');
