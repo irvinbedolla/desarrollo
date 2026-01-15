@@ -421,8 +421,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/solicitud/guardarExpediente',         [SeerController::class, 'guardar_expediente'])->name('subir_expediente'); //Subir expediente 
         Route::post('/solicitud/guardarExpedienteR',        [TurnosController::class, 'guardar_expediente'])->name('subir_expediente_ratificacion'); //Subir expediente ratificacion
         Route::get('/audieniecias/vista_previa/{id_solicitud}',             [SeerController::class, 'vista_previa'])->name('vista_previa');
-        // Ruta para guardar temporalmente la selección de citados para el convenio
         Route::post('/audiencia/guardar-seleccion-convenio', [SeerController::class, 'guardarSeleccionConvenioSession'])->name('guardar_seleccion_convenio');
+        Route::post('/audiencia/guardar-seleccion-acta',    [SeerController::class, 'guardarSeleccionActaSession'])->name('guardar_seleccion_acta');
         Route::post('/solicitud/editar_audiencia',          [SeerController::class, 'editar_solicitud_audiencia'])->name('editar_solicitud_audiencia');
         Route::post('/seleccionar_abogado_audiencia',       [SeerController::class, 'seleccionar_abogado_audiencia'])->name('seleccionar_abogado_audiencia');
         Route::post('/audieencia/guardar_citadoC',          [SeerController::class, 'insertar_citados_audiencia'])->name('insertar_citados_audiencia');

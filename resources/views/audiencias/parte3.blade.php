@@ -50,6 +50,8 @@
                             <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('concluir_audiencia_conciliador')}}">
                                 @csrf
                                 <input type="hidden" name="id" value="{{ $id }}">
+                                <input type="hidden" name="audiencia_hora" id="audiencia_hora" value="{{ $audiencia_hora }}">
+                                <input type="hidden" name="audiencia_fecha" id="audiencia_fecha" value="{{ $audiencia_fecha }}">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12"  style="border:1px solid black;">
                                         <div class="form-group">
@@ -103,6 +105,7 @@
                                             </div>
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-6"><br>
+                                            <input type="hidden" name="bandera_regresar" value="{{ $bandera }}">
                                             <label for="name">Final de la audiencia</label>
                                             <select id="tipo_de_conclucion" name="conclucion" class="form-control">
                                                 <option>Seleccione</option>
@@ -511,12 +514,16 @@
                     parent.append('<input type="hidden" name="tipo_pagoAgenda[]" value="Conciliador">');
                     contenedor.replaceWith('<div class="contenedor-boton-pago col-12 mb-2 mt-2"><button type="button" class="btn btn-success h-100 w-75" id="btnPagarAudiencia">Pagar en la audiencia</button></div>');
                     $(document).on('click', '#btnPagarAudiencia', function() {
-                        mostrarSelectHorasAudiencia();
+                        filaActualParaAgendar = $(this).closest('.inputFormRow2');
+                        if (typeof applyAudienciaDateToRow === 'function') {
+                            applyAudienciaDateToRow(filaActualParaAgendar);
+                        } else {
+                            mostrarSelectHorasAudiencia();
+                        }
                     });
                 } else if (opcionPago === "agendar") {
                     parent.append('<input type="hidden" name="tipo_pagoAgenda[]" value="Audiencia">');
                     contenedor.replaceWith('<div class="contenedor-boton-pago col-12 mb-2 mt-2"><button type="button" class="btn btn-custom-morado w-75 btn-open-calendar" data-bs-toggle="modal" data-bs-target="#calendarModal"> Seleccionar Horario</button></div>');
-                    mostrarSelectHorasAudiencia();
                 } else {
                     contenedor.replaceWith('<div class="contenedor-boton-pago"></div>');
                 }
@@ -532,7 +539,7 @@
             var hoy = new Date();
             var fechaHoy = hoy.toISOString().split('T')[0];
 
-            var selectHtml = '<div class="form-group mt-2" id="selectHoraAudienciaDiv">';
+            /*var selectHtml = '<div class="form-group mt-2" id="selectHoraAudienciaDiv">';
             selectHtml += '<label>Selecciona la hora para pagar en la audiencia:</label>';
             selectHtml += '<select class="form-control" id="selectHoraAudiencia">';
             selectHtml += '<option value="">Seleccione una hora</option>';
@@ -556,26 +563,69 @@
             selectHtml += '<button type="button" class="btn btn-primary mt-2" id="confirmarHoraAudiencia">Confirmar hora</button>';
             selectHtml += '</div>';
             $('#selectHoraAudienciaDiv').remove();
-            $('#btnPagarAudiencia').parent().after(selectHtml);
+            $('#btnPagarAudiencia').parent().after(selectHtml);*/
 
-            $('#confirmarHoraAudiencia').off('click').on('click', function() {
-                var horaSeleccionada = $('#selectHoraAudiencia').val();
-                if (!horaSeleccionada) {
+            //$('#btnPagarAudiencia').off('click').on('click', function() {
+                var horaSeleccionada = (document.getElementById('audiencia_hora') && document.getElementById('audiencia_hora').value) ? document.getElementById('audiencia_hora').value : '';
+                /*if (!horaSeleccionada) {
                     alert('Selecciona una hora válida');
                     return;
-                }
+                }*/
 
-                var pagoBlock = $(this).closest('.inputFormRow2');
+                var pagoBlock = (typeof filaActualParaAgendar !== 'undefined' && filaActualParaAgendar) ? filaActualParaAgendar : $(document).find('.inputFormRow2').last();
                 pagoBlock.find('input[name="dias_pagos[]"], input[name="hora_pagos[]"]').remove();
-                pagoBlock.append('<input type="hidden" name="dias_pagos[]" value="'+fechaHoy+'">');
+                var fechaAud = (document.getElementById('audiencia_fecha') && document.getElementById('audiencia_fecha').value) ? document.getElementById('audiencia_fecha').value : fechaHoy;
+                pagoBlock.append('<input type="hidden" name="dias_pagos[]" value="'+fechaAud+'">');
                 pagoBlock.append('<input type="hidden" name="hora_pagos[]" value="'+horaSeleccionada+'">');
 
-                pagoBlock.find('#fechaResumen').text(fechaHoy);
-                pagoBlock.find('#horaResumen').text(horaSeleccionada.substring(0,5));
+                var fechaAud = (document.getElementById('audiencia_fecha') && document.getElementById('audiencia_fecha').value) ? document.getElementById('audiencia_fecha').value : fechaHoy;
+                pagoBlock.find('#fechaResumen').text(fechaAud);
+
+                var horaToShow = '';
+                if (/^\d{2}:\d{2}(:\d{2})?$/.test(horaSeleccionada)) {
+                    horaToShow = horaSeleccionada.substring(0,5);
+                } else if (horaSeleccionada && horaSeleccionada.length >= 5) {
+
+                    var idx = horaSeleccionada.indexOf(':');
+                    if (idx !== -1) {
+                        horaToShow = horaSeleccionada.substring(idx-2, idx+3);
+                    }
+                }
+                pagoBlock.find('#horaResumen').text(horaToShow);
                 pagoBlock.find('#resumenCita').show();
-                $('#selectHoraAudienciaDiv').remove();
-            });
+                //$('#selectHoraAudienciaDiv').remove();
+            //});
         };
+
+        window.applyAudienciaDateToRow = function(fila) {
+            var pagoBlock = (fila && $(fila).length) ? $(fila) : ((typeof filaActualParaAgendar !== 'undefined' && filaActualParaAgendar) ? $(filaActualParaAgendar) : $(document).find('.inputFormRow2').last());
+            if (!pagoBlock || pagoBlock.length === 0) return;
+
+            // limpiar valores previos
+            pagoBlock.find('input[name="dias_pagos[]"], input[name="hora_pagos[]"]').remove();
+
+            var fechaAud = (document.getElementById('audiencia_fecha') && document.getElementById('audiencia_fecha').value) ? document.getElementById('audiencia_fecha').value : new Date().toISOString().split('T')[0];
+            var horaSeleccionada = (document.getElementById('audiencia_hora') && document.getElementById('audiencia_hora').value) ? document.getElementById('audiencia_hora').value.trim() : '';
+
+            // Solo agregar hora si es válida (HH:MM o HH:MM:SS)
+            var horaValida = /^\d{2}:\d{2}(:\d{2})?$/.test(horaSeleccionada);
+
+            // siempre agregamos la fecha; la hora solo si es válida
+            pagoBlock.append('<input type="hidden" name="dias_pagos[]" value="'+fechaAud+'">');
+            if (horaValida) {
+                pagoBlock.append('<input type="hidden" name="hora_pagos[]" value="'+horaSeleccionada+'">');
+            }
+
+            // actualizar resumen visible
+            pagoBlock.find('#fechaResumen').text(fechaAud);
+            var horaToShow = '';
+            if (horaValida) {
+                horaToShow = horaSeleccionada.substring(0,5);
+            }
+            pagoBlock.find('#horaResumen').text(horaToShow);
+            pagoBlock.find('#resumenCita').show();
+        };
+
         // Borrar pago
         $(document).on('click', '.removeRow2', function () {
             $(this).closest('.col-xs-12').remove();
@@ -693,12 +743,30 @@
                 document.getElementById('archivada').style.display = "none";
                 document.getElementById("pagos").style.display = "block";
                 document.getElementById('dias').style.display = "block";
+
+                var vac = document.querySelector('input[name="vacaciones"]');
+                var agu = document.querySelector('input[name="aguinaldo"]');
+                var hor = document.querySelector('input[name="horario"]');
+                var com = document.querySelector('input[name="comida"]');
+                if(vac) vac.required = true;
+                if(agu) agu.required = true;
+                if(hor) hor.required = true;
+                if(com) com.required = true;
             }
             else if (valorSeleccionado === 'No conciliacion'){
                 document.getElementById('no_conciliacion').style.display = "block";
                 document.getElementById('archivada').style.display = "none"
                 document.getElementById("pagos").style.display = "none";
                 document.getElementById('dias').style.display = "none";
+
+                var vac2 = document.querySelector('input[name="vacaciones"]');
+                var agu2 = document.querySelector('input[name="aguinaldo"]');
+                var hor2 = document.querySelector('input[name="horario"]');
+                var com2 = document.querySelector('input[name="comida"]');
+                if(vac2) vac2.required = false;
+                if(agu2) agu2.required = false;
+                if(hor2) hor2.required = false;
+                if(com2) com2.required = false;
             } 
             else if (valorSeleccionado === 'Reagenda'){
                 document.getElementById('no_conciliacion').style.display = "none";
@@ -750,8 +818,36 @@
                     document.getElementById("pagos").style.display = "none";
                     document.getElementById('dias').style.display = "none";
                 } else {
+                    document.getElementById('no_conciliacion').style.display = "none";
+                    document.getElementById('archivada').style.display = "none";
+                    document.getElementById("pagos").style.display = "none";
+                    document.getElementById('dias').style.display = "none";
                     this.value = "Seleccione"; // Regresa al estado inicial
+
+                    var vac3 = document.querySelector('input[name="vacaciones"]');
+                    var agu3 = document.querySelector('input[name="aguinaldo"]');
+                    var hor3 = document.querySelector('input[name="horario"]');
+                    var com3 = document.querySelector('input[name="comida"]');
+                    if(vac3) vac3.required = false;
+                    if(agu3) agu3.required = false;
+                    if(hor3) hor3.required = false;
+                    if(com3) com3.required = false;
                 }
+            }
+            else if (valorSeleccionado === 'Seleccione'){
+                document.getElementById('no_conciliacion').style.display = "none";
+                document.getElementById('archivada').style.display = "none";
+                document.getElementById("pagos").style.display = "none";
+                document.getElementById('dias').style.display = "none";
+
+                var vac4 = document.querySelector('input[name="vacaciones"]');
+                var agu4 = document.querySelector('input[name="aguinaldo"]');
+                var hor4 = document.querySelector('input[name="horario"]');
+                var com4 = document.querySelector('input[name="comida"]');
+                if(vac4) vac4.required = false;
+                if(agu4) agu4.required = false;
+                if(hor4) hor4.required = false;
+                if(com4) com4.required = false;
             }
         });
 
@@ -1189,7 +1285,236 @@
             });
         }
     </script>
-    
+
+    <script>
+        window.__previewData = {!! isset($previewData) && $previewData ? json_encode($previewData, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT) : 'null' !!};
+
+        function generatePrestacionRow(tipoPagoVal, montoVal, otraPrestacionVal) {
+            var html = '';
+            html += '<div id="inputFormRow1" class="row mb-2 align-items-end">';
+            html +='<div class="col-xs-12 col-sm-12 col-md-6">';
+                html +='<div class="form-group">';
+                html +='<label for="confirm-password"><br>Prestación</label>'; 
+                html +='<select class="form-control tipo-pago-select" name="tipo_pago[]" >';
+                html +='<option value="">Seleccione</option>';
+                var options = ['Aguinaldo','Días de sueldo','Vacaciones','Prima Vacacional','Gratificación A','Gratificación B','Gratificación C','Gratificación D','Gratificación E','Gratificación F','Otras'];
+                options.forEach(function(opt){
+                    var sel = opt === tipoPagoVal ? ' selected' : '';
+                    html += '<option value="'+opt+'"'+sel+'>'+opt.replace(/</g,'&lt;')+'</option>';
+                });
+                html +='</select>';
+                html += '<div class="otra-prestacion-input" style="' + (tipoPagoVal === 'Otras' ? 'display:block; margin-top:10px;' : 'display:none; margin-top:10px;') + '">';
+                html += '<input type="text" class="form-control" name="otra_prestacion[]" value="'+ (otraPrestacionVal ? String(otraPrestacionVal).replace(/"/g,'&quot;') : '') +'" placeholder="Especifique la prestación" />';
+                html += '</div>';
+                html +='<div class="invalid-feedback">El tipo de pago es obligatorio.</div>';
+                html += '</div> </div>';
+            html += '<div class="col-xs-12 col-sm-12 col-md-6">';
+            html += '<div class="form-group">';
+            html += '<label for="password">Monto a pagar</label>';
+            html +='<input type="text" class="form-control" name="monto_pago[]" required oninput="validarNumero(this)" placeholder="$" value="'+ (montoVal ? String(montoVal).replace(/"/g,'&quot;') : '') +'">';
+            html += '<div class="invalid-feedback">El monto es obligatorio.</div>';
+            html += '</div> </div>';
+            html += '<div class="input-group-append">';
+            html += '<button class="removeRow btn btn-danger" type="button">Borrar</button>';
+            html += '</div>';
+            html += '</div>';
+            return html;
+        }
+
+        function generateDeduccionRow(descripcionVal, montoVal) {
+            var html = '';
+            html += '<div id="inputFormRow3" class="row">';
+            html +='<div class="col-xs-12 col-sm-12 col-md-12"><br>';
+            html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+            html += '<div class="form-group">';
+            html += '<label for="password">Descripción</label>';
+            html +='<input type="text" class="form-control" name="descripcion_deduccion[]" value="'+ (descripcionVal ? String(descripcionVal).replace(/"/g,'&quot;') : '') +'" oninput="this.value = this.value.toUpperCase()" >';
+            html += '<div class="invalid-feedback">La Descripción es obligatoria.</div> </div> </div>';
+            html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+            html += '<div class="form-group">';
+            html += '<label for="password">Monto a pagar</label>';
+            html +='<input type="text" class="form-control" name="monto_deduccion[]" oninput="validarNumero(this)" placeholder="$ Solo números y puntos" value="'+ (montoVal ? String(montoVal).replace(/"/g,'&quot;') : '') +'">';
+            html += '<div class="invalid-feedback">El monto es obligatorio.</div> </div> </div>';
+            html += '<div class="input-group-append"><button class="removeRow3 btn btn-danger" type="button">Borrar</button></div>';
+            html += '</div>';
+            return html;
+        }
+
+        function generatePagoRow(montoVal, diasVal, horaVal, descripcionVal) {
+            var html = '';
+            html += '<div class="inputFormRow2 row mb-2 align-items-end">';
+            html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+            html += '<div class="form-group">';
+            html += '<label for="confirm-password"><br>Fecha y hora de pago</label>';
+            html += '<div class="row">';
+            html += '<div class="row">';
+            html += '<div class="col-12">';
+            html += '<button type="button" class="btn btn-custom-morado w-75 btn-open-calendar" data-bs-toggle="modal" data-bs-target="#calendarModal"> Seleccionar Horario</button>';
+            html += '</div>';
+            html += '</div>';
+            html += '<div class="col-12 mt-2">';
+            html += '<div id="resumenCita" style="display:'+(diasVal? 'block':'none')+';width:100%;">';
+            html += '<div class="alert alert-info w-75">';
+            html += '<strong>Cita seleccionada:</strong> <span id="fechaResumen">'+ (diasVal? diasVal : '') +'</span> a las <span id="horaResumen">'+ (horaVal? (horaVal.substring? horaVal.substring(0,5): horaVal) : '') +'</span>';
+            html += '</div></div></div>';
+            html += '</div>';
+            html += '<div class="contenedor-boton-pago"></div>';
+            html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+            html += '<div class="form-group">';
+            html += '<label for="password">Monto a pagar</label>';
+            html += '<input type="text" class="form-control" name="monto_pagos[]" required oninput="validarNumero(this)" value="'+ (montoVal ? String(montoVal).replace(/"/g,'&quot;') : '') +'">';
+            html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>';
+            html += '</div></div>';
+            html += '<div class="col-xs-12 col-sm-12 col-md-12">';
+            html += '<div class="form-group">';
+            html += '<label for="password">Descripción</label>';
+            html += '<input type="text" class="form-control numero_pago" name="descripcion_pagos[]" readonly value="'+ (descripcionVal ? String(descripcionVal).replace(/"/g,'&quot;') : '') +'">';
+            html += '<div class="invalid-feedback">La Dirección es obligatoria.</div>'; 
+            html += '</div></div>';
+            html += '<div class="input-group-append">';
+            html += '<button class="removeRow2 btn btn-danger" type="button">Borrar</button>';
+            html += '</div>';
+            html += '</div>';
+            return html;
+        }
+
+        $(document).ready(function(){
+            var data = window.__previewData;
+            if(!data) return;
+
+            try {
+                // Basic fields
+                if(data.primera) $('textarea[name="primera"]').val(data.primera);
+                if(data.justificacion) $('textarea[name="justificacion"]').val(data.justificacion);
+                if(data.segunda) $('textarea[name="segunda"]').val(data.segunda);
+                if(data.vacaciones) $('input[name="vacaciones"]').val(data.vacaciones);
+                if(data.aguinaldo) $('input[name="aguinaldo"]').val(data.aguinaldo);
+                if(data.otros) $('input[name="otros"]').val(data.otros);
+                if(data.horario) $('input[name="horario"]').val(data.horario);
+                if(data.comida) $('input[name="comida"]').val(data.comida);
+                if(data.conclucion) { $('#tipo_de_conclucion').val(data.conclucion).trigger('change'); }
+                if(data.tipo_audiencia) $('select[name="tipo_audiencia"]').val(data.tipo_audiencia);
+
+                // Prestaciones
+                if(Array.isArray(data['tipo_pago'])){
+                    for(var i=0;i<data['tipo_pago'].length;i++){
+                        var tipo = data['tipo_pago'][i];
+                        var monto = data['monto_pago'] && data['monto_pago'][i] ? data['monto_pago'][i] : '';
+                        var otra = data['otra_prestacion'] && data['otra_prestacion'][i] ? data['otra_prestacion'][i] : '';
+                        $('#newRow').append(generatePrestacionRow(tipo, monto, otra));
+                    }
+                }
+
+                // Deducciones
+                if(Array.isArray(data['descripcion_deduccion'])){
+                    for(var j=0;j<data['descripcion_deduccion'].length;j++){
+                        var desc = data['descripcion_deduccion'][j];
+                        var md = data['monto_deduccion'] && data['monto_deduccion'][j] ? data['monto_deduccion'][j] : '';
+                        $('#newRowDeduccion').append(generateDeduccionRow(desc, md));
+                    }
+                }
+
+                // Pagos diferidos
+                if(Array.isArray(data['monto_pagos'])){
+                    for(var k=0;k<data['monto_pagos'].length;k++){
+                        var mp = data['monto_pagos'][k];
+                        var dias = data['dias_pagos'] && data['dias_pagos'][k] ? data['dias_pagos'][k] : '';
+                        var hora = data['hora_pagos'] && data['hora_pagos'][k] ? data['hora_pagos'][k] : '';
+                        var descp = data['descripcion_pagos'] && data['descripcion_pagos'][k] ? data['descripcion_pagos'][k] : '';
+                        $('#newRowaPago').append(generatePagoRow(mp, dias, hora, descp));
+                    }
+                    actualizaNumeroPago();
+                }
+
+                setTimeout(function(){ calcularTotal(); }, 200);
+            } catch(e){ console.error('Error populating preview data', e); }
+        });
+
+        $(document).ready(function(){
+            $('input[name="monto_pago[]"], input[name="monto_deduccion[]"], input[name="monto_pagos[]"]').each(function(){
+                var v = $(this).val();
+                if(v){ var clean = String(v).replace(/[^0-9.]/g,''); $(this).val(clean); }
+            });
+
+            $('input[name="monto_pago[]"], input[name="monto_deduccion[]"], input[name="monto_pagos[]"]').trigger('input');
+
+            calcularTotal();
+
+            $('#form_roles').on('submit', function(e){
+                var valid = true;
+
+                $('.inputFormRow2').each(function(index){
+                    var block = $(this);
+                    
+                    var tipoSelect = block.find('#tipoPago');
+                    if(tipoSelect.length > 0 && !tipoSelect.val()){
+                         alert('Por favor selecciona una opción de pago para el pago #' + (index + 1));
+                         valid = false;
+                         return false; 
+                    }
+
+                    var fecha = block.find('#fechaResumen').text().trim();
+                    var hora = block.find('#horaResumen').text().trim();
+                    if(fecha && block.find('input[name="dias_pagos[]"]').length === 0){
+                        block.append('<input type="hidden" name="dias_pagos[]" value="'+fecha+'">');
+                    }
+                    if(hora && block.find('input[name="hora_pagos[]"]').length === 0){
+                        var horaVal = '';
+                        if (/^\d{2}:\d{2}$/.test(hora)) {
+                            horaVal = hora + ':00';
+                        } else if (/^\d{2}:\d{2}:\d{2}$/.test(hora)) {
+                            horaVal = hora;
+                        } 
+                        if(horaVal) block.append('<input type="hidden" name="hora_pagos[]" value="'+horaVal+'">');
+                    }
+                    
+                    var hasDias = block.find('input[name="dias_pagos[]"]').val();
+                    var hasHora = block.find('input[name="hora_pagos[]"]').val();
+                    
+                    if(!hasDias || !hasHora){
+                         alert('Por favor selecciona fecha y hora para el pago #' + (index + 1) + '.');
+                         valid = false;
+                         return false;
+                    }
+                    
+                    if(block.find('input[name="tipo_pagoAgenda[]"]').length === 0){
+                        block.append('<input type="hidden" name="tipo_pagoAgenda[]" value="Audiencia">');
+                    }
+                });
+
+                if(!valid){
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    var btn = $(this).find('button[type="submit"]');
+                    btn.prop('disabled', false).removeClass('disabled btn-progress');
+                    $('.loader').parent().hide();
+                    return false;
+                }
+
+                $('input[name="monto_pago[]"], input[name="monto_deduccion[]"], input[name="monto_pagos[]"]').each(function(){
+
+                    var v = $(this).val();
+                    var clean = v ? String(v).replace(/[^0-9.]/g,'') : '';
+                    $(this).val(clean);
+                });
+
+                calcularTotal();
+                return true;
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function(){
+            @if(isset($bandera) && $bandera == 5)
+                var sel = $('#tipo_de_conclucion');
+                if (sel.length) {
+                    sel.prop('selectedIndex', 0);
+                }
+            @endif
+        });
+    </script>
+
 @endsection
 
 <!-- Modal para seleccionar fecha y horario -->

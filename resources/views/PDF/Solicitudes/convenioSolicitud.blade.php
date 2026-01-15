@@ -252,8 +252,28 @@
                                     @foreach($pagos as $pago)
                                         <tr>
                                             <td style="display: none;">{{$pago->id_solicitud}}</td>
-                                            <td>{{ \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d/m/y') }}</td> 
-                                            <td>{{ \Carbon\Carbon::parse(str_replace(' HORAS', '', $pago->hora))->format('H:i') }}</td>
+                                            <td>
+                                                @php
+                                                    $fechaText = '';
+                                                    $horaText = '';
+                                                    try {
+                                                        if (!empty($pago->fecha)) {
+                                                            $fechaText = \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d/m/y');
+                                                        }
+                                                    } catch (Exception $e) {
+                                                        $fechaText = '';
+                                                    }
+                                                    try {
+                                                        $rawHora = isset($pago->hora) ? trim(str_replace(' HORAS', '', $pago->hora)) : '';
+                                                        if ($rawHora && preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $rawHora)) {
+                                                            $horaText = \Carbon\Carbon::parse($rawHora)->format('H:i');
+                                                        }
+                                                    } catch (Exception $e) {
+                                                        $horaText = '';
+                                                    }
+                                                @endphp
+                                                {{ $fechaText }}@if($horaText)<br>{{ $horaText }}@endif
+                                            </td>
                                             <td>${{ number_format($pago->monto, 2) }}</td>
                                             <td>{{$pago->descripcion}}</td>
                                         </tr>

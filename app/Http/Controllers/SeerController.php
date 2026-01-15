@@ -46,6 +46,7 @@ use App\Models\Sedes;
 use App\Models\Usuarios;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\PDF;
+use Carbon\Carbon;
 use App\Exports\ProductsFromViewExport;
 use App\Exports\RatificacionesFromViewExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -4198,6 +4199,11 @@ class SeerController extends Controller
             'folio_audiencia'   =>  $numero_audiencia[0],
             'estatus'           => 'Archivada',
         ]);
+   
+        try {
+            session()->forget(["audiencia_conclucion_data_{$data['id']}", "convenio_citados_{$data['id']}", "acta_citados_{$data['id']}", "audiencia_data_{$data['id']}", 'preserve_edit_session']);
+        } catch (\Exception $e) {
+        }
 
         return redirect()->route('todas_audiencias');
     }
@@ -4944,12 +4950,10 @@ class SeerController extends Controller
             }
         });
 
-        //Actualizar tabla general
-        $solicitud = SeerPerGeneral::find($data["id"])
-        ->update([
-            'estatus'           => 'Confirmado',
-            'conciliador_id'    => $user->id
-        ]);
+        try {
+            session()->forget(["audiencia_conclucion_data_{$data['id']}", "convenio_citados_{$data['id']}", "acta_citados_{$data['id']}", "audiencia_data_{$data['id']}", 'preserve_edit_session']);
+        } catch (\Exception $e) {
+        }
     
         return redirect()->route('todas_audiencias');
     }
@@ -5108,6 +5112,12 @@ class SeerController extends Controller
         $solicitud = SeerPerGeneral::find($id);
         $sede = $solicitud["delegacion"];
 
+        $raw_fecha = Audiencias::where('id_solicitud', $id)->value('fecha');
+        $raw_hora  = Audiencias::where('id_solicitud', $id)->value('hora');
+
+        $audiencia_fecha = Carbon::parse($raw_fecha)->format('Y-m-d');
+        $audiencia_hora = Carbon::parse($raw_hora)->format('H:i:s');
+
         $NUE = $solicitud->NUE;
         if($NUE === NULL){
             $NUE = 'Sin NUE';
@@ -5129,7 +5139,12 @@ class SeerController extends Controller
         'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus','seer_citados.aparece_convenio')
         ->get();
 
-        return view('/audiencias/parte3',compact('id', 'sede','representantes', 'fechaConfirmacion', 'NUE'));
+        $sessionKey = 'audiencia_conclucion_data_' . $id;
+        $previewData = session($sessionKey, null);
+
+        $bandera = request()->query('bandera', null);
+
+        return view('/audiencias/parte3',compact('id', 'sede','representantes', 'fechaConfirmacion', 'NUE', 'previewData', 'audiencia_fecha', 'audiencia_hora', 'bandera'));
     }
 
     public function historial_notificador(Request $request){
@@ -5306,9 +5321,10 @@ class SeerController extends Controller
             if(!isset($data["tipo_pago"])) return back()->withErrors('Debes agregar por lo menos un concepto de pago.');
 
             if(isset($data["valor"]) && $data["valor"] == 1){
-                 $sessionKey = 'audiencia_conclucion_data_' . $id_solicitud;
-                 session([$sessionKey => $data]);
-                 return redirect()->route('vista_previa', ['id_solicitud' => $id_solicitud]);
+                $sessionKey = 'audiencia_conclucion_data_' . $id_solicitud;
+                session([$sessionKey => $data]);
+                session()->put('preserve_edit_session', true);
+                return redirect()->route('vista_previa', ['id_solicitud' => $id_solicitud]);
             }
             // ---------------------------
 
@@ -5495,8 +5511,20 @@ class SeerController extends Controller
             ->update([
                 'numero_audiencia'  =>  $numAudiencia+1,
                 'folio_audiencia'   =>  $numero_audiencia[0],
-                'estatus'           => 'Archivada',
+                'estatus'           => 'No conciliacion',
             ]);
+
+            try {
+                $keys = [
+                    "audiencia_conclucion_data_{$data['id']}",
+                    "convenio_citados_{$data['id']}",
+                    "acta_citados_{$data['id']}",
+                    "audiencia_data_{$data['id']}",
+                    'preserve_edit_session'
+                ];
+                session()->forget($keys);
+            } catch (\Exception $e) {
+            }
 
             return redirect()->route('audiencia_index');
         }
@@ -5575,9 +5603,30 @@ class SeerController extends Controller
     // PDF Convenio para solicitudes
     public function VerPDFConvenioSol($id){
         $solicitud = SeerPerGeneral::find($id); 
-        $datosAudiencia = SeerPerConciliador::where('id_solicitud', $id)
-        ->orderBy('numero_audiencias', 'DESC')
-        ->first();
+        // Priorizar datos temporales de la vista previa guardados en sesión
+        $sessionKey = 'audiencia_conclucion_data_' . $id;
+        $sessionData = session()->get($sessionKey);
+        if ($sessionData && is_array($sessionData)) {
+            $datosAudiencia = (object) [
+                'resolicion_primera' => $sessionData['primera'] ?? '',
+                'resolucion_primera' => $sessionData['primera'] ?? '',
+                'resolicion_justificacion' => $sessionData['justificacion'] ?? '',
+                'resolucion_justificacion' => $sessionData['justificacion'] ?? '',
+                'resolicion_segunda' => $sessionData['segunda'] ?? '',
+                'resolucion_segunda' => $sessionData['segunda'] ?? '',
+                'vacaciones' => $sessionData['vacaciones'] ?? null,
+                'aguinaldo' => $sessionData['aguinaldo'] ?? null,
+                'otros' => $sessionData['otros'] ?? null,
+                'horario' => $sessionData['horario'] ?? null,
+                'comida' => $sessionData['comida'] ?? null,
+                'tipo_audiencia' => $sessionData['tipo_audiencia'] ?? null,
+                'conclucion' => $sessionData['conclucion'] ?? null,
+            ];
+        } else {
+            $datosAudiencia = SeerPerConciliador::where('id_solicitud', $id)
+                ->orderBy('numero_audiencias', 'DESC')
+                ->first();
+        }
         $pagos = Pagos::where('id_solicitud', $id)->get();
         $municipio = Municipios::find($solicitud->municipio_rat);
         $municipioEmpresa = $municipio ? $municipio->nombre : 'No definido';
@@ -5588,24 +5637,94 @@ class SeerController extends Controller
         ->select('abogados.nombres_patronal','abogados.primer_apellido_patronal','abogados.segundo_apellido_patronal','abogados.descipcion_poder','abogados.tipo_identificacion',
         'abogados.num_identificacion','estado_patronal','municipio_patronal','tipo_vialidad_patronal','vialidad_patronal','num_ext_patronal','mun_int_patronal','colonia_patronal','cp_patronal')
         ->first();
-        // Obtener prestaciones y deducciones
-        $prestaciones = Concepto::where('id_solicitud', $id)->get();
-        $deducciones = Deducciones::where('id_solicitud', $id)->get();
 
         $conceptosTexto = [];
         $deduccionesTexto = [];
 
-        foreach ($prestaciones as $concepto) {
-            $conceptosTexto[$concepto->id] = $this->convertirNumerosALetras($concepto->monto);
+        if ($sessionData && is_array($sessionData)) {
+            $prestaciones = collect();
+            $tipos = $sessionData['tipo_pago'] ?? [];
+            $montos_p = $sessionData['monto_pago'] ?? [];
+            $otras = $sessionData['otra_prestacion'] ?? [];
+            $countPrest = max(count($tipos), count($montos_p));
+            for ($i = 0; $i < $countPrest; $i++) {
+                $descripcion = $tipos[$i] ?? '';
+                if (($descripcion === 'Otras' || $descripcion === 'Otras') && isset($otras[$i]) && trim($otras[$i]) !== '') {
+                    $descripcion = trim($otras[$i]);
+                }
+                $montoVal = isset($montos_p[$i]) ? floatval($montos_p[$i]) : 0;
+                $obj = (object) [
+                    'id' => 's_p_'.$i,
+                    'descripcion' => $descripcion,
+                    'monto' => $montoVal,
+                ];
+                $prestaciones->push($obj);
+            }
+
+            $deducciones = collect();
+            $descDed = $sessionData['descripcion_deduccion'] ?? [];
+            $montosDed = $sessionData['monto_deduccion'] ?? [];
+            $countDed = max(count($descDed), count($montosDed));
+            for ($i = 0; $i < $countDed; $i++) {
+                $montoVal = isset($montosDed[$i]) ? floatval($montosDed[$i]) : 0;
+                $obj = (object) [
+                    'id' => 's_d_'.$i,
+                    'descripcion' => $descDed[$i] ?? '',
+                    'monto' => $montoVal,
+                ];
+                $deducciones->push($obj);
+            }
+
+            // pagos desde sesión
+            $pagos = collect();
+            $dias = $sessionData['dias_pagos'] ?? [];
+            $horas = $sessionData['hora_pagos'] ?? [];
+            $montosPag = $sessionData['monto_pagos'] ?? [];
+            $descPag = $sessionData['descripcion_pagos'] ?? [];
+            $countPag = max(count($dias), count($montosPag));
+            for ($i = 0; $i < $countPag; $i++) {
+                $obj = (object) [
+                    'id_solicitud' => $id,
+                    'fecha' => $dias[$i] ?? null,
+                    'hora' => $horas[$i] ?? null,
+                    'monto' => isset($montosPag[$i]) ? floatval($montosPag[$i]) : 0,
+                    'descripcion' => $descPag[$i] ?? '',
+                ];
+                $pagos->push($obj);
+            }
+
+            foreach ($prestaciones as $concepto) {
+                $conceptosTexto[$concepto->id] = $this->convertirNumerosALetras($concepto->monto);
+            }
+            foreach ($deducciones as $deduccion) {
+                $deduccionesTexto[$deduccion->id] = $this->convertirNumerosALetras($deduccion->monto);
+            }
+
+            $totalPrestaciones = collect($prestaciones)->sum('monto');
+            $totalDeducciones = collect($deducciones)->sum('monto');
+            $pagoTotal = $totalPrestaciones - $totalDeducciones;
+        } else {
+            $prestaciones = Concepto::where('id_solicitud', $id)->get();
+            $deducciones = Deducciones::where('id_solicitud', $id)->get();
+
+            foreach ($prestaciones as $concepto) {
+                $conceptosTexto[$concepto->id] = $this->convertirNumerosALetras($concepto->monto);
+            }
+
+            foreach ($deducciones as $deduccion) {
+                $deduccionesTexto[$deduccion->id] = $this->convertirNumerosALetras($deduccion->monto);
+            }
+
+            $totalPrestaciones = $prestaciones->sum('monto');
+            $totalDeducciones = $deducciones->sum('monto');
+            $pagoTotal = $totalPrestaciones - $totalDeducciones;
         }
 
-        foreach ($deducciones as $deduccion) {
-            $deduccionesTexto[$deduccion->id] = $this->convertirNumerosALetras($deduccion->monto);
+        // Asegurar que $datosAudiencia tenga la propiedad monto (si se uso sesión puede no existir)
+        if (isset($datosAudiencia) && is_object($datosAudiencia) && !property_exists($datosAudiencia, 'monto')) {
+            // Tomar monto de la sesión si existe, si no usar el cálculo de prestaciones menos deducciones
+            $datosAudiencia->monto = isset($sessionData) && is_array($sessionData) && isset($sessionData['monto']) ? $sessionData['monto'] : $pagoTotal;
         }
-
-        $totalPrestaciones = $prestaciones->sum('monto');
-        $totalDeducciones = $deducciones->sum('monto');
-        $pagoTotal = $totalPrestaciones - $totalDeducciones;
         
         $pagosDif  = Pagos::join("turnos","turnos.id","=","pago_solicitud.id_solicitud");
         $pagosDif = $pagosDif->where("pago_solicitud.id_solicitud", "=", $id)
@@ -6747,7 +6866,31 @@ class SeerController extends Controller
     public function VerPDFAudiencia($id){
         $solicitud = SeerPerGeneral::find($id);
         $pagos = Pagos::where('id_solicitud',$id)->get();
-        $datosAudiencia = SeerPerConciliador::where('id_solicitud', $id)->first();
+        // Primero revisamos si hay datos temporales en sesión (vista previa)
+        $sessionKey = 'audiencia_conclucion_data_' . $id;
+        $sessionData = session()->get($sessionKey);
+        if ($sessionData && is_array($sessionData)) {
+            // Construimos un objeto mínimo compatible con lo que espera la vista
+            $datosAudiencia = (object) [
+                // Compatibilidad con ortografías en vistas
+                'resolicion_primera' => $sessionData['primera'] ?? '',
+                'resolucion_primera' => $sessionData['primera'] ?? '',
+                'resolicion_justificacion' => $sessionData['justificacion'] ?? '',
+                'resolucion_justificacion' => $sessionData['justificacion'] ?? '',
+                'resolicion_segunda' => $sessionData['segunda'] ?? '',
+                'resolucion_segunda' => $sessionData['segunda'] ?? '',
+                'vacaciones' => $sessionData['vacaciones'] ?? null,
+                'aguinaldo' => $sessionData['aguinaldo'] ?? null,
+                'otros' => $sessionData['otros'] ?? null,
+                'horario' => $sessionData['horario'] ?? null,
+                'comida' => $sessionData['comida'] ?? null,
+                'tipo_audiencia' => $sessionData['tipo_audiencia'] ?? null,
+                'conclucion' => $sessionData['conclucion'] ?? null,
+            ];
+        } else {
+            // Si no hay sesión, traemos el registro de la BD (el más reciente si hay varios)
+            $datosAudiencia = SeerPerConciliador::where('id_solicitud', $id)->orderBy('numero_audiencias', 'DESC')->first();
+        }
         $solicitante = SeerSolicitante::where('id_solicitud',$solicitud["id"])->first();
         $pagos = Pagos::where('id_solicitud', $id)->get();
         $abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
@@ -6764,24 +6907,97 @@ class SeerController extends Controller
         $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
         ->first();
 
-        $prestaciones = Concepto::where('id_solicitud', $id)->get();
-        $deducciones = Deducciones::where('id_solicitud', $id)->get();
+    $prestaciones = Concepto::where('id_solicitud', $id)->get();
+    $deducciones = Deducciones::where('id_solicitud', $id)->get();
 
+    // Soporte para selección específica de citados (guardada en sesión desde la vista)
+        $idsSession = session()->get('acta_citados_' . $id);
+
+        
+        if ($idsSession !== null) {
+            $citados = SeerCitados::whereIn('id', $idsSession)
+                        ->where('id_solicitud', $id)
+                        ->get();
+        } else {
+            $citados = SeerCitados::where('id_solicitud', $id)->get();
+        }
+
+        // Si hubo datos de preview en sesión, construir prestaciones/deducciones/pagos desde sesión
+        if ($sessionData && is_array($sessionData)) {
+            // Construir prestaciones (tipo_pago / monto_pago / otra_prestacion)
+            $prestaciones = collect();
+            $tipos = $sessionData['tipo_pago'] ?? [];
+            $montos_p = $sessionData['monto_pago'] ?? [];
+            $otras = $sessionData['otra_prestacion'] ?? [];
+            $countPrest = max(count($tipos), count($montos_p));
+            for ($i = 0; $i < $countPrest; $i++) {
+                $descripcion = $tipos[$i] ?? '';
+                if (($descripcion === 'Otras' || $descripcion === 'Otras') && isset($otras[$i]) && trim($otras[$i]) !== '') {
+                    $descripcion = trim($otras[$i]);
+                }
+                $montoVal = isset($montos_p[$i]) ? floatval($montos_p[$i]) : 0;
+                $obj = (object) [
+                    'id' => 's_p_'.$i,
+                    'descripcion' => $descripcion,
+                    'monto' => $montoVal,
+                ];
+                $prestaciones->push($obj);
+            }
+
+            // Construir deducciones
+            $deducciones = collect();
+            $descDed = $sessionData['descripcion_deduccion'] ?? [];
+            $montosDed = $sessionData['monto_deduccion'] ?? [];
+            $countDed = max(count($descDed), count($montosDed));
+            for ($i = 0; $i < $countDed; $i++) {
+                $montoVal = isset($montosDed[$i]) ? floatval($montosDed[$i]) : 0;
+                $obj = (object) [
+                    'id' => 's_d_'.$i,
+                    'descripcion' => $descDed[$i] ?? '',
+                    'monto' => $montoVal,
+                ];
+                $deducciones->push($obj);
+            }
+
+            // Construir pagos diferidos (monto_pagos, dias_pagos, hora_pagos, descripcion_pagos)
+            $pagos = collect();
+            $dias = $sessionData['dias_pagos'] ?? [];
+            $horas = $sessionData['hora_pagos'] ?? [];
+            $montosPag = $sessionData['monto_pagos'] ?? [];
+            $descPag = $sessionData['descripcion_pagos'] ?? [];
+            $countPag = max(count($dias), count($montosPag));
+            for ($i = 0; $i < $countPag; $i++) {
+                $obj = (object) [
+                    'id_solicitud' => $id,
+                    'fecha' => $dias[$i] ?? null,
+                    'hora' => $horas[$i] ?? null,
+                    'monto' => isset($montosPag[$i]) ? floatval($montosPag[$i]) : 0,
+                    'descripcion' => $descPag[$i] ?? '',
+                ];
+                $pagos->push($obj);
+            }
+        }
+
+        // construir textos y totales desde las colecciones actuales
         $conceptosTexto = [];
-        $deduccionesTexto = [];
-
         foreach ($prestaciones as $concepto) {
             $conceptosTexto[$concepto->id] = $this->convertirNumerosALetras($concepto->monto);
         }
 
+        $deduccionesTexto = [];
         foreach ($deducciones as $deduccion) {
             $deduccionesTexto[$deduccion->id] = $this->convertirNumerosALetras($deduccion->monto);
         }
 
-        $totalPrestaciones = $prestaciones->sum('monto');
-        $totalDeducciones = $deducciones->sum('monto');
+        $totalPrestaciones = collect($prestaciones)->sum('monto');
+        $totalDeducciones = collect($deducciones)->sum('monto');
         //Total a pagar
         $pagoTotal= $totalPrestaciones-$totalDeducciones;
+
+        // Asegurar que $datosAudiencia tenga la propiedad monto 
+        if (isset($datosAudiencia) && is_object($datosAudiencia) && !property_exists($datosAudiencia, 'monto')) {
+            $datosAudiencia->monto = $pagoTotal;
+        }
 
         //Descripción del tipo de identificación para los solicitantes
         $identificacionSolicitante = $solicitante->identificacion;
@@ -6792,7 +7008,7 @@ class SeerController extends Controller
         $descripcionIdentificacionP = $this->descripcionIdentificacion($identificacionPoder);
 
         $html = view('PDF/Solicitudes/ActaAudiencia', compact('id','solicitud','conciliador','prestaciones','deducciones','deduccionesTexto','pagoTotal','descripcionIdentificacionS',
-        'descripcionIdentificacionP','abogado','conceptosTexto','solicitante','audiencia','datosAudiencia'))->render();
+        'descripcionIdentificacionP','abogado','conceptosTexto','solicitante','audiencia','datosAudiencia','citados'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -7540,6 +7756,17 @@ class SeerController extends Controller
         return response()->json(['status' => 'success']);
     }
 
+    // Guardar temporalmente la selección de citados para el ACTA de audiencia (sesión)
+    public function guardarSeleccionActaSession(Request $request)
+    {
+        $idSolicitud = $request->input('id_solicitud');
+        $idsSeleccionados = $request->input('ids_seleccionados', []);
+
+        session()->put('acta_citados_' . $idSolicitud, $idsSeleccionados);
+
+        return response()->json(['status' => 'success']);
+    }
+
     public function vista_previa($id){
         $id_usuario = auth()->user()->id;
         $user = User::find($id_usuario);           
@@ -8045,7 +8272,9 @@ class SeerController extends Controller
             ]);
 
             //Validar la bandera para mostrar documento o 
-            if($data["bandera"] == 1){
+            if(isset($data["bandera"]) && $data["bandera"] == 1){
+                // Limpiar sesiones relacionadas cuando se pulsa "Terminar"
+                session()->forget(["audiencia_conclucion_data_{$data['id']}", "convenio_citados_{$data['id']}", "acta_citados_{$data['id']}", 'preserve_edit_session']);
                 return redirect()->route('todas_audiencias');
             }
             else if($data["bandera"] == 2){
@@ -8054,7 +8283,7 @@ class SeerController extends Controller
             else if($data["bandera"] == 3 || $data["bandera"] == 4){
                 
                 //$this->VerPDFAudiencia($data["id"]);
-                $this->VerPDFConvenioSol($data["id"]);
+                //$this->VerPDFConvenioSol($data["id"]);
                 //return redirect()->route('vista_previa',compact('id_solicitud'));
             }
         }

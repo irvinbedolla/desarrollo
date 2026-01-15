@@ -135,7 +135,8 @@
                                                     <th style="display:none">ID</th>
                                                     <th style="color: #ffff;">Tipo pago</th>
                                                     <th style="color: #ffff;">Monto</th>
-                                                    <th style="color: #ffff;">Acciones</th>
+                                                    <!--th style="color: #ffff;">Acciones</!--th-->
+                                                    <th style="color: #ffff;"></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -156,7 +157,7 @@
                                                                     @csrf
                                                                     <input type="hidden" name="type" value="concepto">
                                                                     <input type="hidden" name="index" value="{{ $concepto->session_index }}">
-                                                                    <button class="btn btn-secondary" style="background-color:#6c757d; border-color:#6c757d;" type="submit">Quitar (V)</button>
+                                                                    <!--button class="btn btn-secondary" style="background-color:#6c757d; border-color:#6c757d;" type="submit">Quitar (V)</!--button-->
                                                                 </form>
                                                             @endif
                                                         </td>
@@ -176,7 +177,8 @@
                                                     <th style="display:none">ID</th>
                                                     <th style="color: #ffff;">Tipo pago</th>
                                                     <th style="color: #ffff;">Monto</th>
-                                                    <th style="color: #ffff;">Acciones</th>
+                                                    <!--th style="color: #ffff;">Acciones</!--th-->
+                                                    <th style="color: #ffff;"></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -197,7 +199,7 @@
                                                                     @csrf
                                                                     <input type="hidden" name="type" value="deduccion">
                                                                     <input type="hidden" name="index" value="{{ $concepto->session_index }}">
-                                                                    <button class="btn btn-secondary" style="background-color:#6c757d; border-color:#6c757d;" type="submit">Quitar (V)</button>
+                                                                    <!--button class="btn btn-secondary" style="background-color:#6c757d; border-color:#6c757d;" type="submit">Quitar (V)</!--button-->
                                                                 </form>
                                                             @endif
                                                         </td>
@@ -218,7 +220,8 @@
                                                     <th style="color: #ffff;">Fecha y Hora</th>
                                                     <th style="color: #ffff;">Descripción</th>
                                                     <th style="color: #ffff;">Monto</th>
-                                                    <th style="color: #ffff;">Acciones</th>
+                                                    <!--th style="color: #ffff;">Acciones</-th-->
+                                                    <th style="color: #ffff;"></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -240,7 +243,7 @@
                                                                     @csrf
                                                                     <input type="hidden" name="type" value="pago">
                                                                     <input type="hidden" name="index" value="{{ $pago->session_index }}">
-                                                                    <button class="btn btn-secondary" style="background-color:#6c757d; border-color:#6c757d;" type="submit">Quitar (V)</button>
+                                                                    <!--button class="btn btn-secondary" style="background-color:#6c757d; border-color:#6c757d;" type="submit">Quitar (V)</!--button-->
                                                                 </form>
                                                             @endif
                                                         </td>
@@ -345,19 +348,19 @@
                                     <div id="pagos" class="row home-shape">
                                         <div class="col-xs-12 col-sm-12 col-md-12"></div>
                                         <div class="col-xs-12 col-sm-6 col-md-12">
-                                            <button id="addRow" type="button" class="btn btn-info">Agregar Concepto de Pago</button>
+                                            <!--button id="addRow" type="button" class="btn btn-info">Agregar Concepto de Pago</!--button-->
                                         </div>                                        
                                         <div id="newRow"></div>
                                        
                                         <div class="col-xs-12 col-sm-6 col-md-12"><br>
-                                            <button id="addRetencion" type="button" class="btn btn-info">Agregar Deducción</button>
+                                            <!--button id="addRetencion" type="button" class="btn btn-info">Agregar Deducción</!--button-->
                                         </div>
                                         
                                         <div id="newRowDeduccion"></div>
 
                                         <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div id="div_pagos_diferidos1"><br>
-                                                <button id="addPago" type="button" class="btn btn-info">Agregar Pago</button>
+                                                <!--button id="addPago" type="button" class="btn btn-info">Agregar Pago</!--button-->
                                                 <div id="newRowaPago"></div>
                                             </div>
                                         </div>
@@ -381,20 +384,20 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-2">
-                                        <br><a href="{{ route('audiencias.parte3', $id) }}" class="btn btn-danger">Regresar</a>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-2">
                                         <br><button id="btn-terminar" type="submit" class="btn btn-success" name="bandera" value="1">Terminar</button>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-2">
+                                    <!--div class="col-xs-12 col-sm-12 col-md-2">
                                         <br><button id="btn-terminar" type="submit" class="btn btn-success" name="bandera" value="2">Actualizar</button>
+                                    </!--div-->
+                                    <div class="col-xs-12 col-sm-12 col-md-2">
+                                        <br><button id="btn-convenio1" type="button" class="btn btn-info" name="bandera" value="3" target="_blank">Convenio</button>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-2">
-                                        <br><button id="btn-convenio1" class="btn btn-success" type="button" class="btn btn-success" name="bandera" value="3" target="_blank">Convenio</button>
+                                        <br><button id="btn-acta" type="button" class="btn btn-info" name="bandera" value="4">Acta de Audiencia</button>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-2">
-                                        <br><button id="btn-terminar" type="submit" class="btn btn-success" name="bandera" value="4">Acta de Audiencia</button>
-                                    </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-2">
+                                            <br><a href="{{ route('audiencias.parte3', $id) }}?bandera=5" class="btn btn-danger" name="bandera" value="5">Regresar</a>
+                                        </div>
                                 </div>
                             </form>
                         </div>
@@ -1601,6 +1604,61 @@ function clonarCheckboxes() {
                     .catch(error => {
                         console.error('Error:', error);
                         Swal.fire('Error', 'Ocurrió un error de conexión.', 'error');
+                    });
+                });
+            }
+
+            // Lógica para el botón ACTA con AJAX (igual que convenio pero abre VerPDFAudiencia)
+            const btnActa = document.getElementById('btn-acta');
+            if (btnActa) {
+                btnActa.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    // Obtener id de la solicitud
+                    let inputId = document.querySelector('#form_roles input[name="id"]');
+                    if(!inputId) { 
+                        alert("No se encontró el ID de la solicitud");
+                        return; 
+                    }
+                    let idSolicitud = inputId.value;
+
+                    // Recolectar IDs marcados
+                    let idsSeleccionados = [];
+                    document.querySelectorAll('input[type=checkbox][name^="aparece_convenio"]:checked').forEach(cb => {
+                        let match = cb.name.match(/\[(\d+)\]/);
+                        if(match && match[1]) idsSeleccionados.push(match[1]);
+                    });
+
+                    if (idsSeleccionados.length === 0) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Atención',
+                            text: 'Debes seleccionar al menos un citado para generar el acta.'
+                        });
+                        return;
+                    }
+
+                    // Guardar en sesión
+                    fetch("{{ route('guardar_seleccion_acta') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ id_solicitud: idSolicitud, ids_seleccionados: idsSeleccionados })
+                    })
+                    .then(resp => resp.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            let urlPdf = "{{ route('VerPDFAudiencia', ':id') }}";
+                            urlPdf = urlPdf.replace(':id', idSolicitud);
+                            window.open(urlPdf, '_blank');
+                        } else {
+                            Swal.fire('Error', 'No se pudo procesar la selección.', 'error');
+                        }
+                    })
+                    .catch(err => {
+                        Swal.fire('Error', 'No se pudo procesar la selección.', 'error');
                     });
                 });
             }
