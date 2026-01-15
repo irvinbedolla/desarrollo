@@ -997,6 +997,14 @@ class TurnosController extends Controller
 
     public function VerPDFConvenio($id){
         $solicitud = Turnos::find($id);
+        $delegacion = $solicitud->delegacion;
+        $delegado = User::where('delegacion', $delegacion)
+            ->whereHas('roles', function ($query) {
+                $query->where('name', 'Delegado');
+            })
+            ->select('users.id', 'users.name', 'users.delegacion')
+            ->first();
+
         $pagos = Pagos::where('id_solicitud', $id)->get();
         /*$abogado  = Poder::join("turnos","turnos.idAbogado","=","abogados.idAbogado");
         $abogado = $abogado->where("turnos.id", "=", $id)
@@ -1066,7 +1074,7 @@ class TurnosController extends Controller
                 'id', 'solicitud', 'dias_descanso', 'salario_diario', 'salario_mensual', 'pagos', 
                 'diarioTexto', 'mensualTexto', 'montoTexto', 'conceptosTexto', 'deduccionesTexto', 
                 'pagosDif', 'conciliador', 'abogado', 'municipioEmpresa', 'estadoEmpresa', 'pagoTotal', 
-                'descripcionIdentificacionS', 'descripcionIdentificacionP','prestaciones','deducciones'
+                'descripcionIdentificacionS', 'descripcionIdentificacionP','prestaciones','deducciones','delegado'
             )
         )->render();
 
@@ -1283,7 +1291,14 @@ class TurnosController extends Controller
         $conciliador = $conciliador->where("turnos.id_conciliador", "=", $solicitud["id_conciliador"])
         ->select('users.name')
         ->first();
-        $html = view('PDF/pagosParciales', compact('id','solicitud','conciliador','pagos','pagosDif'))->render();
+        $delegacion = $solicitud->delegacion;
+        $delegado = User::where('delegacion', $delegacion)
+            ->whereHas('roles', function ($query) {
+                $query->where('name', 'Delegado');
+            })
+            ->select('users.id', 'users.name', 'users.delegacion')
+            ->first();
+        $html = view('PDF/pagosParciales', compact('id','solicitud','conciliador','pagos','pagosDif','delegado'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')

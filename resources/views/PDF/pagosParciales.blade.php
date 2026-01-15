@@ -46,6 +46,7 @@
                 text-align: justify;
                 margin-left: 3cm;     
                 margin-right: 2cm; 
+                line-height: 1.3;
             }
             .fondo-membrete {
                 position: fixed;
@@ -76,7 +77,7 @@
                             <td>{{ $solicitud->NUE }} </td>
                         </tr> 
                     </table>
-                </div><br><br><br><br><br>
+                </div><br><br><br><br>
                 <p><b>
                     Trabajador(a): {{ mb_strtoupper($solicitud->trabajador, 'UTF-8') }} {{ mb_strtoupper($solicitud->primero_trabajador, 'UTF-8') }} {{ mb_strtoupper($solicitud->segundo_trabajador, 'UTF-8') }} <br> 
                     Empleador(a): @if(is_null($solicitud->nombre_empresa) && is_null($solicitud->primero_empresa))
@@ -127,13 +128,14 @@
 
                     Quien suscribe da fe del cumplimiento del concepto anteriormente descrito por parte del <b>EMPLEADOR. Doy fe.</b><br><br>
 
-                    <b>Con fecha {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }} se emite la presente Constancia de @if($pagosDif>1) Cumplimiento Parcial @elseif($pagosDif == 1) Pago @endif del Convenio de Conciliación, con 
+                    <b>Con fecha {{ $pagos->updated_at->translatedFormat('d \d\e F \d\e\l Y') }} se emite la presente Constancia de @if($pagosDif>1) Cumplimiento Parcial @elseif($pagosDif == 1) Pago @endif del Convenio de Conciliación, con 
                     fundamento en la fracción XIV del artículo 684-E y fracción VIII del artículo 684-F de la Ley Federal del Trabajo.</b>
                 </p>
 
                 <br><br><br><br>       
-                <center><br><br> <p><b>___________________________________<br>{{mb_strtoupper($conciliador->name, 'UTF-8')}} <br>FUNCIONARIO/A CONCILIADOR/A<br>
-                DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>           
+                <center><p><b>___________________________________<br>{{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
+                                    DIRECTOR/A DEL CENTRO DE CONCILIACIÓN<br>
+                                    LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>       
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

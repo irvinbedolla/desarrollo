@@ -128,8 +128,8 @@
                         c) Que desempeñaba sus actividades laborales en las siguientes condiciones: <br>
                             - Horario: <b>{{ $solicitud->horario }}</b> Hrs.<br>
                             - Horario de comida: <b>{{ $solicitud->comida }}.</b><br>
-                            - Domicilio donde prestaba sus servicios: <b>{{ $solicitud->tipo_vialidad }} {{ $solicitud->calle }} {{ $solicitud->num_ext }} @if(!empty($citado->n_int))
-                                    int. {{ $citado->n_int }}
+                            - Domicilio donde prestaba sus servicios: <b>{{ $solicitud->tipo_vialidad }} {{ $solicitud->calle }} {{ $solicitud->num_ext }} @if(!empty($solicitud->n_int))
+                                    int. {{ $solicitud->n_int }}
                                 @endif COLONIA {{ $solicitud->colonia }}, {{ mb_strtoupper($municipioEmpresa, 'UTF-8') }}, {{ mb_strtoupper($estadoEmpresa, 'UTF-8') }} C.P. {{ $solicitud->codigo_postal }}</b>.
                     </p>
                         <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
@@ -232,7 +232,7 @@
                             </thead>   
                         </table>
                     </p>
-                    <p><b>{{ $solicitud->resolucion_justificacion }}</b></p><br>
+                    <p><b>{{ $solicitud->resolucion_justificacion }}</b></p>
                     <!-- CON PAGOS DIFERIDOS-->       
                     @if($pagosDif->C_pagos>'1')            
                         <p><b>SEXTA</b>. La <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará en <b>{{ $pagosDif->C_pagos}}</b> 
@@ -260,7 +260,7 @@
                                     @endforeach
                                 </tbody>
                             </table>      
-                        </div><br>
+                        </div>
 
                         <p>En caso de que la parte <b>EMPLEADORA</b> no cubra el pago de la cantidad estipulada y dentro del plazo determinado en esta cláusula, deberá pagar a la parte <b>TRABAJADORA</b> 
                             el equivalente a un día de salario diario, el cual se fijará en razón del salario que percibía dicha parte antes de finalizar la relación de trabajo correspondiente a la cantidad de 
@@ -325,16 +325,16 @@
                         lo sanciona en este mismo acto. <b>Doy fe</b>.
                     </p>
                                     
-                    <br><br>
-                    <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:30px;">
+                    <br><br><br>
+                    <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:10px;">
                         <tr>
-                            <td style="width:50%; vertical-align:top; padding:0 20px;">
+                            <td style="width:60%; vertical-align:top; padding:0 10px;">
                                 <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
                                 <b> {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}<br>
                                     LA PARTE TRABAJADORA
                                 </b>
                             </td>
-                            <td style="width:50%; vertical-align:top; padding:0 20px;">
+                            <td style="width:60%; vertical-align:top; padding:0 10px;">
                                 <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
                                 <b>{{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}<br>
                                     LA PARTE EMPLEADORA
@@ -343,12 +343,19 @@
                         </tr>
                         <br><br><br>
                         <tr>
-                            <td colspan="2" style="text-align:center; vertical-align:top; padding:0 20px;">
-                                <div style="border-top: 2px solid #000; width:50%; margin: 0 auto 5px auto;"></div>
+                            <td style="width:60%; vertical-align:top; padding:0 10px;">
+                                <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
                                 <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}<br>
-                                    FUNCIONARIO/A CONCILIADOR/A<br>
-                                    DEL CENTRO DE CONCILIACIÓN LABORAL<br>
-                                    DEL ESTADO DE MICHOACÁN DE OCAMPO
+                                        FUNCIONARIO/A CONCILIADOR/A<br>
+                                        DEL CENTRO DE CONCILIACIÓN LABORAL
+                                        DEL ESTADO DE MICHOACÁN DE OCAMPO
+                                </b>
+                            </td>
+                            <td style="width:60%; vertical-align:top; padding:0 10px;">
+                                <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                                <b>{{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
+                                    DIRECTOR/A DEL CENTRO DE CONCILIACIÓN
+                                    LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO                                  
                                 </b>
                             </td>
                         </tr>
