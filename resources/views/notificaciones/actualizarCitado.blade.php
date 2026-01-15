@@ -50,7 +50,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
                                             <label>¿Quién atiende? <span style="color:red;">(*)</span></label>
-                                            <select name="quien_atiende" class="form-control" required>
+                                            <select name="quien_atiende" id="quien_atiende"class="form-control" required>
                                                 <option value="">Selecciona</option>
                                                 <option value="CITADO O REPRESENTANTE">El citado o representante legal</option>
                                                 <option value="OTRA PERSONA">Otra persona</option>
@@ -104,6 +104,7 @@
                                                 <option value="EJE VIAL">Eje vial</option>
                                                 <option value="PERIFÉRICO">Periférico</option>
                                                 <option value="PROLONGACIÓN">Prolongación</option>
+                                                <option value="PRIVADA">Privada</option>
                                                 <option value="RETORNO">Retorno</option>
                                                 <option value="VIADUCTO">Viaducto</option>
                                             </select>
@@ -450,7 +451,6 @@
                     }
                 });
 
-                // Estado inicial al cargar
                 const initial = selectQuienAtiende.value;
                 if (initial === 'NADIE') {
                     dqrGroups.forEach(el => el.style.display = 'none');
@@ -460,7 +460,6 @@
                     setRequiredInGroups(dqrGroups, true);
                 }
 
-                // Aplicar estado inicial específico de Media filiación
                 if (initial === 'OTRA PERSONA') {
                     mediaFiliacionDiv.style.display = 'block';
                     setRequiredInGroups([mediaFiliacionDiv], true);
@@ -498,7 +497,60 @@
                 actualizarTipoProblema();
             }
         });
-        const tipo_iden = document.getElementById('identificacion_notificacion');
+        //Ocultar media filiación cuando si se presenta una identificación
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectQuienAtiende = document.querySelector('select[name="quien_atiende"]');
+            const selectIdentificacion = document.getElementById('identificacion_notificacion');
+            const mediaFiliacionDiv = document.getElementById('media-filiacion');
+            const motivoIdenDiv = document.getElementById('motivo_identificacion');
+            const dqrGroups = Array.from(document.querySelectorAll('.dqr-group'));
+
+            function setRequiredInGroups(groups, enabled) {
+                groups.forEach(sectionEl => {
+                    if (!sectionEl) return;
+                    const fields = sectionEl.querySelectorAll('input, select, textarea');
+                    fields.forEach(el => {
+                        const shouldBeRequiredByDefault = el.hasAttribute('data-required-default') || el.hasAttribute('required');
+                        if (enabled) {
+                            if (shouldBeRequiredByDefault) el.setAttribute('required', '');
+                        } else {
+                            el.removeAttribute('required');
+                        }
+                    });
+                });
+            }
+            function actualizarFormulario() {
+                const quienAtiende = selectQuienAtiende ? selectQuienAtiende.value : '';
+                const idenValor = selectIdentificacion ? selectIdentificacion.value : '';
+
+                if (idenValor === 'NO PROPORCIONA' || idenValor === 'NO ATIENDE PRESENCIALMENTE') {
+                    motivoIdenDiv.style.display = "block";
+                } else {
+                    motivoIdenDiv.style.display = "none";
+                }
+
+                const personasQuePuedenRecibir = ['OTRA PERSONA', 'CITADO O REPRESENTANTE'];
+                const sinIdentificacionValida = ['NO PROPORCIONA'];
+
+                if (personasQuePuedenRecibir.includes(quienAtiende) && sinIdentificacionValida.includes(idenValor)) {
+                    mediaFiliacionDiv.style.display = 'block';
+                    setRequiredInGroups([mediaFiliacionDiv], true);
+                } else {
+                    mediaFiliacionDiv.style.display = 'none';
+                    setRequiredInGroups([mediaFiliacionDiv], false);
+                }
+            }
+
+            if (selectQuienAtiende) {
+                selectQuienAtiende.addEventListener('change', actualizarFormulario);
+            }
+            if (selectIdentificacion) {
+                selectIdentificacion.addEventListener('change', actualizarFormulario);
+            }
+
+            actualizarFormulario();
+        });
+        /*const tipo_iden = document.getElementById('identificacion_notificacion');
         tipo_iden.addEventListener('change', function() {
             const valorSeleccionado = this.value;
             // Realiza la validación o acciones necesarias
@@ -508,7 +560,7 @@
             else {
                 document.getElementById('motivo_identificacion').style.display = "none";
             }
-        });
+        });*/
     </script>
 @endsection
 

@@ -109,7 +109,7 @@
                 <p><b>ASUNTO: CITATORIO DE AUDIENCIA DE CONCILIACIÓN<br>
                     SOLICITANTE: {{ $solicitante->nombre }}<br>
                     CITADO: {{ $citado->nombre}} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}<br>
-                    <b>{{ $citado->tipo_vialidad}} {{ $citado->calle }} #{{ $citado->n_ext }} @if(!empty($citado->n_int))
+                    <b>{{ $citado->tipo_vialidad}} {{ $citado->calle }} {{ $citado->n_ext }} @if(!empty($citado->n_int))
                                     INT. {{ $citado->n_int }}
                                 @endif COLONIA {{ $citado->colonia}}, {{ mb_strtoupper($municipioNombre, 'UTF-8')}}, {{ mb_strtoupper($estadoNombre, 'UTF-8')}} C.P. {{ $citado->cp }}.</b><br><br>
                     FECHA DE EMISIÓN DEL CITATORIO:  {{ $citado->updated_at->translatedFormat('d \d\e F \d\e\l Y') }}

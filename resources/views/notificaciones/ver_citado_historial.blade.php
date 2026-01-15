@@ -227,6 +227,7 @@
                                             </div>
                                         </div>
                                     </div> 
+
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <label for="password">Referencia 1 <span style="color:red;">(*)</span></label><br>
                                         @if (!empty($folio->imagen_domicilio1) && $folio->imagen_domicilio1 !== 'Sin documento')
@@ -237,6 +238,7 @@
                                         <input type="file" name="foto1" accept="image/*" class="form-control">
                                         <input type="hidden" name="imagen_domicilio1" value="{{ $folio->imagen_domicilio1 }}">
                                     </div>
+
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <label for="password">Referencia 2</label><br>
                                         @if (!empty($folio->imagen_domicilio2) && $folio->imagen_domicilio2 !== 'Sin documento')
@@ -247,15 +249,17 @@
                                         <input type="file" name="foto2" accept="image/*" class="form-control">
                                         <input type="hidden" name="imagen_domicilio2" value="{{ $folio->imagen_domicilio2 }}">
                                     </div>
+
                                     <div class="col-xs-12 col-sm-12 col-md-6"><br>
                                         <div class="form-group">
                                             <label for="name">Fecha de Notificación</label>
-                                            <input type="date" name="fecha" class="form-control" value="<?=$folio["fecha"];?>" > 
+                                            <input type="date" name="fecha" class="form-control" value="{{ $folio->updated_at->format('Y-m-d') }}" > 
                                             <div class="invalid-feedback">
                                                 El nombre es obligatorio.
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="col-xs-12 col-sm-12 col-md-6"><br>
                                         <div class="form-group">
                                             <label for="name">Estatus del notificador</label>
