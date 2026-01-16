@@ -998,13 +998,23 @@ class TurnosController extends Controller
     public function VerPDFConvenio($id){
         $solicitud = Turnos::find($id);
         $delegacion = $solicitud->delegacion;
-        $delegado = User::where('delegacion', $delegacion)
-            ->whereHas('roles', function ($query) {
-                $query->where('name', 'Delegado');
+        $delegadosEspeciales = [
+                'Zitácuaro'        => 11,
+                'Lázaro Cárdenas'  => 43,
+                'Sahuayo'          => 26,
+            ];
+
+        if (array_key_exists($delegacion, $delegadosEspeciales)) {
+            $delegado = User::select('id', 'name', 'delegacion')
+                ->find($delegadosEspeciales[$delegacion]);
+        } else {
+            $delegado = User::where('delegacion', $delegacion)
+                ->whereHas('roles', function ($query) {
+                    $query->where('name', 'Delegado');   
             })
             ->select('users.id', 'users.name', 'users.delegacion')
             ->first();
-
+        }
         $pagos = Pagos::where('id_solicitud', $id)->get();
         /*$abogado  = Poder::join("turnos","turnos.idAbogado","=","abogados.idAbogado");
         $abogado = $abogado->where("turnos.id", "=", $id)
@@ -1292,12 +1302,23 @@ class TurnosController extends Controller
         ->select('users.name')
         ->first();
         $delegacion = $solicitud->delegacion;
-        $delegado = User::where('delegacion', $delegacion)
-            ->whereHas('roles', function ($query) {
-                $query->where('name', 'Delegado');
-            })
-            ->select('users.id', 'users.name', 'users.delegacion')
-            ->first();
+        $delegadosEspeciales = [
+                'Zitácuaro'        => 11,
+                'Lázaro Cárdenas'  => 43,
+                'Sahuayo'          => 26,
+            ];
+
+        if (array_key_exists($delegacion, $delegadosEspeciales)) {
+            $delegado = User::select('id', 'name', 'delegacion')
+                ->find($delegadosEspeciales[$delegacion]);
+        } else {
+            $delegado = User::where('delegacion', $delegacion)
+                ->whereHas('roles', function ($query) {
+                    $query->where('name', 'Delegado');
+                })
+                ->select('users.id', 'users.name', 'users.delegacion')
+                ->first();
+        }
         $html = view('PDF/pagosParciales', compact('id','solicitud','conciliador','pagos','pagosDif','delegado'))->render();
 
         $pdf = \PDF::loadHTML($html)

@@ -45,6 +45,7 @@
                 text-align: justify;
                 margin-left: 3cm;     
                 margin-right: 2cm; 
+                line-height: 1.3;
             }
             .fondo-membrete {
                 position: fixed;

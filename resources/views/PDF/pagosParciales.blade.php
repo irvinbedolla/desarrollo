@@ -77,7 +77,7 @@
                             <td>{{ $solicitud->NUE }} </td>
                         </tr> 
                     </table>
-                </div><br><br><br><br>
+                </div><br><br><br>
                 <p><b>
                     Trabajador(a): {{ mb_strtoupper($solicitud->trabajador, 'UTF-8') }} {{ mb_strtoupper($solicitud->primero_trabajador, 'UTF-8') }} {{ mb_strtoupper($solicitud->segundo_trabajador, 'UTF-8') }} <br> 
                     Empleador(a): @if(is_null($solicitud->nombre_empresa) && is_null($solicitud->primero_empresa))
@@ -132,10 +132,26 @@
                     fundamento en la fracción XIV del artículo 684-E y fracción VIII del artículo 684-F de la Ley Federal del Trabajo.</b>
                 </p>
 
-                <br><br><br><br>       
-                <center><p><b>___________________________________<br>{{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
-                                    DIRECTOR/A DEL CENTRO DE CONCILIACIÓN<br>
-                                    LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>       
+                <br><br><br><br>
+                <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:10px;">
+                        <tr>
+                            <td style="width:50%; vertical-align:top; padding:0 5px;">
+                                <div style="border-top: 2px solid #000; width:90%; margin: 0 auto 5px auto;"></div>
+                                <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}<br>
+                                        FUNCIONARIO/A CONCILIADOR/A<br>
+                                        DEL CENTRO DE CONCILIACIÓN LABORAL
+                                        DEL ESTADO DE MICHOACÁN DE OCAMPO
+                                </b>
+                            </td>
+                           <td style="width:50%; vertical-align:top; padding:0 5px;">
+                                <div style="border-top: 2px solid #000; width:90%; margin: 0 auto 5px auto;"></div>
+                                <b>{{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
+                                    DIRECTOR/A DEL CENTRO DE CONCILIACIÓN
+                                    LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO                                  
+                                </b>
+                            </td>
+                        </tr>
+                    </table>           
             </div>
             <script type="text/php">
                 if (isset($pdf)) {
