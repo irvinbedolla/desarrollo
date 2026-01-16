@@ -105,14 +105,14 @@
                         </tr> 
                     </table>
                 </div><br><br><br><br>
-                <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br>
-                <p><b>ASUNTO: CITATORIO DE AUDIENCIA DE CONCILIACIÓN<br>
-                    SOLICITANTE: {{ $solicitante->nombre }}<br>
-                    CITADO: {{ $citado->nombre}} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}<br>
-                    <b>{{ $citado->tipo_vialidad}} {{ $citado->calle }} {{ $citado->n_ext }} @if(!empty($citado->n_int))
+                <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br><br>
+                <p><b>FECHA DE EMISIÓN DEL CITATORIO:</b>  {{ $citado->updated_at->translatedFormat('d \d\e F \d\e\l Y') }}<br>
+                <b>ASUNTO:</b> CITATORIO DE AUDIENCIA DE CONCILIACIÓN<br>
+                <b> SOLICITANTE:</b> {{ $solicitante->nombre }}<br>
+                <b>CITADO:</b> {{ $citado->nombre}} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}<br>
+                <b>DOMICILIO:</b>{{ $citado->tipo_vialidad}} {{ $citado->calle }}, <br>NUMERO {{ $citado->n_ext }} @if(!empty($citado->n_int))
                                     INT. {{ $citado->n_int }}
                                 @endif COLONIA {{ $citado->colonia}}, {{ mb_strtoupper($municipioNombre, 'UTF-8')}}, {{ mb_strtoupper($estadoNombre, 'UTF-8')}} C.P. {{ $citado->cp }}.</b><br><br>
-                    FECHA DE EMISIÓN DEL CITATORIO:  {{ $citado->updated_at->translatedFormat('d \d\e F \d\e\l Y') }}
                 </b></p>  
                            
                 <p><b>P R E S E N T E</b></p>
