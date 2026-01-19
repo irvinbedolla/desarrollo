@@ -132,7 +132,16 @@
                     fundamento en la fracción XIV del artículo 684-E y fracción VIII del artículo 684-F de la Ley Federal del Trabajo.</b>
                 </p>
 
-                <br><br><br><br>
+                @php
+                    $longitud = mb_strlen($pagos->observaciones);
+                    $forzarSalto = $longitud > 380;
+                @endphp
+
+                @if($forzarSalto)
+                    <div style="page-break-before: always;"><br><br><br><br><br><br></div>
+                @else
+                    <br><br><br><br>
+                @endif
                 <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:10px;">
                         <tr>
                             <td style="width:50%; vertical-align:top; padding:0 5px;">
