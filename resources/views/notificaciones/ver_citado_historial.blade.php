@@ -262,6 +262,16 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-6"><br>
                                         <div class="form-group">
+                                            <label for="name">Hora de Notificación</label>
+                                            <input type="time" name="hora" class="form-control" value="{{ $folio->updated_at->format('H:i:m') }}" > 
+                                            <div class="invalid-feedback">
+                                                El nombre es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-6"><br>
+                                        <div class="form-group">
                                             <label for="name">Estatus del notificador</label>
                                             <select name="estatus" class="form-control">
                                                 <option value="">Seleccione</option>

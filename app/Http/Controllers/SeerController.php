@@ -60,7 +60,6 @@ use App\Mail\CorreoAcuseConfirmacion;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\MailAceptacionRechazo;
 use App\Exports\ReporteMexicoRati;
-use Illuminate\Support\Carbon;
 
 class SeerController extends Controller
 {   
@@ -9502,7 +9501,8 @@ class SeerController extends Controller
         } else {
             $foto2 = $folio->imagen_domicilio2;
         }
-        $fecha_actualizar = Carbon::parse($data["fecha"])->setTimeFrom(Carbon::now());
+        
+        $fecha_actualizar = Carbon::parse($data["fecha"] . ' ' . $data["hora"]);
         DB::table('seer_citados')->where('id', $data["id"])
         ->update([
             //'tipo_persona'             => $data["tipo"],
