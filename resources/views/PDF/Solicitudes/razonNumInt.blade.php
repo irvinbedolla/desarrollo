@@ -129,7 +129,7 @@
                     </table>
                 </div>
                 <!-- DELIGENCIA NO EXITOSA, NO SE LOCALIZA INTERIOR -->
-                <div class="razon-notificacion">
+                <div class="razon-notificacion"> 
                     <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p><br>
                             
                     <p>Siendo las <b>{{ $citado->updated_at->format('H') }} HORAS CON {{ $citado->updated_at->format('i') }} MINUTOS

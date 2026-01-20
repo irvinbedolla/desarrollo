@@ -130,7 +130,7 @@
                     </table>
                 </div>
                 <!-- DELIGENCIA NO EXITOSA, SE CONSTITUYE, CERRADO -->
-                <div class="razon-notificacion">
+                <div class="razon-notificacion"> 
                     <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p>
                             
                     <p>Siendo las <b>{{ $citado->updated_at->format('H') }} HORAS CON {{ $citado->updated_at->format('i') }} MINUTOS

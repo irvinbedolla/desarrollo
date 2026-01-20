@@ -128,7 +128,7 @@
                     </table>
                 </div>
                 <!-- DELIGENCIA POR INSTRUCTIVO -->
-                <div class="razon-notificacion">
+                <div class="razon-notificacion"> 
                     <p><center><b>RAZÓN DE NOTIFICACIÓN POR INSTRUCTIVO</b></center></p><br> 
                             
                     <p>Siendo las <b>{{ $citado->updated_at->format('H') }} HORAS CON {{ $citado->updated_at->format('i') }} MINUTOS
