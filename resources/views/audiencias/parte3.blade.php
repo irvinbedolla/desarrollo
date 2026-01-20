@@ -462,9 +462,9 @@
             }
             //Alerta de seleción de horario
             html += '<div class="col-12 mt-2">';
-            html += '<div id="resumenCita" style="display:none;width:100%;">';
+            html += '<div class="resumenCita" style="display:none;width:100%;">';
             html += '<div class="alert alert-info w-75">';
-            html += '<strong>Cita seleccionada:</strong> <span id="fechaResumen"></span> a las <span id="horaResumen"></span>';
+            html += '<strong>Cita seleccionada:</strong> <span class="fechaResumen"></span> a las <span class="horaResumen"></span>';
             html += '</div>';
             html += '</div>';
             html += '</div>';
@@ -578,8 +578,8 @@
                 pagoBlock.append('<input type="hidden" name="dias_pagos[]" value="'+fechaAud+'">');
                 pagoBlock.append('<input type="hidden" name="hora_pagos[]" value="'+horaSeleccionada+'">');
 
-                var fechaAud = (document.getElementById('audiencia_fecha') && document.getElementById('audiencia_fecha').value) ? document.getElementById('audiencia_fecha').value : fechaHoy;
-                pagoBlock.find('#fechaResumen').text(fechaAud);
+                var fechaAudTxt = (document.getElementById('audiencia_fecha') && document.getElementById('audiencia_fecha').value) ? document.getElementById('audiencia_fecha').value : fechaHoy;
+                pagoBlock.find('.fechaResumen').text(fechaAudTxt);
 
                 var horaToShow = '';
                 if (/^\d{2}:\d{2}(:\d{2})?$/.test(horaSeleccionada)) {
@@ -591,8 +591,8 @@
                         horaToShow = horaSeleccionada.substring(idx-2, idx+3);
                     }
                 }
-                pagoBlock.find('#horaResumen').text(horaToShow);
-                pagoBlock.find('#resumenCita').show();
+                pagoBlock.find('.horaResumen').text(horaToShow);
+                pagoBlock.find('.resumenCita').show();
                 //$('#selectHoraAudienciaDiv').remove();
             //});
         };
@@ -617,19 +617,20 @@
             }
 
             // actualizar resumen visible
-            pagoBlock.find('#fechaResumen').text(fechaAud);
+            pagoBlock.find('.fechaResumen').text(fechaAud);
             var horaToShow = '';
             if (horaValida) {
                 horaToShow = horaSeleccionada.substring(0,5);
             }
-            pagoBlock.find('#horaResumen').text(horaToShow);
-            pagoBlock.find('#resumenCita').show();
+            pagoBlock.find('.horaResumen').text(horaToShow);
+            pagoBlock.find('.resumenCita').show();
         };
 
         // Borrar pago
         $(document).on('click', '.removeRow2', function () {
-            $(this).closest('.col-xs-12').remove();
+            $(this).closest('.inputFormRow2').remove();
             actualizaNumeroPago();
+            setTimeout(function(){ if (typeof calcularTotal === 'function') { calcularTotal(); } }, 100);
         });
         //Actualiza los números de pago
         function actualizaNumeroPago() {
@@ -988,10 +989,9 @@
                     
                     pagoBlock.append('<input type="hidden" name="dias_pagos[]" value="'+fecha+'">');
                     pagoBlock.append('<input type="hidden" name="hora_pagos[]" value="'+hora+'">');
-
-                    pagoBlock.find('#fechaResumen').text(fecha);
-                    pagoBlock.find('#horaResumen').text(hora.substring(0,5));
-                    pagoBlock.find('#resumenCita').show();
+                    pagoBlock.find('.fechaResumen').text(fecha);
+                    pagoBlock.find('.horaResumen').text(hora.substring(0,5));
+                    pagoBlock.find('.resumenCita').show();
 
                     // Cerrar modal
                     document.activeElement.blur();
@@ -1353,9 +1353,9 @@
             html += '</div>';
             html += '</div>';
             html += '<div class="col-12 mt-2">';
-            html += '<div id="resumenCita" style="display:'+(diasVal? 'block':'none')+';width:100%;">';
+            html += '<div class="resumenCita" style="display:'+(diasVal? 'block':'none')+';width:100%;">';
             html += '<div class="alert alert-info w-75">';
-            html += '<strong>Cita seleccionada:</strong> <span id="fechaResumen">'+ (diasVal? diasVal : '') +'</span> a las <span id="horaResumen">'+ (horaVal? (horaVal.substring? horaVal.substring(0,5): horaVal) : '') +'</span>';
+            html += '<strong>Cita seleccionada:</strong> <span class="fechaResumen">'+ (diasVal? diasVal : '') +'</span> a las <span class="horaResumen">'+ (horaVal? (horaVal.substring? horaVal.substring(0,5): horaVal) : '') +'</span>';
             html += '</div></div></div>';
             html += '</div>';
             html += '<div class="contenedor-boton-pago"></div>';
@@ -1453,8 +1453,8 @@
                          return false; 
                     }
 
-                    var fecha = block.find('#fechaResumen').text().trim();
-                    var hora = block.find('#horaResumen').text().trim();
+                    var fecha = block.find('.fechaResumen').text().trim();
+                    var hora = block.find('.horaResumen').text().trim();
                     if(fecha && block.find('input[name="dias_pagos[]"]').length === 0){
                         block.append('<input type="hidden" name="dias_pagos[]" value="'+fecha+'">');
                     }

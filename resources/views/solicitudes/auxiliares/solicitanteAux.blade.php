@@ -425,7 +425,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Horario laboral <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="jornada" class="form-control" placeholder="Ejemplo: De lunes a viernes de 9AM a 5PM y Sábados de 9 AM a 2 PM" required>
+                                                    <input type="text" name="jornada" maxlength="200" class="form-control" placeholder="Ejemplo: De lunes a viernes de 9AM a 5PM y Sábados de 9 AM a 2 PM" required>
                                                     <div class="invalid-feedback">
                                                         El campo horario laboral es obligatoria.
                                                     </div>
