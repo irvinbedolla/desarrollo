@@ -126,10 +126,10 @@
                             <td><b>Citado: </b></td>
                             <td>{{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</td>
                         </tr>
-                    </table>
+                    </table> 
                 </div>
                 <!-- DELIGENCIA NO EXITOSA, NO SE LOCALIZA EL NÚMERO -->
-                <div class="razon-notificacion">
+                <div class="razon-notificacion"> 
                     <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p><br>
                             
                     <p>Siendo las <b>{{ $citado->updated_at->format('H') }} HORAS CON {{ $citado->updated_at->format('i') }} MINUTOS

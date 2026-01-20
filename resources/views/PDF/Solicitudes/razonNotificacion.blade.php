@@ -116,7 +116,7 @@
                         </tr> 
                         <tr>   
                             <td><b>Centro de conciliación: </b></td>
-                            <td>{{ $solicitud->delegacion }}</td>
+                            <td>{{ $solicitud->delegacion }}</td> 
                         </tr>
                         <tr>   
                             <td><b>Solicitante: </b></td>

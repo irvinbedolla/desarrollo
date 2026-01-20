@@ -5368,7 +5368,7 @@ class SeerController extends Controller
         $id = auth()->user()->id;
         $user = User::find($id);
         $solicitudOriginal = SeerPerGeneral::find($data["id"]);
-        $sede_a_guardar = $solicitudOriginal->delegacion ?? $user->delegacion;
+        $sede_a_guardar = $solicitudOriginal->delegacion ?? 
 
         if($data["conclucion"] == "Conciliacion"){
              // --- BLOQUE VISTA PREVIA ---
@@ -9669,23 +9669,84 @@ class SeerController extends Controller
     }
 
     public function todas_notificaciones(){
+        // 1. Obtención eficiente del usuario y sus datos
+        $user = auth()->user();
+        $delegacionUsuario = $user->delegacion;
+
+        // 2. Definición de grupos de delegaciones (Lógica centralizada)
+        $grupos = [
+            "Morelia" => ["Morelia", "Zitácuaro"],
+            "Uruapan" => ["Uruapan", "Lázaro Cárdenas"],
+            "Zamora"  => ["Zamora", "Sahuayo"]
+        ];
+
+        // Determinamos qué sedes consultar: el grupo correspondiente o solo la suya
+        $delegacionesFiltrar = $grupos[$delegacionUsuario] ?? [$delegacionUsuario];
+
+        // 3. Consulta optimizada
+        $mis_notificaciones = SeerPerGeneral::join('seer_citados', 'seer_citados.id_solicitud', '=', 'seer_general.id')
+        ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
+        ->join('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
+        ->leftJoin('users', 'seer_citados.id_notificador', '=', 'users.id')
+        
+        // Filtros
+        ->where('seer_citados.estatus', "!=", 'Pendiente')
+        ->whereIn('seer_general.delegacion', $delegacionesFiltrar) // Corregido: ahora usa el array de grupos
+        
+        // Selección de campos específica
+        ->select(
+            'seer_citados.id as id_citado',
+            'seer_general.NUE',
+            'seer_solicitante.nombre as nombre_solicitado',
+            'seer_citados.nombre',
+            'seer_citados.primer_apellido',
+            'seer_citados.segundo_apellido',
+            'municipios.nombre as municipio_citado',
+            'seer_citados.colonia',
+            'seer_citados.calle',
+            'seer_citados.n_ext',
+            'seer_citados.estatus',
+            'seer_citados.tipo_notificacion',
+            'seer_citados.id_solicitud as id_solicitud',
+            'seer_general.id as id',
+            'users.name as notificador_nombre'
+        )
+        ->orderBy('seer_citados.created_at', 'desc')
+        ->limit(500)
+        ->get();
+        /*
         $id = auth()->user()->id;
         $user = User::find($id);
+        $delegacion = $user->delegacion;
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
+
+
+        if($delegacion == "Morelia"){
+            $delegaciones = ["Morelia", "Zítacuaro"];
+        }
+        else if($delegacion == "Uruapan"){
+            $delegaciones = ["Uruapan", "Lázaro Cárdenas"];
+        }
+        else if($delegacion == "Zamora"){
+            $delegaciones = ["Zamora", "Sahuayo"];
+        }
+
 
         $mis_notificaciones  = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
         ->leftJoin('users', 'seer_citados.id_notificador', '=', 'users.id')
         ->join('seer_solicitante','seer_solicitante.id_solicitud','=','seer_general.id')
         ->join('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
         ->where('seer_citados.estatus', "!=", 'Pendiente')
-        ->select('seer_citados.id as id_citado','seer_general.NUE','seer_solicitante.nombre as nombre_solicitado','seer_citados.nombre','seer_citados.primer_apellido',
-        'seer_citados.segundo_apellido','municipios.nombre as municipio_citado','seer_citados.colonia','seer_citados.calle',
-        'seer_citados.n_ext','seer_citados.estatus','seer_citados.tipo_notificacion','seer_citados.id_solicitud as id_solicitud','seer_general.id as id','users.name as notificador_nombre')
+        ->whereIn('seer_general.delegacion', $delegacion)
+        ->select('seer_citados.id as id_citado','seer_general.NUE','seer_solicitante.nombre as nombre_solicitado','seer_citados.nombre',
+        'seer_citados.primer_apellido','seer_citados.segundo_apellido','municipios.nombre as municipio_citado','seer_citados.colonia',
+        'seer_citados.calle','seer_citados.n_ext','seer_citados.estatus','seer_citados.tipo_notificacion','seer_citados.id_solicitud as id_solicitud',
+        'seer_general.id as id','users.name as notificador_nombre')
         ->orderBy('seer_citados.created_at', 'desc')
         ->limit(500)
         ->get();
-
+        */
         return view('notificaciones.indexHitorial',compact('mis_notificaciones'));
     }
 
