@@ -2954,20 +2954,44 @@ class SeerController extends Controller
         $userRole = $user->roles->pluck('name')->all();
 
         if($userRole[0] == "Auxiliar" || $userRole[0] == "Excepcion"){
-            $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
-            ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
-            ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
-            ->select('seer_general.id','seer_general.consecutivo','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
-            'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
-            ->where('seer_general.delegacion', $user["delegacion"])
-            ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
-            ->orderBy('seer_general.fecha')
-            ->get();
+            if(($user["delegacion"] == "Morelia") || ($user["delegacion"] == "Zitácuaro")){
+                $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
+                ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
+                ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+                ->select('seer_general.id','seer_general.consecutivo','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
+                'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
+                ->whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])
+                ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
+                ->orderBy('seer_general.fecha')
+                ->get();
+            }
+            if(($user["delegacion"] == "Uruapan") || ($user["delegacion"] == "Lázaro Cárdenas")){
+                $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
+                ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
+                ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+                ->select('seer_general.id','seer_general.consecutivo','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
+                'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
+                ->whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])
+                ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
+                ->orderBy('seer_general.fecha')
+                ->get();
+            }
+            if(($user["delegacion"] == "Zamora") || ($user["delegacion"] == "Sahuayo")){
+                $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
+                ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
+                ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+                ->select('seer_general.id','seer_general.consecutivo','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
+                'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
+                ->whereIn('seer_general.delegacion', ["Sahuayo", "Zamora"])
+                ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
+                ->orderBy('seer_general.fecha')
+                ->get();
+            }
         }
         else if($userRole[0] == "Conciliador"){
             $permisos = PermisosConciliador::where('id_conciliador',$id)->first();
             if($permisos["tipo"] == "Ambos"){
-                if($user["delegacion"] == "Morelia"){
+                if(($user["delegacion"] == "Morelia") || ($user["delegacion"] == "Zitácuaro")){
                     $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
                     ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
                     ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
@@ -2978,7 +3002,7 @@ class SeerController extends Controller
                     ->orderBy('seer_general.fecha')
                     ->get();
                 }
-                if($user["delegacion"] == "Uruapan"){
+                if(($user["delegacion"] == "Uruapan") || ($user["delegacion"] == "Lázaro Cárdenas")){
                     $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
                     ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
                     ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
@@ -2989,7 +3013,7 @@ class SeerController extends Controller
                     ->orderBy('seer_general.fecha')
                     ->get();
                 }
-                if($user["delegacion"] == "Zamora"){
+                if(($user["delegacion"] == "Zamora") || ($user["delegacion"] == "Sahuayo")){
                     $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
                     ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
                     ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
@@ -3001,15 +3025,39 @@ class SeerController extends Controller
                     ->get();
                 }
             }else{
-                $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
-                ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
-                ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
-                ->select('seer_general.id','seer_general.consecutivo','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
-                'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
-                ->where('seer_general.delegacion', $user["delegacion"])
-                ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
-                ->orderBy('seer_general.fecha')
-                ->get();
+                if(($user["delegacion"] == "Morelia") || ($user["delegacion"] == "Zitácuaro")){
+                    $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
+                    ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
+                    ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+                    ->select('seer_general.id','seer_general.consecutivo','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
+                    'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
+                    ->whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])
+                    ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
+                    ->orderBy('seer_general.fecha')
+                    ->get();
+                }
+                if(($user["delegacion"] == "Uruapan") || ($user["delegacion"] == "Lázaro Cárdenas")){
+                    $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
+                    ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
+                    ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+                    ->select('seer_general.id','seer_general.consecutivo','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
+                    'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
+                    ->whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])
+                    ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
+                    ->orderBy('seer_general.fecha')
+                    ->get();
+                }
+                if(($user["delegacion"] == "Zamora") || ($user["delegacion"] == "Sahuayo")){
+                    $solicitudes = SeerPerGeneral::where('validado_conciliador','Pendiente')
+                    ->join('catalogo_rama','catalogo_rama.id','seer_general.id_rama')
+                    ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+                    ->select('seer_general.id','seer_general.consecutivo','seer_general.fecha','seer_solicitante.nombre','seer_general.delegacion','seer_general.actividad',
+                    'catalogo_rama.rama_industrial','seer_general.tipo_solicitud','seer_general.estatus')
+                    ->whereIn('seer_general.delegacion', ["Sahuayo", "Zamora"])
+                    ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
+                    ->orderBy('seer_general.fecha')
+                    ->get();
+                }
             }
         }
         else if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador"){
@@ -9057,30 +9105,46 @@ class SeerController extends Controller
         $isAudiencia = 'No';
 
         if($userRole[0] == "Auxiliar" || $userRole[0] == "Excepcion"){
-            $solicitudes = SeerPerGeneral::where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(500)->get();
-            foreach ($solicitudes as $solicitud) {
-                $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
-                $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+            if(($user["delegacion"] == "Morelia") || ($user["delegacion"] == "Zitácuaro")){
+                $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
+                foreach ($solicitudes as $solicitud) {
+                    $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                    $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                }
             }
+            if(($user["delegacion"] == "Uruapan") || ($user["delegacion"] == "Lázaro Cárdenas")){
+                $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
+                foreach ($solicitudes as $solicitud) {
+                    $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                    $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                }
+            }
+            if(($user["delegacion"] == "Zamora") || ($user["delegacion"] == "Sahuayo")){
+                $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
+                foreach ($solicitudes as $solicitud) {
+                    $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                    $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                }
+            }    
         }
         else if($userRole[0] == "Conciliador"){
             $permisos = PermisosConciliador::where('id_conciliador',$id)->first();
             if($permisos["tipo"] == "Ambos"){
-                if($user["delegacion"] == "Morelia"){
+                if(($user["delegacion"] == "Morelia") || ($user["delegacion"] == "Zitácuaro")){
                     $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($solicitudes as $solicitud) {
                         $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
                         $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
                     }
                 }
-                if($user["delegacion"] == "Uruapan"){
+                if(($user["delegacion"] == "Uruapan") || ($user["delegacion"] == "Lázaro Cárdenas")){
                     $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($solicitudes as $solicitud) {
                         $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
                         $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
                     }
                 }
-                if($user["delegacion"] == "Sahuayo"){
+                if(($user["delegacion"] == "Zamora") || ($user["delegacion"] == "Sahuayo")){
                     $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($solicitudes as $solicitud) {
                         $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
@@ -9089,10 +9153,26 @@ class SeerController extends Controller
                 }
             }
             else{
-                $solicitudes = SeerPerGeneral::where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(500)->get();
-                foreach ($solicitudes as $solicitud) {
-                    $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
-                    $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                if(($user["delegacion"] == "Morelia") || ($user["delegacion"] == "Zitácuaro")){
+                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    foreach ($solicitudes as $solicitud) {
+                        $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                        $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                    }
+                }
+                if(($user["delegacion"] == "Uruapan") || ($user["delegacion"] == "Lázaro Cárdenas")){
+                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    foreach ($solicitudes as $solicitud) {
+                        $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                        $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                    }
+                }
+                if(($user["delegacion"] == "Zamora") || ($user["delegacion"] == "Sahuayo")){
+                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    foreach ($solicitudes as $solicitud) {
+                        $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                        $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                    }
                 }
             }
         }

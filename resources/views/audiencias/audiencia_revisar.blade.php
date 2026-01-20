@@ -259,7 +259,7 @@
                                     <div id="justificacion"><br>
                                         <div class="col-xs-12 col-sm-12 col-md-12"  style="border:1px solid black;">
                                             <div class="form-group">
-                                                <label for="name">PRIMERA MANIFESTACIÓN DE LAS PARTES</label>
+                                                <label for="name">RESOLUCIÓN PRIMERA MANIFESTACIÓN</label>
                                                 <textarea name="primera" class="form-control"> {{$conciliadores->resolicion_primera}}</textarea>
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
@@ -270,7 +270,7 @@
                                     <div id="justificacion"><br>
                                         <div class="col-xs-12 col-sm-12 col-md-12" style="border:1px solid black;">
                                             <div class="form-group">
-                                                <label for="name">PROPUESTA DE CONVENIO CONCILIATORIO</label>
+                                                <label for="name">RESOLUCIÓN JUSTIFICACIÓN PROPUESTA</label>
                                                 <textarea name="justificacion" class="form-control" >{{$conciliadores->resolicion_justificacion}}</textarea>
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
@@ -281,7 +281,7 @@
                                     <div id="segunda" ><br>
                                         <div class="col-xs-12 col-sm-12 col-md-12" style="border:1px solid black;">
                                             <div class="form-group">
-                                                <label for="name">SEGUNDA MANIFESTACIÓN DE LAS PARTES</label>
+                                                <label for="name">RESOLUCIÓN SEGUNDA MANIFESTACIÓN</label>
                                                 <textarea name="segunda" class="form-control" >{{$conciliadores->resolicion_segunda}}</textarea>
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.

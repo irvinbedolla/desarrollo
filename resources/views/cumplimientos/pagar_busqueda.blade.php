@@ -113,7 +113,7 @@
                     @endforeach
                 </div>
                 <div class="modal-body">
-                    <textarea name="observaciones" style="width:100%; height: 200px;"></textarea>
+                    <textarea name="observaciones" style="width:100%; height: 200px;" required></textarea>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>

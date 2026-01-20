@@ -55,7 +55,7 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12"  style="border:1px solid black;">
                                         <div class="form-group">
-                                            <label for="name">PRIMERA MANIFESTACIÓN DE LAS PARTES</label>
+                                            <label for="name">RESOLUCIÓN PRIMERA MANIFESTACIÓN</label>
                                             <textarea name="primera" class="form-control" required></textarea>
                                             <div class="invalid-feedback">
                                                 El campo es obligatorio.
@@ -81,7 +81,7 @@
                                     <div id="justificacion" style="display:none"><br>
                                         <div class="col-xs-12 col-sm-12 col-md-12" style="border:1px solid black;">
                                             <div class="form-group">
-                                                <label for="name">PROPUESTA DE CONVENIO CONCILIATORIO</label>
+                                                <label for="name">RESOLUCIÓN JUSTIFICACIÓN PROPUESTA</label>
                                                 <textarea name="justificacion" class="form-control" required></textarea>
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
@@ -97,7 +97,7 @@
                                     <div id="segunda" style="display:none"><br>
                                         <div class="col-xs-12 col-sm-12 col-md-12" style="border:1px solid black;">
                                             <div class="form-group">
-                                                <label for="name">SEGUNDA MANIFESTACIÓN DE LAS PARTES</label>
+                                                <label for="name">RESOLUCIÓN SEGUNDA MANIFESTACIÓN</label>
                                                 <textarea name="segunda" class="form-control" required></textarea>
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
@@ -337,7 +337,18 @@
             box-shadow: 0 0 8px #FFD700;
         }
         
-        #resumenCita .alert-info {
+        /*#resumenCita .alert-info {
+            background-color: #e0e7ff;
+            color: #1e293b;              
+            border: 1px solid #6366f1;   
+            border-radius: 8px;
+            font-size: 10px;
+            padding: 8px 16px;
+            margin-bottom: 0;
+            box-shadow: 0 2px 8px rgba(99,102,241,0.08);
+        }*/
+
+        .resumenCita .alert-info {
             background-color: #e0e7ff;
             color: #1e293b;              
             border: 1px solid #6366f1;   
@@ -1340,19 +1351,26 @@
             return html;
         }
 
-        function generatePagoRow(montoVal, diasVal, horaVal, descripcionVal) {
+        function generatePagoRow(montoVal, diasVal, horaVal, descripcionVal, tipoAgendaVal) {
             var html = '';
+            var esPagoAudiencia = (tipoAgendaVal === 'Conciliador');
+
             html += '<div class="inputFormRow2 row mb-2 align-items-end">';
             html += '<div class="col-xs-12 col-sm-12 col-md-12">';
             html += '<div class="form-group">';
             html += '<label for="confirm-password"><br>Fecha y hora de pago</label>';
             html += '<div class="row">';
-            html += '<div class="row">';
-            html += '<div class="col-12">';
-            html += '<button type="button" class="btn btn-custom-morado w-75 btn-open-calendar" data-bs-toggle="modal" data-bs-target="#calendarModal"> Seleccionar Horario</button>';
+            
+            html += '<div class="contenedor-boton-pago col-12 mb-2 mt-2">';
+            if (esPagoAudiencia) {
+                html += '<button type="button" class="btn btn-success h-100 w-75 btn-pagar-audiencia-accion">Pagar en la audiencia</button>';
+            } else {
+                html += '<button type="button" class="btn btn-custom-morado w-75 btn-open-calendar" data-bs-toggle="modal" data-bs-target="#calendarModal"> Seleccionar Horario</button>';
+            }
+
             html += '</div>';
             html += '</div>';
-            html += '<div class="col-12 mt-2">';
+            html += '<div class="col-12 mt-2 resumenCita">';
             html += '<div class="resumenCita" style="display:'+(diasVal? 'block':'none')+';width:100%;">';
             html += '<div class="alert alert-info w-75">';
             html += '<strong>Cita seleccionada:</strong> <span class="fechaResumen">'+ (diasVal? diasVal : '') +'</span> a las <span class="horaResumen">'+ (horaVal? (horaVal.substring? horaVal.substring(0,5): horaVal) : '') +'</span>';
@@ -1421,13 +1439,33 @@
                         var dias = data['dias_pagos'] && data['dias_pagos'][k] ? data['dias_pagos'][k] : '';
                         var hora = data['hora_pagos'] && data['hora_pagos'][k] ? data['hora_pagos'][k] : '';
                         var descp = data['descripcion_pagos'] && data['descripcion_pagos'][k] ? data['descripcion_pagos'][k] : '';
-                        $('#newRowaPago').append(generatePagoRow(mp, dias, hora, descp));
+                        var tipoAgenda = data['tipo_pagoAgenda'] && data['tipo_pagoAgenda'][k] ? data['tipo_pagoAgenda'][k] : '';
+                        $('#newRowaPago').append(generatePagoRow(mp, dias, hora, descp, tipoAgenda));
                     }
+                    // Reenumerar los pagos (Cumplimiento 1, 2, etc)
                     actualizaNumeroPago();
                 }
 
                 setTimeout(function(){ calcularTotal(); }, 200);
             } catch(e){ console.error('Error populating preview data', e); }
+        });
+
+        $(document).ready(function(){
+            var data = window.__previewData;
+            if(!data) return;
+
+            var tipoAgenda0 = (data['tipo_pagoAgenda'] && data['tipo_pagoAgenda'][0]) ? data['tipo_pagoAgenda'][0] : '';
+            var sel0 = $('#newRowaPago').find('#tipoPago').first();
+            if(sel0.length){
+                if(tipoAgenda0 === 'Conciliador'){
+                    sel0.val('pagarAudiencia');
+                } else if(tipoAgenda0 === 'Audiencia'){
+                    sel0.val('agendar');
+                }
+                if(sel0.val()){
+                    sel0.trigger('change');
+                }
+            }
         });
 
         $(document).ready(function(){
@@ -1482,7 +1520,7 @@
                     }
                 });
 
-                if(!valid){
+                if (!valid) {
                     e.preventDefault();
                     e.stopImmediatePropagation();
                     var btn = $(this).find('button[type="submit"]');
