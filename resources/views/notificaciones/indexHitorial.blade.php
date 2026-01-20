@@ -15,7 +15,6 @@
                                     <div class="table-responsive">
                                         <table id="example" class="table table-striped mt-1" style="text-align:center">
                                             <thead style="background-color: #4A001F;">
-                                                <th style="color: #fff;">ID</th>
                                                 <th style="color: #fff;">Expediente</th>
                                                 <th style="color: #fff;">Solicitante</th>
                                                 <th style="color: #fff;">Citado</th>
@@ -29,7 +28,6 @@
                                             <tbody>
                                                 @foreach($mis_notificaciones as $notificacion)
                                                     <tr>
-                                                        <td>{{$notificacion->id_citado}}</td>
                                                         <td>{{$notificacion->NUE}}</td>
                                                         <td>{{$notificacion->nombre_solicitado}}</td>
                                                         <td>{{$notificacion->nombre}} {{$notificacion->primer_apellido}} {{$notificacion->segundo_apellido}}</td>

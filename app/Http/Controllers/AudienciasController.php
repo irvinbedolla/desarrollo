@@ -69,7 +69,7 @@ class AudienciasController extends Controller
 
             return response()->json($eventos);
         }
-        else if ($userRole[0] == "Delegado" || $userRole[0] == "Enlace") {
+        else if ($userRole[0] == "Delegado" || $userRole[0] == "Enlace" || $userRole[0] == "Auxiliar") {
            
             if($sede == "Morelia"){
                 $delegaciones = ['Morelia', 'Zitácuaro'];

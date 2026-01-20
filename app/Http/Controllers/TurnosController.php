@@ -1403,14 +1403,25 @@ class TurnosController extends Controller
     public function concluir_ratificaciones($id){
         $id_usuario = auth()->user()->id;
         $user = User::find($id_usuario);
+        $sede = $user->delegacion;
+
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
         $relacionEloquent = 'roles';
 
+        if($sede == "Morelia" || $sede =='Zitácuaro'){
+            $delegaciones = ['Morelia', 'Zitácuaro'];
+        }else if($sede == "Uruapan" || $sede == "Lázaro Cárdenas"){
+            $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
+        }else if($sede == "Zamora" || $sede =='Sahuayo'){
+            $delegaciones = ['Zamora', 'Sahuayo'];
+        }
+
         $conciliadores = User::whereHas($relacionEloquent, function ($query) {
             return $query->where('name', '=', 'Conciliador');
         })
-        ->where('delegacion', $user["delegacion"])
+        ->whereIn('delegacion', $delegaciones)
+        //->where('delegacion', $user["delegacion"])
         ->get();
 
         return view('/ratificaciones/concluir',compact('id','conciliadores'));
