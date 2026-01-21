@@ -1118,3 +1118,38 @@
             }
         });
     </script>
+
+    <script>
+        function validarfechaNacimiento(){
+            var fechaNacimiento = document.getElementById("fecha_nacimiento").value;
+            if(!fechaNacimiento){
+                $('#años_edad').val('');
+                return;
+            }
+
+            var hoy = new Date();
+            var nac = new Date(fechaNacimiento + 'T00:00:00');
+            var anios = hoy.getFullYear() - nac.getFullYear();
+            var m = hoy.getMonth() - nac.getMonth();
+            if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) {
+                anios--;
+            }
+            
+            //document.getElementById("documentacionAdulto").style.display = "none";
+            //document.getElementById("documentacionMenor").style.display = "none";
+        
+            //document.getElementById("años_edad").value = edad;
+            //Si la fecha de nacimiento es menos a 15 años
+            if(anios <= 15) {
+            alert("Requieres tener al menos 15 años de edad. Debes presentarte con tu tutor legal.");
+            }
+            if(anios > 15 && anios < 18){
+            alert("Debes presentarte con tu tutor legal.");
+            //document.getElementById("documentacionMenor").style.display = "block";
+            }
+            else{
+            //document.getElementById("documentacionAdulto").style.display = "block";
+            }
+            $('#años_edad').val(anios);
+        }
+    </script>
