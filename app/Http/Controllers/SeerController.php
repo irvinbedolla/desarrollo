@@ -3311,10 +3311,17 @@ class SeerController extends Controller
             $path = Storage::putFileAs('documentosSolicitud', $request->file('indetificacion'), $documentoidentificacion);
             SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoIdentificacion' => $documentoidentificacion ]);
         }
-        
             DB::commit();
             session()->forget(['citados_edicion_new', 'citados_edicion_delete']);
+            if ($request->input('toquen') === 'iniciar_audiencia') {
+                $audiencia = Audiencias::where('id_solicitud', $data["id"])
+                        ->orderBy('fecha', 'desc')
+                        ->first();
+
+                return redirect()->route('inicioAudiencia', ['id' => $audiencia->id_solicitud, 'estatus' => 'Confirmado']);
+            }
             return redirect()->route('todas_audiencias'); 
+
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('preserve_edit_session', true);
@@ -6300,7 +6307,7 @@ class SeerController extends Controller
         $ramas          = SolicitudRama::all();
         $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
         $citados        = SeerCitados::where("id_solicitud",$id)->get();
-
+        $citadosConMulta = $citados->where('tipo_notificacion', 'Multa');
         $citadosNew = session('citados_edicion_new', []);
         //dd($citadosNew);
         $citadosDelete = session('citados_edicion_delete', []);
@@ -6364,7 +6371,7 @@ class SeerController extends Controller
         )
         ->exists();
 
-        return view('audiencias.revisar_audiencia', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores', 'isAudiencia','notificaciones','historial_audiencias','datosIncompletos'));
+        return view('audiencias.revisar_audiencia', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores', 'isAudiencia','notificaciones','historial_audiencias','datosIncompletos','citadosConMulta'));
     }
 
 
@@ -7660,6 +7667,13 @@ class SeerController extends Controller
         $pagos = Pagos::find($id);
         if($pagos["id_solicitud"] == 0){
             $solicitud = Pagos::find($id);
+            $delegacion = $solicitud->delegacion;
+            $delegado = User::where('delegacion', $delegacion)
+                ->whereHas('roles', function ($query) {
+                    $query->where('name', 'Delegado');
+                })
+                ->select('users.id', 'users.name', 'users.delegacion')
+                ->first();
             $conciliador  = User::join("pago_solicitud","pago_solicitud.id_conciliador","=","users.id");
             $conciliador = $conciliador->where("pago_solicitud.id", "=", $pagos["id"])
             ->select('users.name')
@@ -7667,6 +7681,13 @@ class SeerController extends Controller
             $html = view('PDF/Cumplimientos/pagosParciales', compact('id', 'solicitud','conciliador','pagos'))->render();
         }else{
             $solicitud = SeerPerGeneral::find($pagos["id_solicitud"]);
+            $delegacion = $solicitud->delegacion;
+            $delegado = User::where('delegacion', $delegacion)
+                ->whereHas('roles', function ($query) {
+                    $query->where('name', 'Delegado');
+                })
+                ->select('users.id', 'users.name', 'users.delegacion')
+                ->first();
             $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
             $conciliador = $conciliador->where("seer_general.id", "=", $solicitud["id"])
             ->select('users.name')

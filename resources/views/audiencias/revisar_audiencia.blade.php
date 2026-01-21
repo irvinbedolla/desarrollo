@@ -126,7 +126,7 @@
                                 </div>
                             @endif
 
-                             <form class="needs-validation" novalidate method="POST" action="{{route('audiencia_confirmar')}}" enctype='multipart/form-data'>
+                            <form class="needs-validation" novalidate method="POST" action="{{route('audiencia_confirmar')}}" enctype='multipart/form-data'>
                                     @csrf
                                     <input type="hidden" name="id" value="{{$id}}">
                                     <input type="hidden" name="isAudiencia" value="1">
@@ -944,7 +944,7 @@
                                             </div><br>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <label for="password">Identificación Oficial</label><br>
-                                                <a class="btn btn-info" target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoIdentificacion}}">Visualizar</a><br>
+                                                <a class="btn btn-info" target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoIdentificacion}}">Visualizar</a>
                                                 <input type="file" name="documentoCurp" accept=".pdf" class="form-control">
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-12">
@@ -1185,26 +1185,67 @@
                                                 <div class="col-md-6">
                                                     <h4 class="text-center"><strong>Actas de Audiencia</strong></h4>
                                                     <hr>
-                                                    @forelse($historial_audiencias as $audiencia)
-                                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                                            <div>
-                                                                <strong>Folio: {{ $audiencia->folio_audiencia }}</strong>
-                                                            </div>
+                                                    <table class="table table-borderless" style="width: 100%; border-collapse: collapse; margin-bottom: 0;">
+                                                        <tbody>
+                                                            @forelse($historial_audiencias as $audiencia)
+                                                                <tr style="border: none;">
+                                                                    <td style="padding: 5px 0; border: none;">
+                                                                        <strong>Folio:</strong> {{ $audiencia->folio_audiencia }}
+                                                                    </td>
+                                                                    <td style="padding: 5px 0; border: none;">
+                                                                        <strong>Fecha:</strong> {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d/m/Y') }}
+                                                                    </td>
+                                                                    <td style="padding: 5px 0; border: none;">
+                                                                        <strong>Hora:</strong> {{ \Carbon\Carbon::parse($audiencia->hora)->format('H:i') }} HRS.
+                                                                    </td>
+                                                                    <td style="padding: 5px 0; border: none;">
+                                                                        <strong>Estatus:</strong> {{ $audiencia->estatus ?? 'Pendiente' }}
+                                                                    </td>
+                                                                    <td style="padding: 5px 0; border: none; text-align: right;">
+                                                                        @if($audiencia->estatus !== 'Pendiente')
+                                                                            <a class="btn btn-info btn-xs" href="{{ route('VerPDFAudiencia', $audiencia->id_solicitud) }}" target="_blank">
+                                                                                Visualizar
+                                                                            </a>
+                                                                        @endif
+                                                                    </td>
+                                                                </tr>
+                                                            @empty
+                                                                <tr>
+                                                                    <td colspan="5" style="border: none; padding: 10px 0;">
+                                                                        No hay audiencias registradas para esta solicitud.
+                                                                    </td>
+                                                                </tr>
+                                                            @endforelse
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h4 class="text-center"><strong>Multas</strong></h4>
+                                                    <hr>
+                                                    <div class="form-group">
+                                                        @foreach($historial_audiencias as $audiencia_historial)
+                                                            @foreach($citados as $citado) 
+                                                                @if($audiencia_historial->estatus !== 'Pendiente' && $citado->tipo_notificacion === 'Multa')
+                                                                    <div class="row" style="margin-bottom: 5px; border-bottom: 1px dotted #ccc; padding: 5px 0;">
+                                                                        <div class="col-sm-5">
+                                                                            <label>Nombre Citado</label><br>
+                                                                            <strong>{{ $citado->nombre }} {{ $citado->primer_apellido }}</strong>
+                                                                        </div>
+                                                                        
+                                                                        <div class="col-sm-4">
+                                                                            <label>Multa</label><br>
+                                                                            <a class="btn btn-success btn-xs" 
+                                                                            href="{{ route('PDFmulta', ['id' => $citado->id, 'id_solicitud' => $general->id]) }}" 
+                                                                            target="_blank">
+                                                                            Visualizar
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
 
-                                                            <div>
-                                                                <strong>
-                                                                    Estatus:
-                                                                    {{ $audiencia->estatus_conciliacion ?? 'Pendiente' }}
-                                                                </strong>
-                                                            </div>
-
-                                                            @if(!empty($audiencia->estatus_conciliacion) && !($audiencia->estatus_conciliacion === 'Pendiente' && $datosIncompletos ))
-                                                                <a class="btn btn-info" href="{{ route('VerPDFAudiencia', $audiencia->id_solicitud) }}" target="_blank"> Visualizar </a>
-                                                            @endif
-                                                        </div>
-                                                    @empty
-                                                        <p>No hay audiencias registradas para esta solicitud.</p>
-                                                    @endforelse
+                                                                @endif
+                                                            @endforeach
+                                                        @endforeach
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -1272,6 +1313,8 @@
                                                 @if(($general->estatus !== "Conciliacion") || ($general->estatus !== "No conciliacion") || ($general->estatus !== "Archivada"))
                                                     @if($citadosCount > 0)
                                                         <button type="submit" class="btn btn-primary" name="toquen" value="1">Guardar Edición</button>
+                                                        <button type="submit" class="btn btn-success" name="toquen" value="iniciar_audiencia"> Guardar e Iniciar Audiencia </button>
+                                                        {{--<a class="btn btn-success" href="{{ route('inicioAudiencia', $audiencia->id_solicitud, 'Confirmado') }}" value="1">Guardar e Iniciar Audiencia</button>--}}
                                                     @else
                                                         <button type="button" class="btn btn-secondary" disabled title="Agregue al menos un citado para poder guardar."  name="toquen" value="1">Guardar Edición</button>
                                                         <div class="text-muted mt-2">Debe agregar al menos un citado para poder guardar.</div>

@@ -104,11 +104,11 @@
                             <td>{{ $solicitud->NUE }} </td>
                         </tr> 
                     </table>
-                </div><br><br><br><br>
-                <center><p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br> 
+                </div><br><br><br>
+                <center><p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br> <br><br>
                         ACTA DE MULTA POR INCOMPARECENCIA</b></p></center>
                 <p>En <b>{{ $direccion_sede }}</b> a <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, el(la) funcionario(a) 
-                    conciliador(a) <b>{{$conciliador->name}}</b>, adscrito al Centro 
+                    conciliador(a) <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}</b>, adscrito al Centro 
                     de Conciliación Laboral del Estado de Michoacán de Ocampo, <b>hace constar y certifica</b> que la parte citada 
                     <b>{{ $citado->nombre }} @if(!empty($citado->primer_apellido)){{ $citado->primer_apellido }}@endif  @if(!empty($citado->segundo_apellido)){{ $citado->segundo_apellido }}@endif no compareció,</b> 
                     a la Audiencia de Conciliación prevista para las 
@@ -116,7 +116,7 @@
                     con <b>la razón de notificación de fecha {{ \Carbon\Carbon::parse($citado->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}. Doy fe</b>.
                 </p>
                 <p>
-                    <b>{{ $direccion_sede }}</b>, a <b>{{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e Y') }}</b>.
+                    <b>Michoacán de Ocampo</b>, a <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>.
                 </p>
                 <p>
                     Advirtiéndose así, que la parte citada <b>{{ $citado->nombre }} @if(!empty($citado->primer_apellido)){{ $citado->primer_apellido }}@endif  @if(!empty($citado->segundo_apellido)){{ $citado->segundo_apellido }}@endif</b>, no compareció a la 
@@ -162,9 +162,9 @@
                     <tr>
                         <td>Domicilio:</td>
                         <td>
-                            {{ $citado->tipo_vialidad }} {{ $citado->calle }} #{{ $citado->n_ext }}
+                            {{ $citado->tipo_vialidad }} {{ $citado->calle }} NO. {{ $citado->n_ext }}
                             @if(!empty($citado->n_int))
-                                int. {{ $citado->n_int }}
+                                INT. {{ $citado->n_int }}
                             @endif
                             {{ $citado->colonia }},
                             {{ mb_strtoupper($municipioEmpresa, 'UTF-8') }},
@@ -178,16 +178,16 @@
                 </b></p>
 
                 <p>
-                    Así lo proveyó <b>{{$conciliador->name}}</b>, funcionario(a) conciliador(a) adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
+                    Así lo proveyó <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}</b>, funcionario(a) conciliador(a) adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
                 </p>
-
-                <p><center><b>___________________________________<br> {{$conciliador->name}} <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>               
+               
+                <p><center><b>___________________________________<br> {{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>               
             </div>
             <script type="text/php">
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");
                     $size = 10;
-                    $y = $pdf->get_height() - 30;
+                    $y = $pdf->get_height() - 44;
                     $x = ($pdf->get_width() / 2) - 50;
                     $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
                     $pdf->page_text($x, $y, $text, $font, $size, array(0, 0, 0));
