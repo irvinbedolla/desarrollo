@@ -144,8 +144,8 @@
                                 @foreach($prestaciones as $concepto)
                                     <tr>
                                         <td>{{ mb_strtoupper($concepto->descripcion, 'UTF-8') }}</td>
-                                        <td><b>${{ number_format($concepto->monto, 2) }} M.N.</b></td>
-                                        <td>{{ $conceptosTexto[$concepto->id] }}</td> 
+                                        <td><b>${{ number_format($concepto->monto, 2) }}</b></td>
+                                        <td>{{ $conceptosTexto[$concepto->id] }}  M.N.</td> 
                                     </tr>
                                 @endforeach
                                 <!--</p>-->
@@ -168,7 +168,7 @@
                                     <tr>
                                         <td>{{ $deduccion->descripcion }}</td>
                                         <td><b>${{ number_format($deduccion->monto, 2) }}</b></td>
-                                        <td>{{ $deduccionesTexto[$deduccion->id] }}</td> 
+                                        <td>{{ $deduccionesTexto[$deduccion->id] }} M.N.</td> 
                                     </tr>
                                 @endforeach  
                             </tbody>
@@ -179,7 +179,7 @@
                             <thead>
                                 <tr style="background-color: #f0f0f0;">
                                     <td class="text-right"><strong>Neto a pagar: </strong></td>
-                                    <td><strong>${{ number_format($pagoTotal, 2) }} M.N.</strong></td>
+                                    <td><strong>${{ number_format($pagoTotal, 2) }}</strong></td>
                                 </tr>
                             </thead>   
                         </table>   
