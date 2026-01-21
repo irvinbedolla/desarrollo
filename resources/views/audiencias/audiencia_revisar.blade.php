@@ -50,6 +50,7 @@
                                             <td>
                                                 <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal1" data-id="{{ $id }}">Editar</a>
                                             </td>
+                                            <td> </td>
                                         </tr>
                                         @php
                                             $fechaActual = date('Y-m-d');
@@ -150,7 +151,7 @@
                                                                 <form method="POST" action="{{ route('concepto_eliminar_pago', $concepto->id) }} ">
                                                                     @csrf
                                                                     <input type="hidden" name="_method" value="DELETE">
-                                                                    <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
+                                                                    <!--button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</!--button-->
                                                                 </form>
                                                             @elseif(isset($concepto->session_index))
                                                                 <form method="POST" action="{{ route('eliminar_item_sesion', $id) }}">
@@ -192,7 +193,7 @@
                                                                 <form method="POST" action="{{ route('eliminar_deduccion_audiencia', $concepto->id) }} ">
                                                                     @csrf
                                                                     <input type="hidden" name="_method" value="DELETE">
-                                                                    <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
+                                                                    <!--button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</!--button-->
                                                                 </form>
                                                             @elseif(isset($concepto->session_index))
                                                                 <form method="POST" action="{{ route('eliminar_item_sesion', $id) }}">
@@ -236,7 +237,7 @@
                                                                 <form method="POST" action="{{ route('pago_eliminar_pago', $pago->id) }} ">
                                                                     @csrf
                                                                     <input type="hidden" name="_method" value="DELETE">
-                                                                    <button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</button>
+                                                                    <!--button class="btn btn-danger" onclick=editar_rol(); type="submit">Eliminar</!--button-->
                                                                 </form>
                                                             @elseif(isset($pago->session_index))
                                                                 <form method="POST" action="{{ route('eliminar_item_sesion', $id) }}">
@@ -260,7 +261,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-12"  style="border:1px solid black;">
                                             <div class="form-group">
                                                 <label for="name">RESOLUCIÓN PRIMERA MANIFESTACIÓN</label>
-                                                <textarea name="primera" class="form-control"> {{$conciliadores->resolicion_primera}}</textarea>
+                                                <textarea name="primera" class="form-control" readonly> {{$conciliadores->resolicion_primera}}</textarea>
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -271,7 +272,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-12" style="border:1px solid black;">
                                             <div class="form-group">
                                                 <label for="name">RESOLUCIÓN JUSTIFICACIÓN PROPUESTA</label>
-                                                <textarea name="justificacion" class="form-control" >{{$conciliadores->resolicion_justificacion}}</textarea>
+                                                <textarea name="justificacion" class="form-control" readonly>{{$conciliadores->resolicion_justificacion}}</textarea>
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -282,7 +283,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-12" style="border:1px solid black;">
                                             <div class="form-group">
                                                 <label for="name">RESOLUCIÓN SEGUNDA MANIFESTACIÓN</label>
-                                                <textarea name="segunda" class="form-control" >{{$conciliadores->resolicion_segunda}}</textarea>
+                                                <textarea name="segunda" class="form-control" readonly>{{$conciliadores->resolicion_segunda}}</textarea>
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -290,7 +291,7 @@
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-6"><br>
                                             <label for="name">Final de la audiencia</label>
-                                            <select id="conclucion" name="conclucion" class="form-control">
+                                            <select style="pointer-events: none; background-color: #eee;" id="conclucion" name="conclucion" class="form-control">
                                                 <option>Seleccione</option>
                                                 <option value="Conciliacion" {{ $conciliadores["conclucion"] == "Conciliacion" ? "selected" : '' }}>Hubo Convenio</option>
                                                 <option value="No conciliacion" {{ $conciliadores["conclucion"] == "No conciliacion" ? "selected" : '' }}>No hubo Convenio</option>
@@ -302,7 +303,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-2"><br>
                                             <div class="form-group">
                                                 <label for="name">Días de vacaciones</label>
-                                                <input type="number" name="vacaciones" class="form-control" value="{{ $conciliadores["vacaciones"] }}"> 
+                                                <input type="number" name="vacaciones" class="form-control" value="{{ $conciliadores["vacaciones"] }}" readonly> 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -311,7 +312,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-2"><br>
                                             <div class="form-group">
                                                 <label for="name">Días de Aguinaldo</label>
-                                                <input type="number" name="aguinaldo" class="form-control" value="{{ $conciliadores["aguinaldo"] }}"> 
+                                                <input type="number" name="aguinaldo" class="form-control" value="{{ $conciliadores["aguinaldo"] }}" readonly> 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -320,7 +321,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-2"><br>
                                             <div class="form-group">
                                                 <label for="name">Otros</label>
-                                                <input type="text" name="otros" class="form-control" value="{{ $conciliadores["otros"] }}"> 
+                                                <input type="text" name="otros" class="form-control" value="{{ $conciliadores["otros"] }}" readonly> 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -329,7 +330,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-3"><br>
                                             <div class="form-group">
                                                 <label for="name">Horario laboral</label>
-                                                <input type="text" name="horario" class="form-control" value="{{ $conciliadores["horario"] }}"> 
+                                                <input type="text" name="horario" class="form-control" value="{{ $conciliadores["horario"] }}" readonly> 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -338,7 +339,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-3"><br>
                                             <div class="form-group">
                                                 <label for="name">Horario de comida</label>
-                                                <input type="text" name="comida" class="form-control" value="{{ $conciliadores["comida"] }}"> 
+                                                <input type="text" name="comida" class="form-control" value="{{ $conciliadores["comida"] }}" readonly> 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -373,7 +374,7 @@
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-6"><br>
                                                 <label for="name">Tipo de audiencia</label>
-                                                <select name="tipo_audiencia" class="form-control" required> 
+                                                <select style="pointer-events: none; background-color: #eee;" name="tipo_audiencia" class="form-control" required> 
                                                     <option value="">Seleccione</option>
                                                     <option value="Presencial" {{ $conciliadores["tipo_audiencia"] == "Presencial" ? "selected" : '' }}>Presencial</option>
                                                     <option value="Virtual" {{ $conciliadores["tipo_audiencia"] == "Virtual" ? "selected" : '' }}>Virtual</option>

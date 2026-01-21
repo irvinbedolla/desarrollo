@@ -198,8 +198,8 @@
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-6"><br>
                                                 <label for="name">Tipo de audiencia</label>
-                                                <select name="tipo_audiencia" class="form-control">
-                                                    <option>Seleccione</option>
+                                                <select id="tipo_audiencia" name="tipo_audiencia" class="form-control">
+                                                    <option value="">Seleccione</option>
                                                     <option value="Presencial">Presencial</option>
                                                     <option value="Virtual">Virtual</option>
                                                 </select>
@@ -760,10 +760,15 @@
                 var agu = document.querySelector('input[name="aguinaldo"]');
                 var hor = document.querySelector('input[name="horario"]');
                 var com = document.querySelector('input[name="comida"]');
+
+                //var tau = document.querySelector('[name="tipo_audiencia"]');
                 if(vac) vac.required = true;
                 if(agu) agu.required = true;
                 if(hor) hor.required = true;
                 if(com) com.required = true;
+                //if(tau) tau.required = true;
+                const tau = document.getElementById('tipo_audiencia');
+                tau.required = true;
             }
             else if (valorSeleccionado === 'No conciliacion'){
                 document.getElementById('no_conciliacion').style.display = "block";
@@ -775,16 +780,23 @@
                 var agu2 = document.querySelector('input[name="aguinaldo"]');
                 var hor2 = document.querySelector('input[name="horario"]');
                 var com2 = document.querySelector('input[name="comida"]');
+                //var tau2 = document.querySelector('[name="tipo_audiencia"]');
                 if(vac2) vac2.required = false;
                 if(agu2) agu2.required = false;
                 if(hor2) hor2.required = false;
                 if(com2) com2.required = false;
+                //if(tau2) tau2.required = false;
+                const tau2 = document.getElementById('tipo_audiencia');
+                tau2.required = false;
             } 
             else if (valorSeleccionado === 'Reagenda'){
                 document.getElementById('no_conciliacion').style.display = "none";
                 document.getElementById('archivada').style.display = "none"
                 document.getElementById("pagos").style.display = "none";
                 document.getElementById('dias').style.display = "none";
+
+                const tau2 = document.getElementById('tipo_audiencia');
+                tau2.required = false;
 
                 function abrirModalReagendar(){
                     var solicitudEl = document.getElementById('solicitud-id');
@@ -829,6 +841,9 @@
                     document.getElementById('archivada').style.display = "block";
                     document.getElementById("pagos").style.display = "none";
                     document.getElementById('dias').style.display = "none";
+
+                    const tau3 = document.getElementById('tipo_audiencia');
+                    tau3.required = false;
                 } else {
                     document.getElementById('no_conciliacion').style.display = "none";
                     document.getElementById('archivada').style.display = "none";
@@ -840,10 +855,15 @@
                     var agu3 = document.querySelector('input[name="aguinaldo"]');
                     var hor3 = document.querySelector('input[name="horario"]');
                     var com3 = document.querySelector('input[name="comida"]');
+                    //var tau3 = document.querySelector('[name="tipo_audiencia"]');
                     if(vac3) vac3.required = false;
                     if(agu3) agu3.required = false;
                     if(hor3) hor3.required = false;
                     if(com3) com3.required = false;
+                    if(tau3) tau3.required = false;
+                    const tau3 = document.getElementById('tipo_audiencia');
+                    tau3.required = false;
+
                 }
             }
             else if (valorSeleccionado === 'Seleccione'){
@@ -856,10 +876,14 @@
                 var agu4 = document.querySelector('input[name="aguinaldo"]');
                 var hor4 = document.querySelector('input[name="horario"]');
                 var com4 = document.querySelector('input[name="comida"]');
+                //var tau4 = document.querySelector('[name="tipo_audiencia"]');
                 if(vac4) vac4.required = false;
                 if(agu4) agu4.required = false;
                 if(hor4) hor4.required = false;
                 if(com4) com4.required = false;
+                if(tau4) tau4.required = false;
+                const tau4 = document.getElementById('tipo_audiencia');
+                tau4.required = false;
             }
         });
 
