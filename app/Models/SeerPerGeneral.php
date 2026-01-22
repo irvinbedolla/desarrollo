@@ -13,5 +13,9 @@ class SeerPerGeneral extends Model
     protected $fillable = ['fecha','hora','fecha_conflicto','fecha_confirmacion','NUE','actividad','id_rama','solicitante', 'estado_solicitante', 'mun_solicitante', 
     'user_id','delegacion','conciliador_id', 'curp','tipo','tipo_solicitud','validado_conciliador','estatus','observaciones','fecha_terminacion','documentoExpediente',
     'documentoCitatoriosT','pendiente_firma','caso_excepcion','tipo_generacion','consecutivo','año']; 
+
+    public function solicitante() {
+        return $this->hasOne(SeerSolicitante::class, 'id_solicitud');
+    }
 }
 

@@ -26,48 +26,9 @@ class CitaController extends Controller
         ]);
     }
 
-    /*public function eventos() {
-        $citas = Cita::all();
 
-        $eventos = [];
-        foreach ($citas as $cita) {
-
-            if ($cita->estatus === 'cancelada') {
-                $color = '#DA0909';
-            } elseif ($cita->estatus === 'pendiente') {
-                $color = '#EAE300';
-            } elseif ($cita->estatus === 'confirmada') {
-                $color = '#00CE1C';
-            } else {
-                $color = '#CCCCCC';
-            }
-
-            $eventos[] = [
-                'id' => $cita->id,
-                'title' => $cita->motivo,
-                'start' => $cita->fecha->format('Y-m-d') . 'T' . $cita->hora->format('H:i:s'),
-                'extendedProps' => [
-                    'hora' => $cita->hora->format('h:i A'),
-                    'color' => $color,
-                    'fecha' => $cita->fecha->format('d/m/Y'),
-                    'estatus' => $cita->estatus,
-                    'tipo' => $cita->tipo,
-                    'usuario' => $cita->usuario,
-                ]
-            ];
-        }
-
-        return response()->json($eventos);
-    }*/
-
-    public function citas() {
-        //$recepciones = Recepcion::all();
-        $id_usuario = auth()->user()->id;
-        $sede = Auth::user()->delegacion;
-        $user = User::find($id_usuario);
-        $roles = Role::pluck('name','name')->all();
-        $userRole = $user->roles->pluck('name')->all();
-
+    public function citas(Request $request) {
+/*
         if ($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador") {
             $recepciones = Pagos::join('turnos','turnos.id','pago_solicitud.id_solicitud')
             ->where('pago_solicitud.tipo_pago','Ratificacion')
@@ -133,6 +94,70 @@ class CitaController extends Controller
             ->where('delegacion', $user["delegacion"])
             ->get();
         }
+*/
+        $user = auth()->user();
+        $rol = $user->roles->first()->name ?? '';
+        $id_usuario = $user->id;
+        $sede_usuario = $user->delegacion;
+
+        // 1. Iniciamos la consulta base con el Join y los campos necesarios
+        $query = Pagos::join('turnos', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
+            ->where('pago_solicitud.tipo_pago', 'Ratificacion')
+            ->select(
+                'turnos.NUE',
+                'pago_solicitud.descripcion',
+                'pago_solicitud.hora',
+                'pago_solicitud.fecha',
+                'turnos.empresa',
+                'pago_solicitud.nombre_trabajador',
+                'pago_solicitud.estatus',
+                'pago_solicitud.monto',
+                'pago_solicitud.observaciones',
+                'pago_solicitud.id',
+                'pago_solicitud.id_solicitud',
+                'turnos.id_conciliador'
+            )
+            ->selectRaw("CONCAT(turnos.trabajador, ' ', turnos.primero_trabajador, ' ', turnos.segundo_trabajador) as nombre_completo");
+
+        // 2. Aplicamos filtros de seguridad por ROL
+        if (!in_array($rol, ['Super Usuario', 'Administrador'])) {
+            
+            $delegacionesPermitidas = [$sede_usuario];
+
+            if (in_array($rol, ['Conciliador', 'Delegado', 'Enlace', 'Auxiliar'])) {
+                $mapaSedes = [
+                    'Morelia' => ['Morelia', 'Zitácuaro'],
+                    'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+                    'Zamora'  => ['Zamora', 'Sahuayo'],
+                ];
+
+                // Verificamos permiso especial "Ambos"
+                $permisoAmbos = PermisosConciliador::where('id_conciliador', $id_usuario)
+                    ->where('tipo', 'Ambos')
+                    ->exists();
+
+                if ($permisoAmbos && isset($mapaSedes[$sede_usuario])) {
+                    $delegacionesPermitidas = $mapaSedes[$sede_usuario];
+                }
+            }
+
+            // Aplicamos el filtro de delegación (ya sea una o varias)
+            // Nota: Especificamos la tabla para evitar ambigüedad en el join
+            $query->whereIn('pago_solicitud.delegacion', $delegacionesPermitidas);
+        }
+
+        // 3. Filtros opcionales desde el Request (Selects de la interfaz)
+        $query->when($request->sede, function ($q) use ($request) {
+            return $q->where('pago_solicitud.delegacion', $request->sede);
+        });
+
+        $query->when($request->conciliador, function ($q) use ($request) {
+            return $q->where('turnos.id_conciliador', $request->conciliador);
+        });
+
+        // 4. Ejecución final
+        $recepciones = $query->get();
+
         $tipo = 8;
 
         $eventos = [];
@@ -180,187 +205,152 @@ class CitaController extends Controller
     }
 
     //Esta funcion se carga por defecto en el calendario
-    public function pagos() {
-        $id_usuario = auth()->user()->id;
-        $user = User::find($id_usuario);
-        $sede = Auth::user()->delegacion;
-        $roles = Role::pluck('name','name')->all();
-        $userRole = $user->roles->pluck('name')->all();
+    public function pagos(Request $request) {
+        $user = auth()->user();
+        $rol = $user->roles->first()->name ?? '';
+        $tipo = 6;
 
-        if ($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador") {
-            $pagos = Pagos::where('tipo_pago','Audiencia')->get();
-        }
-        else if($userRole[0] == "Conciliador" || $userRole[0] == "Delegado" || $userRole[0] == "Enlace"){
-            $tipo_conciliador = PermisosConciliador::where('id_conciliador',$id_usuario)->first();
-            if(!empty($tipo_conciliador)){
-                if($tipo_conciliador["tipo"] == "Ambos"){
-                    //Validar la sede y agregar la oficina de apoyo
-                    if($sede == "Morelia"){
-                        $delegaciones = ['Morelia', 'Zitácuaro'];
-                        $pagos = Pagos::where('tipo_pago','Audiencia')
-                        ->whereIn('delegacion', $delegaciones)
-                        ->get();
-                    }
-                    else if($sede == "Uruapan"){
-                        $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
-                        $pagos = Pagos::where('tipo_pago','Audiencia')
-                        ->whereIn('delegacion', $delegaciones)
-                        ->get();
-                    }
-                    else if($sede == "Zamora"){
-                        $delegaciones = ['Zamora', 'Sahuayo'];
-                        $pagos = Pagos::where('tipo_pago','Audiencia')
-                        ->whereIn('delegacion', $delegaciones)
-                        ->get();
-                    }
+        $query = Pagos::with(['pagoturnos', 'conciliadorUser'])
+            ->where('tipo_pago', 'Audiencia');
+
+        if (!in_array($rol, ['Super Usuario', 'Administrador'])) {
+            $delegacionesPermitidas = [$user->delegacion];
+
+            if (in_array($rol, ['Conciliador', 'Delegado', 'Enlace'])) {
+                $mapaSedes = [
+                    'Morelia' => ['Morelia', 'Zitácuaro'],
+                    'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+                    'Zamora'  => ['Zamora', 'Sahuayo'],
+                ];
+
+                $permisoAmbos = PermisosConciliador::where('id_conciliador', $user->id)
+                    ->where('tipo', 'Ambos')
+                    ->exists();
+
+                if ($permisoAmbos && isset($mapaSedes[$user->delegacion])) {
+                    $delegacionesPermitidas = $mapaSedes[$user->delegacion];
                 }
             }
-            else{
-                $pagos = Pagos::where('tipo_pago','Audiencia')
-                ->where('delegacion', $user["delegacion"])
-                ->get();
-            }
-        }
-        else{
-            $pagos = Pagos::where('tipo_pago','Audiencia')
-            ->where('delegacion', $user["delegacion"])
-            ->get();
+            $query->whereIn('delegacion', $delegacionesPermitidas);
         }
 
-        $eventos = [];
-        foreach ($pagos as $pago) {
-            $turno = $pago->turno;
-            $empresa_turno = $turno ? $turno->empresa : null;
-            $nombre_turno = $turno ? $turno->trabajador : null;
-            $primer_apellido_turno = $turno ? $turno->primero_trabajador : null;
-            $segundo_apellido_turno = $turno ? $turno->segundo_trabajador : null;
+        $query->when($request->sede, function ($q) use ($request) {
+            return $q->where('delegacion', $request->sede);
+        });
 
-            $tipo = 6;
-            
-            $conciliadorName = User::where('id', $pago->id_conciliador)->value('name') ?: '';
+        $query->when($request->filled('conciliador'), function ($q) use ($request) {
+            // Especificamos la tabla 'pago_solicitud' para ir a lo seguro
+            return $q->where('pago_solicitud.id_conciliador', $request->conciliador);
+        });
 
-            if ($pago->estatus === 'Pendiente') {
-                $color = '#EAE300';
-            } elseif ($pago->estatus === 'Pagado') {
-                $color = '#00CE1C';
-            } elseif ($pago->estatus === 'Incomparecencia trabajador') {
-                $color = '#FF2C2C';
-            } else {
-                $color = '#CCCCCC';
-            }
+        $pagos = $query->get();
 
-            $eventos[] = [
+        $mapaColores = [
+            'Pendiente'                  => '#EAE300',
+            'Pagado'                     => '#00CE1C',
+            'Incomparecencia trabajador' => '#FF2C2C',
+        ];
+
+        
+        $eventos = $pagos->map(function ($pago) use ($mapaColores) {
+            $color = $mapaColores[$pago->estatus] ?? '#CCCCCC';
+
+            return [
                 'id' => $pago->id,
-                'title' => $pago->nombre_trabajador,
-                'start' => $pago->fecha->format('Y-m-d') . 'T' . $pago->hora->format('H:i:s'),
-                'extendedProps' => [
-                    'nue' => $pago->NUE,
-                    'descripcion' => $pago->descripcion,
-                    'hora' => $pago->hora->format('h:i A'),
-                    'color' => $color,
-                    'fecha' => $pago->fecha->format('d/m/Y'),
-                    'empresa' => $pago->empresa_representante,
-                    'trabajador' => $pago->nombre_trabajador,
-                    'conciliador' => $conciliadorName,
-                    'estatus' => $pago->estatus,
-                    'monto' => $pago->monto,
-                    'observaciones' => $pago->observaciones,
-                    'tipo' => $tipo
-                ]
+                    'title' => $pago->NUE,
+                    'solicitante' => $pago->nombre_trabajador,
+                    'start' => $pago->fecha->format('Y-m-d') . 'T' . $pago->hora->format('H:i:s'),
+                    'extendedProps' => [
+                        'nue' => $pago->NUE,
+                        'descripcion' => $pago->descripcion,
+                        'hora' => $pago->hora->format('h:i A'),
+                        'color' => $color,
+                        'fecha' => $pago->fecha->format('d/m/Y'),
+                        'empresa' => $pago->empresa_representante,
+                        'trabajador' => $pago->nombre_trabajador,
+                        'conciliador'  => $pago->conciliadorUser->name ?? 'No asignado',
+                        'estatus' => $pago->estatus,
+                        'monto' => $pago->monto,
+                        'observaciones' => $pago->observaciones,
+                        'tipo' => 6,
+                    ]
             ];
-        }
+        });
 
         return response()->json($eventos);
     }
 
     public function conciliadores() {
-        $id_usuario = auth()->user()->id;
-        $user = User::find($id_usuario);
-        $sede = Auth::user()->delegacion;
-        $roles = Role::pluck('name','name')->all();
-        $userRole = $user->roles->pluck('name')->all();
+        $user = auth()->user();
+        $rol = $user->roles->first()->name ?? '';
+        $tipo = 6;
 
-       if ($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador") {
-            $pagos = Pagos::where('tipo_pago','Conciliador')->get();
-        }
-        else if($userRole[0] == "Conciliador" || $userRole[0] == "Delegado"){
-            $tipo_conciliador = PermisosConciliador::where('id_conciliador',$id_usuario)->first();
-            if(!empty($tipo_conciliador)){
-                if($tipo_conciliador["tipo"] == "Ambos"){
-                    //Validar la sede y agregar la oficina de apoyo
-                    if($sede == "Morelia"){
-                        $delegaciones = ['Morelia', 'Zitácuaro'];
-                        $pagos = Pagos::where('tipo_pago','Conciliador')
-                        ->whereIn('delegacion', $delegaciones)
-                        ->get();
-                    }
-                    else if($sede == "Uruapan"){
-                        $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
-                        $pagos = Pagos::where('tipo_pago','Conciliador')
-                        ->whereIn('delegacion', $delegaciones)
-                        ->get();
-                    }
-                    else if($sede == "Zamora"){
-                        $delegaciones = ['Zamora', 'Sahuayo'];
-                        $pagos = Pagos::where('tipo_pago','Conciliador')
-                        ->whereIn('delegacion', $delegaciones)
-                        ->get();
-                    }
+        $query = Pagos::with(['pagoturnos', 'conciliadorUser'])
+            ->where('tipo_pago', 'Conciliador');
+
+        if (!in_array($rol, ['Super Usuario', 'Administrador'])) {
+            $delegacionesPermitidas = [$user->delegacion];
+
+            if (in_array($rol, ['Conciliador', 'Delegado', 'Enlace'])) {
+                $mapaSedes = [
+                    'Morelia' => ['Morelia', 'Zitácuaro'],
+                    'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+                    'Zamora'  => ['Zamora', 'Sahuayo'],
+                ];
+
+                $permisoAmbos = PermisosConciliador::where('id_conciliador', $user->id)
+                    ->where('tipo', 'Ambos')
+                    ->exists();
+
+                if ($permisoAmbos && isset($mapaSedes[$user->delegacion])) {
+                    $delegacionesPermitidas = $mapaSedes[$user->delegacion];
                 }
-            }else{
-                $pagos = Pagos::where('tipo_pago','Conciliador')
-                ->where('delegacion', $user["delegacion"])
-                ->get();
             }
-        }
-        else{
-            $pagos = Pagos::where('tipo_pago','Conciliador')
-            ->where('delegacion', $user["delegacion"])
-            ->get();
+            $query->whereIn('delegacion', $delegacionesPermitidas);
         }
 
-        $eventos = [];
-        foreach ($pagos as $pago) {
-            $turno = $pago->turno;
-            $empresa_turno = $turno ? $turno->empresa : null;
-            $nombre_turno = $turno ? $turno->trabajador : null;
-            $primer_apellido_turno = $turno ? $turno->primero_trabajador : null;
-            $segundo_apellido_turno = $turno ? $turno->segundo_trabajador : null;
+        $query->when($request->sede, function ($q) use ($request) {
+            return $q->where('delegacion', $request->sede);
+        });
 
-            $tipo = 6;
+        $query->when($request->filled('conciliador'), function ($q) use ($request) {
+            // Especificamos la tabla 'pago_solicitud' para ir a lo seguro
+            return $q->where('pago_solicitud.id_conciliador', $request->conciliador);
+        });
 
-            $conciliadorName = User::where('id', $pago->id_conciliador)->value('name') ?: '';
+        $pagos = $query->get();
 
-            if ($pago->estatus === 'Pendiente') {
-                $color = '#EAE300';
-            } elseif ($pago->estatus === 'Pagado') {
-                $color = '#00CE1C';
-            } elseif ($pago->estatus === 'Incomparecencia trabajador') {
-                $color = '#FF2C2C';
-            } else {
-                $color = '#CCCCCC';
-            }
+        $mapaColores = [
+            'Pendiente'                  => '#EAE300',
+            'Pagado'                     => '#00CE1C',
+            'Incomparecencia trabajador' => '#FF2C2C',
+        ];
 
-            $eventos[] = [
+        
+        $eventos = $pagos->map(function ($pago) use ($mapaColores) {
+            $color = $mapaColores[$pago->estatus] ?? '#CCCCCC';
+
+            return [
                 'id' => $pago->id,
-                'title' => $pago->nombre_trabajador,
-                'start' => $pago->fecha->format('Y-m-d') . 'T' . $pago->hora->format('H:i:s'),
-                'extendedProps' => [
-                    'nue' => $pago->NUE,
-                    'descripcion' => $pago->descripcion,
-                    'hora' => $pago->hora->format('h:i A'),
-                    'color' => $color,
-                    'fecha' => $pago->fecha->format('d/m/Y'),
-                    'empresa' => $pago->empresa_representante,
-                    'trabajador' => $pago->nombre_trabajador,
-                    'conciliador' => $conciliadorName,
-                    'estatus' => $pago->estatus,
-                    'monto' => $pago->monto,
-                    'observaciones' => $pago->observaciones,
-                    'tipo' => $tipo
-                ]
+                    'title' => $pago->NUE,
+                    'solicitante' => $pago->nombre_trabajador,
+                    'start' => $pago->fecha->format('Y-m-d') . 'T' . $pago->hora->format('H:i:s'),
+                    'extendedProps' => [
+                        'nue' => $pago->NUE,
+                        'descripcion' => $pago->descripcion,
+                        'hora' => $pago->hora->format('h:i A'),
+                        'color' => $color,
+                        'fecha' => $pago->fecha->format('d/m/Y'),
+                        'empresa' => $pago->empresa_representante,
+                        'trabajador' => $pago->nombre_trabajador,
+                        'conciliador'  => $pago->conciliadorUser->name ?? 'No asignado',
+                        'estatus' => $pago->estatus,
+                        'monto' => $pago->monto,
+                        'observaciones' => $pago->observaciones,
+                        'tipo' => 6,
+                    ]
             ];
-        }
+        });
 
         return response()->json($eventos);
     }

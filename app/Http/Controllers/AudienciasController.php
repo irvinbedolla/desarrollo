@@ -16,11 +16,85 @@ use Illuminate\Support\Facades\Auth;
 class AudienciasController extends Controller
 {
 
-    public function audiencias() {
+    public function audiencias(Request $request) {
+        $sedeFiltro = $request->input('sede');
+        $conciliadorFiltro = $request->input('conciliador');
         $userID = Auth::user()->id;
         $userRole = Auth::user()->roles->pluck('name')->all();
-        $sede = Auth::user()->delegacion;
 
+        // Iniciamos la consulta base
+        $query = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
+        ->join('users','users.id','audiencias.id_conciliador')
+        ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+        ->select('audiencias.*','seer_general.NUE','seer_solicitante.nombre','seer_general.estatus','users.name');
+
+        // FILTROS GLOBALES (Si se seleccionan en el select)
+        if (!empty($sedeFiltro)) {
+            $query->where('audiencias.delegacion', $sedeFiltro);
+        }
+        if (!empty($conciliadorFiltro)) {
+            $query->where('audiencias.id_conciliador', $conciliadorFiltro);
+        }
+
+        // RESTRICCIONES POR ROL (Seguridad)
+        if ($userRole[0] == "Delegado" || $userRole[0] == "Enlace") {
+            $sedeUsuario = Auth::user()->delegacion;
+            $delegacionesPermitidas = [];
+            
+            if($sedeUsuario == "Morelia") $delegacionesPermitidas = ['Morelia', 'Zitácuaro'];
+            elseif($sedeUsuario == "Uruapan") $delegacionesPermitidas = ['Uruapan', 'Lázaro Cárdenas'];
+            elseif($sedeUsuario == "Zamora") $delegacionesPermitidas = ['Zamora', 'Sahuayo'];
+
+            $query->whereIn('audiencias.delegacion', $delegacionesPermitidas);
+        } 
+        else if ($userRole[0] == "Conciliador") {
+            $query->where('audiencias.id_conciliador', $userID);
+        }
+
+        $audiencias = $query->get();
+
+        $eventos = [];
+            foreach ($audiencias as $audiencia) {
+
+                $tipo = 5;
+
+                if ($audiencia->estatus === 'Incompetencia') {
+                    $color = '#DA0909';
+                } elseif ($audiencia->estatus === 'Archivada') {
+                    $color = '#EAE300';
+                } elseif ($audiencia->estatus === 'Conciliación') {
+                    $color = '#00CE1C';
+                } elseif ($audiencia->estatus === 'No Conciliación') {
+                    $color = '#00CE1C';
+                }
+                 else {
+                    $color = '#CCCCCC';
+                }
+
+                $eventos[] = [
+                    'id' => $audiencia->id,
+                    'id_solicitud' => $audiencia->id_solicitud,
+                    'title' => $audiencia->NUE,
+                    'solicitante' => $audiencia->nombre,
+                    'start' => $audiencia->fecha->format('Y-m-d') . 'T' . $audiencia->hora->format('H:i:s'),
+                    'extendedProps' => [
+                        'hora' => $audiencia->hora->format('h:i A'),
+                        'color' => $color,
+                        'numero_audiencia' => $audiencia->numero_audiencia,
+                        'folio_audiencia' => $audiencia->folio_audiencia,
+                        'fecha' => $audiencia->fecha->format('d/m/Y'),
+                        'estatus' => $audiencia->estatus,
+                        'tipo' => $audiencia->tipo,
+                        'delegacion' => $audiencia->delegacion,
+                        'sala' => $audiencia->sala,
+                        'usuario' => $userID,
+                        'tipo' => $tipo,
+                        'conciliador' => $audiencia->name,
+                    ]
+                ];
+            }
+        return response()->json($eventos);
+/*    
         if ($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador") {
             $audiencias = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
             ->join('users','users.id','audiencias.id_conciliador')
@@ -57,7 +131,6 @@ class AudienciasController extends Controller
                         'fecha' => $audiencia->fecha->format('d/m/Y'),
                         'estatus' => $audiencia->estatus,
                         'tipo' => $audiencia->tipo,
-                        'conciliador' => $audiencia->id_conciliador,
                         'delegacion' => $audiencia->delegacion,
                         'sala' => $audiencia->sala,
                         'usuario' => $userID,
@@ -69,20 +142,20 @@ class AudienciasController extends Controller
 
             return response()->json($eventos);
         }
-        else if ($userRole[0] == "Delegado" || $userRole[0] == "Enlace" || $userRole[0] == "Auxiliar") {
+        else if ($userRole[0] == "Delegado" || $userRole[0] == "Enlace") {
            
             if($sede == "Morelia"){
                 $delegaciones = ['Morelia', 'Zitácuaro'];
                 $audiencias = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
                 ->join('users','users.id','audiencias.id_conciliador')
-                ->select('audiencias.*','seer_general.NUE','seer_general.estatus')
+                ->select('audiencias.*','seer_general.NUE','seer_general.estatus','users.name')
                 ->whereIn('audiencias.delegacion', $delegaciones)->get();
             }
             else if($sede == "Uruapan"){
                 $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
                 $audiencias = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
                 ->join('users','users.id','audiencias.id_conciliador')
-                ->select('audiencias.*','seer_general.NUE','seer_general.estatus')
+                ->select('audiencias.*','seer_general.NUE','seer_general.estatus','users.name')
                 ->whereIn('audiencias.delegacion', $delegaciones)->get();
             }
             else if($sede == "Zamora"){
@@ -124,7 +197,6 @@ class AudienciasController extends Controller
                         'fecha' => $audiencia->fecha->format('d/m/Y'),
                         'estatus' => $audiencia->estatus,
                         'tipo' => $audiencia->tipo,
-                        'conciliador' => $audiencia->id_conciliador,
                         'delegacion' => $audiencia->delegacion,
                         'sala' => $audiencia->sala,
                         'usuario' => $userID,
@@ -138,10 +210,11 @@ class AudienciasController extends Controller
         }
         else if ($userRole[0] == "Conciliador") {
             $audiencias = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
-            ->select('audiencias.*','seer_general.NUE','seer_general.estatus')
+            ->join('users','users.id','audiencias.id_conciliador')
+            ->select('audiencias.*','seer_general.NUE','seer_general.estatus','users.name')
             ->where('audiencias.id_conciliador',$userID)
             ->get();
-
+            
             $eventos = [];
             foreach ($audiencias as $audiencia) {
 
@@ -173,24 +246,57 @@ class AudienciasController extends Controller
                         'fecha' => $audiencia->fecha->format('d/m/Y'),
                         'estatus' => $audiencia->estatus,
                         'tipo' => $audiencia->tipo,
-                        'conciliador' => $audiencia->id_conciliador,
                         'delegacion' => $audiencia->delegacion,
                         'sala' => $audiencia->sala,
                         'usuario' => $userID,
-                        'tipo' => $tipo
+                        'tipo' => $tipo,
+                        'conciliador' => $audiencia->name,
                     ]
                 ];
             }
 
             return response()->json($eventos);
         }
+*/    
     }
 
-    public function ratificaciones() {
+    public function ratificaciones(Request $request) {
+        $sedeFiltro = $request->input('sede');
+        $conciliadorFiltro = $request->input('conciliador');
         $userID = Auth::user()->id;
         $userRole = Auth::user()->roles->pluck('name')->all();
-        $sede = Auth::user()->delegacion;
+       
+        // Iniciamos la consulta base
+        $query = Turnos::join('users','users.id','turnos.id_conciliador')
+        ->select('turnos.*','users.name');
+
+        // FILTROS GLOBALES (Si se seleccionan en el select)
+        if (!empty($sedeFiltro)) {
+            $query->where('turnos.delegacion', $sedeFiltro);
+        }
+        if (!empty($conciliadorFiltro)) {
+            $query->where('turnos.id_conciliador', $conciliadorFiltro);
+        }
         
+        // RESTRICCIONES POR ROL (Seguridad)
+        if ($userRole[0] == "Delegado" || $userRole[0] == "Enlace") {
+            $sedeUsuario = Auth::user()->delegacion;
+            $delegacionesPermitidas = [];
+            
+            if($sedeUsuario == "Morelia") $delegacionesPermitidas = ['Morelia', 'Zitácuaro'];
+            elseif($sedeUsuario == "Uruapan") $delegacionesPermitidas = ['Uruapan', 'Lázaro Cárdenas'];
+            elseif($sedeUsuario == "Zamora") $delegacionesPermitidas = ['Zamora', 'Sahuayo'];
+
+            $query->whereIn('turnos.delegacion', $delegacionesPermitidas);
+        } 
+        else if ($userRole[0] == "Conciliador") {
+            $query->where('turnos.id_conciliador', $userID);
+        }
+
+        $ratificaciones = $query->get();
+
+
+    /*
         if ($userRole[0] == "Super Usuario" || $userRole[0] == "Administardor") {
             $ratificaciones = Turnos::all();
         }
@@ -212,7 +318,7 @@ class AudienciasController extends Controller
         else{
             $ratificaciones = Turnos::where('delegacion', $sede)->get();
         }
-
+    */
         $eventos = [];
         foreach ($ratificaciones as $rati) {
 
@@ -235,6 +341,7 @@ class AudienciasController extends Controller
                 $eventos[] = [
                     'id' => $rati->id,
                     'title' => $rati->empresa,
+                    'solicitante' => $rati->nombre,
                     'start' => $rati->fecha . 'T' . $rati->hora,
                     'extendedProps' => [
                         'hora' => $rati->hora,
@@ -245,6 +352,7 @@ class AudienciasController extends Controller
                         'delegacion' => $rati->delegacion,
                         'usuario' => $userID,
                         'tipo' => $tipo,
+                        'conciliador' => $audiencia->name,
                     ]
                 ];
         }

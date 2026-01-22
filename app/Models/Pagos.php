@@ -27,4 +27,16 @@ class Pagos extends Model
         return $this->hasOne(Pagos::class, 'id', 'id_solicitud');
     }
     
+    public function conciliadorUser()
+    {
+        // 'id_conciliador' es la llave foránea en tu tabla 'pagos'
+        // 'id' es la llave primaria en tu tabla 'users'
+        return $this->belongsTo(User::class, 'id_conciliador');
+    }
+
+    public function pagoturnos()
+    {
+        return $this->belongsTo(Turnos::class, 'id_solicitud'); 
+        // Ajusta 'id_turno' según el nombre real de tu columna
+    }
 }

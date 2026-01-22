@@ -36,7 +36,66 @@
             background: url('public/assets/images/pageLoader.gif') 50% 50% no-repeat rgb(249,249,249);
             opacity: .8;
         }
-        
+        #calendar {
+            width: 100% !important;
+            display: block;
+        }
+
+        /* Evita que las celdas se vean comprimidas */
+        .fc-view-harness {
+            background-color: #fff;
+        }
+
+        /* Ajuste para que la Card de Bootstrap no le ponga padding excesivo */
+        .card-body {
+            padding: 15px !important;
+        }
+        @media (max-width: 768px) {
+            /* El contenedor padre deja de ser horizontal */
+            .flex-column.flex-md-row {
+                align-items: stretch !important;
+            }
+
+            /* Cada botón ocupa todo el ancho disponible */
+            .btn-custom-morado {
+                width: 100% !important;
+                margin-bottom: 5px !important;
+                white-space: normal; /* Permite que el texto del botón use dos líneas si es largo */
+                font-size: 0.85rem;
+            }
+
+            /* Quitamos el justify-content-center para que no baile el contenido */
+            .justify-content-center {
+                justify-content: flex-start !important;
+            }
+
+            .fc .fc-toolbar {
+                display: flex;
+                flex-direction: column;
+                gap: 10px; /* Espacio entre fecha y botones */
+            }
+
+            /* Centrar el título y reducir su tamaño */
+            .fc .fc-toolbar-title {
+                font-size: 1.2rem !important;
+                text-align: center;
+                width: 100%;
+            }
+
+            /* Asegurar que los botones ocupen el ancho necesario sin amontonarse */
+            .fc .fc-toolbar-chunk {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+
+            /* Ajustar tamaño de botones para que quepan mejor */
+            .fc .fc-button {
+                padding: 0.4em 0.6em !important;
+                font-size: 0.85em !important;
+            }
+        }
     </style>
 
     @livewireStyles
@@ -133,40 +192,53 @@
                                     <div class="row">
                                         <ul class="navbar-nav flex-grow-1 justify-content-center">
                                             <li class="nav-item text-center">
-                                                <img src="public/assets/images/ccl-r.png" alt="" style="max-width: 50%; height: auto;">
+                                                <img src="public/assets/images/ccl-r.png" alt="Logo" class="img-fluid" style="max-height: 100px;">
                                             </li>
-                                        </ul>
-                                            @if($userRole[0] != 'Solicitante')
-                                                    <h1>Agenda</h1>
-                                                    <div class="mt-3 mb-3 text-left">
-                                                        <button id="btn-actualizar" class="btn btn-lg btn-custom-morado">Actualizar</button>   
-                                                        <button id="btn-pagos" class="btn btn-lg btn-custom-morado float-right">Cumplimientos</button>
-                                                        @if( $userRole[0] == 'Super Usuario' || $userRole[0] == 'Administrador' || $userRole[0] == 'Delegado' || $userRole[0] == 'Conciliador' || 
-                                                        $userRole[0] == 'Enlace' || $userRole[0] == 'Auxiliar' || $userRole[0] == 'Excepcion' )
-                                                            <button id="btn-audiencias" class="btn btn-lg btn-custom-morado  float-right">Audiencias</button>
-                                                            <button id="btn-conciliador" class="btn btn-lg btn-custom-morado float-right">Cumplimientos en Audiencia</button>
-                                                            <button id="btn-citas" class="btn btn-lg btn-custom-morado float-right">Cumplimientos de Ratificación</button>
-                                                            <button id="btn-ratificaciones" class="btn btn-lg btn-custom-morado float-right">Ratificaciones</button>
-                                                        @else
-                                                            <button class="btn btn-lg btn-custom-morado  float-right">Audiencias</button>
-                                                            <button class="btn btn-lg btn-custom-morado float-right">Cumplimientos en Audiencia</button>
-                                                            <button class="btn btn-lg btn-custom-morado float-right">Cumplimientos de Ratificación</button>
-                                                            <button class="btn btn-lg btn-custom-morado float-right">Ratificaciones</button>
-                                                        @endif
-                                                    
-                                                    <div id="calendar">
+                                        </ul><br>
+                                        @if($userRole[0] != 'Solicitante')
+                                            <div class="actions-container w-100 w-md-auto">
+                                                <div class="dropdown d-block d-md-none">
+                                                    <button class="btn btn-md btn-custom-morado dropdown-toggle w-100" type="button" data-toggle="dropdown">
+                                                        Tipo de Agenda
+                                                    </button>
+                                                    <div class="dropdown-menu dropdown-menu-right w-100">
+                                                        <a class="dropdown-item btn-calendar" data-tipo="btn-pagos">Cumplimientos</a>
+                                                        <a class="dropdown-item btn-calendar" data-tipo="btn-audiencias">Audiencias</a>
+                                                        <a class="dropdown-item btn-calendar" data-tipo="btn-conciliador">Cumplimientos en Audiencia</a>
+                                                        <a class="dropdown-item btn-calendar" data-tipo="btn-citas">Cumplimientos de Ratificación</a>
+                                                        <a class="dropdown-item btn-calendar" data-tipo="btn-ratificaciones">Ratificaciones</a>
                                                     </div>
-                                                    <!--
-                                                    <div class="mt-3 mb-3 text-center">
-                                                        <form action="{{ url('citas/exportar-excel') }}" method="GET">
-                                                            <button type="submit" class="btn btn-success">
-                                                                <i class="bi bi-file-earmark-excel"></i> Exportar Excel
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                    -->
                                                 </div>
-                                            @endif
+
+                                                <div class="d-none d-md-flex flex-wrap justify-content-end" style="gap: 5px;">
+                                                    <button class="btn btn-md btn-custom-morado btn-calendar" data-tipo="btn-pagos">Cumplimientos</button>
+                                                    <button class="btn btn-md btn-custom-morado btn-calendar" data-tipo="btn-audiencias">Audiencias</button>
+                                                    <button class="btn btn-md btn-custom-morado btn-calendar" data-tipo="btn-conciliador">Cumplimientos en Audiencia</button>
+                                                    <button class="btn btn-md btn-custom-morado btn-calendar" data-tipo="btn-citas">Cumplimientos de Ratificación</button>
+                                                    <button class="btn btn-md btn-custom-morado btn-calendar" data-tipo="btn-ratificaciones">Ratificaciones</button>
+                                                </div>
+
+                                                <div class="filter-container mb-3">
+                                                    <label for="filtro-sede">Filtrar por Sede:</label>
+                                                    <select id="filtro-sede" class="form-control d-inline-block w-auto">
+                                                        @foreach($sedes as $sede)
+                                                            <option value="{{$sede['id']}}" data-delegacion-id="{{ $sede['nombre'] }}">
+                                                            {{ $municipio['nombre'] }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
+                                                <div class="filter-container mb-3">
+                                                    <label>Conciliador:</label>
+                                                    <select id="filter-conciliador" class="form-control filter-action">
+                                                        <option value="">Todos los conciliadores</option>
+                                                        <option value="38">Conciliador</option>
+                                                    </select>
+                                                </div>
+
+                                            </div>  
+                                            <div id="calendar" style="width: 100%;"></div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -177,6 +249,22 @@
         </div>
         <footer class="main-footer">
         </footer>
+    </div>
+</div>
+
+<div class="modal fade" id="evento" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalles</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+            </div>
+            <div class="modal-body">
+                Cita
+            </div>
+        </div>
     </div>
 </div>
 
@@ -248,5 +336,3 @@
 
 </script>
 </html>
-
-

@@ -1,250 +1,131 @@
-var calendarPagos, calendarAudiencias, currentCalendar, calendarRatificaciones, calendarConciliador;
+// 1. Declaración global
+var calendarPagos, calendarAudiencias, calendarRatificaciones, calendarCitas, calendarConciliador;
+var currentCalendar = null;
+const calendarEl = document.getElementById('calendar'); // Asegúrate que este ID exista en tu HTML
+
+// Función para obtener los parámetros de filtro actuales
+    function getFilterParams() {
+        const sede = document.getElementById('filtro-sede').value;
+        const conciliador = document.getElementById('filter-conciliador').value;
+        return `?sede=${encodeURIComponent(sede)}&conciliador=${encodeURIComponent(conciliador)}`;
+    }
+
+    function refreshCurrentCalendar() {
+        if (currentCalendar) {
+            // Obtenemos la URL base eliminando cualquier parámetro previo (?)
+            const currentSource = currentCalendar.getOption('events');
+            const baseUrl = typeof currentSource === 'string' ? currentSource.split('?')[0] : currentSource;
+            
+            // Aplicamos la nueva URL con los filtros actuales
+            const nuevaUrl = baseUrl + getFilterParams();
+            
+            console.log("Actualizando calendario a:", nuevaUrl); // Para depuración
+            currentCalendar.setOption('events', nuevaUrl);
+        }
+    }
 
 document.addEventListener('DOMContentLoaded', function () {
-    var calendarEl = document.getElementById('calendar');
+    
+    // Listeners para los select de filtros
+    document.getElementById('filtro-sede').addEventListener('change', function() {
+        // IMPORTANTE: Usamos la función maestra que actualiza la URL completa
+        refreshCurrentCalendar(); 
+    });
+    document.getElementById('filter-conciliador').addEventListener('change', refreshCurrentCalendar);
 
-    // Configuración del calendario de pagos
-    calendarPagos = new FullCalendar.Calendar(calendarEl, {
-        initialView: window.innerWidth < 768 ? 'listWeek' : 'dayGridWeek',
-        locale: 'es',
-        events: 'pagos/eventos',
-        eventSourceSuccess: function (events) {
-            console.log(events); // Verifica los datos que se están cargando
-            return events;
-        },
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,dayGridWeek'
-        },
-        buttonText: {
-            today: 'Hoy',
-            month: 'Mensual',
-            week: 'Semanal'
-        },
-        eventClick: function (info) {
-            handleEventClick(info, 'pagos');
-        },
-        eventDidMount: function (info) {
-            styleEvent(info);
-        },
-        eventContent: function (info) {
-            return {
-                html: `
-                    <div class="fc-event-content">
-                        <div class="fc-event-title">${info.event.extendedProps.nue}</div>
-                        <div class="fc-event-title">${info.event.title}</div>
-                        <div class="fc-event-time">
-                            <div class="color-indicator" style="background:${info.event.extendedProps.color}"></div>
-                            ${info.event.extendedProps.hora}
+    // 2. INICIALIZACIÓN DE CALENDARIOS
+    // Usamos una función para evitar repetir toda la configuración 5 veces
+    function crearConfiguracion(endpoint, tipoParaModal) {
+        return {
+            initialView: window.innerWidth < 768 ? 'listWeek' : 'dayGridWeek',
+            locale: 'es',
+            //aspectRatio: window.innerWidth < 768 ? 0.65 : 1.35,
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,dayGridWeek'
+            },
+            buttonText: {
+                today: 'Hoy',
+                month: 'Mensual',
+                week: 'Semanal'
+            },
+
+            events: endpoint + getFilterParams(),
+            //events: endpoint,
+            eventClick: (info) => handleEventClick(info, tipoParaModal),
+            eventDidMount: styleEvent,
+            windowResize: function(arg) {
+                let view = window.innerWidth < 768 ? 'listWeek' : 'dayGridWeek';
+                if (this.view.type !== view) { this.changeView(view); }
+            },
+            eventContent: function (info) {
+                return {
+                    html: `
+                        <div class="fc-event-content">
+                            <div class="fc-event-title">${info.event.title}</div>
+                            <div class="fc-event-title">${info.event.extendedProps.solicitante}</div>
+                            <div class="fc-event-title">${info.event.extendedProps.conciliador}</div>
+                            <div class="fc-event-time">
+                                <div class="color-indicator" style="background:${info.event.extendedProps.color}"></div>
+                                ${info.event.extendedProps.hora}
+                            </div>
                         </div>
-                    </div>
-                `
-            };
-        },
+                    `
+                };
+            }
+        };
+    }
+
+    // Instanciamos cada calendario
+    calendarPagos = new FullCalendar.Calendar(calendarEl, crearConfiguracion('pagos/eventos', 'pagos'));
+    calendarAudiencias = new FullCalendar.Calendar(calendarEl, crearConfiguracion('audiencias/eventos', 'audiencias'));
+    calendarRatificaciones = new FullCalendar.Calendar(calendarEl, crearConfiguracion('ratificaciones/eventos', 'ratificaciones'));
+    calendarCitas = new FullCalendar.Calendar(calendarEl, crearConfiguracion('citas/eventos', 'citas'));
+    calendarConciliador = new FullCalendar.Calendar(calendarEl, crearConfiguracion('pagos/conciliadores', 'conciliador'));
+
+    // 3. LÓGICA DE LOS BOTONES (Función Maestra)
+    const botones = document.querySelectorAll('.btn-calendar');
+    const mapeo = {
+        'btn-pagos': calendarPagos,
+        'btn-audiencias': calendarAudiencias,
+        'btn-conciliador': calendarConciliador,
+        'btn-citas': calendarCitas,
+        'btn-ratificaciones': calendarRatificaciones
+    };
+
+    botones.forEach(boton => {
+        boton.addEventListener('click', function(e) {
+            e.preventDefault();
+            const tipo = this.getAttribute('data-tipo');
+            const calSeleccionado = mapeo[tipo];
+
+            if (calSeleccionado) {
+                switchCalendar(calSeleccionado);
+                // Opcional: Resaltar botón activo
+                botones.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            }
+        });
     });
 
-    // Configuración del calendario de audiencias
-    calendarAudiencias = new FullCalendar.Calendar(calendarEl, {
-        initialView: window.innerWidth < 768 ? 'listWeek' : 'dayGridWeek',
-        locale: 'es',
-        events: 'audiencias/eventos',
-        /*eventSourceSuccess: function (events) {
-            console.log(events); // Verifica los datos que se están cargando
-            return events;
-        },*/
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,dayGridWeek'
-        },
-        buttonText: {
-            today: 'Hoy',
-            month: 'Mensual',
-            week: 'Semanal'
-        },
-        eventClick: function (info) {
-            handleEventClick(info, 'audiencias');
-        },
-        eventDidMount: function (info) {
-            styleEvent(info);
-        },
-        eventContent: function (info) {
-            return {
-                html: `
-                    <div class="fc-event-content">
-                        <div class="fc-event-title">${info.event.title}</div>
-                        <div class="fc-event-time">
-                            <div class="color-indicator" style="background:${info.event.extendedProps.color}"></div>
-                            ${info.event.extendedProps.hora}
-                        </div>
-                    </div>
-                `
-            };
-        },
-    });
-
-    // Configuración del calendario de ratificaciones
-    calendarRatificaciones = new FullCalendar.Calendar(calendarEl, {
-        initialView: window.innerWidth < 768 ? 'listWeek' : 'dayGridWeek',
-        locale: 'es',
-        events: 'ratificaciones/eventos',
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,dayGridWeek'
-        },
-        buttonText: {
-            today: 'Hoy',
-            month: 'Mensual',
-            week: 'Semanal'
-        },
-        eventClick: function (info) {
-            handleEventClick(info, 'ratificaciones');
-        },
-        eventDidMount: function (info) {
-            styleEvent(info);
-        },
-        eventContent: function (info) {
-            return {
-                html: `
-                    <div class="fc-event-content">
-                        <div class="fc-event-title">${info.event.title}</div>
-                        <div class="fc-event-time">
-                            <div class="color-indicator" style="background:${info.event.extendedProps.color}"></div>
-                            ${info.event.extendedProps.hora}
-                        </div>
-                    </div>
-                `
-            };
-        },
-    });
-
-    calendarCitas = new FullCalendar.Calendar(calendarEl, {
-        initialView: window.innerWidth < 768 ? 'listWeek' : 'dayGridWeek',
-        locale: 'es',
-        events: 'citas/eventos',
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,dayGridWeek'
-        },
-        buttonText: {
-            today: 'Hoy',
-            month: 'Mensual',
-            week: 'Semanal'
-        },
-        eventClick: function (info) {
-            handleEventClick(info, 'citas');
-        },
-        eventDidMount: function (info) {
-            styleEvent(info);
-        },
-        eventContent: function (info) {
-            return {
-                html: `
-                    <div class="fc-event-content">
-                        <div class="fc-event-title">${info.event.extendedProps.nue}</div>
-                        <div class="fc-event-title">${info.event.extendedProps.trabajador}</div>
-                        <div class="fc-event-time">
-                            <div class="color-indicator" style="background:${info.event.extendedProps.color}"></div>
-                            ${info.event.extendedProps.hora}
-                        </div>
-                    </div>
-                `
-            };
-        },
-    });
-
-    calendarConciliador = new FullCalendar.Calendar(calendarEl, {
-        initialView: window.innerWidth < 768 ? 'listWeek' : 'dayGridWeek',
-        locale: 'es',
-        events: 'pagos/conciliadores',
-        eventSourceSuccess: function (events) {
-            console.log(events); // Verifica los datos que se están cargando
-            return events;
-        },
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,dayGridWeek'
-        },
-        buttonText: {
-            today: 'Hoy',
-            month: 'Mensual',
-            week: 'Semanal'
-        },
-        eventClick: function (info) {
-            handleEventClick(info, 'pagos');
-        },
-        eventDidMount: function (info) {
-            styleEvent(info);
-        },
-        eventContent: function (info) {
-            return {
-                html: `
-                    <div class="fc-event-content">
-                    <div class="fc-event-title">${info.event.extendedProps.nue}</div>
-                        <div class="fc-event-title">${info.event.title}</div>
-                        <div class="fc-event-time">
-                            <div class="color-indicator" style="background:${info.event.extendedProps.color}"></div>
-                            ${info.event.extendedProps.hora}
-                        </div>
-                    </div>
-                `
-            };
-        },
-    });
-
-    currentCalendar = calendarPagos;
-    currentCalendar.render();
-
-    /*function updateCalendarView() {
-        if (window.innerWidth < 768) {
-            calendar.changeView('listWeek');
-        } else {
-            calendar.changeView('dayGridWeek');
-        }
-    }*/
-
-    //window.addEventListener('resize', updateCalendarView);
-
-    document.getElementById('btn-conciliador').addEventListener('click', function () {
-        switchCalendar(calendarConciliador);
-    });
-
-    document.getElementById('btn-pagos').addEventListener('click', function () {
-        switchCalendar(calendarPagos);
-    });
-
-    document.getElementById('btn-audiencias').addEventListener('click', function () {
-        switchCalendar(calendarAudiencias);
-    });
-
-    document.getElementById('btn-ratificaciones').addEventListener('click', function () {
-        switchCalendar(calendarRatificaciones);
-    });
-
-    document.getElementById('btn-citas').addEventListener('click', function () {
-        switchCalendar(calendarCitas);
-    });
-
-    document.getElementById('btn-actualizar').addEventListener('click', function () {
-        if (currentCalendar) {
-            currentCalendar.refetchEvents();
-        }
-    });
+    // Renderizar el primero por defecto
+    switchCalendar(calendarPagos);
 });
 
-function switchCalendar(newCalendar) {
-    if (currentCalendar) {
-        currentCalendar.destroy();
-    }
-    currentCalendar = newCalendar;
-    currentCalendar.render();
+    function switchCalendar(newCalendar) {
+        if (currentCalendar) {
+            currentCalendar.destroy();
+        }
+        
+        currentCalendar = newCalendar;
 
-    //window.addEventListener('resize', updateCalendarView);
-}
+        // Antes de renderizar, inyectamos los filtros actuales del DOM
+        const baseUrl = currentCalendar.getOption('events').split('?')[0];
+        currentCalendar.setOption('events', baseUrl + getFilterParams());
+        
+        currentCalendar.render();
+    }
 
 function handleEventClick(info, calendarType) {
     const props = info.event.extendedProps;
@@ -287,7 +168,7 @@ function handleEventClick(info, calendarType) {
         `;
     } else if (calendarType === 'audiencias') {
         modalContent = `
-            <strong>NUE:</strong> ${info.event.title}<br>
+            <strong>NUE:</strong> ${props.nue}<br>
             <strong>Conciliador:</strong> ${props.conciliador}<br>
             <strong>Fecha:</strong> ${props.fecha}<br>
             <strong>Hora:</strong> ${props.hora}<br>
@@ -359,4 +240,3 @@ function styleEvent(info) {
         info.el.style.boxSizing = 'border-box';
     }
 }
-
