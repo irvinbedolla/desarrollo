@@ -51,13 +51,14 @@
                                                                         Documentos
                                                                     </button>
                                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                                        <li><a class="dropdown-item" href="{{ route('VerDocumentosRatificacion', $notificacion->id_solicitud) }}"  target="_blank">Identificaciones</a></li>
+                                                                        <li><a class="dropdown-item" href="{{ route('VerDocumentosAudiencia', $notificacion->id_solicitud) }}"  target="_blank">Identificaciones</a></li>
                                                                         @if($notificacion->tipo_notificacion === "Citatorio")
                                                                             <li><a class="dropdown-item" style="width: 100%" href="{{ route('PDFRazonNoticacion', [$notificacion->id_citado, $notificacion->id_solicitud]) }}"  target="_blank">Notificación</a></li>
                                                                         @endif
                                                                         @if($notificacion->tipo_notificacion === "Multa")
                                                                             <li><a class="dropdown-item" style="width: 100%" href="{{ route('PDFmultaNotificacion', [$notificacion->id_citado, $notificacion->id_solicitud]) }}" target="_blank">Multa</a></li>
                                                                         @endif
+                                                                        <button type="button" class="btn btn-warning open-expediente-modal" data-bs-toggle="modal" data-bs-target="#expediente" data-id="{{ $notificacion->id_solicitud }}">Subir Documento</button><br>
                                                                     </ul>
                                                             @endif    
                                                             @if($notificacion->estatus === "No notificada")
@@ -65,13 +66,14 @@
                                                                         Documentos
                                                                     </button>
                                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                                        <li><a class="dropdown-item" href="{{ route('VerDocumentosRatificacion', $notificacion->id_solicitud) }}"  target="_blank">Identificaciones</a></li>
+                                                                        <li><a class="dropdown-item" href="{{ route('VerDocumentosAudiencia', $notificacion->id_solicitud) }}"  target="_blank">Identificaciones</a></li>
                                                                         @if($notificacion->tipo_notificacion === "Citatorio")
                                                                             <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFInstructivo', [$notificacion->id_citado, $notificacion->id_solicitud]) }}" target="_blank">Notificación</a></li>
                                                                         @endif
                                                                         @if($notificacion->tipo_notificacion === "Multa")
                                                                             <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFmultaNotificacion', [$notificacion->id_citado, $notificacion->id_solicitud]) }}" target="_blank">Multa</a></li>
                                                                         @endif
+                                                                        <button type="button" class="btn btn-warning open-expediente-modal" data-bs-toggle="modal" data-bs-target="#expediente" data-id="{{ $notificacion->id_solicitud }}">Subir Documento</button><br>
                                                                     </ul>
                                                             @endif      
                                                             @if($notificacion->estatus === "No exitosa se constituye")
@@ -79,18 +81,20 @@
                                                                         Documentos
                                                                     </button>
                                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                                        <li><a class="dropdown-item" href="{{ route('VerDocumentosRatificacion', $notificacion->id_solicitud) }}"  target="_blank">Identificaciones</a></li>
+                                                                        <li><a class="dropdown-item" href="{{ route('VerDocumentosAudiencia', $notificacion->id_solicitud) }}"  target="_blank">Identificaciones</a></li>
                                                                         @if($notificacion->tipo_notificacion === "Citatorio")
                                                                             <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFNoExitosa', [$notificacion->id_citado, $notificacion->id_solicitud]) }}" target="_blank">Notificación</a></li>
                                                                         @endif
                                                                         @if($notificacion->tipo_notificacion === "Multa")
                                                                             <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFmultaNotificacion', [$notificacion->id_citado, $notificacion->id_solicitud]) }}" target="_blank">Multa</a></li>
                                                                         @endif
+                                                                        <button type="button" class="btn btn-warning open-expediente-modal" data-bs-toggle="modal" data-bs-target="#expediente" data-id="{{ $notificacion->id_solicitud }}">Subir Documento</button><br>
                                                                     </ul>
                                                             @endif                                      
                                                             @if($notificacion->estatus === "No exitosa no se constituye")
-                                                                    <a class="dropdown-item" href="{{ route('VerDocumentosRatificacion', $notificacion->id_solicitud) }}"  target="_blank">Identificaciones</a>
+                                                                    <a class="dropdown-item" href="{{ route('VerDocumentosAudiencia', $notificacion->id_solicitud) }}"  target="_blank">Identificaciones</a>
                                                                     <a class="btn btn-success" href="{{ route('PDFNoExitosaInt', [$notificacion->id_citado, $notificacion->id_solicitud]) }}" target="_blank">Notificación</a>
+                                                                    <button type="button" class="btn btn-warning open-expediente-modal" data-bs-toggle="modal" data-bs-target="#expediente" data-id="{{ $notificacion->id_solicitud }}">Subir Documento</button><br>
                                                             @endif
                                                             @if($notificacion->estatus === "Sin asignar")
                                                                 Pendiente
@@ -115,12 +119,70 @@
             <div>.</div>
             <div class="loader"></div>
         </div>
-        
+
+        @push('modals')
+            <div class="modal fade" id="expediente" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <form class="modal-content needs-validation" novalidate method="POST" action="{{ route('subir_expediente') }}" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="audiencia_id" id="expediente_audiencia_id">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalLabel">Subir expediente</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Documento en PDF</label>
+                                    <input type="file" name="documentoExpediente" class="form-control" accept=".pdf" required>
+                                    <div class="invalid-feedback">
+                                        El documento es obligatorio.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group"><br>
+                                    <label for="name">Nombre de expediente<span style="color:red;">(*)</span></label>
+                                    <input type="text" name="nombreExpediente" class="form-control" required>
+                                    <div class="invalid-feedback">
+                                        El nombre para el expediente es obligatorio.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        @endpush
+    
+    </section>
+
+    
+    
 @section('scripts')
     <script src="../public/assets/js/estadistica/estadistica.js"></script>
+    <style>
+        .modal {
+            z-index: 20000;
+        }
+        .modal-backdrop {
+            z-index: 19990;
+        }
+    </style>
+    <script>
+        $(document).on('click', '.open-expediente-modal', function() {
+            // 2. Capturar el 'data-id'
+            var idRegistro = $(this).data('id');            
+            document.getElementById('expediente_audiencia_id').value = idRegistro;
+        });
+    </script>
 @endsection
         
-    </section>
+    
     
     
 @endsection

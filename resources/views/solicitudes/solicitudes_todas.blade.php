@@ -308,5 +308,10 @@
                 });
              });
         });
+
+        $(document).on('click', '.open-expediente-modal', function() {
+            var idRegistro = $(this).data('id');            
+            document.getElementById('expediente_audiencia_id').value = idRegistro;
+        });
     </script>
 @endsection

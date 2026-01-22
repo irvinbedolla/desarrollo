@@ -1745,12 +1745,18 @@ class SeerController extends Controller
 
 
     public function seer_estatus($id){
-        $citados  = SeerCitados::find($id);
-        $id = $citados->id;
+        $citado  = SeerCitados::find($id);
+        $solicitud = SeerPerGeneral::where('id', $citado->id_solicitud)->first();
+        $estado = Estados::where('id', $citado->estado_citado)->first();
+        $municipio = Municipios::where('id', $citado->municipio_citado)->first();
+        $nombre_estado = $estado->nombre;
+        $nombre_municipio = $municipio->nombre;
+        $NUE = $solicitud->NUE;
+        $id = $citado->id;
         $municipios = Municipios::all();
         $estados = Estados::all();
 
-        return view('notificaciones.actualizarCitado', compact('id','municipios','estados'));
+        return view('notificaciones.actualizarCitado', compact('id','municipios','estados', 'citado', 'NUE', 'nombre_estado', 'nombre_municipio'));
     }
 
     public function update_notificador(Request $request){

@@ -36,6 +36,56 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-4">
                                         <div class="form-group">
+                                            <label for="name">NUE</label>
+                                            <input type="text" name="nue" class="form-control" value="<?=$NUE;?>" readonly> 
+                                            <div class="invalid-feedback">
+                                                El campo nombre es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
+                                            <label for="name">Nombre del Citado</label>
+                                            <input type="text" name="nombre_citado" class="form-control" value="{{ trim($citado->nombre . ' ' . ($citado->primer_apellido ?? '') . ' ' . ($citado->segundo_apellido ?? '')) }}" readonly> 
+                                            <div class="invalid-feedback">
+                                                El campo nombre es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="form-group">
+                                            <label for="name">Dirección del citado</label>
+                                            <input type="text" name="nombre_citado" class="form-control" value="{{ trim($citado->tipo_vialidad . ' ' . ($citado->calle ?? '') . ', ' . ($citado->n_ext ?? '') . ', ' . ($citado->n_int ?? '') . ', ' . ($citado->colonia ?? '') . ', ' . ($citado->cp ?? '') . ', ' . ($nombre_municipio ?? '') . ', ' . ($nombre_estado ?? '')) . '.' }}" readonly> 
+                                            <div class="invalid-feedback">
+                                                El campo nombre es obligatorio.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-6 mb-3">
+                                        <label for="name">Referencia 1</label><br>
+                                        @if (!empty($citado->imagen_domicilio1) && $citado->imagen_domicilio1 !== 'Sin documento')
+                                            <a target='_blank' href="{{ asset('storage/app/documentosSolicitud/'.$citado->imagen_domicilio1) }}">VER IMAGEN</a>
+                                        @else
+                                            <span class="text-muted">No se subió imagen</span>
+                                        @endif
+                                        <input type="hidden" name="imagen_domicilio1" value="{{ $citado->imagen_domicilio1 }}">
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-6 mb-3">
+                                        <label for="name">Referencia 2</label><br>
+                                        @if (!empty($citado->imagen_domicilio2) && $citado->imagen_domicilio2 !== 'Sin documento')
+                                            <a target='_blank' href="{{ asset('storage/app/documentosSolicitud/'.$citado->imagen_domicilio2) }}">VER IMAGEN</a><br>
+                                        @else
+                                            <span class="text-muted">No se subió imagen</span>
+                                        @endif
+                                        <input type="hidden" name="imagen_domicilio2" value="{{ $citado->imagen_domicilio2 }}">
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:25px;">
+                                        <h5 class="text-center" style="color:black">Expediente</h5>
+                                    </div>
+                                </div>    
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group">
                                             <label for="name">Tipo de guardado <span style="color:red;">(*)</span></label>
                                             <select class="form-control" name="tipo_llenado" required>
                                                 <option value="">Seleccione</option>
@@ -47,7 +97,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label>¿Quién atiende? <span style="color:red;">(*)</span></label>
                                             <select name="quien_atiende" id="quien_atiende"class="form-control" required>
