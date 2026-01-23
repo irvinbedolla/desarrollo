@@ -127,7 +127,9 @@
                             @if($solicitud->aguinaldo_dias > 0 && !is_null($solicitud->aguinaldo_dias))
                             - Aguinaldo: <b>{{ $solicitud->aguinaldo_dias }}</b> días al año.<br>
                             @endif
+                            @if($solicitud->Otras > 0 && !is_null($solicitud->Otras))
                             - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>{{ $solicitud->Otras }}</b>
+                            @endif
                     </p>
                     <p class="sangria">
                         c) Que desempeñaba sus actividades laborales en las siguientes condiciones: <br>
