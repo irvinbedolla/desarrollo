@@ -77,7 +77,7 @@
                     </table>
                 </div><br><br><br>
                 <div class="table-responsive">
-                    <spam>Ratificaciones</spam>
+                    <spam>Solicitudes</spam>
                     <table class="table table-striped mt-2">
                         <thead style="background-color: #869b9c;">
                             <th style="color: #fff;  text-align: center;">Usuario</th>

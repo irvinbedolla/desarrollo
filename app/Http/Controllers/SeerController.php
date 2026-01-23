@@ -813,6 +813,8 @@ class SeerController extends Controller
             // Obtenemos los usuarios con sus solicitudes y pagos filtrados por fecha y sede
             $detalleSolicitantes = DB::table('seer_general')
             ->join('users', 'users.id', '=', 'seer_general.user_id')
+            ->join('seer_motivos', 'seer_motivos.id_solicitud', '=', 'seer_general.user_id')
+            ->join('catalogo_motivos', 'catalogo_motivos.id', '=', 'seer_motivos.id_motivo')
             ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
             ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
             ->when($sede !== "Todos", function ($q) use ($sede) {
@@ -844,6 +846,7 @@ class SeerController extends Controller
                 'seer_general.delegacion',
                 'seer_general.actividad',
                 'seer_solicitante.nombre',
+                'catalogo_motivos.motivo'
             )
             ->orderBy('seer_general.fecha', 'desc')
             ->get();
@@ -934,8 +937,6 @@ class SeerController extends Controller
             //Notificaciones
             return Excel::download(new NotificacionesExport($fecha_inicial, $fecha_final, $sede, $auxiliar , $notificador), 'notificaciones.xlsx');
         }
-    
-    
         else if($data["tipo_reporte"] == "Graficas"){
     
             $conciliadores = User::role('Conciliador')->select('id','name')->get();
@@ -1165,7 +1166,232 @@ class SeerController extends Controller
             return $pdf->stream('archivo.pdf');
         }
         else if($data["tipo_reporte"] == "GeneralSede"){
-    
+            //Auxiliares
+                $id_usuario = auth()->user()->id;
+                $userActual = User::find($id_usuario);
+
+                $solicitudes = DB::table('seer_general')
+                    ->leftJoin('pago_solicitud', 'seer_general.id', '=', 'pago_solicitud.id_solicitud')
+                    ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
+                    ->when($sede !== "Todos", function ($q) use ($sede, $userActual) {
+                        // Lógica de sedes vinculadas para Delegados
+                        if ($sede === "TodosDelegado") {
+                            $mapaSedes = [
+                                'Morelia' => ['Morelia', 'Zitácuaro'],
+                                'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+                                'Zamora'  => ['Zamora', 'Sahuayo'],
+                            ];
+                            
+                            $delegaciones = $mapaSedes[$userActual->delegacion] ?? [$userActual->delegacion];
+                            return $q->whereIn('seer_general.delegacion', $delegaciones);
+                        }
+                        // Filtro manual de una sola sede
+                        return $q->where("seer_general.delegacion", $sede);
+                    })
+                    ->select(
+                        'seer_general.delegacion as sede_nombre', // Agrupamos por este campo
+                        DB::raw('COUNT(DISTINCT seer_general.id) as numeroSolicitudes'),
+                        DB::raw("COUNT(DISTINCT CASE WHEN seer_general.estatus NOT IN ('Pendiente','Prevencion','Rechazado') THEN seer_general.id END) as confirmadas"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN seer_general.estatus = 'Incompetencia' THEN seer_general.id END) as incompetencia"),
+                        
+                        // Totales de Audiencia
+                        DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' THEN pago_solicitud.id END) as cumplimientoAudiencia"),
+                        DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoAudienciaMonto"),
+                        
+                        // Totales de Audiencia (Pagado)
+                        DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.id END) as cumplimientoAudienciaPagado"),
+                        DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoAudienciaMontPagado"),
+
+                        // Totales de Ratificación
+                        DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' THEN pago_solicitud.id END) as cumplimientoRatificacion"),
+                        DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoRatificacionMonto"),
+
+                        // Totales de Ratificación (Pagado)
+                        DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.id END) as cumplimientoRatificacionPagado"),
+                        DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoRatificacionMontoPagado")
+                    )
+                    ->groupBy('seer_general.delegacion') // <--- Cambio clave
+                    ->get()
+                    ->keyBy('sede_nombre'); // Ahora indexamos por el nombre de la sede
+
+
+                $dataTurnos = DB::table('turnos')
+                    // Nota: Usamos id_solicitud según la estructura de tu tabla pago_solicitud
+                    ->join('pago_solicitud', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
+                    ->whereBetween('turnos.fecha', [$fecha_inicial, $fecha_final])
+                    ->when($sede !== "Todos", function ($q) use ($sede, $userActual) {
+                        // Lógica para Delegados (Ver sede propia y oficina de apoyo)
+                        if ($sede === "TodosDelegado") {
+                            $mapaSedes = [
+                                'Morelia' => ['Morelia', 'Zitácuaro'],
+                                'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+                                'Zamora'  => ['Zamora', 'Sahuayo'],
+                            ];
+                            $delegaciones = $mapaSedes[$userActual->delegacion] ?? [$userActual->delegacion];
+                            return $q->whereIn('turnos.delegacion', $delegaciones);
+                        }
+                        // Filtro manual por una sede específica
+                        return $q->where('turnos.delegacion', $sede);
+                    })
+                    ->select(
+                        'turnos.delegacion as sede_nombre', // Agrupamos por nombre de sede
+                        DB::raw('COUNT(DISTINCT turnos.id) as ratificaciones'),
+                        DB::raw('SUM(pago_solicitud.monto) as ratificacionesMonto') // Monto real del pago
+                    )
+                    ->groupBy('turnos.delegacion')
+                    ->get();
+
+                // 3. Unir los resultados en una sola colección
+                foreach ($solicitudes as $id => $solicitud) {
+                    $turno = $dataTurnos->get($id);
+                    $solicitud->ratificaciones = $turno ? $turno->ratificaciones : 0;
+                    $solicitud->ratificacionesMonto = $turno ? $turno->ratificacionesMonto : 0;
+                }
+
+            //Audiencias
+                $audiencias = DB::table('seer_general')
+                    ->join('audiencias', 'seer_general.id', '=', 'audiencias.id_solicitud')
+                    ->leftJoin('pago_solicitud', function($join) {
+                        $join->on('seer_general.id', '=', 'pago_solicitud.id_solicitud')
+                            ->where('pago_solicitud.tipo_pago', '=', 'Conciliador');
+                    })
+                    ->leftJoin('seer_citados', function($join) {
+                        $join->on('seer_general.id', '=', 'seer_citados.id_solicitud')
+                            ->where('seer_citados.tipo_notificacion', '=', 'Multa');
+                    })
+                    ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
+                    ->when($sede !== "Todos", function ($q) use ($sede, $userActual) {
+                        if ($sede === "TodosDelegado") {
+                            $mapaSedes = [
+                                'Morelia' => ['Morelia', 'Zitácuaro'],
+                                'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+                                'Zamora'  => ['Zamora', 'Sahuayo'],
+                            ];
+                            $delegaciones = $mapaSedes[$userActual->delegacion] ?? [$userActual->delegacion];
+                            return $q->whereIn('seer_general.delegacion', $delegaciones);
+                        }
+                        return $q->where("seer_general.delegacion", $sede);
+                    })
+                    ->select(
+                        'seer_general.delegacion as sede_nombre', // Agrupamos por sede
+                        DB::raw('COUNT(DISTINCT audiencias.id) as total_audiencias'),
+                        
+                        // Cumplimientos y Montos
+                        DB::raw('COUNT(DISTINCT pago_solicitud.id) as cumplimientoAudiencia'),
+                        DB::raw('SUM(pago_solicitud.monto) as cumplimientoAudienciaMonto'),
+                        
+                        // Estatus específicos
+                        DB::raw("COUNT(DISTINCT CASE WHEN seer_general.estatus IN ('Concluida', 'Conciliacion') THEN seer_general.id END) as cumplimientoAudienciaConvenio"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN seer_general.estatus = 'Archivada' THEN seer_general.id END) as cumplimientoAudienciaFalta"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN seer_general.estatus = 'Incompetencia' THEN seer_general.id END) as cumplimientoAudienciaIncompetencia"),
+                        
+                        // Multas y Virtuales
+                        DB::raw("COUNT(DISTINCT seer_citados.id) as multas"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN seer_general.tipo = 'Virtual' THEN seer_general.id END) as audiencias_virtuales"),
+
+                        // Conteos por número de audiencias (Subconsultas optimizadas por sede)
+                        DB::raw("COUNT(DISTINCT CASE WHEN (SELECT COUNT(*) FROM audiencias a WHERE a.id_solicitud = seer_general.id) = 1 THEN seer_general.id END) as una_audiencia"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN (SELECT COUNT(*) FROM audiencias a WHERE a.id_solicitud = seer_general.id) = 2 THEN seer_general.id END) as dos_audiencias"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN (SELECT COUNT(*) FROM audiencias a WHERE a.id_solicitud = seer_general.id) >= 3 THEN seer_general.id END) as tres_audiencias")
+                    )
+                    ->groupBy('seer_general.delegacion')
+                    ->get();
+
+
+
+            //Notificadores
+                $notificaciones = DB::table('seer_general')
+                    ->join('seer_citados', 'seer_general.id', '=', 'seer_citados.id_solicitud')
+                    ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
+                    ->where('seer_citados.estatus', '!=', 'Sin asignar')
+                    ->where('seer_citados.notificacion', 'Centro')
+                    ->when($sede !== "Todos", function ($q) use ($sede, $userActual) {
+                        if ($sede === "TodosDelegado") {
+                            $mapaSedes = [
+                                'Morelia' => ['Morelia', 'Zitácuaro'],
+                                'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+                                'Zamora'  => ['Zamora', 'Sahuayo'],
+                            ];
+                            $delegaciones = $mapaSedes[$userActual->delegacion] ?? [$userActual->delegacion];
+                            return $q->whereIn('seer_general.delegacion', $delegaciones);
+                        }
+                        return $q->where("seer_general.delegacion", $sede);
+                    })
+                    ->select(
+                        'seer_general.delegacion as sede_nombre', // Agrupamos por este campo
+                        DB::raw('COUNT(seer_citados.id) as Todas_notificaciones'),
+                            
+                        // Conteos condicionales por estatus
+                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Notificada' THEN 1 ELSE 0 END) as notificada"),
+                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'No notificada' THEN 1 ELSE 0 END) as notificacion_Nonotificada"),
+                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Pendiente' THEN 1 ELSE 0 END) as notificacion_pendientes"),
+                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Exhorto' THEN 1 ELSE 0 END) as notificacion_exhortos"),
+                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'No exitosa se constituye' THEN 1 ELSE 0 END) as notificacion_NESC"),
+                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'No exitosa no se constituye' THEN 1 ELSE 0 END) as notificacion_NENSC"),
+                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Finalizado exitosamente' THEN 1 ELSE 0 END) as exitosamente"),
+                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Recibe pero no firma' THEN 1 ELSE 0 END) as firma")
+                    )
+                    ->groupBy('seer_general.delegacion')
+                    ->get();
+
+            //Totales
+                // 2. Cálculo del Gran Total usando la colección de Laravel
+                $total_notificaciones = [
+                    'sede_nombre'               => 'TOTAL GENERAL',
+                    'Todas_notificaciones'      => $notificaciones->sum('Todas_notificaciones'),
+                    'notificada'                => $notificaciones->sum('notificada'),
+                    'notificacion_Nonotificada' => $notificaciones->sum('notificacion_Nonotificada'),
+                    'notificacion_pendientes'   => $notificaciones->sum('notificacion_pendientes'),
+                    'notificacion_exhortos'     => $notificaciones->sum('notificacion_exhortos'),
+                    'notificacion_NESC'         => $notificaciones->sum('notificacion_NESC'),
+                    'notificacion_NENSC'        => $notificaciones->sum('notificacion_NENSC'),
+                    'exitosamente'              => $notificaciones->sum('exitosamente'),
+                    'firma'                     => $notificaciones->sum('firma'),
+                ];
+
+
+                $granTotal = [
+                    'sede_nombre' => 'TOTAL GENERAL',
+                    'solicitudes' => $solicitudes->sum('solicitudes'),
+                    'confirmadas' => $solicitudes->sum('confirmadas'),
+                    'incompetencia' => $solicitudes->sum('incompetencia'),
+                    
+                    'cumplimientoAudiencia' => $solicitudes->sum('cumplimientoAudiencia'),
+                    'cumplimientoAudienciaMonto' => $solicitudes->sum('cumplimientoAudienciaMonto'),
+                    
+                    'cumplimientoAudienciaPagado' => $solicitudes->sum('cumplimientoAudienciaPagado'),
+                    'cumplimientoAudienciaMontPagado' => $solicitudes->sum('cumplimientoAudienciaMontPagado'),
+
+                    'cumplimientoRatificacion' => $solicitudes->sum('cumplimientoRatificacion'),
+                    'cumplimientoRatificacionMonto' => $solicitudes->sum('cumplimientoRatificacionMonto'),
+
+                    'cumplimientoRatificacionPagado' => $solicitudes->sum('cumplimientoRatificacionPagado'),
+                    'cumplimientoRatificacionMontoPagado' => $solicitudes->sum('cumplimientoRatificacionMontoPagado'),
+                ];
+
+
+                $total_audiencias = [
+                    'sede_nombre' => 'TOTAL GENERAL',
+                    'total_audiencias' => $audiencias->sum('total_audiencias'),
+                    'cumplimientoAudiencia' => $audiencias->sum('cumplimientoAudiencia'),
+                    'cumplimientoAudienciaMonto' => $audiencias->sum('cumplimientoAudienciaMonto'),
+                    'cumplimientoAudienciaConvenio' => $audiencias->sum('cumplimientoAudienciaConvenio'),
+                    'cumplimientoAudienciaFalta' => $audiencias->sum('cumplimientoAudienciaFalta'),
+                    'cumplimientoAudienciaIncompetencia' => $audiencias->sum('cumplimientoAudienciaIncompetencia'),
+                    'multas' => $audiencias->sum('multas'),
+                    'audiencias_virtuales' => $audiencias->sum('audiencias_virtuales'),
+                    'una_audiencia' => $audiencias->sum('una_audiencia'),
+                    'dos_audiencias' => $audiencias->sum('dos_audiencias'),
+                    'tres_audiencias' => $audiencias->sum('tres_audiencias'),
+                ];
+
+                $audienciasConTotal = $audiencias->push((object)$total_audiencias);
+                $solicitudesConTotal = $solicitudes->push((object)$granTotal);   
+                $notificacionesConTotal = $notificaciones->push((object)$total_notificaciones);
+               
+            $pdf = \PDF::loadView('PDF/Estadisticas/reporte_cuantitativo_sede', compact('fecha_inicial','fecha_final','solicitudes','audiencias','notificaciones'));
+            $pdf->setPaper('legal', 'landscape');
+            return $pdf->stream('archivo.pdf');
         }
         else if($data["tipo_reporte"] == "EstadisticaMexico"){
             return Excel::download(new ReporteMexicoRati($fecha_inicial, $fecha_final,$sede), 'reporte.xlsx');
@@ -4008,13 +4234,52 @@ class SeerController extends Controller
     }
 
     public function notificaciones(){
-        $id = auth()->user()->id;
-        $user = User::find($id);
-        $roles = Role::pluck('name','name')->all();
+        $user = auth()->user(); // Obtenemos el usuario directamente sin buscarlo por ID
         $userRole = $user->roles->pluck('name')->all();
-        //$fecha_actual = date('y-m-d');
 
-        /*if($user["delegacion"] == "Morelia"){
+        // 1. Mapeo de Sedes y Oficinas de Apoyo (Consistente con tus otros módulos)
+        $mapaSedes = [
+            'Morelia' => ['Morelia', 'Zitacuaro'],
+            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+            'Zamora'  => ['Zamora', 'Sahuayo'],
+        ];
+
+        // Determinamos las sedes a consultar según la delegación del usuario
+        $sedesAconsultar = $mapaSedes[$user->delegacion] ?? [$user->delegacion];
+
+        // 2. Construcción de la consulta optimizada
+        $mis_notificaciones = SeerPerGeneral::join('seer_citados', 'seer_citados.id_solicitud', '=', 'seer_general.id')
+            ->join('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
+            ->join('estados', 'seer_citados.estado_citado', '=', 'estados.id')
+            ->select(
+                'seer_general.id as id_solicitud',
+                'seer_citados.id as id_citado',
+                'seer_general.NUE',
+                'seer_citados.nombre',
+                'seer_citados.primer_apellido',
+                'seer_citados.segundo_apellido',
+                'seer_citados.colonia',
+                'seer_citados.tipo_vialidad',
+                'seer_citados.calle',
+                'seer_citados.n_ext',
+                'seer_citados.n_int',
+                'seer_citados.municipio_citado',
+                'seer_citados.estado_citado',
+                'seer_citados.estatus',
+                'seer_citados.tipo_notificacion',
+                'municipios.nombre as municipio_nombre',
+                'estados.nombre as estado_nombre',
+                'seer_citados.id_notificador'
+            )
+            // Usamos whereIn con las sedes mapeadas para incluir oficinas de apoyo automáticamente
+            ->whereIn('seer_general.delegacion', $sedesAconsultar)
+            ->where('seer_citados.id_notificador', 0)
+            ->where('seer_citados.notificacion', '!=', 'Trabajador')
+            ->whereNotIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
+            ->get();
+            
+
+        if($user["delegacion"] == "Morelia"){
             $personas = User::whereHas('roles', function ($query) {
                 return $query->where('name', '=', 'Notificador');
             })
@@ -4032,21 +4297,7 @@ class SeerController extends Controller
             })
             ->where('delegacion', ["Zamora", "Sahuayo"])
             ->get();
-        }*/
-
-        $mis_notificaciones = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
-        ->join('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
-        ->join('estados', 'seer_citados.estado_citado', '=', 'estados.id')
-        ->select('seer_general.id as id_solicitud','seer_citados.id as id_citado','seer_general.NUE',
-            'seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido',
-            'seer_citados.colonia','seer_citados.tipo_vialidad','seer_citados.calle','seer_citados.n_ext','seer_citados.n_int',
-            'seer_citados.municipio_citado','seer_citados.estado_citado','seer_citados.estatus','seer_citados.tipo_notificacion',
-            'municipios.nombre as municipio_nombre','estados.nombre as estado_nombre','seer_citados.id_notificador')
-        ->where('seer_general.delegacion', $user["delegacion"])
-        ->where('seer_citados.id_notificador', 0)
-        ->where('seer_citados.notificacion',"!=", "Trabajador")
-        ->whereNotIn('seer_general.estatus', ["Pendiente","Prevencion"])
-        ->get();
+        }
 
         return view('notificaciones.index',compact('personas','mis_notificaciones','userRole'));
     }
@@ -7674,12 +7925,31 @@ class SeerController extends Controller
         $user = User::find($id);
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
-        
-        $notificaciones = SeerCitados::join('seer_general','seer_general.id','seer_citados.id_solicitud')
-        ->join('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
-        ->join('estados', 'seer_citados.estado_citado', '=', 'estados.id')
-        ->select('seer_citados.*','seer_general.NUE','municipios.nombre as municipio_citado','estados.nombre as estado_citado')
-        ->orderBy('created_at', 'desc')->limit(500)->get();
+        $delegacion = $user->delegacion;
+        if($userRole[0] == "Enlace"){
+            if($delegacion == "Morelia"){
+                $delegaciones = ["Morelia", "Zítacuaro"];
+            }
+            else if($delegacion == "Uruapan"){
+                $delegaciones = ["Uruapan", "Lázaro Cárdenas"];
+            }
+            else if($delegacion == "Zamora"){
+                $delegaciones = ["Zamora", "Sahuayo"];
+            }
+            $notificaciones = SeerCitados::join('seer_general','seer_general.id','seer_citados.id_solicitud')
+            ->leftjoin('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
+            ->leftjoin('estados', 'seer_citados.estado_citado', '=', 'estados.id')
+            ->whereIn('seer_general.delegacion', $delegaciones)
+            ->select('seer_citados.*','seer_general.NUE','municipios.nombre as municipio_citado','estados.nombre as estado_citado')
+            ->orderBy('created_at', 'desc')->limit(1000)->get();
+        }
+        else{
+            $notificaciones = SeerCitados::join('seer_general','seer_general.id','seer_citados.id_solicitud')
+            ->leftjoin('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
+            ->leftjoin('estados', 'seer_citados.estado_citado', '=', 'estados.id')
+            ->select('seer_citados.*','seer_general.NUE','municipios.nombre as municipio_citado','estados.nombre as estado_citado')
+            ->orderBy('created_at', 'desc')->limit(1000)->get();
+        }
 
        
         return view('/notificaciones.index_busqueda',compact('notificaciones'));

@@ -171,7 +171,7 @@
                                         @foreach($audiencias as $audiencia)
                                             <tr>
                                                 <td style=" text-align: center;">{{ $audiencia->name}}</td>
-                                                <td style=" text-align: center;">{{ $audiencia->audiencias}}</td>
+                                                <td style=" text-align: center;">{{ $audiencia->total_audiencias}}</td>
                                                 <td style=" text-align: center;">{{ $audiencia->cumplimientoAudiencia }}</td>
                                                 <td style=" text-align: center;">${{ number_format($audiencia->cumplimientoAudienciaMonto, 2) }}</td>
                                                 <td style=" text-align: center;">{{ $audiencia->cumplimientoAudienciaConvenio}}</td>
@@ -179,11 +179,11 @@
                                                 <td style=" text-align: center;">{{ $audiencia->cumplimientoAudienciaIncompetencia}}</td>
                                                 <td style=" text-align: center;">{{ $audiencia->multas}}</td>
                                                 <td style=" text-align: center;">{{ $audiencia->audiencias_virtuales}}</td>
-                                                <td style=" text-align: center;">{{ $audiencia->una_audiencias}}</td>
+                                                <td style=" text-align: center;">{{ $audiencia->una_audiencia}}</td>
                                                 <td style=" text-align: center;">{{ $audiencia->dos_audiencias}}</td>
                                                 <td style=" text-align: center;">{{ $audiencia->tres_audiencias}}</td>
                                                 @php 
-                                                    $total_audiencias = $total_audiencias + $audiencia->audiencias;
+                                                    $total_audiencias = $total_audiencias + $audiencia->total_audiencias;
                                                     $total_cumplimientoAudiencia = $total_cumplimientoAudiencia + $audiencia->cumplimientoAudiencia;
                                                     $total_cumplimientoAudienciaMonto = $total_cumplimientoAudienciaMonto + $audiencia->cumplimientoAudienciaMonto;
                                                     $total_cumplimientoAudienciaConvenio = $total_cumplimientoAudienciaConvenio + $audiencia->cumplimientoAudienciaConvenio;
@@ -191,7 +191,7 @@
                                                     $total_cumplimientoAudienciaIncompetencia = $total_cumplimientoAudienciaIncompetencia + $audiencia->cumplimientoAudienciaIncompetencia;
                                                     $total_multas = $total_multas + $audiencia->multas;
                                                     $total_audiencias_virtuales = $total_audiencias_virtuales + $audiencia->audiencias_virtuales;
-                                                    $total_una_audiencias = $total_una_audiencias + $audiencia->una_audiencias;
+                                                    $total_una_audiencias = $total_una_audiencias + $audiencia->una_audiencia;
                                                     $total_dos_audiencias = $total_dos_audiencias + $audiencia->dos_audiencias;
                                                     $total_tres_audiencias = $total_tres_audiencias + $audiencia->tres_audiencias;
                                                 @endphp

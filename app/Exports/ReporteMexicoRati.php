@@ -65,7 +65,7 @@ class ReporteMexicoRati implements FromView
                 'turnos.user_id',
                 'turnos.estatus',
                 'turnos.id',
-                'users.sexo'
+                'turnos.sexo'
             )
             ->selectSub($subconsultaPagosTurnos, 'total')
             ->get();
@@ -97,7 +97,7 @@ class ReporteMexicoRati implements FromView
                 'seer_general.user_id',
                 'seer_general.estatus',
                 'seer_general.id',
-                'users.sexo'
+                'seer_solicitante.sexo'
             )
             // Agregamos la cadena de motivos y el total de pagos como subconsultas
             ->selectSub($subconsultaMotivos, 'motivo') 

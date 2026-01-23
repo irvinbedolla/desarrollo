@@ -71,38 +71,48 @@
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                             <tr>   
                                 <td><b>Centro de Conciliación Laboral </b></td>
-                                
-                                <td>{{ \Carbon\Carbon::parse($fecha_inicial)->format('d/m/y') }} a {{ \Carbon\Carbon::parse($fecha_final)->format('d/m/y') }}</td>
+                                <td>{{ $fecha_inicial}} a {{ $fecha_final }} </td>
                             </tr>
                     </table>
                 </div><br><br><br>
-                <table class="table table-striped mt-2">
-                    <thead style="background-color: #869b9c;">
-                        <tr>
-                            <th style="color: #fff;  text-align: center;">Auxiliar</th>
-                            <th style="color: #fff;  text-align: center;">Folio</th>
-                            <th style="color: #fff;  text-align: center;">Fecha</th>
-                            <th style="color: #fff;  text-align: center;">Estatus Solicitud</th>
-                            <th style="color: #fff;  text-align: center;">Solicitante</th>
-                            <th style="color: #fff;  text-align: center;">Actividad Economica</th>
-                            <th style="color: #fff;  text-align: center;">Motivo</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($detalleSolicitantes as $registro)
-                            <tr>
-                                <td style="text-align: center;">{{ $registro->auxiliar }}</td>
-                                <td style="text-align: center;">{{ $registro->folio }}</td>
-                                <td style="text-align: center;">{{ $registro->fecha }}</td>
-                                <td style="text-align: center;">{{ $registro->estatus }}</td>
-                                <td style="text-align: center;">{{ $registro->nombre}}</td>
-                                <td style="text-align: center;">{{ $registro->actividad}}</td>
-                                <td style="text-align: center;">{{ $registro->motivo}}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+
+                    <div class="table-responsive">
+                        <spam>Reporte por sede</spam>
+                            <table class="table table-striped mt-2">
+                                <thead style="background-color: #869b9c;">
+                                    <th style="color: #fff;  text-align: center;">Sede</th>
+                                    <th style="color: #fff;  text-align: center;">Solicitudes</th>
+                                    <th style="color: #fff;  text-align: center;">Solicitudes Confirmadas</th>
+
+                                    <th style="color: #fff;  text-align: center;">Ratificaciones</th>
+                                    <th style="color: #fff;  text-align: center;">Incompetencias</th>
+                                    <th style="color: #fff;  text-align: center;">Cumplimientos</th>
+
+                                    <th style="color: #fff;  text-align: center;">Monto en Audiencia</th>
+                                    <th style="color: #fff;  text-align: center;">Monto en Ratificaciones</th>
+                                </thead>
+                                <tbody>
+                                    @foreach($solicitudes as $solicitud)
+                                        <tr>
+                                            <td style=" text-align: center;">{{ $solicitud->sede_nombre}}</td>
+                                            <td style=" text-align: center;">{{ $solicitud->numeroSolicitudes}}</td>
+                                            <td style=" text-align: center;">{{ $solicitud->confirmadas}}</td>
+                                            <td style=" text-align: center;">{{ $solicitud->ratificaciones}}</td>
+                                            <td style=" text-align: center;">{{ $solicitud->incompetencia}}</td>
+                                            <th style=" text-align: center;">{{ $solicitud->cumplimientoRatificacion + $solicitud->cumplimientoAudiencia }}</th>
+                                            <td style=" text-align: center;">${{ number_format($solicitud->cumplimientoAudienciaMonto, 2) }}</td>
+                                            <td style=" text-align: center;">${{ number_format($solicitud->cumplimientoRatificacionMonto, 2) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                                <tfoot>
+                                    
+                                </tfoot>
+                            </table>
+                        </div>
+
+             
+
             <script type="text/php">
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");
