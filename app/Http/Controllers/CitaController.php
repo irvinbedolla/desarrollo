@@ -280,7 +280,7 @@ class CitaController extends Controller
         return response()->json($eventos);
     }
 
-    public function conciliadores() {
+    public function conciliadores(Request $request) {
         $user = auth()->user();
         $rol = $user->roles->first()->name ?? '';
         $tipo = 6;

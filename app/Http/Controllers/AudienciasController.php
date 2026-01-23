@@ -352,7 +352,7 @@ class AudienciasController extends Controller
                         'delegacion' => $rati->delegacion,
                         'usuario' => $userID,
                         'tipo' => $tipo,
-                        'conciliador' => $audiencia->name,
+                        'conciliador' => $rati->name,
                     ]
                 ];
         }
