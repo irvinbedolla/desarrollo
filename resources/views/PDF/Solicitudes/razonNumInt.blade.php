@@ -140,7 +140,7 @@
                         de Ocampo, a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
                         en el expediente citado, en el que se ordena NOTIFICAR <b>AL CITADO: {{$citado->nombre}}@if($citado->primer_apellido!=null) {{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null) {{$citado->segundo_apellido}}@endif</b>, 
                         en el domicilio señalado en <b>{{strtoupper($citado->tipo_vialidad)}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) INT. {{$citado->n_int}}@endif, COLONIA {{$citado->colonia}}, 
-                        {{strtoupper($municipioCitado, 'UTF-8')}}, CP {{$citado->cp}}, {{mb_strtoupper($estadoCitado, 'UTF-8')}}.</b> Cerciorándome de ser el domicilio correcto por
+                        {{mb_strtoupper($municipioCitado, 'UTF-8')}}, CP {{$citado->cp}}, {{mb_strtoupper($estadoCitado, 'UTF-8')}}.</b> Cerciorándome de ser el domicilio correcto por
                         <b>
                             @php
                                 $letras = range('A', 'Z');
@@ -149,7 +149,7 @@
                                 if (is_array($citado->medio)) {
                                     $medios = $citado->medio;
                                 } elseif (is_string($citado->medio)) {
-                                    $decoded = json_decode($citado->medio, true);
+                                    $decoded = json_decode($citado->medio, true); 
                                     $medios = is_array($decoded)
                                         ? $decoded
                                         : array_map('trim', explode(',', $citado->medio));
