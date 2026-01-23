@@ -121,8 +121,12 @@
                         b) Que por el desempeño de sus labores contaba con las siguientes prestaciones:<br>
                             - Salario mensual: <b>${{ number_format($salario_mensual, 2) }} {{ $mensualTexto }}</b> <br>
                             - Días de descanso: <b>{{ $dias_descanso }}</b><br>
+                           @if($solicitud->vacaciones_dias > 0 && !is_null($solicitud->vacaciones_dias))
                             - Vacaciones: <b>{{ $solicitud->vacaciones_dias }}</b> días al año.<br>
+                            @endif
+                            @if($solicitud->aguinaldo_dias > 0 && !is_null($solicitud->aguinaldo_dias))
                             - Aguinaldo: <b>{{ $solicitud->aguinaldo_dias }}</b> días al año.<br>
+                            @endif
                             - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>{{ $solicitud->Otras }}</b>
                     </p>
                     <p class="sangria">
@@ -327,8 +331,17 @@
                         Michoacán de Ocampo a los <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\í\a\s \d\e F \d\e\l Y') }}</b>, ante la fe de <b>{{ $conciliador->name }}</b>, funcionario(a) conciliador(a), quien 
                         lo sanciona en este mismo acto. <b>Doy fe</b>.
                     </p>
-                                    
-                    <br><br><br>
+                    @php
+                        $longitud = mb_strlen($solicitud->fecha);
+                        $forzarSalto = $longitud > 380;
+                    @endphp
+
+                    @if($forzarSalto)
+                        <div style="page-break-before: always;"><br><br><br><br><br><br></div>
+                    @else
+                        <br><br><br><br>
+                    @endif           
+                    
                     <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:10px;">
                         <tr>
                             <td style="width:60%; vertical-align:top; padding:0 10px;">
