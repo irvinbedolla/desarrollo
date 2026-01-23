@@ -222,8 +222,7 @@
                                                     <label for="filtro-sede">Filtrar por Sede:</label>
                                                     <select id="filtro-sede" class="form-control d-inline-block w-auto">
                                                         @foreach($sedes as $sede)
-                                                            <option value="{{$sede['id']}}" data-delegacion-id="{{ $sede['nombre'] }}">
-                                                            {{ $municipio['nombre'] }}</option>
+                                                            <option value="{{ $sede }}">{{ $sede }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -232,7 +231,9 @@
                                                     <label>Conciliador:</label>
                                                     <select id="filter-conciliador" class="form-control filter-action">
                                                         <option value="">Todos los conciliadores</option>
-                                                        <option value="38">Conciliador</option>
+                                                        @foreach($conciliadores as $conciliador)
+                                                            <option value="{{$conciliador['id']}}" data-delegacion-id="{{ $conciliador['delegacion_id'] }}">{{ $conciliador['name'] }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
 

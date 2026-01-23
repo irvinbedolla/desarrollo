@@ -15,11 +15,11 @@ class DashboardController extends Controller
         $roles = Role::pluck('name', 'name')->all();
         $userRole = $user->roles->pluck('name')->all();
         $sede = $user->delegacion;
-        
+        $relacionEloquent = "roles";
 
         if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador" || $userRole[0] == "Estadistica"){
-            $sede = ["Morelia", "Zítacuaro","Uruapan", "Lázaro Cárdenas","Zamora", "Sahuayo"];
-            $conciliador = User::whereHas($relacionEloquent, function ($query) {
+            $sedes = ["Morelia", "Zítacuaro","Uruapan", "Lázaro Cárdenas","Zamora", "Sahuayo"];
+            $conciliadores = User::whereHas($relacionEloquent, function ($query) {
                     return $query->where('name', '=', 'Conciliador');
                 })
                 ->get();
@@ -28,15 +28,15 @@ class DashboardController extends Controller
         elseif($userRole[0] == "Delegado" || $userRole[0] == "Enlace"){
             if($delegacion == "Morelia"){
                 $sede = ["Morelia", "Zítacuaro"];
-                $conciliador = User::whereHas($relacionEloquent, function ($query) {
+                $conciliadores = User::whereHas($relacionEloquent, function ($query) {
                     return $query->where('name', '=', 'Conciliador');
                 })
                 ->where('delegacion', $delegacion)
                 ->get();
             }
             else if($delegacion == "Uruapan"){
-                $sede = ["Uruapan", "Lázaro Cárdenas"];
-                $conciliador = User::whereHas($relacionEloquent, function ($query) {
+                $sedes = ["Uruapan", "Lázaro Cárdenas"];
+                $conciliadores = User::whereHas($relacionEloquent, function ($query) {
                     return $query->where('name', '=', 'Conciliador');
                 })
                 ->where('delegacion', $delegacion)
@@ -44,7 +44,7 @@ class DashboardController extends Controller
             }
             else if($delegacion == "Zamora"){
                 $sede = ["Zamora", "Sahuayo"];
-                $conciliador = User::whereHas($relacionEloquent, function ($query) {
+                $conciliadores = User::whereHas($relacionEloquent, function ($query) {
                     return $query->where('name', '=', 'Conciliador');
                 })
                 ->where('delegacion', $delegacion)
@@ -60,12 +60,16 @@ class DashboardController extends Controller
                 $sede = ["Uruapan", "Lázaro Cárdenas"];
             }
             else if($delegacion == "Zamora"){
-                $sede = ["Zamora", "Sahuayo"];
+                $sedes = ["Zamora", "Sahuayo"];
             }
-            $conciliadores = "";
+            $conciliadores = User::whereHas($relacionEloquent, function ($query) {
+                return $query->where('name', '=', 'Conciliador');
+            })
+            ->where('id', $id_usuario)
+            ->get();
         }
         
 
-        return view('pages/dashboards.index', compact('userRole','sede','conciliador'));
+        return view('pages/dashboards.index', compact('userRole','sedes','conciliadores'));
     }
 }
