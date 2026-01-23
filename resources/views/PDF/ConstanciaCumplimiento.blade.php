@@ -76,7 +76,7 @@
                             <td>{{ $solicitud->NUE }} </td>
                         </tr>  
                     </table>
-                </div><br><br><br><br><br>
+                </div><br><br><br><br>
                
                 <p><b>
                     Trabajador(a): {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
@@ -139,9 +139,51 @@
                     Laboral del Estado de Michoacán de Ocampo.</b>
                 </p>
 
-                <br><br><br><br>       
-                <center><br><br> <p><b>___________________________________<br>{{mb_strtoupper($conciliador->name, 'UTF-8')}} <br>FUNCIONARIO/A CONCILIADOR/A<br>
-                    DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>                            
+                @php
+                    $longitud = mb_strlen($pago->observaciones);
+                    $forzarSalto = $longitud > 380;
+                @endphp
+
+                @if($forzarSalto)
+                    <div style="page-break-before: always;"><br><br><br><br><br><br></div>
+                @else
+                    <br><br><br><br>
+                @endif           
+                    
+                <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:10px;">
+                    <tr>
+                        <td style="width:60%; vertical-align:top; padding:0 10px;">
+                            <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                            <b> {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}<br>
+                                LA PARTE TRABAJADORA
+                            </b>
+                        </td>
+                        <td style="width:60%; vertical-align:top; padding:0 10px;">
+                            <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                            <b>{{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}<br>
+                                LA PARTE EMPLEADORA
+                            </b>
+                        </td>
+                    </tr>
+                    <br><br><br>
+                    <tr>
+                        <td style="width:60%; vertical-align:top; padding:0 10px;">
+                            <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                            <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}<br>
+                                        FUNCIONARIO/A CONCILIADOR/A<br>
+                                        DEL CENTRO DE CONCILIACIÓN LABORAL
+                                        DEL ESTADO DE MICHOACÁN DE OCAMPO
+                            </b>
+                        </td>
+                        <td style="width:60%; vertical-align:top; padding:0 10px;">
+                            <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                            <b>{{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
+                                    DIRECTOR/A DEL CENTRO DE CONCILIACIÓN
+                                    LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO                                  
+                            </b>
+                        </td>
+                    </tr>
+                </table>                         
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

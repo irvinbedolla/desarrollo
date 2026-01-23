@@ -1178,8 +1178,25 @@ class TurnosController extends Controller
         $conciliador = $conciliador->where("turnos.id", "=", $id)
         ->select('users.name')
         ->first();
+        $delegacion = $solicitud->delegacion;
+        $delegadosEspeciales = [
+                'Zitácuaro'        => 11,
+                'Lázaro Cárdenas'  => 43,
+                'Sahuayo'          => 26,
+            ];
 
-        $html = view('PDF/ConstanciaCumplimiento', compact('id', 'solicitud','conciliador','pagos'))->render();
+        if (array_key_exists($delegacion, $delegadosEspeciales)) {
+            $delegado = User::select('id', 'name', 'delegacion')
+                ->find($delegadosEspeciales[$delegacion]);
+        } else {
+            $delegado = User::where('delegacion', $delegacion)
+                ->whereHas('roles', function ($query) {
+                    $query->where('name', 'Delegado');
+                })
+                ->select('users.id', 'users.name', 'users.delegacion')
+                ->first();
+        }
+        $html = view('PDF/ConstanciaCumplimiento', compact('id', 'solicitud','conciliador','pagos','delegado'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -2315,5 +2332,93 @@ class TurnosController extends Controller
                 r.{$consecutivoColumn} = subquery.nuevo_consecutivo;";
 
         DB::statement($sql);
+    }
+    //Conveio de PTU cuando el trabajador NO SIGUE laborando
+    public function VerPDFConvenioPTU_rat($id){
+        $ratificacion = Turnos::find($id);
+        $delegacion = $ratificacion->delegacion;
+        $delegadosEspeciales = [
+                'Zitácuaro'        => 11,
+                'Lázaro Cárdenas'  => 43,
+                'Sahuayo'          => 26,
+            ];
+
+        if (array_key_exists($delegacion, $delegadosEspeciales)) {
+            $delegado = User::select('id', 'name', 'delegacion')
+                ->find($delegadosEspeciales[$delegacion]);
+        } else {
+            $delegado = User::where('delegacion', $delegacion)
+                ->whereHas('roles', function ($query) {
+                    $query->where('name', 'Delegado');   
+            })
+            ->select('users.id', 'users.name', 'users.delegacion')
+            ->first();
+        }
+
+        $abogado = Poder::join("turnos", "turnos.idAbogado", "=", "abogados.idAbogado")
+           ->where("turnos.id", "=", $id)
+           ->select(
+           "abogados.*",
+           "turnos.tipo_identificacion as tipo_identificacion_turno",
+           "turnos.num_identificacion as num_identificacion_turno"
+        )
+        ->first();
+        $pagos = Pagos::where('id_solicitud', $id)->get();
+        $prestaciones = Concepto::where('id_solicitud', $id)->get();
+        $deducciones = Deducciones::where('id_solicitud', $id)->get();
+
+        $conceptosTexto = [];
+        $deduccionesTexto = [];
+
+        foreach ($prestaciones as $concepto) {
+            $conceptosTexto[$concepto->id] = $this->convertirNumerosALetras($concepto->monto);
+        }
+
+        foreach ($deducciones as $deduccion) {
+            $deduccionesTexto[$deduccion->id] = $this->convertirNumerosALetras($deduccion->monto);
+        }
+
+        $totalPrestaciones = $prestaciones->sum('monto');
+        $totalDeducciones = $deducciones->sum('monto');
+        //Total a pagar
+        $pagoTotal= $totalPrestaciones-$totalDeducciones;
+        $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
+        $conciliador = $conciliador->where("turnos.id", "=", $id)
+        ->select('users.name')
+        ->first();
+        
+        //Descripción del tipo de identificación para los solicitantes
+        $identificacionSolicitante = $ratificacion->tipo_identificacion;
+        $descripcionIdentificacionS = $this->descripcionIdentificacion($identificacionSolicitante);
+
+        //Descripción del tipo de identificación para los poderes
+        $identificacionPoder = $abogado->tipo_identificacion;
+        $descripcionIdentificacionP = $this->descripcionIdentificacion($identificacionPoder);
+
+        $salario_diario = $this->calcularSalarioDiario($ratificacion->salario, $ratificacion->frecuencia);
+        $salario_mensual = $salario_diario * 30;
+        $diarioTexto = $this->convertirNumerosALetras($salario_diario);
+        $mensualTexto = $this->convertirNumerosALetras($salario_mensual);
+        $montoTexto = $this->convertirNumerosALetras($ratificacion->monto);
+        
+        $pagosDif  = Pagos::join("turnos","turnos.id","=","pago_solicitud.id_solicitud");
+        $pagosDif = $pagosDif->where("pago_solicitud.id_solicitud", "=", $id)
+        ->select(DB::raw('count(pago_solicitud.id_solicitud) as C_pagos'))
+        ->first();
+        
+        $municipio = Municipios::find($ratificacion->municipio_rat);
+        $municipioEmpresa = $municipio ? $municipio->nombre : 'No definido';
+        $estado = Estados::find($ratificacion->estado_rat);
+        $estadoEmpresa = $estado ? $estado->nombre : 'No definido';
+        $html = view('PDF/convenioPTUNoLaboraRati', compact('id','ratificacion','conciliador','prestaciones','deducciones','deduccionesTexto','pagoTotal','descripcionIdentificacionS','salario_mensual','mensualTexto',
+        'descripcionIdentificacionP','abogado','conceptosTexto','municipioEmpresa','estadoEmpresa','montoTexto','pagosDif','pagos','delegado'))->render();
+
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'Convenio_PTU_NRati' . $ratificacion->trabajador .'.pdf';
+        return $pdf->stream($nombreArchivo);            
     }
 }

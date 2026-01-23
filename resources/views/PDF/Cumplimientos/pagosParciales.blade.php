@@ -19,7 +19,7 @@
                 padding-top: 85px;
             }
             main{
-                margin: 50px 50px 50px 40px; /*Para colocar el texto*/
+                margin: 50px 0 50px 0; /*Para colocar el texto*/
             }
             header {
                 position: fixed;
@@ -42,9 +42,11 @@
             }
             .content {
                 font-family: sans-serif;
-                font-size: 12px;
+                font-size: 14px;
                 text-align: justify;
-                margin-top: 50px;
+                margin-left: 3cm;     
+                margin-right: 2cm; 
+                line-height: 1.3;
             }
             .fondo-membrete {
                 position: fixed;
@@ -75,12 +77,12 @@
                                 <td>{{ $solicitud->delegacion }} </td>
                             </tr>
                     </table>
-                </div><br><br><br><br><br>
+                </div><br><br><br><br>
                 <p><b>
                     Trabajador(a): {{ $solicitud->nombre_trabajador }} <br> 
                     Empresa/Patrón: {{ $solicitud->empresa_representante }}<br>
                     Funcionario/a Conciliador/a Responsable: {{$conciliador->name}}<br>
-                    Fecha y hora de cumplimiento: {{\Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y')}} a las {{\Carbon\Carbon::parse($solicitud->hora)->translatedFormat('h:i')}} horas.<br
+                    Fecha y hora de cumplimiento: {{\Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y')}} a las {{\Carbon\Carbon::parse($solicitud->hora)->translatedFormat('h:i')}} horas.<br>
                     Asistencia de los interesados: Si<br>
                     Convenio conciliatorio: Si
                 </b></p>  
@@ -97,16 +99,43 @@
 
                     Las <b>PARTES</b> acordaron <b>PAGO</b> en el convenio referido, en este sentido, el <b>EMPLEADOR</b> da cumplimiento ante esta Autoridad Conciliadora al siguiente concepto:<br>
 
-                    <p><b>{{ $pagos->observaciones}}</b></p>
+                    <p><b>{{ $pagos->observaciones}}</b></p> 
 
                     Quien suscribe da fe del cumplimiento del concepto anteriormente descrito por parte del <b>EMPLEADOR. Doy fe.</b><br><br>
 
-                    <b>Con fecha {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }} se emite la presente Constancia de Pago, con 
+                    <b>Con fecha {{ $pagos->updated_at->translatedFormat('d \d\e F \d\e\l Y') }} se emite la presente Constancia de Pago, con 
                     fundamento en la fracción XIV del artículo 684-E y fracción VIII del artículo 684-F de la Ley Federal del Trabajo.</b>
                 </p>
 
-                <br><br><br><br>       
-                <center><br><br> <p><b>___________________________________<br>{{$conciliador->name}} <br>FUNCIONARIO/A CONCILIADOR/A</b></p></center>           
+                @php
+                    $longitud = mb_strlen($pagos->observaciones);
+                    $forzarSalto = $longitud > 380;
+                @endphp
+
+                @if($forzarSalto)
+                    <div style="page-break-before: always;"><br><br><br><br><br><br></div>
+                @else
+                    <br><br><br><br>
+                @endif
+                <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:10px;">
+                    <tr>
+                        <td style="width:50%; vertical-align:top; padding:0 5px;">
+                            <div style="border-top: 2px solid #000; width:90%; margin: 0 auto 5px auto;"></div>
+                            <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}<br>
+                                    FUNCIONARIO/A CONCILIADOR/A<br>
+                                    DEL CENTRO DE CONCILIACIÓN LABORAL
+                                    DEL ESTADO DE MICHOACÁN DE OCAMPO
+                            </b>
+                        </td>
+                       <td style="width:50%; vertical-align:top; padding:0 5px;">
+                            <div style="border-top: 2px solid #000; width:90%; margin: 0 auto 5px auto;"></div>
+                            <b>{{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
+                                DIRECTOR/A DEL CENTRO DE CONCILIACIÓN
+                                LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO                                  
+                            </b>
+                        </td>
+                    </tr>
+                </table>
             </div>
             <script type="text/php">
                 if (isset($pdf)) {
