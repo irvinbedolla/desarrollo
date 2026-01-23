@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Auth, Hash;
 use App\Models\Recepcion;
+use App\Models\SeerPerGeneral;
+use App\Models\Turnos;
 use App\Models\TurnoDisponible;
 
 class RecepcionController extends Controller
@@ -89,6 +91,8 @@ class RecepcionController extends Controller
         $relacionEloquent = 'roles';
         $id = auth()->user()->id;
         $user = User::find($id);
+        $last_solicitudes = SeerPerGeneral::where('delegacion', $user["delegacion"])->latest()->value('consecutivo');
+        $last_turnos = Turnos::where('delegacion', $user["delegacion"])->latest()->value('consecutivo');
 
         $auxiliares = User::whereHas($relacionEloquent, function ($query) {
             return $query->where('name', '=', 'Auxiliar');
@@ -118,7 +122,7 @@ class RecepcionController extends Controller
         }
         $total = count($auxiliares_morelia);
 
-        return view('turnos.index',compact('auxiliares_morelia','total'));
+        return view('turnos.index',compact('auxiliares_morelia','total', 'last_solicitudes', 'last_turnos'));
     }
 
     public function create()

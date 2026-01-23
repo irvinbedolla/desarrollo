@@ -253,9 +253,6 @@
 
     @auth
         @role('Turnos')
-            <a class="nav-link" href="{{ route('agenda') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Agenda</span>
-            </a>
             <a class="nav-link" href="{{ route('turnos') }}">
                 <i class="bi bi-book" aria-hidden="true"></i></i><span class="text-dark" onclick="turnos()">Turnos</span>
             </a>
