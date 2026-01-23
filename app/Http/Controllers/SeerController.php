@@ -4013,11 +4013,26 @@ class SeerController extends Controller
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name')->all();
         //$fecha_actual = date('y-m-d');
-        $personas = User::whereHas('roles', function ($query) {
-            return $query->where('name', '=', 'Notificador');
-        })
-        ->where('delegacion', $user["delegacion"])
-        ->get();
+
+        /*if($user["delegacion"] == "Morelia"){
+            $personas = User::whereHas('roles', function ($query) {
+                return $query->where('name', '=', 'Notificador');
+            })
+            ->where('delegacion', ["Morelia", "Zitacuaro"])
+            ->get();
+        } else if ($user["delegacion"] == "Uruapan"){
+            $personas = User::whereHas('roles', function ($query) {
+                return $query->where('name', '=', 'Notificador');
+            })
+            ->where('delegacion', ["Uruapan", "Lázaro Cárdenas"])
+            ->get();
+        }else if ($user["delegacion"] == "Zamora"){
+            $personas = User::whereHas('roles', function ($query) {
+                return $query->where('name', '=', 'Notificador');
+            })
+            ->where('delegacion', ["Zamora", "Sahuayo"])
+            ->get();
+        }*/
 
         $mis_notificaciones = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
         ->join('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
