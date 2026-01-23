@@ -14,7 +14,7 @@ class DashboardController extends Controller
         $user = User::find($id_usuario);
         $roles = Role::pluck('name', 'name')->all();
         $userRole = $user->roles->pluck('name')->all();
-        $sede = $user->delegacion;
+        $delegacion = $user->delegacion;
         $relacionEloquent = "roles";
 
         if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador" || $userRole[0] == "Estadistica"){
@@ -27,7 +27,7 @@ class DashboardController extends Controller
         //puede ver las sede y conciliadores
         elseif($userRole[0] == "Delegado" || $userRole[0] == "Enlace"){
             if($delegacion == "Morelia"){
-                $sede = ["Morelia", "Zítacuaro"];
+                $sedes = ["Morelia", "Zítacuaro"];
                 $conciliadores = User::whereHas($relacionEloquent, function ($query) {
                     return $query->where('name', '=', 'Conciliador');
                 })
@@ -43,7 +43,7 @@ class DashboardController extends Controller
                 ->get();
             }
             else if($delegacion == "Zamora"){
-                $sede = ["Zamora", "Sahuayo"];
+                $sedes = ["Zamora", "Sahuayo"];
                 $conciliadores = User::whereHas($relacionEloquent, function ($query) {
                     return $query->where('name', '=', 'Conciliador');
                 })
@@ -52,12 +52,12 @@ class DashboardController extends Controller
             }
         }
         //puede ver unicamente las sede
-        else if($userRole[0] == "Conciliador"){
+        else{
             if($delegacion == "Morelia"){
-                $sede = ["Morelia", "Zítacuaro"];
+                $sedes = ["Morelia", "Zítacuaro"];
             }
             else if($delegacion == "Uruapan"){
-                $sede = ["Uruapan", "Lázaro Cárdenas"];
+                $sedes = ["Uruapan", "Lázaro Cárdenas"];
             }
             else if($delegacion == "Zamora"){
                 $sedes = ["Zamora", "Sahuayo"];
@@ -68,8 +68,6 @@ class DashboardController extends Controller
             ->where('id', $id_usuario)
             ->get();
         }
-        
-
         return view('pages/dashboards.index', compact('userRole','sedes','conciliadores'));
     }
 }
