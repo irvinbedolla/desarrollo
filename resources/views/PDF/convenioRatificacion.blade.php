@@ -123,11 +123,13 @@
                             - Días de descanso: <b>{{ $dias_descanso }}</b><br>
                            @if($solicitud->vacaciones_dias > 0 && !is_null($solicitud->vacaciones_dias))
                             - Vacaciones: <b>{{ $solicitud->vacaciones_dias }}</b> días al año.<br>
+                            @else - Vacaciones<br>
                             @endif
                             @if($solicitud->aguinaldo_dias > 0 && !is_null($solicitud->aguinaldo_dias))
                             - Aguinaldo: <b>{{ $solicitud->aguinaldo_dias }}</b> días al año.<br>
+                            @else - Aguinaldo<br>
                             @endif
-                            @if($solicitud->Otras > 0 && !is_null($solicitud->Otras))
+                            @if($solicitud->Otras)
                             - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>{{ $solicitud->Otras }}</b>
                             @endif
                     </p>
