@@ -233,7 +233,8 @@
             || valorCambiado == "EstadisticaMexico" 
             || valorCambiado == "RatificacionesDias"
             || valorCambiado == "Solicitudes"
-            || valorCambiado == "SolicitudesResumen"){
+            || valorCambiado == "SolicitudesResumen"
+            || valorCambiado == "GeneralSede"){
                 $('#PDF').css('display','block');
                 $('#Excel').css('display','none');
                 $('#Excel-PDF').css('display','none');

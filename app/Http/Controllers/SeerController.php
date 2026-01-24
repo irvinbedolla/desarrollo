@@ -1297,8 +1297,6 @@ class SeerController extends Controller
                     ->groupBy('seer_general.delegacion')
                     ->get();
 
-
-
             //Notificadores
                 $notificaciones = DB::table('seer_general')
                     ->join('seer_citados', 'seer_general.id', '=', 'seer_citados.id_solicitud')
@@ -1351,8 +1349,8 @@ class SeerController extends Controller
 
 
                 $granTotal = [
-                    'sede_nombre' => 'TOTAL GENERAL',
-                    'solicitudes' => $solicitudes->sum('solicitudes'),
+                    'sede_nombre' => 'TOTAL',
+                    'numeroSolicitudes' => $solicitudes->sum('numeroSolicitudes'),
                     'confirmadas' => $solicitudes->sum('confirmadas'),
                     'incompetencia' => $solicitudes->sum('incompetencia'),
                     
@@ -1371,7 +1369,7 @@ class SeerController extends Controller
 
 
                 $total_audiencias = [
-                    'sede_nombre' => 'TOTAL GENERAL',
+                    'sede_nombre' => 'TOTAL',
                     'total_audiencias' => $audiencias->sum('total_audiencias'),
                     'cumplimientoAudiencia' => $audiencias->sum('cumplimientoAudiencia'),
                     'cumplimientoAudienciaMonto' => $audiencias->sum('cumplimientoAudienciaMonto'),

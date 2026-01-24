@@ -92,16 +92,49 @@
                                     <th style="color: #fff;  text-align: center;">Monto en Ratificaciones</th>
                                 </thead>
                                 <tbody>
-                                    @foreach($solicitudes as $solicitud)
+                                    @foreach($solicitudes as $ciudad => $solicitud)
                                         <tr>
                                             <td style=" text-align: center;">{{ $solicitud->sede_nombre}}</td>
-                                            <td style=" text-align: center;">{{ $solicitud->numeroSolicitudes}}</td>
+                                            <td style=" text-align: center;">{{ $solicitud->numeroSolicitudes ?? 0 }}</td>
                                             <td style=" text-align: center;">{{ $solicitud->confirmadas}}</td>
-                                            <td style=" text-align: center;">{{ $solicitud->ratificaciones}}</td>
+                                            <td style=" text-align: center;">{{ $solicitud->ratificaciones ?? 0}}</td>
                                             <td style=" text-align: center;">{{ $solicitud->incompetencia}}</td>
                                             <th style=" text-align: center;">{{ $solicitud->cumplimientoRatificacion + $solicitud->cumplimientoAudiencia }}</th>
                                             <td style=" text-align: center;">${{ number_format($solicitud->cumplimientoAudienciaMonto, 2) }}</td>
                                             <td style=" text-align: center;">${{ number_format($solicitud->cumplimientoRatificacionMonto, 2) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                    </div>
+
+                    <div class="table-responsive">
+                            <table class="table table-striped mt-2">
+                                <thead style="background-color: #869b9c;">
+                                    <th style="color: #fff;  text-align: center;">Sede</th>
+                                    <th style="color: #fff;  text-align: center;">Audiencias</th>
+                                    <th style="color: #fff;  text-align: center;">Cumplimientos Audiencia</th>
+                                    <th style="color: #fff;  text-align: center;">Monto</th>
+
+                                    <th style="color: #fff;  text-align: center;">Multas</th>
+                                    <th style="color: #fff;  text-align: center;">Audiencia Virtuales</th>
+                                    <th style="color: #fff;  text-align: center;">Una Audiencia</th>
+                                    <th style="color: #fff;  text-align: center;">Dos Audiencias</th>
+                                    <th style="color: #fff;  text-align: center;">Tres Audiecias</th>
+                                </thead>
+                                <tbody>
+                                    @foreach($audiencias as $ciudad => $solicitud)
+                                        <tr>
+                                            <td style=" text-align: center;">{{ $solicitud->sede_nombre}}</td>
+                                            <td style=" text-align: center;">{{ $solicitud->total_audiencias ?? 0 }}</td>
+                                            <td style=" text-align: center;">{{ $solicitud->cumplimientoAudiencia}}</td>
+                                            <td style=" text-align: center;">${{ number_format($solicitud->cumplimientoAudienciaMonto, 2) }}</td>
+
+                                            <td style=" text-align: center;">{{ $solicitud->multas ?? 0}}</td>
+                                            <td style=" text-align: center;">{{ $solicitud->audiencias_virtuales ?? 0}}</td>
+                                            <th style=" text-align: center;">{{ $solicitud->una_audiencia }}</th>
+                                            <td style=" text-align: center;">{{ $solicitud->dos_audiencias }}</td>
+                                            <td style=" text-align: center;">{{ $solicitud->tres_audiencias }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -111,7 +144,39 @@
                             </table>
                         </div>
 
-             
+                        <div class="table-responsive">
+                            <table class="table table-striped mt-2">
+                                <thead style="background-color: #869b9c;">
+                                    <th style="color: #fff;  text-align: center;">Sede</th>
+                                    <th style="color: #fff;  text-align: center;">Total Notificaciones</th>
+                                    <th style="color: #fff;  text-align: center;">Notificación Exitosa</th>
+                                    <th style="color: #fff;  text-align: center;">No Notificada</th>
+
+                                    <th style="color: #fff;  text-align: center;">Pendientes</th>
+                                    <th style="color: #fff;  text-align: center;">Exhortos</th>
+                                    <th style="color: #fff;  text-align: center;">Existosa se Constituye</th>
+                                    <th style="color: #fff;  text-align: center;">No exitosa se Constituye</th>
+                                </thead>
+                                <tbody>
+                                    @foreach($notificaciones as $ciudad => $solicitud)
+                                        <tr>
+                                            <td style=" text-align: center;">{{ $solicitud->sede_nombre}}</td>
+                                            <td style=" text-align: center;">{{ $solicitud->Todas_notificaciones ?? 0 }}</td>
+                                            <td style=" text-align: center;">{{ $solicitud->exitosamente}}</td>
+                                            <td style=" text-align: center;">{{ $solicitud->notificacion_Nonotificada }}</td>
+
+                                            <td style=" text-align: center;">{{ $solicitud->notificacion_pendientes }}</td>
+                                            <td style=" text-align: center;">{{ $solicitud->notificacion_exhortos }}</td>
+                                            <th style=" text-align: center;">{{ $solicitud->notificacion_NESC }}</th>
+                                            <td style=" text-align: center;">{{ $solicitud->notificacion_NENSC }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                                <tfoot>
+                                    
+                                </tfoot>
+                            </table>
+                        </div>
 
             <script type="text/php">
                 if (isset($pdf)) {
