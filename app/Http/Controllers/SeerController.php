@@ -4471,7 +4471,7 @@ class SeerController extends Controller
         
         SeerPerConciliador::create($data_conciliador);  
 
-        $solicitud = SeerPerGeneral::find($data["id"])
+        SeerPerGeneral::find($data["id"])
         ->update([
             'fecha_terminacion' => $fecha_actual, 
             'estatus'           => 'Archivada',
@@ -5026,7 +5026,7 @@ class SeerController extends Controller
         
         SeerPerConciliador::create($data_conciliador);  
 
-        $solicitud = SeerPerGeneral::find($data["id"])
+        SeerPerGeneral::find($data["id"])
         ->update([
             'fecha_terminacion'     => $fecha_actual, 
             'observaciones'         => $data["observaciones"], 
@@ -5040,7 +5040,7 @@ class SeerController extends Controller
         ->update([
             'numero_audiencia'  =>  $numAudiencia+1,
             'folio_audiencia'   =>  $numero_audiencia[0],
-            'estatus'           => 'Archivada',
+            'estatus'           => 'Incompetencia',
         ]);
 
         return redirect()->route('todas_audiencias');
@@ -5813,7 +5813,7 @@ class SeerController extends Controller
             } catch (\Exception $e) {
             }
 
-            return redirect()->route('audiencia_index');
+            return redirect()->route('todas_audiencias');
         }
 
         if($data["valor"] == 1){
