@@ -335,8 +335,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/VerpdfNotificacion/{id}/{id_solicitud}',           [SeerController::class, 'PDFnotificadoInstructivo'])->name('PDFInstructivo'); //Notificación por instructivo
         Route::get('/VerpdfNotificacionNoExitosa/{id}/{id_solicitud}',  [SeerController::class, 'PDFnotificadoNoexitosa'])->name('PDFNoExitosa'); //Notificación No exitosa SE CONSTITUYE, CERRADO
         Route::get('/VerpdfNotificacionNoInt/{id}/{id_solicitud}',      [SeerController::class, 'PDFnotificadoNoexitosaInt'])->name('PDFNoExitosaInt'); //Notificación No exitosa NO SE LOCALIZA INTERIOR
-        Route::get('/VerpdfcPTULabora/{id}',                            [SeerController::class, 'VerPDFConvenioPTULabora'])->name('PDFconvenioPTU'); //Convenio PTU SIGUE laborando el trabajador
-        Route::get('/VerpdfcPTUNLabora/{id}',                           [SeerController::class, 'VerPDFConvenioPTUNoLabora'])->name('PDFconvenioPTU'); //Convenio PTU ya NO labora el trabajador
+        Route::get('/VerpdfcPTULabora/{id}',                            [SeerController::class, 'VerPDFConvenioPTULabora'])->name('PDFconvenioPTU_SI_S'); //Convenio PTU SIGUE laborando el trabajador
+        Route::get('/VerpdfcPTUNLabora/{id}',                           [SeerController::class, 'VerPDFConvenioPTUNoLabora'])->name('PDFconvenioPTU_NO_S'); //Convenio PTU ya NO labora el trabajador
         Route::get('/pdfsinPoder/{id}',                                 [SeerController::class, 'VerPDFCompareceSinPoder'])->name('PDFcompareceSP'); //Comparece representante legal sin poder
         Route::get('/Verpdfcumpumplimiento/{id}',                       [SeerController::class, 'VerPDFCumplimiento'])->name('PDFcumplimiento');
         Route::get('/VerpdfcumpumplimientoP/{id}',                      [SeerController::class, 'PDFcumplimientoParcial'])->name('PDFcumplimientoParcial');
@@ -368,6 +368,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/ratificaciones/pago_eliminar_pago/{id_solicitud}',          [TurnosController::class, 'pago_eliminar_pago_ratificacion'])->name('pago_eliminar_pago_ratificacion');
         Route::post('/ratificaciones/terminar_ratificacion',   [TurnosController::class, 'terminar_ratificacion'])->name('terminar_ratificacion');
         Route::get('/cumplimiento/PDFIncumplimientoR/{id}',    [TurnosController::class, 'PDFincumplimientoRatificacion'])->name('PDFincumplimientoRatificacion');
+        Route::get('/VerpdfcPTUNLaboraRat/{id}',               [TurnosController::class, 'VerPDFConvenioPTU_rat'])->name('PDFconvenioPTU_NO_R'); //Convenio PTU ya NO labora el trabajador
+        
     //Fin de Ratificaciones
     //PDF ABOGADOS
         Route::get('/PDF/acuseRegistro/{idAbogado}',        [PoderController::class, 'VerPDFregistroAbogado'])->name('PDFregistroAbogado'); //Acuse de registro exitoso para abogados

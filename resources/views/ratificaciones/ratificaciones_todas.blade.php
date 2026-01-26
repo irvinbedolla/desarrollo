@@ -51,7 +51,7 @@
                                                             <a class="btn btn-info" href="{{ route('ratificacion_concluir', $solicitud->id) }}">Concluir</a>
                                                         @endif
                                                         @if($solicitud->estatus == "Concluida Pagos")
-                                                            <a class="btn btn-info" href="{{ route('ratificacion_pagar', $solicitud->id) }}">Pagar</a>
+                                                            <a class="btn btn-info" href="{{ route('ratificacion_pagar', $solicitud->id) }}">Pagar</a> 
                                                         @endif
                                                     </td>
                                                     <td>
@@ -68,7 +68,11 @@
                                                                 </button>
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="dropdown-item" href="{{ route('VerDocumentosRatificacion', $solicitud->id) }}"  target="_blank">Identificaciones</a></li>
-                                                                    <li><a class="dropdown-item" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}"  target="_blank">Convenio</a></li>
+                                                                    @if($solicitud->estatus == "Concluida" && $solicitud->motivo == "Pago de prestaciones" && $solicitud->PagoPTU == "1")
+                                                                        <li><a class="dropdown-item" href="{{ route('PDFconvenioPTU_NO_R', $solicitud->id) }}"  target="_blank">Convenio PTU</a></li>
+                                                                    @else
+                                                                        <li><a class="dropdown-item" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}"  target="_blank">Convenio</a></li>
+                                                                    @endif
                                                                     <li><a class="dropdown-item" href="{{ route('PDFaudiencia', $solicitud->id) }}"  target="_blank">Acta de audiencia</a></li>
                                                                     @if($solicitud->constancia == 0)
                                                                         <li><a class="dropdown-item" href="{{ route('PDFcumplimientoR', $solicitud->id) }}"  target="_blank">Constancia de cumplimiento</a></li>
@@ -81,7 +85,11 @@
                                                                 </button>
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="dropdown-item" href="{{ route('VerDocumentosRatificacion', $solicitud->id) }}"  target="_blank">Identificaciones</a></li>
-                                                                    <li><a class="dropdown-item" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}"  target="_blank">Convenio</a></li>
+                                                                    @if($solicitud->estatus == "Concluida" && $solicitud->motivo == "Pago de prestaciones" && $solicitud->PagoPTU == "1")
+                                                                        <li><a class="dropdown-item" href="{{ route('PDFconvenioPTU_NO_R', $solicitud->id) }}"  target="_blank">Convenio PTU</a></li>
+                                                                    @else
+                                                                        <li><a class="dropdown-item" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}"  target="_blank">Convenio</a></li>
+                                                                    @endif
                                                                     <li><a class="dropdown-item" href="{{ route('PDFaudiencia', $solicitud->id) }}"  target="_blank">Acta de audiencia</a></li>
                                                                 </ul>
                                                             </div>
