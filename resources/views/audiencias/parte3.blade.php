@@ -311,8 +311,6 @@
 
         .fc-event-expirado {
             color: #ffff !important;
-            /*background-color: #F0DF24 !important;
-            border-color: #F0DF24 !important;*/
             background-color: #F59727 !important;
             border-color: #F59727 !important;
             cursor: not-allowed;
@@ -1238,10 +1236,10 @@
                     },
                     events: function(fetchInfo, success, failure) {
                         $.ajax({
-                            url: '{{ url('/api/obtenerAudiencias') }}',
+                            url: '{{ url('/api/obtenerAudienciasParte3') }}',
                             data: { sede: sede, start: fetchInfo.startStr, end: fetchInfo.endStr, conciliador: conciliadorId },
                             success: function(data){
-                                console.log('calendarReagendar: audiencias recibidas', data && data.length);
+                                //console.log('calendarReagendar: audiencias recibidas', data && data.length);
                                 success(data);
                             },
                             error: function(xhr,status,err){
@@ -1264,7 +1262,7 @@
                         } else {
                             Swal.fire({
                                 icon: 'warning',
-                                title: 'Uups...',
+                                title: 'Ups...',
                                 text: 'Horario no disponible',
                             });
                         }

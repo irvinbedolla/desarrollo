@@ -168,7 +168,7 @@ function handleEventClick(info, calendarType) {
         `;
     } else if (calendarType === 'audiencias') {
         modalContent = `
-            <strong>NUE:</strong> ${props.nue}<br>
+            <strong>NUE:</strong> ${info.event.title}<br>
             <strong>Conciliador:</strong> ${props.conciliador}<br>
             <strong>Fecha:</strong> ${props.fecha}<br>
             <strong>Hora:</strong> ${props.hora}<br>

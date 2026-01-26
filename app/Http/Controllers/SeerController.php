@@ -5198,7 +5198,7 @@ class SeerController extends Controller
 
                 // Crear nueva audiencia con estatus Pendiente y datos copiados
                 Audiencias::create([
-                    'id_conciliador'   => $user->id,
+                    'id_conciliador'   => $audienciaOld->id_conciliador,
                     'id_solicitud'     => $audienciaOld->id_solicitud,
                     'numero_audiencia' => $new_num,
                     'folio_audiencia'  => $new_folio,
@@ -8845,6 +8845,113 @@ class SeerController extends Controller
         }
 
         return $fecha;
+    }
+
+    public function obtenerAudienciasParte3(Request $request)
+    {
+        
+        $fecha_inicio_str = $request->input('start', now()->format('Y-m-d'));
+        $fecha_fin_str = $request->input('end', now()->addDays(300)->format('Y-m-d'));
+        
+        $fecha_inicio = (new \DateTime($fecha_inicio_str))->setTime(0, 0, 0);
+        $fecha_fin = (new \DateTime($fecha_fin_str))->setTime(23, 59, 59);
+
+        $sede = $request->input('sede'); 
+
+        $id_conciliador = $request->input('conciliador') ?? auth()->id();
+
+        // Calcular fecha mínima para reagendar: permitir desde el siguiente día natural
+        $fechaMinima = (new \DateTime())->setTime(0,0,0)->modify('+1 day');
+        $minDateStr = $fechaMinima->format('Y-m-d');
+
+        $inhabiles = DiasInhabiles::where('centro', $sede)
+            ->where(function($query) use ($fecha_inicio, $fecha_fin) {
+                $query->where('fecha_inicio', '<=', $fecha_fin)
+                    ->where('fecha_final', '>=', $fecha_inicio);
+            })
+            ->get();
+
+        $audienciasPorSlot = Audiencias::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
+            ->where('id_conciliador', $id_conciliador)
+            ->selectRaw("CONCAT(DATE(fecha), 'T', TIME(hora)) as slot_key, COUNT(*) as total")
+            ->groupBy('slot_key')
+            ->pluck('total', 'slot_key')
+            ->toArray();
+
+        $ahora = new \DateTime();
+
+        $todosLosEventos = [];
+        $fecha = (new \DateTime($fecha_inicio_str))->setTime(0,0,0);
+        $fin_loop = (new \DateTime($fecha_fin_str))->setTime(0,0,0);
+
+        while ($fecha <= $fin_loop) {
+            if ($fecha->format('N') < 6) { // Saltar fines de semana
+                
+                $inicioJornada = (clone $fecha)->setTime(9, 0, 0);
+                $finJornada    = (clone $fecha)->setTime(15, 15, 0);
+                
+
+                $slot = clone $inicioJornada;
+                while ($slot < $finJornada) {
+                    $slotStart = $slot->format('Y-m-d\TH:i:s');
+
+                    $audienciasEnSlot = (int)($audienciasPorSlot[$slotStart] ?? 0);
+                    $ocupado = $audienciasEnSlot >= 2;
+                    
+                    $esInhabil = false;
+                    foreach($inhabiles as $dia){
+                        $fechaInhabilInicio = $dia->fecha_inicio . 'T' . $dia->horario_inicio;
+                        $fechaInhabilFinal = $dia->fecha_final . 'T' . $dia->horario_final;
+                        if($slotStart >= $fechaInhabilInicio && $slotStart <= $fechaInhabilFinal){
+                            $esInhabil = true;
+                            break;
+                        }
+                    }
+
+                    // Bloquear slots anteriores a la fecha mínima (aunque estén en el futuro)
+                    if ($slot->format('Y-m-d') < $minDateStr) {
+                        $estado = 'expirado';
+                    } elseif ($ocupado) {
+                        $estado = 'ocupado';
+                    } elseif ($esInhabil) {
+                        $estado = 'inhabil';
+                    } elseif ($ahora > $slot) {
+                        $estado = 'expirado';
+                    } else {
+                        $estado = 'disponible';
+                    }
+
+                    $colores = [
+                        'ocupado' => '#DA0909', 'inhabil' => '#3B78DB',
+                        'expirado' => '#F59727', 'disponible' => '#00CE1C'
+                    ];
+                    $titulos = [
+                        'ocupado' => 'Ocupado', 'inhabil' => 'Inhábil',
+                        'expirado' => 'No disponible', 'disponible' => 'Disponible'
+                    ];
+
+                    $titulo = $titulos[$estado];
+                    if ($estado === 'disponible' && $audienciasEnSlot === 1) {
+                        $titulo = 'Audiencia (1)';
+                    }
+
+                    $todosLosEventos[] = [
+                        'title' => $titulo,
+                        'start' => $slotStart,
+                        'color' => $colores[$estado],
+                        'extendedProps' => [
+                            'estado' => $estado,
+                            'audiencias_en_slot' => $audienciasEnSlot,
+                        ]
+                    ];
+
+                    $slot->modify('+75 minutes');
+                }
+            }
+            $fecha->modify('+1 day');
+        }
+
+        return response()->json($todosLosEventos);
     }
 
     public function obtenerAudiencias(Request $request)

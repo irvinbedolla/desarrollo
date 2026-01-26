@@ -26,7 +26,7 @@ class AudienciasController extends Controller
         $query = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
         ->join('users','users.id','audiencias.id_conciliador')
         ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
-        ->select('audiencias.*','seer_general.NUE','seer_solicitante.nombre','seer_general.estatus','users.name');
+        ->select('audiencias.*','seer_general.NUE','seer_solicitante.nombre','users.name');
 
         // FILTROS GLOBALES (Si se seleccionan en el select)
         if (!empty($sedeFiltro)) {
@@ -58,16 +58,17 @@ class AudienciasController extends Controller
 
                 $tipo = 5;
 
-                if ($audiencia->estatus === 'Incompetencia') {
+                if ($audiencia->estatus === 'Archivada') {
                     $color = '#DA0909';
-                } elseif ($audiencia->estatus === 'Archivada') {
+                } elseif ($audiencia->estatus === 'Pendiente') {
                     $color = '#EAE300';
-                } elseif ($audiencia->estatus === 'Conciliación') {
+                } elseif ($audiencia->estatus === 'Conciliacion') {
                     $color = '#00CE1C';
-                } elseif ($audiencia->estatus === 'No Conciliación') {
-                    $color = '#00CE1C';
-                }
-                 else {
+                } elseif ($audiencia->estatus === 'No conciliacion') {
+                    $color = '#3D71FF';
+                } elseif ($audiencia->estatus === 'Reagendada' || $audiencia->estatus === 'No conciliacion reagendada'){
+                    $color = '#FFA93D';
+                } else {
                     $color = '#CCCCCC';
                 }
 
