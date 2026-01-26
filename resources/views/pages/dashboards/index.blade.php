@@ -229,7 +229,7 @@
 
                                                 <div class="filter-container mb-3">
                                                     <label>Conciliador:</label>
-                                                    <select id="filter-conciliador" class="form-control filter-action">
+                                                    <select id="filter-conciliador" class="form-control d-inline-block w-auto">
                                                         <option value="">Todos los conciliadores</option>
                                                         @foreach($conciliadores as $conciliador)
                                                             <option value="{{$conciliador['id']}}" data-delegacion-id="{{ $conciliador['delegacion_id'] }}">{{ $conciliador['name'] }}</option>

@@ -61,6 +61,7 @@ use App\Mail\CorreoAcuseConfirmacion;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\MailAceptacionRechazo;
 use App\Exports\ReporteMexicoRati;
+use App\Exports\EmpresaSinSeguro;
 
 class SeerController extends Controller
 {   
@@ -813,7 +814,7 @@ class SeerController extends Controller
             // Obtenemos los usuarios con sus solicitudes y pagos filtrados por fecha y sede
             $detalleSolicitantes = DB::table('seer_general')
             ->join('users', 'users.id', '=', 'seer_general.user_id')
-            ->join('seer_motivos', 'seer_motivos.id_solicitud', '=', 'seer_general.user_id')
+            ->join('seer_motivos', 'seer_motivos.id_solicitud', '=', 'seer_general.id')
             ->join('catalogo_motivos', 'catalogo_motivos.id', '=', 'seer_motivos.id_motivo')
             ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
             ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
@@ -840,17 +841,27 @@ class SeerController extends Controller
             })
             ->select(
                 'users.name as auxiliar',
-                'seer_general.id as folio',
+                'seer_general.consecutivo as folio',
                 'seer_general.fecha',
                 'seer_general.estatus',
                 'seer_general.delegacion',
                 'seer_general.actividad',
                 'seer_solicitante.nombre',
-                'catalogo_motivos.motivo'
+                DB::raw('GROUP_CONCAT(catalogo_motivos.motivo SEPARATOR ", ") as motivos')
             )
-            ->orderBy('seer_general.fecha', 'desc')
+            ->groupBy(
+                'users.name', 
+                'seer_general.id', // Agrupar por el ID de la solicitud es clave
+                'seer_general.consecutivo', 
+                'seer_general.fecha', 
+                'seer_general.estatus', 
+                'seer_general.delegacion', 
+                'seer_general.actividad', 
+                'seer_solicitante.nombre'
+            )
+            ->orderBy('seer_general.consecutivo', 'desc')
             ->get();
-    
+ 
             $pdf = \PDF::loadView('PDF/Estadisticas/SolicitudesDetallado',compact('fecha_inicial','fecha_final','detalleSolicitantes'));
             $pdf->setPaper('a4', 'landscape');
             return $pdf->stream('solicitudes.pdf');
@@ -1466,6 +1477,9 @@ class SeerController extends Controller
                 ->whereIn('seer_motivos.id_motivo',[4,5,6])
                 ->where('seer_solicitante.sexo','M')
                 ->first();
+        }
+        else if($data["tipo_reporte"] == "SeguroSocial"){
+            return Excel::download(new EmpresaSinSeguro($fecha_inicial, $fecha_final, $sede), 'empresas.xlsx');
         }
     }
 

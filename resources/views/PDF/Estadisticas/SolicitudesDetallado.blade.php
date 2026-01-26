@@ -97,7 +97,7 @@
                                 <td style="text-align: center;">{{ $registro->estatus }}</td>
                                 <td style="text-align: center;">{{ $registro->nombre}}</td>
                                 <td style="text-align: center;">{{ $registro->actividad}}</td>
-                                <td style="text-align: center;">{{ $registro->motivo}}</td>
+                                <td style="text-align: center;">{{ $registro->motivos}}</td>
                             </tr>
                         @endforeach
                     </tbody>
