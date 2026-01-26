@@ -58,6 +58,8 @@
                                                     <option value="EstadisticaMexico">INEGI</option> 
                                                     <option value="Concentrado">General</option>
                                                     <option value="GeneralSede">General por Sede</option>
+
+                                                    <option value="SeguroSocial">Seguro Social</option>
                                                 </select>
                                                 <div class="invalid-feedback">
                                                     Debes seleccionar un tipo de reporte.

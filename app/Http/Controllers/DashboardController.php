@@ -53,13 +53,13 @@ class DashboardController extends Controller
         }
         //puede ver unicamente las sede
         else{
-            if($delegacion == "Morelia"){
+            if($delegacion == "Morelia" || $delegacion == "Zítacuaro"){
                 $sedes = ["Morelia", "Zítacuaro"];
             }
-            else if($delegacion == "Uruapan"){
+            else if($delegacion == "Uruapan" || $delegacion == "Lázaro Cárdenas"){
                 $sedes = ["Uruapan", "Lázaro Cárdenas"];
             }
-            else if($delegacion == "Zamora"){
+            else if($delegacion == "Zamora" || $delegacion == "Sahuayo"){
                 $sedes = ["Zamora", "Sahuayo"];
             }
             $conciliadores = User::whereHas($relacionEloquent, function ($query) {
