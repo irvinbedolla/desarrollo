@@ -134,7 +134,7 @@
                     que, en el caso de estar conformes con dicho acuerdo, se procederá a realizar el convenio por escrito, mismo que deberá ratificarse en el presente acto y, posteriormente, se les 
                     entregará copia certificada del mismo en el que conste su cumplimiento en términos de los artículos 684-E fracción XIV y 684-I, de la ley Federal del Trabajo.<br><br>
 
-                    La propuesta referida para la parte trabajadora, se encuentra formulada en los términos siguientes:<br><br>
+                    La propuesta referida para la parte trabajadora, se encuentra formulada en los términos siguientes:
 
                     <table class="table table-bordered">
                         <thead>
@@ -253,11 +253,12 @@
                                 </b>
                             </td>
                         </tr>
-                    </table>   
-                </div>  <br><br> 
-                    <p font-size: 10px;>
+                    </table>  
+                    <br>
+                    <p style="font-size: 12px;">
                         LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DEL ACTA DE AUDIENCIA DE CONCILIACIÓN DE FECHA <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> EXPEDIENTE NÚMERO <b>{{ $solicitud->NUE }}</b> DEL CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO.
-                    </p>                 
+                    </p>  
+                </div>                  
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

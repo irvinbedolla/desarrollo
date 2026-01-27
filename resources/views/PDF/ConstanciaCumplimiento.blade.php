@@ -116,7 +116,7 @@
                     Autoridad Conciliadora como resultado de la audiencia 
                     de conciliación celebrada el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}.</b><br><br>
                                 
-                    De acuerdo con lo establecido en el convenio referido el <b>EMPLEADOR</b> se obligó al pago de los siguientes conceptos: <br>
+                    De acuerdo con lo establecido en el convenio referido el <b>EMPLEADOR</b> se obligó al pago de los siguientes conceptos:
               
                     <div class="table-responsive">
                         <table id="pagos" class="table-striped" style="width:100%;">
@@ -184,11 +184,12 @@
                                     </b>
                                 </td>
                             </tr>
-                        </table>  
-                    </div> <br><br> 
-                    <p font-size: 10px;>
-                        LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DE LA CONSTANCIA DE CUMPLIMIENTO TOTAL DE CONVENIO DE FECHA <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> EXPEDIENTE NÚMERO <b>{{ $solicitud->NUE }}</b> DEL CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO.
-                    </p>                      
+                        </table> 
+                        <br>
+                        <p style="font-size: 12px;">
+                            LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DE LA CONSTANCIA DE CUMPLIMIENTO TOTAL DE CONVENIO DE FECHA <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> EXPEDIENTE NÚMERO <b>{{ $solicitud->NUE }}</b> DEL CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO.
+                        </p>  
+                    </div>                      
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

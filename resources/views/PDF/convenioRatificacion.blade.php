@@ -199,8 +199,6 @@
                         <b>QUINTA</b>. La parte <b>TRABAJADORA</b> recibirá de la parte <b>EMPLEADORA</b> la cantidad de <b>${{ number_format($solicitud->monto, 2) }} {{ $montoTexto }}</b>, 
                             conforme a los siguientes conceptos:</p>
 
-                        <br><br>
-
                         <b>Prestaciones</b>
                         <table class="table table-bordered">
                             <thead>
@@ -386,14 +384,15 @@
                                     </b>
                                 </td>
                             </tr>
-                        </table>
-                    </div><br><br>
+                        </table><br>
+                        <p style="font-size: 12px;">
+                            LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DEL CONVENIO DE CONCILIACIÓN DE FECHA <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> EXPEDIENTE NÚMERO <b>{{ $solicitud->NUE }}</b> DEL CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO.
+                        </p> 
+                    </div>
                     {{--<br><br>
                     <p><center><b>___________________________________<br> {{ strtoupper($conciliador->name) }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
                         DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center> --}}   
-                    <p font-size: 10px;>
-                        LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DEL CONVENIO DE CONCILIACIÓN DE FECHA <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> EXPEDIENTE NÚMERO <b>{{ $solicitud->NUE }}</b> DEL CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO.
-                    </p> 
+                    
                 </div>
             <script type="text/php">
                 if (isset($pdf)) {
