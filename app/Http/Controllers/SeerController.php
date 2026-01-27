@@ -5555,6 +5555,18 @@ class SeerController extends Controller
                     continue;
                 }
 
+                if (in_array($delegacion, ["Zitácuaro", "Lázaro Cárdenas", "Sahuayo"])) {
+                    $ya_existe_audiencia_en_sede = Audiencias::where('fecha', $fecha_revisar)
+                        ->where('hora', $h)
+                        ->where('delegacion', $delegacion)
+                        ->exists();
+
+                    if ($ya_existe_audiencia_en_sede) {
+                        // Si ya hay una audiencia en esta sede y hora, saltamos al siguiente horario
+                        continue; 
+                    }
+                }
+
                 $listado_auxiliares = [];
 
                 foreach ($conciliadores as $conciliador) {
