@@ -8891,6 +8891,10 @@ class SeerController extends Controller
         $minDateStr = $fechaMinima->format('Y-m-d');
 
         $inhabiles = DiasInhabiles::where('centro', $sede)
+            ->where(function($query) use ($id_conciliador) {
+                $query->whereNull('user_id')
+                    ->orWhere('user_id', $id_conciliador);
+            })
             ->where(function($query) use ($fecha_inicio, $fecha_fin) {
                 $query->where('fecha_inicio', '<=', $fecha_fin)
                     ->where('fecha_final', '>=', $fecha_inicio);
@@ -8998,6 +9002,10 @@ class SeerController extends Controller
         $minDateStr = $fechaMinima->format('Y-m-d');
 
         $inhabiles = DiasInhabiles::where('centro', $sede)
+            ->where(function($query) use ($id_conciliador) {
+                $query->whereNull('user_id')
+                    ->orWhere('user_id', $id_conciliador);
+            })
             ->where(function($query) use ($fecha_inicio, $fecha_fin) {
                 $query->where('fecha_inicio', '<=', $fecha_fin)
                     ->where('fecha_final', '>=', $fecha_inicio);
