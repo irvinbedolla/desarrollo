@@ -385,7 +385,7 @@
                                 </td>
                             </tr>
                         </table><br>
-                        <p style="font-size: 12px;">
+                        <p style="font-size: 10px;">
                             LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DEL CONVENIO DE CONCILIACIÓN DE FECHA <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> EXPEDIENTE NÚMERO <b>{{ $solicitud->NUE }}</b> DEL CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO.
                         </p> 
                     </div>
