@@ -60,6 +60,18 @@
                 text-indent: -15px; 
                 padding-left: 15px;
             }
+            /* Contenedor que agrupa las firmas */
+            .salto-inteligente {
+                display: block;
+                height: 2cm;            
+                margin-bottom: -2cm;   
+                page-break-inside: avoid;
+            }
+
+            .contenedor-firmas {
+                page-break-inside: avoid; 
+            }
+
         </style>
         
     </head>
@@ -328,61 +340,60 @@
                                     
                         <b>DÉCIMA</b>. Las <b>PARTES</b> manifiestan que en la celebración del presente convenio no existió violencia, mala fe, dolo, lesión o cualquier otro tipo de vicio del consentimiento 
                         que pudiera nulificarlo.<br><br>
-                                    
+                    
+                          
                         <b>DÉCIMA PRIMERA</b>. En caso de que no se cumplan los términos de lo convenido en el presente instrumento, las <b>PARTES</b> deberán acudir al Juzgado Laboral competente a 
                         efecto de que se realice el Procedimiento de Ejecución que la Ley Federal del Trabajo contempla. <br>
-                        <br>Enteradas las <b>PARTES</b> del alcance legal del presente convenio que se eleva a la categoria de cosa juzgada, conforme al artículo 684-E fracción XIII, mismo que se firma en <b>{{ $solicitud->delegacion }},</b> 
-                        Michoacán de Ocampo a los <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\í\a\s \d\e F \d\e\l Y') }}</b>, ante la fe de <b>{{ $conciliador->name }}</b>, funcionario(a) conciliador(a), quien 
-                        lo sanciona en este mismo acto. <b>Doy fe</b>.
                     </p>
-                    @php
-                        $longitud = mb_strlen($solicitud->fecha);
-                        $forzarSalto = $longitud > 380;
-                    @endphp
-
-                    @if($forzarSalto)
-                        <div style="page-break-before: always;"><br><br><br><br><br><br></div>
-                    @else
-                        <br><br><br><br>
-                    @endif           
-                    
-                    <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:10px;">
-                        <tr>
-                            <td style="width:60%; vertical-align:top; padding:0 10px;">
-                                <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
-                                <b> {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}<br>
-                                    LA PARTE TRABAJADORA
-                                </b>
-                            </td>
-                            <td style="width:60%; vertical-align:top; padding:0 10px;">
-                                <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
-                                <b>{{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}<br>
-                                    LA PARTE EMPLEADORA
-                                </b>
-                            </td>
-                        </tr>
+                    <div class="salto-inteligente"></div>
+                    <div class="contenedor-firmas">
+                        <p> 
+                            Enteradas las <b>PARTES</b> del alcance legal del presente convenio que se eleva a la categoria de cosa juzgada, conforme al artículo 684-E fracción XIII, mismo que se firma en <b>{{ $solicitud->delegacion }},</b> 
+                            Michoacán de Ocampo a los <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\í\a\s \d\e F \d\e\l Y') }}</b>, ante la fe de <b>{{ $conciliador->name }}</b>, funcionario(a) conciliador(a), quien 
+                            lo sanciona en este mismo acto. <b>Doy fe</b>.
+                        </p>       
                         <br><br><br>
-                        <tr>
-                            <td style="width:60%; vertical-align:top; padding:0 10px;">
-                                <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
-                                <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}<br>
-                                        FUNCIONARIO/A CONCILIADOR/A<br>
-                                        DEL CENTRO DE CONCILIACIÓN LABORAL
-                                        DEL ESTADO DE MICHOACÁN DE OCAMPO
-                                </b>
-                            </td>
-                            <td style="width:60%; vertical-align:top; padding:0 10px;">
-                                <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
-                                <b>{{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
-                                    DIRECTOR/A DEL CENTRO DE CONCILIACIÓN
-                                    LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO                                  
-                                </b>
-                            </td>
-                        </tr>
-                    </table>
+                        <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:10px;">
+                            <tr>
+                                <td style="width:60%; vertical-align:top; padding:0 10px;">
+                                    <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                                    <b> {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}<br>
+                                        LA PARTE TRABAJADORA
+                                    </b>
+                                </td>
+                                <td style="width:60%; vertical-align:top; padding:0 10px;">
+                                    <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                                    <b>{{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}<br>
+                                        LA PARTE EMPLEADORA
+                                    </b>
+                                </td>
+                            </tr>
+                            <br><br><br>
+                            <tr>
+                                <td style="width:60%; vertical-align:top; padding:0 10px;">
+                                    <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                                    <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}<br>
+                                            FUNCIONARIO/A CONCILIADOR/A<br>
+                                            DEL CENTRO DE CONCILIACIÓN LABORAL
+                                            DEL ESTADO DE MICHOACÁN DE OCAMPO
+                                    </b>
+                                </td>
+                                <td style="width:60%; vertical-align:top; padding:0 10px;">
+                                    <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                                    <b>{{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
+                                        DIRECTOR/A DEL CENTRO DE CONCILIACIÓN
+                                        LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO                                  
+                                    </b>
+                                </td>
+                            </tr>
+                        </table>
+                    </div><br><br>
                     {{--<br><br>
                     <p><center><b>___________________________________<br> {{ strtoupper($conciliador->name) }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
-                        DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center> --}}    
+                        DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center> --}}   
+                    <p font-size: 10px;>
+                        LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DEL CONVENIO DE CONCILIACIÓN DE FECHA <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> EXPEDIENTE NÚMERO <b>{{ $solicitud->NUE }}</b> DEL CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO.
+                    </p> 
                 </div>
             <script type="text/php">
                 if (isset($pdf)) {
