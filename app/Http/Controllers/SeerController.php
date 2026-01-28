@@ -4466,8 +4466,8 @@ class SeerController extends Controller
         $data_conciliador = [
             'id_solicitud'          => $data["id"],
             'numero_audiencia'      => $numero_audiencia[0],
+            'estatus_conciliacion'  => 'Archivado por incomparecencia',
             'numero_audiencias'     => $num_audi,
-            'validado'              => 'Validado',
             'fecha_conclucion'      =>  $fecha_actual,
             'consecutivo'           =>  $numero_audiencia[1],
             'conclucion'            => "Archivada"
@@ -4497,6 +4497,57 @@ class SeerController extends Controller
             session()->forget(["audiencia_conclucion_data_{$data['id']}", "convenio_citados_{$data['id']}", "acta_citados_{$data['id']}", "audiencia_data_{$data['id']}", 'preserve_edit_session']);
         } catch (\Exception $e) {
         }
+
+        return redirect()->route('todas_audiencias');
+    }
+
+    public function emitir_multas(Request $request){
+        $data = $request->all();
+        $user = auth()->user();
+        $fecha_actual = date('y-m-d');
+
+        //Guardar registro en SeerConciliador
+        $numero_audiencias = SeerPerConciliador::find($data["id"]);
+        if(!isset($numero_audiencias)){
+            $num_audi = 0;
+        }
+        else{
+            $num_audi = $numero_audiencias->numero_audiencias;
+        }
+        $num_audi = $num_audi+1;
+
+        $numero_audiencia = $this->GeneraAudiencia($data["id"]);
+        
+        $data_conciliador = [
+            'id_solicitud'          => $data["id"],
+            'numero_audiencia'      => $numero_audiencia[0],
+            'estatus_conciliacion'  => 'Archivado por incomparecencia',
+            'numero_audiencias'     => $num_audi,
+            'fecha_conclucion'      =>  $fecha_actual,
+            'consecutivo'           =>  $numero_audiencia[1],
+            'conclucion'            => "Archivada"
+        ];
+        
+        SeerPerConciliador::create($data_conciliador);
+
+        SeerPerGeneral::find($data["id"])
+        ->update([
+            'fecha_terminacion' => $fecha_actual, 
+            'estatus'           => 'Archivada',
+            'observaciones'     => 'Incomparencia de los citados',
+        ]);
+
+        $numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
+        Audiencias::where('id_solicitud',$data["id"])
+        ->orderBy('id_solicitud','desc')
+        ->first()
+        ->update([
+            'numero_audiencia'  =>  $numAudiencia+1,
+            'folio_audiencia'   =>  $numero_audiencia[0],
+            'estatus'           => 'Archivada',
+        ]);
+
+        SeerCitados::where('id_solicitud', $data["id"])->where('notificacion', 'Centro')->update(['tipo_notificacion' => 'Multa']);
 
         return redirect()->route('todas_audiencias');
     }
@@ -7218,7 +7269,7 @@ class SeerController extends Controller
             $datosAudiencia = SeerPerConciliador::where('id_solicitud', $id)->orderBy('numero_audiencias', 'DESC')->first();
         }
         $solicitante = SeerSolicitante::where('id_solicitud',$solicitud["id"])->first();
-        $pagos = Pagos::where('id_solicitud', $id)->get();
+        $pagos = Pagos::where('id_solicitud', $id)->where('id_solicitud', 'Audiencia')->get();
         $abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
         ->where('id_solicitud',$id)
         ->select('abogados.nombres_patronal','abogados.primer_apellido_patronal','abogados.segundo_apellido_patronal','abogados.descipcion_poder','abogados.tipo_identificacion','abogados.num_identificacion')
@@ -7233,8 +7284,8 @@ class SeerController extends Controller
         $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
         ->first();
 
-    $prestaciones = Concepto::where('id_solicitud', $id)->get();
-    $deducciones = Deducciones::where('id_solicitud', $id)->get();
+    $prestaciones = Concepto::where('id_solicitud', $id)->where('tipo_pago', 'Audiencia')->get();
+    $deducciones = Deducciones::where('id_solicitud', $id)->where('tipo_pago', 'Audiencia')->get();
 
     // Soporte para selección específica de citados (guardada en sesión desde la vista)
         $idsSession = session()->get('acta_citados_' . $id);

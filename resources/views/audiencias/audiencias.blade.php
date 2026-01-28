@@ -38,13 +38,33 @@
                             </button>
                             @endif
 
+                            @php
+                                $totalCentroTop = 0;
+                                $totalCentroSinComparecenciaTop = 0;
+                                foreach ($representantes as $r) {
+                                    if (($r->notificacion ?? null) === 'Centro') {
+                                        $totalCentroTop++;
+                                        $tieneComparecenciaTop = (!is_null($r->id_abogado) || !is_null($r->id_fisica));
+                                        if (!$tieneComparecenciaTop) {
+                                            $totalCentroSinComparecenciaTop++;
+                                        }
+                                    }
+                                }
+                                $mostrarEmitirMultasTop = ($totalCentroTop >= 1 && $totalCentroSinComparecenciaTop === $totalCentroTop);
+                            @endphp
+
                             <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#ModalArchivar" data-id="{{ $id }}">
                                 Archivar
                             </button>
-                            
                             <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#ModalIncopentencia" data-id="{{ $id }}">
                                 Incompetencia
                             </button>
+
+                            @if($mostrarEmitirMultasTop)
+                                <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#ModalEmitirMultas" data-id="{{ $id }}">
+                                    Emitir multas
+                                </button>
+                            @endif
                             <div class="table-responsive">
                                 <table class="table table-striped mt-1">
                                     <thead style="background-color: #4A001F;">
@@ -1320,12 +1340,20 @@
         }
 
         $hayNotificacionCentro = false;
+        $totalCentro = 0;
+        $totalCentroSinComparecencia = 0;
         foreach ($representantes as $representante) {
             if (($representante->notificacion ?? null) === 'Centro') {
                 $hayNotificacionCentro = true;
-                break;
+                $totalCentro++;
+                $tieneComparecencia = (!is_null($representante->id_abogado) || !is_null($representante->id_fisica));
+                if (!$tieneComparecencia) {
+                    $totalCentroSinComparecencia++;
+                }
             }
         }
+
+    $casoMultasCentroSinComparecencia = ($totalCentro >= 1 && $totalCentroSinComparecencia === $totalCentro);
 
         $bloquearContinuar = (!$hayNotificacionCentro && $hayRepresentante === 0);
 
@@ -1345,7 +1373,9 @@
         <div class="modal-dialog modal-l">
             <div class="modal-content">
                 <div class="modal-header">
-                    @if($bandera != 0)
+                    @if($casoMultasCentroSinComparecencia)
+                        Ningún citado notificado por el Centro presenta comparecencia. Debes emitir multas.
+                    @elseif($bandera != 0)
                         Se multará a los citados que no tengan un representante asignado.
                     @else
                         Continuar con la audiencia.
@@ -1357,7 +1387,7 @@
                         @csrf
                         <input type="hidden" name="id" value="{{$id}}">
                         <input type="hidden" name="bandera" value="{{$hayRepresentante}}">
-                        <button type="submit" class="btn btn-success">
+                        <button type="submit" class="btn btn-success" @if($casoMultasCentroSinComparecencia) disabled @endif>
                             Continuar
                         </button>
                     </form>                    
@@ -1392,6 +1422,32 @@
         </div>
     @endif
 </div>
+
+<div class="modal fade" id="ModalEmitirMultas" tabindex="-1" aria-labelledby="ModalEmitirMultasLabel" aria-hidden="true">
+    <form class="needs-validation novalidate" method="POST" action="{{route('emitir_multas')}}">
+        @csrf
+        <input type="hidden" name="id" value="{{ $id }}">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalEmitirMultasLabel">Emisión de Multas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-2">
+                        Se detectó que <b>los citados notificados por el Centro</b> no tienen comparecencia.
+                        Confirma para continuar con la emisión de multas.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Emitir multas</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
 <div class="modal fade" id="modalAgregarDerecho" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <form class='needs-validation' novalidate method='POST' enctype="multipart/form-data" name="AgregarPersonaFisica" id="AgregarPersonaFisica" action="{{route('insertar_citado_PF')}}">
         @csrf
