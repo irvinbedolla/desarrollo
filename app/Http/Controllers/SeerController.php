@@ -11847,9 +11847,25 @@ class SeerController extends Controller
 
     //PDF Constancia de cumplimiento
     public function VerPDFCumplimientoTotal($id){
-        $solicitud = SeerPerGeneral::join('seer_solicitantes','seer_solicitantes.id_solicitud','seer_general.id')
-        ->se
-        ->get();
+        $solicitud = SeerPerGeneral::find($id);
+        $solicitud->solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
+
+        $allCentro = 1;
+        $citadosCentro = SeerCitados::where('id_solicitud', $id)->latest()->get();
+        foreach ($citadosCentro as $citado){
+            if($citado->notificacion == 'Centro'){
+                $allCentro = 0;
+                break;
+            }
+        }
+
+        if ($allCentro == 0){
+            $solicitud->citados = SeerCitados::where('id_solicitud', $id)->where('notificacion', 'Centro')->get();
+        }
+        else {
+            $solicitud->citados = SeerCitados::where('id_solicitud', $id)->get();
+        }
+        
         $pagos = Pagos::where('id_solicitud', $id)->where('tipo_pago','Audiencia')->get();
         $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
         $conciliador = $conciliador->where("seer_general.id", "=", $id)
@@ -11861,7 +11877,6 @@ class SeerController extends Controller
                 'Lázaro Cárdenas'  => 43,
                 'Sahuayo'          => 26,
             ];
-
         if (array_key_exists($delegacion, $delegadosEspeciales)) {
             $delegado = User::select('id', 'name', 'delegacion')
                 ->find($delegadosEspeciales[$delegacion]);

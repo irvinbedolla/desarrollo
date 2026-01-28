@@ -99,18 +99,16 @@
                 </div><br><br><br>
                
                 <p><b>
-                    Trabajador(a): {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
-                    Empleador(a): @if(is_null($solicitud->nombre_empresa) && is_null($solicitud->primero_empresa))
-                             {{ $solicitud->empresa }}
-                        @else
-                             {{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}
-                    @endif <br>
+                    Trabajador(a): {{ $solicitud->solicitante->nombre }} {{ $solicitud->solicitante->primero_trabajador }} {{ $solicitud->solicitante->segundo_trabajador }} <br> 
+                    Empleador(a): @foreach ($solicitud->citados as $citado)
+                        {{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}} <br>
+                    @endforeach
                     Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
                     Asistencia de los interesados: Si. <br>
                     <!--Fecha del conflicto: [SOLICITUD_FECHA_CONFLICTO]  <br>
                     Posible prescripción de derechos: [SOLICITUD_PRESCRIPCION] <br> -->
                     Convenio conciliatorio: Si.
-                </b></p> 
+                </></p> 
 
                 <p>
                     <center><b>CONSTANCIA DE CUMPLIMIENTO TOTAL DE CONVENIO</b></center>
