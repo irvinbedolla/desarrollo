@@ -323,7 +323,7 @@ class AudienciasController extends Controller
         $eventos = [];
         foreach ($ratificaciones as $rati) {
 
-                $tipo = 7;
+                $tipo = 3;
 
                 if ($rati->estatus === 'Incumplimiento') {
                     $color = '#DA0909';

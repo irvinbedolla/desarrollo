@@ -55,7 +55,16 @@
                 height: 100%;
                 z-index: -1;
             } 
-             /* Contenedor que agrupa las firmas */
+            .table-compacta td, 
+            .table-compacta th {
+                padding: 2px 5px !important; /* Reduce el espacio interno arriba y abajo */
+                line-height: 1.1 !important;  /* Ajusta la altura del texto */
+                vertical-align: middle;
+            }
+            .table-compacta {
+                margin-bottom: 10px !important; /* Reduce espacio entre tablas */
+            }
+            /* Contenedor que agrupa las firmas */
             .salto-inteligente {
                 display: block;
                 height: 2cm;           
@@ -86,7 +95,7 @@
                             <td>{{ $solicitud->NUE }} </td>
                         </tr> 
                     </table>
-                </div><br><br><br><br>
+                </div><br><br><br>
                 <p><center><b>
                     CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br><br>
                     ACTA DE AUDIENCIA DE CONCILIACIÓN     </b></center></p><br>
@@ -136,7 +145,7 @@
 
                     La propuesta referida para la parte trabajadora, se encuentra formulada en los términos siguientes:
 
-                    <table class="table table-bordered">
+                    <table class="table table-bordered table-compacta">
                         <thead>
                             <tr>
                                 <th>Concepto</th>
@@ -159,7 +168,7 @@
                     <!-- Para las deducciones -->
                     @if(!empty($deducciones) && count($deducciones) > 0)
                         <b>Deducciones</b>
-                        <table class="table table-bordered">
+                        <table class="table table-bordered table-compacta">
                             <thead>
                                 <tr>
                                     <th>Concepto</th>
@@ -178,7 +187,7 @@
                             </tbody>
                         </table> 
                     @endif
-                    <table class="table table-bordered" style="width:100%; float: right;">
+                    <table class="table table-bordered table-compacta" style="width:100%; float: right;">
                         <thead>
                             <tr style="background-color: #f0f0f0;">
                                 <td class="text-right"><strong>Neto a pagar: </strong>
@@ -216,13 +225,13 @@
 
                     De igual modo, el tratamiento de los datos proporcionados por los interesados y los datos personales recabados por este Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, 
                     serán protegidos, incorporados y tratados únicamente por este Organismo Descentralizado de la Administración Pública Estatal como Sujeto Obligado ante la Ley General de Protección de Datos 
-                    Personales en Posesión de Sujetos Obligados y a la Ley General de Transparencia y Acceso a la Información Pública.
+                    Personales en Posesión de Sujetos Obligados y a la Ley General de Transparencia y Acceso a la Información Pública.<br><br>
+
+                    Asimismo, se informa que sus datos no podrán ser difundidos sin el consentimiento expreso, salvo las excepciones previstas en ley.
                 </p> 
                 <div class="salto-inteligente"></div>
                 <div class="contenedor-firmas">  
                     <p>   
-                        Asimismo, se informa que sus datos no podrán ser difundidos sin el consentimiento expreso, salvo las excepciones previstas en ley.<br><br>
-
                         Así lo proveyó, <b>{{ $conciliador->name }}</b>, Funcionario(a) Conciliador(a) adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
                     </p>
 

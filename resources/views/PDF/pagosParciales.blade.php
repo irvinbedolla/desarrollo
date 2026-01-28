@@ -56,6 +56,25 @@
                 height: 100%;
                 z-index: -1;
             } 
+            .table-compacta td, 
+            .table-compacta th {
+                padding: 2px 5px !important; /* Reduce el espacio interno arriba y abajo */
+                line-height: 1.1 !important;  /* Ajusta la altura del texto */
+                vertical-align: middle;
+            }
+            .table-compacta {
+                margin-bottom: 10px !important; /* Reduce espacio entre tablas */
+            }
+            /* Contenedor que agrupa las firmas */
+            .salto-inteligente {
+                display: block;
+                height: 2cm;           
+                margin-bottom: -2cm;    
+                page-break-inside: avoid;
+            }
+            .contenedor-firmas {
+                page-break-inside: avoid; 
+            }
         </style>
         
     </head>
@@ -106,7 +125,7 @@
                     Conciliadora al siguiente concepto:<br>@endif
 
                     <div class="table-responsive">
-                        <table id="pagos" class="table-striped" style="width:100%;">
+                        <table id="pagos" class="table-striped table-compacta" style="width:100%;">
                             <thead>
                                 <th style="display: none;">ID</th>
                                 <th>Fecha</th>
@@ -127,22 +146,14 @@
                     </div><br>
 
                     Quien suscribe da fe del cumplimiento del concepto anteriormente descrito por parte del <b>EMPLEADOR. Doy fe.</b><br><br>
-
-                    <b>Con fecha {{ $pagos->updated_at->translatedFormat('d \d\e F \d\e\l Y') }} se emite la presente Constancia de @if($pagosDif>1) Cumplimiento Parcial @elseif($pagosDif == 1) Pago @endif del Convenio de Conciliación, con 
-                    fundamento en la fracción XIV del artículo 684-E y fracción VIII del artículo 684-F de la Ley Federal del Trabajo.</b>
                 </p>
-
-                @php
-                    $longitud = mb_strlen($pagos->observaciones);
-                    $forzarSalto = $longitud > 380;
-                @endphp
-
-                @if($forzarSalto)
-                    <div style="page-break-before: always;"><br><br><br><br><br><br></div>
-                @else
-                    <br><br><br><br>
-                @endif
-                <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:10px;">
+                <div class="salto-inteligente"></div>
+                <div class="contenedor-firmas">
+                    <p>
+                        <b>Con fecha {{ $pagos->updated_at->translatedFormat('d \d\e F \d\e\l Y') }} se emite la presente Constancia de @if($pagosDif>1) Cumplimiento Parcial @elseif($pagosDif == 1) Pago @endif del Convenio de Conciliación, con 
+                        fundamento en la fracción XIV del artículo 684-E y fracción VIII del artículo 684-F de la Ley Federal del Trabajo.</b>
+                    </p><br><br><br>
+                    <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:10px;">
                         <tr>
                             <td style="width:50%; vertical-align:top; padding:0 5px;">
                                 <div style="border-top: 2px solid #000; width:90%; margin: 0 auto 5px auto;"></div>
@@ -152,7 +163,7 @@
                                         DEL ESTADO DE MICHOACÁN DE OCAMPO
                                 </b>
                             </td>
-                           <td style="width:50%; vertical-align:top; padding:0 5px;">
+                            <td style="width:50%; vertical-align:top; padding:0 5px;">
                                 <div style="border-top: 2px solid #000; width:90%; margin: 0 auto 5px auto;"></div>
                                 <b>{{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
                                     DIRECTOR/A DEL CENTRO DE CONCILIACIÓN
@@ -160,7 +171,13 @@
                                 </b>
                             </td>
                         </tr>
-                    </table>           
+                    </table>  
+                    <br>
+                    <p style="font-size: 10px;">
+                        LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DE LA @if($pagosDif>1)CONSTANCIA DE CUMPLIMIENTO PARCIAL DE CONVENIO @endif
+                        @if($pagosDif==1)CONSTANCIA DE PAGO DE CONVENIO @endif DE FECHA <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> EXPEDIENTE NÚMERO <b>{{ $solicitud->NUE }}</b> DEL CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO.
+                    </p>  
+                </div>        
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

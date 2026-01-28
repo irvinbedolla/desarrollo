@@ -1942,7 +1942,25 @@ class TurnosController extends Controller
             $conciliador = $conciliador->where("pago_solicitud.id", "=", $id)
             ->select('users.name')
             ->first();
-            $html = view('PDF/cumplimientos/incomparecenciaTrabajador', compact('id', 'solicitud','conciliador','pagos'))->render();
+            $delegacion = $solicitud->delegacion;
+            $delegadosEspeciales = [
+                    'Zitácuaro'        => 11,
+                    'Lázaro Cárdenas'  => 43,
+                    'Sahuayo'          => 26,
+                ];
+
+            if (array_key_exists($delegacion, $delegadosEspeciales)) {
+                $delegado = User::select('id', 'name', 'delegacion')
+                    ->find($delegadosEspeciales[$delegacion]);
+            } else {
+                $delegado = User::where('delegacion', $delegacion)
+                    ->whereHas('roles', function ($query) {
+                        $query->where('name', 'Delegado');   
+                })
+                ->select('users.id', 'users.name', 'users.delegacion')
+                ->first();
+            }
+            $html = view('PDF/Cumplimientos/incomparecenciaTrabajador', compact('id', 'solicitud','conciliador','pagos','delegado'))->render();
         }
         else{
             
@@ -1953,8 +1971,25 @@ class TurnosController extends Controller
             ->where('turnos.id', $solicitud->id)
             ->select('users.name')
             ->first();
-            
-            $html = view('PDF/incomparecenciaTrabajador', compact('id','solicitud','conciliador','pagos'))->render();
+            $delegacion = $solicitud->delegacion;
+            $delegadosEspeciales = [
+                    'Zitácuaro'        => 11,
+                    'Lázaro Cárdenas'  => 43,
+                    'Sahuayo'          => 26,
+                ];
+
+            if (array_key_exists($delegacion, $delegadosEspeciales)) {
+                $delegado = User::select('id', 'name', 'delegacion')
+                    ->find($delegadosEspeciales[$delegacion]);
+            } else {
+                $delegado = User::where('delegacion', $delegacion)
+                    ->whereHas('roles', function ($query) {
+                        $query->where('name', 'Delegado');   
+                })
+                ->select('users.id', 'users.name', 'users.delegacion')
+                ->first();
+            }
+            $html = view('PDF/incomparecenciaTrabajador', compact('id','solicitud','conciliador','pagos','delegado'))->render();
         }
        
         $pdf = \PDF::loadHTML($html)
@@ -2278,7 +2313,7 @@ class TurnosController extends Controller
             $conciliador = $conciliador->where("pago_solicitud.id", "=", $id)
             ->select('users.name')
             ->first();
-            $html = view('PDF/cumplimientos/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
+            $html = view('PDF/Cumplimientos/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
         }
         else{
             $solicitud  = Turnos::where('id',$pagos["id_solicitud"])->first();

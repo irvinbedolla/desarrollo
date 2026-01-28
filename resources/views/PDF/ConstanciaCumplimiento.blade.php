@@ -55,6 +55,15 @@
                 height: 100%;
                 z-index: -1;
             } 
+            .table-compacta td, 
+            .table-compacta th {
+                padding: 2px 5px !important; /* Reduce el espacio interno arriba y abajo */
+                line-height: 1.1 !important;  /* Ajusta la altura del texto */
+                vertical-align: middle;
+            }
+            .table-compacta {
+                margin-bottom: 10px !important; /* Reduce espacio entre tablas */
+            }
             /* Contenedor que agrupa las firmas */
             .salto-inteligente {
                 display: block;
@@ -87,7 +96,7 @@
                             <td>{{ $solicitud->NUE }} </td>
                         </tr>  
                     </table>
-                </div><br><br><br><br>
+                </div><br><br><br>
                
                 <p><b>
                     Trabajador(a): {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
@@ -119,7 +128,7 @@
                     De acuerdo con lo establecido en el convenio referido el <b>EMPLEADOR</b> se obligó al pago de los siguientes conceptos:
               
                     <div class="table-responsive">
-                        <table id="pagos" class="table-striped" style="width:100%;">
+                        <table id="pagos" class="table-striped table-compacta" style="width:100%;">
                             <thead>
                                 <th style="display: none;">ID</th>
                                 <th>Fecha</th>
@@ -145,7 +154,7 @@
                     celebrado entre las <b>PARTES. Doy fe.</b></p><br>
                     <div class="salto-inteligente"></div>
                     <div class="contenedor-firmas">       
-                        <p> <b> Con fecha {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}
+                        <p> <b> Con fecha {{ $pago->updated_at->translatedFormat('d \d\e F \d\e\l Y') }}
                             se emite la presente Constancia de Cumplimiento del Convenio de Conciliación, con fundamento en la fracción XIV del 
                             artículo 684-E, fracción VIII del artículo 684-F de la Ley Federal del Trabajo, y artículo 20 del Reglamento Interior del Centro de Conciliación 
                             Laboral del Estado de Michoacán de Ocampo.</b>
