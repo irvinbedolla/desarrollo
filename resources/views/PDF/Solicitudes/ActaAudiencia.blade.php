@@ -79,8 +79,8 @@
                     CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br><br>
                     ACTA DE AUDIENCIA DE CONCILIACIÓN     </b></center></p><br>
                 <p>
-                    En el <b>Centro de Conciliación Laboral del Estado de Michoacán de Ocampo con sede en {{ $solicitud->delegacion }}</b>, siendo las <b>{{ \Carbon\Carbon::parse($audiencia->hora)->format('H:i') }} horas del
-                    {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, hora y día señalados para la celebración de la Audiencia de Conciliación 
+                    En el <b>Centro de Conciliación Laboral del Estado de Michoacán de Ocampo con sede en {{ $solicitud->delegacion }}</b>, siendo las <b>{{ \Carbon\Carbon::parse($audiencia->update)->format('H:i') }} horas del
+                    {{ \Carbon\Carbon::parse($audiencia->update)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, hora y día señalados para la celebración de la Audiencia de Conciliación 
                     Prejudicial, relativa al expediente electrónico con Número de Identificación Único <b>{{ $solicitud->NUE }}</b>, misma que se celebra ante  
                     <b>{{ $conciliador->name }},</b> Funcionario/a Conciliador/a adscrito al Centro de Conciliación 
                     Laboral del Estado de Michoacán de Ocampo,  con fundamento en los artículos 33, 590-E, 590-F, 684-A, 684-B, 684-C, 684-D, 684-E, 684-F, 684-G y 684-I, de la 

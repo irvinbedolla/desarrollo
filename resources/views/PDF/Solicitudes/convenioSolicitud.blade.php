@@ -138,7 +138,7 @@
                         prejudicial ante el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.
                     </p>
                     <p class="sangria">     
-                        e) Que el Centro Estatal, fijó la audiencia de conciliación para el día <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>.
+                        e) Que el Centro Estatal, fijó la audiencia de conciliación para el día <b>{{ \Carbon\Carbon::parse($audiencia->update)->translatedFormat('d \d\e F \d\e\l Y') }}</b>.
                     </p>  
 
                     <b>CUARTA.</b> Declara la parte <b>EMPLEADORA</b>:
@@ -157,7 +157,7 @@
                             seguido ante el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.
                         </p>
                         <p class="sangria">        
-                            b) Que el día <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, se celebro la audiencia de conciliación y que, por así convenir a sus 
+                            b) Que el día <b>{{ \Carbon\Carbon::parse($audiencia->udate)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, se celebro la audiencia de conciliación y que, por así convenir a sus 
                             intereses, las <b>PARTES</b> al haber llegado a un acuerdo para dirimir el conflicto suscitado, se sujetan al tenor de las siguientes:
                         </p>  
                        
@@ -242,16 +242,16 @@
 
                     <!-- CON PAGOS DIFERIDOS-->       
                     @if($pagosDif>'1')            
-                        <p><b>SEXTA.</b> La parte <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará en <b>{{ $pagosDif->C_pagos}}</b> 
-                            exhibiciones, hasta culminar la cantidad de 
-                            <b>${{ number_format($datosAudiencia->monto, 2) }} {{ $montoTexto }} M.N</b>, tal como se muestra:
+                        <p><b>SEXTA.</b> La parte <b>EMPLEADORA</b> manifiesta que en este acto en fecha <b>{{ \Carbon\Carbon::parse($solicitud->update)->translatedFormat('d \d\e F \d\e\l Y') }}</b> le paga a la parte <b>TRABAJADORA en</b> <b>{{ $pagosDif->C_pagos}}</b> 
+                            exhibiciones, la cantidad de 
+                            <b>${{ number_format($datosAudiencia->monto, 2) }} {{ $montoTexto }} M.N</b>, en el domicilio que ocupa el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con lo que se certifica el cumplimiento de su obligación bajo el presente convenio, de conformidad con lo establecido en el artículo 684-E, fracción XIV, de la Ley Federal del Trabajo, tal como se muestra:
                         </p>
+                        <!--
                         <div class="table-responsive">
                             <table id="pagos" class="table-striped" style="width:100%;">
                                 <thead>
                                     <th style="display: none;">ID</th>
                                     <th>Fecha</th>
-                                    <th>Hora</th>
                                     <th>Monto</th>
                                     <th>Descripción</th>
                                 </thead>
@@ -265,7 +265,7 @@
                                                     $horaText = '';
                                                     try {
                                                         if (!empty($pago->fecha)) {
-                                                            $fechaText = \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d/m/y');
+                                                            $fechaText = \Carbon\Carbon::parse($pago->update)->translatedFormat('d/m/y');
                                                         }
                                                     } catch (Exception $e) {
                                                         $fechaText = '';
@@ -288,21 +288,23 @@
                                 </tbody>
                             </table>      
                         </div><br>
+                            -->
+                        <!--
                         <p>En caso de que la parte <b>EMPLEADORA</b> no cubra el pago de la cantidad estipulada y dentro del plazo determinado en esta cláusula, deberá pagar a la parte <b>TRABAJADORA</b> 
                             el equivalente a un día de salario diario, el cual se fijará en razón del salario que percibía dicha parte antes de finalizar la relación de trabajo correspondiente a la cantidad de 
                             <b>${{ number_format($salario_diario, 2) }} {{ $diarioTexto }} M.N</b>. Esa cantidad se sumará a la previamente pactada, por cada día que 
-                            transcurra, sin que se dé cabal cumplimiento al convenio, con fundamento en el artículo 684-E, fracción XIV, último párrafo, de la Ley Federal del Trabajo.</p>
+                            transcurra, sin que se dé cabal cumplimiento al convenio, con fundamento en el artículo 684-E, fracción XIV, último párrafo, de la Ley Federal del Trabajo.</p> -->
                     @endif  
                     <!-- CONDICIONAL 1 SOLO PAGO(EN UNA SOLA EXIBICIÓN)--> 
                     @if($pagosDif=='1')            
-                        <p><b>SEXTA.</b> La parte <b>EMPLEADORA</b> manifiesta que en este acto en fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> le paga a la parte <b>TRABAJADORA en una exibición</b> la cantidad 
+                        <p><b>SEXTA.</b> La parte <b>EMPLEADORA</b> manifiesta que en este acto en fecha <b>{{ \Carbon\Carbon::parse($audiencia->update)->translatedFormat('d \d\e F \d\e\l Y') }}</b> le paga a la parte <b>TRABAJADORA en una exibición</b> la cantidad 
                             de <b>${{ number_format($datosAudiencia->monto, 2) }} {{ $montoTexto }} M.N</b>, en el domicilio que ocupa el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con lo que se certifica el cumplimiento de su 
                             obligación bajo el presente convenio, de conformidad con lo establecido en el artículo 684-E, fracción XIV, último párrafo, de la Ley Federal del Trabajo.</p> 
                     @endif        
-
+<!--
                     <p>Asimismo, manifiestan estar de acuerdo que de no pagarse el primero de los pagos convenidos en la fecha de su vencimiento, quedará a salvo el derecho de cualquiera de las partes para 
                         exigir el cumplimiento del pago total de la cantidad pactada ante la autoridad competente, a parte de los días que transcurran de pena convencional. <br><br>
-
+                            -->
                         <b>SÉPTIMA.</b> Las <b>PARTES</b> solicitan se apruebe y sancione este convenio, toda vez que se elaboró conforme a las disposiciones aplicables de la Ley Federal del Trabajo como 
                         resultado del diálogo de la conciliación entre la parte <b>TRABAJADORA</b> y la parte <b>EMPLEADORA</b>. Así mismo, manifiestan que se encuentran conformes con el presente acuerdo 
                         por no contener cláusula contraria a la costumbre, a la moral, ni renuncia a los derechos de las <b>PARTES.</b><br><br>
@@ -319,9 +321,10 @@
                         <b>DÉCIMA PRIMERA.</b> En caso de que no se cumplan los términos de lo convenido en el presente instrumento, las <b>PARTES</b> deberán acudir a los juzgados Laborales del fuero común a 
                         efecto de que se realice el procedimiento de ejecución que la Ley Federal del Trabajo contempla. <br>
                         <br>Enteradas las <b>PARTES</b> del alcance legal del presente convenio que se eleva a la categoria de cosa juzgada, conforme al artículo 684-E fracción XIII, mismo que se firma en <b>{{ $solicitud->delegacion }}</b> 
-                        de Michoacán de Ocampo a los <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\í\a\s \d\e F \d\e\l Y') }}</b>, ante la fe de <b>{{ strtoupper($conciliador->name) }}</b>, funcionario(a) conciliador(a), quien 
+                        de Michoacán de Ocampo a los <b>{{ \Carbon\Carbon::parse($solicitud->update)->translatedFormat('d \d\í\a\s \d\e F \d\e\l Y') }}</b>, ante la fe de <b>{{ strtoupper($conciliador->name) }}</b>, funcionario(a) conciliador(a), quien 
                         lo sanciona en este mismo acto. <b>Doy fe.</b>
                     </p>
+                    <br><br><br><br>
                     
                     <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:30px;">
                         <tr>
@@ -340,7 +343,7 @@
                             </td>
                         </tr>
                     </table>
-                    <br><br>
+                    <br><br><br><br>
                     <p><center><b>___________________________________<br> {{ strtoupper($conciliador->name) }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
                         DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>               
             </div>

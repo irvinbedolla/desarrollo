@@ -92,7 +92,7 @@
                     Trabajador(a): {{ $solicitud->nombre_trabajador }} <br> 
                     Empresa/Patrón: {{ $solicitud->empresa_representante }}<br>
                     Funcionario/a Conciliador/a Responsable: {{$conciliador->name}}<br>
-                    Fecha y hora de cumplimiento: {{\Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y')}} a las {{\Carbon\Carbon::parse($solicitud->hora)->translatedFormat('h:i')}} horas.<br>
+                    Fecha y hora de cumplimiento: {{\Carbon\Carbon::parse($solicitud->update)->translatedFormat('d \d\e F \d\e\l Y')}} a las {{\Carbon\Carbon::parse($solicitud->update)->translatedFormat('h:i')}} horas.<br>
                     Asistencia de los interesados: Si<br>
                     Convenio conciliatorio: Si
                 </b></p>  
@@ -103,8 +103,8 @@
                     Michoacán de Ocampo.<br><br>
 
                     <b>Motivación:</b> Conforme a la determinación de dar por terminado el conflicto laboral, la parte <b>TRABAJADORA</b> y la parte <b>EMPLEADORA</b>, celebraron el Convenio de Conciliación 
-                    de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha_audiencia)->translatedFormat('d \d\e F \d\e\l Y') }}</b> ante esta Autoridad Conciliadora como resultado de la audiencia de conciliación 
-                    celebrada el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha_audiencia)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{ \Carbon\Carbon::parse($solicitud->hora_audiencia)->translatedFormat('h:i')}} horas.</b><!-- de 
+                    de fecha <b>{{ \Carbon\Carbon::parse($solicitud->update)->translatedFormat('d \d\e F \d\e\l Y') }}</b> ante esta Autoridad Conciliadora como resultado de la audiencia de conciliación 
+                    celebrada el día <b>{{ \Carbon\Carbon::parse($solicitud->update)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{ \Carbon\Carbon::parse($solicitud->update)->translatedFormat('h:i')}} horas.</b><!-- de 
                     <b>{{$solicitud->hora}}</b> a <b>{{$solicitud->hora_fin}} hrs--></b><br><br>
 
                     Las <b>PARTES</b> acordaron <b>PAGO</b> en el convenio referido, en este sentido, el <b>EMPLEADOR</b> da cumplimiento ante esta Autoridad Conciliadora al siguiente concepto:<br>

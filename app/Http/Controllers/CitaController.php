@@ -28,7 +28,7 @@ class CitaController extends Controller
 
 
     public function citas(Request $request) {
-/*
+        /*
         if ($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador") {
             $recepciones = Pagos::join('turnos','turnos.id','pago_solicitud.id_solicitud')
             ->where('pago_solicitud.tipo_pago','Ratificacion')
@@ -94,7 +94,7 @@ class CitaController extends Controller
             ->where('delegacion', $user["delegacion"])
             ->get();
         }
-*/
+        */
         $user = auth()->user();
         $rol = $user->roles->first()->name ?? '';
         $id_usuario = $user->id;
