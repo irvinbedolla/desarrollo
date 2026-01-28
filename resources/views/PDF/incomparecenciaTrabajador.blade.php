@@ -109,8 +109,30 @@
                     
                 </p>
                 <br><br><br><br><br>     
-                <center><br><br> <p><b>___________________________________<br>{{mb_strtoupper($conciliador->name, 'UTF-8')}} <br>FUNCIONARIO/A CONCILIADOR/A<br>
-                    DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>      
+                <div class="contenedor-firmas">
+                    <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:10px;">
+                        <tr>
+                            <td style="width:50%; vertical-align:top; padding:0 5px;">
+                                <div style="border-top: 2px solid #000; width:90%; margin: 0 auto 5px auto;"></div>
+                                <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}<br>
+                                        FUNCIONARIO/A CONCILIADOR/A<br>
+                                        DEL CENTRO DE CONCILIACIÓN LABORAL
+                                        DEL ESTADO DE MICHOACÁN DE OCAMPO
+                                </b>
+                            </td>
+                        <td style="width:50%; vertical-align:top; padding:0 5px;">
+                                <div style="border-top: 2px solid #000; width:90%; margin: 0 auto 5px auto;"></div>
+                                <b>{{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
+                                    DIRECTOR/A DEL CENTRO DE CONCILIACIÓN
+                                    LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO                                  
+                                </b>
+                            </td>
+                        </tr>
+                    </table><br>
+                    <p style="font-size: 10px;">
+                        LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DE LA CONSTANCIA DE INCOMPARECENCIA DE PAGO DE FECHA <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> EXPEDIENTE NÚMERO <b>{{ $solicitud->NUE }}</b> DEL CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO.
+                    </p>  
+                </div>   
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

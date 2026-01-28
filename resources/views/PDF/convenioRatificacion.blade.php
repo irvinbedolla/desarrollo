@@ -60,6 +60,15 @@
                 text-indent: -15px; 
                 padding-left: 15px;
             }
+            .table-compacta td, 
+            .table-compacta th {
+                padding: 2px 5px !important; /* Reduce el espacio interno arriba y abajo */
+                line-height: 1.1 !important;  /* Ajusta la altura del texto */
+                vertical-align: middle;
+            }
+            .table-compacta {
+                margin-bottom: 10px !important; /* Reduce espacio entre tablas */
+            }
             /* Contenedor que agrupa las firmas */
             .salto-inteligente {
                 display: block;
@@ -71,9 +80,7 @@
             .contenedor-firmas {
                 page-break-inside: avoid; 
             }
-
         </style>
-        
     </head>
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
@@ -200,7 +207,7 @@
                             conforme a los siguientes conceptos:</p>
 
                         <b>Prestaciones</b>
-                        <table class="table table-bordered">
+                        <table class="table table-bordered table-compacta">
                             <thead>
                                 <tr>
                                     <th>Concepto</th>
@@ -224,7 +231,7 @@
                         <!-- Para las deducciones -->
                         @if(!empty($deducciones) && count($deducciones) > 0)
                             <b>Deducciones</b>
-                            <table class="table table-bordered">
+                            <table class="table table-bordered table-compacta">
                                 <thead>
                                     <tr>
                                         <th>Concepto</th>
@@ -244,7 +251,7 @@
                             </table> 
                         @endif
 
-                        <table class="table table-bordered" style="width:100%; float: right;">
+                        <table class="table table-bordered table-compacta" style="width:100%; float: right;">
                             <thead>
                             <tr>
                                 <td class="text-right"><strong>Neto a pagar: </strong>

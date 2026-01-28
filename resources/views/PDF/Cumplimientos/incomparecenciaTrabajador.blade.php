@@ -54,6 +54,9 @@
                 height: 100%;
                 z-index: -1;
             } 
+            .contenedor-firmas {
+                page-break-inside: avoid; 
+            }
         </style>
         
     </head>
