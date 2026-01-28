@@ -1173,7 +1173,7 @@ class TurnosController extends Controller
     //PDF Constancia de cumplimiento
     public function VerPDFCumplimiento($id){
         $solicitud = Turnos::find($id);
-        $pagos = Pagos::where('id_solicitud', $id)->where('tipo_solicitud','Ratificacion')->get();
+        $pagos = Pagos::where('id_solicitud', $id)->where('tipo_pago','Ratificacion')->get();
         $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
         $conciliador = $conciliador->where("turnos.id", "=", $id)
         ->select('users.name')
