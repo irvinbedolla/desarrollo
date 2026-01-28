@@ -29,17 +29,19 @@
                                 <p id="mensaje-estado" class="mt-2"></p>
                             </div>
                             -->
-                            <a href="" type="button" class="btn btn-info">
+                            <!--a href="" type="button" class="btn btn-info">
                                 Actualizar representantes
-                            </a>
-                            <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#ModalArchivar" data-id="{{ $id }}">
-                                Archivar
-                            </button>
+                            </!--a-->
                             @if ($allCentro == 1)
-                            <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#ModalReagendar" data-id="{{ $id }}">
+                            <button type="button" class="btn btn-info open-modal" data-bs-toggle="modal" data-bs-target="#ModalReagendar" data-id="{{ $id }}">
                                 Reagendar
                             </button>
                             @endif
+
+                            <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#ModalArchivar" data-id="{{ $id }}">
+                                Archivar
+                            </button>
+                            
                             <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#ModalIncopentencia" data-id="{{ $id }}">
                                 Incompetencia
                             </button>
@@ -78,7 +80,13 @@
                                                 <td  style="display:none">{{$representante->id}}</td>
                                                 <td style="color: #000000;"><b>Citado</b></td>
                                                 <td>{{$representante->nombre}} {{$representante->primer_apellido}} {{$representante->segundo_apellido}}</td>
-                                                <td>{{ $representante->notificacion }}</td>
+                                                <td>
+                                                    @if ($representante->notificacion == 'Trabajador') 
+                                                        Solicitante
+                                                    @else
+                                                        {{ $representante->notificacion }}
+                                                    @endif
+                                                </td>
                                                 <td>{{ $representante->estatus }}</td>
                                                 <td>
                                                     @if($representante->id_abogado == null && $representante->id_fisica == null)
@@ -1302,15 +1310,38 @@
     </form>
 </div>
 <div class="modal fade" id="ModalTerminar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    {{ $bandera = 0; }}
-    @foreach($representantes as $representante)
-        @if($representante->id_abogado == null && $representante->id_fisica == null)
-            {{ $bandera = 1; }}
-        @endif        
-    @endforeach
-    {{$bandera;}}
+    @php
+        $hayRepresentante = 0;
+        foreach ($representantes as $representante) {
+            if (!is_null($representante->id_abogado) || !is_null($representante->id_fisica)) {
+                $hayRepresentante = 1;
+                break;
+            }
+        }
 
-    @if($representantes[$contador-1]->notificacion == "Centro")
+        $hayNotificacionCentro = false;
+        foreach ($representantes as $representante) {
+            if (($representante->notificacion ?? null) === 'Centro') {
+                $hayNotificacionCentro = true;
+                break;
+            }
+        }
+
+        $bloquearContinuar = (!$hayNotificacionCentro && $hayRepresentante === 0);
+
+        $bandera = 0;
+        foreach ($representantes as $representante) {
+            if (($representante->notificacion ?? null) === 'Centro') {
+                $tieneRepresentante = (!is_null($representante->id_abogado) || !is_null($representante->id_fisica));
+                if (!$tieneRepresentante) {
+                    $bandera = 1;
+                    break;
+                }
+            }
+        }
+    @endphp
+
+    @if($hayNotificacionCentro)
         <div class="modal-dialog modal-l">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1325,8 +1356,10 @@
                     <form class="needs-validation novalidate" method="POST" action="{{route('audiencia_parte2')}}">
                         @csrf
                         <input type="hidden" name="id" value="{{$id}}">
-                        <input type="hidden" name="bandera" value="{{$bandera}}">
-                        <button type="submit" class="btn btn-success">Continuar</button>
+                        <input type="hidden" name="bandera" value="{{$hayRepresentante}}">
+                        <button type="submit" class="btn btn-success">
+                            Continuar
+                        </button>
                     </form>                    
                 </div>
             </div>
@@ -1335,7 +1368,7 @@
         <div class="modal-dialog">
             <div class="modal-content modal-xl">
                 <div class="modal-header">
-                    @if($bandera != 0)
+                    @if($hayRepresentante == 0)
                         <!--span>Si no seleccionas todos los representantes debes seleccionar una fecha para que próxima audiencia.<br>
                         Notificará el centro</!--span>
                         <input type="date" name="fecha" class="form-control"-->
@@ -1349,8 +1382,10 @@
                     <form class="needs-validation novalidate" method="POST" action="{{route('audiencia_parte2')}}">
                         @csrf
                         <input type="hidden" name="id" value="{{$id}}">
-                        <input type="hidden" name="bandera" value="{{$bandera}}">
-                        <button type="submit" class="btn btn-success">Continuar</button>
+                        <input type="hidden" name="bandera" value="{{$hayRepresentante}}">
+                        <button type="submit" class="btn btn-success" @if($bloquearContinuar) disabled @endif>
+                            Continuar
+                        </button>
                     </form> 
                 </div>
             </div>

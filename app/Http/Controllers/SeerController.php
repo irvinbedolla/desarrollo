@@ -4384,7 +4384,11 @@ class SeerController extends Controller
         $sessionKey = "audiencia_data_{$id}";
         if (!session()->has($sessionKey)) {
             $solicitanteDB = SeerSolicitante::where('id_solicitud', $id)->first();
-            $citadosDB = SeerCitados::where('id_solicitud', $id)->get();
+            if($allCentro == 0){
+                $citadosDB = SeerCitados::where('id_solicitud', $id)->where('notificacion', 'Centro')->get();
+            } else {
+                $citadosDB = SeerCitados::where('id_solicitud', $id)->get();
+            }
             
             session([$sessionKey => [
                 'solicitante' => $solicitanteDB,
@@ -5089,7 +5093,16 @@ class SeerController extends Controller
             'consecutivo'           =>  $numero_audiencia[1],
             'estatus_conciliacion'  => 'Regenerada'
         ];        
-        SeerPerConciliador::create($data_conciliador);  
+        SeerPerConciliador::create($data_conciliador);
+        
+        $citados = SeerCitados::where('id_solicitud', $data["id"])->get();
+        foreach($citados as $citado){
+            if($citado->notificacion == "Trabajador"){
+                    $nuevo_citado = $citado->replicate();
+                    $nuevo_citado->notificacion = 'Centro';
+                    $nuevo_citado->save();
+            }
+        }
         
         \DB::transaction(function() use ($user, $data) {
             //Obtener la audiencia mas reciente
@@ -5119,7 +5132,7 @@ class SeerController extends Controller
 
                 // Crear nueva audiencia con estatus Pendiente y datos copiados
                 Audiencias::create([
-                    'id_conciliador'   => $user->id,
+                    'id_conciliador'   => $audienciaOld->id_conciliador,
                     'id_solicitud'     => $audienciaOld->id_solicitud,
                     'numero_audiencia' => $new_num,
                     'folio_audiencia'  => $new_folio,
@@ -5145,13 +5158,6 @@ class SeerController extends Controller
                 ]);
             }
         });
-
-        //Actualizar tabla general
-        $solicitud = SeerPerGeneral::find($data["id"])
-        ->update([
-            'estatus'           => 'Confirmado',
-            'conciliador_id'    => $user->id
-        ]);
     
         return redirect()->route('todas_audiencias');
     }
@@ -6054,10 +6060,24 @@ class SeerController extends Controller
                     ->where('id_solicitud', $id)
                     ->get();
         } else {
+            $allCentro = 1;
+            $citadosCentro = SeerCitados::where('id_solicitud', $id)->latest()->get();
+            foreach ($citadosCentro as $citado){
+                if($citado->notificacion == 'Centro'){
+                    $allCentro = 0;
+                    break;
+                }
+            }
             // Si no hay sesión (ej. el usuario recargó o entró directo), usamos la lógica de BD
-            $citados = SeerCitados::where('id_solicitud', $id)
+            if($allCentro == 0) {
+                $citados = SeerCitados::where('id_solicitud', $id)
                         ->where('aparece_convenio', 1)
+                        ->where('notificacion', 'Centro')
                         ->get();
+            }
+            else {
+                $citados = SeerCitados::where('id_solicitud', $id)->where('aparece_convenio', 1)->get();
+            }
         }
 
         //$citados = SeerCitados::where('id_solicitud', $id)->get();
@@ -8101,15 +8121,38 @@ class SeerController extends Controller
         $solicitud      = SeerPerGeneral::find($id);
         $conciliador    = User::select('name')->where('id', $solicitud->conciliador_id)->first();
 
-        $representantes = SeerCitados::
-        leftjoin('abogados', 'abogados.idAbogado', '=', 'seer_citados.id_abogado')
-        ->leftJoin('persona_fisica', 'persona_fisica.id', '=', 'seer_citados.id_fisica')
-        ->where('seer_citados.id_solicitud', $id)
-        ->select('seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido','seer_citados.rfc',
-        'abogados.nombres_patronal as nombre_abogado','abogados.primer_apellido_patronal as primero_abogado','abogados.segundo_apellido_patronal as segundo_abogado',
-        'persona_fisica.nombre as nombre_fisica','persona_fisica.primer_apellido as primer_fisica','persona_fisica.segundo_apellido as segundo_fisica',
-        'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus','abogados.tipo_identificacion')
-        ->get();
+        $allCentro = 1;
+        $citadosCentro = SeerCitados::where('id_solicitud', $id)->latest()->get();
+        foreach ($citadosCentro as $citado){
+            if($citado->notificacion == 'Centro'){
+                $allCentro = 0;
+                break;
+            }
+        }
+
+        if ( $allCentro == 0 ){
+            $representantes = SeerCitados::
+            leftjoin('abogados', 'abogados.idAbogado', '=', 'seer_citados.id_abogado')
+            ->leftJoin('persona_fisica', 'persona_fisica.id', '=', 'seer_citados.id_fisica')
+            ->where('seer_citados.id_solicitud', $id)
+            ->where('seer_citados.notificacion', 'Centro')
+            ->select('seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido','seer_citados.rfc',
+            'abogados.nombres_patronal as nombre_abogado','abogados.primer_apellido_patronal as primero_abogado','abogados.segundo_apellido_patronal as segundo_abogado',
+            'persona_fisica.nombre as nombre_fisica','persona_fisica.primer_apellido as primer_fisica','persona_fisica.segundo_apellido as segundo_fisica',
+            'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus','abogados.tipo_identificacion')
+            ->get();
+        }else {
+            $representantes = SeerCitados::
+            leftjoin('abogados', 'abogados.idAbogado', '=', 'seer_citados.id_abogado')
+            ->leftJoin('persona_fisica', 'persona_fisica.id', '=', 'seer_citados.id_fisica')
+            ->where('seer_citados.id_solicitud', $id)
+            ->select('seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido','seer_citados.rfc',
+            'abogados.nombres_patronal as nombre_abogado','abogados.primer_apellido_patronal as primero_abogado','abogados.segundo_apellido_patronal as segundo_abogado',
+            'persona_fisica.nombre as nombre_fisica','persona_fisica.primer_apellido as primer_fisica','persona_fisica.segundo_apellido as segundo_fisica',
+            'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus','abogados.tipo_identificacion')
+            ->get();
+        }
+        
         $solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
         $abogados = Poder::all();
         SeerPerGeneral::find($id)->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
