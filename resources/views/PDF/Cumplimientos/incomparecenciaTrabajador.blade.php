@@ -96,7 +96,7 @@
                     legal de la parte patronal <b>{{$solicitud->empresa}}</b> a dar cumplimiento al Convenio celebrado entre las partes ante este Centro el día 
                     <b>{{ \Carbon\Carbon::parse($solicitud->fecha_audiencia)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{ \Carbon\Carbon::parse($solicitud->hora_audiencia)->translatedFormat('h:i') }}</b> hrs., 
                     haciendo constar la inasistencia de la parte trabajadora, no obstante de encontrarse legal y debidamente notificada de la fecha y hora del cumplimiento de pago de convenio, 
-                    sin que exista causa justificada, motivo por el cual se EMITE CONSTANCIA DE INCUMPLIMIENTO dejando a salvo los derechos de la parte compareciente para hacerlos valer ante 
+                    sin que exista causa justificada, motivo por el cual se <b>EMITE CONSTANCIA DE INCOMPARECENCIA DE PAGO</b> dejando a salvo los derechos de la parte compareciente para hacerlos valer ante 
                     la autoridad competente, para los efectos legales y administrativos a los que haya lugar.- Archívese el presente asunto y Notifíquese.- 
                     <br><br>
 
@@ -105,8 +105,31 @@
                     de Michoacán de Ocampo. <b>Doy fe.</b> 
                     
                 </p>
-                <br><br><br><br><br>     
-                <center><br><br> <p><b>___________________________________<br>{{$conciliador->name}}<br>FUNCIONARIO/A CONCILIADOR/A</b></p></center>           
+                <br><br><br><br><br> 
+                <div class="contenedor-firmas">
+                    <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:10px;">
+                        <tr>
+                            <td style="width:50%; vertical-align:top; padding:0 5px;">
+                                <div style="border-top: 2px solid #000; width:90%; margin: 0 auto 5px auto;"></div>
+                                <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}<br>
+                                        FUNCIONARIO/A CONCILIADOR/A<br>
+                                        DEL CENTRO DE CONCILIACIÓN LABORAL
+                                        DEL ESTADO DE MICHOACÁN DE OCAMPO
+                                </b>
+                            </td>
+                        <td style="width:50%; vertical-align:top; padding:0 5px;">
+                                <div style="border-top: 2px solid #000; width:90%; margin: 0 auto 5px auto;"></div>
+                                <b>{{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
+                                    DIRECTOR/A DEL CENTRO DE CONCILIACIÓN
+                                    LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO                                  
+                                </b>
+                            </td>
+                        </tr>
+                    </table><br>
+                    <p style="font-size: 10px;">
+                        LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DE LA CONSTANCIA DE INCOMPARECENCIA DE PAGO DE FECHA <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> EXPEDIENTE NÚMERO <b>{{ $solicitud->NUE }}</b> DEL CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO.
+                    </p>  
+                </div>       
             </div>
             <script type="text/php">
                 if (isset($pdf)) {
