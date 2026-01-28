@@ -137,7 +137,7 @@ class AdministracionController extends Controller
             }
         }
         else if($data["tipo"] == "Ratificación"){
-            $folios = Turnos::where('id',$data["folio"])
+            $folios = Turnos::where('consecutivo',$data["folio"])
             ->whereYear("fecha",$data["año"])
             ->select('id','NUE','fecha','estatus')
             ->selectRaw("CONCAT(empresa,' ',primero_empresa,' ',segundo_empresa) as empresa")
@@ -162,7 +162,7 @@ class AdministracionController extends Controller
                 ->with('tipo', $data["tipo"]); // La variable específica
             }
             else{
-                return back()->withErrors('Debes seleccionar al menos una Región.');
+                return back()->withErrors('El foilio ingresado no existe.');
             }
         }
         else if($data["tipo"] == "Solicitudes"){
@@ -198,7 +198,7 @@ class AdministracionController extends Controller
     }
 
     public function hacer_retroceso($id){
-        Pagos::find($id)->update(['estatus'  => "Pendiente"]);
+        Pagos::find($id)->update(['estatus'  => "Concluir"]);
         return redirect()->back()->with('success', 'Puedes realizar tu cumplimiento nuevamente.');
     }
 

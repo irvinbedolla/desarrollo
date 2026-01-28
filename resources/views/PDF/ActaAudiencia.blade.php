@@ -55,6 +55,17 @@
                 height: 100%;
                 z-index: -1;
             } 
+             /* Contenedor que agrupa las firmas */
+            .salto-inteligente {
+                display: block;
+                height: 2cm;           
+                margin-bottom: -2cm;    
+                page-break-inside: avoid;
+            }
+
+            .contenedor-firmas {
+                page-break-inside: avoid; 
+            }
         </style>
     </head>
     <body>
@@ -123,7 +134,7 @@
                     que, en el caso de estar conformes con dicho acuerdo, se procederá a realizar el convenio por escrito, mismo que deberá ratificarse en el presente acto y, posteriormente, se les 
                     entregará copia certificada del mismo en el que conste su cumplimiento en términos de los artículos 684-E fracción XIV y 684-I, de la ley Federal del Trabajo.<br><br>
 
-                    La propuesta referida para la parte trabajadora, se encuentra formulada en los términos siguientes:<br><br>
+                    La propuesta referida para la parte trabajadora, se encuentra formulada en los términos siguientes:
 
                     <table class="table table-bordered">
                         <thead>
@@ -205,41 +216,49 @@
 
                     De igual modo, el tratamiento de los datos proporcionados por los interesados y los datos personales recabados por este Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, 
                     serán protegidos, incorporados y tratados únicamente por este Organismo Descentralizado de la Administración Pública Estatal como Sujeto Obligado ante la Ley General de Protección de Datos 
-                    Personales en Posesión de Sujetos Obligados y a la Ley General de Transparencia y Acceso a la Información Pública. <br><br>
+                    Personales en Posesión de Sujetos Obligados y a la Ley General de Transparencia y Acceso a la Información Pública.
+                </p> 
+                <div class="salto-inteligente"></div>
+                <div class="contenedor-firmas">  
+                    <p>   
+                        Asimismo, se informa que sus datos no podrán ser difundidos sin el consentimiento expreso, salvo las excepciones previstas en ley.<br><br>
 
-                    Asimismo, se informa que sus datos no podrán ser difundidos sin el consentimiento expreso, salvo las excepciones previstas en ley.<br><br>
+                        Así lo proveyó, <b>{{ $conciliador->name }}</b>, Funcionario(a) Conciliador(a) adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
+                    </p>
 
-                    Así lo proveyó, <b>{{ $conciliador->name }}</b>, Funcionario(a) Conciliador(a) adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
-                </p>
-
-                <br><br>
-                <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:30px;">
-                    <tr>
-                        <td style="width:50%; vertical-align:top; padding:0 20px;">
-                            <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
-                            <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}<br>
-                                LA PARTE TRABAJADORA
-                            </b>
-                        </td>
-                        <td style="width:50%; vertical-align:top; padding:0 20px;">
-                            <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
-                            <b>{{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}<br>
-                                LA PARTE EMPLEADORA
-                            </b>
-                        </td>
-                    </tr>
-                    <br><br><br>
-                    <tr>
-                        <td colspan="2" style="text-align:center; vertical-align:top; padding:0 20px;">
-                            <div style="border-top: 2px solid #000; width:50%; margin: 0 auto 5px auto;"></div>
-                            <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}<br>
-                                    FUNCIONARIO/A CONCILIADOR/A<br>
-                                    DEL CENTRO DE CONCILIACIÓN LABORAL<br>
-                                    DEL ESTADO DE MICHOACÁN DE OCAMPO
-                            </b>
-                        </td>
-                    </tr>
-                </table>                    
+                    <br><br>
+                    <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:30px;">
+                        <tr>
+                            <td style="width:50%; vertical-align:top; padding:0 20px;">
+                                <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                                <b>{{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}<br>
+                                    LA PARTE TRABAJADORA
+                                </b>
+                            </td>
+                            <td style="width:50%; vertical-align:top; padding:0 20px;">
+                                <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                                <b>{{ $solicitud->nombre_empresa }} {{ $solicitud->primero_empresa }} {{ $solicitud->segundo_empresa }}<br>
+                                    LA PARTE EMPLEADORA
+                                </b>
+                            </td>
+                        </tr>
+                        <br><br><br>
+                        <tr>
+                            <td colspan="2" style="text-align:center; vertical-align:top; padding:0 20px;">
+                                <div style="border-top: 2px solid #000; width:50%; margin: 0 auto 5px auto;"></div>
+                                <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}<br>
+                                        FUNCIONARIO/A CONCILIADOR/A<br>
+                                        DEL CENTRO DE CONCILIACIÓN LABORAL<br>
+                                        DEL ESTADO DE MICHOACÁN DE OCAMPO
+                                </b>
+                            </td>
+                        </tr>
+                    </table>  
+                    <br>
+                    <p style="font-size: 10px;">
+                        LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DEL ACTA DE AUDIENCIA DE CONCILIACIÓN DE FECHA <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> EXPEDIENTE NÚMERO <b>{{ $solicitud->NUE }}</b> DEL CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO.
+                    </p>  
+                </div>                  
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

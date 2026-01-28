@@ -1438,10 +1438,10 @@ class TurnosController extends Controller
             return $query->where('name', '=', 'Conciliador');
         })
         ->whereIn('delegacion', $delegaciones)
-        //->where('delegacion', $user["delegacion"])
         ->get();
 
-        return view('/ratificaciones/concluir',compact('id','conciliadores'));
+        //$ratificacion = Turnos::find($id);
+        return view('/ratificaciones/concluir',compact('id','conciliadores','ratificacion'));
     }
 
     public function consultar_ratificaciones($id){
