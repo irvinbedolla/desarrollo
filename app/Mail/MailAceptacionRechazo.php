@@ -38,7 +38,7 @@ class MailAceptacionRechazo extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.confirmacion_solicitud',
+            view: 'emails.confirmacion',
         );
     }
     
