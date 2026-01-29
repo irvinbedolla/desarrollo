@@ -11656,4 +11656,84 @@ class SeerController extends Controller
         $nombreArchivo = 'constancia_de_cumplimiento_' . $solicitud->trabajador .'.pdf';
         return $pdf->stream($nombreArchivo);                  
     }
+
+    public function todas_solicitudes(){
+        $id = auth()->user()->id;
+        $user = User::find($id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+        $isAudiencia = 'No';
+
+        if($userRole[0] == "Auxiliar" || $userRole[0] == "Excepcion"){
+            $solicitudes = SeerPerGeneral::where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(500)->get();
+            foreach ($solicitudes as $solicitud) {
+                $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+            }
+        }
+        else if($userRole[0] == "Conciliador"){
+            $permisos = PermisosConciliador::where('id_conciliador',$id)->first();
+            if($permisos["tipo"] == "Ambos"){
+                if($user["delegacion"] == "Morelia"){
+                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    foreach ($solicitudes as $solicitud) {
+                        $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                        $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                    }
+                }
+                if($user["delegacion"] == "Uruapan"){
+                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    foreach ($solicitudes as $solicitud) {
+                        $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                        $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                    }
+                }
+                if($user["delegacion"] == "Sahuayo"){
+                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    foreach ($solicitudes as $solicitud) {
+                        $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                        $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                    }
+                }
+            }
+            else{
+                $solicitudes = SeerPerGeneral::where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(500)->get();
+                foreach ($solicitudes as $solicitud) {
+                    $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                    $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                }
+            }
+        }
+        else if($userRole[0] == "Delegado" || $userRole[0] == "Enlace"){
+            if($user["delegacion"] == "Morelia"){
+                $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
+                foreach ($solicitudes as $solicitud) {
+                    $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                    $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                }
+            }
+            if($user["delegacion"] == "Uruapan"){
+                $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
+                foreach ($solicitudes as $solicitud) {
+                    $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                    $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                }
+            }
+            if($user["delegacion"] == "Zamora"){
+                $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
+                foreach ($solicitudes as $solicitud) {
+                    $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                    $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+                }
+            }
+        }
+        else if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador"){
+            $solicitudes = SeerPerGeneral::orderBy('created_at', 'desc')->limit(500)->get();
+            foreach ($solicitudes as $solicitud) {
+                $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
+                $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+            }
+        }
+        return view('solicitudes.solicitudes_todas',compact('solicitudes', 'isAudiencia'));
+    }
 }
