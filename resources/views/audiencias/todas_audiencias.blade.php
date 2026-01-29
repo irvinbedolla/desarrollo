@@ -48,11 +48,9 @@
                                             @foreach($audiencias as $audiencia)
                                             <tr>
                                                 <td>{{$audiencia->NUE}}</td>
-                                                <td>
-                                                    {{ \Carbon\Carbon::parse($audiencia->fecha)->format('d-m-y') }} {{ \Carbon\Carbon::parse($audiencia->hora)->format('H:i') }} hrs.
-                                                </td>
+                                                <td>{{ $audiencia->fecha }} {{ $audiencia->hora }} hrs.</td>                                                </td>
                                                 <td>{{$audiencia->nombre}}</td>
-                                                <td>{{$audiencia->conciliador}}</td>
+                                                <td>{{$audiencia->conciliador_nombre}}</td>
                                                 <td>{{$audiencia->estatus_modelo}}</td>
                                                 <td><a class="btn btn-info" href="{{ route('solicitud_audiencia', $audiencia->id_solicitud) }}?isAudiencia=Si" onclick=editar_usuario();>Revisar</a></td>
                                                 <td>
@@ -61,8 +59,8 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    @if(/*$audiencia->estatus == "Conciliacion" ||*/ $audiencia->estatus == "Concluida" || $audiencia->estatus == "Concluida Pagos")
-                                                        <a class="btn btn-primary" href="{{ route('audiencia_cumplimientos', $audiencia->id_solicitud) }}">Generar cumplimiento</a>
+                                                    @if($audiencia->estatus == "Conciliacion" || $audiencia->estatus == "Concluida Pagos")
+                                                        <a class="btn btn-primary" href="{{ route('audiencia_cumplimientos', $audiencia->id_solicitud) }}">Cumplimiento</a>
                                                     @endif
                                                 </td>
                                                 <td>
@@ -157,7 +155,7 @@
                                                                     <li><a class="dropdown-item" href="{{ route('VerPDFAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Acta de Audiencia</a></li>
                                                                     <li><a class="dropdown-item" href="{{ route('PDFconveniosolicitud', $audiencia->id_solicitud) }}" target="_blank">Convenio</a></li>
                                                                     @if($audiencia->constancia == 0)
-                                                                        <li><a class="dropdown-item" href="{{ route('PDFcumplimiento', $audiencia->id_solicitud) }}"  target="_blank">Constancia de cumplimiento</a></li>
+                                                                        <li><a class="dropdown-item" href="{{ route('PDFcumplimientoTotal', $audiencia->id_solicitud) }}"  target="_blank">Constancia de cumplimiento</a></li>
                                                                     @endif
                                                                     <li><button type="button" class="btn btn-info btn-mostrar-registros" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $audiencia->id_solicitud }}">Citatorios</button></li>
                                                                 </ul>

@@ -9510,314 +9510,71 @@ class SeerController extends Controller
         return Excel::download(new CitasExport, 'pagos.xlsx');
     }
     
-    public function todas_audiencias(){
-        $id = auth()->user()->id;
-        $user = User::find($id);
-        $roles = Role::pluck('name','name')->all();
-        $userRole = $user->roles->pluck('name')->all();
-        $audiencias = array();
-        $isAudiencia = 'Si';
-
-        if($userRole[0] == "Conciliador"){
-            $permisos = PermisosConciliador::where('id_conciliador',$id)->first();
-            if($permisos["tipo"] == "Ambos"){
-                if($user["delegacion"] == "Morelia"){
-                    $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->whereIn('delegacion', ["Morelia", "Zitácuaro"])->where('id_conciliador', $id)->orderBy('created_at', 'desc')->limit(500)->get();
-                    foreach ($audiencias as $audiencia) {
-                        $datosAudiencia = Audiencias::where('id_solicitud', $audiencia->id_solicitud)
-                        ->orderBy('numero_audiencia', 'DESC')
-                        ->first();
-                        $audienciaActual = Audiencias::where('id_solicitud', $audiencia->id_solicitud)
-                        ->orderBy('numero_audiencia', 'DESC')
-                        ->first();
-
-                        $audiencia->estatus_modelo = $audiencia->estatus;
-                        $audiencia->estatus_conciliacion = $audienciaActual->estatus_conciliacion;
-
-                        $audiencia->fecha = $datosAudiencia->fecha;
-                        $audiencia->hora = $datosAudiencia->hora;
-                        $audiencia->id_conciliador = $datosAudiencia->id_conciliador;
-                        $audiencia["fecha"] = date('d-m-Y', strtotime($audiencia["fecha"]));
-                        $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
-
-                        $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
-                        $audiencia->nombre = $solicitante?->nombre ?? 'Sin solicitante';
-
-                        $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
-                        $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
-                        $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Sin estatus';
-                        $datosAudiencia = Audiencias::where('id_solicitud', $audiencia->id_solicitud)->first();
-                        $conciliador = User::find($datosAudiencia->id_conciliador);
-                        $audiencia->conciliador = $conciliador?->name ?? 'Sin Conciliador';
-                        
-                        $pendientes = Pagos::where('id_solicitud',$audiencia["id_solicitud"])->where('estatus',"Pendiente")->where('tipo_pago',"Audiencia")->get();
-                        if(count($pendientes) == 0){
-                            //Si la contancia es 0 no tiene pagos pendientes
-                            $audiencia->constancia = 0;
-                        }
-                        else{
-                            $audiencia->constancia = 1;
-                        }
-                        /*$solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
-                        $audiencia->nombre = $solicitante?->nombre ?? 'Sin solicitante';
-
-                        $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
-                        $audiencia->NUE = $expediente?->NUE ?? 'Sin Expediente';
-                        $audiencia->estatus = $expediente?->estatus ?? 'Sin estatus';
-                        $audiencia->fecha = date('Y-m-d', strtotime($audiencia["fecha"]));
-                        $audiencia->hora = date('H:i:s', strtotime($audiencia["hora"]));
-                        $datosAudiencia = Audiencias::where('id_solicitud', $audiencia->id_solicitud)->first();
-                        $conciliador = User::find($datosAudiencia->id_conciliador);
-                        $audiencia->conciliador = $conciliador?->name ?? 'Sin Conciliador';
-                        
-                        $pendientes = Pagos::where('id_solicitud',$audiencia["id_solicitud"])->where('estatus',"Pendiente")->where('tipo_pago',"Audiencia")->get();
-                        if(count($pendientes) == 0){
-                            //Si la contancia es 0 no tiene pagos pendientes
-                            $audiencia->constancia = 0;
-                        }
-                        else{
-                            $audiencia->constancia = 1;
-                        }*/
-                    }
-                }
-                if($user["delegacion"] == "Uruapan"){
-                    $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->where('id_conciliador', $id)->orderBy('created_at', 'desc')->limit(500)->get();
-                    foreach ($audiencias as $audiencia) {
-                        $audiencia->estatus_modelo = $audiencia->estatus;
-                        $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
-                        $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-                        $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
-                        $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
-                        $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Algo';
-                        $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
-                        $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
-                        $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
-                        $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
-                        $pendientes = Pagos::where('id_solicitud',$audiencia["id_solicitud"])->where('estatus',"Pendiente")->where('tipo_pago',"Audiencia")->get();
-                        if(count($pendientes) == 0){
-                            //Si la contancia es 0 no tiene pagos pendientes
-                            $audiencia->constancia = 0;
-                        }
-                        else{
-                            $audiencia->constancia = 1;
-                        }
-                    }
-                }
-                if($user["delegacion"] == "Zamora"){
-                    $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->whereIn('delegacion', ["Sahuayo", "Zamora"])->where('id_conciliador', $id)->orderBy('created_at', 'desc')->limit(500)->get();
-                    foreach ($audiencias as $audiencia) {
-                        $audiencia->estatus_modelo = $audiencia->estatus;
-                        $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
-                        $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-                        $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
-                        $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
-                        $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Algo';
-                        $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
-                        $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
-                        $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
-                        $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
-                        $pendientes = Pagos::where('id_solicitud',$audiencia["id_solicitud"])->where('estatus',"Pendiente")->where('tipo_pago',"Audiencia")->get();
-                        if(count($pendientes) == 0){
-                            //Si la contancia es 0 no tiene pagos pendientes
-                            $audiencia->constancia = 0;
-                        }
-                        else{
-                            $audiencia->constancia = 1;
-                        }
-                    }
-                }
-            }
-            else{
-                $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->where('seer_general.delegacion', $user["delegacion"])->where('id_conciliador', $id)->orderBy('created_at', 'desc')->limit(500)->get();
-                foreach ($audiencias as $audiencia) {
-                    $audiencia->estatus_modelo = $audiencia->estatus;
-                    $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
-                    $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-                    $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
-                    $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
-                    $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Algo';
-                    $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
-                    $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
-                    $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
-                    $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
-                    $pendientes = Pagos::where('id_solicitud',$audiencia["id_solicitud"])->where('estatus',"Pendiente")->where('tipo_pago',"Audiencia")->get();
-                    if(count($pendientes) == 0){
-                        //Si la contancia es 0 no tiene pagos pendientes
-                        $audiencia->constancia = 0;
-                    }
-                    else{
-                        $audiencia->constancia = 1;
-                    }     
-                }
-            }
-        }
-        else if($userRole[0] == "Delegado"){
-            if($user["delegacion"] == "Morelia"){
-                $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->whereIn('delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
-                foreach ($audiencias as $audiencia) {
-                    $audiencia->estatus_modelo = $audiencia->estatus;
-                    $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
-                    $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-                    $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
-                    $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
-                    $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Algo';
-                    $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
-                    $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
-                    $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
-                    $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
-                    $pendientes = Pagos::where('id_solicitud',$audiencia["id_solicitud"])->where('estatus',"Pendiente")->where('tipo_pago',"Audiencia")->get();
-                    if(count($pendientes) == 0){
-                        //Si la contancia es 0 no tiene pagos pendientes
-                        $audiencia->constancia = 0;
-                    }
-                    else{
-                        $audiencia->constancia = 1;
-                    }
-                }
-            }
-            if($user["delegacion"] == "Uruapan"){
-                $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
-                foreach ($audiencias as $audiencia) {
-                    $audiencia->estatus_modelo = $audiencia->estatus;
-                    $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
-                    $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-                    $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
-                    $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
-                    $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Algo';
-                    $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
-                    $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
-                    $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
-                    $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
-                    $pendientes = Pagos::where('id_solicitud',$audiencia["id_solicitud"])->where('estatus',"Pendiente")->where('tipo_pago',"Audiencia")->get();
-                    if(count($pendientes) == 0){
-                        //Si la contancia es 0 no tiene pagos pendientes
-                        $audiencia->constancia = 0;
-                    }
-                    else{
-                        $audiencia->constancia = 1;
-                    }
-                }
-            }
-            if($user["delegacion"] == "Zamora"){
-                $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->whereIn('delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
-                foreach ($audiencias as $audiencia) {
-                    $audiencia->estatus_modelo = $audiencia->estatus;
-                    $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
-                    $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-                    $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
-                    $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Expediente';
-                    $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Algo';
-                    $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
-                    $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
-                    $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
-                    $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
-                    $pendientes = Pagos::where('id_solicitud',$audiencia["id_solicitud"])->where('estatus',"Pendiente")->where('tipo_pago',"Audiencia")->get();
-                    if(count($pendientes) == 0){
-                        //Si la contancia es 0 no tiene pagos pendientes
-                        $audiencia->constancia = 0;
-                    }
-                    else{
-                        $audiencia->constancia = 1;
-                    }
-                }
-            }
-        }
-        else if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador"){    
-            $audiencias = Audiencias::select('id_solicitud','fecha','hora','id_conciliador', 'estatus')->distinct()->orderBy('created_at', 'desc')->limit(500)->get();
-            //$registros_unicos_recientes = $audiencias->unique('id_solicitud');
-
-            foreach ($audiencias as $audiencia) {
-                $audiencia->estatus_modelo = $audiencia->estatus;
-                $solicitante = SeerSolicitante::where('id_solicitud', $audiencia->id_solicitud)->first();
-                $audiencia->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-                $expediente = SeerPerGeneral::find($audiencia->id_solicitud);
-                $audiencia["NUE"] = $expediente ? $expediente->NUE : 'Sin Confirmar';
-                $audiencia["estatus"] = $expediente ? $expediente->estatus : 'Sin Confirmar';
-                $audiencia["fecha"] = date('Y-m-d', strtotime($audiencia["fecha"]));
-                $audiencia["hora"] = date('H:i:s', strtotime($audiencia["hora"]));
-                $conciliador = User::where("id",$audiencia["id_conciliador"])->select("name")->first();
-                $audiencia->conciliador = $conciliador ? $conciliador->name : 'Sin Conciliador';
-                $pendientes = Pagos::where('id_solicitud',$audiencia["id_solicitud"])->where('estatus',"Pendiente")->where('tipo_pago',"Audiencia")->get();
-                if(count($pendientes) == 0){
-                    //Si la contancia es 0 no tiene pagos pendientes
-                    $audiencia->constancia = 0;
-                }
-                else{
-                    $audiencia->constancia = 1;
-                }
-            }
-        }
-
-        return view('audiencias.todas_audiencias',compact('audiencias', 'isAudiencia'));
-    }
-
-    public function todas_solicitudes(){
+    public function todas_audiencias() {
         $user = auth()->user();
-        $rol = $user->roles->first()->name ?? '';
-        
-        // 1. Definimos el mapa de sedes y sus apoyos (Centralizado)
-        $mapaSedes = [
+        $userRole = $user->roles->pluck('name')->first();
+        $isAudiencia = 'Si';
+    
+        // 1. Definir el Query base con sus relaciones (Eager Loading)
+        $query = Audiencias::with([
+            'solicitante', // Asumiendo relación en el modelo Audiencia
+            'expediente',  // Asumiendo relación con SeerPerGeneral
+            'conciliador', // Asumiendo relación con User
+            'pagos'        => function($q) {
+                $q->where('estatus', 'Pendiente')->where('tipo_pago', 'Audiencia');
+            }
+        ])->select('id_solicitud', 'fecha', 'hora', 'id_conciliador', 'estatus', 'delegacion', 'created_at')
+          ->distinct();
+    
+        // 2. Mapeo de delegaciones para evitar IFs repetitivos
+        $mapaDelegaciones = [
             'Morelia' => ['Morelia', 'Zitácuaro'],
             'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
-            'Zamora'  => ['Zamora', 'Sahuayo'],
-            'Sahuayo' => ['Sahuayo', 'Zamora'], // Agregado por simetría
+            'Zamora'  => ['Sahuayo', 'Zamora'],
         ];
-
-        // 2. Iniciamos la consulta con Eager Loading (Carga el solicitante en una sola consulta)
-        $query = SeerPerGeneral::with('solicitante')
-            ->orderBy('consecutivo', 'desc')
-            ->limit(500);
-
-        // 3. Lógica de filtrado por Rol
-        if (!in_array($rol, ['Super Usuario', 'Administrador'])) {
+    
+        // 3. Aplicar filtros según Rol
+        if ($userRole == "Conciliador") {
+            $permisos = PermisosConciliador::where('id_conciliador', $user->id)->first();
+            $query->where('id_conciliador', $user->id);
             
-            $delegacionesPermitidas = [$user->delegacion];
-
-            // Roles con acceso a sedes vinculadas
-            if (in_array($rol, ['Conciliador', 'Delegado', 'Enlace'])) {
-                
-                $esAmbos = true;
-                if ($rol == 'Conciliador') {
-                    $esAmbos = PermisosConciliador::where('id_conciliador', $user->id)
-                        ->where('tipo', 'Ambos')
-                        ->exists();
-                }
-
-                if ($esAmbos && isset($mapaSedes[$user->delegacion])) {
-                    $delegacionesPermitidas = $mapaSedes[$user->delegacion];
-                }
+            if ($permisos && $permisos->tipo == "Ambos") {
+                $delegaciones = $mapaDelegaciones[$user->delegacion] ?? [$user->delegacion];
+                $query->whereIn('delegacion', $delegaciones);
+            } else {
+                $query->where('delegacion', $user->delegacion);
             }
-
-            $query->whereIn('seer_general.delegacion', $delegacionesPermitidas);
+        } 
+        elseif ($userRole == "Delegado") {
+            $delegaciones = $mapaDelegaciones[$user->delegacion] ?? [$user->delegacion];
+            $query->whereIn('delegacion', $delegaciones);
         }
-
-        // 4. Ejecutamos y asignamos nombres (opcional si lo manejas en la vista)
-        $solicitudes = $query->get()->each(function($sol) {
-            $sol->nombre = $sol->solicitante->nombre ?? 'Sin solicitante';
+        // Si es Super Usuario o Admin, no se agregan filtros adicionales (ve todo)
+    
+        // 4. Ejecutar consulta (Límite 500)
+        $audiencias = $query->orderBy('created_at', 'desc')->limit(500)->get();
+    
+        // 5. Procesar resultados (Formateo)
+        $audiencias->transform(function ($audiencia) {
+            $audiencia->estatus_modelo = $audiencia->estatus;
+            
+            // Datos del solicitante y expediente (vienen de la relación)
+            $audiencia->nombre = $audiencia->solicitante->nombre ?? 'Sin solicitante';
+            $audiencia->NUE = $audiencia->expediente->NUE ?? 'Sin Expediente';
+            $audiencia->estatus = $audiencia->expediente->estatus ?? 'Sin estatus';
+            
+            // Formateo de fecha y hora
+            $audiencia->fecha = date('d-m-Y', strtotime($audiencia->fecha));
+            $audiencia->hora = date('H:i:s', strtotime($audiencia->hora));
+            
+            // Conciliador y Pagos
+            $audiencia->conciliador_nombre = $audiencia->conciliador->name ?? 'Sin Conciliador';
+            $audiencia->constancia = $audiencia->pagos->count() > 0 ? 1 : 0;
+    
+            return $audiencia;
         });
-    //Revisión convenio de PTU
-        $solicitudes = $query->get();
-        foreach ($solicitudes as $solicitud) {
-            $solicitud->nombre = $solicitud->solicitante->nombre ?? 'Sin solicitante';
-            $labora = $solicitud->solicitante ? trim($solicitud->solicitante->labora) : '';
-            $relacionMotivo = \DB::table('seer_motivos')
-                ->where('id_solicitud', $solicitud->id)
-                ->first();
-
-            $idMotivo = $relacionMotivo ? $relacionMotivo->id_motivo : 0;
-
-            $esEstatusValido = ($solicitud->estatus == 'Conciliacion' || $solicitud->estatus == 'Concluida');
-            $esPTU = ($idMotivo == 41 || $idMotivo == 42);
-            $noLabora = ($labora == 'No' || $labora == 'no');
-            $solicitud->mostrar_ptu = ($esEstatusValido && $esPTU && $noLabora);
-        }
-
-        return view('solicitudes.solicitudes_todas', [
-            'solicitudes' => $solicitudes,
-            'isAudiencia' => 'No'
-        ]);
-
-        return view('solicitudes.solicitudes_todas',compact('solicitudes', 'isAudiencia'));
+    
+        return view('audiencias.todas_audiencias', compact('audiencias', 'isAudiencia'));
     }
 
     public function todas_ratificaciones(){
@@ -10483,6 +10240,7 @@ class SeerController extends Controller
     public function ver_pagos_audiencia($id){
         $cumplimientos = Pagos::join('seer_general','seer_general.id',"=",'pago_solicitud.id_solicitud')
         ->where('pago_solicitud.id_solicitud',$id)
+        ->whereIn('tipo_pago',['Audiencia','Conciliador'])
         ->select('pago_solicitud.id','pago_solicitud.id_solicitud','seer_general.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
         ->get();
 

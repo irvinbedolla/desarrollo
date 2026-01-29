@@ -110,7 +110,7 @@ class ReporteMexicoRati implements FromView
             return $item;
         });
 
-        return view('excel.reporte-mexico', ['reportes' => $todoJunto]);
+        return view('excel.reporte-mexico', ['reportes' => $reportes]);
     }
 
     /**

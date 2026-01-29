@@ -20,4 +20,21 @@ class Audiencias extends Model
 
     public const ESTADOS = ['Conciliación', 'No Conciliación', 'Archivada', 'Incompetencia'];
     public const TIPOS = ['Pago Parcial', 'Pago Total'];
+
+    // En el archivo app/Models/Audiencias.php
+    public function solicitante() {
+        return $this->hasOne(SeerSolicitante::class, 'id_solicitud', 'id_solicitud');
+    }
+
+    public function expediente() {
+        return $this->hasOne(SeerPerGeneral::class, 'id', 'id_solicitud'); 
+    }
+
+    public function conciliador() {
+        return $this->belongsTo(User::class, 'id_conciliador');
+    }
+
+    public function pagos() {
+        return $this->hasMany(Pagos::class, 'id_solicitud', 'id_solicitud');
+    }
 }
