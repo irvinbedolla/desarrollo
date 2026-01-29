@@ -9553,7 +9553,7 @@ class SeerController extends Controller
     
         // 4. Ejecutar consulta (Límite 500)
         $audiencias = $query->orderBy('created_at', 'desc')->limit(500)->get();
-    
+        
         // 5. Procesar resultados (Formateo)
         $audiencias->transform(function ($audiencia) {
             $audiencia->estatus_modelo = $audiencia->estatus;
@@ -9564,8 +9564,8 @@ class SeerController extends Controller
             $audiencia->estatus = $audiencia->expediente->estatus ?? 'Sin estatus';
             
             // Formateo de fecha y hora
-            $audiencia->fecha = date('d-m-Y', strtotime($audiencia->fecha));
-            $audiencia->hora = date('H:i:s', strtotime($audiencia->hora));
+            //$audiencia->fecha = date('d-m-Y', strtotime($audiencia->fecha));
+            //$audiencia->hora = date('H:i:s', strtotime($audiencia->hora));
             
             // Conciliador y Pagos
             $audiencia->conciliador_nombre = $audiencia->conciliador->name ?? 'Sin Conciliador';

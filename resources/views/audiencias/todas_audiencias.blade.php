@@ -48,7 +48,7 @@
                                             @foreach($audiencias as $audiencia)
                                             <tr>
                                                 <td>{{$audiencia->NUE}}</td>
-                                                <td>{{ $audiencia->fecha }} {{ $audiencia->hora }} hrs.</td>                                                </td>
+                                                <td>{{ \Carbon\Carbon::parse($audiencia->fecha)->format('d-m-y') }} {{ \Carbon\Carbon::parse($audiencia->hora)->format('H:i') }} hrs.</td>
                                                 <td>{{$audiencia->nombre}}</td>
                                                 <td>{{$audiencia->conciliador_nombre}}</td>
                                                 <td>{{$audiencia->estatus_modelo}}</td>
