@@ -265,16 +265,16 @@
                                                     $horaText = '';
                                                     try {
                                                         if (!empty($pago->fecha)) {
-                                                            $fechaText = \Carbon\Carbon::parse($pago->update)->translatedFormat('d/m/y');
+                                                            $fechaText = \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d/m/y');
                                                         }
                                                     } catch (Exception $e) {
                                                         $fechaText = '';
                                                     }
                                                     try {
                                                         $rawHora = isset($pago->hora) ? trim(str_replace(' HORAS', '', $pago->hora)) : '';
-                                                        if ($rawHora && preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $rawHora)) {
+                                                        //if ($rawHora && preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $rawHora)) {
                                                             $horaText = \Carbon\Carbon::parse($rawHora)->format('H:i');
-                                                        }
+                                                        //}
                                                     } catch (Exception $e) {
                                                         $horaText = '';
                                                     }

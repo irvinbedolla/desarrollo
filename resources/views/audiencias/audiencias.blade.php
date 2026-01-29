@@ -1339,6 +1339,17 @@
             }
         }
 
+        $totalCitados = 0;
+        $totalCitadosConComparecencia = 0;
+        foreach ($representantes as $representante) {
+            $totalCitados++;
+            if (!is_null($representante->id_abogado) || !is_null($representante->id_fisica)) {
+                $totalCitadosConComparecencia++;
+            }
+        }
+
+        $todasComparecencias = ($totalCitados > 0 && $totalCitadosConComparecencia === $totalCitados);
+
         $hayNotificacionCentro = false;
         $totalCentro = 0;
         $totalCentroSinComparecencia = 0;
@@ -1353,9 +1364,9 @@
             }
         }
 
-    $casoMultasCentroSinComparecencia = ($totalCentro >= 1 && $totalCentroSinComparecencia === $totalCentro);
+        $casoMultasCentroSinComparecencia = ($totalCentro >= 1 && $totalCentroSinComparecencia === $totalCentro);
 
-        $bloquearContinuar = (!$hayNotificacionCentro && $hayRepresentante === 0);
+        $bloquearContinuar = (!$hayNotificacionCentro && !$todasComparecencias);
 
         $bandera = 0;
         foreach ($representantes as $representante) {
@@ -1402,7 +1413,7 @@
                         <!--span>Si no seleccionas todos los representantes debes seleccionar una fecha para que próxima audiencia.<br>
                         Notificará el centro</!--span>
                         <input type="date" name="fecha" class="form-control"-->
-                        Si no se presenta el representante puedes reagendar la audiencia.
+                        Si no se presenta el representante debes reagendar la audiencia.
                     @else
                         Continuar con la audiencia.
                     @endif
