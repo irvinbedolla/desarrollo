@@ -124,7 +124,7 @@
                                                                 </ul>
                                                             </div>
                                                         </div> 
-                                                    @elseif($solicitud->estatus == "Conciliacion")
+                                                    @elseif($solicitud->estatus == "Conciliacion" || $solicitud->estatus == "Concluida")
                                                         <div class="dropdown">
                                                             <div class="dropdown">
                                                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
