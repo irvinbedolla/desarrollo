@@ -74,6 +74,7 @@
                                                                         <li><a class="dropdown-item" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}"  target="_blank">Convenio</a></li>
                                                                     @endif
                                                                     <li><a class="dropdown-item" href="{{ route('PDFaudiencia', $solicitud->id) }}"  target="_blank">Acta de audiencia</a></li>
+                                                                    <li><a class="dropdown-item" href="{{ route('PDFCaratulaInfo', ['tipo' => 'ratificacion', 'id' => $solicitud->id]) }}"  target="_blank">Imprimir solicitud</a></li>
                                                                     @if($solicitud->constancia == 0)
                                                                         <li><a class="dropdown-item" href="{{ route('PDFcumplimientoR', $solicitud->id) }}"  target="_blank">Constancia de cumplimiento</a></li>
                                                                     @endif
@@ -91,6 +92,7 @@
                                                                         <li><a class="dropdown-item" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}"  target="_blank">Convenio</a></li>
                                                                     @endif
                                                                     <li><a class="dropdown-item" href="{{ route('PDFaudiencia', $solicitud->id) }}"  target="_blank">Acta de audiencia</a></li>
+                                                                    <li><a class="dropdown-item" href="{{ route('PDFCaratulaInfo', ['tipo' => 'ratificacion', 'id' => $solicitud->id]) }}"  target="_blank">Imprimir solicitud</a></li>
                                                                 </ul>
                                                             </div>
                                                         @elseif($solicitud->estatus == "Confirmado")

@@ -11818,4 +11818,63 @@ class SeerController extends Controller
         }
         return view('solicitudes.solicitudes_todas',compact('solicitudes', 'isAudiencia'));
     }
+    public function VerPDFCaratula($id, $tipo){
+        $bandera = ($tipo == 'ratificacion') ? 'Ratificación' : 'Solicitud';
+
+        if ($tipo == 'ratificacion') {
+            $ratificacion = Turnos::where('turnos.id', $id)
+            ->leftJoin('municipios', 'turnos.municipio_rat', '=', 'municipios.id')
+            ->leftJoin('estados', 'turnos.estado_rat', '=', 'estados.id')
+            ->select(
+                'turnos.*', 
+                'municipios.nombre as municipio_domicilio', 
+                'estados.nombre as estado_domicilio'
+            )
+            ->first();
+            $abogado = Poder::join("turnos", "turnos.idAbogado", "=", "abogados.idAbogado")
+                ->where("turnos.id", "=", $id)
+                ->select(
+                    "abogados.*",
+                    "turnos.tipo_identificacion as tipo_identificacion_turno",
+                    "turnos.num_identificacion as num_identificacion_turno"
+                )
+                ->first();
+            $html = view('PDF/Caratula', compact('id','ratificacion','abogado','bandera'))->render();
+        } else {
+            $solicitud = SeerPerGeneral::find($id);
+            $solicitante = SeerSolicitante::where('id_solicitud', $solicitud["id"])
+            ->leftJoin('municipios', 'seer_solicitante.municipio_domicilio', '=', 'municipios.id')
+            ->leftJoin('estados', 'seer_solicitante.estado_domicilio', '=', 'estados.id')
+            ->select(
+                'seer_solicitante.*', 
+                'municipios.nombre as nombre_municipio_sol', 
+                'estados.nombre as nombre_estado_sol'
+            )
+            ->first();
+            $citados = SeerCitados::where("id_solicitud", $id)
+            ->leftJoin('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
+            ->leftJoin('estados', 'seer_citados.estado_citado', '=', 'estados.id')
+            ->select('seer_citados.*', 'municipios.nombre as nombre_municipio', 'estados.nombre as nombre_estado')
+            ->get();
+            $notifica = \DB::table('seer_citados')
+            ->where('id_solicitud', $id)
+            ->pluck('notificacion');
+
+            $motivos = \DB::table('seer_motivos')
+            ->join('catalogo_motivos', 'seer_motivos.id_motivo', '=', 'catalogo_motivos.id')
+            ->where('seer_motivos.id_solicitud', $id)
+            ->select('catalogo_motivos.motivo')
+            ->get();
+
+            $html = view('PDF/Caratula', compact('id','solicitud','solicitante','citados','motivos','notifica','bandera'))->render();
+        }
+        
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'Captura_caratula' .'.pdf';
+        return $pdf->stream($nombreArchivo);  
+    }
 }
