@@ -26,75 +26,8 @@ class CitaController extends Controller
         ]);
     }
 
-
+    //Agrenda de pagos en Ratificacion
     public function citas(Request $request) {
-        /*
-        if ($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador") {
-            $recepciones = Pagos::join('turnos','turnos.id','pago_solicitud.id_solicitud')
-            ->where('pago_solicitud.tipo_pago','Ratificacion')
-            ->select('turnos.NUE','pago_solicitud.descripcion','pago_solicitud.hora','pago_solicitud.fecha','turnos.empresa'
-            ,'pago_solicitud.nombre_trabajador','pago_solicitud.estatus','pago_solicitud.monto','pago_solicitud.observaciones',
-            'pago_solicitud.id','pago_solicitud.id_solicitud','turnos.id_conciliador')
-            ->selectRaw("CONCAT(turnos.trabajador, ' ', turnos.primero_trabajador, ' ', turnos.segundo_trabajador) as nombre_completo")
-            ->get();
-        }
-        else if($userRole[0] == "Conciliador" || $userRole[0] == "Delegado" || $userRole[0] == "Enlace" || $userRole[0] == "Auxiliar"){
-            $tipo_conciliador = PermisosConciliador::where('id_conciliador',$id_usuario)->first();
-            if(!empty($tipo_conciliador)){
-                if($tipo_conciliador["tipo"] == "Ambos"){
-                    //Validar la sede y agregar la oficina de apoyo
-                    if($sede == "Morelia"){
-                        $delegaciones = ['Morelia', 'Zitácuaro'];
-                        $recepciones = Pagos::join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                        ->where('pago_solicitud.tipo_pago','Ratificacion')
-                        ->whereIn('delegacion', $delegaciones)
-                        ->select('turnos.NUE','pago_solicitud.descripcion','pago_solicitud.hora','pago_solicitud.fecha','turnos.empresa'
-                        ,'pago_solicitud.nombre_trabajador','pago_solicitud.estatus','pago_solicitud.monto','pago_solicitud.observaciones',
-                        'pago_solicitud.id','pago_solicitud.id_solicitud','turnos.id_conciliador')
-                        ->selectRaw("CONCAT(turnos.trabajador, ' ', turnos.primero_trabajador, ' ', turnos.segundo_trabajador) as nombre_completo")
-                        ->get();
-                    }
-                    else if($sede == "Uruapan"){
-                        $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
-                        $recepciones = Pagos::join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                        ->where('pago_solicitud.tipo_pago','Ratificacion')
-                        ->whereIn('delegacion', $delegaciones)
-                        ->select('turnos.NUE','pago_solicitud.descripcion','pago_solicitud.hora','pago_solicitud.fecha','turnos.empresa'
-                        ,'pago_solicitud.nombre_trabajador','pago_solicitud.estatus','pago_solicitud.monto','pago_solicitud.observaciones',
-                        'pago_solicitud.id','pago_solicitud.id_solicitud','turnos.id_conciliador')
-                        ->selectRaw("CONCAT(turnos.trabajador, ' ', turnos.primero_trabajador, ' ', turnos.segundo_trabajador) as nombre_completo")
-                        ->get();
-                    }
-                    else if($sede == "Zamora"){
-                        $delegaciones = ['Zamora', 'Sahuayo'];
-                        $recepciones = Pagos::join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                        ->where('pago_solicitud.tipo_pago','Ratificacion')
-                        ->whereIn('delegacion', $delegaciones)
-                        ->select('turnos.NUE','pago_solicitud.descripcion','pago_solicitud.hora','pago_solicitud.fecha','turnos.empresa'
-                        ,'pago_solicitud.nombre_trabajador','pago_solicitud.estatus','pago_solicitud.monto','pago_solicitud.observaciones',
-                        'pago_solicitud.id','pago_solicitud.id_solicitud','turnos.id_conciliador')
-                        ->selectRaw("CONCAT(turnos.trabajador, ' ', turnos.primero_trabajador, ' ', turnos.segundo_trabajador) as nombre_completo")
-                        ->get();
-                    }
-                }
-            }
-            else{
-                $recepciones = Pagos::join('turnos','turnos.id','pago_solicitud.id_solicitud')
-                ->where('pago_solicitud.tipo_pago','Ratificacion')
-                ->where('pago_solicitud.delegacion', $user["delegacion"])
-                ->select('turnos.NUE','pago_solicitud.descripcion','pago_solicitud.hora','pago_solicitud.fecha','turnos.empresa'
-                ,'pago_solicitud.nombre_trabajador','pago_solicitud.estatus','pago_solicitud.monto','pago_solicitud.observaciones',
-                'pago_solicitud.id','pago_solicitud.id_solicitud','turnos.id_conciliador')
-                ->selectRaw("CONCAT(turnos.trabajador, ' ', turnos.primero_trabajador, ' ', turnos.segundo_trabajador) as nombre_completo")
-                ->get();
-            }
-        }
-        else{
-            $recepciones = Pagos::where('tipo_pago','Ratificacion')
-            ->where('delegacion', $user["delegacion"])
-            ->get();
-        }
-        */
         $user = auth()->user();
         $rol = $user->roles->first()->name ?? '';
         $id_usuario = $user->id;

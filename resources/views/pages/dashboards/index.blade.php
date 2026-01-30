@@ -221,6 +221,7 @@
                                                 <div class="filter-container mb-3">
                                                     <label for="filtro-sede">Filtrar por Sede:</label>
                                                     <select id="filtro-sede" class="form-control d-inline-block w-auto">
+                                                        <option value="Todos">Todos<option>
                                                         @foreach($sedes as $sede)
                                                             <option value="{{ $sede }}">{{ $sede }}</option>
                                                         @endforeach

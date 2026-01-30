@@ -19,8 +19,19 @@ class AudienciasController extends Controller
     public function audiencias(Request $request) {
         $sedeFiltro = $request->input('sede');
         $conciliadorFiltro = $request->input('conciliador');
+        $user = auth()->user();
         $userID = Auth::user()->id;
         $userRole = Auth::user()->roles->pluck('name')->all();
+
+        // 1. Mapeo de Sedes y Oficinas de Apoyo (Consistente con tus otros módulos)
+        $mapaSedes = [
+            'Morelia' => ['Morelia', 'Zitacuaro'],
+            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+            'Zamora'  => ['Zamora', 'Sahuayo'],
+        ];
+
+        // Determinamos las sedes a consultar según la delegación del usuario
+        $sedesAconsultar = $mapaSedes[$user->delegacion] ?? [$user->delegacion];
 
         // Iniciamos la consulta base
         $query = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
@@ -28,9 +39,13 @@ class AudienciasController extends Controller
         ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
         ->select('audiencias.*','seer_general.NUE','seer_solicitante.nombre','users.name');
 
-        // FILTROS GLOBALES (Si se seleccionan en el select)
-        if (!empty($sedeFiltro)) {
-            $query->where('audiencias.delegacion', $sedeFiltro);
+        if($userRole[0] != "Super Usuario"){
+            if ($sedeFiltro != "Todos") {
+                $query->where('audiencias.delegacion', $sedeFiltro);
+            }
+            else{
+                $query->whereIn('audiencias.delegacion', $sedesAconsultar);
+            }
         }
         if (!empty($conciliadorFiltro)) {
             $query->where('audiencias.id_conciliador', $conciliadorFiltro);
@@ -266,14 +281,29 @@ class AudienciasController extends Controller
         $conciliadorFiltro = $request->input('conciliador');
         $userID = Auth::user()->id;
         $userRole = Auth::user()->roles->pluck('name')->all();
+        $user = auth()->user();
        
+        // 1. Mapeo de Sedes y Oficinas de Apoyo (Consistente con tus otros módulos)
+        $mapaSedes = [
+            'Morelia' => ['Morelia', 'Zitacuaro'],
+            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+            'Zamora'  => ['Zamora', 'Sahuayo'],
+        ];
+
+        // Determinamos las sedes a consultar según la delegación del usuario
+        $sedesAconsultar = $mapaSedes[$user->delegacion] ?? [$user->delegacion];
+
         // Iniciamos la consulta base
         $query = Turnos::join('users','users.id','turnos.id_conciliador')
         ->select('turnos.*','users.name');
 
-        // FILTROS GLOBALES (Si se seleccionan en el select)
-        if (!empty($sedeFiltro)) {
-            $query->where('turnos.delegacion', $sedeFiltro);
+        if($userRole[0] != "Super Usuario"){
+            if ($sedeFiltro != "Todos") {
+                $query->where('turnos.delegacion', $sedeFiltro);
+            }
+            else{
+                $query->whereIn('turnos.delegacion', $sedesAconsultar);
+            }
         }
         if (!empty($conciliadorFiltro)) {
             $query->where('turnos.id_conciliador', $conciliadorFiltro);
@@ -296,30 +326,6 @@ class AudienciasController extends Controller
 
         $ratificaciones = $query->get();
 
-
-    /*
-        if ($userRole[0] == "Super Usuario" || $userRole[0] == "Administardor") {
-            $ratificaciones = Turnos::all();
-        }
-        else if ($userRole[0] == "Delegado" || $userRole[0] == "Enlace") {
-            $sede = Auth::user()->delegacion;
-            if($sede == "Morelia"){
-                $delegaciones = ['Morelia', 'Zitácuaro'];
-                $ratificaciones = Turnos::where('delegacion', $delegaciones)->get();
-            }
-            else if($sede == "Uruapan"){
-                $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
-                $ratificaciones = Turnos::where('delegacion', $delegaciones)->get();
-            }
-            else if($sede == "Zamora"){
-                $delegaciones = ['Zamora', 'Sahuayo'];
-                $ratificaciones = Turnos::where('delegacion', $delegaciones)->get();
-            }
-        }
-        else{
-            $ratificaciones = Turnos::where('delegacion', $sede)->get();
-        }
-    */
         $eventos = [];
         foreach ($ratificaciones as $rati) {
 
