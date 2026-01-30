@@ -114,7 +114,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-8">
                                                 <div class="form-group">
                                                     <label for="name">Nombre(s) y Apellidos del Solicitante <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="nombre" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <input type="text" name="nombre" maxlength="150" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo nombre es obligatorio.
                                                     </div>
@@ -124,7 +124,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">CURP/No. de Migración <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="curp" id="curp_input" oninput="validarInput(this)"class="form-control" required> 
+                                                    <input type="text" name="curp" maxlength="18" id="curp_input" oninput="validarInput(this)"class="form-control" required> 
                                                     <pre id="resultado"></pre>
                                                     <div class="invalid-feedback">
                                                         El campo curp es obligatorio.
@@ -288,7 +288,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Nombre de la Vialidad <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="vialidad_calle" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <input type="text" name="vialidad_calle" maxlength="50" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo vialidad o calle es obligatorio.
                                                     </div>
@@ -314,7 +314,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Colonia <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="colonia_solicitante" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <input type="text" name="colonia_solicitante" maxlength="50" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo colonia es obligatorio.
                                                     </div>
@@ -362,7 +362,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">Entre calle (Opcional)</span></label>
-                                                    <input type="text" name="calle1" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                    <input type="text" name="calle1" maxlength="30" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo entre calle es obligatoria.
                                                     </div>
@@ -371,7 +371,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <div class="form-group">
                                                     <label for="name">y calle (Opcional)</label>
-                                                    <input type="text" name="calle2" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                    <input type="text" name="calle2" maxlength="30" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                     <div class="invalid-feedback">
                                                         El campo calle es obligatoria.
                                                     </div>                                    
@@ -400,7 +400,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Puesto <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="puesto" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <input type="text" name="puesto" maxlength="50" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo puesto es obligatorio.
                                                     </div>
@@ -519,7 +519,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Núm de identificación <span style="color:red;">(*)</span> <span data-bs-toggle="modal" data-bs-target="#helpModal" style="cursor: pointer;">❓</span></label>
-                                                    <input type="text" name="num_identificacion" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                    <input type="text" name="num_identificacion" maxlength="50" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                     <div class="invalid-feedback">
                                                         El campo núm. de identificación es obligatorio.
                                                     </div>

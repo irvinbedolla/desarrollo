@@ -106,7 +106,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-2" id="campo_curp">
                                             <div class="form-group">
                                                 <label for="name">CURP (Opcional)</label>
-                                                <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control"> 
+                                                <input type="text" name="curp" maxlength="18" id="curp_input" oninput="validarInput(this)" class="form-control"> 
                                                 <pre id="resultado"></pre>
                                             </div>
                                         </div>
@@ -156,7 +156,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="primer_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                        <input type="text" name="primer_apellido" maxlength="50" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                                         <div class="invalid-feedback">
                                                             El primer apellido es obligatorio.
                                                         </div>
@@ -166,7 +166,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Segundo apellido</label>
-                                                        <input type="text" name="segundo_apellido" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" name="segundo_apellido" maxlength="50" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                         <!--<div class="invalid-feedback">
                                                             El segundo apellido es obligatorio.
                                                         </div>-->
@@ -233,7 +233,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Nombre de la vialidad <span style="color:red;">(*)</span></label>
-                                            <input type="text" name="calle" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                            <input type="text" name="calle" maxlength="100" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                             <div class="invalid-feedback">
                                                 El campo nombre de la vialidad es obligatorio.
                                             </div>
@@ -260,7 +260,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Colonia <span style="color:red;">(*)</span></label>
-                                            <input type="text" name="colonia" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                            <input type="text" name="colonia" maxlength="100" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                             <div class="invalid-feedback">
                                                 El campo colonia es obligatorio.
                                             </div>
@@ -310,7 +310,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Entre calle (Opcional)</label>
-                                            <input type="text" name="calle1" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                            <input type="text" name="calle1" maxlength="50" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                             <!--<div class="invalid-feedback">
                                                 El campo entre calle es obligatorio.
                                             </div>-->
@@ -320,7 +320,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group">
                                             <label for="name">y calle (Opcional)</label>
-                                            <input type="text" name="calle2" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                            <input type="text" name="calle2" maxlength="50" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
                                             <!--<div class="invalid-feedback">
                                                 El campo y calle es obligatorio.
                                             </div>-->
