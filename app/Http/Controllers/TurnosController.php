@@ -2101,7 +2101,7 @@ class TurnosController extends Controller
     public function ver_pagos_rati($id){
         $solicitudes = Pagos::join('turnos','turnos.id',"=",'pago_solicitud.id_solicitud')
         ->where('pago_solicitud.id_solicitud',$id)
-        ->where('tipo_pago','Ratificacion')
+        ->where('pago_solicitud.tipo_pago','Ratificacion')
         ->select('pago_solicitud.id','pago_solicitud.id_solicitud','turnos.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
         ->get();
 
