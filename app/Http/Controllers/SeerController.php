@@ -9134,12 +9134,29 @@ class SeerController extends Controller
         $sede = $request->input('sede'); 
 
         $id_conciliador = $request->input('conciliador') ?? auth()->id();
+        $tipoConciliador = PermisosConciliador::where('id_conciliador', $id_conciliador)->value('tipo');
 
         // Calcular fecha mínima para reagendar: permitir desde el siguiente día natural
         $fechaMinima = (new \DateTime())->setTime(0,0,0)->modify('+1 day');
         $minDateStr = $fechaMinima->format('Y-m-d');
+     
+        $centros = [$sede];
 
-        $inhabiles = DiasInhabiles::where('centro', $sede)
+        if ($sede === 'Zitacuaro' || $sede =='Zitácuaro') {
+            $centros = ['Zitácuaro', 'Zitacuaro'];
+        }
+
+        if ($tipoConciliador == 'Ambos'){
+            if ($sede === 'Morelia' || $sede === 'Zitácuaro' || $sede === 'Zitacuaro') {
+                $centros = ['Morelia', 'Zitácuaro', 'Zitacuaro'];
+            } elseif ($sede === 'Uruapan' || $sede === 'Lázaro Cárdenas') {
+                $centros = ['Uruapan', 'Lázaro Cárdenas'];
+            } elseif ($sede === 'Zamora' || $sede === 'Sahuayo') {
+                $centros = ['Zamora', 'Sahuayo'];
+            }
+        }
+
+        $inhabiles = DiasInhabiles::whereIn('centro', $centros)
             ->where(function($query) use ($id_conciliador) {
                 $query->whereNull('user_id')
                     ->orWhere('user_id', $id_conciliador);
@@ -9245,12 +9262,29 @@ class SeerController extends Controller
         $sede = $request->input('sede'); 
 
         $id_conciliador = $request->input('conciliador') ?? auth()->id();
+        $tipoConciliador = PermisosConciliador::where('id_conciliador', $id_conciliador)->value('tipo');
 
         // Calcular fecha mínima para reagendar: permitir desde el siguiente día natural
         $fechaMinima = (new \DateTime())->setTime(0,0,0)->modify('+1 day');
         $minDateStr = $fechaMinima->format('Y-m-d');
 
-        $inhabiles = DiasInhabiles::where('centro', $sede)
+        $centros = [$sede];
+
+        if ($sede === 'Zitacuaro' || $sede =='Zitácuaro') {
+            $centros = ['Zitácuaro', 'Zitacuaro'];
+        }
+
+        if ($tipoConciliador == 'Ambos'){
+            if ($sede === 'Morelia' || $sede === 'Zitácuaro' || $sede === 'Zitacuaro') {
+                $centros = ['Morelia', 'Zitácuaro', 'Zitacuaro'];
+            } elseif ($sede === 'Uruapan' || $sede === 'Lázaro Cárdenas') {
+                $centros = ['Uruapan', 'Lázaro Cárdenas'];
+            } elseif ($sede === 'Zamora' || $sede === 'Sahuayo') {
+                $centros = ['Zamora', 'Sahuayo'];
+            }
+        }
+
+        $inhabiles = DiasInhabiles::whereIn('centro', $centros)
             ->where(function($query) use ($id_conciliador) {
                 $query->whereNull('user_id')
                     ->orWhere('user_id', $id_conciliador);
@@ -9408,6 +9442,54 @@ class SeerController extends Controller
             })
             ->select('users.id', 'users.name', 'users.delegacion')
             ->first(); 
+            $html = view('PDF/Cumplimientos/incomparecenciaTrabajador', compact('id','solicitud','conciliador',/*'salario_diario',*/'pagos','delegado'))->render();
+        }
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+
+        $nombreArchivo = 'constancia_de_incomparecencia_'  .'.pdf';
+        return $pdf->stream($nombreArchivo);      
+    }
+
+    public function PDFIncomparecenciaCumplimientoRati($id){
+        $pagos = Pagos::find($id);
+
+        if($pagos["id_solicitud"] == 0){
+            $solicitud = Pagos::find($id);
+            //$salario_diario = 0;
+            $conciliador  = User::join("pago_solicitud","pago_solicitud.id_conciliador","=","users.id");
+            $conciliador = $conciliador->where("pago_solicitud.id", "=", $id)
+            ->select('users.name')
+            ->first();
+            $delegacion = $solicitud->delegacion;
+            $delegado = User::where('delegacion', $delegacion)
+            ->whereHas('roles', function ($query) {
+                $query->where('name', 'Delegado');
+            })
+            ->select('users.id', 'users.name', 'users.delegacion')
+            ->first();
+            $html = view('PDF/cumplimientos/incomparecenciaTrabajador', compact('id', 'solicitud','conciliador',/*'salario_diario',*/'pagos','delegado'))->render();
+        }
+        else{
+            $solicitud = SeerSolicitante::where('id_solicitud', $pagos->id_solicitud)->first();
+            $pagos = Pagos::find($id);
+            //$salario_diario = $this->calcularSalarioDiario($solicitud->pago, $solicitud->periodo_pago);
+
+            $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
+            $conciliador = $conciliador->where("seer_general.id", "=", $id)
+            ->select('users.name')
+            ->first();
+
+            $delegacion = $solicitud->delegacion;
+            $delegado = User::where('delegacion', $delegacion)
+            ->whereHas('roles', function ($query) {
+                $query->where('name', 'Delegado');
+            })
+            ->select('users.id', 'users.name', 'users.delegacion')
+            ->first(); 
+            dd($solicitud);
             $html = view('PDF/Cumplimientos/incomparecenciaTrabajador', compact('id','solicitud','conciliador',/*'salario_diario',*/'pagos','delegado'))->render();
         }
         $pdf = \PDF::loadHTML($html)

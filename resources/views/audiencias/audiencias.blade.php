@@ -136,7 +136,7 @@
                                                     {{--@if($representante->id_abogado != null)
                                                         <a class="btn btn-success mb-1 w-100" href="{{ route('PDFcompareceSP', $solicitud->id) }}"  target="_blank">Comparecencia sin Acreditación de Facultades</a>
                                                     @endif--}}
-                                                    @if($representante->id_abogado != null)
+                                                    @if($representante->id_abogado == null)
                                                         <a class="btn btn-success mb-1 w-100" href="{{ route('PDFcompareceSP', $solicitud->id) }}" target="_blank">Comparecencia sin Acreditación de Facultades</a>
                                                     @else
                                                         <button class="btn btn-secondary mb-1 w-100" disabled title="No hay una comparecencia registrada">Comparecencia sin Acreditación de Facultades</button>

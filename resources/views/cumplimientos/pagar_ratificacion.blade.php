@@ -26,6 +26,8 @@
                                         <tbody>
                                             @foreach($solicitudes as $pago)
                                                 <tr>
+                                                    <!--td>{{\Carbon\Carbon::parse($pago->fecha)->translatedFormat('d-m-Y')}}</!--td--> 
+                                                    <!--td>{{\Carbon\Carbon::parse($pago->hora)->translatedFormat('d-m-Y')}}</!--td-->
                                                     <td>{{date_format($pago->fecha,"d-m-Y")}}</td> 
                                                     <td>{{date_format($pago->hora,"h:m:s")}}</td>
                                                     <td>${{number_format($pago->monto, 2)}}</td>
@@ -36,7 +38,14 @@
                                                                 Pagar
                                                             </button>
                                                             <a class="btn btn-danger" href="{{ route('cumplimiento_rechazar', $pago->id) }}" onclick=consultar_estadistica();>Rechazar</a>
-                                                            <a class="btn btn-danger" href="{{ route('cumplimiento_incomparecencia', $pago->id) }}" onclick=consultar_estadistica();>No comparece trabajador</a>
+                                                            <form method="POST" action="{{ route('cumplimiento_incomparecencia', $pago->id) }}" style="display:inline;">
+                                                                @csrf
+                                                                <input type="hidden" name="fecha_audiencia" value="{{ optional($pago->fecha)->format('Y-m-d') }}">
+                                                                <input type="hidden" name="hora_audiencia" value="{{ optional($pago->hora)->format('H:i:s') }}">
+                                                                <button type="submit" class="btn btn-danger" onclick="consultar_estadistica();">
+                                                                    No comparece trabajador
+                                                                </button>
+                                                            </form>
                                                         @endif
                                                     </td>
                                                     <td>
@@ -45,7 +54,7 @@
                                                         @elseif($pago->estatus == "No pagado")
                                                             <a class="btn btn-info" href="{{ route('PDFincumplimientoRatificacion', $pago->id) }}" target="_blank">PDF</a>
                                                         @elseif($pago->estatus == "Incomparecencia trabajador")
-                                                            <a class="btn btn-info" href="{{ route('PDFIncomparecenciaCumplimiento', $pago->id) }}" target="_blank">PDF</a>
+                                                            <a class="btn btn-info" href="{{ route('PDFIncomparecenciaCumplimientoRati', $pago->id) }}" target="_blank">PDF</a>
                                                         @endif
                                                     </td>
                                                 </tr>
