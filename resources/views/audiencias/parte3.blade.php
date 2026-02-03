@@ -268,6 +268,9 @@
         @csrf
         <input type="hidden" id="modal-id-reagendar" name="id" value="">
         <input type="hidden" id="fechaConfirmacion" value= "{{ $fechaConfirmacion }}">
+        <input type="hidden" name="primera" id="reagenda_primera" value="">
+        <input type="hidden" name="justificacion" id="reagenda_justificacion" value="">
+        <input type="hidden" name="segunda" id="reagenda_segunda" value="">
         <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -801,6 +804,14 @@
                     var solicitudId = solicitudEl ? solicitudEl.value : '{{ $id ?? '' }}';
                     var modalInput = document.getElementById('modal-id-reagendar');
                     if(modalInput) modalInput.value = solicitudId;
+
+                    var primeraVal = $('textarea[name="primera"]').val() || '';
+                    var justificacionVal = $('textarea[name="justificacion"]').val() || '';
+                    var segundaVal = $('textarea[name="segunda"]').val() || '';
+                    $('#reagenda_primera').val(primeraVal);
+                    $('#reagenda_justificacion').val(justificacionVal);
+                    $('#reagenda_segunda').val(segundaVal);
+
                     $('#ModalReagendar').modal('show');
                 }
 

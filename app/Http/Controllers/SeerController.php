@@ -5238,7 +5238,10 @@ class SeerController extends Controller
             'validado'              => 'Validado',
             'fecha_conclucion'      =>  $fecha_actual,
             'consecutivo'           =>  $numero_audiencia[1],
-            'estatus_conciliacion'  => 'Regenerada'
+            'estatus_conciliacion'  => 'Regenerada',
+            'resolicion_primera'        => $data['primera'] ?? null,
+            'resolicion_justificacion'  => $data['justificacion'] ?? null,
+            'resolicion_segunda'        => $data['segunda'] ?? null,
         ];        
         SeerPerConciliador::create($data_conciliador);  
         
@@ -7310,7 +7313,8 @@ class SeerController extends Controller
             ];
         } else {
             // Si no hay sesión, traemos el registro de la BD (el más reciente si hay varios)
-            $datosAudiencia = SeerPerConciliador::where('id_solicitud', $id)->orderBy('numero_audiencias', 'DESC')->first();
+            $datosAudiencia = SeerPerConciliador::where('id_solicitud', $id)->latest()->first();
+            //->orderBy('numero_audiencias', 'DESC')->first();
         }
         $solicitante = SeerSolicitante::where('id_solicitud',$solicitud["id"])->first();
         $pagos = Pagos::where('id_solicitud', $id)->where('id_solicitud', 'Audiencia')->get();
