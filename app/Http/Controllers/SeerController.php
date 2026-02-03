@@ -7318,9 +7318,11 @@ class SeerController extends Controller
         ->where('id_solicitud',$id)
         ->select('abogados.nombres_patronal','abogados.primer_apellido_patronal','abogados.segundo_apellido_patronal','abogados.descipcion_poder','abogados.tipo_identificacion','abogados.num_identificacion')
         ->first();
-        $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id")
-        ->select('users.name')
-        ->first();
+        $conciliador = User::join('audiencias', 'audiencias.id_conciliador', '=', 'users.id')
+            ->where('audiencias.id_solicitud', $solicitud['id'])
+            ->select('users.name')
+            ->orderByDesc('audiencias.id')
+            ->first();
         /*$audiencia = Audiencias::where('id_solicitud', $id)
         ->orderByDesc('id')
         ->first();*/
