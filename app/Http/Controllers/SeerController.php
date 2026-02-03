@@ -7175,7 +7175,7 @@ class SeerController extends Controller
 
     public function PDFincumplimientoAudiencia($id){
         $pagos = Pagos::find($id);
-
+    
         if($pagos["id_solicitud"] == 0){
             $solicitud = Pagos::find($id);
             $salario_diario = 0;
@@ -7183,14 +7183,14 @@ class SeerController extends Controller
             $conciliador = $conciliador->where("pago_solicitud.id", "=", $id)
             ->select('users.name')
             ->first();
-            $html = view('PDF/cumplimientos/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
+            $html = view('PDF/Cumplimientos/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
         }
         else{
             $solicitud = SeerSolicitante::where('id_solicitud',$pagos["id_solicitud"])->first();
             $pagos      = Pagos::find($id);
             $general    = SeerPerGeneral::find($pagos["id_solicitud"]);
             $salario_diario = $this->calcularSalarioDiario($solicitud->pago, $solicitud->periodo_pago);
-
+    
             $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
             $conciliador = $conciliador->where("seer_general.id", "=", $general["id"])
             ->select('users.name')
@@ -7202,7 +7202,7 @@ class SeerController extends Controller
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true); 
-
+    
         $nombreArchivo = 'constancia_de_incumplimiento_'  .'.pdf';
         return $pdf->stream($nombreArchivo);                  
     }
