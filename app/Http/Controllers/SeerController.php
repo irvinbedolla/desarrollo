@@ -4525,7 +4525,7 @@ class SeerController extends Controller
             'numero_audiencias'     => $num_audi,
             'fecha_conclucion'      =>  $fecha_actual,
             'consecutivo'           =>  $numero_audiencia[1],
-            'conclucion'            => "Archivada"
+            'conclucion'            => "No conciliacion"
         ];
         
         SeerPerConciliador::create($data_conciliador);
@@ -4533,18 +4533,19 @@ class SeerController extends Controller
         SeerPerGeneral::find($data["id"])
         ->update([
             'fecha_terminacion' => $fecha_actual, 
-            'estatus'           => 'Archivada',
+            'estatus'           => 'No conciliacion',
             'observaciones'     => 'Incomparencia de los citados',
         ]);
 
         $numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
         Audiencias::where('id_solicitud',$data["id"])
         ->orderBy('id_solicitud','desc')
+        ->latest()
         ->first()
         ->update([
             'numero_audiencia'  =>  $numAudiencia+1,
             'folio_audiencia'   =>  $numero_audiencia[0],
-            'estatus'           => 'Archivada',
+            'estatus'           => 'No conciliacion',
         ]);
 
         SeerCitados::where('id_solicitud', $data["id"])->where('notificacion', 'Centro')->update(['tipo_notificacion' => 'Multa']);
