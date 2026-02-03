@@ -6735,7 +6735,7 @@ class SeerController extends Controller
         $motivoIds = SeerMotivo::where('id_solicitud', $citado["id_solicitud"])->pluck('id_motivo');
         $motivos = SolicitudMotivo::whereIn('id', $motivoIds)->get();
         $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id")
-        ->where("audiencias.id_solicitud", "=", $solicitud["id"])->first();
+        ->where("audiencias.id_solicitud", "=", $solicitud["id"])->latest('audiencias.created_at')->first();
         $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
         $conciliador = $conciliador->where("seer_general.conciliador_id", "=", $solicitud["conciliador_id"])->select('users.name')->first();
         $municipio = Municipios::find($citado->municipio_citado);

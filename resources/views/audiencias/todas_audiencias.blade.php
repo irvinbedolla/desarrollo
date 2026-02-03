@@ -273,7 +273,7 @@
                 const listaRegistros = $('#listaRegistros');
                 const pdfsUrlBase = "{{ url('ObtenerCitatorios') }}";
                 const id = $(this).data('id');
-                const pdfRouteBase = '{{ route("PDFSolicitud", ["id" => "xxx"]) }}';
+                const pdfRouteBase = '{{ route("pdfCitatorioAudiencia", ["id" => "xxx"]) }}';
 
                 listaRegistros.empty(); // Limpiar lista
                 $.ajax({
@@ -289,7 +289,7 @@
                                 <tr>
                                     <td style="text-align: left;"> <strong>${registro.nombre} ${registro.primer_apellido} ${registro.segundo_apellido}</strong> </td>
                                     <td>
-                                        <a href="${pdfUrl}">PDF</a>
+                                        <a href="${pdfUrl}" target="_blank" rel="noopener noreferrer">PDF</a>
                                     </td>
                                 </tr>`;
                                 listaRegistros.append(listItem);
