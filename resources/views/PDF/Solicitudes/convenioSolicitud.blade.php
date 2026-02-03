@@ -274,11 +274,11 @@
                     @endphp
 
                     <!-- CONDICIONAL 1 SOLO PAGO(EN UNA SOLA EXIBICIÓN)--> 
-                    @if($cantidadPagos > 0)           
+                    <!--@if($cantidadPagos > 0)           
                         <p><b>SEXTA.</b> La parte <b>EMPLEADORA</b> manifiesta que en este acto en fecha <b>{{ \Carbon\Carbon::parse($audiencia->update)->translatedFormat('d \d\e F \d\e\l Y') }}</b> le paga a la parte <b>TRABAJADORA en una exibición</b> la cantidad 
                             de <b>${{ number_format($datosAudiencia->monto, 2) }} {{ $montoTexto }} M.N</b>, en el domicilio que ocupa el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con lo que se certifica el cumplimiento de su 
                             obligación bajo el presente convenio, de conformidad con lo establecido en el artículo 684-E, fracción XIV, último párrafo, de la Ley Federal del Trabajo.</p> 
-                    @endif  
+                    @endif  -->
 
                     @if($cantidadPagos > 0)            
                         <p><b>SEXTA.</b> La parte <b>EMPLEADORA</b> manifiesta que en este acto en fecha <b>{{ \Carbon\Carbon::parse($solicitud->update)->translatedFormat('d \d\e F \d\e\l Y') }}</b> le paga a la parte <b>TRABAJADORA en</b> <b>{{ $cantidadPagos }}</b> 
