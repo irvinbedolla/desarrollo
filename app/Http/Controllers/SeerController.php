@@ -6266,6 +6266,7 @@ class SeerController extends Controller
        
         $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
         $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
+        ->latest('audiencias.created_at')
         ->first();
         $pdf = \PDF::loadView('PDF/Solicitudes/notificacionSolicitante', compact('id','solicitud','solicitante','citados','conciliador','audiencia'))
         ->setPaper('a4', 'portrait')
