@@ -7430,9 +7430,22 @@ class SeerController extends Controller
         $identificacionSolicitante = $solicitante->identificacion;
         $descripcionIdentificacionS = $this->descripcionIdentificacion($identificacionSolicitante);
 
-        //Descripción del tipo de identificación para los poderes
-        $identificacionPoder = $abogado->tipo_identificacion;
-        $descripcionIdentificacionP = $this->descripcionIdentificacion($identificacionPoder);
+        $identificacionPoder = $abogado->tipo_identificacion ?? null;
+        $descripcionIdentificacionP = $identificacionPoder ? $this->descripcionIdentificacion($identificacionPoder) : '';
+
+        if (!$abogado) {
+            $abogado = (object) [
+                'nombres_patronal' => null,
+                'primer_apellido_patronal' => null,
+                'segundo_apellido_patronal' => null,
+                'nombre_representante' => null,
+                'primer_apellido_representante' => null,
+                'segundo_apellido_representante' => null,
+                'descipcion_poder' => null,
+                'tipo_identificacion' => null,
+                'num_identificacion' => null,
+            ];
+        }
 
         $html = view('PDF/Solicitudes/ActaAudiencia', compact('id','solicitud','conciliador','prestaciones','deducciones','deduccionesTexto','pagoTotal','descripcionIdentificacionS',
         'descripcionIdentificacionP','abogado','conceptosTexto','solicitante','audiencia','datosAudiencia','citados'))->render();
