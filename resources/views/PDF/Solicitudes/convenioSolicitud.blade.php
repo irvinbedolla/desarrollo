@@ -102,14 +102,42 @@
                 <p><b>PRIMERA.</b> La parte <b>TRABAJADORA {{ $solicitante->nombre }}</b> se identifica con <b>{{ strtoupper($solicitante->identificacion) }}</b>, de Número <b>{{ $solicitante->num_identificacion }}</b> 
                     expedida a su favor por <b>{{ $descripcionIdentificacionS }}</b> y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p> 
 
-                <p><b>SEGUNDA.</b> @if(is_null($abogado->nombre_representante) && is_null($abogado->primer_apellido_representante) && is_null($abogado->segundo_apellido_representante))
-                        La parte EMPLEADORA <b>{{$abogado->nombres_patronal}} {{$abogado->primer_apellido_patronal}} {{$abogado->segundo_apellido_patronal}}</b> quien se identifica con 
-                        <b>{{ strtoupper($abogado->tipo_identificacion) }}</b>, de Número <b>{{ $abogado->num_identificacion }}</b> expedida a su favor por <b>{{ $descripcionIdentificacionP }}</b>, 
-                        y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
-                    @else Declara <b>{{$abogado->nombre_representante}} {{$abogado->primer_apellido_representante}} {{$abogado->segundo_apellido_representante}}</b>, <b>ser representante legal de la PARTE EMPLEADORA</b>, quien se identifica con 
-                        <b>{{ strtoupper($abogado->tipo_identificacion) }}</b>, de Número <b>{{ $abogado->num_identificacion }}</b> expedida a su favor por <b>{{ $descripcionIdentificacionP }}</b>, así como <b>{{$abogado->descipcion_poder}}</b>  
-                    @endif
-                </p>   
+                @php
+                    $listaAbogados = isset($abogadosConvenio) ? $abogadosConvenio : collect();
+                    if ($listaAbogados instanceof \Illuminate\Support\Collection === false) {
+                        $listaAbogados = collect($listaAbogados);
+                    }
+                    //Si por alguna razón no viene la colección, usamos $abogado
+                    if ($listaAbogados->count() === 0 && isset($abogado) && $abogado) {
+                        $listaAbogados = collect([$abogado]);
+                    }
+                @endphp
+
+                <p><b>SEGUNDA.</b>
+                    @foreach($listaAbogados as $idx => $rep)
+                        @php
+                            $nombreRepresentante = trim(($rep->nombre_representante ?? '').' '.($rep->primer_apellido_representante ?? '').' '.($rep->segundo_apellido_representante ?? ''));
+                            $tieneRepresentante = $nombreRepresentante !== '';
+                            $descId = $descripcionIdentificacionP;
+                            if (isset($descripcionIdentificacionPMap) && isset($rep->idAbogado) && array_key_exists($rep->idAbogado, $descripcionIdentificacionPMap)) {
+                                $descId = $descripcionIdentificacionPMap[$rep->idAbogado];
+                            }
+                        @endphp
+
+                        @if($idx > 0)
+                            <br><br>
+                        @endif
+
+                        @if(!$tieneRepresentante)
+                            La parte EMPLEADORA <b>{{ $rep->nombres_patronal }} {{ $rep->primer_apellido_patronal }} {{ $rep->segundo_apellido_patronal }}</b> quien se identifica con
+                            <b>{{ strtoupper($rep->tipo_identificacion) }}</b>, de Número <b>{{ $rep->num_identificacion }}</b> expedida a su favor por <b>{{ $descId }}</b>,
+                            y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
+                        @else
+                            Declara <b>{{ $nombreRepresentante }}</b>, <b>ser representante legal de la PARTE EMPLEADORA</b>, quien se identifica con
+                            <b>{{ strtoupper($rep->tipo_identificacion) }}</b>, de Número <b>{{ $rep->num_identificacion }}</b> expedida a su favor por <b>{{ $descId }}</b>, así como <b>{{ $rep->descipcion_poder }}</b>
+                        @endif
+                    @endforeach
+                </p>
 
                 <b>TERCERA.</b> Declara la parte <b>TRABAJADORA</b>:
                     <p class="sangria">
@@ -241,8 +269,12 @@
                     <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
 
                     <!-- CON PAGOS DIFERIDOS-->       
-                    @if($pagosDif>'1')            
-                        <p><b>SEXTA.</b> La parte <b>EMPLEADORA</b> manifiesta que en este acto en fecha <b>{{ \Carbon\Carbon::parse($solicitud->update)->translatedFormat('d \d\e F \d\e\l Y') }}</b> le paga a la parte <b>TRABAJADORA en</b> <b>{{ $pagosDif->C_pagos}}</b> 
+                    @php
+                        $cantidadPagos = (int) ($pagosDif->C_pagos ?? 1);
+                    @endphp
+
+                    @if($cantidadPagos > 1)            
+                        <p><b>SEXTA.</b> La parte <b>EMPLEADORA</b> manifiesta que en este acto en fecha <b>{{ \Carbon\Carbon::parse($solicitud->update)->translatedFormat('d \d\e F \d\e\l Y') }}</b> le paga a la parte <b>TRABAJADORA en</b> <b>{{ $cantidadPagos }}</b> 
                             exhibiciones, la cantidad de 
                             <b>${{ number_format($datosAudiencia->monto, 2) }} {{ $montoTexto }} M.N</b>, en el domicilio que ocupa el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con lo que se certifica el cumplimiento de su obligación bajo el presente convenio, de conformidad con lo establecido en el artículo 684-E, fracción XIV, de la Ley Federal del Trabajo, tal como se muestra:
                         </p>
@@ -296,7 +328,7 @@
                             transcurra, sin que se dé cabal cumplimiento al convenio, con fundamento en el artículo 684-E, fracción XIV, último párrafo, de la Ley Federal del Trabajo.</p>
                     @endif  
                     <!-- CONDICIONAL 1 SOLO PAGO(EN UNA SOLA EXIBICIÓN)--> 
-                    @if($pagosDif=='1')            
+                    @if($cantidadPagos === 1)            
                         <p><b>SEXTA.</b> La parte <b>EMPLEADORA</b> manifiesta que en este acto en fecha <b>{{ \Carbon\Carbon::parse($audiencia->update)->translatedFormat('d \d\e F \d\e\l Y') }}</b> le paga a la parte <b>TRABAJADORA en una exibición</b> la cantidad 
                             de <b>${{ number_format($datosAudiencia->monto, 2) }} {{ $montoTexto }} M.N</b>, en el domicilio que ocupa el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con lo que se certifica el cumplimiento de su 
                             obligación bajo el presente convenio, de conformidad con lo establecido en el artículo 684-E, fracción XIV, último párrafo, de la Ley Federal del Trabajo.</p> 

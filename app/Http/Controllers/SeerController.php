@@ -5988,11 +5988,9 @@ class SeerController extends Controller
         $municipioEmpresa = $municipio ? $municipio->nombre : 'No definido';
         $estado = Estados::find($solicitud->estado_rat);
         $estadoEmpresa = $estado ? $estado->nombre : 'No definido';
-        $abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
-        ->where('id_solicitud',$id)
-        ->select('abogados.nombres_patronal','abogados.primer_apellido_patronal','abogados.segundo_apellido_patronal','abogados.descipcion_poder','abogados.tipo_identificacion',
-        'abogados.num_identificacion','estado_patronal','municipio_patronal','tipo_vialidad_patronal','vialidad_patronal','num_ext_patronal','mun_int_patronal','colonia_patronal','cp_patronal')
-        ->first();
+        $abogado = null;
+        $abogadosConvenio = collect();
+        $descripcionIdentificacionPMap = [];
 
         $conceptosTexto = [];
         $deduccionesTexto = [];
@@ -6082,11 +6080,11 @@ class SeerController extends Controller
             $datosAudiencia->monto = isset($sessionData) && is_array($sessionData) && isset($sessionData['monto']) ? $sessionData['monto'] : $pagoTotal;
         }
         
-        $pagosDif  = Pagos::join("seer_general","seer_general.id","=","pago_solicitud.id_solicitud");
-        $pagosDif = $pagosDif->where("pago_solicitud.id_solicitud", "=", $id)
-        ->where('pago_solicitud.tipo_pago', "!=", "Ratificacion")
-        ->select(DB::raw('count(pago_solicitud.id_solicitud) as C_pagos'))
-        ->first();
+        
+        $pagosCount = $pagos instanceof \Illuminate\Support\Collection ? $pagos->count() : (is_countable($pagos) ? count($pagos) : 0);
+        $pagosDif = (object) [
+            'C_pagos' => max(1, (int) $pagosCount),
+        ];
 
         $conciliador = User::join("seer_general", "seer_general.conciliador_id", "=", "users.id")
         ->where("seer_general.id", "=", $id)
@@ -6138,6 +6136,44 @@ class SeerController extends Controller
             }
         }
 
+        // Obtener TODOS los representantes/abogados distintos que correspondan a los citados incluidos en el convenio
+        $citadoIdsParaConvenio = $citados instanceof \Illuminate\Support\Collection ? $citados->pluck('id')->filter()->values()->all() : [];
+        if (!empty($citadoIdsParaConvenio)) {
+            $abogadosConvenio = Poder::join('seer_citados as sc', 'sc.id_abogado', '=', 'abogados.idAbogado')
+                ->where('sc.id_solicitud', $id)
+                ->whereIn('sc.id', $citadoIdsParaConvenio)
+                ->select(
+                    'abogados.idAbogado',
+                    'abogados.nombres_patronal',
+                    'abogados.primer_apellido_patronal',
+                    'abogados.segundo_apellido_patronal',
+                    'abogados.descipcion_poder',
+                    'abogados.tipo_identificacion',
+                    'abogados.num_identificacion',
+                    'abogados.nombre_representante',
+                    'abogados.primer_apellido_representante',
+                    'abogados.segundo_apellido_representante',
+                    'abogados.estado_patronal',
+                    'abogados.municipio_patronal',
+                    'abogados.tipo_vialidad_patronal',
+                    'abogados.vialidad_patronal',
+                    'abogados.num_ext_patronal',
+                    'abogados.mun_int_patronal',
+                    'abogados.colonia_patronal',
+                    'abogados.cp_patronal'
+                )
+                ->distinct()
+                ->get();
+
+            $abogado = $abogadosConvenio->first();
+            foreach ($abogadosConvenio as $rep) {
+                $repId = $rep->idAbogado ?? null;
+                if ($repId !== null) {
+                    $descripcionIdentificacionPMap[$repId] = $this->descripcionIdentificacion($rep->tipo_identificacion);
+                }
+            }
+        }
+
         //$citados = SeerCitados::where('id_solicitud', $id)->get();
         /*$citados = SeerCitados::where('id_solicitud', $id)
         ->where('aparece_convenio', 1)
@@ -6150,14 +6186,15 @@ class SeerController extends Controller
         // Descripción del tipo de identificación para los solicitantes y poderes
         $identificacionSolicitante = $solicitante->identificacion;
         $descripcionIdentificacionS = $this->descripcionIdentificacion($identificacionSolicitante);
-        $identificacionPoder = $abogado->tipo_identificacion;
+        $identificacionPoder = $abogado ? $abogado->tipo_identificacion : null;
         $descripcionIdentificacionP = $this->descripcionIdentificacion($identificacionPoder);
 
         $html = view('PDF/Solicitudes/convenioSolicitud', 
         compact('id', 'solicitud', /*'dias_descanso',*/ 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto',/*'vacacionesTexto',
         'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
         'gratificacionETexto','gratificacionFTexto','otrasTexto',*/'pagosDif','conciliador','prestaciones','solicitante','citados','audiencia','pagoTotal','abogado',
-        'conceptosTexto', 'deduccionesTexto','municipioEmpresa', 'estadoEmpresa','descripcionIdentificacionS', 'descripcionIdentificacionP','prestaciones','deducciones','datosAudiencia','delegado'))
+        'conceptosTexto', 'deduccionesTexto','municipioEmpresa', 'estadoEmpresa','descripcionIdentificacionS', 'descripcionIdentificacionP','prestaciones','deducciones','datosAudiencia','delegado',
+        'abogadosConvenio', 'descripcionIdentificacionPMap'))
         ->render();
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
