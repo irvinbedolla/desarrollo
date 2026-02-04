@@ -650,7 +650,7 @@
                                                 </div>  
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="">CURP</label>
+                                                        <label for="">CURP <span style="color:red;">(*)</span></label>
                                                         <input type="text" class="form-control"  aria-label="CURP" name="curp_representante_pF" id="curp_representante_pF" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
                                                             La CURP es obligatoria.
@@ -725,8 +725,8 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-2"><br><label for="btncheck1">Sin fecha de vigencia</label>
-                                                    <input name="fecha_vigencia_pF" type="checkbox" class="btn-check" id="check_vigencia" autocomplete="off"/>
+                                                <div class="col-xs-12 col-sm-12 col-md-2"><br><label for="btncheck1" style="color:black">Sin fecha de vigencia</label>
+                                                    <input name="fecha_vigencia_pF" type="checkbox" class="form-check-label" id="check_vigencia" autocomplete="off"/>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3" id="fecha_vigencia_pF">
                                                     <div class="form-group">
@@ -740,8 +740,8 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
                                                         <label for="">Descripción del documento que acredite la personaria <span style="color:red;">(*)</span></label>
-                                                        <textarea class="form-control" aria-describedby="basic-addon1" name="descripcion_pF" id="descripcion_pF" 
-                                                        placeholder="Ejemplo: Carta poder simple de fecha___, firmada ante dos testigos, suscrita a favor del compareciente por el (C., Lic., Ing., etc.,)_____, en cuanto ___ de la moral citada, personalidad que acredite en terminos de___ número(45 Cuarenta y Cinco), de fecha___, pasada ante la fe del(Lic., Mtro., etc.,)___, Notario Público Número ___, del Estado de ____, y cuyas facultades no han sido revocadas ni mofificadas a la fecha."></textarea>
+                                                        <textarea class="form-control" aria-describedby="basic-addon1" name="descripcion_pF" id="descripcion_pF" style="min-width: 100%; width: 100%; height: 60px; resize: vertical;"
+                                                        placeholder="Ejemplo: Carta poder simple de fecha___, firmada ante dos testigos, suscrita a favor del compareciente por el (C., Lic., Ing., etc.,)_____, en cuanto ___ de la moral citada, personalidad que acredite en terminos de___ número(45 Cuarenta y Cinco), de fecha___, pasada ante la fe del(Lic., Mtro., etc.,)___, Notario Público Número ___, del Estado de ____, y cuyas facultades no han sido revocadas ni modificadas a la fecha."></textarea>
                                                         <div class="invalid-feedback">
                                                             La descripción es obligatoria.
                                                         </div>
@@ -1075,7 +1075,7 @@
                                                 </div>  
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="">CURP</label>
+                                                        <label for="">CURP <span style="color:red;">(*)</span></label>
                                                         <input type="text" class="form-control"  aria-label="CURP" name="curp_moral" id="curp_moral" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
                                                             La CURP es obligatoria.
@@ -1150,8 +1150,8 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-2"><br><label for="btncheck1">Sin fecha de vigencia</label>
-                                                    <input name="fecha_vigencia_Moral" type="checkbox" class="btn-check" id="check_vigenciaM" autocomplete="off"/>
+                                                <div class="col-xs-12 col-sm-12 col-md-2"><br><label for="btncheck1"  style="color:black">Sin fecha de vigencia</label>
+                                                    <input name="fecha_vigencia_Moral" type="checkbox" class="form-check-label" id="check_vigenciaM" autocomplete="off"/>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3" id="fecha_vigencia_Moral">
                                                     <div class="form-group">
@@ -1165,8 +1165,8 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
                                                         <label for="">Descripción del documento que acredite la personaria <span style="color:red;">(*)</span></label>
-                                                        <textarea class="form-control" aria-describedby="basic-addon1" name="descripcion_Moral"  id="descripcion_Moral" 
-                                                        placeholder="Ejemplo: Carta poder simple de fecha___, firmada ante dos testigos, suscrita a favor del compareciente por el (C., Lic., Ing., etc.,)_____, en cuanto ___ de la moral citada, personalidad que acredite en terminos de___ número(45 Cuarenta y Cinco), de fecha___, pasada ante la fe del(Lic., Mtro., etc.,)___, Notario Público Número ___, del Estado de ____, y cuyas facultades no han sido revocadas ni mofificadas a la fecha."></textarea>
+                                                        <textarea class="form-control" aria-describedby="basic-addon1" name="descripcion_Moral"  id="descripcion_Moral" style="min-width: 100%; width: 100%; height: 60px; resize: vertical;" 
+                                                        placeholder="Ejemplo: Carta poder simple de fecha___, firmada ante dos testigos, suscrita a favor del compareciente por el (C., Lic., Ing., etc.,)_____, en cuanto ___ de la moral citada, personalidad que acredite en terminos de___ número(45 Cuarenta y Cinco), de fecha___, pasada ante la fe del(Lic., Mtro., etc.,)___, Notario Público Número ___, del Estado de ____, y cuyas facultades no han sido revocadas ni modificadas a la fecha."></textarea>
                                                         <div class="invalid-feedback">
                                                             La descripción es obligatoria.
                                                         </div>
@@ -1254,10 +1254,10 @@
                                     </div>                           
                     </div>
                 </div>
-                <div class="modal-footer">
+                <!--<div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                     <button type="submit" class="btn btn-primary">Guardar</button>
-                </div>
+                </div>-->
             </div>
         </div>
     </form>

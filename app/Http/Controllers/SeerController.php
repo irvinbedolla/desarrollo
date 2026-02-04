@@ -8183,7 +8183,7 @@ class SeerController extends Controller
         return view('solicitudes.verDocumentos',compact('documento_general','documento_solicitante','documento_abogado','documento_fisica','documento_subidos'));
      }
 
-    //PDF Constancia de cumplimiento
+   //PDF Constancia de cumplimiento
     public function VerPDFCumplimiento($id){
         $pagos = Pagos::find($id);
         if($pagos["id_solicitud"] == 0){
@@ -8199,9 +8199,9 @@ class SeerController extends Controller
             $conciliador = $conciliador->where("pago_solicitud.id", "=", $pagos["id"])
             ->select('users.name')
             ->first();
-            $html = view('PDF/Cumplimientos/pagosParciales', compact('id', 'solicitud','conciliador','pagos'))->render();
+            $html = view('PDF/Cumplimientos/pagosParciales', compact('id', 'solicitud','conciliador','pagos','delegado'))->render();
         }else{
-            $solicitud = SeerPerGeneral::find($pagos["id"]);
+            $solicitud = Turnos::find($pagos["id_solicitud"]);
             $delegacion = $solicitud->delegacion;
             $delegado = User::where('delegacion', $delegacion)
                 ->whereHas('roles', function ($query) {
@@ -8209,14 +8209,14 @@ class SeerController extends Controller
                 })
                 ->select('users.id', 'users.name', 'users.delegacion')
                 ->first();
-            $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
-            $conciliador = $conciliador->where("seer_general.id", "=", $solicitud["id"])
+            $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
+            $conciliador = $conciliador->where("turnos.id", "=", $solicitud["id"])
             ->select('users.name')
             ->first();
-            $html = view('PDF/Solicitudes/pagosParciales', compact('id', 'solicitud','conciliador','pagos'))->render();
+            // Obtener el número de pagos
+            $pagosDif = Pagos::where("id_solicitud", $id)->count();
+            $html = view('PDF/pagosParciales', compact('id', 'solicitud','conciliador','pagos','pagosDif','delegado'))->render();
         }
-
-        
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
