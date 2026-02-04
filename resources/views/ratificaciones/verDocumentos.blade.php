@@ -60,7 +60,7 @@
                                             @foreach($documento_subidos as $solicitud)
                                             <tr>
                                                 <td colspan="4">{{$solicitud->nombre_documento}}</td> 
-                                                <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitud->nombre_documento}}">PDF</a></td>
+                                                <td><a target='_blank' href="{{ route('documento_ratificacion_ver', $solicitud->id) }}">PDF</a></td>
                                             </tr>
                                             @endforeach
                                         @endif

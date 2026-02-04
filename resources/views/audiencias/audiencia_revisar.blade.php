@@ -91,7 +91,7 @@
                                                 </td>
                                                 <td>   
                                                 @if($representante->id_abogado != null)
-                                                    <input type="checkbox" name="aparece_convenio[{{ $representante->id }}]" value="1" {{ $representante->aparece_convenio == 1 ? 'checked' : '' }}>
+                                                    <input form="form_roles" type="checkbox" name="aparece_convenio[{{ $representante->id }}]" value="1" {{ $representante->aparece_convenio == 1 ? 'checked' : '' }}>
                                                 @else
                                                     Sin representante asignado
                                                 @endif

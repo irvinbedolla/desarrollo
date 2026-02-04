@@ -5379,7 +5379,7 @@ class SeerController extends Controller
         $user = auth()->user();
 
         //Se usa para marcar que citados si tienen un representante o una persona fisica, para el tema de la no conciliación y se genere un documento por citado, indicando si asistió o no
-        $citados_apareceConvenio = SeerCitados::where('id_solicitud', $id)->get();
+        /*$citados_apareceConvenio = SeerCitados::where('id_solicitud', $id)->get();
         foreach ($citados_apareceConvenio as $citado) {
 
             $tiene_representante = 
@@ -5388,7 +5388,7 @@ class SeerController extends Controller
 
             $citado->aparece_convenio = $tiene_representante ? 1 : 0;
             $citado->save();
-        }
+        }*/
  
         //Si la bandera es 0 selecciono a todos los representantes puede avanzar
         if($data["bandera"] == 0){
@@ -7318,10 +7318,6 @@ class SeerController extends Controller
         }
         $solicitante = SeerSolicitante::where('id_solicitud',$solicitud["id"])->first();
         $pagos = Pagos::where('id_solicitud', $id)->where('id_solicitud', 'Audiencia')->get();
-        $abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
-        ->where('id_solicitud',$id)
-        ->select('abogados.nombres_patronal','abogados.primer_apellido_patronal','abogados.segundo_apellido_patronal','abogados.descipcion_poder','abogados.tipo_identificacion','abogados.num_identificacion')
-        ->first();
         $conciliador = User::join('audiencias', 'audiencias.id_conciliador', '=', 'users.id')
             ->where('audiencias.id_solicitud', $solicitud['id'])
             ->select('users.name')
@@ -7345,8 +7341,24 @@ class SeerController extends Controller
             $citados = SeerCitados::whereIn('id', $idsSession)
                         ->where('id_solicitud', $id)
                         ->get();
+
+            $abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
+                ->where('id_solicitud',$id)
+                ->whereIn('seer_citados.id', $idsSession)
+                ->select('abogados.nombres_patronal','abogados.primer_apellido_patronal','abogados.segundo_apellido_patronal','abogados.descipcion_poder','abogados.tipo_identificacion','abogados.num_identificacion')
+                ->first();
+
+            dd($abogado);
         } else {
-            $citados = SeerCitados::where('id_solicitud', $id)->get();
+            $citados = SeerCitados::where('id_solicitud', $id)
+                        ->where('aparece_convenio', 1)
+                        ->get();
+
+            $abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
+                ->where('seer_citados.aparece_convenio', 1)
+                ->where('id_solicitud',$id)
+                ->select('abogados.nombres_patronal','abogados.primer_apellido_patronal','abogados.segundo_apellido_patronal','abogados.descipcion_poder','abogados.tipo_identificacion','abogados.num_identificacion')
+                ->first();
         }
 
         // Si hubo datos de preview en sesión, construir prestaciones/deducciones/pagos desde sesión
@@ -8774,11 +8786,13 @@ class SeerController extends Controller
         }
         // ------------------------------------
 
-        if (isset($data['aparece_convenio']) && is_array($data['aparece_convenio'])) {
-            foreach ($data['aparece_convenio'] as $id_representante => $valor) {
-                SeerCitados::where('id', $id_representante)
-                    ->update(['aparece_convenio' => $valor == 1 ? 1 : 0]);
-            }
+        $apareceConvenioIds = (isset($data['aparece_convenio']) && is_array($data['aparece_convenio']))
+            ? array_keys($data['aparece_convenio'])
+            : [];
+
+        SeerCitados::where('id_solicitud', $id_solicitud)->update(['aparece_convenio' => 0]);
+        if (!empty($apareceConvenioIds)) {
+            SeerCitados::whereIn('id', $apareceConvenioIds)->update(['aparece_convenio' => 1]);
         }
         
         $monto = 0;
