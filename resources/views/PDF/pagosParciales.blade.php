@@ -107,8 +107,8 @@
                     Asistencia de los interesados: Si<br>
                     Convenio conciliatorio: Si
                 </b></p>  
-                <p><center><b>@if($pagosDif>1)CONSTANCIA DE CUMPLIMIENTO PARCIAL DE CONVENIO @endif
-                    @if($pagosDif==1)CONSTANCIA DE PAGO DE CONVENIO @endif</b></center></p><br>
+                <p><center><b>@if($pagosDif > 1)CONSTANCIA DE CUMPLIMIENTO PARCIAL DE CONVENIO @endif
+                    @if($pagosDif == 1)CONSTANCIA DE PAGO DE CONVENIO @endif</b></center></p><br>
                 <p>
                     <b>Fundamentación:</b> Artículos 33 párrafo segundo, 590-E, 590-F y 684-E fracciones XIII y XIV, 684-F fracción VII de la Ley Federal del Trabajo, artículo 8 fracción I, II y III 
                     de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo y artículo 20 del Reglamento Interior del Centro de Conciliación Laboral del Estado de 
@@ -119,9 +119,9 @@
                     celebrada <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las 
                     <b>{{$solicitud->hora}}</b> hrs.<br><br>
 
-                    @if($pagosDif==1)Las <b>PARTES</b> acordaron el pago en el convenio referido, en este sentido, la parte <b>EMPLEADORA</b> da cumplimiento ante esta Autoridad 
+                    @if($pagosDif == 1)Las <b>PARTES</b> acordaron el pago en el convenio referido, en este sentido, la parte <b>EMPLEADORA</b> da cumplimiento ante esta Autoridad 
                     Conciliadora al siguiente concepto:<br>@endif
-                    @if($pagosDif>1)Las <b>PARTES</b> acordaron <b>PAGOS DIFERIDOS</b> en el convenio referido, en este sentido, el <b>EMPLEADOR</b> da cumplimiento ante esta Autoridad 
+                    @if($pagosDif > 1)Las <b>PARTES</b> acordaron <b>PAGOS DIFERIDOS</b> en el convenio referido, en este sentido, el <b>EMPLEADOR</b> da cumplimiento ante esta Autoridad 
                     Conciliadora al siguiente concepto:<br>@endif
 
                     <div class="table-responsive">

@@ -18,6 +18,7 @@ class AudienciasController extends Controller
 
     public function audiencias(Request $request) {
         $sedeFiltro = $request->input('sede');
+        echo $sedeFiltro;
         $conciliadorFiltro = $request->input('conciliador');
         $user = auth()->user();
         $userID = Auth::user()->id;
@@ -25,7 +26,7 @@ class AudienciasController extends Controller
 
         // 1. Mapeo de Sedes y Oficinas de Apoyo (Consistente con tus otros módulos)
         $mapaSedes = [
-            'Morelia' => ['Morelia', 'Zitacuaro'],
+            'Morelia' => ['Morelia', 'Zitácuaro'],
             'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
             'Zamora'  => ['Zamora', 'Sahuayo'],
         ];
@@ -285,7 +286,7 @@ class AudienciasController extends Controller
        
         // 1. Mapeo de Sedes y Oficinas de Apoyo (Consistente con tus otros módulos)
         $mapaSedes = [
-            'Morelia' => ['Morelia', 'Zitacuaro'],
+            'Morelia' => ['Morelia', 'Zitácuaro'],
             'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
             'Zamora'  => ['Zamora', 'Sahuayo'],
         ];
