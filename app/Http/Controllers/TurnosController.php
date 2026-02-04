@@ -1426,8 +1426,8 @@ class TurnosController extends Controller
         $userRole = $user->roles->pluck('name')->all();
         $relacionEloquent = 'roles';
 
-        if($sede == "Morelia" || $sede =='Zitácuaro'){
-            $delegaciones = ['Morelia', 'Zitácuaro'];
+        if($sede == "Morelia" || $sede =='Zitacuaro' || $sede =='Zitácuaro'){
+            $delegaciones = ['Morelia', 'Zitacuaro', 'Zitácuaro'];
         }else if($sede == "Uruapan" || $sede == "Lázaro Cárdenas"){
             $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
         }else if($sede == "Zamora" || $sede =='Sahuayo'){

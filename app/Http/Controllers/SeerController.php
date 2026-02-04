@@ -5580,7 +5580,7 @@ class SeerController extends Controller
         // 2. Determinar punto de inicio
         $reciente = Audiencias::where('delegacion', $delegacion)->orderBy('fecha', 'desc')->orderBy('hora', 'desc')->first();
         // Definimos la fecha mínima permitida
-        $fecha_revisar = "2026-02-12";
+        $fecha_revisar = "2026-02-25";
         $fecha_hora = "09:00:00";
         //$fecha_revisar = $reciente ? date('Y-m-d', strtotime($reciente->fecha)) : date('Y-m-d');
         //$fecha_hora = $reciente ? date('H:i:s', strtotime($reciente->hora)) : "09:00:00";

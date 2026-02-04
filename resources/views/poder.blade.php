@@ -1079,6 +1079,7 @@
                 if (valor === 'Fisica') {
                     nombreDiv.style.display = 'block';
                     empresaDiv.style.display = 'none';
+                    /*
                     //Poner los campos requeridos
                     document.getElementById('nombre_pF').setAttribute('required', 'true');
                     document.getElementById('primero_PF').setAttribute('required', 'true');
@@ -1127,10 +1128,11 @@
                     document.getElementById('documentoPoder').removeAttribute('required');
                     document.getElementById('tipo_identificacion_Moral').removeAttribute('required');
                     document.getElementById('num_identificacion_Moral').removeAttribute('required');  
-
+                    */
                 } else if (valor === 'Moral') {
                     empresaDiv.style.display = 'block';
                     nombreDiv.style.display = 'none';
+                    /*
                     //Las personas fisicas quitar requerido
                     document.getElementById('nombre_pF').removeAttribute('required');
                     document.getElementById('nombre_pF').removeAttribute('required');
@@ -1181,6 +1183,7 @@
                     document.getElementById('documentoPoder').setAttribute('required', 'true');
                     document.getElementById('tipo_identificacion_Moral').setAttribute('required', 'true');
                     document.getElementById('num_identificacion_Moral').setAttribute('required', 'true');  
+                    */
                 }
             }
 
@@ -1201,11 +1204,12 @@
                 // Oculta ambos inicialmente
                 razonDiv.style.display = 'none';
                 propioDiv.style.display = 'none';
-
+                
                 if (valor === 'Si') {
                     razonDiv.style.display = 'block';
                     propioDiv.style.display = 'none';
                     //Poner requeridos los campos
+                    /*
                     document.getElementById('nombre_representante_pF').setAttribute('required', 'true');
                     document.getElementById('primer_representante_pF').setAttribute('required', 'true');
                     document.getElementById('segundo_representante_pF').setAttribute('required', 'true');
@@ -1224,10 +1228,12 @@
                     document.getElementById('documentoIne_pFSR').removeAttribute('required');
                     document.getElementById('tipo_identificacion_pFCR').setAttribute('required', 'true');
                     document.getElementById('num_identificacion_pFCR').setAttribute('required', 'true'); 
+                    */
                 } else if (valor === 'No') {
                     razonDiv.style.display = 'none';
                     propioDiv.style.display = 'block';
                     //Poner requeridos los campos
+                    /*
                     document.getElementById('documentoIne_pFSR').setAttribute('required', 'true');
                     //Poner requeridos los campos
                     document.getElementById('nombre_representante_pF').removeAttribute('required');
@@ -1246,7 +1252,9 @@
                     document.getElementById('documentoPoder_pF').removeAttribute('required'); 
                     document.getElementById('tipo_identificacion_pF').setAttribute('required', 'true');
                     document.getElementById('num_identificacion_pF').setAttribute('required', 'true'); 
+                    */
                 }
+            
             }
 
             if (reprecentante) {
