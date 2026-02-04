@@ -26,7 +26,7 @@
         $direccion_sede='JUSTO SIERRA PONIENTE NO. 290, COL. JARDINES DE CATEDRAL, C.P. 59600 ZAMORA, MICHOACÁN DE OCAMPO, con un horario de atención Lunes a Viernes de 9:00 am a 3:00 pm.';
     }  
     if($delegacion->delegacion === 'Zitácuaro') {
-        $direccion_sede='CUAUHTEMOC ORIENTE NO. 15, COL. CUAUHTEMOC, C.P. 61506 ZITÁCUARO, MICHOACÁN DE OCAMPO, con un horario de atención Lunes a Viernes de 9:00 am a 3:00 pm.';
+        $direccion_sede='5 DE MAYO NORTE NO. 03, PISO 3 COL. CENTRO, C.P. 61500 ZITÁCUARO, MICHOACÁN DE OCAMPO, con un horario de atención Lunes a Viernes de 9:00 am a 3:00 pm.';
     } 
     if($delegacion->delegacion === 'Lázaro Cárdenas') {
         $direccion_sede='PARACHO NO. 26, COL. 600 CASAS, C.P. 60950 LÁZARO CÁRDENAS, MICHOACÁN DE OCAMPO, con un horario de atención Lunes a Viernes de 9:00 am a 3:00 pm.';
