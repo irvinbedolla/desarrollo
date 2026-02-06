@@ -5874,6 +5874,25 @@ class SeerController extends Controller
                 'estatus'           => 'No conciliacion',
             ]);
 
+            $citadosPorCentro = SeerCitados::where('id_solicitud', $id)->get();
+            foreach($citadosPorCentro as $citado){
+                if($citado->notificacion == 'Centro'){
+                    $hayCentro = true;
+                    break;
+                }
+            }
+
+            if($hayCentro){
+                $citados = SeerCitados::where('id_solicitud', $data["id"])
+                        ->where('notificacion', 'Centro')
+                        ->where('resulte_responsable', 'No')
+                        ->update(['aparece_convenio' => 1]);
+            } else {
+                SeerCitados::where('id_solicitud', $data["id"])
+                            ->where('resulte_responsable', 'No')
+                            ->update(['aparece_convenio' => 1]);
+            }
+
             try {
                 $keys = [
                     "audiencia_conclucion_data_{$data['id']}",
