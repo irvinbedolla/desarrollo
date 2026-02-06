@@ -447,6 +447,18 @@
                                         </div>
                                     </div>
 
+                                    <div class="col-xs-12 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <label for="name">Fecha de notificación <span style="color:red;">(*)</span></label>
+                                            <input type="date" class="form-control" name="fecha_notificacion" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <label for="name">Hora de notificación <span style="color:red;">(*)</span></label>
+                                            <input type="time" class="form-control" name="hora_notificacion" required>
+                                        </div>
+                                    </div>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <a href="{{ route('seer') }}" class="btn btn-secondary">Cancelar</a>
                                         <button type="submit" class="btn btn-primary">Guardar</button>
