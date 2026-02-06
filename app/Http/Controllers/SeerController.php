@@ -5667,6 +5667,8 @@ class SeerController extends Controller
     public function concluir_audiencia_conciliador(Request $request){    
         $data = $request->all();
 
+        $hayCentro = false;
+
         $id_solicitud = $data["id"];
         $monto = 0;
         $fecha_actual = date('y-m-d');
