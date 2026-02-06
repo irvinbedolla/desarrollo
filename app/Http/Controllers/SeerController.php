@@ -5800,7 +5800,7 @@ class SeerController extends Controller
             ->update([
                 'tipo'                  => $data["tipo_audiencia"],
                 'fecha_terminacion'     => $fecha_actual, 
-                'conciliador_id'        => $user->id,
+                //'conciliador_id'        => $user->id,
                 'estatus'               => $data["conclucion"]
             ]);
 
@@ -5860,7 +5860,7 @@ class SeerController extends Controller
             ->update([
                 'tipo'                  => "Presencial",
                 'fecha_terminacion'     => $fecha_actual, 
-                'conciliador_id'        => $user->id,
+                //'conciliador_id'        => $user->id,
                 'observaciones'         => $data["observaciones"], 
                 'estatus'               => $data["conclucion"]
             ]);
@@ -7337,29 +7337,44 @@ class SeerController extends Controller
         $idsSession = session()->get('acta_citados_' . $id);
 
         
-        if ($idsSession !== null) {
+        /*if ($idsSession !== null) {
             $citados = SeerCitados::whereIn('id', $idsSession)
                         ->where('id_solicitud', $id)
-                        ->get();
+                        ->where('resulte_responsable', 'No')
+                        ->get();*/
 
-            $abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
+        $citadosPorCentro = SeerCitados::where('id_solicitud', $id)->get();
+        foreach($citadosPorCentro as $citado){
+            if($citado->notificacion == 'Centro'){
+                $hayCentro = true;
+                break;
+            }
+        }
+
+            /*$abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
                 ->where('id_solicitud',$id)
                 ->whereIn('seer_citados.id', $idsSession)
                 ->select('abogados.nombres_patronal','abogados.primer_apellido_patronal','abogados.segundo_apellido_patronal','abogados.descipcion_poder','abogados.tipo_identificacion','abogados.num_identificacion')
-                ->first();
+                ->first();*/
 
-            dd($abogado);
+        //} else {
+        if($hayCentro){
+            $citados = SeerCitados::where('id_solicitud', $id)
+                        ->where('notificacion', 'Centro')
+                        ->where('resulte_responsable', 'No')
+                        ->get();
         } else {
             $citados = SeerCitados::where('id_solicitud', $id)
-                        ->where('aparece_convenio', 1)
+                        ->where('resulte_responsable', 'No')
                         ->get();
+        }
 
-            $abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
+            /*$abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
                 ->where('seer_citados.aparece_convenio', 1)
                 ->where('id_solicitud',$id)
                 ->select('abogados.nombres_patronal','abogados.primer_apellido_patronal','abogados.segundo_apellido_patronal','abogados.descipcion_poder','abogados.tipo_identificacion','abogados.num_identificacion')
-                ->first();
-        }
+                ->first();*/
+        //}
 
         // Si hubo datos de preview en sesión, construir prestaciones/deducciones/pagos desde sesión
         if ($sessionData && is_array($sessionData)) {
@@ -7445,7 +7460,7 @@ class SeerController extends Controller
         $identificacionPoder = $abogado->tipo_identificacion ?? null;
         $descripcionIdentificacionP = $identificacionPoder ? $this->descripcionIdentificacion($identificacionPoder) : '';
 
-        if (!$abogado) {
+        /*if (!$abogado) {
             $abogado = (object) [
                 'nombres_patronal' => null,
                 'primer_apellido_patronal' => null,
@@ -7457,10 +7472,10 @@ class SeerController extends Controller
                 'tipo_identificacion' => null,
                 'num_identificacion' => null,
             ];
-        }
+        }*/
 
         $html = view('PDF/Solicitudes/ActaAudiencia', compact('id','solicitud','conciliador','prestaciones','deducciones','deduccionesTexto','pagoTotal','descripcionIdentificacionS',
-        'descripcionIdentificacionP','abogado','conceptosTexto','solicitante','audiencia','datosAudiencia','citados'))->render();
+        'descripcionIdentificacionP','conceptosTexto','solicitante','audiencia','datosAudiencia','citados'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')

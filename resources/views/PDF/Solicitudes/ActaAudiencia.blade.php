@@ -87,7 +87,7 @@
                     Ley Federal del Trabajo, artículo 27 de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, y artículo 20 del Reglamento Interior del 
                     Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, <b>declara abierta</b> la Audiencia de Conciliación Prejudicial en la que comparecen: <br><br>
 
-                    @if(isset($abogado) && !empty($abogado->tipo_identificacion) && !empty($abogado->num_identificacion))
+                    {{--@if(isset($abogado) && !empty($abogado->tipo_identificacion) && !empty($abogado->num_identificacion))
                     La parte citada <b>@if(is_null($abogado->nombres_patronal) && is_null($abogado->primer_apellido_patronal))
                            {{ $abogado->nombre_representante }} {{ $abogado->primer_apellido_representante }} {{ $abogado->segundo_apellido_representante }}
                        @else {{ $abogado->nombres_patronal }} {{ $abogado->primer_apellido_patronal }} {{ $abogado->segundo_apellido_patronal }} @endif</b>se identifica con 
@@ -95,7 +95,11 @@
                     <b>{{ $descripcionIdentificacionP }}</b> y, por la parte solicitante <b>{{ $solicitante->nombre }}</b> quien se identifica con 
                     @else
                     La parte citada <b>(SIN DATOS DE REPRESENTANTE LEGAL)</b> y, por la parte solicitante <b>{{ $solicitante->nombre }}</b> quien se identifica con 
-                    @endif
+                    @endif --}}
+                    La parte citada:
+                    @foreach ($citados as $citado)
+                        <b>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido ?? ''}}</b>,
+                    @endforeach y, por la parte solicitante <b>{{ $solicitante->nombre }}</b> quien se identifica con 
                     <b>{{ mb_strtoupper($solicitante->identificacion, 'UTF-8') }}</b>, de Número <b>{{ $solicitante->num_identificacion }}</b> expedida a su favor por 
                     <b>{{ $descripcionIdentificacionS }}</b>, identificaciones que concuerdan fisionómicamente con las partes y, que, en este acto, se agrega copia cotejada al 
                     expediente electrónico para que conste como corresponda; documentos que les son devueltos por ser innecesaria su retención. <br><br>
@@ -237,7 +241,7 @@
                             <td style="width:50%; vertical-align:top; padding:0 20px;">
                             <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
                             <b>
-                                {{ $abogado->nombres_patronal }} {{ $abogado->primer_apellido_patronal }} {{ $abogado->segundo_apellido_patronal }}<br>
+                                {{-- {{ $abogado->nombres_patronal }} {{ $abogado->primer_apellido_patronal }} {{ $abogado->segundo_apellido_patronal }}<br> --}}
                                 LA PARTE EMPLEADORA
                             </b>
                         </td>        
