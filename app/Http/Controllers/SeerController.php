@@ -2047,6 +2047,7 @@ class SeerController extends Controller
             //'municipio_citado'            => 'nullable',
         ]);
 
+        $fechaEspecifica = Carbon::createFromFormat('Y-m-d H:i', $request->fecha_notificacion . ' ' . $request->hora_notificacion);
 
         if($data["tipo_llenado"] == 1){
             SeerCitados::find($data["id"])
@@ -2078,7 +2079,7 @@ class SeerController extends Controller
                     'ojos'                       => $data["ojos"],
                     'particulares'               => $data["particulares"],
                     'especificar'                => $data["especificar"],
-                   // 'municipio_citado'           => $data["municipio_citado"],
+                    'updated_at'                 => $fechaEspecifica
                 ]);
         }
         else{
@@ -2114,7 +2115,7 @@ class SeerController extends Controller
                     'ojos'                       => $data["ojos"],
                     'particulares'               => $data["particulares"],
                     'especificar'                => $data["especificar"],
-                    //'municipio_citado'           => $data["municipio_citado"],
+                    'updated_at'                 => $fechaEspecifica
                 ]);
             }
         }
@@ -3812,9 +3813,9 @@ class SeerController extends Controller
         SeerCitados::where('id_solicitud',$data["id"])->delete();
         $cont = count($data["colonia_citado"]);
         for($i = 0; $i < $cont; $i++) {
-
+            $tipo_notificacion = $data["notificacion"][0];
             $foto1 = $data["imagen_domicilio1"][$i] ?? 'Sin documento';
-            $foto2 = $data["imagen_domicilio2"][$i] ?? 'Sin documento';
+            $foto2 = $data["imagen_domicilio2"][$i] ?? 'Sin documentolo';
         
             if ($request->hasFile("foto1.$i")) {
                 $file = $request->file("foto1")[$i];
@@ -3893,7 +3894,8 @@ class SeerController extends Controller
                 $num_audi = $numero_audiencias->numero_audiencias;
             }
             $num_audi = $num_audi+1;
-            $Audiencia = $this->ObtenerAudiencia($delegacion["delegacion"]);
+            $Audiencia = $this->ObtenerAudiencia($delegacion["delegacion"],$tipo_notificacion);
+
 
             if ($Audiencia instanceof \Illuminate\Http\JsonResponse) {
                 DB::rollBack();
@@ -5548,121 +5550,104 @@ class SeerController extends Controller
         return view('solicitudes.solicitudes', compact('solicitudes'));
     }
     
-    public function ObtenerAudiencia($delegacion) {
+    public function ObtenerAudiencia($delegacion, $notificion) {
         $array_horarios = array();
         $relacionEloquent = 'roles';
         $id = auth()->user()->id;
         $user = User::find($id);
         $bandera = 0;
 
-        // 1. Obtención de Conciliadores (Simplificado)
-        $tipo_permiso = in_array($delegacion, ["Morelia", "Uruapan", "Zamora"]) ? ["Ambos", "Precencial"] : ["Ambos", "Virtual"];
-        
-        // Lógica de oficina de apoyo
-        $oficina = $delegacion;
-        if ($delegacion == "Zitácuaro") $oficina = "Morelia";
-        else if ($delegacion == "Lázaro Cárdenas") $oficina = "Uruapan";
-        else if ($delegacion == "Sahuayo") $oficina = "Zamora";
+        // 1. Configuración de Fechas
+        $hoy = \Carbon\Carbon::now();
+        $fecha_limite_natural = $hoy->copy()->addDays(45);
+        $fecha_inicio_busqueda = $hoy->copy();
 
-        $conciliadores = User::whereHas($relacionEloquent, function ($query) {
-                $query->where('name', 'Conciliador');
-            })
-            ->where('delegacion', $oficina)
-            ->whereExists(function($q) use ($tipo_permiso) {
-                $q->select(DB::raw(1))
-                ->from('permisos_conciliador')
-                ->whereColumn('permisos_conciliador.id_conciliador', 'users.id')
-                ->whereIn('tipo', $tipo_permiso);
-            })->get();
 
-        if ($conciliadores->isEmpty()) return response()->json(['error' => 'No hay conciliadores disponibles'], 404);
+        // 2. Cálculo del margen mínimo y construcción del mensaje
+        if ($notificion == "Trabajador") {
+            $dias_sumados = 0;
+            while ($dias_sumados < 7) {
+                $fecha_inicio_busqueda->addDay();
+                $es_festivo = DiasInhabiles::where('fecha_inicio', $fecha_inicio_busqueda->format('Y-m-d'))
+                                ->where('centro', $user->delegacion)
+                                ->whereNull('user_id')->exists();
 
-        // 2. Determinar punto de inicio
-        $reciente = Audiencias::where('delegacion', $delegacion)->orderBy('fecha', 'desc')->orderBy('hora', 'desc')->first();
-        // Definimos la fecha mínima permitida
-        $fecha_revisar = "2026-02-25";
-        $fecha_hora = "09:00:00";
-        //$fecha_revisar = $reciente ? date('Y-m-d', strtotime($reciente->fecha)) : date('Y-m-d');
-        //$fecha_hora = $reciente ? date('H:i:s', strtotime($reciente->hora)) : "09:00:00";
+                if (!$fecha_inicio_busqueda->isWeekend() && !$es_festivo) {
+                    $dias_sumados++;
+                }
+            }
+            $mensaje_ajuste = "Se agendó considerando los 7 días hábiles mínimos para la notificación del trabajador.";
+        } else {
+            $fecha_inicio_busqueda->addDays(15);
+            $mensaje_ajuste = "Se agendó considerando los 15 días naturales requeridos para la notificación por el Centro.";
+        }
+
+        // Ajuste al tope de 45 días
+        if ($fecha_inicio_busqueda->gt($fecha_limite_natural)) {
+            $fecha_inicio_busqueda = $fecha_limite_natural->copy();
+            $mensaje_ajuste .= " (Ajustado al límite legal de 45 días).";
+        }
+
+        $fecha_revisar = $fecha_inicio_busqueda->format('Y-m-d');
         $horarios_disponibles = ["09:00:00", "10:15:00", "11:30:00", "12:45:00", "14:00:00"];
 
-        // 3. Bucle de búsqueda de espacio
+        // 3. Conciliadores y Sedes
+        $tipo_permiso = in_array($delegacion, ["Morelia", "Uruapan", "Zamora"]) ? ["Ambos", "Precencial"] : ["Ambos", "Virtual"];
+        $mapa_sedes = ["Zitácuaro" => "Morelia", "Lázaro Cárdenas" => "Uruapan", "Sahuayo" => "Zamora"];
+        $oficina = $mapa_sedes[$delegacion] ?? $delegacion;
+
+        $conciliadores = User::whereHas('roles', function ($q) { $q->where('name', 'Conciliador'); })
+            ->where('delegacion', $oficina)->get();
+
+        // 4. Bucle de búsqueda
         do {
-            $dia_semana = date('l', strtotime($fecha_revisar));
+            $carbon_revisar = \Carbon\Carbon::parse($fecha_revisar);
 
-            // Saltamos fines de semana
-            if ($dia_semana == 'Saturday' || $dia_semana == 'Sunday') {
-                $fecha_revisar = date('Y-m-d', strtotime($fecha_revisar . ' +1 day'));
-                $fecha_hora = "09:00:00";
+            if ($carbon_revisar->gt($fecha_limite_natural)) {
+                return response()->json(['error' => 'No hay disponibilidad en el rango de 45 días'], 404);
+            }
+
+            $es_inhabit_centro = DiasInhabiles::where('fecha_inicio', $fecha_revisar)
+                ->where('centro', $user->delegacion)->whereNull('user_id')->exists();
+
+            if ($carbon_revisar->isWeekend() || $es_inhabit_centro) {
+                $fecha_revisar = $carbon_revisar->addDay()->format('Y-m-d');
                 continue;
             }
 
-            // Revisar si el centro tiene día inhábil general
-            $revisar_centro = DiasInhabiles::where('fecha_inicio', $fecha_revisar)
-                ->where('centro', $user->delegacion)
-                ->whereNull('user_id')
-                ->exists();
-
-            if ($revisar_centro) {
-                $fecha_revisar = date('Y-m-d', strtotime($fecha_revisar . ' +1 day'));
-                $fecha_hora = "09:00:00";
-                continue;
-            }
-
-            // Buscamos en cada horario
             foreach ($horarios_disponibles as $h) {
-                // Si la fecha es la "reciente", solo buscamos horarios posteriores a la última audiencia
-                if ($fecha_revisar == date('Y-m-d', strtotime($reciente->fecha ?? '')) && $h <= $fecha_hora) {
-                    continue;
-                }
-
-                if (in_array($delegacion, ["Zitácuaro", "Lázaro Cárdenas", "Sahuayo"])) {
-                    $ya_existe_audiencia_en_sede = Audiencias::where('fecha', $fecha_revisar)
-                        ->where('hora', $h)
-                        ->where('delegacion', $delegacion)
-                        ->exists();
-
-                    if ($ya_existe_audiencia_en_sede) {
-                        // Si ya hay una audiencia en esta sede y hora, saltamos al siguiente horario
+                if (isset($mapa_sedes[$delegacion])) {
+                    if (Audiencias::where('fecha', $fecha_revisar)->where('hora', $h)->where('delegacion', $delegacion)->exists()) {
                         continue; 
                     }
                 }
 
-                $listado_auxiliares = [];
-
-                foreach ($conciliadores as $conciliador) {
-                    // Verificamos si el conciliador está ocupado (Audiencia o Día Inhábil)
-                    $ocupado = Audiencias::where('fecha', $fecha_revisar)->where('hora', $h)->where('id_conciliador', $conciliador->id)->exists();
-                    
-                    $dia_libre = DiasInhabiles::where('fecha_inicio', $fecha_revisar)
-                        ->where('user_id', $conciliador->id)
-                        ->where('horario_inicio', '<=', $h)
-                        ->where('horario_final', '>=', $h)
-                        ->exists();
-
-                    if (!$ocupado && !$dia_libre) {
-                        $listado_auxiliares[] = $conciliador->id;
-                    }
+                $disponibles = [];
+                foreach ($conciliadores as $c) {
+                    $ocupado = Audiencias::where('fecha', $fecha_revisar)->where('hora', $h)->where('id_conciliador', $c->id)->exists();
+                    if (!$ocupado) $disponibles[] = $c->id;
                 }
 
-                if (!empty($listado_auxiliares)) {
+                if (!empty($disponibles)) {
                     $bandera = 1;
-                    $random_id = $listado_auxiliares[array_rand($listado_auxiliares)];
+                    $conciliador_id = $disponibles[array_rand($disponibles)];
+                    
+                    // Formatear fecha amigable (Ej: "Miércoles 25 de Febrero, 2026")
+                    $fecha_amigable = $carbon_revisar->isoFormat('dddd D [de] MMMM');
+
                     return [
-                        $fecha_revisar,   // [0] Fecha sugerida
-                        $h,               // [1] Hora sugerida
-                        $fecha_revisar,   // [2] Originalmente tenías fecha_audiencia aquí
-                        $random_id        // [3] ID del Conciliador
+                        $fecha_revisar,           // [0] Para la base de datos
+                        $h,                       // [1] Hora
+                        ucfirst($fecha_amigable), // [2] Fecha para mostrar al usuario
+                        $conciliador_id,          // [3] ID Conciliador
+                        $mensaje_ajuste           // [4] Explicación del sistema
                     ];
                 }
             }
-
-            // Si terminamos los horarios del día y no hubo éxito, pasamos al siguiente día
-            $fecha_revisar = date('Y-m-d', strtotime($fecha_revisar . ' +1 day'));
-            $fecha_hora = "09:00:00";
-
+            $fecha_revisar = $carbon_revisar->addDay()->format('Y-m-d');
         } while ($bandera == 0);
     }
+
 
     public function concluir_audiencia_conciliador(Request $request){    
         $data = $request->all();

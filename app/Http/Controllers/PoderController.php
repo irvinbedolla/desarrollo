@@ -681,11 +681,10 @@ class PoderController extends Controller
                 $data_insertar["anexo_documeto"] = $nombre_anexo;
             }
 
-            
             if(isset($data["num_int"])){
                 $data_insertar["mun_int_patronal"] = $data["num_int"];
             }
-                
+
             $poder->update($data_insertar);
             return redirect()->route('poderes');
         }
