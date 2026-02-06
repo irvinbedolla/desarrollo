@@ -5885,10 +5885,12 @@ class SeerController extends Controller
             if($hayCentro){
                 $citados = SeerCitados::where('id_solicitud', $data["id"])
                         ->where('notificacion', 'Centro')
+                        ->where('id_abogado', '!=' , NULL)
                         ->where('resulte_responsable', 'No')
                         ->update(['aparece_convenio' => 1]);
             } else {
                 SeerCitados::where('id_solicitud', $data["id"])
+                            ->where('id_abogado', '!=' , NULL)
                             ->where('resulte_responsable', 'No')
                             ->update(['aparece_convenio' => 1]);
             }
