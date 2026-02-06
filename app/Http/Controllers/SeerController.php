@@ -9744,7 +9744,7 @@ class SeerController extends Controller
         // Si es Super Usuario o Admin, no se agregan filtros adicionales (ve todo)
     
         // 4. Ejecutar consulta (Límite 500)
-        $audiencias = $query->orderBy('created_at', 'desc')->limit(500)->get();
+        $audiencias = $query->orderBy('created_at', 'desc')->limit(1500)->get();
         
         // 5. Procesar resultados (Formateo)
         $audiencias->transform(function ($audiencia) {
@@ -11857,7 +11857,7 @@ class SeerController extends Controller
         $isAudiencia = 'No';
 
         if($userRole[0] == "Auxiliar" || $userRole[0] == "Excepcion"){
-            $solicitudes = SeerPerGeneral::where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(500)->get();
+            $solicitudes = SeerPerGeneral::where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(1500)->get();
             foreach ($solicitudes as $solicitud) {
                 $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
                 $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
@@ -11867,21 +11867,21 @@ class SeerController extends Controller
             $permisos = PermisosConciliador::where('id_conciliador',$id)->first();
             if($permisos["tipo"] == "Ambos"){
                 if($user["delegacion"] == "Morelia"){
-                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(1500)->get();
                     foreach ($solicitudes as $solicitud) {
                         $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
                         $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
                     }
                 }
                 if($user["delegacion"] == "Uruapan"){
-                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(1500)->get();
                     foreach ($solicitudes as $solicitud) {
                         $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
                         $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
                     }
                 }
                 if($user["delegacion"] == "Sahuayo"){
-                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
+                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(1500)->get();
                     foreach ($solicitudes as $solicitud) {
                         $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
                         $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
@@ -11889,7 +11889,7 @@ class SeerController extends Controller
                 }
             }
             else{
-                $solicitudes = SeerPerGeneral::where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(500)->get();
+                $solicitudes = SeerPerGeneral::where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(1500)->get();
                 foreach ($solicitudes as $solicitud) {
                     $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
                     $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
@@ -11898,21 +11898,21 @@ class SeerController extends Controller
         }
         else if($userRole[0] == "Delegado" || $userRole[0] == "Enlace"){
             if($user["delegacion"] == "Morelia"){
-                $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(500)->get();
+                $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(1500)->get();
                 foreach ($solicitudes as $solicitud) {
                     $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
                     $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
                 }
             }
             if($user["delegacion"] == "Uruapan"){
-                $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(500)->get();
+                $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(1500)->get();
                 foreach ($solicitudes as $solicitud) {
                     $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
                     $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
                 }
             }
             if($user["delegacion"] == "Zamora"){
-                $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(500)->get();
+                $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(1500)->get();
                 foreach ($solicitudes as $solicitud) {
                     $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
                     $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
@@ -11920,7 +11920,7 @@ class SeerController extends Controller
             }
         }
         else if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador"){
-            $solicitudes = SeerPerGeneral::orderBy('created_at', 'desc')->limit(500)->get();
+            $solicitudes = SeerPerGeneral::orderBy('created_at', 'desc')->limit(1500)->get();
             foreach ($solicitudes as $solicitud) {
                 $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
                 $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
