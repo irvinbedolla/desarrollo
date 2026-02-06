@@ -103,7 +103,7 @@
                     Empleador(a): @foreach ($solicitud->citados as $citado)
                         {{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}} <br>
                     @endforeach
-                    Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
+                    Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($audienciaFecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ \Carbon\Carbon::parse($audienciaFecha)->translatedFormat('H:i') }} horas.<br> 
                     Asistencia de los interesados: Si. <br>
                     <!--Fecha del conflicto: [SOLICITUD_FECHA_CONFLICTO]  <br>
                     Posible prescripción de derechos: [SOLICITUD_PRESCRIPCION] <br> -->
@@ -119,9 +119,9 @@
                     y artículo 20 del Reglamento Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<br><br>
 
                     <b>Motivación:</b> Conforme a la determinación de dar por terminado el conflicto laboral, la parte <b>TRABAJADORA</b> y la parte <b>EMPLEADORA</b>, 
-                    celebraron el Convenio de Conciliación de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> ante esta 
+                    celebraron el Convenio de Conciliación de fecha <b>{{ \Carbon\Carbon::parse($audienciaFecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> ante esta 
                     Autoridad Conciliadora como resultado de la audiencia 
-                    de conciliación celebrada el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}.</b><br><br>
+                    de conciliación celebrada el día <b>{{ \Carbon\Carbon::parse($audienciaFecha)->translatedFormat('d \d\e F \d\e\l Y') }}.</b><br><br>
                                 
                     De acuerdo con lo establecido en el convenio referido el <b>EMPLEADOR</b> se obligó al pago de los siguientes conceptos:
               

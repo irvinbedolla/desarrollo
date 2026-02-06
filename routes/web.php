@@ -73,6 +73,20 @@ use App\Http\Controllers\IncidenciasController;
         Route::get('/ratificaciones/eventos', [App\Http\Controllers\AudienciasController::class, 'ratificaciones'])->name('ratificaciones.eventos');
         Route::get('citas/exportar-excel', [CitaController::class, 'exportarExcel']);
 
+    //Ruta Solicitud para los Centros
+        Route::get('levantar_solicitudCentro',                    [SeerController::class, 'solicitudesLineaCentro'])->name('solicitudEnLineaCentro');
+        Route::get('tipoIndustriaCentro/{tipo_solicitud}',        [SeerController::class, 'IndustriasCentro'])->name('solicitud.industriaCentro');
+        Route::get('TrabajadorCentro/{tipo_solicitud}',   [SeerController::class, 'trabajadorCentro'])->name('solicitud_trabajadorCentro');
+        Route::post('guardar_trabajadorCentro',           [SeerController::class, 'solicitud_parte1Centro'])->name('parte1Centro');
+        Route::get('solicitud_continuarCentro',      [SeerController::class, 'vista_parte2Centro'])->name('parte2.verCentro');
+        Route::post('solicitud_solicitanteCentro',        [SeerController::class, 'solicitud_parte2Centro'])->name('parte2Centro');
+        Route::get('/agrega_citadoCentro/{id}',           [SeerController::class, 'vista_citadoCentro'])->name('agregar_citadoCentro');
+        Route::post('/agrega_citadoCentro',               [SeerController::class, 'guardar_citadoCentro'])->name('seer.citadosCentro');
+    // Finalizar solicitud Centro: debe ser POST (acción con efectos: guarda en BD y genera acuse/correo)
+    Route::post('/finalizaCentro',                    [SeerController::class, 'guardar_solicitudCentro_post'])->name('seer.finalizaCentro');
+    // Mantener compatibilidad por si algún link viejo aún apunta a GET
+    Route::get('/finalizaCentro/{id}',                [SeerController::class, 'guardar_solicitudCentro'])->name('seer.finalizaCentro_get');
+
     //Rutas fuera del login
     Route::get('/pantalla', function () {
         $fecha_actual = date('Y-m-d');

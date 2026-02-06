@@ -136,8 +136,11 @@
                         744 y 745 Ter de la Ley Federal del Trabajo.
                     </p>
                 <!--@(notificacion==centro)-->
-                    <p>Con fundamento en el artículo 684-E. fracción IV, así como el artículo 692 de la Ley Federal del Trabajo, se apercibe al citado que de no comparecer por sí o por conducto de
-                        su representante legal, o bien por medio de apoderado con facultades suficientes, se le impondrá una multa entre 50 y
+                    <p>Con fundamento en el artículo 684-E. fracción IV, así como el artículo 692 de la Ley Federal del Trabajo, se apercibe al citado que de no comparecer por sí,
+                        @if($solicitud->tipo_solicitud == 1)
+                         o por conducto de su representante legal, o bien por medio de apoderado con facultades suficientes
+                        @endif
+                        se le impondrá una multa entre 50 y
                         100 veces la Unidad de Medida y Actualización, y se le tendrá por inconforme con todo arreglo conciliatorio.
                     </p>
                 @endif

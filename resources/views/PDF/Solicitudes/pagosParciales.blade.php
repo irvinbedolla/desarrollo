@@ -106,7 +106,8 @@
                 </p>
 
                 <br><br><br><br>       
-                <center><br><br> <p><b>___________________________________<br>{{$conciliador->name}} <br>FUNCIONARIO/A CONCILIADOR/A</b></p></center>           
+                <br><br> <p><b>___________________________________<br>{{$conciliador->name}} <br>FUNCIONARIO/A CONCILIADOR/A</b> <b>  ___________________________________<br>{{$delegado->name}} <br>FUNCIONARIO/A CONCILIADOR/A</b></p> 
+                
             </div>
             <script type="text/php">
                 if (isset($pdf)) {
