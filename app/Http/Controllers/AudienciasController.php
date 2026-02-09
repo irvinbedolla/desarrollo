@@ -18,7 +18,6 @@ class AudienciasController extends Controller
 
     public function audiencias(Request $request) {
         $sedeFiltro = $request->input('sede');
-        echo $sedeFiltro;
         $conciliadorFiltro = $request->input('conciliador');
         $user = auth()->user();
         $userID = Auth::user()->id;

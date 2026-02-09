@@ -78,11 +78,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Instanciamos cada calendario
-    calendarPagos = new FullCalendar.Calendar(calendarEl, crearConfiguracion('pagos/eventos', 'pagos'));
-    calendarAudiencias = new FullCalendar.Calendar(calendarEl, crearConfiguracion('audiencias/eventos', 'audiencias'));
-    calendarRatificaciones = new FullCalendar.Calendar(calendarEl, crearConfiguracion('ratificaciones/eventos', 'ratificaciones'));
-    calendarCitas = new FullCalendar.Calendar(calendarEl, crearConfiguracion('citas/eventos', 'citas'));
-    calendarConciliador = new FullCalendar.Calendar(calendarEl, crearConfiguracion('pagos/conciliadores', 'conciliador'));
+    calendarPagos = new FullCalendar.Calendar(calendarEl, crearConfiguracion('/pagos/eventos', 'pagos'));
+    calendarAudiencias = new FullCalendar.Calendar(calendarEl, crearConfiguracion('/audiencias/eventos', 'audiencias'));
+    calendarRatificaciones = new FullCalendar.Calendar(calendarEl, crearConfiguracion('/ratificaciones/eventos', 'ratificaciones'));
+    calendarCitas = new FullCalendar.Calendar(calendarEl, crearConfiguracion('/citas/eventos', 'citas'));
+    calendarConciliador = new FullCalendar.Calendar(calendarEl, crearConfiguracion('/pagos/conciliadores', 'conciliador'));
 
     // 3. LÓGICA DE LOS BOTONES (Función Maestra)
     const botones = document.querySelectorAll('.btn-calendar');

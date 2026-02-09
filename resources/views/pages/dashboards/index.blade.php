@@ -221,7 +221,7 @@
                                                 <div class="filter-container mb-3">
                                                     <label for="filtro-sede">Filtrar por Sede:</label>
                                                     <select id="filtro-sede" class="form-control d-inline-block w-auto">
-                                                        <option value="Todos">Todos<option>
+                                                        <option value="Todos">Todos</option>
                                                         @foreach($sedes as $sede)
                                                             <option value="{{ $sede }}">{{ $sede }}</option>
                                                         @endforeach
@@ -251,22 +251,6 @@
         </div>
         <footer class="main-footer">
         </footer>
-    </div>
-</div>
-
-<div class="modal fade" id="evento" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Detalles</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-            </div>
-            <div class="modal-body">
-                Cita
-            </div>
-        </div>
     </div>
 </div>
 
