@@ -76,7 +76,7 @@
                                                     
                                                     <tr>
                                                         <td colspan="4">{{$solicitud->nombre_documento}}</td> 
-                                                        <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$solicitud->nombre_documento}}">PDF</a></td>
+                                                        <td><a target='_blank' href="{{ route('documento_solicitud_ver', $solicitud->id) }}">PDF</a></td>
                                                     </tr>
                                                 @endforeach
                                             @endif

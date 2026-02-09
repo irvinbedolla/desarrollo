@@ -65,6 +65,23 @@ use App\Exports\EmpresaSinSeguro;
 
 class SeerController extends Controller
 {   
+
+    public function ver_documento_subido($id)
+    {
+        $doc = DocumentosSolicitud::findOrFail($id);
+
+        $path = 'documentosSolicitud/' . $doc->nombre_documento;
+
+        if (!Storage::exists($path)) {
+            abort(404, 'Documento no encontrado en almacenamiento.');
+        }
+
+        $downloadName = $doc->tipo_documentos ?: $doc->nombre_documento;
+        return response()->file(Storage::path($path), [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $downloadName . '"',
+        ]);
+    }
     public function index()
     {
         $id = auth()->user()->id;
@@ -8837,22 +8854,24 @@ class SeerController extends Controller
         if ($request->hasFile('documentoExpediente')) {
             $file = $request->file('documentoExpediente');
             if ($file->isValid()) {
-                $nombreInput = $data["nombreExpediente"];
-                $filename = \Illuminate\Support\Str::slug($nombreInput);
-                $documentoExpediente = $filename . '_Expediente.' . $file->getClientOriginalExtension();
-        
-                $path = Storage::putFileAs(
-                    'documentosSolicitud', $file, $documentoExpediente
-                );
+                //Creamos primero el registro para obtener un ID y así generar un nombre único
+                $doc = DocumentosSolicitud::create([
+                    'id_solicitud'     => $data['audiencia_id'],
+                    'nombre_documento' => '',
+                    'tipo_documentos'  => $file->getClientOriginalName(),
+                    'tramite'          => 'Audiencia',
+                ]);
 
-                $data_insertar= array(
-                    'id_solicitud'      => $data["audiencia_id"],
-                    'nombre_documento'  => $documentoExpediente,
-                    'tipo_documentos'   => $file->getClientOriginalName(),
-                    'tramite'           => "Audiencia", 
-                );
-                DocumentosSolicitud::create($data_insertar);
+                $nombreInput = $data['nombreExpediente'] ?? 'expediente';
+                $slugBase = \Illuminate\Support\Str::slug($nombreInput);
+                $ext = strtolower($file->getClientOriginalExtension());
 
+                //Nombre único por documento (id de solicitud y id de documento)
+                $documentoExpediente = $slugBase . '_Expediente_' . $data['audiencia_id'] . '_' . $doc->id . '.' . $ext;
+
+                Storage::putFileAs('documentosSolicitud', $file, $documentoExpediente);
+
+                $doc->update(['nombre_documento' => $documentoExpediente]);
             } else {
                 return back()->withErrors(['documentoExpediente' => 'Archivo no válido.']);
             }

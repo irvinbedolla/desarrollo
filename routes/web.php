@@ -517,6 +517,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/INE_Solicitante/{id}',             [SeerController::class, 'Ver_INE_Solicitante'])->name('PDF_INE_solicitante');
         Route::get('/VerDcocumentosRatificacion/{id}',  [TurnosController::class, 'VerDocumentosRatificacion'])->name('VerDocumentosRatificacion');
         Route::get('/documentos/ratificacion/{id}',     [TurnosController::class, 'ver_documento_subido'])->name('documento_ratificacion_ver');
+        Route::get('/documentos/solicitud/{id}',        [SeerController::class, 'ver_documento_subido'])->name('documento_solicitud_ver');
         Route::get('/VerDcocumentos/{id}',              [SeerController::class, 'VerDocumentosAudiencia'])->name('VerDocumentosAudiencia');
     //Fin de Documentos
     //Estadisticas
