@@ -944,8 +944,8 @@
                                             </div><br>
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <label for="password">Identificación Oficial</label><br>
-                                                <a class="btn btn-info" target='_blank' href="../storage/app/documentosSolicitud/{{$solicitante->documentoIdentificacion}}">Visualizar</a>
-                                                <input type="file" name="documentoCurp" accept=".pdf" class="form-control">
+                                                <a class="btn btn-info" target="_blank" href="{{ route('documento_identificacion_solicitante_ver', $id) }}">Visualizar</a>
+                                                <input type="file" name="indetificacion" accept=".pdf" class="form-control">
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="row">

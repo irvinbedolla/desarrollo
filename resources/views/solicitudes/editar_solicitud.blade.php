@@ -891,7 +891,7 @@ select[name="municipio_citado"] option {
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <label for="password">Identificación Oficial <span style="color:red;">(*)</span></label><br>
-                                                <a target='_blank' class="btn btn-primary" href="../storage/app/documentosSolicitud/{{$solicitante->documentoIdentificacion}}">Consultar Documento PDF</a><br>
+                                                <a target="_blank" class="btn btn-primary" href="{{ route('documento_identificacion_solicitante_ver', $id) }}">Consultar Documento PDF</a><br>
                                             </div>
                                              <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <label for="password">Reemplazar Identificación Oficial</label><br>

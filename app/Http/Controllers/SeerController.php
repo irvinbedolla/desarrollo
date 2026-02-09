@@ -66,6 +66,29 @@ use App\Exports\EmpresaSinSeguro;
 class SeerController extends Controller
 {   
 
+    public function ver_identificacion_solicitante($idSolicitud)
+    {
+        $sol = SeerSolicitante::where('id_solicitud', $idSolicitud)->firstOrFail();
+        $fileName = $sol->documentoIdentificacion;
+
+        if (!$fileName || $fileName === 'Sin documento') {
+            abort(404, 'Documento no encontrado.');
+        }
+
+        $path = 'documentosSolicitud/' . $fileName;
+        if (!Storage::exists($path)) {
+            abort(404, 'Documento no encontrado en almacenamiento.');
+        }
+
+        return response()->file(Storage::path($path), [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Identificacion.pdf"',
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
+        ]);
+    }
+
     public function ver_documento_subido($id)
     {
         $doc = DocumentosSolicitud::findOrFail($id);
@@ -4388,18 +4411,19 @@ class SeerController extends Controller
             SeerCitados::create($data_insert);
         }
 
-        //Documentos
-        if(isset($data["curp"])){
-            $documento = $data["curp"]."_CURP.pdf";
-            $path = Storage::putFileAs('documentosSolicitud', $request->file('documentoCurp'), $documento);
-            SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoCurp' => $documento ]);
-        }
- 
-        //Acta de nacimiento
-        if(isset($data["indetificacion"])){
-            $documentoidentificacion = $data["curp"]."_Identificacion.pdf";
-            $path = Storage::putFileAs('documentosSolicitud', $request->file('indetificacion'), $documentoidentificacion);
-            SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoIdentificacion' => $documentoidentificacion ]);
+        $curpBase = $data['curp_solicitante'];
+
+        // CURP (PDF)
+        /*if ($request->hasFile('curp_solicitante')) {
+            $documento = $curpBase . '_CURP.pdf';
+            Storage::putFileAs('documentosSolicitud', $request->file('curpsolicitante'), $documento);
+            SeerSolicitante::where('id_solicitud', $data['id'])->update(['documentoCurp' => $documento]);
+        }*/
+
+        if ($request->hasFile('indetificacion')) {
+            $documentoidentificacion = $curpBase . '_Identificacion.pdf';
+            Storage::putFileAs('documentosSolicitud', $request->file('indetificacion'), $documentoidentificacion);
+            SeerSolicitante::where('id_solicitud', $data['id'])->update(['documentoIdentificacion' => $documentoidentificacion]);
         }
             DB::commit();
             session()->forget(['citados_edicion_new', 'citados_edicion_delete']);
@@ -4571,18 +4595,29 @@ class SeerController extends Controller
             SeerCitados::create($data_insert);
         }
 
-        //Documentos
-        if(isset($data["curp"])){
-            $documento = $data["curp"]."_CURP.pdf";
-            $path = Storage::putFileAs('documentosSolicitud', $request->file('documentoCurp'), $documento);
-            SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoCurp' => $documento ]);
+        $solActual = SeerSolicitante::where('id_solicitud', $data['id'])->first();
+        $curpBase = $data['curp_solicitante'] ?? ($data['curp'] ?? ($solActual->curp ?? ('solicitud_' . $data['id'])));
+
+        if ($request->hasFile('documentoCurp')) {
+            $prev = $solActual->documentoCurp ?? null;
+            $documento = $curpBase . '_CURP_' . time() . '.pdf';
+            Storage::putFileAs('documentosSolicitud', $request->file('documentoCurp'), $documento);
+            SeerSolicitante::where('id_solicitud', $data['id'])->update(['documentoCurp' => $documento]);
+
+            if ($prev && $prev !== 'Sin documento') {
+                Storage::delete('documentosSolicitud/' . $prev);
+            }
         }
- 
-        //Acta de nacimiento
-        if(isset($data["indetificacion"])){
-            $documentoidentificacion = $data["curp"]."_Identificacion.pdf";
-            $path = Storage::putFileAs('documentosSolicitud', $request->file('indetificacion'), $documentoidentificacion);
-            SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoIdentificacion' => $documentoidentificacion ]);
+
+        if ($request->hasFile('documentoIdentificacion')) {
+            $prev = $solActual->documentoIdentificacion ?? null;
+            $documentoidentificacion = $curpBase . '_Identificacion_' . time() . '.pdf';
+            Storage::putFileAs('documentosSolicitud', $request->file('documentoIdentificacion'), $documentoidentificacion);
+            SeerSolicitante::where('id_solicitud', $data['id'])->update(['documentoIdentificacion' => $documentoidentificacion]);
+
+            if ($prev && $prev !== 'Sin documento') {
+                Storage::delete('documentosSolicitud/' . $prev);
+            }
         }
         
         SeerPerGeneral::find($data["id"])->update(['estatus' => 'Pendiente']);
@@ -4773,18 +4808,29 @@ class SeerController extends Controller
             SeerCitados::create($data_insert);
         }
 
-        //Documentos
-        if(isset($data["curp"])){
-            $documento = $data["curp"]."_CURP.pdf";
-            $path = Storage::putFileAs('documentosSolicitud', $request->file('documentoCurp'), $documento);
-            SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoCurp' => $documento ]);
+        $solActual = SeerSolicitante::where('id_solicitud', $data['id'])->first();
+        $curpBase = $data['curp_solicitante'] ?? ($data['curp'] ?? ($solActual->curp ?? ('solicitud_' . $data['id'])));
+
+        if ($request->hasFile('documentoCurp')) {
+            $prev = $solActual->documentoCurp ?? null;
+            $documento = $curpBase . '_CURP_' . time() . '.pdf';
+            Storage::putFileAs('documentosSolicitud', $request->file('documentoCurp'), $documento);
+            SeerSolicitante::where('id_solicitud', $data['id'])->update(['documentoCurp' => $documento]);
+
+            if ($prev && $prev !== 'Sin documento') {
+                Storage::delete('documentosSolicitud/' . $prev);
+            }
         }
- 
-        //Acta de nacimiento
-        if(isset($data["indetificacion"])){
-            $documentoidentificacion = $data["curp"]."_Identificacion.pdf";
-            $path = Storage::putFileAs('documentosSolicitud', $request->file('indetificacion'), $documentoidentificacion);
-            SeerSolicitante::where('id_solicitud', $data["id"])->update(['documentoIdentificacion' => $documentoidentificacion ]);
+
+        if ($request->hasFile('documentoIdentificacion')) {
+            $prev = $solActual->documentoIdentificacion ?? null;
+            $documentoidentificacion = $curpBase . '_Identificacion_' . time() . '.pdf';
+            Storage::putFileAs('documentosSolicitud', $request->file('documentoIdentificacion'), $documentoidentificacion);
+            SeerSolicitante::where('id_solicitud', $data['id'])->update(['documentoIdentificacion' => $documentoidentificacion]);
+
+            if ($prev && $prev !== 'Sin documento') {
+                Storage::delete('documentosSolicitud/' . $prev);
+            }
         }
         
         //Si se va confirmar si el valor es 2 solo se va editar lo anterior
