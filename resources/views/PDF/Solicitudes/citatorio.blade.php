@@ -152,14 +152,14 @@
                 @endif
 
                 <br><br><br><br><br>
-                <p><center><b>___________________________________<br> {{strtoupper($conciliador->name)}} <br> FUNCIONARIO/A CONCILIADOR/A<br>
+                <p><center><b>___________________________________<br> {{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
                         DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center> </p>
             </div>
             <script type="text/php">
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");
                     $size = 10;
-                    $y = $pdf->get_height() - 30;
+                    $y = $pdf->get_height() - 44;
                     $x = ($pdf->get_width() / 2) - 50;
                     $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
                     $pdf->page_text($x, $y, $text, $font, $size, array(0, 0, 0));

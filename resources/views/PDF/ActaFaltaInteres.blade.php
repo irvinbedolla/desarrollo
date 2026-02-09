@@ -81,9 +81,7 @@
     @endphp
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
-        <footer>
-            
-        </footer>
+        <footer></footer>
         <main>
             <div class="content">
                 <div class="table-responsive">
@@ -162,7 +160,7 @@
                 </p>
 
                 <br><br><br><br>  
-                <center><br><br> <p><b>___________________________________<br>{{mb_strtoupper($conciliador->name, 'UTF-8')}} <br>FUNCIONARIO/A CONCILIADOR/A<br>
+                <center><p><b>___________________________________<br>{{mb_strtoupper($conciliador->name, 'UTF-8')}} <br>FUNCIONARIO/A CONCILIADOR/A<br>
                     DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>        
             </div>
             <script type="text/php">

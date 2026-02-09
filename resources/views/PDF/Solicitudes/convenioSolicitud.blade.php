@@ -58,9 +58,40 @@
                 text-indent: -15px; 
                 padding-left: 15px;
             }
+            .table-compacta td, 
+            .table-compacta th {
+                padding: 2px 5px !important; /* Reduce el espacio interno arriba y abajo */
+                line-height: 1.1 !important;  /* Ajusta la altura del texto */
+                vertical-align: middle;
+            }
+            .table-compacta {
+                margin-bottom: 10px !important; /* Reduce espacio entre tablas */
+            }
+            /* Contenedor que agrupa las firmas */
+            .salto-inteligente {
+                display: block;
+                height: 2cm;            
+                margin-bottom: -2cm;   
+                page-break-inside: avoid;
+            }
+
+            .contenedor-firmas {
+                page-break-inside: avoid; 
+            }
         </style>
-        
     </head>
+    @php
+        $nombramiento_delegado='';
+        if($solicitud->delegacion === 'Morelia' || $solicitud->delegacion === 'Zitácuaro'){
+            $nombramiento_delegado='DIRECTOR DE LA DELEGACIÓN REGIONAL DE MORELIA';
+        }    
+        if($solicitud->delegacion === 'Uruapan' || $solicitud->delegacion === 'Lázaro Cárdenas'){
+            $nombramiento_delegado='DIRECTORA DE LA DELEGACIÓN REGIONAL DE URUAPAN';
+        }
+        if($solicitud->delegacion === 'Zamora' || $solicitud->delegacion === 'Sahuayo') {
+            $nombramiento_delegado='DIRECTORA DE LA DELEGACIÓN REGIONAL DE ZAMORA';
+        }  
+    @endphp
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
         <footer></footer>
@@ -212,7 +243,7 @@
                             conforme a los siguientes conceptos:</p>
 
                         <b>Prestaciones</b>
-                        <table class="table table-bordered">
+                        <table class="table table-bordered table-compacta">
                             <thead>
                                 <tr>
                                     <th>Concepto</th>
@@ -236,7 +267,7 @@
                         <!-- Para las deducciones -->
                         @if(!empty($deducciones) && count($deducciones) > 0)
                             <b>Deducciones</b>
-                            <table class="table table-bordered">
+                            <table class="table table-bordered table-compacta">
                                 <thead>
                                     <tr>
                                         <th>Concepto</th>
@@ -280,86 +311,138 @@
                             obligación bajo el presente convenio, de conformidad con lo establecido en el artículo 684-E, fracción XIV, último párrafo, de la Ley Federal del Trabajo.</p> 
                     @endif  -->
 
-                    @if($cantidadPagos > 0)            
-                        <p><b>SEXTA.</b> La parte <b>EMPLEADORA</b> manifiesta que en este acto en fecha <b>{{ \Carbon\Carbon::parse($solicitud->update)->translatedFormat('d \d\e F \d\e\l Y') }}</b> le paga a la parte <b>TRABAJADORA en</b> <b>{{ $cantidadPagos }}</b> 
-                            exhibiciones, la cantidad de 
-                            <b>${{ number_format($datosAudiencia->monto, 2) }} {{ $montoTexto }} M.N</b>, en el domicilio que ocupa el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, con lo que se certifica el cumplimiento de su obligación bajo el presente convenio, de conformidad con lo establecido en el artículo 684-E, fracción XIV, de la Ley Federal del Trabajo, tal como se muestra:
+                    @if($cantidadPagos > 1)            
+                        <p><b>SEXTA.</b> La parte <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($solicitud->update)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará a la parte <b>TRABAJADORA en</b> <b>{{ $cantidadPagos }}</b> 
+                            exhibiciones, hasta culminar la cantidad de 
+                            <b>${{ number_format($datosAudiencia->monto, 2) }} {{ $montoTexto }} M.N</b>, tal como se muestra:
                         </p>
                         
                         <div class="table-responsive">
                             <table id="pagos" class="table-striped" style="width:100%;">
                                 <thead>
                                     <th style="display: none;">ID</th>
+                                    <th>Exhibiciones</th>
                                     <th>Fecha</th>
+                                    <th>Hora</th>
                                     <th>Monto</th>
-                                    <th>Descripción</th>
                                 </thead>
                                 <tbody>
                                     @foreach($pagos as $pago)
                                         <tr>
                                             <td style="display: none;">{{$pago->id_solicitud}}</td>
-                                            <td>
-                                                @php
-                                                    $fechaText = '';
-                                                    $horaText = '';
-                                                    try {
-                                                        if (!empty($pago->fecha)) {
-                                                            $fechaText = \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d/m/y');
-                                                        }
-                                                    } catch (Exception $e) {
-                                                        $fechaText = '';
-                                                    }
-                                                    try {
-                                                        $rawHora = isset($pago->hora) ? trim(str_replace(' HORAS', '', $pago->hora)) : '';
-                                                        //if ($rawHora && preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $rawHora)) {
-                                                            $horaText = \Carbon\Carbon::parse($rawHora)->format('H:i');
-                                                        //}
-                                                    } catch (Exception $e) {
-                                                        $horaText = '';
-                                                    }
-                                                @endphp
-                                                {{ $fechaText }}@if($horaText)<br>{{ $horaText }}@endif
-                                            </td>
-                                            <td>${{ number_format($pago->monto, 2) }}</td>
                                             <td>{{$pago->descripcion}}</td>
+                                            @php
+                                                $fechaText = '';
+                                                $horaText = '';
+                                                try {
+                                                    if (!empty($pago->fecha)) {
+                                                        $fechaText = \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d/m/y');
+                                                    }
+                                                } catch (Exception $e) {
+                                                    $fechaText = '';
+                                                }
+                                                try {
+                                                    $rawHora = isset($pago->hora) ? trim(str_replace(' HORAS', '', $pago->hora)) : '';
+                                                    //if ($rawHora && preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $rawHora)) {
+                                                        $horaText = \Carbon\Carbon::parse($rawHora)->format('H:i');
+                                                    //}
+                                                } catch (Exception $e) {
+                                                    $horaText = '';
+                                                }
+                                            @endphp
+                                            <td>{{ $fechaText }}</td> @if($horaText) <td>{{ $horaText }} HRS</td> @endif
+                                            <td>${{ number_format($pago->monto, 2) }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>      
                         </div><br>
                         
+                        <p>En caso de que la parte <b>EMPLEADORA</b> no cubra el pago de la cantidad estipulada y dentro del plazo determinado en esta cláusula, deberá pagar a la parte <b>TRABAJADORA</b> 
+                            el equivalente a un día de salario diario, el cual se fijará en razón del salario que percibía dicha parte antes de finalizar la relación de trabajo correspondiente a la cantidad de 
+                            <b>${{ number_format($salario_diario, 2) }} {{ $diarioTexto }} M.N</b> Esa cantidad se sumará a la previamente pactada, por cada día que 
+                            transcurra, sin que se dé cabal cumplimiento al convenio, con fundamento en el artículo 684-E, fracción XIV, último párrafo, de la Ley Federal del Trabajo.</p>
+                        
+                        <p>Asimismo, manifiestan estar de acuerdo que de no pagarse el primero de los pagos convenidos en la fecha de su vencimiento, quedará a salvo el derecho de cualquiera de las partes para 
+                            exigir el cumplimiento del pago total de la cantidad pactada ante la autoridad competente, a parte de los días que transcurran de pena convencional.</p>
+                    @endif   
+                    @if($cantidadPagos == 1)            
+                        <p><b>SEXTA.</b> La parte <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($solicitud->update)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará a la parte <b>TRABAJADORA en</b> <b>{{ $cantidadPagos }}</b> 
+                            exhibición, hasta culminar la cantidad de 
+                            <b>${{ number_format($datosAudiencia->monto, 2) }} {{ $montoTexto }} M.N</b>, tal como se muestra:
+                        </p>
+                        
+                        <div class="table-responsive">
+                            <table id="pagos" class="table-striped" style="width:100%;">
+                                <thead>
+                                    <th style="display: none;">ID</th>
+                                    <th>Exhibición</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Monto</th>
+                                </thead>
+                                <tbody>
+                                    @foreach($pagos as $pago)
+                                        <tr>
+                                            <td style="display: none;">{{$pago->id_solicitud}}</td>
+                                            <td>{{$pago->descripcion}}</td>
+                                            @php
+                                                $fechaText = '';
+                                                $horaText = '';
+                                                try {
+                                                    if (!empty($pago->fecha)) {
+                                                        $fechaText = \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d/m/y');
+                                                    }
+                                                } catch (Exception $e) {
+                                                    $fechaText = '';
+                                                }
+                                                try {
+                                                    $rawHora = isset($pago->hora) ? trim(str_replace(' HORAS', '', $pago->hora)) : '';
+                                                    //if ($rawHora && preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $rawHora)) {
+                                                        $horaText = \Carbon\Carbon::parse($rawHora)->format('H:i');
+                                                    //}
+                                                } catch (Exception $e) {
+                                                    $horaText = '';
+                                                }
+                                            @endphp
+                                            <td>{{ $fechaText }}</td> @if($horaText) <td>{{ $horaText }} HRS</td> @endif
+                                            <td>${{ number_format($pago->monto, 2) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>      
+                        </div>
                         
                         <p>En caso de que la parte <b>EMPLEADORA</b> no cubra el pago de la cantidad estipulada y dentro del plazo determinado en esta cláusula, deberá pagar a la parte <b>TRABAJADORA</b> 
                             el equivalente a un día de salario diario, el cual se fijará en razón del salario que percibía dicha parte antes de finalizar la relación de trabajo correspondiente a la cantidad de 
-                            <b>${{ number_format($salario_diario, 2) }} {{ $diarioTexto }} M.N</b>. Esa cantidad se sumará a la previamente pactada, por cada día que 
+                            <b>${{ number_format($salario_diario, 2) }} {{ $diarioTexto }} M.N.</b> Esa cantidad se sumará a la previamente pactada, por cada día que 
                             transcurra, sin que se dé cabal cumplimiento al convenio, con fundamento en el artículo 684-E, fracción XIV, último párrafo, de la Ley Federal del Trabajo.</p>
-                    @endif   
-
-                    <p>Asimismo, manifiestan estar de acuerdo que de no pagarse el primero de los pagos convenidos en la fecha de su vencimiento, quedará a salvo el derecho de cualquiera de las partes para 
-                        exigir el cumplimiento del pago total de la cantidad pactada ante la autoridad competente, a parte de los días que transcurran de pena convencional.</p>
-
+                    @endif
                     <p>
-                        <b>SÉPTIMA.</b> Las <b>PARTES</b> solicitan se apruebe y sancione este convenio, toda vez que se elaboró conforme a las disposiciones aplicables de la Ley Federal del Trabajo como 
+                        <b>SÉPTIMA</b>. Las <b>PARTES</b> solicitan se apruebe y sancione este convenio, toda vez que se elaboró conforme a las disposiciones aplicables de la Ley Federal del Trabajo como 
                         resultado del diálogo de la conciliación entre la parte <b>TRABAJADORA</b> y la parte <b>EMPLEADORA</b>. Así mismo, manifiestan que se encuentran conformes con el presente acuerdo 
-                        por no contener cláusula contraria a la costumbre, a la moral, ni renuncia a los derechos de las <b>PARTES.</b><br><br>
+                        por no contener cláusula contraria a la costumbre, a la moral, ni renuncia a los derechos de las <b>PARTES</b>.<br><br>
                                     
-                        <b>OCTAVA.</b> Las <b>PARTES</b> manifiestan que es su voluntad ratificar el presente convenio en todas y cada una de sus partes y la aprobación de su contenido, por lo que no se 
+                        <b>OCTAVA</b>. Las <b>PARTES</b> manifiestan que es su voluntad ratificar el presente convenio en todas y cada una de sus partes y la aprobación de su contenido, por lo que no se 
                         reservan acción legal o derecho alguno para ejercitar con posterioridad a la firma del presente convenio.<br><br>
                                     
-                        <b>NOVENA.</b> Las <b>PARTES</b> solicitan ante el Centro Estatal de Conciliación Laboral que les sean expedidas las copias autorizadas del convenio, y en el momento en que se haya 
+                        <b>NOVENA</b>. Las <b>PARTES</b> solicitan ante el Centro Estatal de Conciliación Laboral que se les expida un tanto original del convenio, y en el momento en que se haya 
                         cumplido totalmente, se les expida acta en la que conste el cumplimiento de éste, en términos del artículo 684-E, fracción XIV, primer párrafo, de la Ley Federal del Trabajo.<br><br>
                                     
-                        <b>DÉCIMA.</b> Las <b>PARTES</b> manifiestan que en la celebración del presente convenio no existió violencia, mala fe, dolo, lesión o cualquier otro tipo de vicio del consentimiento 
+                        <b>DÉCIMA</b>. Las <b>PARTES</b> manifiestan que en la celebración del presente convenio no existió violencia, mala fe, dolo, lesión o cualquier otro tipo de vicio del consentimiento 
                         que pudiera nulificarlo.<br><br>
-                                    
-                        <b>DÉCIMA PRIMERA.</b> En caso de que no se cumplan los términos de lo convenido en el presente instrumento, las <b>PARTES</b> deberán acudir a los juzgados Laborales del fuero común a 
-                        efecto de que se realice el procedimiento de ejecución que la Ley Federal del Trabajo contempla. <br>
-                        <br>Enteradas las <b>PARTES</b> del alcance legal del presente convenio que se eleva a la categoria de cosa juzgada, conforme al artículo 684-E fracción XIII, mismo que se firma en <b>{{ $solicitud->delegacion }}</b> 
+                    
+                          
+                        <b>DÉCIMA PRIMERA</b>. En caso de que no se cumplan los términos de lo convenido en el presente instrumento, las <b>PARTES</b> deberán acudir al Juzgado Laboral competente a 
+                        efecto de que se realice el Procedimiento de Ejecución que la Ley Federal del Trabajo contempla. <br>
+                    </p> 
+                    <div class="salto-inteligente"></div>
+                    <div class="contenedor-firmas">             
+                    <p>Enteradas las <b>PARTES</b> del alcance legal del presente convenio que se eleva a la categoria de cosa juzgada, conforme al artículo 684-E fracción XIII, mismo que se firma en <b>{{ $solicitud->delegacion }}</b> 
                         de Michoacán de Ocampo a los <b>{{ \Carbon\Carbon::parse($solicitud->update)->translatedFormat('d \d\í\a\s \d\e F \d\e\l Y') }}</b>, ante la fe de <b>{{ strtoupper($conciliador->name) }}</b>, funcionario(a) conciliador(a), quien 
                         lo sanciona en este mismo acto. <b>Doy fe.</b>
                     </p>
-                    <br><br><br><br>
-                    
+                    <br><br>
                     <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:30px;">
                         <tr>
                             <td style="width:50%; vertical-align:top; padding:0 20px;">
@@ -375,11 +458,28 @@
                                 LA PARTE EMPLEADORA
                             </b>
                             </td>
+                        </tr><br>
+                        <tr>
+                            <td style="width:60%; vertical-align:top; padding:0 10px;"><b>Doy fe</b><br><br><br><br>
+                                <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                                <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}<br>
+                                        FUNCIONARIO/A CONCILIADOR/A<br>
+                                        DEL CENTRO DE CONCILIACIÓN LABORAL
+                                        DEL ESTADO DE MICHOACÁN DE OCAMPO
+                                </b>
+                            </td>
+                            <td style="width:60%; vertical-align:top; padding:0 10px;"><b>Vo. Bo.</b><br><br><br><br>
+                                <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                                <b>{{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
+                                {{ $nombramiento_delegado }}                         
+                                </b>
+                            </td>
                         </tr>
-                    </table>
-                    <br><br><br><br>
-                    <p><center><b>___________________________________<br> {{ strtoupper($conciliador->name) }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
-                        DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>               
+                    </table><br>
+                    <p style="font-size: 10px;">
+                            LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DEL CONVENIO DE CONCILIACIÓN DE FECHA <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> EXPEDIENTE NÚMERO <b>{{ $solicitud->NUE }}</b> DEL CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO.
+                    </p> 
+                </div>        
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

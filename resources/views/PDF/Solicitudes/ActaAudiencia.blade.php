@@ -54,13 +54,31 @@
                 height: 100%;
                 z-index: -1;
             } 
+            .table-compacta td, 
+            .table-compacta th {
+                padding: 2px 5px !important; /* Reduce el espacio interno arriba y abajo */
+                line-height: 1.1 !important;  /* Ajusta la altura del texto */
+                vertical-align: middle;
+            }
+            .table-compacta {
+                margin-bottom: 10px !important; /* Reduce espacio entre tablas */
+            }
+            /* Contenedor que agrupa las firmas */
+            .salto-inteligente {
+                display: block;
+                height: 2cm;           
+                margin-bottom: -2cm;    
+                page-break-inside: avoid;
+            }
+
+            .contenedor-firmas {
+                page-break-inside: avoid; 
+            }
         </style>
     </head>
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
-        <footer>
-            
-        </footer>
+        <footer></footer>
         <main>
             <div class="content">
                 <div class="table-responsive">
@@ -139,7 +157,7 @@
 
                     La propuesta referida para la parte trabajadora, se encuentra formulada en los términos siguientes:<br><br>
                     @if(!empty($prestaciones) && count($prestaciones) > 0)
-                        <table class="table table-bordered">
+                        <table class="table table-bordered table-compacta">
                             <thead>
                                 <tr>
                                     <th>Concepto</th>
@@ -163,7 +181,7 @@
             <!-- Para las deducciones -->
                     @if(!empty($deducciones) && count($deducciones) > 0)
                         <b>Deducciones</b>
-                        <table class="table table-bordered">
+                        <table class="table table-bordered table-compacta">
                             <thead>
                                 <tr>
                                     <th>Concepto</th>
@@ -183,7 +201,7 @@
                         </table> 
                     @endif
                     @if((!empty($deducciones) && count($deducciones) > 0) || (!empty($prestaciones) && count($prestaciones) > 0))
-                        <table class="table table-bordered" style="width:100%; float: right;">
+                        <table class="table table-bordered table-compacta" style="width:100%; float: right;">
                             <thead>
                                 <tr style="background-color: #f0f0f0;">
                                     <td class="text-right"><strong>Neto a pagar: </strong></td>
@@ -224,32 +242,36 @@
                     serán protegidos, incorporados y tratados únicamente por este Organismo Descentralizado de la Administración Pública Estatal como Sujeto Obligado ante la Ley General de Protección de Datos 
                     Personales en Posesión de Sujetos Obligados y a la Ley General de Transparencia y Acceso a la Información Pública. <br><br>
 
-                    Asimismo, se informa que sus datos no podrán ser difundidos sin el consentimiento expreso, salvo las excepciones previstas en ley.<br><br>
-
-                    Así lo proveyó, <b>{{ $conciliador->name }}</b>, Funcionario(a) Conciliador(a) adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
+                    Asimismo, se informa que sus datos no podrán ser difundidos sin el consentimiento expreso, salvo las excepciones previstas en ley.
                 </p>
-               
-                <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:30px;">
-                    <tr>
-                        <td style="width:50%; vertical-align:top; padding:0 20px;">
-                            <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
-                            <b>
-                                {{ $solicitante->nombre }}<br>
-                                LA PARTE TRABAJADORA
-                            </b>
-                            </td>
+                <div class="salto-inteligente"></div>
+                <div class="contenedor-firmas"> 
+                    <p>
+                        Así lo proveyó, <b>{{ $conciliador->name }}</b>, Funcionario(a) Conciliador(a) adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
+                    </p>
+                    <br><br>
+                    <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:30px;">
+                        <tr>
                             <td style="width:50%; vertical-align:top; padding:0 20px;">
-                            <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
-                            <b>
-                                {{-- {{ $abogado->nombres_patronal }} {{ $abogado->primer_apellido_patronal }} {{ $abogado->segundo_apellido_patronal }}<br> --}}
-                                LA PARTE EMPLEADORA
-                            </b>
-                        </td>        
-                    </tr>
-                </table>
-                <br><br><br>
-                <p><center><b>___________________________________<br> {{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
-                        DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p>                  
+                                <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                                <b>
+                                    {{ $solicitante->nombre }}<br>
+                                    LA PARTE TRABAJADORA
+                                </b>
+                                </td>
+                                <td style="width:50%; vertical-align:top; padding:0 20px;">
+                                <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                                <b>
+                                    {{-- {{ $abogado->nombres_patronal }} {{ $abogado->primer_apellido_patronal }} {{ $abogado->segundo_apellido_patronal }}<br> --}}
+                                    LA PARTE EMPLEADORA
+                                </b>
+                            </td>        
+                        </tr>
+                    </table>
+                    <br><br><br>
+                    <p><center><b>___________________________________<br> {{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
+                            DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p>                  
+                </div>
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

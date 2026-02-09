@@ -102,7 +102,7 @@
                 </p>
 
                 <br><br><br><br>       
-                <center><br><br> <p><b>___________________________________<br>{{ $conciliador->name}} <br>FUNCIONARIO/A CONCILIADOR/A<br>
+                <center><p><b>___________________________________<br>{{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br>FUNCIONARIO/A CONCILIADOR/A<br>
                     DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>         
             </div>
             <script type="text/php">

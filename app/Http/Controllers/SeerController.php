@@ -6991,12 +6991,23 @@ class SeerController extends Controller
         ->select("users.name")
         ->first();
         $delegacion = $solicitud->delegacion;
-        $delegado = User::where('delegacion', $delegacion)
-            ->whereHas('roles', function ($query) {
-                $query->where('name', 'Delegado');
-            })
-            ->select('users.id', 'users.name', 'users.delegacion')
-            ->first();  
+        $delegadosEspeciales = [
+                'Zitácuaro'        => 11,
+                'Lázaro Cárdenas'  => 43,
+                'Sahuayo'          => 26,
+            ];
+
+        if (array_key_exists($delegacion, $delegadosEspeciales)) {
+            $delegado = User::select('id', 'name', 'delegacion')
+                ->find($delegadosEspeciales[$delegacion]);
+        } else {
+            $delegado = User::where('delegacion', $delegacion)
+                ->whereHas('roles', function ($query) {
+                    $query->where('name', 'Delegado');
+                })
+                ->select('users.id', 'users.name', 'users.delegacion')
+                ->first();
+        }  
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
         ->first();
@@ -7006,7 +7017,7 @@ class SeerController extends Controller
         $salario_mensual = $salario_diario * 30;
         $diarioTexto = $this->convertirNumerosALetras($salario_diario);
         $mensualTexto = $this->convertirNumerosALetras($salario_mensual);
-        $montoTexto = $this->convertirNumerosALetras($solicitante->monto);
+        $montoTexto = $this->convertirNumerosALetras($datosAudiencia->monto);
 
         $idsSession = session()->get('convenio_citados_' . $id);
 
@@ -9107,19 +9118,29 @@ class SeerController extends Controller
    //PDF Constancia de cumplimiento
     public function VerPDFCumplimiento($id){
         $pagos = Pagos::find($id);
+        $delegadosEspeciales = [
+            'Zitácuaro'        => 11,
+            'Lázaro Cárdenas'  => 43,
+            'Sahuayo'          => 26,
+        ];
         if($pagos["id_solicitud"] == 0){
             $solicitud = Pagos::find($id);
-            $delegacion = $solicitud->delegacion;
-            $delegado = User::where('delegacion', $delegacion)
-                ->whereHas('roles', function ($query) {
-                    $query->where('name', 'Delegado');
-                })
-                ->select('users.id', 'users.name', 'users.delegacion')
-                ->first();
             $conciliador  = User::join("pago_solicitud","pago_solicitud.id_conciliador","=","users.id");
             $conciliador = $conciliador->where("pago_solicitud.id", "=", $pagos["id"])
             ->select('users.name')
             ->first();
+            $delegacion = $solicitud->delegacion;
+            if (array_key_exists($delegacion, $delegadosEspeciales)) {
+                $delegado = User::select('id', 'name', 'delegacion')
+                    ->find($delegadosEspeciales[$delegacion]);
+            } else {
+                $delegado = User::where('delegacion', $delegacion)
+                    ->whereHas('roles', function ($query) {
+                        $query->where('name', 'Delegado');
+                    })
+                    ->select('users.id', 'users.name', 'users.delegacion')
+                    ->first();
+            }
             $html = view('PDF/Cumplimientos/pagosParciales', compact('id', 'solicitud','conciliador','pagos','delegado'))->render();
         }else{
             $solicitud = Turnos::find($pagos["id_solicitud"]);
@@ -9135,7 +9156,7 @@ class SeerController extends Controller
             ->select('users.name')
             ->first();
             // Obtener el número de pagos
-            $pagosDif = Pagos::where("id_solicitud", $id)->count();
+            $pagosDif = Pagos::where("id_solicitud", $pagos->id_solicitud)->count();
             $html = view('PDF/pagosParciales', compact('id', 'solicitud','conciliador','pagos','pagosDif','delegado'))->render();
         }
 
@@ -11274,28 +11295,48 @@ class SeerController extends Controller
     //PDF Constancia de cumplimiento
     public function PDFcumplimientoParcial($id){
         $pagos = Pagos::find($id);
-
+        $delegadosEspeciales = [
+            'Zitácuaro'        => 11,
+            'Lázaro Cárdenas'  => 43,
+            'Sahuayo'          => 26,
+        ];
         if($pagos["id_solicitud"] == 0){
             $solicitud = Pagos::find($id);
             $conciliador  = User::join("pago_solicitud","pago_solicitud.id_conciliador","=","users.id");
             $conciliador = $conciliador->where("pago_solicitud.id", "=", $pagos["id"])
             ->select('users.name')
             ->first();
-            $html = view('PDF/Cumplimientos/pagosParciales', compact('id', 'solicitud','conciliador','pagos'))->render();
+            $delegacion = $solicitud->delegacion;
+            if (array_key_exists($delegacion, $delegadosEspeciales)) {
+                $delegado = User::select('id', 'name', 'delegacion')
+                    ->find($delegadosEspeciales[$delegacion]);
+            } else {
+                $delegado = User::where('delegacion', $delegacion)
+                    ->whereHas('roles', function ($query) {
+                        $query->where('name', 'Delegado');
+                    })
+                    ->select('users.id', 'users.name', 'users.delegacion')
+                    ->first();
+            }
+            $html = view('PDF/Cumplimientos/pagosParciales', compact('id', 'solicitud','conciliador','pagos','delegado'))->render();
         }else{
             $solicitud = SeerPerGeneral::find($pagos["id_solicitud"]);
             $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id")
             ->where("seer_general.id", "=", $solicitud["id"])
             ->select('users.name')
             ->first();
-            $delegacion = $solicitud["delegacion"];
-            $delegado = User::where('delegacion', $delegacion)
-                ->whereHas('roles', function ($query) {
-                    $query->where('name', 'Delegado');
-                })
-                ->select('users.name')
-                ->first();
-
+            $delegacion = $solicitud->delegacion;
+            if (array_key_exists($delegacion, $delegadosEspeciales)) {
+                $delegado = User::select('id', 'name', 'delegacion')
+                    ->find($delegadosEspeciales[$delegacion]);
+            } else {
+                $delegado = User::where('delegacion', $delegacion)
+                    ->whereHas('roles', function ($query) {
+                        $query->where('name', 'Delegado');
+                    })
+                    ->select('users.id', 'users.name', 'users.delegacion')
+                    ->first();
+            }
             $html = view('PDF/Solicitudes/pagosParciales', compact('id', 'solicitud','conciliador','pagos', 'delegado', 'delegacion'))->render();
         }
 

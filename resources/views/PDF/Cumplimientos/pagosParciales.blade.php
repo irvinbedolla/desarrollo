@@ -67,8 +67,19 @@
                 page-break-inside: avoid; 
             }
         </style>
-        
     </head>
+    @php
+        $nombramiento_delegado='';
+        if($solicitud->delegacion === 'Morelia' || $solicitud->delegacion === 'Zitácuaro'){
+            $nombramiento_delegado='DIRECTOR DE LA DELEGACIÓN REGIONAL DE MORELIA';
+        }    
+        if($solicitud->delegacion === 'Uruapan' || $solicitud->delegacion === 'Lázaro Cárdenas'){
+            $nombramiento_delegado='DIRECTORA DE LA DELEGACIÓN REGIONAL DE URUAPAN';
+        }
+        if($solicitud->delegacion === 'Zamora' || $solicitud->delegacion === 'Sahuayo') {
+            $nombramiento_delegado='DIRECTORA DE LA DELEGACIÓN REGIONAL DE ZAMORA';
+        }  
+    @endphp
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
         <footer>
@@ -118,10 +129,10 @@
                     <p>
                         <b>Con fecha {{ $pagos->updated_at->translatedFormat('d \d\e F \d\e\l Y') }} se emite la presente Constancia de Pago, con 
                         fundamento en la fracción XIV del artículo 684-E y fracción VIII del artículo 684-F de la Ley Federal del Trabajo.</b>
-                    </p><br><br><br>
+                    </p><br><br>
                     <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:10px;">
                         <tr>
-                            <td style="width:50%; vertical-align:top; padding:0 5px;">
+                            <td style="width:50%; vertical-align:top; padding:0 5px;"><b>Doy fe</b><br><br><br><br>
                                 <div style="border-top: 2px solid #000; width:90%; margin: 0 auto 5px auto;"></div>
                                 <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}<br>
                                         FUNCIONARIO/A CONCILIADOR/A<br>
@@ -129,11 +140,10 @@
                                         DEL ESTADO DE MICHOACÁN DE OCAMPO
                                 </b>
                             </td>
-                        <td style="width:50%; vertical-align:top; padding:0 5px;">
+                        <td style="width:50%; vertical-align:top; padding:0 5px;"><b>Vo. Bo.</b><br><br><br><br>
                                 <div style="border-top: 2px solid #000; width:90%; margin: 0 auto 5px auto;"></div>
                                 <b>{{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
-                                    DIRECTOR/A DEL CENTRO DE CONCILIACIÓN
-                                    LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO                                  
+                                   {{ $nombramiento_delegado }}                                  
                                 </b>
                             </td>
                         </tr>

@@ -150,7 +150,7 @@
                     solicitante <b>{{ $solicitante->nombre }}</b>, sin embargo, no acudió, no obrando una causa justificada de la incomparecencia. <br><br> 
                     Por lo anteriormente expuesto, se:
                 </p> <br><br><br><br><br>      
-                    <p><br><br><center><b>RESUELVE</b></center><br>
+                <p><center><b>RESUELVE</b></center><br>
 
                     <b>Primero.</b> Se archiva el expediente <b>{{ $solicitud->NUE }}</b> que consta desde el <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, 
                     en este Centro, por falta de interés del Solicitante.<br><br>
@@ -168,14 +168,14 @@
                 </p>
 
                 <br>
-                <center><br><br> <p><b>___________________________________<br>{{ strtoupper($conciliador->name) }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
+                <center><p><b>___________________________________<br>{{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
                         DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>     
             </div>
             <script type="text/php">
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");
                     $size = 10;
-                    $y = $pdf->get_height() - 30;
+                    $y = $pdf->get_height() - 44;
                     $x = ($pdf->get_width() / 2) - 50;
                     $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
                     $pdf->page_text($x, $y, $text, $font, $size, array(0, 0, 0));

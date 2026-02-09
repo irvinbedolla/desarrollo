@@ -181,7 +181,8 @@
                     Así lo proveyó <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}</b>, funcionario(a) conciliador(a) adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
                 </p>
                
-                <p><center><b>___________________________________<br> {{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>               
+                <p><center><b>___________________________________<br> {{ mb_strtoupper($conciliador->name, 'UTF-8') }} 
+                <br> FUNCIONARIO/A CONCILIADOR/A <br>DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></center> </p>               
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

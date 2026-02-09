@@ -104,6 +104,18 @@
             $direccion_sede='AV. UNIVERSIDAD SUR NO. 300, COL. LOMAS DE UNIVERSIDAD, C.P. 59103 SAHUAYO DE MORELOS, MICHOACÁN DE OCAMPO.';
         } 
     @endphp
+    @php
+        $nombramiento_delegado='';
+        if($solicitud->delegacion === 'Morelia' || $solicitud->delegacion === 'Zitácuaro'){
+            $nombramiento_delegado='DIRECTOR DE LA DELEGACIÓN REGIONAL DE MORELIA';
+        }    
+        if($solicitud->delegacion === 'Uruapan' || $solicitud->delegacion === 'Lázaro Cárdenas'){
+            $nombramiento_delegado='DIRECTORA DE LA DELEGACIÓN REGIONAL DE URUAPAN';
+        }
+        if($solicitud->delegacion === 'Zamora' || $solicitud->delegacion === 'Sahuayo') {
+            $nombramiento_delegado='DIRECTORA DE LA DELEGACIÓN REGIONAL DE ZAMORA';
+        }  
+    @endphp
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
         <footer></footer>
@@ -357,7 +369,7 @@
                             Enteradas las <b>PARTES</b> del alcance legal del presente convenio que se eleva a cosa juzgada, conforme al artículo 684- E fracción XIII, mismo que se firma en <b>Michoacán de Ocampo a {{ \Carbon\Carbon::parse($ratificacion->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, 
                             ante la fe de <b>{{$conciliador->name}}</b>, funcionario(a) conciliador(a), quien lo sanciona en este mismo acto. <b>Doy fe.</b>
                         </p>
-                        <br><br><br>
+                        <br><br>
                         <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:5px;">
                             <tr>
                                 <td style="width:60%; vertical-align:top; padding:0 10px;">
@@ -376,7 +388,7 @@
                             </tr>
                             <br><br><br>
                             <tr>
-                                <td style="width:60%; vertical-align:top; padding:0 10px;">
+                                <td style="width:60%; vertical-align:top; padding:0 10px;"><b>Doy fe</b><br><br><br><br>
                                     <div style="border-top: 1px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
                                     <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}<br>
                                             FUNCIONARIO/A CONCILIADOR/A<br>
@@ -384,11 +396,10 @@
                                             DEL ESTADO DE MICHOACÁN DE OCAMPO
                                     </b>
                                 </td>
-                                <td style="width:60%; vertical-align:top; padding:0 10px;">
+                                <td style="width:60%; vertical-align:top; padding:0 10px;"><b>Vo. Bo.</b><br><br><br><br>
                                     <div style="border-top: 1px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
                                     <b>{{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
-                                        DIRECTOR/A DEL CENTRO DE CONCILIACIÓN
-                                        LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO                                  
+                                    {{ $nombramiento_delegado }}                                 
                                     </b>
                                 </td>
                             </tr>

@@ -55,7 +55,6 @@
                 z-index: -1;
             } 
         </style>
-        
     </head>
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
@@ -102,13 +101,16 @@
                 </p>
 
                 <br><br><br><br>       
-                <center><br><br> <p><b>___________________________________<br>{{ $conciliador->name}} <br>FUNCIONARIO/A CONCILIADOR/A</b></p></center>           
+                <center><p><b>___________________________________<br>{{ mb_strtoupper($conciliador->name, 'UTF-8') }} 
+                <br>FUNCIONARIO/A CONCILIADOR/A
+                <br>DEL CENTRO DE CONCILIACIÓN LABORAL
+                <br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>           
             </div>
             <script type="text/php">
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");
                     $size = 10;
-                    $y = $pdf->get_height() - 30;
+                    $y = $pdf->get_height() - 44;
                     $x = ($pdf->get_width() / 2) - 50;
                     $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
                     $pdf->page_text($x, $y, $text, $font, $size, array(0, 0, 0));

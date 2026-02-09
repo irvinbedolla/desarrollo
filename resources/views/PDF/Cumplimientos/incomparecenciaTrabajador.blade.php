@@ -58,13 +58,10 @@
                 page-break-inside: avoid; 
             }
         </style>
-        
     </head>
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
-        <footer>
-            
-        </footer>
+        <footer></footer>
         <main>
             <div class="content">
                 <div class="table-responsive">
@@ -110,7 +107,11 @@
                 </p>
                 <br><br><br><br><br> 
                 <div class="contenedor-firmas">
-                    <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:10px;">
+                <center><p><b>___________________________________<br>{{ mb_strtoupper($conciliador->name, 'UTF-8') }} 
+                <br>FUNCIONARIO/A CONCILIADOR/A
+                <br>DEL CENTRO DE CONCILIACIÓN LABORAL
+                <br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>
+                  {{-- <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:10px;">
                         <tr>
                             <td style="width:50%; vertical-align:top; padding:0 5px;">
                                 <div style="border-top: 2px solid #000; width:90%; margin: 0 auto 5px auto;"></div>
@@ -128,7 +129,7 @@
                                 </b>
                             </td>
                         </tr>
-                    </table><br>
+                    </table><br>-}}
                     <p style="font-size: 10px;">
                         LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DE LA CONSTANCIA DE INCOMPARECENCIA DE PAGO DE FECHA <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> EXPEDIENTE NÚMERO <b>{{ $solicitud->NUE }}</b> DEL CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO.
                     </p>  
@@ -138,7 +139,7 @@
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");
                     $size = 10;
-                    $y = $pdf->get_height() - 30;
+                    $y = $pdf->get_height() - 44;
                     $x = ($pdf->get_width() / 2) - 50;
                     $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
                     $pdf->page_text($x, $y, $text, $font, $size, array(0, 0, 0));

@@ -80,9 +80,7 @@
     @endphp
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
-        <footer>
-            
-        </footer>
+        <footer></footer>
         <main>
             <div class="content">
                 <div class="table-responsive">
@@ -138,8 +136,8 @@
                          
                 </p>    
                 <br><br><br>  
-                <center><br><br> <p><b>___________________________________<br>{{ strtoupper($conciliador->name) }} <br> FUNCIONARIO/A CONCILIADOR<br>
-                DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>    
+                <center><p><b>___________________________________<br>{{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br> FUNCIONARIO/A CONCILIADOR<br>
+                DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>   
                 <br>
                 <p style="font-size:10px">En caso de que el conflicto se relacione con prestaciones de seguridad social, pensiones, designación de beneficiarios
                     y devolución de aportaciones, puedes acudir a la Procuraduría de la Defensa del Trabajo.<br><br>
@@ -153,7 +151,7 @@
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");
                     $size = 10;
-                    $y = $pdf->get_height() - 30;
+                    $y = $pdf->get_height() - 44;
                     $x = ($pdf->get_width() / 2) - 50;
                     $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
                     $pdf->page_text($x, $y, $text, $font, $size, array(0, 0, 0));
