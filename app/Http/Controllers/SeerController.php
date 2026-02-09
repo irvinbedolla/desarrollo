@@ -2015,6 +2015,7 @@ class SeerController extends Controller
 
     public function update_notificador(Request $request){
         $data = $request->all();
+        $fechaEspecifica = Carbon::createFromFormat('Y-m-d H:i', $data["fecha_notificacion"] . ' ' . $data["hora_notificacion"]);
         $documento = "Sin documento";
         $documento1 = "Sin documento";
         $documento2 = "Sin documento";
@@ -2062,8 +2063,6 @@ class SeerController extends Controller
             'especificar'                 => 'nullable',
             //'municipio_citado'            => 'nullable',
         ]);
-
-        $fechaEspecifica = Carbon::createFromFormat('Y-m-d H:i', $request->fecha_notificacion . ' ' . $request->hora_notificacion);
 
         if($data["tipo_llenado"] == 1){
             SeerCitados::find($data["id"])
@@ -6493,7 +6492,8 @@ class SeerController extends Controller
             $mensaje_ajuste .= " (Ajustado al límite legal de 45 días).";
         }
 
-        $fecha_revisar = $fecha_inicio_busqueda->format('Y-m-d');
+        //$fecha_revisar = $fecha_inicio_busqueda->format('Y-m-d');
+        $fecha_revisar = "2026-02-26";
         $horarios_disponibles = ["09:00:00", "10:15:00", "11:30:00", "12:45:00", "14:00:00"];
 
         // 3. Conciliadores y Sedes
@@ -6552,7 +6552,6 @@ class SeerController extends Controller
             $fecha_revisar = $carbon_revisar->addDay()->format('Y-m-d');
         } while ($bandera == 0);
     }
-
 
     public function concluir_audiencia_conciliador(Request $request){    
         $data = $request->all();
