@@ -85,8 +85,9 @@
                                 <div class="alert alert-success alert-dismissible fade show" role="alert" style="text-align: justify;">
                                     <input type="hidden" name="id" value="{{ $id }}">
                                     <strong>¡Registro completo!</strong><br>
-                                    <label>Tu solicitud fue capturada correctamente, tu número de folio es: "{{$id}}", Debes ingresar a 
-                                    http://siconcilio.cclmichoacan.gob.mx/ en el apartado de buzón electrónico con: "{{$mensaje}}"
+                                    <label>Tu solicitud fue capturada correctamente, tu número de folio es: "{{$id}}" 
+                                    <br><br>  
+                                        <b>POR FAVOR, ACUDE CON EL PERSONAL DEL CENTRO DE CONCILIACIÓN PARA PROSEGUIR CON LA CONFIRMACIÓN DE TU SOLICITUD</b>
                                     <br><br>
 
                                     NOTA: En caso de detectar algún error en los datos proporcionados, el personal del centro se pondrá en contacto contigo.<br><br>

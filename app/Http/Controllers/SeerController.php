@@ -387,7 +387,6 @@ class SeerController extends Controller
     
     public function mostrar_reporte(Request $request){
         $data = $request->all();
-        //dd($data);
         //Primero vamos a validar si el reporte sera cuanticativo o detallado
         //Validar documentacion
         /*
@@ -2345,21 +2344,8 @@ class SeerController extends Controller
     }
 
     //Solicitud en línea para los Centros de Conciliación
-    public function trabajadorCentro($tipo_solicitud){  
-        if (request()->boolean('debug_session')) {
-            dd([
-                'method' => 'trabajadorCentro',
-                'tipo_solicitud' => $tipo_solicitud,
-                'route' => optional(request()->route())->getName(),
-                'session_id' => session()->getId(),
-                'has_solicitud_trabajador_data' => session()->has('solicitud_trabajador_data'),
-                'has_solicitante_trabajador_data' => session()->has('solicitante_trabajador_data'),
-                'has_citados_trabajador_data' => session()->has('citados_trabajador_data'),
-                'solicitud_trabajador_data' => session('solicitud_trabajador_data'),
-                'solicitante_trabajador_data' => session('solicitante_trabajador_data'),
-                'citados_trabajador_data' => session('citados_trabajador_data'),
-            ]);
-        }
+    public function trabajadorCentro($tipo_solicitud){
+          
         if ($tipo_solicitud == "1") {
             $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '1') ->get();
         }
@@ -3737,8 +3723,7 @@ class SeerController extends Controller
                  $solicitante_insert = $solicitante_data['solicitante'];
                  $solicitante_insert['id_solicitud'] = $new_id;
                  SeerSolicitante::create($solicitante_insert);
-                 //dd($solicitante_insert);
-                                  
+
                  // 4. Crear SeerCasosExcepcion
                  if ($solicitante_data['excepcion'] === "Si") {
                      $excepcion_insert = $solicitante_data['excepcion_data'];
@@ -3763,19 +3748,6 @@ class SeerController extends Controller
                  
              } catch (\Exception $e) {
                 DB::rollBack();
-
-                // Si estás depurando, corta aquí para ver por qué NO se guardó en BD.
-                if (request()->boolean('debug_session')) {
-                    dd([
-                        'method' => 'guardar_solicitudCentro (catch)',
-                        'message' => $e->getMessage(),
-                        'exception' => get_class($e),
-                        'file' => $e->getFile(),
-                        'line' => $e->getLine(),
-                        // ojo: trace completo puede ser enorme; con esto suele bastar
-                        'code' => $e->getCode(),
-                    ]);
-                }
 
                     $solicitanteSess = session('solicitante_trabajador_data', []);
                     if (!empty($solicitanteSess) && is_array($solicitanteSess)) {
@@ -3903,20 +3875,6 @@ class SeerController extends Controller
      */
     public function guardar_solicitudCentro_post(Request $request)
     {
-        if ($request->boolean('debug_session')) {
-            dd([
-                'method' => 'guardar_solicitudCentro_post',
-                'route' => optional($request->route())->getName(),
-                'session_id' => session()->getId(),
-                'request_id' => $request->input('id'),
-                'has_solicitud_trabajador_data' => session()->has('solicitud_trabajador_data'),
-                'has_solicitante_trabajador_data' => session()->has('solicitante_trabajador_data'),
-                'has_citados_trabajador_data' => session()->has('citados_trabajador_data'),
-                'solicitud_trabajador_data' => session('solicitud_trabajador_data'),
-                'solicitante_trabajador_data' => session('solicitante_trabajador_data'),
-                'citados_trabajador_data' => session('citados_trabajador_data'),
-            ]);
-        }
         $id = $request->input('id');
 
         // En este flujo, casi siempre debe ser 'session'. Si llega vacío, intentamos usar el valor esperado.
@@ -3967,7 +3925,6 @@ class SeerController extends Controller
                  
                  // 3. Crear SeerSolicitante
                  $solicitante_insert = $solicitante_data['solicitante'];
-                 //dd($solicitante_data);
                  $solicitante_insert['id_solicitud'] = $new_id;
                  SeerSolicitante::create($solicitante_insert);
                  
@@ -7605,7 +7562,6 @@ class SeerController extends Controller
         $citados        = SeerCitados::where("id_solicitud",$id)->get();
         $citadosConMulta = $citados->where('tipo_notificacion', 'Multa');
         $citadosNew = session('citados_edicion_new', []);
-        //dd($citadosNew);
         $citadosDelete = session('citados_edicion_delete', []);
         
         $citados = $citados->filter(function($c) use ($citadosDelete) {
@@ -8606,7 +8562,6 @@ class SeerController extends Controller
         //Citados
         SeerCitados::where('id_solicitud',$data["id"])->delete();
         $cont = count($data["colonia_citado"]);
-        dd($cont);
         for($i = 0; $i < $cont; $i++) {
                 $foto1 = $data["imagen_domicilio1"][$i] ?? 'Sin documento';
                 $foto2 = $data["imagen_domicilio2"][$i] ?? 'Sin documento';
@@ -11340,8 +11295,8 @@ class SeerController extends Controller
                 })
                 ->select('users.name')
                 ->first();
-            //dd($delegado);
-            $html = view('PDF/Solicitudes/pagosParciales', compact('id', 'solicitud','conciliador','pagos', 'delegado'))->render();
+
+            $html = view('PDF/Solicitudes/pagosParciales', compact('id', 'solicitud','conciliador','pagos', 'delegado', 'delegacion'))->render();
         }
 
         $pdf = \PDF::loadHTML($html)

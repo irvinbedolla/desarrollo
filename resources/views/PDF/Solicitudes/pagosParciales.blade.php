@@ -106,7 +106,30 @@
                 </p>
 
                 <br><br><br><br>       
-                <br><br> <p><b>___________________________________<br>{{$conciliador->name}} <br>FUNCIONARIO/A CONCILIADOR/A</b> <b>  ___________________________________<br>{{$delegado->name}} <br>FUNCIONARIO/A CONCILIADOR/A</b></p> 
+                <br><br> 
+                <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:10px;">
+                    <tr>
+                        <td style="width:50%; vertical-align:top; padding:0 5px;">
+                            <div style="border-top: 2px solid #000; width:90%; margin: 0 auto 5px auto;"></div>
+                            <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}<br>
+                                    FUNCIONARIO/A CONCILIADOR/A<br>
+                                    DEL CENTRO DE CONCILIACIÓN LABORAL
+                                    DEL ESTADO DE MICHOACÁN DE OCAMPO
+                            </b>
+                        </td>
+
+                        @if ($delegacion == 'Morelia' || $delegacion == 'Zamora' || $delegacion == 'Uruapan')
+                        <td style="width:50%; vertical-align:top; padding:0 5px;">
+                            <div style="border-top: 2px solid #000; width:90%; margin: 0 auto 5px auto;"></div>
+                            <b>{{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
+                                DIRECTOR/A DEL CENTRO DE CONCILIACIÓN
+                                LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO                                  
+                            </b>
+                        </td>
+                        @else
+                        @endif
+                    </tr>
+                </table>
                 
             </div>
             <script type="text/php">
