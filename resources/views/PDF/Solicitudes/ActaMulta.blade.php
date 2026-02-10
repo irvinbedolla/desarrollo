@@ -83,6 +83,21 @@
             $direccion_sede='AV. UNIVERSIDAD SUR NO. 300, COL. LOMAS DE UNIVERSIDAD, C.P. 59103 SAHUAYO DE MORELOS, MICHOACÁN DE OCAMPO';
         } 
     @endphp
+    @php     
+        $cargo_conciliador='';
+        if($solicitud->delegacion === 'Morelia' || $solicitud->delegacion === 'Zitácuaro') {
+            $cargo_conciliador='ADSCRITO (A) A LA DELEGACIÓN REGIONAL DE MORELIA ';
+            $fraccion='I';
+        }    
+        if($solicitud->delegacion === 'Uruapan' || $solicitud->delegacion ==='Lázaro Cárdenas') {
+            $cargo_conciliador='ADSCRITO (A) A LA DELEGACIÓN REGIONAL DE URUAPAN';
+             $fraccion='II';
+        }
+        if($solicitud->delegacion === 'Zamora' || $solicitud->delegacion ==='Sahuayo') {
+            $cargo_conciliador='ADSCRITO (A) A LA DELEGACIÓN REGIONAL DE ZAMORA';
+            $fraccion='III';
+        }  
+    @endphp
     @php
         use Carbon\Carbon;
     @endphp
@@ -123,7 +138,7 @@
                     audiencia de conciliación prevista para las <b>{{ \Carbon\Carbon::parse($audiencia->hora)->format('H:i') }}</b> horas de esta misma fecha, a pesar de encontrarse debidamente notificado(a) para tal efecto, circunstancia que se 
                     corrobora con la notificación de fecha <b>{{ \Carbon\Carbon::parse($citado->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, por lo que con fundamento en los artículos 16, primer párrafo, 
                     de la Constitución Política de los Estados Unidos Mexicanos; 590-E, 590-F, 684-E, fracciones IV, X, 684-I, fracción II de la Ley Federal del Trabajo; y 27 de 
-                    la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo; artículo 20 fracción XVI y XVII del Reglamento Interior del Centro de 
+                    la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo; artículos 19 fracción {{ $fraccion }} y 20 fracción XVI y XVII del Reglamento Interior del Centro de 
                     Conciliación del Estado de Michoacán de Ocampo, <b>SE ACUERDA</b>:
                 </p>
 
@@ -135,7 +150,7 @@
                 <p>
                     En este acto, <b>se hace efectivo el apercibimiento decretado</b> en el citatorio notificado el <b>{{ \Carbon\Carbon::parse($citado->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
                     y se impone a la parte citada <b>{{ $citado->nombre }} @if(!empty($citado->primer_apellido)){{ $citado->primer_apellido }}@endif  @if(!empty($citado->segundo_apellido)){{ $citado->segundo_apellido }}@endif una 
-                    multa mínima por el monto de $5,657.00 (equivalente a Cincuenta veces la Unidad de Medida y Actualización)</b>.
+                    multa mínima por el monto de $5,865.50 (cinco mil ochocientos sesenta y cinco pesos 50/100 M.N.)(equivalente a Cincuenta veces la Unidad de Medida y Actualización)</b>.
                 </p>
                             
                 <p>
@@ -180,9 +195,8 @@
                 <p>
                     Así lo proveyó <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}</b>, funcionario(a) conciliador(a) adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
                 </p>
-               
-                <p><center><b>___________________________________<br> {{ mb_strtoupper($conciliador->name, 'UTF-8') }} 
-                <br> FUNCIONARIO/A CONCILIADOR/A <br>DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></center> </p>               
+               <br><br><br>
+                <p><center><b>___________________________________<br> {{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br>FUNCIONARIO/A CONCILIADOR/A<br>{{$cargo_conciliador}} </b></center> </p>                
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

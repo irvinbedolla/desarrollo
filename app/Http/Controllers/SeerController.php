@@ -7968,13 +7968,36 @@ class SeerController extends Controller
             ->select('name')
             ->first();
 
-        $imagenes = [];
+        /*$imagenes = [];
 
         for ($i = 1; $i <= 3; $i++) {
             $path = storage_path("app/documentos_notificacion/{$citado->id}-foto{$i}.jpg");
 
             if (file_exists($path)) {
                 $imagenes[] = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($path));
+            } else {
+                $imagenes[] = null;
+            }
+        }*/
+        $imagenes = [];
+    
+        $camposImagen = [
+            $citado->documento ?? null,
+            $citado->documento1 ?? null,
+            $citado->documento2 ?? null,
+        ];
+        
+        foreach ($camposImagen as $img) {    
+            if (!$img || $img === 'Sin documento') {
+                $imagenes[] = null;
+                continue;
+            }
+        
+            $path = storage_path("app/documentos_notificacion/{$img}");
+        
+            if (file_exists($path)) {
+                $mime = mime_content_type($path);
+                $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
             } else {
                 $imagenes[] = null;
             }
@@ -8761,12 +8784,24 @@ class SeerController extends Controller
             ->first();
 
         $imagenes = [];
-
-        for ($i = 1; $i <= 3; $i++) {
-            $path = storage_path("app/documentos_notificacion/{$citado->id}-foto{$i}.jpg");
-
+    
+        $camposImagen = [
+            $citado->documento ?? null,
+            $citado->documento1 ?? null,
+            $citado->documento2 ?? null,
+        ];
+            
+        foreach ($camposImagen as $img) {    
+            if (!$img || $img === 'Sin documento') {
+                $imagenes[] = null;
+                continue;
+            }
+            
+            $path = storage_path("app/documentos_notificacion/{$img}");
+            
             if (file_exists($path)) {
-                $imagenes[] = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($path));
+                $mime = mime_content_type($path);
+                $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
             } else {
                 $imagenes[] = null;
             }
@@ -8812,13 +8847,36 @@ class SeerController extends Controller
             ->select('name')
             ->first();
 
-        $imagenes = [];
+        /*$imagenes = [];
 
         for ($i = 1; $i <= 3; $i++) {
             $path = storage_path("app/documentos_notificacion/{$citado->id}-foto{$i}.jpg");
 
             if (file_exists($path)) {
                 $imagenes[] = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($path));
+            } else {
+                $imagenes[] = null;
+            }
+        }*/
+        $imagenes = [];
+    
+        $camposImagen = [
+            $citado->documento ?? null,
+            $citado->documento1 ?? null,
+            $citado->documento2 ?? null,
+        ];
+        
+        foreach ($camposImagen as $img) {    
+            if (!$img || $img === 'Sin documento') {
+                $imagenes[] = null;
+                continue;
+            }
+        
+            $path = storage_path("app/documentos_notificacion/{$img}");
+        
+            if (file_exists($path)) {
+                $mime = mime_content_type($path);
+                $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
             } else {
                 $imagenes[] = null;
             }
@@ -8864,13 +8922,36 @@ class SeerController extends Controller
             ->select('name')
             ->first();
  
-        $imagenes = [];
+        /*$imagenes = [];
  
         for ($i = 1; $i <= 3; $i++) {
             $path = storage_path("app/documentos_notificacion/{$citado->id}-foto{$i}.jpg");
  
             if (file_exists($path)) {
                 $imagenes[] = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($path));
+            } else {
+                $imagenes[] = null;
+            }
+        }*/
+        $imagenes = [];
+    
+        $camposImagen = [
+            $citado->documento ?? null,
+            $citado->documento1 ?? null,
+            $citado->documento2 ?? null,
+        ];
+        
+        foreach ($camposImagen as $img) {    
+            if (!$img || $img === 'Sin documento') {
+                $imagenes[] = null;
+                continue;
+            }
+        
+            $path = storage_path("app/documentos_notificacion/{$img}");
+        
+            if (file_exists($path)) {
+                $mime = mime_content_type($path);
+                $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
             } else {
                 $imagenes[] = null;
             }
