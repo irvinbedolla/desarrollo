@@ -2038,14 +2038,16 @@ class SeerController extends Controller
 
     public function update_notificador(Request $request){
         $data = $request->all();
-        $fechaEspecifica = Carbon::createFromFormat('Y-m-d H:i', $data["fecha_notificacion"] . ' ' . $data["hora_notificacion"]);
+        $fechaEspecifica = Carbon::parse($request->fecha_notificacion . ' ' . $request->hora_notificacion);
+        //$fechaEspecifica = Carbon::parse($data["fecha_notificacion"] . ' ' . $data["hora_notificacion"]);
+        //dd($fechaEspecifica);
         $documento = "Sin documento";
         $documento1 = "Sin documento";
         $documento2 = "Sin documento";
         //$foto = "Sin documento";
        /* $foto1 = "Sin documento";
         $foto2 = "Sin documento";*/
-        $fecha_actual = date('y-m-d');
+        //$fecha_actual = date('y-m-d');
 
         if ($request->hasFile('foto')) {
             $documento = $data["id"] . "-foto1.jpg";
@@ -2086,8 +2088,64 @@ class SeerController extends Controller
             'especificar'                 => 'nullable',
             //'municipio_citado'            => 'nullable',
         ]);
-
         if($data["tipo_llenado"] == 1){
+            $model = SeerCitados::find($data["id"]);
+            $model->timestamps = false; // 🔥 desactiva auto updated_at
+
+            $model->estatus = $data["estatus"];
+            $model->observaciones = $data["observaciones"];
+            $model->documento = $documento;
+            $model->documento1 = $documento1;
+            $model->documento2 = $documento2;
+            $model->fecha = $fechaEspecifica;
+            $model->quien_atiende = $data["quien_atiende"];
+            $model->medio = $data["medio"];
+            $model->vialidad_notificacion = $data["vialidad_notificacion"];
+            $model->abundar_area = $data["abundar_area"];
+            $model->abundar_inmueble = $data["abundar_inmueble"];
+            $model->nombre_notificacion = $data["nombre_notificacion"];
+            $model->relacion_notificacion = $data["relacion_notificacion"];
+            $model->puesto = $data["puesto"];
+            $model->identificacion_notificacion = $data["identificacion_notificacion"];
+            $model->motivo_identificacion = $data["motivo_identificacion"];
+            $model->firma = $data["firma"];
+            $model->problema_diligencia = $data["problema_diligencia"];
+            $model->genero = $data["genero"];
+            $model->tez = $data["tez"];
+            $model->edad_filiacion = $data["edad_filiacion"];
+            $model->altura = $data["altura"];
+            $model->complexion = $data["complexion"];
+            $model->cabello = $data["cabello"];
+            $model->ojos = $data["ojos"];
+            $model->particulares = $data["particulares"];
+            $model->especificar = $data["especificar"];
+
+            $model->updated_at = $fechaEspecifica; // 👈 aquí guardas tu fecha personalizada
+
+            $model->save();
+        }else{
+
+            $solicitud = SeerCitados::find($data["id"]);
+            $citados = SeerCitados::where('id_solicitud',$solicitud["id_solicitud"])->get();
+
+            foreach($citados as $citado){
+
+                $model = SeerCitados::find($citado["id"]);
+                $model->timestamps = false; // 🔥 importante
+
+                $model->estatus = $data["estatus"];
+                $model->observaciones = $data["observaciones"];
+                $model->documento = $documento;
+                $model->documento1 = $documento1;
+                $model->documento2 = $fechaEspecifica;
+                $model->fecha = $fechaEspecifica;
+
+                $model->updated_at = $fechaEspecifica; // 👈 aquí también
+
+                $model->save();
+            }
+        }
+        /*if($data["tipo_llenado"] == 1){
             SeerCitados::find($data["id"])
                 ->update([
                     'estatus'                    => $data["estatus"],
@@ -2095,7 +2153,7 @@ class SeerController extends Controller
                     'documento'                  => $documento,
                     'documento1'                 => $documento1,
                     'documento2'                 => $documento2,
-                    'fecha'                      => $fecha_actual,
+                    'fecha'                      => $fechaEspecifica,
                     'quien_atiende'              => $data["quien_atiende"],
                     'medio'                      => $data["medio"],
                     'vialidad_notificacion'      => $data["vialidad_notificacion"],
@@ -2131,7 +2189,7 @@ class SeerController extends Controller
                     'documento'                  => $documento,
                     'documento1'                 => $documento1,
                     'documento2'                 => $documento2,
-                    'fecha'                      => $fecha_actual,
+                    'fecha'                      => $fechaEspecifica,
                     'quien_atiende'              => $data["quien_atiende"],
                     'medio'                      => $data["medio"],
                     'vialidad_notificacion'      => $data["vialidad_notificacion"],
@@ -2156,7 +2214,7 @@ class SeerController extends Controller
                     'updated_at'                 => $fechaEspecifica
                 ]);
             }
-        }
+        } */
 
         return redirect()->route('seer');  
     }
