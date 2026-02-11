@@ -121,6 +121,30 @@
                         </tbody>
                     </table>
                 </div>
+
+                <div class="table-responsive">
+                    <spam>Promedio</spam>
+                    <table class="table table-striped mt-2">
+                        <thead style="background-color: #869b9c;">
+                            <th>Sede</th>
+                            <th>Pagos Totales</th>
+                            <th>Días Activos</th>
+                            <th>Promedio Diario</th>
+                        </thead>
+                        <tbody> 
+                            @foreach($promediosPagos as $info)
+                                <tr>
+                                    <td>{{ $info['sede'] }}</td>
+                                    <td class="text-center">{{ $info['total_pagos'] }}</td>
+                                    <td class="text-center">{{ $info['dias_con_actividad'] }}</td>
+                                    <td class="text-center font-weight-bold">
+                                        {{ number_format($info['promedio_diario'], 2) }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <script type="text/php">
                 if (isset($pdf)) {

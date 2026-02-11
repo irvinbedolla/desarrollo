@@ -83,6 +83,7 @@
                             <th style="color: #fff;  text-align: center;">Folio</th>
                             <th style="color: #fff;  text-align: center;">Fecha</th>
                             <th style="color: #fff;  text-align: center;">Estatus Solicitud</th>
+                            <th style="color: #fff;  text-align: center;">Tipo Solicitud</th>
                             <th style="color: #fff;  text-align: center;">Solicitante</th>
                             <th style="color: #fff;  text-align: center;">Actividad Economica</th>
                             <th style="color: #fff;  text-align: center;">Motivo</th>
@@ -95,6 +96,13 @@
                                 <td style="text-align: center;">{{ $registro->folio }}</td>
                                 <td style="text-align: center;">{{ $registro->fecha }}</td>
                                 <td style="text-align: center;">{{ $registro->estatus }}</td>
+                                <td style="text-align: center;">
+                                    @if($registro->tipo_solicitud == 1)
+                                        Trabajador
+                                    @elseif($registro->tipo_solicitud == 2)
+                                        Patronal
+                                    @endif
+                                </td>
                                 <td style="text-align: center;">{{ $registro->nombre}}</td>
                                 <td style="text-align: center;">{{ $registro->actividad}}</td>
                                 <td style="text-align: center;">{{ $registro->motivos}}</td>

@@ -96,19 +96,21 @@
                     </table>
                 </div>
                 <div class="table-responsive">
-                    <spam>Ratificaciones por dia</spam>
+                    <spam>Promedio</spam>
                     <table class="table table-striped mt-2">
                         <thead style="background-color: #869b9c;">
-                            <th style="color: #fff;  text-align: center;">Usuario</th>
-                            <th style="color: #fff;  text-align: center;">Fecha</th>
-                            <th style="color: #fff;  text-align: center;">Monto</th>
+                            <th style="color: #fff;  text-align: center;">Sede</th>
+                            <th style="color: #fff;  text-align: center;">Promedio por dia</th>
+                            <th style="color: #fff;  text-align: center;">Total</th>
                         </thead>
                         <tbody> 
-                            @foreach($usuariosDias as $usuario)
+                            @foreach($promedios as $item)
                                 <tr>
-                                    <td style=" text-align: center;">{{ $usuario->name }}</td>
-                                    <td style=" text-align: center;">{{ \Carbon\Carbon::parse($usuario->fecha)->format('d/m/y') }}</td>
-                                    <td style=" text-align: center;">{{ $usuario->numero }}</td>
+                                    <td class="fw-bold">{{ $item['sede'] }}</td>
+                                    <td class="text-center">
+                                        {{ number_format($item['promedio'], 2) }}
+                                    </td>
+                                    <td class="text-center">{{ $item['total'] }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
