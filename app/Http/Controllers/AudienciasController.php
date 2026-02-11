@@ -47,6 +47,12 @@ class AudienciasController extends Controller
                 $query->whereIn('audiencias.delegacion', $sedesAconsultar);
             }
         }
+        else{
+            if ($sedeFiltro != "Todos") {
+                $query->where('audiencias.delegacion', $sedeFiltro);
+            }
+        }
+        
         if (!empty($conciliadorFiltro)) {
             $query->where('audiencias.id_conciliador', $conciliadorFiltro);
         }
