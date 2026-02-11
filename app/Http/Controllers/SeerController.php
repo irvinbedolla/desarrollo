@@ -2156,7 +2156,7 @@ class SeerController extends Controller
                     'updated_at'                 => $fechaEspecifica
                 ]);
             }
-        }
+        } 
 
         return redirect()->route('seer');  
     }
