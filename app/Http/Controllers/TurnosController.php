@@ -909,8 +909,9 @@ class TurnosController extends Controller
         while ($fecha <= $fin) {
             if ($fecha->format('N') < 6) { 
                 for ($hora = 9; $hora <= 15; $hora++) {
-                    foreach ([0, 15, 30] as $minuto) {
-                        $hora_str = str_pad($hora, 2, '0', STR_PAD_LEFT) . ':' . str_pad($minuto, 2, '0', STR_PAD_LEFT) . ':00';
+                   // foreach ([0, 15, 30] as $minuto) {                                                                                //Genera espacios para agendar cada 15min
+                        //$hora_str = str_pad($hora, 2, '0', STR_PAD_LEFT) . ':' . str_pad($minuto, 2, '0', STR_PAD_LEFT) . ':00';    //Se indica el formato de horas y minutos en 2 digitos cuando se desea generar espacios por minutos
+                        $hora_str = str_pad($hora, 2, '0', STR_PAD_LEFT) . ':00';
                         $slotStart = $fecha->format('Y-m-d') . 'T' . $hora_str;
                         $ahora = new DateTime();
                         $currentCita = new DateTime($slotStart);
@@ -989,7 +990,7 @@ class TurnosController extends Controller
                         }
                         unset($evento);*/
 
-                    }
+                   // }
                 }
             }
             $fecha->modify('+1 day');
