@@ -4720,6 +4720,8 @@ class SeerController extends Controller
             'fecha_ingreso'         => $data["fecha_ingreso"],
             'fecha_salida'          => $data["fecha_salida"],
             'jornada'               => $data["jornada"],
+            'identificacion'        =>$data["tipoIdentificacion"],
+            'num_identificacion'    =>$data["numeroIdentificacion"],
             'estado_domicilio'      => $data["estado_solicitante"],
             'horas_semana'          => $data["horas_semana"],
             'descripcionSolicitud'  => $data["descripcionSolicitud"],

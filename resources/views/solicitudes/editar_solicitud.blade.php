@@ -852,13 +852,18 @@ select[name="municipio_citado"] option {
                                                 
                                                 <div class="col-xs-12 col-sm-12 col-md-5">
                                                     <label for="password">Referencia Imagen 1<span style="color:red;"> (*)</span></label><br>
-                                                    @if (!empty($citado->imagen_domicilio1) && $citado->imagen_domicilio1 !== 'Sin documento')
+                                                    @php
+                                                        $hasRefImg1 = (!empty($citado->imagen_domicilio1) && $citado->imagen_domicilio1 !== 'Sin documento');
+                                                    @endphp
+                                                    @if ($hasRefImg1)
                                                         <a target='_blank' href="../storage/app/documentosSolicitud/{{$citado->imagen_domicilio1}}">VER IMAGEN</a><br>
                                                     @else
                                                         <span class="text-muted">No se subió imagen</span>
                                                     @endif
-                                                    <input type="file" name="foto1[]" accept="image/*" class="form-control">
+                                                    <input type="file" name="foto1[]" accept="image/*" class="form-control" {{ $hasRefImg1 ? '' : 'required' }}>
+                                                    <div class="invalid-feedback">Debe subir la Referencia Imagen 1 para poder confirmar.</div>
                                                     <input type="hidden" name="imagen_domicilio1[]" value="{{ $citado->imagen_domicilio1 }}">
+                                                    <input type="hidden" class="ref-img1-exists" value="{{ $hasRefImg1 ? '1' : '0' }}">
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-5">
                                                     <label for="password">Referencia Imagen 2</label><br>
@@ -898,6 +903,41 @@ select[name="municipio_citado"] option {
                                                 <input type="file" name="documentoIdentificacion" accept=".pdf" class="form-control">
                                             </div>
                                             <br>
+
+                                            @foreach ($solicitantes as $solicitante)
+                                               <div class="col-xs-12 col-sm-12 col-md-6 mt-3">
+                                                    <div class="form-group">
+                                                        <label for="name">Tipo de Identificación<span style="color:red;"> (*)</span></label>
+                                                        <select name="tipoIdentificacion" class="form-control" required>
+                                                            <option value="">SELECCIONE</option>
+                                                            <option value="Credencial de elector"          {{ $solicitante['identificacion'] == 'Credencial de elector' ? "selected" : '' }}   >Credencial de elector</option>
+                                                            <option value="Pasaporte"        {{ $solicitante['identificacion'] == 'Pasaporte' ? "selected" : '' }} >Pasaporte</option>
+                                                            <option value="Cédula profesional"        {{ $solicitante['identificacion'] == 'Cédula profesional' ? "selected" : '' }} >Calzada</option>
+                                                            <option value="Licencia de conducir"          {{ $solicitante['identificacion'] == 'Licencia de conducir' ? "selected" : '' }}   >Licencia de conducir</option>
+                                                            <option value="Otros"        {{ $solicitante['identificacion'] == 'Otros' ? "selected" : '' }} >Otros</option>
+                                                            <option value="Credencial de inapam"        {{ $solicitante['identificacion'] == 'Credencial de inapam' ? "selected" : '' }} >Credencial de inapam</option>
+                                                            <option value="Cartilla militar"          {{ $solicitante['identificacion'] == 'Cartilla militar' ? "selected" : '' }}   >Cartilla militar</option>
+                                                            <option value="Documento migratorio"        {{ $solicitante['identificacion'] == 'Documento migratorio' ? "selected" : '' }} >Documento migratorio</option>
+                                                            <option value="Constancia de identidad"        {{ $solicitante['identificacion'] == 'Constancia de identidad' ? "selected" : '' }} >Constancia de identidad</option>                                                 
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo Tipo de Identificación es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-xs-12 col-sm-12 col-md-6 mt-3">
+                                                    <div class="form-group">
+                                                        <label for="name">Número de identificación<span style="color:red;"> (*)</span></label>
+                                                        <input type="text" name="numeroIdentificacion" maxlength="20" class="form-control" value="{{ $solicitante['num_identificacion'] ?? '' }}" required>
+                                                            
+                                                        <div class="invalid-feedback">
+                                                            El campo Número de Identificación es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                            
                                         </div>
                                     </div>
 
@@ -932,7 +972,8 @@ select[name="municipio_citado"] option {
                                                 @endphp
                                                 @if($general['estatus'] == 'Prevencion' || $general['estatus'] == 'Pendiente')
                                                     @if($citadosCount > 0)
-                                                        <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;"  name="toquen" value="1">Confirmar</button>
+                                                        <button id="btnConfirmarSolicitud" type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;" name="toquen" value="1">Confirmar</button>
+                                                        <div id="msgRefImg1" class="text-muted mt-2" style="display:none;">Debe subir la <strong>Referencia Imagen 1</strong> de todos los citados para poder confirmar.</div>
                                                     @else
                                                         <button type="button" class="btn btn-secondary" disabled title="Agregue al menos un citado para poder guardar."  name="toquen" value="1">Confirmar</button>
                                                         <div class="text-muted mt-2">Debe agregar al menos un citado para poder guardar.</div>
@@ -1398,6 +1439,51 @@ select[name="municipio_citado"] option {
 
 @section('scripts')
     <script src="../public/assets/js/estadistica/estadisticaConfirmar.js"></script>
+
+    <script>
+        (function () {
+            function syncConfirmButtonByRefImg1() {
+                var btn = document.getElementById('btnConfirmarSolicitud');
+                if (!btn) return;
+
+                var msg = document.getElementById('msgRefImg1');
+                var rows = document.querySelectorAll('.ref-img1-exists');
+                var inputs = document.querySelectorAll('input[type="file"][name="foto1[]"]');
+
+                var missing = false;
+                for (var i = 0; i < rows.length; i++) {
+                    var exists = rows[i].value === '1';
+                    if (exists) continue;
+
+                    var fileInput = inputs[i];
+                    var hasFile = !!(fileInput && fileInput.files && fileInput.files.length > 0);
+                    if (!hasFile) {
+                        missing = true;
+                        break;
+                    }
+                }
+
+                btn.disabled = missing;
+                if (msg) msg.style.display = missing ? 'block' : 'none';
+            }
+
+            document.addEventListener('change', function (e) {
+                if (e.target && e.target.matches('input[type="file"][name="foto1[]"]')) {
+                    syncConfirmButtonByRefImg1();
+                }
+            });
+
+            document.addEventListener('DOMContentLoaded', function () {
+                syncConfirmButtonByRefImg1();
+            });
+
+            window.addEventListener('click', function (e) {
+                if (e.target && e.target.closest && e.target.closest('.tab')) {
+                    setTimeout(syncConfirmButtonByRefImg1, 50);
+                }
+            });
+        })();
+    </script>
         <script>
             $(function(){
                 $('#motivo_solicitud').on('change', validarcheckfolio);
