@@ -121,7 +121,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-2"><br>
                                             <div class="form-group">
                                                 <label for="name">Días de vacaciones</label>
-                                                <input type="number" name="vacaciones" class="form-control" > 
+                                                <input type="number" step="0.001" name="vacaciones" class="form-control" placeholder="Ingrese solo 3 decimales" > 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -130,7 +130,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-2"><br>
                                             <div class="form-group">
                                                 <label for="name">Días de Aguinaldo</label>
-                                                <input type="number" name="aguinaldo" class="form-control" > 
+                                                <input type="number" step="0.001" name="aguinaldo" class="form-control" placeholder="Ingrese solo 3 decimales" > 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -139,7 +139,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-1">
                                             <div class="form-group">
                                                 <label for="name">Otros</label>
-                                                <input type="number" name="otros" class="form-control" > 
+                                                <input type="number" step="0.001" name="otros" class="form-control" placeholder="Ingrese solo 3 decimales" > 
                                                 <div class="invalid-feedback">
                                                     El campo otro es obligatorio.
                                                 </div>

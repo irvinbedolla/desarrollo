@@ -887,7 +887,7 @@ class TurnosController extends Controller
         $fecha_fin = now()->addDays(20)->format('Y-m-d');
         $sede = $request->input('sede'); // Obtener sede de la solicitud
 
-        $inhabiles = DiasInhabiles::where('centro', $sede)->get(); //Obtenemos días inhabiles
+        $inhabiles = DiasInhabiles::whereNull('user_id')->where('centro', $sede)->get(); //Obtenemos días inhabiles
 
         /* Obtener turnos ocupados filtrando por sede
         $ocupados = Turnos::whereBetween('fecha', [$fecha_inicio, $fecha_fin])

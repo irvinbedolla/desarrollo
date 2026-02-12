@@ -6607,7 +6607,7 @@ class SeerController extends Controller
 
         // 2. Cálculo del margen mínimo y construcción del mensaje
         if ($notificion == "Trabajador") {
-            $dias_sumados = 0;
+            /*$dias_sumados = 0;
             while ($dias_sumados < 7) {
                 $fecha_inicio_busqueda->addDay();
                 $es_festivo = DiasInhabiles::where('fecha_inicio', $fecha_inicio_busqueda->format('Y-m-d'))
@@ -6617,8 +6617,9 @@ class SeerController extends Controller
                 if (!$fecha_inicio_busqueda->isWeekend() && !$es_festivo) {
                     $dias_sumados++;
                 }
-            }
-            $mensaje_ajuste = "Se agendó considerando los 7 días hábiles mínimos para la notificación del trabajador.";
+            }*/
+            $fecha_inicio_busqueda->addDays(7);
+            $mensaje_ajuste = "Se agendó considerando los 7 días naturales mínimos para la notificación del trabajador.";
         } else {
             $fecha_inicio_busqueda->addDays(15);
             $mensaje_ajuste = "Se agendó considerando los 15 días naturales requeridos para la notificación por el Centro.";
@@ -6630,8 +6631,7 @@ class SeerController extends Controller
             $mensaje_ajuste .= " (Ajustado al límite legal de 45 días).";
         }
 
-        //$fecha_revisar = $fecha_inicio_busqueda->format('Y-m-d');
-        $fecha_revisar = "2026-02-26";
+        $fecha_revisar = $fecha_inicio_busqueda->format('Y-m-d');
         $horarios_disponibles = ["09:00:00", "10:15:00", "11:30:00", "12:45:00", "14:00:00"];
 
         // 3. Conciliadores y Sedes
