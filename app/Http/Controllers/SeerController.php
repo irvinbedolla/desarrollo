@@ -2039,16 +2039,12 @@ class SeerController extends Controller
     public function update_notificador(Request $request){
         $data = $request->all();
         $fechaEspecifica = Carbon::parse($request->fecha_notificacion . ' ' . $request->hora_notificacion);
-        //$fechaEspecifica = Carbon::parse($data["fecha_notificacion"] . ' ' . $data["hora_notificacion"]);
-        //dd($fechaEspecifica);
+
         $documento = "Sin documento";
         $documento1 = "Sin documento";
         $documento2 = "Sin documento";
-        //$foto = "Sin documento";
-       /* $foto1 = "Sin documento";
-        $foto2 = "Sin documento";*/
-        //$fecha_actual = date('y-m-d');
 
+        // Guardar archivos si existen
         if ($request->hasFile('foto')) {
             $documento = $data["id"] . "-foto1.jpg";
             Storage::putFileAs('documentos_notificacion', $request->file('foto'), $documento);
@@ -2063,7 +2059,8 @@ class SeerController extends Controller
             $documento2 = $data["id"] . "-foto3.jpg";
             Storage::putFileAs('documentos_notificacion', $request->file('foto2'), $documento2);
         }
-        
+
+        // Validación de campos (todos opcionales)
         $request->validate([
             'quien_atiende'               => 'nullable',
             'medio'                       => 'nullable',
@@ -2086,66 +2083,10 @@ class SeerController extends Controller
             'ojos'                        => 'nullable',
             'particulares'                => 'nullable',
             'especificar'                 => 'nullable',
-            //'municipio_citado'            => 'nullable',
         ]);
-        if($data["tipo_llenado"] == 1){
-            $model = SeerCitados::find($data["id"]);
-            $model->timestamps = false; // 🔥 desactiva auto updated_at
 
-            $model->estatus = $data["estatus"];
-            $model->observaciones = $data["observaciones"];
-            $model->documento = $documento;
-            $model->documento1 = $documento1;
-            $model->documento2 = $documento2;
-            $model->fecha = $fechaEspecifica;
-            $model->quien_atiende = $data["quien_atiende"];
-            $model->medio = $data["medio"];
-            $model->vialidad_notificacion = $data["vialidad_notificacion"];
-            $model->abundar_area = $data["abundar_area"];
-            $model->abundar_inmueble = $data["abundar_inmueble"];
-            $model->nombre_notificacion = $data["nombre_notificacion"];
-            $model->relacion_notificacion = $data["relacion_notificacion"];
-            $model->puesto = $data["puesto"];
-            $model->identificacion_notificacion = $data["identificacion_notificacion"];
-            $model->motivo_identificacion = $data["motivo_identificacion"];
-            $model->firma = $data["firma"];
-            $model->problema_diligencia = $data["problema_diligencia"];
-            $model->genero = $data["genero"];
-            $model->tez = $data["tez"];
-            $model->edad_filiacion = $data["edad_filiacion"];
-            $model->altura = $data["altura"];
-            $model->complexion = $data["complexion"];
-            $model->cabello = $data["cabello"];
-            $model->ojos = $data["ojos"];
-            $model->particulares = $data["particulares"];
-            $model->especificar = $data["especificar"];
-
-            $model->updated_at = $fechaEspecifica; // 👈 aquí guardas tu fecha personalizada
-
-            $model->save();
-        }else{
-
-            $solicitud = SeerCitados::find($data["id"]);
-            $citados = SeerCitados::where('id_solicitud',$solicitud["id_solicitud"])->get();
-
-            foreach($citados as $citado){
-
-                $model = SeerCitados::find($citado["id"]);
-                $model->timestamps = false; // 🔥 importante
-
-                $model->estatus = $data["estatus"];
-                $model->observaciones = $data["observaciones"];
-                $model->documento = $documento;
-                $model->documento1 = $documento1;
-                $model->documento2 = $fechaEspecifica;
-                $model->fecha = $fechaEspecifica;
-
-                $model->updated_at = $fechaEspecifica; // 👈 aquí también
-
-                $model->save();
-            }
-        }
-        /*if($data["tipo_llenado"] == 1){
+        // Tipo de llenado 1: actualizar un solo registro
+        if ($data["tipo_llenado"] == 1) {
             SeerCitados::find($data["id"])
                 ->update([
                     'estatus'                    => $data["estatus"],
@@ -2164,58 +2105,60 @@ class SeerController extends Controller
                     'puesto'                     => $data["puesto"],
                     'identificacion_notificacion'=> $data["identificacion_notificacion"],
                     'motivo_identificacion'      => $data["motivo_identificacion"],
-                    'firma'                      => $data["firma"],
-                    'problema_diligencia'        => $data["problema_diligencia"],
-                    'genero'                     => $data["genero"],
-                    'tez'                        => $data["tez"],
-                    'edad_filiacion'             => $data["edad_filiacion"],
-                    'altura'                     => $data["altura"],
-                    'complexion'                 => $data["complexion"],
-                    'cabello'                    => $data["cabello"],
-                    'ojos'                       => $data["ojos"],
-                    'particulares'               => $data["particulares"],
-                    'especificar'                => $data["especificar"],
-                    'updated_at'                 => $fechaEspecifica
+                    'firma'                       => $data["firma"],
+                    'problema_diligencia'         => $data["problema_diligencia"],
+                    'genero'                      => $data["genero"],
+                    'tez'                         => $data["tez"],
+                    'edad_filiacion'              => $data["edad_filiacion"],
+                    'altura'                      => $data["altura"],
+                    'complexion'                  => $data["complexion"],
+                    'cabello'                     => $data["cabello"],
+                    'ojos'                        => $data["ojos"],
+                    'particulares'                => $data["particulares"],
+                    'especificar'                 => $data["especificar"],
+                    'updated_at'                  => DB::raw("'" . $fechaEspecifica->format('Y-m-d H:i:s') . "'")
                 ]);
-        }
-        else{
+        } else {
+            // Tipo de llenado 2: actualizar varios registros de la misma solicitud
             $solicitud = SeerCitados::find($data["id"]);
-            $citados = SeerCitados::where('id_solicitud',$solicitud["id_solicitud"])->get();
-            foreach($citados as $citado){
-                SeerCitados::find($citado["id"])
-                ->update([
-                    'estatus'                    => $data["estatus"],
-                    'observaciones'              => $data["observaciones"],
-                    'documento'                  => $documento,
-                    'documento1'                 => $documento1,
-                    'documento2'                 => $documento2,
-                    'fecha'                      => $fechaEspecifica,
-                    'quien_atiende'              => $data["quien_atiende"],
-                    'medio'                      => $data["medio"],
-                    'vialidad_notificacion'      => $data["vialidad_notificacion"],
-                    'abundar_area'               => $data["abundar_area"],
-                    'abundar_inmueble'           => $data["abundar_inmueble"],
-                    'nombre_notificacion'        => $data["nombre_notificacion"],
-                    'relacion_notificacion'      => $data["relacion_notificacion"],
-                    'puesto'                     => $data["puesto"],
-                    'identificacion_notificacion'=> $data["identificacion_notificacion"],
-                    'motivo_identificacion'      => $data["motivo_identificacion"],
-                    'firma'                      => $data["firma"],
-                    'problema_diligencia'        => $data["problema_diligencia"],
-                    'genero'                     => $data["genero"],
-                    'tez'                        => $data["tez"],
-                    'edad_filiacion'             => $data["edad_filiacion"],
-                    'altura'                     => $data["altura"],
-                    'complexion'                 => $data["complexion"],
-                    'cabello'                    => $data["cabello"],
-                    'ojos'                       => $data["ojos"],
-                    'particulares'               => $data["particulares"],
-                    'especificar'                => $data["especificar"],
-                    'updated_at'                 => $fechaEspecifica
-                ]);
-            }
-        } */
+            $citados = SeerCitados::where('id_solicitud', $solicitud["id_solicitud"])->get();
 
+            foreach ($citados as $citado) {
+                SeerCitados::find($citado["id"])
+                    ->update([
+                        'estatus'                    => $data["estatus"],
+                        'observaciones'              => $data["observaciones"],
+                        'documento'                  => $documento,
+                        'documento1'                 => $documento1,
+                        'documento2'                 => $documento2,
+                        'fecha'                      => $fechaEspecifica,
+                        'quien_atiende'              => $data["quien_atiende"],
+                        'medio'                      => $data["medio"],
+                        'vialidad_notificacion'      => $data["vialidad_notificacion"],
+                        'abundar_area'               => $data["abundar_area"],
+                        'abundar_inmueble'           => $data["abundar_inmueble"],
+                        'nombre_notificacion'        => $data["nombre_notificacion"],
+                        'relacion_notificacion'      => $data["relacion_notificacion"],
+                        'puesto'                     => $data["puesto"],
+                        'identificacion_notificacion'=> $data["identificacion_notificacion"],
+                        'motivo_identificacion'      => $data["motivo_identificacion"],
+                        'firma'                       => $data["firma"],
+                        'problema_diligencia'         => $data["problema_diligencia"],
+                        'genero'                      => $data["genero"],
+                        'tez'                         => $data["tez"],
+                        'edad_filiacion'              => $data["edad_filiacion"],
+                        'altura'                      => $data["altura"],
+                        'complexion'                  => $data["complexion"],
+                        'cabello'                     => $data["cabello"],
+                        'ojos'                        => $data["ojos"],
+                        'particulares'                => $data["particulares"],
+                        'especificar'                 => $data["especificar"],
+                        'updated_at'                  => DB::raw("'" . $fechaEspecifica->format('Y-m-d H:i:s') . "'")
+                    ]);
+            }
+        }
+
+        // Redirigir al listado
         return redirect()->route('seer');  
     }
 
@@ -12230,7 +12173,7 @@ class SeerController extends Controller
     public function guardar_solicitudAux($id){
         $id_usuario = auth()->user()->id;
         DB::beginTransaction();
-        try {
+        /*try {
             if ($id == 'session') {
                 // Recuperar datos de la sesión
                 $solicitudData = session('solicitud_data');
@@ -12322,7 +12265,7 @@ class SeerController extends Controller
             
 
             return redirect()->route('solicitudes_index')->with('error', 'Ocurrió un error al finalizar la solicitud. Se descartaron los datos de captura.');
-        }
+        }*/
 
 
 
@@ -13083,6 +13026,22 @@ class SeerController extends Controller
                 $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
                 $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
             }
+        }
+        //Revisión convenio de PTU
+        $solicitudes = $query->get();
+        foreach ($solicitudes as $solicitud) {
+            $solicitud->nombre = $solicitud->solicitante->nombre ?? 'Sin solicitante';
+            $labora = $solicitud->solicitante ? trim($solicitud->solicitante->labora) : '';
+            $relacionMotivo = \DB::table('seer_motivos')
+                ->where('id_solicitud', $solicitud->id)
+                ->first();
+
+            $idMotivo = $relacionMotivo ? $relacionMotivo->id_motivo : 0;
+
+            $esEstatusValido = ($solicitud->estatus == 'Conciliacion' || $solicitud->estatus == 'Concluida');
+            $esPTU = ($idMotivo == 41 || $idMotivo == 42);
+            $noLabora = ($labora == 'No' || $labora == 'no');
+            $solicitud->mostrar_ptu = ($esEstatusValido && $esPTU && $noLabora);
         }
         return view('solicitudes.solicitudes_todas',compact('solicitudes', 'isAudiencia'));
     }
