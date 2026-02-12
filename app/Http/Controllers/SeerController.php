@@ -2373,9 +2373,15 @@ class SeerController extends Controller
     } 
 
     public function solicitudesLinea(){
-        $ahora = Carbon::create(2026,02,14);
+        $ahora = Carbon::now();
         $hora_inicial = '09:00:00';
         $hora_final = '16:00:00';
+
+        if($ahora){
+            return view('solicitudes.solicitud_no_disponible', [
+                'motivo' => 'Fuera de Servicio.',
+            ]);
+        }
 
         //Cerrar si es fin de semana
         if ($ahora->isWeekend()) {
