@@ -12173,7 +12173,7 @@ class SeerController extends Controller
     public function guardar_solicitudAux($id){
         $id_usuario = auth()->user()->id;
         DB::beginTransaction();
-        /*try {
+        try {
             if ($id == 'session') {
                 // Recuperar datos de la sesión
                 $solicitudData = session('solicitud_data');
@@ -12265,9 +12265,7 @@ class SeerController extends Controller
             
 
             return redirect()->route('solicitudes_index')->with('error', 'Ocurrió un error al finalizar la solicitud. Se descartaron los datos de captura.');
-        }*/
-
-
+        }
 
         $delegacion = SeerPerGeneral::find($id);
         // 1. Carga de relaciones necesarias (Eager Loading para evitar múltiples consultas)
