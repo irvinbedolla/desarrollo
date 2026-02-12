@@ -2373,6 +2373,32 @@ class SeerController extends Controller
     } 
 
     public function solicitudesLinea(){
+        $ahora = Carbon::create(2026,02,14);
+        $hora_inicial = '09:00:00';
+        $hora_final = '16:00:00';
+
+        //Cerrar si es fin de semana
+        if ($ahora->isWeekend()) {
+            return view('solicitudes.solicitud_no_disponible', [
+                'motivo' => 'Fin de semana. Fuera de Servicio.',
+            ]);
+        }
+
+        //Cerrar si hoy cae dentro de un rango de días inhábiles
+        $fechaHoy = $ahora->format('Y-m-d');
+        $esInhabil = DiasInhabiles::whereNull('user_id')
+            ->where('horario_inicio', $hora_inicial)
+            ->where('horario_final', $hora_final)
+            ->whereDate('fecha_inicio', '<=', $fechaHoy)
+            ->whereDate('fecha_final', '>=', $fechaHoy)
+            ->exists();
+
+        if ($esInhabil) {
+            return view('solicitudes.solicitud_no_disponible', [
+                'motivo' => 'Día inhábil. Fuera de servicio.',
+            ]);
+        }
+
         return view('solicitud');
     }
 
@@ -4814,7 +4840,7 @@ class SeerController extends Controller
         for($i = 0; $i < $cont; $i++) {
             $tipo_notificacion = $data["notificacion"][0];
             $foto1 = $data["imagen_domicilio1"][$i] ?? 'Sin documento';
-            $foto2 = $data["imagen_domicilio2"][$i] ?? 'Sin documentolo';
+            $foto2 = $data["imagen_domicilio2"][$i] ?? 'Sin documento';
         
             if ($request->hasFile("foto1.$i")) {
                 $file = $request->file("foto1")[$i];
