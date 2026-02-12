@@ -296,7 +296,7 @@
                             </thead>   
                         </table>
                     </p>
-                    <p><b>{{ $datosAudiencia->resolucion_justificacion }}</b></p><br>
+                    <p><b>{{ $datosAudiencia->resolicion_justificacion }}</b></p><br>
                     <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
 
                     <!-- CON PAGOS DIFERIDOS-->       
