@@ -13027,22 +13027,6 @@ class SeerController extends Controller
                 $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
             }
         }
-        //Revisión convenio de PTU
-        $solicitudes = $query->get();
-        foreach ($solicitudes as $solicitud) {
-            $solicitud->nombre = $solicitud->solicitante->nombre ?? 'Sin solicitante';
-            $labora = $solicitud->solicitante ? trim($solicitud->solicitante->labora) : '';
-            $relacionMotivo = \DB::table('seer_motivos')
-                ->where('id_solicitud', $solicitud->id)
-                ->first();
-
-            $idMotivo = $relacionMotivo ? $relacionMotivo->id_motivo : 0;
-
-            $esEstatusValido = ($solicitud->estatus == 'Conciliacion' || $solicitud->estatus == 'Concluida');
-            $esPTU = ($idMotivo == 41 || $idMotivo == 42);
-            $noLabora = ($labora == 'No' || $labora == 'no');
-            $solicitud->mostrar_ptu = ($esEstatusValido && $esPTU && $noLabora);
-        }
         return view('solicitudes.solicitudes_todas',compact('solicitudes', 'isAudiencia'));
     }
     public function VerPDFCaratula($id, $tipo){

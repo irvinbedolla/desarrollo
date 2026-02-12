@@ -353,7 +353,7 @@
                                                     <label for="name">¿Cada cuándo te pagan?</label>
                                                     <select name="tiempo_pago" class="form-control" required>
                                                         <option value="">Seleccione</option>
-                                                        <option value="Semana">Semanal</option>
+                                                        <option value="Semanal">Semanal</option>
                                                         <option value="Quincenal">Quincenal</option>
                                                         <option value="Mensual">Mensual</option>
                                                         <option value="Diario">Diario</option>

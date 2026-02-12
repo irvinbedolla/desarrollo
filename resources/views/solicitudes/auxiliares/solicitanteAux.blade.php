@@ -389,7 +389,7 @@
                                                     <select name="periodo_pago" class="form-control" required>
                                                         <option value="">SELECCIONE</option>
                                                         <option value="Diario">DIARIO</option>
-                                                        <option value="Semana">SEMANAL</option>
+                                                        <option value="Semanal">SEMANAL</option>
                                                         <option value="Quincenal">QUINCENAL</option>
                                                         <option value="Mensual">MENSUAL</option>
                                                     </select>
