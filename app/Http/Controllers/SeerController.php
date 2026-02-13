@@ -7736,7 +7736,9 @@ class SeerController extends Controller
         )
         ->exists();
 
-        return view('audiencias.revisar_audiencia', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores', 'isAudiencia','notificaciones','historial_audiencias','datosIncompletos','citadosConMulta'));
+        $ultimaEstatus = Audiencias::where('id_solicitud', $id)->latest()->value('estatus');
+
+        return view('audiencias.revisar_audiencia', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores', 'isAudiencia','notificaciones','historial_audiencias','datosIncompletos','citadosConMulta', 'ultimaEstatus'));
     }
 
 

@@ -1313,9 +1313,23 @@
                                                 @endphp
                                                 @if(($general->estatus !== "Conciliacion") || ($general->estatus !== "No conciliacion") || ($general->estatus !== "Archivada"))
                                                     @if($citadosCount > 0)
+
+                                                        @if($isAudiencia == 'No' && $general->estatus == 'Pendiente')
                                                         <button type="submit" class="btn btn-primary" name="toquen" value="1">Guardar Edición</button>
+                                                        @elseif($isAudiencia == 'Si')
+                                                        <button type="submit" class="btn btn-primary" name="toquen" value="1">Guardar Edición</button>
+                                                        @else
+                                                        @auth
+                                                            @hasanyrole('Enlace|Super Usuario')
+                                                                <button type="submit" class="btn btn-primary" name="toquen" value="1">Guardar Edición</button>
+                                                            @endhasanyrole
+                                                        @endauth
+                                                        @endif
+
+                                                        @if( $isAudiencia == 'Si' && $ultimaEstatus == 'Pendiente')
                                                         <button type="submit" class="btn btn-success" name="toquen" value="iniciar_audiencia"> Guardar e Iniciar Audiencia </button>
                                                         {{--<a class="btn btn-success" href="{{ route('inicioAudiencia', $audiencia->id_solicitud, 'Confirmado') }}" value="1">Guardar e Iniciar Audiencia</button>--}}
+                                                        @endif
                                                     @else
                                                         <button type="button" class="btn btn-secondary" disabled title="Agregue al menos un citado para poder guardar."  name="toquen" value="1">Guardar Edición</button>
                                                         <div class="text-muted mt-2">Debe agregar al menos un citado para poder guardar.</div>
