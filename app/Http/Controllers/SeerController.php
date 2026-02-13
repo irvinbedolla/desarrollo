@@ -6574,8 +6574,12 @@ class SeerController extends Controller
             $mensaje_ajuste .= " (Ajustado al límite legal de 45 días).";
         }
 
-        $fecha_revisar = '2026-02-25';
-        //$fecha_revisar = $fecha_inicio_busqueda->format('Y-m-d');
+        if($delegacion == "Morelia"){
+            $fecha_revisar = '2026-02-25';
+        } else {
+            $fecha_revisar = $fecha_inicio_busqueda->format('Y-m-d');
+        }
+
         $horarios_disponibles = ["09:00:00", "10:15:00", "11:30:00", "12:45:00", "14:00:00"];
 
         // 3. Conciliadores y Sedes
@@ -11518,7 +11522,11 @@ class SeerController extends Controller
                     ->select('users.id', 'users.name', 'users.delegacion')
                     ->first();
             }
-            $html = view('PDF/Solicitudes/pagosParciales', compact('id', 'solicitud','conciliador','pagos', 'delegado', 'delegacion'))->render();
+
+            $solicitanteNombre = SeerSolicitante::where('id_solicitud', $pagos["id_solicitud"])->value('nombre');
+            $citados = SeerCitados::where('id_solicitud', $pagos["id_solicitud"])->where('aparece_convenio', 1)->where('resulte_responsable', 'No')->get();
+
+            $html = view('PDF/Solicitudes/pagosParciales', compact('id', 'solicitud','conciliador','pagos', 'delegado', 'delegacion', 'solicitanteNombre', 'citados'))->render();
         }
 
         $pdf = \PDF::loadHTML($html)

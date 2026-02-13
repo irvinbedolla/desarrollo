@@ -88,8 +88,10 @@
                     </table>
                 </div><br><br><br><br><br>
                 <p><b>
-                    Trabajador(a): {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }} <br> 
-                    Empresa/Patrón: {{ $solicitud->empresa }}<br>
+                    Trabajador(a): {{ $solicitanteNombre }} <br> 
+                    Empresa/Patrón: @foreach ($citados as $citado)
+                        {{ $citado->nombre }} {{ $citado->primer_apellido ?? ''}} {{ $citado->segundo_apellido ?? ''}}<br>
+                    @endforeach
                     Funcionario/a Conciliador/a Responsable: {{$conciliador->name}}<br>
                     Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
                     Asistencia de los interesados: Si<br>
