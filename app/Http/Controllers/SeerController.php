@@ -6574,7 +6574,8 @@ class SeerController extends Controller
             $mensaje_ajuste .= " (Ajustado al límite legal de 45 días).";
         }
 
-        $fecha_revisar = $fecha_inicio_busqueda->format('Y-m-d');
+        $fecha_revisar = '2026-02-25';
+        //$fecha_revisar = $fecha_inicio_busqueda->format('Y-m-d');
         $horarios_disponibles = ["09:00:00", "10:15:00", "11:30:00", "12:45:00", "14:00:00"];
 
         // 3. Conciliadores y Sedes
