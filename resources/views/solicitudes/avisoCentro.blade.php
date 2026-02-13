@@ -37,7 +37,7 @@
 @php     
     $direccion_sede='';
     if($delegacion->delegacion === 'Morelia'){
-        $direccion_sede='BLVD. GARCÍA DE LEÓN NO. 1575, COL. CHAPULTEPEC ORIENTE, C.P. 58260 MORELIA, MICHOACÁN DE OCAMPO, con un horario de atención Lunes a Viernes de 9:00 am a 5:00 pm.';
+        $direccion_sede='BLVD. GARCÍA DE LEÓN NO. 1575, COL. CHAPULTEPEC ORIENTE, C.P. 58260 MORELIA, MICHOACÁN DE OCAMPO, con un horario de atención Lunes a Jueves de 9:00 am a 4:00 pm. Y viernes de 9:00 am a 3:00 pm.';
     }    
     if($delegacion->delegacion === 'Uruapan'){
         $direccion_sede='NUEVO PARICUTÍN NO. 308, COL. JARDINES DE SAN RAFAEL, C.P. 30136 URUAPAN, MICHOACÁN DE OCAMPO. SE ENCUENTRA DENTRO DEL RECINTÓ DONDE ESTA RENTAS DEL
@@ -85,14 +85,10 @@
                                 <div class="alert alert-success alert-dismissible fade show" role="alert" style="text-align: justify;">
                                     <input type="hidden" name="id" value="{{ $id }}">
                                     <strong>¡Registro completo!</strong><br>
-                                    <label>Tu solicitud fue capturada correctamente, tu número de folio es: "{{$id}}" 
+                                    <label>Tu solicitud fue capturada correctamente. 
                                     <br><br>  
                                         <b>POR FAVOR, ACUDE CON EL PERSONAL DEL CENTRO DE CONCILIACIÓN PARA PROSEGUIR CON LA CONFIRMACIÓN DE TU SOLICITUD</b>
                                     <br><br>
-
-                                    NOTA: En caso de detectar algún error en los datos proporcionados, el personal del centro se pondrá en contacto contigo.<br><br>
-                                    Para dudas acude a tu Delegación u Oficina de Apoyo del Centro de Conciliación Laboral en {{$delegacion->delegacion}}.<br>
-                                    Ubicada en {{$direccion_sede}}
     
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
