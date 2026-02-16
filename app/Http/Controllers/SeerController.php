@@ -10980,7 +10980,7 @@ class SeerController extends Controller
             }
         }
 
-        return view('ratificaciones.ratificaciones_todas',compact('solicitudes'));
+        return view('ratificaciones.ratificaciones_todas',compact('solicitudes','userRole'));
     }
 
     public function todos_complimientos(){

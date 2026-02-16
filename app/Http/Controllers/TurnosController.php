@@ -2475,4 +2475,129 @@ class TurnosController extends Controller
         $nombreArchivo = 'Convenio_PTU_NRati' . $ratificacion->trabajador .'.pdf';
         return $pdf->stream($nombreArchivo);            
     }
+    public function vista_previa_citas($id){
+        $idSolicitud = $id;
+        $id_usuario = auth()->user()->id;
+        $user = User::find($id_usuario);           
+        $solicitud      = Turnos::find($id);
+
+        $representantes = Poder::find($solicitud["idAbogado"]);
+        $abogados = Poder::all();
+        $estados        = Estados::all();
+        $municipios     = Municipios::where('estado',16)->get();
+
+        return view('/ratificaciones/edicionVistaCitas',compact('idSolicitud','representantes','solicitud','abogados'));
+    }
+    public function guardarEdicion_citas(Request $request){
+        $data = $request->all();
+        $id_solicitud = $data["id"];
+        $id_usuario = auth()->user()->id;
+        $user = User::find($id_usuario);
+        $roles = Role::pluck('name', 'name')->all();
+        $userRole = $user->roles->pluck('name')->all();
+
+        $solicitud = Turnos::find($data['id']);
+        //Variables opcionales
+        if(isset($data["Aguinaldo"]) && $data["motivo"] == "Pago de prestaciones"){
+            $Aguinaldo =  1;
+        }
+        else{
+            $Aguinaldo =  0;
+        }
+        if(isset($data["Vacaciones"]) && $data["motivo"] == "Pago de prestaciones"){
+            $Vacaciones =  1;
+        }
+        else{
+            $Vacaciones =  0;
+        }
+        if(isset($data["PrimaVacacional"]) && $data["motivo"] == "Pago de prestaciones"){
+            $PrimaVacacional = 1;
+        }
+        else{
+            $PrimaVacacional = 0;
+        }
+        if(isset($data["PagoPTU"]) && $data["motivo"] == "Pago de prestaciones"){
+            $PagoPTU =  1;
+        }
+        else{
+            $PagoPTU = 0;
+        }
+        if(isset($data["Gratificación"]) && $data["motivo"] == "Pago de prestaciones"){
+            $Gratificación =  1;
+        }
+        else{
+            $Gratificación = 0;
+        }
+        if(isset($data["PrimaAntigüedad"]) && $data["motivo"] == "Pago de prestaciones"){
+            $PrimaAntigüedad =  1;
+        }
+        else{
+            $PrimaAntigüedad = 0;
+        }
+        if(isset($data["Otras"]) && $data["motivo"] == "Pago de prestaciones"){
+            $Otras =  1;
+        }
+        else{
+            $Otras =  0;
+        }
+        if(isset($data["Especifique"]) && $data["motivo"] == "Pago de prestaciones"){
+            $Especifique =  $data["Especifique"];
+        }
+        else{
+            $Especifique = 0;
+        }
+        $updateData = [
+            'idAbogado'           =>  $data["folio"],
+            'primero_trabajador'  =>  $data["primero"],
+            'segundo_trabajador'  =>  $data["segundo"],
+            'trabajador'          =>  $data["nombre"],
+            'edad'                =>  $data["edad"],
+            'sexo'                =>  $data["trabajador_sexo"],
+            'trabajador_curp'     =>  $data["curp"],
+            'tipo_identificacion' =>  $data["tipo_identificacion"],
+            'num_identificacion'  =>  $data["num_identificacion"],
+            'fecha_inicio'        =>  $data["fecha_inicio"],
+            'fecha_termino'       =>  $data["fecha_termino"],
+            'categoria'           =>  $data["categoria"],
+            'frecuencia'          =>  $data["frecuencia"],
+            'salario'             =>  $data["salario"],
+            'dias'                =>  $data["dias"],
+            'motivo'              =>  $data["motivo"],
+            'monto'               =>  $data["monto"],
+            'tipo_pago'           =>  $data["tipo_pago"],
+            'delegacion'          =>  $data["sede"],
+            'fecha'               =>  $data["fecha"],
+            'hora'                =>  $data["hora"],
+            'hora_fin'            =>  $data["hora"],
+            'Aguinaldo'           => $Aguinaldo,
+            'Vacaciones'          => $Vacaciones,
+            'PrimaVacacional'     => $PrimaVacacional,
+            'PagoPTU'             => $PagoPTU,
+            'Gratificación'       => $Gratificación,
+            'PrimaAntigüedad'     => $PrimaAntigüedad,
+            'Otras'               => $Otras,
+            'Especifique'         => $Especifique,
+        ];
+
+        if ($request->hasFile('documentoidentificacion')) {
+            $nombre_ine = $request->curp . "_IDENTIFICACION_" . time() . ".pdf";
+            $request->file('documentoidentificacion')->storeAs('documentos_ratificacion', $nombre_ine);
+            $updateData["documentoidentificacion"] = $nombre_ine; 
+        }
+        if ($request->hasFile('documentoCurp')) {
+            $nombre_curp = $request->curp . "_CURP_" . time() . ".pdf";
+            $request->file('documentoCurp')->storeAs('documentos_ratificacion', $nombre_curp);
+            $updateData["documentoCurp"] = $nombre_curp;
+        }
+
+        if ($request->hasFile('cuantificacion')) {
+            $nombre_cuantificacion = $request->curp . "_CUANTIFICACION_" . time() . ".pdf";
+            $request->file('cuantificacion')->storeAs('documentos_ratificacion', $nombre_cuantificacion);
+            $updateData["documentoCuanti"] = $nombre_cuantificacion; 
+        }
+        $solicitud->update($updateData);
+
+        return redirect()->route('todas_ratificaciones')->with('success', 'Actualizado correctamente');
+
+    }
 }

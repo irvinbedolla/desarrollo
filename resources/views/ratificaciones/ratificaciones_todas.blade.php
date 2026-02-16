@@ -27,8 +27,11 @@
                                             <th style="color: #fff;">Estatus</th>
                                             <th style="color: #fff;">Detalles</th>
                                             <th style="color: #fff;">Concluir</th>
-                                            <th style="color: #fff;">Cumplimeintos</th>
+                                            <th style="color: #fff;">Cumplimientos</th>
                                             <th style="color: #fff;">Documentos</th>
+                                            @if($userRole[0] == "Enlace" || $userRole[0] == "Super Usuario")
+                                                <th style="color: #fff;">Editar</th>
+                                            @endif
                                         </thead>
                                         <tbody>
                                             @foreach($solicitudes as $solicitud)
@@ -125,6 +128,11 @@
                                                             </div>
                                                         @endif                                                        
                                                     </td>
+                                                    @if($userRole[0] == "Enlace" || $userRole[0] == "Super Usuario")
+                                                        <td>
+                                                            <a class="btn btn-success" href="{{ route('vista_previa_citas', $solicitud->id) }}">Editar</a>
+                                                        </td>
+                                                    @endif
                                                 </tr>
                                             @endforeach
                                         </tbody>
