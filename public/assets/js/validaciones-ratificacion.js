@@ -9,7 +9,7 @@ function validacionCamposInput(valor, tipoValidacion, elementoMsj, msj, aplicaVa
     let patron;
     switch(tipoValidacion){
       case "soloLetras":
-        patron = /^[A-ZÑÁÉÍÓÚ.\s]+$/; // Mayúsculas y espacios
+        patron = /^[A-Z.\s]+$/; // Mayúsculas y espacios
         break;
       case "soloNumeros":
         patron = /^\d+$/;  // Solo dígitos
@@ -35,7 +35,7 @@ function validacionCamposInput(valor, tipoValidacion, elementoMsj, msj, aplicaVa
 
     document.querySelectorAll('.soloLetras').forEach(input => {
         input.addEventListener('input', () => {
-            input.value = input.value.replace(/[^a-zA-ZñÑáéíóúÁÉÍÓÚ.\s]/g, '').toUpperCase();
+            input.value = input.value.replace(/[^a-zA-Z.\s]/g, '').toUpperCase();
         });
     });
   
