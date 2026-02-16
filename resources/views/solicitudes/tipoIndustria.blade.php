@@ -1016,7 +1016,9 @@ Acude a la Oficina Estatal del Centro Federal de Conciliación y Registro Labora
                                                 </div>
                                             </div>
                                             <div>
-                                                <button type="button" class="btn btn-primary" onclick="validarIndustria()" style="float: right; margin-top: 2%;"> Validar y Continuar <i class="fa fa-arrow-right"></i></button>
+                                                <!--
+                                                <button type="button" class="btn btn-primary" onclick="validarIndustria()" style="float: right; margin-top: 2%;"> Validar y Continuar <i class="fa fa-arrow-right"></i></button> -->
+                                                <button type="button" class="btn btn-primary" style="float: right; margin-top: 2%;"> Validar y Continuar <i class="fa fa-arrow-right"></i></button>
                                                 <button type="button" onclick="window.location.href='{{ route('solicitud') }}'" class="btn" style="float: right; margin-top: 2%;">Cancelar Solicitud</button>
                                             </div>
                                         </div>

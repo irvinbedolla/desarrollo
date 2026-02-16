@@ -20,6 +20,7 @@
                                         <th style="color: #fff;">Actividad Economica</th>
                                         <th style="color: #fff;">Tipo Trabajador</th>
                                         <th style="color: #fff;">Estatus</th>
+                                        <th style="color: #fff;">Delegacion</th>
                                         <th style="color: #fff;">Acciones</th>
                                     </thead>
                                     <tbody class="contenidobusqueda">
@@ -43,6 +44,7 @@
                                                     <td>
                                                         {{$solicitud->estatus}}
                                                     </td>    
+                                                    <td>{{$solicitud->delegacion}}</td>
                                                     <td>
                                                         <a class="btn btn-info" href="{{ route('solicitud_editar', $solicitud->id)}}" onclick=editar_usuario();>Revisar</a>
                                                     </td>

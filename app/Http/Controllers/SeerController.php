@@ -2087,6 +2087,8 @@ class SeerController extends Controller
 
         // Tipo de llenado 1: actualizar un solo registro
         if ($data["tipo_llenado"] == 1) {
+            $registro = SeerCitados::find($data["id"]);
+
             SeerCitados::find($data["id"])
                 ->update([
                     'estatus'                    => $data["estatus"],
@@ -2116,8 +2118,9 @@ class SeerController extends Controller
                     'ojos'                        => $data["ojos"],
                     'particulares'                => $data["particulares"],
                     'especificar'                 => $data["especificar"],
-                    'updated_at'                  => DB::raw("'" . $fechaEspecifica->format('Y-m-d H:i:s') . "'")
+                    'updated_at'                  => $fechaEspecifica,
                 ]);
+                dd("llego");
         } else {
             // Tipo de llenado 2: actualizar varios registros de la misma solicitud
             $solicitud = SeerCitados::find($data["id"]);
@@ -2157,7 +2160,6 @@ class SeerController extends Controller
                     ]);
             }
         }
-
         // Redirigir al listado
         return redirect()->route('seer');  
     }
@@ -2319,17 +2321,17 @@ class SeerController extends Controller
         $ahora = Carbon::now();
         $hora_inicial = '09:00:00';
         $hora_final = '16:00:00';
-
+        /*
         if($ahora){
             return view('solicitudes.solicitud_no_disponible', [
                 'motivo' => 'Fuera de Servicio.',
             ]);
         }
-
+        */
         //Cerrar si es fin de semana
         if ($ahora->isWeekend()) {
             return view('solicitudes.solicitud_no_disponible', [
-                'motivo' => 'Fin de semana. Fuera de Servicio.',
+                'motivo' => 'En mantenimiento.',
             ]);
         }
 
@@ -2344,10 +2346,10 @@ class SeerController extends Controller
 
         if ($esInhabil) {
             return view('solicitudes.solicitud_no_disponible', [
-                'motivo' => 'Día inhábil. Fuera de servicio.',
+                'motivo' => 'Día inhábil.',
             ]);
         }
-
+        
         return view('solicitud');
     }
 
@@ -5248,8 +5250,8 @@ class SeerController extends Controller
 
         // 2. Construcción de la consulta optimizada
         $mis_notificaciones = SeerPerGeneral::join('seer_citados', 'seer_citados.id_solicitud', '=', 'seer_general.id')
-            ->join('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
-            ->join('estados', 'seer_citados.estado_citado', '=', 'estados.id')
+            ->leftjoin('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
+            ->leftjoin('estados', 'seer_citados.estado_citado', '=', 'estados.id')
             ->select(
                 'seer_general.id as id_solicitud',
                 'seer_citados.id as id_citado',
@@ -5276,8 +5278,7 @@ class SeerController extends Controller
             ->where('seer_citados.notificacion', '!=', 'Trabajador')
             ->whereNotIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
             ->get();
-            
-
+       
         if($user["delegacion"] == "Morelia"){
             $personas = User::whereHas('roles', function ($query) {
                 return $query->where('name', '=', 'Notificador');

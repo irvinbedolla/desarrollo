@@ -53,7 +53,7 @@ class DashboardController extends Controller
         }
         //puede ver unicamente las sede
         else{
-            if($delegacion == "Morelia" || $delegacion == "Zitácuaro"){
+            if($delegacion == "Morelia" || $delegacion == "Zitácuaro" || $delegacion == "Zitacuaro"){
                 $sedes = ["Morelia", "Zitácuaro"];
             }
             else if($delegacion == "Uruapan" || $delegacion == "Lázaro Cárdenas"){

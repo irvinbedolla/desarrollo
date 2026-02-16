@@ -152,6 +152,10 @@
             <a class="nav-link" href="{{ route('poderes') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="poderes()">Poderes</span>
             </a>
+            
+            <a class="nav-link" href="{{ route('audiencia_index') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" >Audiencias</span>
+            </a>
             <a id="menu-pendiente-firma" class="nav-link" href="{{ route('firma_citatorio') }}">
                 <i class="bi bi-bank"></i>
                 <span class="text-dark" onclick="mis_citas()">Pendiente de Firma
@@ -199,8 +203,8 @@
             <a class="nav-link" href="{{ route('create_asesoria') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Asesorias</span>
             </a>
-            <a class="nav-link" href="{{ route('seer') }}">
-                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">SEER</span>
+            <a class="nav-link" href="{{ route('solicitudes_index') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Solicitudes</span>
             </a>
         @endrole
     @endauth

@@ -65,23 +65,23 @@ use App\Http\Controllers\IncidenciasController;
         Route::post('/chat/crearUno/',  [Controller::class, 'storeUno'])->name('RespuestasChat.storeUno');
 
     //Ruta calendario
-        Route::get('/calendario', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendario.index');
-        Route::get('/citas/eventos', [App\Http\Controllers\CitaController::class, 'citas'])->name('citas.eventos');
-        Route::get('/pagos/eventos', [App\Http\Controllers\CitaController::class, 'pagos'])->name('pagos.eventos');
-        Route::get('/pagos/conciliadores', [App\Http\Controllers\CitaController::class, 'conciliadores'])->name('conciliador.eventos');
-        Route::get('/audiencias/eventos', [App\Http\Controllers\AudienciasController::class, 'audiencias'])->name('audiencias.eventos');
-        Route::get('/ratificaciones/eventos', [App\Http\Controllers\AudienciasController::class, 'ratificaciones'])->name('ratificaciones.eventos');
-        Route::get('citas/exportar-excel', [CitaController::class, 'exportarExcel']);
+        Route::get('/calendario',               [App\Http\Controllers\CalendarController::class, 'index'])->name('calendario.index');
+        Route::get('/citas/eventos',            [App\Http\Controllers\CitaController::class, 'citas'])->name('citas.eventos');
+        Route::get('/pagos/eventos',            [App\Http\Controllers\CitaController::class, 'pagos'])->name('pagos.eventos');
+        Route::get('/pagos/conciliadores',      [App\Http\Controllers\CitaController::class, 'conciliadores'])->name('conciliador.eventos');
+        Route::get('/audiencias/eventos',       [App\Http\Controllers\AudienciasController::class, 'audiencias'])->name('audiencias.eventos');
+        Route::get('/ratificaciones/eventos',   [App\Http\Controllers\AudienciasController::class, 'ratificaciones'])->name('ratificaciones.eventos');
+        Route::get('citas/exportar-excel',      [CitaController::class, 'exportarExcel']);
 
     //Ruta Solicitud para los Centros
-        Route::get('levantar_solicitudCentro',                    [SeerController::class, 'solicitudesLineaCentro'])->name('solicitudEnLineaCentro');
-        Route::get('tipoIndustriaCentro/{tipo_solicitud}',        [SeerController::class, 'IndustriasCentro'])->name('solicitud.industriaCentro');
-        Route::get('TrabajadorCentro/{tipo_solicitud}',   [SeerController::class, 'trabajadorCentro'])->name('solicitud_trabajadorCentro');
-        Route::post('guardar_trabajadorCentro',           [SeerController::class, 'solicitud_parte1Centro'])->name('parte1Centro');
-        Route::get('solicitud_continuarCentro',      [SeerController::class, 'vista_parte2Centro'])->name('parte2.verCentro');
-        Route::post('solicitud_solicitanteCentro',        [SeerController::class, 'solicitud_parte2Centro'])->name('parte2Centro');
-        Route::get('/agrega_citadoCentro/{id}',           [SeerController::class, 'vista_citadoCentro'])->name('agregar_citadoCentro');
-        Route::post('/agrega_citadoCentro',               [SeerController::class, 'guardar_citadoCentro'])->name('seer.citadosCentro');
+        Route::get('levantar_solicitudCentro',                      [SeerController::class, 'solicitudesLineaCentro'])->name('solicitudEnLineaCentro');
+        Route::get('tipoIndustriaCentro/{tipo_solicitud}',          [SeerController::class, 'IndustriasCentro'])->name('solicitud.industriaCentro');
+        Route::get('TrabajadorCentro/{tipo_solicitud}',             [SeerController::class, 'trabajadorCentro'])->name('solicitud_trabajadorCentro');
+        Route::post('guardar_trabajadorCentro',                     [SeerController::class, 'solicitud_parte1Centro'])->name('parte1Centro');
+        Route::get('solicitud_continuarCentro',                     [SeerController::class, 'vista_parte2Centro'])->name('parte2.verCentro');
+        Route::post('solicitud_solicitanteCentro',                  [SeerController::class, 'solicitud_parte2Centro'])->name('parte2Centro');
+        Route::get('/agrega_citadoCentro/{id}',                     [SeerController::class, 'vista_citadoCentro'])->name('agregar_citadoCentro');
+        Route::post('/agrega_citadoCentro',                         [SeerController::class, 'guardar_citadoCentro'])->name('seer.citadosCentro');
     // Finalizar solicitud Centro: debe ser POST (acción con efectos: guarda en BD y genera acuse/correo)
     Route::post('/finalizaCentro',                    [SeerController::class, 'guardar_solicitudCentro_post'])->name('seer.finalizaCentro');
     // Mantener compatibilidad por si algún link viejo aún apunta a GET
@@ -122,12 +122,12 @@ use App\Http\Controllers\IncidenciasController;
     //Solicitudes en línea trabajador
     Route::get('Trabajador/{tipo_solicitud}',   [SeerController::class, 'trabajador'])->name('solicitud_trabajador');
     Route::post('guardar_trabajador',           [SeerController::class, 'solicitud_parte1'])->name('parte1');
-    Route::get('solicitud_continuar',      [SeerController::class, 'vista_parte2'])->name('parte2.ver');
+    Route::get('solicitud_continuar',           [SeerController::class, 'vista_parte2'])->name('parte2.ver');
     Route::post('solicitud_solicitante',        [SeerController::class, 'solicitud_parte2'])->name('parte2');
     Route::get('vista_solicitante/{id}' ,       [SeerController::class, 'vista_solicitante'])->name('solicitante');
     Route::post('/delegacion/{municipioId}',    [SeerController::class, 'DelegacionPorMunicipio']); //Muestra la delegación que le corresponde según el municipio seleccionado
-    Route::get('/munSolicitante/{id}',  [SeerController::class, 'obtenerMunicipio']);
-    Route::get('/munCitado/{id}',       [SeerController::class, 'obtenerMunicipio']);
+    Route::get('/munSolicitante/{id}',          [SeerController::class, 'obtenerMunicipio']);
+    Route::get('/munCitado/{id}',               [SeerController::class, 'obtenerMunicipio']);
     //Ruta de agregar citados
     Route::get('/agrega_citado/{id}',           [SeerController::class, 'vista_citado'])->name('agregar_citado');
     Route::post('/agrega_citado',               [SeerController::class, 'guardar_citado'])->name('seer.citados');
