@@ -594,10 +594,50 @@ class SeerController extends Controller
             $pagosAudiencias      = (object)['audiencias' => $audienciasData->total_count];
             $pagosAudienciasMonto = (object)['audienciasMonto' => $audienciasData->total_monto];
     
+            // 3. Consulta para Promedios por Sede
+            $promediosPagos = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
+                ->when($sede !== "Todos", function ($q) use ($sede) {
+                    if ($sede === "TodosDelegado") {
+                        $user = User::find(auth()->id());
+                        $sedeUsuario = $user->delegacion;
+                        
+                        $mapping = [
+                            'Morelia' => ['Morelia', 'Zitácuaro'],
+                            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+                            'Zamora'  => ['Zamora', 'Sahuayo']
+                        ];
+
+                        if (isset($mapping[$sedeUsuario])) {
+                            return $q->whereIn('pago_solicitud.delegacion', $mapping[$sedeUsuario]);
+                        }
+                    }
+                    return $q->where('pago_solicitud.delegacion', $sede);
+                })
+                ->selectRaw("
+                    pago_solicitud.delegacion as sede,
+                    COUNT(pago_solicitud.id) as total_pagos,
+                    COUNT(DISTINCT DATE(pago_solicitud.fecha)) as dias_con_actividad
+                ")
+                ->groupBy('pago_solicitud.delegacion')
+                ->get()
+                ->map(function ($item) {
+                    // Calculamos el promedio evitando división por cero
+                    $promedio = $item->dias_con_actividad > 0 
+                        ? $item->total_pagos / $item->dias_con_actividad 
+                        : 0;
+
+                    return [
+                        'sede'               => $item->sede,
+                        'total_pagos'        => $item->total_pagos,
+                        'dias_con_actividad' => $item->dias_con_actividad,
+                        'promedio_diario'    => $promedio
+                    ];
+                });
+                
             $pdf = \PDF::loadView('PDF/Estadisticas/reporte-CumplimientosMonto', 
             compact('fecha_inicial','fecha_final','pagosRatificacion','pagosRatificacionMonto',
             'pagosAudiencias','pagosAudienciasMonto','pagosRatificacionPagado','pagosRatificacionMontoPagado',
-            'pagosRatificacionPendiente','pagosRatificacionMontoPendiente'));
+            'pagosRatificacionPendiente','pagosRatificacionMontoPendiente','promediosPagos'));
             return $pdf->stream('archivo.pdf');
         }
         else if ($data["tipo_reporte"] == "CumplimientosGrafica"){
@@ -804,7 +844,34 @@ class SeerController extends Controller
                 ->orderBy('turnos.fecha', 'asc') // Opcional: ordena por fecha para facilitar la lectura
                 ->get();
     
-            $pdf = \PDF::loadView('PDF/Estadisticas/RatificacionUsuario',compact('fecha_inicial','fecha_final','usuariosTotal','usuariosDias'));
+            // 1. Obtenemos los totales y el conteo de días con actividad por sede
+            $promedios = Turnos::whereBetween('turnos.fecha', [$fecha_inicial, $fecha_final])
+                ->when($sede !== "Todos", function ($query) use ($sede) {
+                    if ($sede === "TodosDelegado") {
+                        $sedeUsuario = auth()->user()->delegacion;
+                        $mapping = [
+                            'Morelia' => ['Morelia', 'Zitácuaro'],
+                            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+                            'Zamora'  => ['Zamora', 'Sahuayo'],
+                        ];
+                        return $query->whereIn('turnos.delegacion', $mapping[$sedeUsuario] ?? [$sedeUsuario]);
+                    }
+                    return $query->where('turnos.delegacion', $sede);
+                })
+                ->select(
+                    'turnos.delegacion as sede',
+                    DB::raw('COUNT(turnos.id) as total'),
+                    // Contamos fechas únicas para saber cuántos días realmente se trabajó
+                    DB::raw('COUNT(DISTINCT turnos.fecha) as dias_activos')
+                )
+                ->groupBy('turnos.delegacion')
+                ->get()
+                ->map(function ($item) {
+                    // Calculamos el promedio: Total / Días Activos
+                    $item->promedio = $item->dias_activos > 0 ? ($item->total / $item->dias_activos) : 0;
+                    return $item;
+                });
+            $pdf = \PDF::loadView('PDF/Estadisticas/RatificacionUsuario',compact('fecha_inicial','fecha_final','usuariosTotal','usuariosDias','promedios'));
             //$pdf->setPaper('a4', 'landscape');
             return $pdf->stream('archivo.pdf');
         }
@@ -886,6 +953,7 @@ class SeerController extends Controller
                 'seer_general.delegacion',
                 'seer_general.actividad',
                 'seer_solicitante.nombre',
+                'seer_general.tipo_solicitud',
                 DB::raw('GROUP_CONCAT(catalogo_motivos.motivo SEPARATOR ", ") as motivos')
             )
             ->groupBy(
@@ -896,7 +964,8 @@ class SeerController extends Controller
                 'seer_general.estatus', 
                 'seer_general.delegacion', 
                 'seer_general.actividad', 
-                'seer_solicitante.nombre'
+                'seer_solicitante.nombre',
+                'seer_general.tipo_solicitud'
             )
             ->orderBy('seer_general.consecutivo', 'desc')
             ->get();
@@ -1211,9 +1280,12 @@ class SeerController extends Controller
                     ->get();    
                 
                 
+            /*
             $pdf = \PDF::loadView('PDF/Estadisticas/reporte_cuantitativo', compact('solicitudes','audiencias','notificaciones'));
             $pdf->setPaper('legal', 'landscape');
             return $pdf->stream('archivo.pdf');
+            */
+            return Excel::download(new ReporteGeneral($fecha_inicial, $fecha_final,$sede), 'reporte.xlsx');
         }
         else if($data["tipo_reporte"] == "GeneralSede"){
             //Auxiliares
@@ -2120,12 +2192,10 @@ class SeerController extends Controller
                     'especificar'                 => $data["especificar"],
                     'updated_at'                  => $fechaEspecifica,
                 ]);
-                dd("llego");
         } else {
             // Tipo de llenado 2: actualizar varios registros de la misma solicitud
             $solicitud = SeerCitados::find($data["id"]);
             $citados = SeerCitados::where('id_solicitud', $solicitud["id_solicitud"])->get();
-
             foreach ($citados as $citado) {
                 SeerCitados::find($citado["id"])
                     ->update([
@@ -2156,7 +2226,7 @@ class SeerController extends Controller
                         'ojos'                        => $data["ojos"],
                         'particulares'                => $data["particulares"],
                         'especificar'                 => $data["especificar"],
-                        'updated_at'                  => DB::raw("'" . $fechaEspecifica->format('Y-m-d H:i:s') . "'")
+                        'updated_at'                  => $fechaEspecifica,  
                     ]);
             }
         }
@@ -5283,7 +5353,7 @@ class SeerController extends Controller
             $personas = User::whereHas('roles', function ($query) {
                 return $query->where('name', '=', 'Notificador');
             })
-            ->where('delegacion', ["Morelia", "Zitacuaro"])
+            ->where('delegacion', ["Morelia", "Zitacuaro" , "Zitácuaro"])
             ->get();
         } else if ($user["delegacion"] == "Uruapan"){
             $personas = User::whereHas('roles', function ($query) {

@@ -351,10 +351,11 @@ class AudienciasController extends Controller
                     $color = '#CCCCCC';
                 }
 
+                $trabajador = $rati->trabajador." ".$rati->primero_trabajador." ".$rati->segundo_trabajador;
                 $eventos[] = [
                     'id' => $rati->id,
                     'title' => $rati->empresa,
-                    'solicitante' => $rati->nombre,
+                    'solicitante' => $trabajador,
                     'start' => $rati->fecha . 'T' . $rati->hora,
                     'extendedProps' => [
                         'hora' => $rati->hora,
@@ -366,6 +367,7 @@ class AudienciasController extends Controller
                         'usuario' => $userID,
                         'tipo' => $tipo,
                         'conciliador' => $rati->name,
+                        'solicitante' => $trabajador,
                     ]
                 ];
         }
