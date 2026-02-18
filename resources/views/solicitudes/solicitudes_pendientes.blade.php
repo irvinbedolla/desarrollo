@@ -20,6 +20,7 @@
                                         <th style="color: #fff;">Actividad Economica</th>
                                         <th style="color: #fff;">Tipo Trabajador</th>
                                         <th style="color: #fff;">Estatus</th>
+                                        <th style="color: #fff;">Tipo Solicitud</th>
                                         <th style="color: #fff;">Delegacion</th>
                                         <th style="color: #fff;">Acciones</th>
                                     </thead>
@@ -44,6 +45,13 @@
                                                     <td>
                                                         {{$solicitud->estatus}}
                                                     </td>    
+                                                    @if($solicitud->tipo_generacion == 0)
+                                                        <td>Solicitud en linea</td>
+                                                    @elseif($solicitud->tipo_generacion == 1000)
+                                                        <td>Solicitud en tablet</td>
+                                                    @else
+                                                        <td>Personal Centro</td>
+                                                    @endif
                                                     <td>{{$solicitud->delegacion}}</td>
                                                     <td>
                                                         <a class="btn btn-info" href="{{ route('solicitud_editar', $solicitud->id)}}" onclick=editar_usuario();>Revisar</a>

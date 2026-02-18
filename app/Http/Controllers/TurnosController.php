@@ -956,7 +956,7 @@ class TurnosController extends Controller
                             ];
                         } else if ($esInhabil){
                             $todosLosEventos[] = [
-                                'title' => 'Inhábil',
+                                'title' => 'No disponible',
                                 'start' => $slotStart,
                                 'color' => '#3B78DB',
                                 'extendedProps' => ['estado' => 'inhabil', 'espacios_disponibles' => 0]

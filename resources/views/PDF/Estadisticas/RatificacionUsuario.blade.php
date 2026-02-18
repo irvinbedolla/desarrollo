@@ -12,50 +12,132 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     
         <style>
-           @page {
-                margin: 0px 0px;
-            }
-            body{
+           @page { margin: 0px 0px; }
+            body {
                 padding-top: 85px;
+                font-family: 'Helvetica', 'Arial', sans-serif;
+                color: #333;
+                line-height: 1.2;
             }
-            main{
-                margin: 50px 50px 50px 40px; /*Para colocar el texto*/
-            }
-            header {
-                position: fixed;
-                top: -100px;
-                left: 0;
-                right: 0;
-                height: 100px;
-                text-align: center;
-                font-size: 14px;
-            }
-
-            footer {
-                position: fixed;
-                bottom: -60px;
-                left: 0;
-                right: 0;
-                height: 50px;
-                text-align: center;
-                font-size: 12px;
-            }
-            .content {
-                font-family: sans-serif;
-                font-size: 12px;
-                text-align: justify;
-                margin-top: 50px;
-            }
+            main { margin: 40px 40px 60px 40px; }
+            
             .fondo-membrete {
                 position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
+                top: 0; left: 0; width: 100%; height: 100%;
                 z-index: -1;
             } 
-            .page-break {
-                page-break-after: always;
+
+            /* Encabezado */
+            .header-info-table {
+                width: 100%;
+                margin-bottom: 25px;
+                border-bottom: 2px solid #869b9c;
+            }
+            .header-title {
+                color: #5a6a6b;
+                font-size: 19px;
+                font-weight: bold;
+                padding-bottom: 5px;
+            }
+            .header-date {
+                text-align: right;
+                font-size: 12px;
+                color: #555;
+            }
+
+            /* Secciones */
+            .section-title {
+                background-color: #f1f3f3;
+                color: #445455;
+                padding: 7px 12px;
+                border-left: 5px solid #869b9c;
+                font-weight: bold;
+                font-size: 13px;
+                margin: 20px 0 10px 0;
+                text-transform: uppercase;
+            }
+
+            /* Tablas */
+            .table-custom {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 9.5px;
+                margin-bottom: 10px;
+            }
+            .table-custom thead th {
+                background-color: #869b9c;
+                color: #ffffff;
+                text-align: center;
+                padding: 8px 3px;
+                border: 1px solid #758a8b;
+            }
+            .table-custom tbody td {
+                padding: 6px 3px;
+                border: 1px solid #dee2e6;
+                text-align: center;
+            }
+            .table-custom tbody tr:nth-child(even) { background-color: #f9f9f9; }
+
+            /* Fila de Totales en Tablas */
+            .row-total {
+                background-color: #e9ecef !important;
+                font-weight: bold;
+                font-size: 10.5px;
+                color: #2c3e50;
+            }
+            .total-label { text-align: right !important; padding-right: 15px !important; }
+
+            /* Cuadro Resumen Final */
+            .resumen-container {
+                margin-top: 30px;
+                width: 40%;
+                float: right; /* Alineado a la derecha para un look más ejecutivo */
+                border: 1px solid #869b9c;
+            }
+            .resumen-table {
+                width: 100%;
+                font-size: 11px;
+            }
+            .resumen-table th {
+                background-color: #5a6a6b;
+                color: white;
+                padding: 8px;
+                text-align: center;
+            }
+            .resumen-table td {
+                padding: 8px;
+                border-bottom: 1px solid #dee2e6;
+            }
+            .resumen-grand-total {
+                background-color: #869b9c;
+                color: white;
+                font-weight: bold;
+                font-size: 13px;
+            }
+
+            .monto-bold { font-weight: bold; color: #1a1a1a; }
+            .estatus-pill {
+                padding: 2px 5px;
+                border-radius: 3px;
+                background-color: #d1d8d9;
+                font-size: 8.5px;
+            }
+            .clearfix { clear: both; }
+
+            @page {
+                margin: 0cm; /* Margen global: Top, Right, Bottom, Left */
+            }
+            
+            /* Ajuste de tablas para evitar cortes bruscos */
+            table {
+                page-break-inside: auto;
+                width: 100%;
+                margin-bottom: 20px;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
             }
         </style>
             

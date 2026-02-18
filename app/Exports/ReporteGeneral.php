@@ -9,7 +9,7 @@ use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Illuminate\Support\Facades\DB;
 
-class ReporteMexicoRati implements FromView
+class ReporteGeneral implements FromView
 {
     protected $fecha_inicial;
     protected $fecha_final;

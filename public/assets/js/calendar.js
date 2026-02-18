@@ -63,9 +63,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 return {
                     html: `
                         <div class="fc-event-content">
-                            <div class="fc-event-title">${info.event.title}</div>
-                            <div class="fc-event-title">${info.event.extendedProps.solicitante}</div>
-                            <div class="fc-event-title">${info.event.extendedProps.conciliador}</div>
+                            <div class="fc-event-title">Solicitante:${info.event.title}</div>
+                            <div class="fc-event-title">Citado:${info.event.extendedProps.solicitante}</div>
+                            <div class="fc-event-title">Conciliador:${info.event.extendedProps.conciliador}</div>
                             <div class="fc-event-time">
                                 <div class="color-indicator" style="background:${info.event.extendedProps.color}"></div>
                                 ${info.event.extendedProps.hora}
@@ -183,8 +183,8 @@ function handleEventClick(info, calendarType) {
     }
     else if (calendarType === 'ratificaciones') {
         modalContent = `
-            <strong>NUE:</strong> ${info.event.title}<br>
-            <strong>Folio:</strong> ${info.event.id}<br>
+            <strong>Citado:</strong> ${info.event.title}<br>
+            <strong>Solicitante:</strong> ${props.solicitante}<br>
             <strong>Fecha:</strong> ${props.fecha}<br>
             <strong>Hora:</strong> ${props.hora}<br>
             <strong>Estatus:</strong> ${props.estatus}<br>

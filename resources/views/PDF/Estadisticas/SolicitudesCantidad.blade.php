@@ -12,51 +12,98 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     
         <style>
-           @page {
-                margin: 0px 0px;
+           @page { margin: 0px 0px; }
+            body {
+                margin: 0; padding-top: 85px;
+                font-family: 'Helvetica', 'Arial', sans-serif;
+                color: #333; line-height: 1.2;
             }
-            body{
-                padding-top: 85px;
-            }
-            main{
-                margin: 50px 50px 50px 40px; /*Para colocar el texto*/
-            }
-            header {
-                position: fixed;
-                top: -100px;
-                left: 0;
-                right: 0;
-                height: 100px;
-                text-align: center;
-                font-size: 14px;
-            }
-
-            footer {
-                position: fixed;
-                bottom: -60px;
-                left: 0;
-                right: 0;
-                height: 50px;
-                text-align: center;
-                font-size: 12px;
-            }
-            .content {
-                font-family: sans-serif;
-                font-size: 12px;
-                text-align: justify;
-                margin-top: 50px;
-            }
+            /* Margen superior exacto para tu membrete */
+            main { margin: 40px 30px 50px 30px; }
+            
             .fondo-membrete {
                 position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                z-index: -1;
+                top: 0; left: 0; width: 100%; height: 100%;
+                z-index: -1000;
             } 
-            .page-break {
-                page-break-after: always;
+
+            /* Cabecera */
+            .header-info-table {
+                width: 100%;
+                border-bottom: 2px solid #869b9c;
+                margin-bottom: 15px;
+                padding-bottom: 8px;
             }
+            .report-title {
+                color: #5a6a6b;
+                font-size: 18px;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+            .report-date {
+                text-align: right;
+                font-size: 11px;
+                color: #666;
+            }
+
+            /* Secciones de Título */
+            .section-label {
+                background-color: #f1f3f3;
+                color: #445455;
+                padding: 6px 12px;
+                border-left: 4px solid #869b9c;
+                font-weight: bold;
+                font-size: 12px;
+                margin: 15px 0 10px 0;
+                text-transform: uppercase;
+            }
+
+            /* Tabla Principal */
+            .table-custom {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 8.5px;
+            }
+            .table-custom thead th {
+                background-color: #869b9c;
+                color: #ffffff;
+                text-align: center;
+                padding: 6px 3px;
+                border: 1px solid #758a8b;
+            }
+            .table-custom tbody td {
+                padding: 5px 3px;
+                border: 1px solid #dee2e6;
+                text-align: center;
+                vertical-align: middle;
+            }
+            .table-custom tbody tr:nth-child(even) { background-color: #f9f9f9; }
+
+            /* Indicadores Visuales */
+            .badge-trabajador { color: #0d6efd; font-weight: bold; }
+            .badge-patronal { color: #dc3545; font-weight: bold; }
+            .folio-text { font-weight: bold; color: #333; }
+            
+            /* Cuadro Resumen */
+            .resumen-compacto {
+                width: 100%;
+                margin-bottom: 20px;
+                border-collapse: collapse;
+            }
+            .resumen-compacto td {
+                padding: 10px;
+                background: #f8f9fa;
+                border: 1px solid #dee2e6;
+                text-align: center;
+            }
+            .resumen-val {
+                display: block;
+                font-size: 16px;
+                font-weight: bold;
+                color: #869b9c;
+            }
+            
+            .clearfix { clear: both; }
         </style>
             
     </head>
