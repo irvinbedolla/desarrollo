@@ -3760,7 +3760,6 @@ class SeerController extends Controller
              $citados_data = session('citados_trabajador_data', []);
              
              if (!$solicitud_data || !$solicitante_data) {
-                 // En el flujo Centro, si la sesión expira regresamos al inicio del flujo Centro.
                  return redirect()->route('solicitudEnLineaCentro')->with('error', 'Sesión expirada o datos incompletos.');
              }
 
@@ -3772,7 +3771,7 @@ class SeerController extends Controller
                     'actividad'       =>  $solicitud_data["actividad"],
                     'delegacion'      =>  $solicitud_data["delegacion"],
                     'tipo_solicitud'  =>  $solicitud_data["tipo_solicitud"],
-                    'tipo_generacion' =>  $solicitud_data["tipo_generacion"],
+                    'tipo_generacion' =>  -1,
                     'consecutivo'     =>  $solicitud_data["consecutivo"],
                     'año'             =>  $solicitud_data["año"],
                     'caso_excepcion'  =>  $solicitante_data['excepcion']
@@ -3943,15 +3942,11 @@ class SeerController extends Controller
         return view('solicitudes.avisoCentro',compact('id','mensaje','delegacion'));
     }
 
-    /**
-     * Finaliza la solicitud del flujo "Centro".
-     * Importante: esta acción guarda en BD (cuando el flujo trae id='session'), por eso debe ser POST.
-     */
+
     public function guardar_solicitudCentro_post(Request $request)
     {
         $id = $request->input('id');
 
-        // En este flujo, casi siempre debe ser 'session'. Si llega vacío, intentamos usar el valor esperado.
         if (!$id) {
             $id = 'session';
         }
