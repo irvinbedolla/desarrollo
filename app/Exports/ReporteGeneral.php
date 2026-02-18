@@ -27,89 +27,81 @@ class ReporteGeneral implements FromView
         $user = auth()->user();
         $sedeUsuario = $user->delegacion ?? '';
 
-        $subconsultaMotivos = DB::table('seer_motivos')
-        ->join('catalogo_motivos', 'catalogo_motivos.id', '=', 'seer_motivos.id_motivo')
-        ->whereColumn('seer_motivos.id_solicitud', 'seer_general.id')
-        ->select(DB::raw('COALESCE(GROUP_CONCAT(catalogo_motivos.motivo SEPARATOR ", "), "N/A")'));
+        $solicitudes = DB::table('users')
+            ->join('seer_general', 'users.id', '=', 'seer_general.user_id')
+            ->leftJoin('pago_solicitud', 'seer_general.id', '=', 'pago_solicitud.id_solicitud')
+            ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
+            ->when($sede !== "Todos", function ($q) use ($sede) {
+                if ($sede === "TodosDelegado") {
+                    $id = auth()->user()->id;
+                    $user = User::find($id);
+                    $sedeUsuario = $user->delegacion;
+    
+                    if($sedeUsuario == "Morelia"){
+                        $delegaciones = ['Morelia', 'Zitácuaro'];
+                        return $q->whereIn('seer_general.delegacion', $delegaciones);
+                    }
+                    else if($sedeUsuario == "Uruapan"){
+                        $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
+                        return $q->whereIn('seer_general.delegacion', $delegaciones);
+                    }
+                    else if($sedeUsuario == "Zamora"){
+                |    $delegaciones = ['Zamora', 'Sahuayo'];
+                |            return $q->whereIn('seer_general.delegacion', $delegaciones);
+                |        }
+                |    }
+                |    return $q->where("seer_general.delegacion", $sede);
+                    })
+                    ->select(
+                        'users.id as user_id', 
+                        'users.name',
+                        DB::raw('COUNT(DISTINCT seer_general.id) as solicitudes'),
+                        DB::raw("COUNT(DISTINCT CASE WHEN seer_general.estatus NOT IN ('Pendiente','Prevencion','Rechazado') THEN seer_general.id END) as confirmadas"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN seer_general.estatus = 'Incompetencia' THEN seer_general.id END) as incompetencia"),
+                        
+                        // Totales de Audiencia (General)
+                        DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' THEN pago_solicitud.id END) as cumplimientoAudiencia"),
+                        DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoAudienciaMonto"),
+                        
+                        // Totales de Audiencia (Pagado)
+                        DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.id END) as cumplimientoAudienciaPagado"),
+                        DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoAudienciaMontPagado"),
 
-        $subconsultaPagosTurnos = Pagos::select(DB::raw('SUM(monto)'))
-            ->whereColumn('pago_solicitud.id_solicitud', 'turnos.id')
-            ->where('pago_solicitud.tipo_pago', 'Ratificacion');
+                        // Totales de Ratificación vía Pago (General)
+                        DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' THEN pago_solicitud.id END) as cumplimientoRatificacion"),
+                        DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoRatificacionMonto"),
 
-        $subconsultaPagosSeer = Pagos::select(DB::raw('SUM(monto)'))
-            ->whereColumn('pago_solicitud.id_solicitud', 'seer_general.id')
-            ->whereIn('pago_solicitud.tipo_pago', ['Audiencia','Conciliador']); 
+                        // Totales de Ratificación vía Pago (Pagado)
+                        DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.id END) as cumplimientoRatificacionPagado"),
+                        DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoRatificacionMontoPagado")
+                    )
+                    ->groupBy('users.id', 'users.name')
+                    ->get()
+                    ->keyBy('user_id');
 
-        // --- CONSULTA 1: TURNOS ---
-        $reportes = Turnos::whereBetween('turnos.fecha', [$this->fecha_inicial, $this->fecha_final])
-            ->leftJoin('users', 'users.id', '=', 'turnos.user_id')
-            ->leftJoin('estados', 'estados.id', '=', 'turnos.estado_rat')
-            ->leftJoin('municipios', 'municipios.id', '=', 'turnos.municipio_rat')
-            ->leftJoin('abogados', 'abogados.idAbogado', '=', 'turnos.idAbogado')
-            ->leftJoin('municipios as mun_abogado', 'mun_abogado.id', '=', 'abogados.municipio_patronal')
-            ->when($this->sede !== "Todos", function ($q) use ($sedeUsuario) {
-                return $this->aplicarFiltroSede($q, 'turnos', $sedeUsuario);
-            })
-            ->select(
-                'turnos.NUE',
-                DB::raw('MONTH(turnos.fecha) as mes'),
-                DB::raw('YEAR(turnos.fecha) as año'),
-                'estados.nombre as estado',
-                'municipios.nombre as municipio',
-                'mun_abogado.nombre as municipio_abogado',
-                'abogados.giroComercial',
-                'abogados.nombres_patronal',
-                'abogados.primer_apellido_patronal',
-                'abogados.segundo_apellido_patronal',
-                'turnos.motivo',
-                'turnos.user_id',
-                'turnos.estatus',
-                'turnos.id',
-                'turnos.sexo'
-            )
-            ->selectSub($subconsultaPagosTurnos, 'total')
-            ->get();
+                // 2. Consulta de Turnos (La parte de Ratificaciones que viene de otra tabla)
+                $dataTurnos = DB::table('turnos')
+                    ->join('pago_solicitud', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
+                    ->whereBetween('turnos.fecha', [$fecha_inicial, $fecha_final])
+                    ->when($sede !== "Todos", function ($q) use ($sede) {
+                        return $q->where('turnos.delegacion', $sede);
+                    })
+                    ->select(
+                        'turnos.user_id',
+                        DB::raw('COUNT(turnos.id) as ratificaciones'),
+                        DB::raw('SUM(turnos.monto) as ratificacionesMonto')
+                    )
+                    ->groupBy('turnos.user_id')
+                    ->get()
+                    ->keyBy('user_id');
 
-        // --- CONSULTA 2: SEER GENERAL ---
-        // Corregimos los joins para que apunten a seer_general, no a turnos
-        $reportesSolicitudes = SeerPerGeneral::whereBetween('seer_general.fecha', [$this->fecha_inicial, $this->fecha_final])
-            ->join('seer_citados','seer_citados.id_solicitud','seer_general.id')
-            ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
-            ->leftJoin('users', 'users.id', '=', 'seer_general.user_id')
-            ->leftJoin('estados', 'estados.id', '=', 'seer_solicitante.estado')
-            ->leftJoin('municipios', 'municipios.id', '=', 'seer_solicitante.municipio_domicilio')
-            ->leftJoin('abogados', 'abogados.idAbogado', '=', 'seer_citados.id_abogado') 
-            ->leftJoin('municipios as mun_abogado', 'mun_abogado.id', '=', 'abogados.municipio_patronal')
-            //->where('seer_general.estatus','=!','Pendiente')
-            ->when($this->sede !== "Todos", function ($q) use ($sedeUsuario) {
-                return $this->aplicarFiltroSede($q, 'seer_general', $sedeUsuario);
-            })
-            ->select(
-                'seer_general.NUE',
-                DB::raw('MONTH(seer_general.fecha) as mes'),
-                DB::raw('YEAR(seer_general.fecha) as año'),
-                'estados.nombre as estado',
-                'municipios.nombre as municipio',
-                'mun_abogado.nombre as municipio_abogado',
-                'abogados.giroComercial',
-                'abogados.nombres_patronal',
-                'abogados.primer_apellido_patronal',
-                'abogados.segundo_apellido_patronal',
-                'seer_general.user_id',
-                'seer_general.estatus',
-                'seer_general.id',
-                'seer_solicitante.sexo'
-            )
-            // Agregamos la cadena de motivos y el total de pagos como subconsultas
-            ->selectSub($subconsultaMotivos, 'motivo') 
-            ->selectSub($subconsultaPagosSeer, 'total') 
-            ->get();
+                // 3. Unir los resultados en una sola colección
+                foreach ($solicitudes as $id => $solicitud) {
+                    $turno = $dataTurnos->get($id);
+                    $solicitud->ratificaciones = $turno ? $turno->ratificaciones : 0;
+                    $solicitud->ratificacionesMonto = $turno ? $turno->ratificacionesMonto : 0;
+                }
 
-        // Combinar ambas colecciones
-        $todoJunto = $reportes->concat($reportesSolicitudes)->map(function($item) {
-            $item->total = $item->total ?? 0;
-            return $item;
-        });
 
         return view('excel.reporte-mexico', ['reportes' => $todoJunto]);
     }
