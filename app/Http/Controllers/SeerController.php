@@ -4243,6 +4243,7 @@ class SeerController extends Controller
         // 2. Iniciamos la consulta base (Se define una sola vez)
         $query = SeerPerGeneral::join('catalogo_rama', 'catalogo_rama.id', '=', 'seer_general.id_rama')
             ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
+            ->leftjoin('users','users.id','seer_general.user_id')
             ->select(
                 'seer_general.id',
                 'seer_general.consecutivo',
@@ -4252,7 +4253,9 @@ class SeerController extends Controller
                 'seer_general.actividad',
                 'catalogo_rama.rama_industrial',
                 'seer_general.tipo_solicitud',
-                'seer_general.estatus'
+                'seer_general.estatus',
+                'seer_general.tipo_generacion',
+                'users.name'
             )
             ->where('validado_conciliador', 'Pendiente')
             ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
@@ -4287,7 +4290,7 @@ class SeerController extends Controller
 
         // 4. Ejecución final
         $solicitudes = $query->get();
-
+        
         return view('solicitudes.solicitudes_pendientes', compact('solicitudes'));
     }
 
@@ -13047,85 +13050,61 @@ class SeerController extends Controller
         return $pdf->stream($nombreArchivo);                  
     }
 
-    public function todas_solicitudes(){
-        $id = auth()->user()->id;
-        $user = User::find($id);
-        $roles = Role::pluck('name','name')->all();
-        $userRole = $user->roles->pluck('name')->all();
+    public function todas_solicitudes() {
+        $user = auth()->user();
+        // Obtenemos el nombre del primer rol asignado
+        $userRole = $user->roles->pluck('name')->first(); 
         $isAudiencia = 'No';
 
-        if($userRole[0] == "Auxiliar" || $userRole[0] == "Excepcion"){
-            $solicitudes = SeerPerGeneral::where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(1500)->get();
-            foreach ($solicitudes as $solicitud) {
-                $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
-                $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+        // 1. Iniciamos el Query base con la relación y la validación de estatus
+        // Usamos 'solicitante:id,id_solicitud,nombre' para traer solo las columnas necesarias
+        $query = SeerPerGeneral::with('solicitante:id,id_solicitud,nombre')
+            ->where('estatus', '!=', 'Pendiente')
+            ->orderBy('created_at', 'desc')
+            ->limit(1500);
+
+        // 2. Definimos el mapa de delegaciones para evitar IFs repetitivos
+        $mapaDelegaciones = [
+            "Morelia" => ["Morelia", "Zitácuaro"],
+            "Uruapan" => ["Uruapan", "Lázaro Cárdenas"],
+            "Zamora"  => ["Zamora", "Sahuayo"],
+            "Sahuayo" => ["Sahuayo", "Zamora"],
+        ];
+
+        // 3. Aplicamos los filtros de seguridad según el Rol
+        if (in_array($userRole, ["Auxiliar", "Excepcion"])) {
+            $query->where('delegacion', $user->delegacion);
+        } 
+        elseif ($userRole == "Conciliador") {
+            $permisos = PermisosConciliador::where('id_conciliador', $user->id)->first();
+            // Si tiene permiso "Ambos", aplicamos el mapeo de sedes
+            if ($permisos && $permisos->tipo == "Ambos" && isset($mapaDelegaciones[$user->delegacion])) {
+                $query->whereIn('delegacion', $mapaDelegaciones[$user->delegacion]);
+            } else {
+                $query->where('delegacion', $user->delegacion);
+            }
+        } 
+        elseif (in_array($userRole, ["Delegado", "Enlace"])) {
+            if (isset($mapaDelegaciones[$user->delegacion])) {
+                $query->whereIn('delegacion', $mapaDelegaciones[$user->delegacion]);
+            } else {
+                $query->where('delegacion', $user->delegacion);
             }
         }
-        else if($userRole[0] == "Conciliador"){
-            $permisos = PermisosConciliador::where('id_conciliador',$id)->first();
-            if($permisos["tipo"] == "Ambos"){
-                if($user["delegacion"] == "Morelia"){
-                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(1500)->get();
-                    foreach ($solicitudes as $solicitud) {
-                        $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
-                        $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-                    }
-                }
-                if($user["delegacion"] == "Uruapan"){
-                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(1500)->get();
-                    foreach ($solicitudes as $solicitud) {
-                        $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
-                        $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-                    }
-                }
-                if($user["delegacion"] == "Sahuayo"){
-                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(1500)->get();
-                    foreach ($solicitudes as $solicitud) {
-                        $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
-                        $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-                    }
-                }
-            }
-            else{
-                $solicitudes = SeerPerGeneral::where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(1500)->get();
-                foreach ($solicitudes as $solicitud) {
-                    $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
-                    $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-                }
-            }
-        }
-        else if($userRole[0] == "Delegado" || $userRole[0] == "Enlace"){
-            if($user["delegacion"] == "Morelia"){
-                $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(1500)->get();
-                foreach ($solicitudes as $solicitud) {
-                    $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
-                    $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-                }
-            }
-            if($user["delegacion"] == "Uruapan"){
-                $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(1500)->get();
-                foreach ($solicitudes as $solicitud) {
-                    $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
-                    $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-                }
-            }
-            if($user["delegacion"] == "Zamora"){
-                $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(1500)->get();
-                foreach ($solicitudes as $solicitud) {
-                    $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
-                    $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-                }
-            }
-        }
-        else if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador"){
-            $solicitudes = SeerPerGeneral::orderBy('created_at', 'desc')->limit(1500)->get();
-            foreach ($solicitudes as $solicitud) {
-                $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
-                $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-            }
-        }
-        return view('solicitudes.solicitudes_todas',compact('solicitudes', 'isAudiencia'));
+        // Para Super Usuario / Administrador no se agregan filtros (ve todo)
+
+        // 4. Ejecutamos la consulta
+        $solicitudes = $query->get();
+
+        // 5. Mapeamos el nombre del solicitante al objeto principal para no romper tu vista actual
+        $solicitudes->transform(function ($solicitud) {
+            $solicitud->nombre = $solicitud->solicitante->nombre ?? 'Sin solicitante';
+            return $solicitud;
+        });
+
+        return view('solicitudes.solicitudes_todas', compact('solicitudes', 'isAudiencia'));
     }
+
     public function VerPDFCaratula($id, $tipo){
         $bandera = ($tipo == 'ratificacion') ? 'Ratificación' : 'Solicitud';
 
