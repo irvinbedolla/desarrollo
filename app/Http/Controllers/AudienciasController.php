@@ -300,7 +300,7 @@ class AudienciasController extends Controller
         $sedesAconsultar = $mapaSedes[$user->delegacion] ?? [$user->delegacion];
 
         // Iniciamos la consulta base
-        $query = Turnos::join('users','users.id','turnos.id_conciliador')
+        $query = Turnos::leftjoin('users','users.id','turnos.id_conciliador')
         ->select('turnos.*','users.name');
 
         if($userRole[0] != "Super Usuario"){

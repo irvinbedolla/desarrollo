@@ -5368,6 +5368,13 @@ class SeerController extends Controller
             ->where('delegacion', ["Zamora", "Sahuayo"])
             ->get();
         }
+        else if ($user["delegacion"] == "Zitacuaro" || $user["delegacion"] == "Zitácuaro"){
+            $personas = User::whereHas('roles', function ($query) {
+                return $query->where('name', '=', 'Notificador');
+            })
+            ->whereIN('delegacion', ["Zamora", "Zitacuaro"])
+            ->get();
+        }
 
         return view('notificaciones.index',compact('personas','mis_notificaciones','userRole'));
     }
@@ -6618,20 +6625,8 @@ class SeerController extends Controller
         $fecha_limite_natural = $hoy->copy()->addDays(45);
         $fecha_inicio_busqueda = $hoy->copy();
 
-
-        // 2. Cálculo del margen mínimo y construcción del mensaje
+        // 2. Cálculo del margen mínimo
         if ($notificion == "Trabajador") {
-            /*$dias_sumados = 0;
-            while ($dias_sumados < 7) {
-                $fecha_inicio_busqueda->addDay();
-                $es_festivo = DiasInhabiles::where('fecha_inicio', $fecha_inicio_busqueda->format('Y-m-d'))
-                                ->where('centro', $user->delegacion)
-                                ->whereNull('user_id')->exists();
-
-                if (!$fecha_inicio_busqueda->isWeekend() && !$es_festivo) {
-                    $dias_sumados++;
-                }
-            }*/
             $fecha_inicio_busqueda->addDays(7);
             $mensaje_ajuste = "Se agendó considerando los 7 días naturales mínimos para la notificación del trabajador.";
         } else {
@@ -6639,13 +6634,13 @@ class SeerController extends Controller
             $mensaje_ajuste = "Se agendó considerando los 15 días naturales requeridos para la notificación por el Centro.";
         }
 
-        // Ajuste al tope de 45 días
         if ($fecha_inicio_busqueda->gt($fecha_limite_natural)) {
             $fecha_inicio_busqueda = $fecha_limite_natural->copy();
             $mensaje_ajuste .= " (Ajustado al límite legal de 45 días).";
         }
 
-        if($delegacion == "Morelia"){
+        // Hardcode temporal para Morelia según tu lógica original
+        if($delegacion == "Morelia" || $delegacion == "Zitácuaro"){
             $fecha_revisar = '2026-02-25';
         } else {
             $fecha_revisar = $fecha_inicio_busqueda->format('Y-m-d');
@@ -6653,13 +6648,36 @@ class SeerController extends Controller
 
         $horarios_disponibles = ["09:00:00", "10:15:00", "11:30:00", "12:45:00", "14:00:00"];
 
-        // 3. Conciliadores y Sedes
-        $tipo_permiso = in_array($delegacion, ["Morelia", "Uruapan", "Zamora"]) ? ["Ambos", "Precencial"] : ["Ambos", "Virtual"];
-        $mapa_sedes = ["Zitácuaro" => "Morelia", "Lázaro Cárdenas" => "Uruapan", "Sahuayo" => "Zamora"];
+        // 3. Mapeo de Sedes y Filtro de Conciliadores por Permiso
+        $mapa_sedes = [
+            "Zitácuaro" => "Morelia", 
+            "Lázaro Cárdenas" => "Uruapan", 
+            "Sahuayo" => "Zamora"
+        ];
+        
         $oficina = $mapa_sedes[$delegacion] ?? $delegacion;
 
-        $conciliadores = User::whereHas('roles', function ($q) { $q->where('name', 'Conciliador'); })
-            ->where('delegacion', $oficina)->get();
+        // Lógica de validación de permisos solicitada:
+        // Si es una subsede (Zitacuaro, etc), buscamos conciliadores con permiso 'Ambos' o 'Virtual'
+        // Para las sedes principales (Morelia, Uruapan, Zamora), buscamos permiso 'Precencial' únicamente (o 'Ambos')
+        if (array_key_exists($delegacion, $mapa_sedes)) {
+            $permisos_requeridos = ["Ambos", "Virtual"];
+        } else {
+            $permisos_requeridos = ["Ambos", "Precencial"];
+        }
+
+        // Obtenemos solo los conciliadores que cumplen con el criterio de la oficina Y el permiso
+        $conciliadores = User::whereHas('roles', function ($q) { 
+                $q->where('name', 'Conciliador'); 
+            })
+            ->where('delegacion', $oficina)
+            // Sustituir 'campo_permiso' por el nombre real de tu columna en la tabla users
+            ->whereIn('campo_permiso', $permisos_requeridos) 
+            ->get();
+
+        if ($conciliadores->isEmpty()) {
+            return response()->json(['error' => 'No hay conciliadores configurados con los permisos requeridos para esta sede.'], 404);
+        }
 
         // 4. Bucle de búsqueda
         do {
@@ -6678,6 +6696,8 @@ class SeerController extends Controller
             }
 
             foreach ($horarios_disponibles as $h) {
+                // Si es subsede, validamos que no haya otra audiencia de la MISMA subsede a esa hora
+                // (Para no saturar el canal virtual/espacio físico de la subsede)
                 if (isset($mapa_sedes[$delegacion])) {
                     if (Audiencias::where('fecha', $fecha_revisar)->where('hora', $h)->where('delegacion', $delegacion)->exists()) {
                         continue; 
@@ -6693,16 +6713,14 @@ class SeerController extends Controller
                 if (!empty($disponibles)) {
                     $bandera = 1;
                     $conciliador_id = $disponibles[array_rand($disponibles)];
-                    
-                    // Formatear fecha amigable (Ej: "Miércoles 25 de Febrero, 2026")
                     $fecha_amigable = $carbon_revisar->isoFormat('dddd D [de] MMMM');
 
                     return [
-                        $fecha_revisar,           // [0] Para la base de datos
-                        $h,                       // [1] Hora
-                        ucfirst($fecha_amigable), // [2] Fecha para mostrar al usuario
-                        $conciliador_id,          // [3] ID Conciliador
-                        $mensaje_ajuste           // [4] Explicación del sistema
+                        $fecha_revisar,
+                        $h,
+                        ucfirst($fecha_amigable),
+                        $conciliador_id,
+                        $mensaje_ajuste
                     ];
                 }
             }
