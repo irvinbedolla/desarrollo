@@ -1926,7 +1926,7 @@
                 return false;
             }
             function calcularFechaMinima(){
-                while(habilesContados < 16){
+                while(habilesContados < 10){
                     fechaCursor.setDate(fechaCursor.getDate()+1);
                     const esFinSemana = fechaCursor.getDay() === 0 || fechaCursor.getDay() === 6;
                     if(esFinSemana) continue;
