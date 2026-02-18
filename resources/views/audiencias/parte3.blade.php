@@ -1230,8 +1230,7 @@
                 const startOfWeekStr = fechaSemanaInicio.toISOString().slice(0,10);
 
                 const fechaConfirmacion = document.getElementById('fechaConfirmacion').value;
-                // Calcula la fecha límite sumando 46 días hábiles (excluye inhábiles cargados)
-                const fechaLimite = fechaConfirmacion ? addBusinessDaysYMD(fechaConfirmacion, 46) : null;
+                const fechaLimite = fechaConfirmacion ? addDaysYMD(fechaConfirmacion, 45) : null;
 
 
                 calendarReagendar = new FullCalendar.Calendar(calEl, {
