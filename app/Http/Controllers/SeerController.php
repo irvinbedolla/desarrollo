@@ -3841,7 +3841,7 @@ class SeerController extends Controller
                     'actividad'       =>  $solicitud_data["actividad"],
                     'delegacion'      =>  $solicitud_data["delegacion"],
                     'tipo_solicitud'  =>  $solicitud_data["tipo_solicitud"],
-                    'tipo_generacion' =>  -1,
+                    'tipo_generacion' =>  1000,
                     'consecutivo'     =>  $solicitud_data["consecutivo"],
                     'año'             =>  $solicitud_data["año"],
                     'caso_excepcion'  =>  $solicitante_data['excepcion']
