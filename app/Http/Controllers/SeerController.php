@@ -6612,11 +6612,11 @@ class SeerController extends Controller
     }
     
     public function ObtenerAudiencia($delegacion, $notificion) {
-        $array_horarios = array();
-        $relacionEloquent = 'roles';
-        $id = auth()->user()->id;
-        $user = User::find($id);
-        $bandera = 0;
+    $array_horarios = array();
+    $relacionEloquent = 'roles';
+    $id = auth()->user()->id;
+    $user = User::find($id);
+    $bandera = 0;
 
         // 1. Configuración de Fechas
         $hoy = \Carbon\Carbon::now();
@@ -6625,6 +6625,17 @@ class SeerController extends Controller
 
         // 2. Cálculo del margen mínimo
         if ($notificion == "Trabajador") {
+            /*$dias_sumados = 0;
+            while ($dias_sumados < 7) {
+                $fecha_inicio_busqueda->addDay();
+                $es_festivo = DiasInhabiles::where('fecha_inicio', $fecha_inicio_busqueda->format('Y-m-d'))
+                                ->where('centro', $user->delegacion)
+                                ->whereNull('user_id')->exists();
+
+                if (!$fecha_inicio_busqueda->isWeekend() && !$es_festivo) {
+                    $dias_sumados++;
+                }
+            }*/
             $fecha_inicio_busqueda->addDays(7);
             $mensaje_ajuste = "Se agendó considerando los 7 días naturales mínimos para la notificación del trabajador.";
         } else {
@@ -6632,6 +6643,7 @@ class SeerController extends Controller
             $mensaje_ajuste = "Se agendó considerando los 15 días naturales requeridos para la notificación por el Centro.";
         }
 
+        // Ajuste al tope de 45 días
         if ($fecha_inicio_busqueda->gt($fecha_limite_natural)) {
             $fecha_inicio_busqueda = $fecha_limite_natural->copy();
             $mensaje_ajuste .= " (Ajustado al límite legal de 45 días).";
@@ -6664,18 +6676,48 @@ class SeerController extends Controller
             $permisos_requeridos = ["Ambos", "Precencial"];
         }
 
-        // Obtenemos solo los conciliadores que cumplen con el criterio de la oficina Y el permiso
-        $conciliadores = User::whereHas('roles', function ($q) { 
-                $q->where('name', 'Conciliador'); 
+    
+        $conciliadores = User::whereHas('roles', function ($q) {
+                $q->where('name', 'Conciliador');
             })
             ->where('delegacion', $oficina)
-            // Sustituir 'campo_permiso' por el nombre real de tu columna en la tabla users
-            ->whereIn('campo_permiso', $permisos_requeridos) 
+            ->whereIn('id', function ($q) use ($permisos_requeridos) {
+                $q->select('id_conciliador')
+                    ->from('permisos_conciliador')
+                    ->whereIn('tipo', $permisos_requeridos);
+            })
             ->get();
 
         if ($conciliadores->isEmpty()) {
             return response()->json(['error' => 'No hay conciliadores configurados con los permisos requeridos para esta sede.'], 404);
         }
+
+        //Validamos si un centro completo está inhábil en una fecha
+        $centroInhabilEnFecha = function (string $fechaYmd) use ($oficina) {
+            return DiasInhabiles::where('centro', $oficina)
+                ->whereNull('user_id')
+                ->where('fecha_inicio', '<=', $fechaYmd)
+                ->where('fecha_final', '>=', $fechaYmd)
+                ->exists();
+        };
+
+        //Validamos si un conciliador está inhábil en una fecha y hora
+        //Si horario_inicio/horario_final vienen NULL, el día completo se considera inhábil para el conciliador.
+        $conciliadorInhabilEnSlot = function (int $conciliadorId, string $fechaYmd, string $horaHms) use ($oficina) {
+            return DiasInhabiles::where('centro', $oficina)
+                ->where('user_id', $conciliadorId)
+                ->where('fecha_inicio', '<=', $fechaYmd)
+                ->where('fecha_final', '>=', $fechaYmd)
+                ->where(function ($q) use ($horaHms) {
+                    $q->whereNull('horario_inicio')
+                      ->orWhereNull('horario_final')
+                      ->orWhere(function ($q2) use ($horaHms) {
+                          $q2->where('horario_inicio', '<=', $horaHms)
+                             ->where('horario_final', '>=', $horaHms);
+                      });
+                })
+                ->exists();
+        };
 
         // 4. Bucle de búsqueda
         do {
@@ -6685,8 +6727,7 @@ class SeerController extends Controller
                 return response()->json(['error' => 'No hay disponibilidad en el rango de 45 días'], 404);
             }
 
-            $es_inhabit_centro = DiasInhabiles::where('fecha_inicio', $fecha_revisar)
-                ->where('centro', $user->delegacion)->whereNull('user_id')->exists();
+            $es_inhabit_centro = $centroInhabilEnFecha($fecha_revisar);
 
             if ($carbon_revisar->isWeekend() || $es_inhabit_centro) {
                 $fecha_revisar = $carbon_revisar->addDay()->format('Y-m-d');
@@ -6704,6 +6745,10 @@ class SeerController extends Controller
 
                 $disponibles = [];
                 foreach ($conciliadores as $c) {
+                    // Si el conciliador tiene un día/horario inhábil configurado, lo saltamos
+                    if ($conciliadorInhabilEnSlot((int)$c->id, $fecha_revisar, $h)) {
+                        continue;
+                    }
                     $ocupado = Audiencias::where('fecha', $fecha_revisar)->where('hora', $h)->where('id_conciliador', $c->id)->exists();
                     if (!$ocupado) $disponibles[] = $c->id;
                 }
