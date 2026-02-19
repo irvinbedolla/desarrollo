@@ -130,6 +130,7 @@
                                     @csrf
                                     <input type="hidden" name="id" value="{{$id}}">
                                     <input type="hidden" name="isAudiencia" value="1">
+                                    <input type="hidden" name="esAudiencia" value="{{ $isAudiencia }}">
                                     <div class="tab">
                                         <a class="btn btn-info" onclick="openCity(event, 'detalles')">Detalles</a>
                                         <a class="btn btn-info" onclick="openCity(event, 'solicitante')">Solicitante</a>
@@ -648,7 +649,16 @@
                                                 <div class="form-group">
                                                     <h4 class="text-center">Datos Citado(s)</h4>
                                                 </div>
-                                            </div><br>
+                                            </div>
+                                            
+                                            @if(($general->estatus !== "Conciliacion") || ($general->estatus !== "No conciliacion") || ($general->estatus !== "Archivada"))
+                                                <div class="col-xs-12 col-sm-12 col-md-12"><br>
+                                                    <a type="button" class="btn btn-warning open-modal mb-3" data-bs-toggle="modal" 
+                                                    data-bs-target="#exampleModal1" data-id="{{ $id }}">Agregar Citado</a>
+                                                    <a type="button" class="btn btn-warning open-modal mb-3" data-bs-toggle="modal" 
+                                                    data-bs-target="#exampleModal2" data-id="{{ $id }}">Borrar Citado</a>
+                                                </div>
+                                            @endif<br>
 
                                             @foreach($citados as $citado)
                                                 @php
@@ -847,6 +857,7 @@
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="password">Colonia<span style="color:red;"> (*)</span></label>
+                                                        <input type="hidden" name="id_citado[]" value="{{ $citado->id ?? ($citado['id'] ?? '') }}">
                                                         <input type="text" class="form-control" name="colonia_citado[]" value="{{ $citado['colonia'] ?? '' }}" required>
                                                         <div class="invalid-feedback">
                                                             El campo colonia es obligatorio.
@@ -925,14 +936,7 @@
                                                 
                                                 
                                             @endforeach
-                                            @if(($general->estatus !== "Conciliacion") || ($general->estatus !== "No conciliacion") || ($general->estatus !== "Archivada"))
-                                                <div class="col-xs-12 col-sm-12 col-md-12"><br>
-                                                    <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
-                                                    data-bs-target="#exampleModal1" data-id="{{ $id }}">Agregar Citado</a>
-                                                    <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
-                                                    data-bs-target="#exampleModal2" data-id="{{ $id }}">Borrar Citado</a>
-                                                </div>
-                                            @endif
+                                            
                                         </div>
                                     </div>
                                     <div id="citados" class="tabcontent">

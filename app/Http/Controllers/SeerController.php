@@ -4456,26 +4456,45 @@ class SeerController extends Controller
         }
 
         //Citados
-        SeerCitados::where('id_solicitud',$data["id"])->delete();
-        $cont = count($data["colonia_citado"]);
+
+        $citadosDelete = session('citados_edicion_delete', []);
+        if (!empty($citadosDelete)) {
+            SeerCitados::where('id_solicitud', $data["id"])->whereIn('id', $citadosDelete)->delete();
+        }
+
+        $cont = is_array($data["colonia_citado"] ?? null) ? count($data["colonia_citado"]) : 0;
         for($i = 0; $i < $cont; $i++) {
 
-            $foto1 = $data["imagen_domicilio1"][$i] ?? 'Sin documento';
-            $foto2 = $data["imagen_domicilio2"][$i] ?? 'Sin documento';
-        
+            $citadoId = null;
+            if (isset($data['id_citado']) && is_array($data['id_citado'])) {
+                $citadoId = $data['id_citado'][$i] ?? null;
+            }
+
+            $citado = null;
+            if (!empty($citadoId)) {
+                $citado = SeerCitados::where('id_solicitud', $data["id"])->where('id', $citadoId)->first();
+            }
+            if (!$citado) {
+                $citado = new SeerCitados();
+                $citado->id_solicitud = $data["id"];
+            }
+
+            $foto1 = $citado->imagen_domicilio1 ?? ($data["imagen_domicilio1"][$i] ?? 'Sin documento');
+            $foto2 = $citado->imagen_domicilio2 ?? ($data["imagen_domicilio2"][$i] ?? 'Sin documento');
+
             if ($request->hasFile("foto1.$i")) {
                 $file = $request->file("foto1")[$i];
                 $foto1 = $data["id"] . "-citado_foto1_" . Str::random(8) . "." . $file->getClientOriginalExtension();
                 Storage::putFileAs('documentosSolicitud', $file, $foto1);
             }
-        
+
             if ($request->hasFile("foto2.$i")) {
                 $file = $request->file("foto2")[$i];
                 $foto2 = $data["id"] . "-citado_foto2_" . Str::random(8) . "." . $file->getClientOriginalExtension();
                 Storage::putFileAs('documentosSolicitud', $file, $foto2);
             }
-            $data_insert=array(
-                'id_solicitud'      => $data["id"],
+
+            $data_update = array(
                 'colonia'           => $data["colonia_citado"][$i],
                 'cp'                => $data["cp_citado"][$i],
                 'n_ext'             => $data["n_ext_citado"][$i],
@@ -4498,20 +4517,23 @@ class SeerController extends Controller
                 'imagen_domicilio2' => $foto2,
                 'resulte_responsable' => $data['resulte_responsable'][$i] ?? 'No',
             );
-            
+
             if(isset($data["traductor"])){
                 $val = $data["traductor"][ $i ] ?? null;
-                $requires = ($val === 'Si' || $val === '1' || $val === 1);
-                $data_insert["traductor"] = $requires ? 1 : 0;
-                $data_insert["lenguaje"]  = $data["lenguaje"][ $i ] ?? null;
+                $requires = ($val === 'Si' || $val === '1' || $val === 1 || $val === 'on' || $val === true);
+                $data_update["traductor"] = $requires ? 1 : 0;
+                $data_update["lenguaje"]  = $data["lenguaje"][ $i ] ?? null;
             }
+
             if(isset($data["calle1"])){
                 SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle1' => $data["calle1_citado"] ]);
             }
             if(isset($data["calle2"])){
                 SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle2' => $data["calle2_citado"] ]);
             }
-            SeerCitados::create($data_insert);
+
+            $citado->fill($data_update);
+            $citado->save();
         }
 
         $curpBase = $data['curp_solicitante'];
@@ -4537,7 +4559,12 @@ class SeerController extends Controller
 
                 return redirect()->route('inicioAudiencia', ['id' => $audiencia->id_solicitud, 'estatus' => 'Confirmado']);
             }
-            return redirect()->route('todas_audiencias'); 
+
+            if($data["esAudiencia"] == 'No'){
+                return redirect()->route('todas_solicitudes');
+            } else {
+                return redirect()->route('todas_audiencias'); 
+            }
 
         } catch (\Exception $e) {
             DB::rollBack();
