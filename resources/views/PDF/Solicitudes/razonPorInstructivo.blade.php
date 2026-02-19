@@ -164,7 +164,7 @@
                             @endforeach
                         </b>
                         A mayor abundamiento, verifico que cerca del domicilio se encuentran los siguientes puntos  
-                        de referencia: {{$citado->abundar_inmueble}}. De igual forma, he constatado que se trata de un inmueble con las siguientes características: {{$citado->abundar_area}}.</b> Procedí a tocar en repetidas ocasiones, 
+                        de referencia: {{$citado->abundar_area}}. De igual forma, he constatado que se trata de un inmueble con las siguientes características: {{$citado->abundar_inmueble}}.</b> Procedí a tocar en repetidas ocasiones, 
                         sin recibir respuesta. Y después de haber esperado un tiempo prudente, lógico y razonable, nadie acude a mi llamado, sin emabargo cuento con los medios de cercioramiento antes mencionados de que el domicilio 
                         es el correcto y que el citado labora, habita o tiene su asiento de negocios en este domicilio con base en <b>{{$citado->observaciones}}</b>. Por todo lo anterior en términos de lo previsto en los artículos 741, 
                         742 fracción XIII, 743 y 751 de la Ley Federal del Trabajo procedo a notificar por 
