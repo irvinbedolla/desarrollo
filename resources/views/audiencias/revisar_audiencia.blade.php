@@ -964,14 +964,21 @@
                                                 
                                                                         <div class="col-sm-4">
                                                                             <label>Citatorio</label><br>
-                                                                            <a class="btn btn-success btn-xs"
-                                                                            href="{{ route('pdfCitatorioAudiencia', [
-                                                                                'id' => $citado->id,
-                                                                                'id_audiencia' => $audiencia_historial->id 
-                                                                            ]) }}"
-                                                                            target="_blank">
-                                                                                Visualizar
-                                                                            </a>
+                                                                            @if(!empty($citado->id))
+                                                                                <a class="btn btn-success btn-xs"
+                                                                                href="{{ route('pdfCitatorioAudiencia', [
+                                                                                    'id' => $citado->id,
+                                                                                    'id_audiencia' => $audiencia_historial->id 
+                                                                                ]) }}"
+                                                                                target="_blank">
+                                                                                    Visualizar
+                                                                                </a>
+                                                                            @else
+                                                                                <button type="button" class="btn btn-secondary btn-xs" disabled
+                                                                                    title="Guarda la audiencia/solicitud para generar el citatorio">
+                                                                                    Visualizar
+                                                                                </button>
+                                                                            @endif
                                                                         </div>
                                                                     </div>
                                                                 @endforeach
