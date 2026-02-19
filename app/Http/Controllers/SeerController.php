@@ -6346,6 +6346,16 @@ class SeerController extends Controller
                     'delegacion'       => $audienciaOld->delegacion ?? null,
                     'estatus'          => 'Pendiente'
                 ]);
+                /*
+                $citados = SeerCitados::where('id_solicitud', $data["id"])->get();
+                foreach($citados as $citado){
+                    if($citado->notificacion == "Trabajador"){
+                            $nuevo_citado = $citado->replicate();
+                            $nuevo_citado->notificacion = 'Centro';
+                            $nuevo_citado->save();
+                    }
+                }
+                    */
             } else {
                 // Si no existe audiencia previa, crear una nueva simple
                 $new_folio = str_pad('1', 4, '0', STR_PAD_LEFT) . '/' . date('Y');
@@ -7793,84 +7803,75 @@ class SeerController extends Controller
         return view('/cumplimientos/index',compact('auxiliares','conciliadores'));
     }
 
-    public function solicitud_audiencia_revisar($id, Request $request){
+    public function solicitud_audiencia_revisar($id, Request $request) {
         if (!session('preserve_edit_session')) {
             session()->forget(['citados_edicion_new', 'citados_edicion_delete', 'motivos_edicion_delete']);
         }
 
-        $id_user = auth()->user()->id;
-        $user = User::find($id_user);
+        $user = auth()->user(); // Ya trae el objeto, no necesitas buscarlo por ID de nuevo
         $isAudiencia = $request->query('isAudiencia', null);
-        $general        = SeerPerGeneral::find($id);
-        $ramas          = SolicitudRama::all();
-        $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
-        $citados        = SeerCitados::where("id_solicitud",$id)->get();
-        $citadosConMulta = $citados->where('tipo_notificacion', 'Multa');
-        $citadosNew = session('citados_edicion_new', []);
+        
+        // Usamos with() si existen relaciones definidas en el modelo para evitar el problema N+1
+        $general = SeerPerGeneral::findOrFail($id);
+        $ramas = SolicitudRama::all();
+        $solicitantes = SeerSolicitante::where("id_solicitud", $id)->get();
+        
+        // Citados
+        $dbCitados = SeerCitados::where("id_solicitud", $id)->get();
         $citadosDelete = session('citados_edicion_delete', []);
-        
-        $citados = $citados->filter(function($c) use ($citadosDelete) {
-            return !in_array($c->id, $citadosDelete);
-        });
-        
+        $citadosNew = session('citados_edicion_new', []);
+
+        // Filtrar y empujar nuevos citados en una sola colección
+        $citados = $dbCitados->reject(fn($c) => in_array($c->id, $citadosDelete));
         foreach ($citadosNew as $cData) {
-            $cModel = new SeerCitados($cData);
-            $cModel->id = $cData['id'];
-            $citados->push($cModel);
+            $citados->push(new SeerCitados($cData + ['id' => $cData['id']]));
         }
 
-        $estados        = Estados::orderby('nombre','asc')->get();
-        $municipios     = Municipios::orderby('nombre','asc')->get();
-        $conciliadores = User::whereHas('roles', function ($query) {
-            return $query->where('name', '=', 'Conciliador');
-        })
-        ->where('delegacion', $user["delegacion"])
-        ->get();
-        // Obtener todos los citados notificados de la solicitud
-        $notificaciones = SeerCitados::where('id_solicitud', $id)
-        ->get()
-        ->keyBy('id');
-        //Catalogo de motivos
-        //$mostrarMotivos = SolicitudMotivo::all();
+        $citadosConMulta = $dbCitados->where('tipo_notificacion', 'Multa');
+        $notificaciones = $dbCitados->keyBy('id');
+
+        // Catálogos
+        $estados = Estados::orderBy('nombre', 'asc')->get();
+        $municipios = Municipios::orderBy('nombre', 'asc')->get();
+        
+        // Conciliadores con carga de relación optimizada
+        $conciliadores = User::role('Conciliador')
+            ->where('delegacion', $user->delegacion)
+            ->get();
+
+        // Motivos
         $mostrarMotivos = SolicitudMotivo::where('tipo_solicitud', $general->tipo_solicitud)->get();
-        //Motivos capturados
-        $motivos        = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
-        ->where('id_solicitud',$id)
-        ->select('catalogo_motivos.motivo','seer_motivos.id')->get();
-
         $motivosDelete = session('motivos_edicion_delete', []);
-        $motivos = $motivos->filter(function($m) use ($motivosDelete) {
-            return !in_array((string)$m->id, array_map('strval', $motivosDelete));
-        })->values();
+        $motivos = SeerMotivo::join('catalogo_motivos', 'catalogo_motivos.id', '=', 'seer_motivos.id_motivo')
+            ->where('id_solicitud', $id)
+            ->select('catalogo_motivos.motivo', 'seer_motivos.id')
+            ->get()
+            ->reject(fn($m) => in_array((string)$m->id, array_map('strval', $motivosDelete)))
+            ->values();
 
-        $historial_audiencias = Audiencias::where('id_solicitud', $id)
-        ->orderBy('fecha', 'desc')
-        ->get();
+        $historial_audiencias = Audiencias::where('id_solicitud', $id)->orderBy('fecha', 'desc')->get();
+        $ultimaEstatus = $historial_audiencias->first()->estatus ?? null;
 
-        $idsAbogados = SeerCitados::where('id_solicitud', $id)
-        ->whereNotNull('id_abogado')
-        ->pluck('id_abogado');
+        // Validación de datos incompletos
+        $idsAbogados = $dbCitados->whereNotNull('id_abogado')->pluck('id_abogado');
+        $solIncompleto = SeerSolicitante::where('id_solicitud', $id)
+            ->where(fn($q) => $q->whereNull('identificacion')->orWhere('identificacion', ''))
+            ->exists();
+        
+        $abogIncompleto = Poder::whereIn('idAbogado', $idsAbogados)
+            ->where(fn($q) => $q->whereNull('tipo_identificacion')->orWhere('tipo_identificacion', ''))
+            ->exists();
 
-        $datosIncompletos = SeerSolicitante::where('id_solicitud', $id)
-        ->where(fn($q) =>
-            $q->whereNull('identificacion')
-            ->orWhereNull('num_identificacion')
-            ->orWhere('identificacion', '')
-            ->orWhere('num_identificacion', '')
-        )
-        ->exists();
-        $datosIncompletos = $datosIncompletos || Poder::whereIn('idAbogado', $idsAbogados)
-        ->where(fn($q) =>
-            $q->whereNull('tipo_identificacion')
-            ->orWhereNull('num_identificacion')
-            ->orWhere('tipo_identificacion', '')
-            ->orWhere('num_identificacion', '')
-        )
-        ->exists();
+        $datosIncompletos = $solIncompleto || $abogIncompleto;
+        
+        // PASAMOS LA FECHA ACTUAL DESDE EL CONTROLADOR
+        $fecha_actual = now(); 
 
-        $ultimaEstatus = Audiencias::where('id_solicitud', $id)->latest()->value('estatus');
-
-        return view('audiencias.revisar_audiencia', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores', 'isAudiencia','notificaciones','historial_audiencias','datosIncompletos','citadosConMulta', 'ultimaEstatus'));
+        return view('audiencias.revisar_audiencia', compact(
+            'id','general','solicitantes','citados','ramas','estados','municipios',
+            'mostrarMotivos','motivos','conciliadores', 'isAudiencia','notificaciones',
+            'historial_audiencias','datosIncompletos','citadosConMulta', 'ultimaEstatus', 'fecha_actual'
+        )); 
     }
 
 

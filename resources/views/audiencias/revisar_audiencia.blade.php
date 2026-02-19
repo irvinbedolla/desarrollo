@@ -94,7 +94,7 @@
             @endif
         </div>
         <div class="section-body">
-            <?php $fecha_actual = date('d-m-Y');?>
+            <?php $fecha_actual->format('d/m/Y') ?>
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
@@ -1315,20 +1315,24 @@
                                                     @if($citadosCount > 0)
 
                                                         @if($isAudiencia == 'No' && $general->estatus == 'Pendiente')
-                                                        <button type="submit" class="btn btn-primary" name="toquen" value="1">Guardar Edición</button>
-                                                        @elseif($isAudiencia == 'Si')
-                                                        <button type="submit" class="btn btn-primary" name="toquen" value="1">Guardar Edición</button>
-                                                        @else
-                                                        @auth
-                                                            @hasanyrole('Enlace|Super Usuario')
+                                                            <button type="submit" class="btn btn-primary" name="toquen" value="1">Guardar Edición</button>
+                                                        @elseif($fecha_actual->isSameDay($general->fecha_confirmacion) && auth()->user()->hasRole('Auxiliar'))
+                                                            @hasanyrole('Auxiliar')
                                                                 <button type="submit" class="btn btn-primary" name="toquen" value="1">Guardar Edición</button>
                                                             @endhasanyrole
-                                                        @endauth
+                                                        @elseif($isAudiencia == 'Si' && auth()->user()->hasRole('Conciliador'))
+                                                            <button type="submit" class="btn btn-primary" name="toquen" value="1">Guardar Edición</button>
+                                                        @else
+                                                            @auth
+                                                                @hasanyrole('Enlace|Super Usuario')
+                                                                    <button type="submit" class="btn btn-primary" name="toquen" value="1">Guardar Edición</button>
+                                                                @endhasanyrole
+                                                            @endauth
                                                         @endif
 
-                                                        @if( $isAudiencia == 'Si' && $ultimaEstatus == 'Pendiente')
-                                                        <button type="submit" class="btn btn-success" name="toquen" value="iniciar_audiencia"> Guardar e Iniciar Audiencia </button>
-                                                        {{--<a class="btn btn-success" href="{{ route('inicioAudiencia', $audiencia->id_solicitud, 'Confirmado') }}" value="1">Guardar e Iniciar Audiencia</button>--}}
+                                                        @if( $isAudiencia == 'Si' && $ultimaEstatus == 'Pendiente' && auth()->user()->hasRole('Conciliador'))
+                                                            <button type="submit" class="btn btn-success" name="toquen" value="iniciar_audiencia"> Guardar e Iniciar Audiencia </button>
+                                                            {{--<a class="btn btn-success" href="{{ route('inicioAudiencia', $audiencia->id_solicitud, 'Confirmado') }}" value="1">Guardar e Iniciar Audiencia</button>--}}
                                                         @endif
                                                     @else
                                                         <button type="button" class="btn btn-secondary" disabled title="Agregue al menos un citado para poder guardar."  name="toquen" value="1">Guardar Edición</button>

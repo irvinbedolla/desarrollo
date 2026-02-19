@@ -1926,7 +1926,7 @@
                 return false;
             }
             function calcularFechaMinima(){
-                while(habilesContados < 10){
+                while(habilesContados < 6){
                     fechaCursor.setDate(fechaCursor.getDate()+1);
                     const esFinSemana = fechaCursor.getDay() === 0 || fechaCursor.getDay() === 6;
                     if(esFinSemana) continue;
@@ -2013,7 +2013,7 @@
                             Swal.fire({
                                 icon: 'warning',
                                 title: 'Uups...',
-                                text: 'Horario no disponible',
+                                text: 'Debes dejar al menos 5 días.',
                             });
                         }
                     },
