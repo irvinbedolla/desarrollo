@@ -1295,7 +1295,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" id="sede" value="{{ Auth::user()->delegacion ?? ($sede ?? '') }}">
+                    <input type="hidden" id="sede" value="{{ $solicitud->delegacion ?? ($sede ?? '') }}">
                     <div id="calendar"></div>
                     <input type="hidden" name="fecha" id="fechaSeleccionada">
                     <input type="hidden" name="hora" id="horaSeleccionada">
@@ -1903,38 +1903,11 @@
             const calEl = document.getElementById('calendar');
             if (!calEl) return;
             if (calendar) { calendar.destroy(); }
-            // Calcular fecha mínima (16 días hábiles) para posicionar el calendario directamente en la primera semana válida.
+            //Calculamos fecha mínima (5 días hábiles) para posicionar el calendario directamente en la primera semana válida.
             const sede = $('#sede').val();
             const conciliadorId = '{{ $conciliador->id ?? "" }}';
             const hoy = new Date();
             hoy.setHours(0,0,0,0);
-            let fechaCursor = new Date(hoy);
-            let habilesContados = 0;
-            let fechasInhabilesCentro = window.__diasInhabilesCentroCache || null;
-            function cargarInhabilesSync(){
-                if(fechasInhabilesCentro) return Promise.resolve();
-                return fetch(`{{ url('/api/dias-inhabiles-centro') }}?centro=${encodeURIComponent(sede)}`)
-                    .then(r=>r.json())
-                    .then(data=>{ fechasInhabilesCentro = data.map(d=>({inicio:d.fecha_inicio, fin:d.fecha_final})); window.__diasInhabilesCentroCache = fechasInhabilesCentro; })
-                    .catch(()=>{ fechasInhabilesCentro = []; });
-            }
-            function esInhabil(fecha){
-                const fStr = fecha.toISOString().slice(0,10);
-                for(const r of fechasInhabilesCentro){
-                    if(r.inicio <= fStr && r.fin >= fStr){ return true; }
-                }
-                return false;
-            }
-            function calcularFechaMinima(){
-                while(habilesContados < 6){
-                    fechaCursor.setDate(fechaCursor.getDate()+1);
-                    const esFinSemana = fechaCursor.getDay() === 0 || fechaCursor.getDay() === 6;
-                    if(esFinSemana) continue;
-                    if(esInhabil(fechaCursor)) continue;
-                    habilesContados++;
-                }
-                return new Date(fechaCursor);
-            }
 
             function toYMD(dt) {
                 const y = dt.getFullYear();
@@ -1950,13 +1923,95 @@
                 return toYMD(dt);
             }
 
-            function addBusinessDaysYMD(ymd, n) {
+            function fetchEventosParte3(startDate, endDate, opciones = {}){
+                const soloSedePrincipal = opciones && opciones.soloSedePrincipal ? 1 : 0;
+                return new Promise((resolve, reject) => {
+                    $.ajax({
+                        url: '{{ url('/api/obtenerAudienciasParte3') }}',
+                        data: {
+                            sede: sede,
+                            start: startDate.toISOString(),
+                            end: endDate.toISOString(),
+                            conciliador: conciliadorId,
+                            solo_sede_principal: soloSedePrincipal
+                        },
+                        success: (data)=> resolve(Array.isArray(data) ? data : []),
+                        error: (xhr, status, err)=> reject(err || status || 'error')
+                    });
+                });
+            }
+
+            function indexDiaEstado(eventos){
+                // Regresa un Map yyyy-mm-dd -> { hasNonInhabil: bool }
+                const map = new Map();
+                for(const ev of eventos){
+                    if(!ev || !ev.start) continue;
+                    const ymd = String(ev.start).slice(0,10);
+                    const estado = ev.extendedProps && ev.extendedProps.estado ? ev.extendedProps.estado : null;
+                    if(!map.has(ymd)) map.set(ymd, { hasNonInhabil: false });
+                    if(estado && estado !== 'inhabil'){
+                        map.get(ymd).hasNonInhabil = true;
+                    }
+                }
+                return map;
+            }
+
+            async function calcularFechaMinimaAsync(){
+                // Se requiere dejar al menos 6 días hábiles.
+                const diasMinimosHabiles = 6;
+                let cursor = new Date(hoy);
+                let contados = 0;
+
+                const ventanaInicio = new Date(hoy);
+                ventanaInicio.setHours(0,0,0,0);
+                const ventanaFin = new Date(hoy);
+                ventanaFin.setDate(ventanaFin.getDate() + 90);
+                ventanaFin.setHours(23,59,59,999);
+
+                const eventos = await fetchEventosParte3(ventanaInicio, ventanaFin, { soloSedePrincipal: true });
+                const idx = indexDiaEstado(eventos);
+
+                while(contados < diasMinimosHabiles){
+                    cursor.setDate(cursor.getDate() + 1);
+                    const day = cursor.getDay();
+                    const esFinSemana = (day === 0 || day === 6);
+                    if(esFinSemana) continue;
+
+                    const ymd = toYMD(cursor);
+                    const info = idx.get(ymd);
+
+                    if(info && info.hasNonInhabil === false){
+                        continue;
+                    }
+
+                    contados++;
+                }
+                return new Date(cursor);
+            }
+
+            async function addBusinessDaysYMDAsync(ymd, n) {
                 const [y, m, d] = ymd.split('-').map(Number);
                 let dt = new Date(y, m - 1, d); // local
                 let added = 0;
+
+                const ventanaInicio = new Date(dt);
+                ventanaInicio.setHours(0,0,0,0);
+                const ventanaFin = new Date(dt);
+                ventanaFin.setDate(ventanaFin.getDate() + 180);
+                ventanaFin.setHours(23,59,59,999);
+
+                const eventos = await fetchEventosParte3(ventanaInicio, ventanaFin, { soloSedePrincipal: true });
+                const idx = indexDiaEstado(eventos);
+
                 while (added < n) {
                     dt.setDate(dt.getDate() + 1);
-                    if (typeof esInhabil === 'function' && esInhabil(dt)) {
+                    const day = dt.getDay();
+                    const esFinSemana = (day === 0 || day === 6);
+                    if(esFinSemana) continue;
+
+                    const ymd2 = toYMD(dt);
+                    const info = idx.get(ymd2);
+                    if(info && info.hasNonInhabil === false){
                         continue;
                     }
                     added++;
@@ -1964,9 +2019,9 @@
                 return toYMD(dt);
             }
 
-            cargarInhabilesSync().then(()=>{
+            (async function(){
 
-                const fechaMinima = calcularFechaMinima();
+                const fechaMinima = await calcularFechaMinimaAsync();
                 const fechaMinimaStr = fechaMinima.toISOString().slice(0,10);
                 // Ajustar a lunes de la semana que contiene la fecha mínima para no cortar la semana
                 const fechaSemanaInicio = new Date(fechaMinima);
@@ -1976,7 +2031,7 @@
 
                 const fechaConfirmacion = document.getElementById('fechaConfirmacion').value;
                 // Calcula la fecha límite sumando 46 días hábiles (excluye inhábiles cargados)
-                const fechaLimite = fechaConfirmacion ? addBusinessDaysYMD(fechaConfirmacion, 46) : null;
+                const fechaLimite = fechaConfirmacion ? await addBusinessDaysYMDAsync(fechaConfirmacion, 46) : null;
 
 
                 calendar = new FullCalendar.Calendar(calEl, {
@@ -1992,7 +2047,7 @@
                     },
                     events: function(fetchInfo, success, failure) {
                         $.ajax({
-                            url: '{{ url('/api/obtenerAudiencias') }}',
+                            url: '{{ url('/api/obtenerAudienciasParte3') }}',
                             data: { sede: sede, start: fetchInfo.startStr, end: fetchInfo.endStr, conciliador: conciliadorId },
                             success: success,
                             error: () => failure('No se pudieron cargar eventos')
@@ -2013,7 +2068,7 @@
                             Swal.fire({
                                 icon: 'warning',
                                 title: 'Uups...',
-                                text: 'Debes dejar al menos 5 días.',
+                                text: 'Se necesitan 5 días hábiles para notificar.',
                             });
                         }
                     },
@@ -2024,7 +2079,7 @@
                 });
                 calendar.render();
                 setTimeout(function(){ if (calendar) { calendar.updateSize(); calendar.refetchEvents(); } }, 200);
-            });
+            })();
         });
 
         $('#sede').on('change', function(){ if(calendar){ calendar.refetchEvents(); }});
@@ -2064,6 +2119,108 @@
                 if(window.Swal){ lanzar(); } else { setTimeout(lanzar, 200); }
             });
         }
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function cargarMunicipiosSolicitante(estadoId) {
+                var $municipio = $('#municipio_pF');
+                if (!$municipio.length) return;
+                $municipio.html('<option value="">Cargando...</option>');
+                if (!estadoId) {
+                    $municipio.html('<option value="">Seleccione</option>');
+                    return;
+                }
+                $.get(base_url + '/api/munSolicitante/' + estadoId, function (data) {
+                    var html = '<option value="">Seleccione</option>';
+                    data.forEach(function (m) {
+                        html += '<option value="' + m.id + '">' + m.nombre + '</option>';
+                    });
+                    $municipio.html(html);
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    $.get(base_url + '/munSolicitante/' + estadoId, function (data) {
+                        var html = '<option value="">Seleccione</option>';
+                        data.forEach(function (m) {
+                            html += '<option value="' + m.id + '">' + m.nombre + '</option>';
+                        });
+                        $municipio.html(html);
+                    }).fail(function (jq2, t2, e2) {
+                        $municipio.html('<option value="">Error cargando municipios</option>');
+                        if (typeof iziToast !== 'undefined') {
+                            iziToast.error({
+                                title: 'Error',
+                                message: 'No se pudieron cargar los municipios. HTTP: ' + (jqXHR.status || jq2.status || 'N/A') + ' - ' + (errorThrown || e2 || textStatus),
+                                position: 'topRight'
+                            });
+                        } else {
+                            alert('No se pudieron cargar los municipios.');
+                        }
+                    });
+                });
+            }
+
+            var $estadoSolicitante = $('#estado_pF');
+            var base_url = "{{ url('') }}";
+
+            if ($estadoSolicitante.length) {
+                $estadoSolicitante.on('change', function () {
+                    cargarMunicipiosSolicitante(this.value);
+                });
+                var inicial = $estadoSolicitante.val();
+                if (inicial) cargarMunicipiosSolicitante(inicial);
+            }
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function cargarMunicipiosSolicitante(estadoId) {
+                var $municipio = $('#municipio_moral');
+                if (!$municipio.length) return;
+                $municipio.html('<option value="">Cargando...</option>');
+                if (!estadoId) {
+                    $municipio.html('<option value="">Seleccione</option>');
+                    return;
+                }
+                $.get(base_url + '/api/munSolicitante/' + estadoId, function (data) {
+                    var html = '<option value="">Seleccione</option>';
+                    data.forEach(function (m) {
+                        html += '<option value="' + m.id + '">' + m.nombre + '</option>';
+                    });
+                    $municipio.html(html);
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    $.get(base_url + '/munSolicitante/' + estadoId, function (data) {
+                        var html = '<option value="">Seleccione</option>';
+                        data.forEach(function (m) {
+                            html += '<option value="' + m.id + '">' + m.nombre + '</option>';
+                        });
+                        $municipio.html(html);
+                    }).fail(function (jq2, t2, e2) {
+                        $municipio.html('<option value="">Error cargando municipios</option>');
+                        if (typeof iziToast !== 'undefined') {
+                            iziToast.error({
+                                title: 'Error',
+                                message: 'No se pudieron cargar los municipios. HTTP: ' + (jqXHR.status || jq2.status || 'N/A') + ' - ' + (errorThrown || e2 || textStatus),
+                                position: 'topRight'
+                            });
+                        } else {
+                            alert('No se pudieron cargar los municipios.');
+                        }
+                    });
+                });
+            }
+
+            var $estadoSolicitante = $('#estado_moral');
+            var base_url = "{{ url('') }}";
+
+            if ($estadoSolicitante.length) {
+                $estadoSolicitante.on('change', function () {
+                    cargarMunicipiosSolicitante(this.value);
+                });
+                var inicial = $estadoSolicitante.val();
+                if (inicial) cargarMunicipiosSolicitante(inicial);
+            }
+        });
     </script>
 
     <script src="../../public/assets/js/validaciones.js"></script> 

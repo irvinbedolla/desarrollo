@@ -6560,6 +6560,7 @@ class SeerController extends Controller
 
     public function audienciaParte3($id){
         $solicitud = SeerPerGeneral::find($id);
+        $conciliadorId = $solicitud->conciliador_id;
         $sede = $solicitud["delegacion"];
 
         $raw_fecha = Audiencias::where('id_solicitud', $id)->value('fecha');
@@ -6594,7 +6595,7 @@ class SeerController extends Controller
 
         $bandera = request()->query('bandera', null);
 
-        return view('/audiencias/parte3',compact('id', 'sede','representantes', 'fechaConfirmacion', 'NUE', 'previewData', 'audiencia_fecha', 'audiencia_hora', 'bandera'));
+        return view('/audiencias/parte3',compact('id', 'sede','representantes', 'fechaConfirmacion', 'NUE', 'previewData', 'audiencia_fecha', 'audiencia_hora', 'bandera', 'conciliadorId'));
     }
 
     public function historial_notificador(Request $request){
@@ -10440,6 +10441,151 @@ class SeerController extends Controller
         return response()->json($todosLosEventos);
     }
 
+    public function obtenerCumplimientosFiltrado(Request $request)
+    {
+        $fecha_inicio_str = $request->input('start', now()->format('Y-m-d'));
+        $fecha_fin_str = $request->input('end', now()->addDays(700)->format('Y-m-d'));
+
+        $fecha_inicio_dt = (new \DateTime($fecha_inicio_str))->setTime(0, 0, 0);
+        $fecha_fin_dt = (new \DateTime($fecha_fin_str))->setTime(23, 59, 59);
+
+        $sede = $request->input('sede');
+        $conciliador_id = $request->input('conciliador_id');
+
+        $centrosConciliador = [$sede];
+        if (in_array($sede, ['Morelia', 'Zitácuaro', 'Zitacuaro'], true)) {
+            $centrosConciliador = ['Morelia', 'Zitácuaro', 'Zitacuaro'];
+        } elseif (in_array($sede, ['Uruapan', 'Lázaro Cárdenas'], true)) {
+            $centrosConciliador = ['Uruapan', 'Lázaro Cárdenas'];
+        } elseif (in_array($sede, ['Zamora', 'Sahuayo'], true)) {
+            $centrosConciliador = ['Zamora', 'Sahuayo'];
+        }
+
+        $inhabiles = DiasInhabiles::where(function ($q) use ($sede, $centrosConciliador, $conciliador_id) {
+                $q->where(function ($q2) use ($sede) {
+                    $q2->where('centro', $sede)
+                        ->whereNull('user_id');
+                });
+
+                if (!empty($conciliador_id)) {
+                    $q->orWhere(function ($q3) use ($centrosConciliador, $conciliador_id) {
+                        $q3->whereIn('centro', $centrosConciliador)
+                            ->where('user_id', $conciliador_id);
+                    });
+                }
+            })
+            ->where(function($query) use ($fecha_inicio_dt, $fecha_fin_dt) {
+                $query->where('fecha_inicio', '<=', $fecha_fin_dt)
+                    ->where('fecha_final', '>=', $fecha_inicio_dt);
+            })
+            ->get();
+
+        $ocupados = Pagos::whereBetween('fecha', [$fecha_inicio_dt, $fecha_fin_dt])
+            ->where('delegacion', $sede)
+            ->get();
+
+        $ocupadosMap = [];
+        foreach ($ocupados as $cumplimiento) {
+            $slotKey = $cumplimiento->fecha->format('Y-m-d') . 'T' . $cumplimiento->hora->format('H:i:s');
+            if (isset($ocupadosMap[$slotKey])) {
+                $ocupadosMap[$slotKey]++;
+            } else {
+                $ocupadosMap[$slotKey] = 1;
+            }
+        }
+
+        $pagosPorDia = Pagos::where('tipo_pago', 'Audiencia')
+            ->where('delegacion', $sede)
+            ->whereBetween('fecha', [$fecha_inicio_dt, $fecha_fin_dt])
+            ->select('fecha', DB::raw('COUNT(*) as total'))
+            ->groupBy('fecha')
+            ->get();
+
+        $pagosPorDiaMap = [];
+        foreach ($pagosPorDia as $dia) {
+            $pagosPorDiaMap[$dia->fecha->format('Y-m-d')] = $dia->total;
+        }
+
+        $ahora = new \DateTime();
+        $todosLosEventos = [];
+        $fecha = (new \DateTime($fecha_inicio_str))->setTime(0,0,0);
+        $fin = (new \DateTime($fecha_fin_str))->setTime(0,0,0);
+
+        while ($fecha <= $fin) {
+            if ($fecha->format('N') < 6) {
+                $inicioJornada = (clone $fecha)->setTime(9, 0, 0);
+                $finJornada    = (clone $fecha)->setTime(15, 0, 0);
+
+                $fecha_str = $fecha->format('Y-m-d');
+                $conteoDiario = $pagosPorDiaMap[$fecha_str] ?? 0;
+                $diaEstaLleno = ($conteoDiario > 16);
+
+                $slot = clone $inicioJornada;
+                while ($slot < $finJornada) {
+                    $slotStart = $slot->format('Y-m-d\\TH:i:s');
+
+                    $conteoOcupados = $ocupadosMap[$slotStart] ?? 0;
+                    $ocupado = ($conteoOcupados >= 1);
+
+                    $esInhabil = false;
+                    foreach($inhabiles as $dia){
+                        $fechaInhabilInicio = $dia->fecha_inicio . 'T' . $dia->horario_inicio;
+                        $fechaInhabilFinal = $dia->fecha_final . 'T' . $dia->horario_final;
+                        if($slotStart >= $fechaInhabilInicio && $slotStart <= $fechaInhabilFinal){
+                            $esInhabil = true;
+                            break;
+                        }
+                    }
+
+                    if ($diaEstaLleno) {
+                        $estado = 'ocupado';
+                    } elseif ($ocupado) {
+                        $estado = 'ocupado';
+                    } elseif ($esInhabil) {
+                        $estado = 'inhabil';
+                    } elseif ($ahora > $slot) {
+                        $estado = 'expirado';
+                    } else {
+                        $estado = 'disponible';
+                    }
+
+                    switch ($estado) {
+                        case 'ocupado':
+                            $todosLosEventos[] = [
+                                'title' => 'Ocupado', 'start' => $slotStart,
+                                'color' => '#DA0909', 'extendedProps' => ['estado' => 'ocupado']
+                            ];
+                            break;
+                        case 'inhabil':
+                            $todosLosEventos[] = [
+                                'title' => 'Inhábil', 'start' => $slotStart,
+                                'color' => '#3B78DB', 'extendedProps' => ['estado' => 'inhabil']
+                            ];
+                            break;
+                        case 'expirado':
+                            $todosLosEventos[] = [
+                                'title' => 'Expirado', 'start' => $slotStart,
+                                'color' => '#F59727', 'extendedProps' => ['estado' => 'expirado']
+                            ];
+                            break;
+                        case 'disponible':
+                        default:
+                            $todosLosEventos[] = [
+                                'title' => 'Disponible', 'start' => $slotStart,
+                                'color' => '#00CE1C', 'extendedProps' => ['estado' => 'disponible']
+                            ];
+                            break;
+                    }
+
+                    $slot->modify('+30 minutes');
+                }
+            }
+            $fecha->modify('+1 day');
+        }
+
+        return response()->json($todosLosEventos);
+    }
+
     //Calcula la fecha mínima a partir de la cual se puede reagendar,
     private function calcularFechaMinimaHabil(string $sede, int $diasHabiles = 16): \DateTime
     {
@@ -10474,48 +10620,71 @@ class SeerController extends Controller
 
     public function obtenerAudienciasParte3(Request $request)
     {
-        
+        $request->validate([
+            'sede' => 'required|string',
+            'conciliador' => 'required|integer',
+        ]);
+
         $fecha_inicio_str = $request->input('start', now()->format('Y-m-d'));
         $fecha_fin_str = $request->input('end', now()->addDays(300)->format('Y-m-d'));
         
         $fecha_inicio = (new \DateTime($fecha_inicio_str))->setTime(0, 0, 0);
         $fecha_fin = (new \DateTime($fecha_fin_str))->setTime(23, 59, 59);
 
-        $sede = $request->input('sede'); 
-
-        $id_conciliador = $request->input('conciliador') ?? auth()->id();
+    $sede = $request->input('sede');
+    $id_conciliador = (int) $request->input('conciliador');
         $tipoConciliador = PermisosConciliador::where('id_conciliador', $id_conciliador)->value('tipo');
+
+        $soloSedePrincipal = $request->boolean('solo_sede_principal', false);
 
         // Calcular fecha mínima para reagendar: permitir desde el siguiente día natural
         $fechaMinima = (new \DateTime())->setTime(0,0,0)->modify('+1 day');
         $minDateStr = $fechaMinima->format('Y-m-d');
-     
-        $centros = [$sede];
 
-        if ($sede === 'Zitacuaro' || $sede =='Zitácuaro') {
-            $centros = ['Zitácuaro', 'Zitacuaro'];
-        }
-
-        if ($tipoConciliador == 'Ambos'){
-            if ($sede === 'Morelia' || $sede === 'Zitácuaro' || $sede === 'Zitacuaro') {
-                $centros = ['Morelia', 'Zitácuaro', 'Zitacuaro'];
-            } elseif ($sede === 'Uruapan' || $sede === 'Lázaro Cárdenas') {
-                $centros = ['Uruapan', 'Lázaro Cárdenas'];
-            } elseif ($sede === 'Zamora' || $sede === 'Sahuayo') {
-                $centros = ['Zamora', 'Sahuayo'];
+        if ($soloSedePrincipal) {
+            // Solo inhábiles generales de la sede principal (sin subsedes y sin user_id del conciliador)
+            $inhabiles = DiasInhabiles::where('centro', $sede)
+                ->whereNull('user_id')
+                ->where(function ($query) use ($fecha_inicio, $fecha_fin) {
+                    $query->where('fecha_inicio', '<=', $fecha_fin)
+                        ->where('fecha_final', '>=', $fecha_inicio);
+                })
+                ->get();
+        } else {
+            $centrosNull = [$sede];
+            if ($sede === 'Zitacuaro' || $sede === 'Zitácuaro') {
+                // Para generales acepto ambas variantes si existe mezcla en BD.
+                $centrosNull = ['Zitácuaro', 'Zitacuaro'];
             }
-        }
 
-        $inhabiles = DiasInhabiles::whereIn('centro', $centros)
-            ->where(function($query) use ($id_conciliador) {
-                $query->whereNull('user_id')
-                    ->orWhere('user_id', $id_conciliador);
-            })
-            ->where(function($query) use ($fecha_inicio, $fecha_fin) {
-                $query->where('fecha_inicio', '<=', $fecha_fin)
-                    ->where('fecha_final', '>=', $fecha_inicio);
-            })
-            ->get();
+            $centrosConciliador = [$sede];
+            if ($tipoConciliador === 'Ambos') {
+                if (in_array($sede, ['Morelia', 'Zitácuaro', 'Zitacuaro'], true)) {
+                    $centrosConciliador = ['Morelia', 'Zitácuaro', 'Zitacuaro'];
+                } elseif (in_array($sede, ['Uruapan', 'Lázaro Cárdenas'], true)) {
+                    $centrosConciliador = ['Uruapan', 'Lázaro Cárdenas'];
+                } elseif (in_array($sede, ['Zamora', 'Sahuayo'], true)) {
+                    $centrosConciliador = ['Zamora', 'Sahuayo'];
+                }
+            }
+
+            $inhabiles = DiasInhabiles::where(function ($q) use ($centrosNull, $centrosConciliador, $id_conciliador) {
+                    $q->where(function ($q2) use ($centrosNull) {
+                        $q2->whereIn('centro', $centrosNull)
+                            ->whereNull('user_id');
+                    });
+
+                    $q->orWhere(function ($q3) use ($centrosConciliador, $id_conciliador) {
+                        $q3->whereIn('centro', $centrosConciliador)
+                            ->where('user_id', $id_conciliador);
+                    });
+                })
+                ->where(function ($query) use ($fecha_inicio, $fecha_fin) {
+                    $query->where('fecha_inicio', '<=', $fecha_fin)
+                        ->where('fecha_final', '>=', $fecha_inicio);
+                })
+                ->get();
+        }
 
         $audienciasPorSlot = Audiencias::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
             ->where('id_conciliador', $id_conciliador)
@@ -10730,7 +10899,7 @@ class SeerController extends Controller
         }
 
         $rangos = DiasInhabiles::where('centro', $centro)
-            ->get(['fecha_inicio', 'fecha_final', 'horario_inicio', 'horario_final']);
+            ->get(['fecha_inicio', 'fecha_final', 'horario_inicio', 'horario_final', 'user_id', 'centro']);
 
         return response()->json($rangos);
     }
