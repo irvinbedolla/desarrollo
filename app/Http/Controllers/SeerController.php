@@ -12563,7 +12563,14 @@ class SeerController extends Controller
     public function mostrar_citatorios($id) {
         
         // Obtener los citados
-        $citados = SeerCitados::select('id','nombre','primer_apellido','segundo_apellido')->where('id_solicitud', $id)->get();
+        $citadoCentro = SeerCitados::where('id_solicitud', $id)->where('notificacion', 'Centro')->exists();
+
+        if($citadoCentro){
+            $citados = SeerCitados::where('id_solicitud', $id)->where('notificacion', 'Centro')->get();
+        } else{
+            $citados = SeerCitados::select('id','nombre','primer_apellido','segundo_apellido')->where('id_solicitud', $id)->get();
+        }
+
         if ($citados->isEmpty()) {
             return redirect()->back()->with('error', 'No hay citados para esta solicitud.');
         }
