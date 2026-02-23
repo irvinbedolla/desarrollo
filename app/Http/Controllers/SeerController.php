@@ -155,7 +155,7 @@ class SeerController extends Controller
         }
         if($userRole[0] == "Enlace"){
             if($delegacion == "Morelia"){
-                $delegaciones = ["Morelia", "Zítacuaro"];
+                $delegaciones = ["Morelia", "Zitácuaro"];
             }
             else if($delegacion == "Uruapan"){
                 $delegaciones = ["Uruapan", "Lázaro Cárdenas"];
@@ -733,7 +733,7 @@ class SeerController extends Controller
         }
         else if($data["tipo_reporte"] == "Ratificaciones"){
             if ($data["tipo"] == "2") {
-                return Excel::download(new RatificacionesFromViewExport($fecha_inicial, $fecha_final, $sede), 'productos.xlsx');
+                return Excel::download(new RatificacionesFromViewExport($fecha_inicial, $fecha_final, $sede), 'Ratificaciones.xlsx');
             }
             
             // 1. Construir la consulta base
@@ -771,9 +771,40 @@ class SeerController extends Controller
             
             // 2. Ejecutar la consulta
             $Ratificacion = $query->get();
-            
+
+             // 1. Consulta Unificada para Ratificaciones
+            $ratificacionePagadas = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
+            ->join('turnos', 'turnos.id', 'pago_solicitud.id_solicitud')
+            ->where('pago_solicitud.tipo_pago', 'Ratificacion')
+            ->when($sede !== "Todos", function ($q) use ($sede) {
+                // Si es el caso especial de Delegado, filtramos por el array de sedes
+                if ($sede === "TodosDelegado") {
+                    $id = auth()->user()->id;
+                    $user = User::find($id);
+                    $sedeUsuario = $user->delegacion;
+    
+                    if($sedeUsuario == "Morelia"){
+                        $delegaciones = ['Morelia', 'Zitácuaro'];
+                        return $q->whereIn('pago_solicitud.delegacion', $delegaciones);
+                    }
+                    else if($sedeUsuario == "Uruapan"){
+                        $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
+                        return $q->whereIn('pago_solicitud.delegacion', $delegaciones);
+                    }
+                    else if($sedeUsuario == "Zamora"){
+                        $delegaciones = ['Zamora', 'Sahuayo'];
+                        return $q->whereIn('pago_solicitud.delegacion', $delegaciones);
+                    }
+                }
+                return $q->where('pago_solicitud.delegacion', $sede);
+            })
+            ->selectRaw("
+                SUM(CASE WHEN pago_solicitud.estatus = 'Pagado' THEN pago_solicitud.monto ELSE 0 END) as pagado_monto
+            ")
+            ->first();
+
             // 3. Generar y retornar PDF
-            return \PDF::loadView('PDF/Estadisticas/Ratificaciones', compact('fecha_inicial', 'fecha_final', 'Ratificacion'))
+            return \PDF::loadView('PDF/Estadisticas/Ratificaciones', compact('fecha_inicial', 'fecha_final', 'Ratificacion','ratificacionePagadas'))
                 ->setPaper('a4', 'landscape')
                 ->stream('ratificaciones.pdf');
         }
@@ -5335,7 +5366,7 @@ class SeerController extends Controller
 
         // 1. Mapeo de Sedes y Oficinas de Apoyo (Consistente con tus otros módulos)
         $mapaSedes = [
-            'Morelia' => ['Morelia', 'Zitacuaro'],
+            'Morelia' => ['Morelia', 'Zitácuaro'],
             'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
             'Zamora'  => ['Zamora', 'Sahuayo'],
         ];
@@ -5378,7 +5409,7 @@ class SeerController extends Controller
             $personas = User::whereHas('roles', function ($query) {
                 return $query->where('name', '=', 'Notificador');
             })
-            ->where('delegacion', ["Morelia", "Zitacuaro" , "Zitácuaro"])
+            ->where('delegacion', ["Morelia", "Zitácuaro" , "Zitácuaro"])
             ->get();
         } else if ($user["delegacion"] == "Uruapan"){
             $personas = User::whereHas('roles', function ($query) {
@@ -5393,11 +5424,11 @@ class SeerController extends Controller
             ->where('delegacion', ["Zamora", "Sahuayo"])
             ->get();
         }
-        else if ($user["delegacion"] == "Zitacuaro" || $user["delegacion"] == "Zitácuaro"){
+        else if ($user["delegacion"] == "Zitácuaro" || $user["delegacion"] == "Zitácuaro"){
             $personas = User::whereHas('roles', function ($query) {
                 return $query->where('name', '=', 'Notificador');
             })
-            ->whereIN('delegacion', ["Zamora", "Zitacuaro"])
+            ->whereIN('delegacion', ["Zamora", "Zitácuaro"])
             ->get();
         }
 
@@ -6706,7 +6737,7 @@ class SeerController extends Controller
         $oficina = $mapa_sedes[$delegacion] ?? $delegacion;
 
         // Lógica de validación de permisos solicitada:
-        // Si es una subsede (Zitacuaro, etc), buscamos conciliadores con permiso 'Ambos' o 'Virtual'
+        // Si es una subsede (Zitácuaro, etc), buscamos conciliadores con permiso 'Ambos' o 'Virtual'
         // Para las sedes principales (Morelia, Uruapan, Zamora), buscamos permiso 'Precencial' únicamente (o 'Ambos')
         if (array_key_exists($delegacion, $mapa_sedes)) {
             $permisos_requeridos = ["Ambos", "Virtual"];
@@ -9526,7 +9557,7 @@ class SeerController extends Controller
         $delegacion = $user->delegacion;
         if($userRole[0] == "Enlace"){
             if($delegacion == "Morelia"){
-                $delegaciones = ["Morelia", "Zítacuaro"];
+                $delegaciones = ["Morelia", "Zitácuaro"];
             }
             else if($delegacion == "Uruapan"){
                 $delegaciones = ["Uruapan", "Lázaro Cárdenas"];
@@ -10453,8 +10484,8 @@ class SeerController extends Controller
         $conciliador_id = $request->input('conciliador_id');
 
         $centrosConciliador = [$sede];
-        if (in_array($sede, ['Morelia', 'Zitácuaro', 'Zitacuaro'], true)) {
-            $centrosConciliador = ['Morelia', 'Zitácuaro', 'Zitacuaro'];
+        if (in_array($sede, ['Morelia', 'Zitácuaro', 'Zitácuaro'], true)) {
+            $centrosConciliador = ['Morelia', 'Zitácuaro', 'Zitácuaro'];
         } elseif (in_array($sede, ['Uruapan', 'Lázaro Cárdenas'], true)) {
             $centrosConciliador = ['Uruapan', 'Lázaro Cárdenas'];
         } elseif (in_array($sede, ['Zamora', 'Sahuayo'], true)) {
@@ -10652,15 +10683,15 @@ class SeerController extends Controller
                 ->get();
         } else {
             $centrosNull = [$sede];
-            if ($sede === 'Zitacuaro' || $sede === 'Zitácuaro') {
+            if ($sede === 'Zitácuaro' || $sede === 'Zitácuaro') {
                 // Para generales acepto ambas variantes si existe mezcla en BD.
-                $centrosNull = ['Zitácuaro', 'Zitacuaro'];
+                $centrosNull = ['Zitácuaro', 'Zitácuaro'];
             }
 
             $centrosConciliador = [$sede];
             if ($tipoConciliador === 'Ambos') {
-                if (in_array($sede, ['Morelia', 'Zitácuaro', 'Zitacuaro'], true)) {
-                    $centrosConciliador = ['Morelia', 'Zitácuaro', 'Zitacuaro'];
+                if (in_array($sede, ['Morelia', 'Zitácuaro', 'Zitácuaro'], true)) {
+                    $centrosConciliador = ['Morelia', 'Zitácuaro', 'Zitácuaro'];
                 } elseif (in_array($sede, ['Uruapan', 'Lázaro Cárdenas'], true)) {
                     $centrosConciliador = ['Uruapan', 'Lázaro Cárdenas'];
                 } elseif (in_array($sede, ['Zamora', 'Sahuayo'], true)) {
@@ -10789,13 +10820,13 @@ class SeerController extends Controller
 
         $centros = [$sede];
 
-        if ($sede === 'Zitacuaro' || $sede =='Zitácuaro') {
-            $centros = ['Zitácuaro', 'Zitacuaro'];
+        if ($sede === 'Zitácuaro' || $sede =='Zitácuaro') {
+            $centros = ['Zitácuaro', 'Zitácuaro'];
         }
 
         if ($tipoConciliador == 'Ambos'){
-            if ($sede === 'Morelia' || $sede === 'Zitácuaro' || $sede === 'Zitacuaro') {
-                $centros = ['Morelia', 'Zitácuaro', 'Zitacuaro'];
+            if ($sede === 'Morelia' || $sede === 'Zitácuaro' || $sede === 'Zitácuaro') {
+                $centros = ['Morelia', 'Zitácuaro', 'Zitácuaro'];
             } elseif ($sede === 'Uruapan' || $sede === 'Lázaro Cárdenas') {
                 $centros = ['Uruapan', 'Lázaro Cárdenas'];
             } elseif ($sede === 'Zamora' || $sede === 'Sahuayo') {
@@ -11691,7 +11722,7 @@ class SeerController extends Controller
 
 
         if($delegacion == "Morelia"){
-            $delegaciones = ["Morelia", "Zítacuaro"];
+            $delegaciones = ["Morelia", "Zitácuaro"];
         }
         else if($delegacion == "Uruapan"){
             $delegaciones = ["Uruapan", "Lázaro Cárdenas"];

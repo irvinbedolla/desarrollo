@@ -4,18 +4,21 @@
         <meta charset="utf-8">
     </head>
     <body>
+        <div>Ratificación</div>
         <table>
             <thead style="background-color: #869b9c;">
-                <th style="color: #fff;  text-align: center;">Fecha</th>
-                <th style="color: #fff;  text-align: center;">Hora</th>
-                <th style="color: #fff;  text-align: center;">NUE</th>
-                <th style="color: #fff;  text-align: center;">Empleador</th>
-                <th style="color: #fff;  text-align: center;">Trabajador</th>
-                <th style="color: #fff;  text-align: center;">Descripción</th>
-                <th style="color: #fff;  text-align: center;">Monto</th>
-                <th style="color: #fff;  text-align: center;">Delegacion</th>
-                <th style="color: #fff;  text-align: center;">Conciliador</th>
-                <th style="color: #fff;  text-align: center;">Estatus</th>
+                <tr>
+                    <th width="15" style="background-color: #869b9c; color: #ffffff;">Fecha</th>
+                    <th width="10" style="background-color: #869b9c; color: #ffffff;">Hora</th>
+                    <th width="25" style="background-color: #869b9c; color: #ffffff;">NUE</th>
+                    <th width="40" style="background-color: #869b9c; color: #ffffff;">Empleador</th>
+                    <th width="40" style="background-color: #869b9c; color: #ffffff;">Trabajador</th>
+                    <th width="30" style="background-color: #869b9c; color: #ffffff;">Descripción</th>
+                    <th width="15" style="background-color: #869b9c; color: #ffffff;">Monto</th>
+                    <th width="20" style="background-color: #869b9c; color: #ffffff;">Delegacion</th>
+                    <th width="15" style="background-color: #869b9c; color: #ffffff;">Conciliador</th>
+                    <th width="15" style="background-color: #869b9c; color: #ffffff;">Estatus</th>
+                </tr>
             </thead>
             <tbody>
                 @php
@@ -48,6 +51,22 @@
                     <td></td>
                     <td style="font-weight: bold;">Total :</td>
                     <td style="font-weight: bold;">{{ number_format($totalPrice, 2) }}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td style="font-weight: bold;">Pagado :</td>
+                    <td style="font-weight: bold;">{{ number_format($ratificacionePagadas->pagado_monto, 2) }}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td style="font-weight: bold;">Total :</td>
+                    <td style="font-weight: bold;">{{ number_format($totalPrice-$ratificacionePagadas->pagado_monto, 2) }}</td>
                 </tr>
             </tfoot>
         </table>

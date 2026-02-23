@@ -65,7 +65,8 @@ class AudienciasController extends Controller
             if($sedeUsuario == "Morelia") $delegacionesPermitidas = ['Morelia', 'Zitácuaro'];
             elseif($sedeUsuario == "Uruapan") $delegacionesPermitidas = ['Uruapan', 'Lázaro Cárdenas'];
             elseif($sedeUsuario == "Zamora") $delegacionesPermitidas = ['Zamora', 'Sahuayo'];
-
+            elseif($sedeUsuario == "Zitácuaro") $delegacionesPermitidas = ['Zitácuaro'];
+            
             $query->whereIn('audiencias.delegacion', $delegacionesPermitidas);
         } 
         else if ($userRole[0] == "Conciliador") {
