@@ -2085,10 +2085,41 @@ class SeerController extends Controller
             'especificar'                 => 'nullable',
         ]);
 
+        $seercitado = SeerCitados::find($data["id"]);
+        //dd($registro);
+        $solicitud = SeerPerGeneral::where('id', $seercitado->id_solicitud)->first();
+        $municipio = Municipios::where('id', $seercitado->municipio_citado)->first();
+        $estado = Estados::where('id', $seercitado->estado_citado)->first();
+        $nombre_estado = $estado->nombre;
+        $nombre_municipio = $municipio->nombre;
+        $NUE = $solicitud->NUE;
+        $municipios = Municipios::all();
+        $estados = Estados::all();
+        $id_notificador = SeerCitados::where('id_solicitud', $seercitado->id_solicitud)->pluck('id_notificador')->first();
+        $notificacion = SeerCitados::where('id_solicitud', $seercitado->id_solicitud)->pluck('notificacion')->first();
+
+        $hora_notificacion = $data["hora_notificacion"];
+        $tipo_llenado = $data["tipo_llenado"];
+        
+
+        if($data["quien_atiende"] == 'EXHORTO'){
+            $data["estatus"] = 'Exhorto';
+            $notificacion = 'Exhorto';
+            $data["medio"]= null;
+            if($nombre_municipio == 'Morelia' || $nombre_municipio == 'Zitacuaro'){
+                $id_notificador = 57;
+            }
+            else if($nombre_municipio == 'Uruapan' || $nombre_municipio == 'Lázaro Cárdenas'){
+                $id_notificador = 58;
+
+            }
+            else if($nombre_municipio == 'Zamora' || $nombre_municipio == 'Sahuayo'){
+                $id_notificador = 59;
+            }
+        }
+       
         // Tipo de llenado 1: actualizar un solo registro
         if ($data["tipo_llenado"] == 1) {
-            $registro = SeerCitados::find($data["id"]);
-
             SeerCitados::find($data["id"])
                 ->update([
                     'estatus'                    => $data["estatus"],
@@ -2118,13 +2149,19 @@ class SeerController extends Controller
                     'ojos'                        => $data["ojos"],
                     'particulares'                => $data["particulares"],
                     'especificar'                 => $data["especificar"],
+                    'giro_comercial'              => $data["giro_comercial"],
+                    'id_notificador'              => $id_notificador,
+                    'notificacion'                => $notificacion,
                     'updated_at'                  => $fechaEspecifica,
                 ]);
-                dd("llego");
+                
+                //dd("llego");
         } else {
             // Tipo de llenado 2: actualizar varios registros de la misma solicitud
             $solicitud = SeerCitados::find($data["id"]);
-            $citados = SeerCitados::where('id_solicitud', $solicitud["id_solicitud"])->get();
+            //$citados = SeerCitados::where('id_solicitud', $solicitud["id_solicitud"])->get();
+            
+            $citados = SeerCitados::where('id_solicitud', $solicitud["id_solicitud"])->where('estatus', 'pendiente')->get();
 
             foreach ($citados as $citado) {
                 SeerCitados::find($citado["id"])
@@ -2156,12 +2193,60 @@ class SeerController extends Controller
                         'ojos'                        => $data["ojos"],
                         'particulares'                => $data["particulares"],
                         'especificar'                 => $data["especificar"],
-                        'updated_at'                  => DB::raw("'" . $fechaEspecifica->format('Y-m-d H:i:s') . "'")
+                        'giro_comercial'              => $data["giro_comercial"],
+                        'id_notificador'              => $id_notificador,
+                        'notificacion'                => $notificacion,
+                        //'updated_at'                  => DB::raw("'" . $fechaEspecifica->format('Y-m-d H:i:s') . "'") //da un objeto "expression"
+                        'updated_at'                => $fechaEspecifica->toDateTimeString()
                     ]);
+                    
             }
         }
-        // Redirigir al listado
-        return redirect()->route('seer');  
+        $registro = SeerCitados::find($data["id"]);
+
+        
+
+        if($data["vista_previa"] == '0'){
+            // Redirigir al listado
+            return redirect()->route('seer');
+        }
+        else{
+            $url_pdf = null;
+            
+            // Evaluamos el estatus y el tipo de notificación exactamente igual que en tu index
+            $estatus = $registro->estatus;
+            $tipo = $registro->tipo_notificacion; // Suponiendo que este campo está en tu tabla
+
+            if ($estatus === "Finalizado exitosamente") {
+                if ($tipo === "Citatorio") {
+                    $url_pdf = route('PDFRazonNoticacion', [$registro->id, $registro->id_solicitud]);
+                } elseif ($tipo === "Multa") {
+                    $url_pdf = route('PDFmulta', [$registro->id, $registro->id_solicitud]);
+                }
+            } 
+            elseif ($estatus === "No notificada") {
+                if ($tipo === "Citatorio") {
+                    $url_pdf = route('PDFInstructivo', [$registro->id, $registro->id_solicitud]);
+                } elseif ($tipo === "Multa") {
+                    $url_pdf = route('PDFmulta', [$registro->id, $registro->id_solicitud]);
+                }
+            } 
+            elseif ($estatus === "No exitosa se constituye") {
+                if ($tipo === "Citatorio") {
+                    $url_pdf = route('PDFNoExitosa', [$registro->id, $registro->id_solicitud]);
+                } elseif ($tipo === "Multa") {
+                    $url_pdf = route('PDFmulta', [$registro->id, $registro->id_solicitud]);
+                }
+            } 
+            elseif ($estatus === "No exitosa no se constituye") {
+                $url_pdf = route('PDFNoExitosaInt', [$registro->id, $registro->id_solicitud]);
+            }
+
+            // Retornamos la vista pasando la variable url_pdf
+            return view('notificaciones.vista_previa', compact('registro','municipios','estados', 'NUE', 'nombre_estado', 'nombre_municipio', 'url_pdf', 'hora_notificacion', 'tipo_llenado'));
+            
+        }
+          
     }
 
     public function store_enlace(Request $request){
