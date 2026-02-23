@@ -9706,6 +9706,15 @@ class SeerController extends Controller
             else if($delegacion == "Zamora"){
                 $delegaciones = ["Zamora", "Sahuayo"];
             }
+            else if($delegacion == "Lázaro Cárdenas"){
+                $delegaciones = ["Lázaro Cárdenas"];
+            }
+            else if($delegacion == "Zitácuaro"){
+                $delegaciones = ["Zitácuaro"];
+            }
+            else if($delegacion == "Sahuayo"){
+                $delegaciones = ["Sahuayo"];
+            }
             $notificaciones = SeerCitados::join('seer_general','seer_general.id','seer_citados.id_solicitud')
             ->leftjoin('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
             ->leftjoin('estados', 'seer_citados.estado_citado', '=', 'estados.id')
@@ -13618,7 +13627,8 @@ class SeerController extends Controller
         $nombreArchivo = 'Captura_caratula' .'.pdf';
         return $pdf->stream($nombreArchivo);  
     }
-        //Solicitud en línea patronal
+
+//Solicitud en línea patronal
     public function Industrias_p($tipo_solicitud){
         return view('solicitudes.patronal.tipoIndustria_p', compact('tipo_solicitud'));
     }
@@ -13810,21 +13820,6 @@ class SeerController extends Controller
             'email'                => $poder->email_patronal ?? $poder->correo_representante,
             'num_ext'              => $poder->num_ext_patronal,
             'codigo_postal'        => $poder->cp_patronal,
-            //'colonia'              => $poder->colonia_patronal,
-            /*'curp'                 => $data["curp"],
-            'nombre'               => $data["nombre"],
-            //'sexo'                 => $data["genero"], // H, M, NC
-            'estado'               => $data["estado_nacimiento"],
-           
-            'email'                => $data["correo"],
-            'estado_domicilio'     => $data["estado_solicitante"],
-            'tipo_vialidad'        => $data["vialidad"],
-            'calle'                => $data["vialidad_calle"],
-            'num_ext'              => $data["numExt"],
-            'num_int'              => $data["numInt"] ?? null,
-            'colonia'              => $data["colonia_solicitante"],
-            'municipio_domicilio'  => $data["municipio_solicitante"],
-            'codigo_postal'        => $data["cp"],*/
             'puesto'               => $data["puesto"],
             'pago'                 => $data["pago"],
             'periodo_pago'         => $data["periodo_pago"],
@@ -13832,15 +13827,13 @@ class SeerController extends Controller
             'fecha_ingreso'        => $data["fecha_ingreso"],
             'fecha_nacimiento'     => $data["fecha_nacimiento"] ?? null,
             'edad'                 => $data["edad"] ?? null,
-            //'nacionalidad'         => $data["nacionalidad"] ?? 'Mexicana',
+            'nacionalidad'         => $data["nacionalidad"] ?? null,
             'identificacion'       => $data["identificacion"],
             'num_identificacion'   => $data["num_identificacion"],
             'descripcionSolicitud' => $data["descripcionSolicitud"],
             'labora'               => isset($data["labora"]) ? "Si" : "No",
-            //'rfc'                  => $data["rfc"] ?? null,
             'nss'                  => $data["seguro"] ?? null,
             'fecha_salida'         => $data["fecha_salida"] ?? null,
-            'estado'               => $poder->estado_patronal
         ];
 
         // Manejo de traductor
@@ -13855,30 +13848,15 @@ class SeerController extends Controller
             //'excepcion_data' => $excepcion_data
         ];
         
-        session(['solicitante_trabajador_data' => $solicitante_data]);
-        //SeerSolicitante::create($data_solicitante);
+        session(['solicitante_trabajador_data' => $data_solicitante]);
        
         $data_citado = [
             'id_solicitud'      => $id_solicitud,
-            //'fecha'             => now(),
             'tipo_persona'      => $poder->tipo,
-           /* 'curp'              => $poder->curp_patronal,
-            'rfc'               => $poder->rfc_patronal,
-            'nombre'            => $nombrePatron,
-            'primer_apellido'   => $poder->primer_apellido_patronal,
-            'segundo_apellido'  => $poder->segundo_apellido_patronal,
-            'estado_solicitante'=> $poder->estado_patronal,
-            'municipio_citado'  => $poder->municipio_patronal,
-            'tipo_vialidad'     => $poder->tipo_vialidad_patronal,
-            'calle'             => $poder->vialidad_patronal,
-            'n_ext'             => $poder->num_ext_patronal,
-            'n_int'             => $poder->mun_int_patronal,
-            'colonia'           => $poder->colonia_patronal,
-            'cp'                => $poder->cp_patronal,*/
             'estatus'           => 'Pendiente',
             'id_abogado'        => $poder->idAbogado,
             //'notificacion'      => 'Centro',
-            //'tipo_notificacion' => 'Citatorio'
+            'tipo_notificacion' => 'Citatorio'
         ];
 
         SeerCitados::create($data_citado);
