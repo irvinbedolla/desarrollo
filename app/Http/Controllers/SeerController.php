@@ -9618,6 +9618,15 @@ class SeerController extends Controller
             else if($delegacion == "Zamora"){
                 $delegaciones = ["Zamora", "Sahuayo"];
             }
+            else if($delegacion == "Lázaro Cárdenas"){
+                $delegaciones = ["Lázaro Cárdenas"];
+            }
+            else if($delegacion == "Zitácuaro"){
+                $delegaciones = ["Zitácuaro"];
+            }
+            else if($delegacion == "Sahuayo"){
+                $delegaciones = ["Sahuayo"];
+            }
             $notificaciones = SeerCitados::join('seer_general','seer_general.id','seer_citados.id_solicitud')
             ->leftjoin('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
             ->leftjoin('estados', 'seer_citados.estado_citado', '=', 'estados.id')
