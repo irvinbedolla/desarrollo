@@ -10,6 +10,7 @@ use Illuminate\Support\Arr;
 use App\Models\Municipios;
 use App\Models\Estados;
 use App\Models\User;
+use App\Models\HistorialAbogado;
 use Spatie\Permission\Models\Role;
 
 //Para sacar el Id del usuario
@@ -401,6 +402,7 @@ class PoderController extends Controller
         $id_usuario = auth()->user()->id;
         $data = $request->all();
         $poder = Poder::find($id);
+        $data_insertar = [];
 
         if($data["tipoPersona"] == "Fisica"){
             if($data["representate"] == "No"){
@@ -489,7 +491,7 @@ class PoderController extends Controller
         
         if($data["tipoPersona"] == "Fisica"){
             if($data["representate"] == "No"){
-                $data_insertar = array(
+        $data_insertar = array(
                         'tipo'                      => $data["tipoPersona"],
                         'nombres_patronal'          => $data["nombre_pF"],
                         'primer_apellido_patronal'  => $data["primero_PF"],
@@ -508,7 +510,6 @@ class PoderController extends Controller
                         'num_ext_patronal'          => $data["num_ext_pF"],
                         'cp_patronal'               => $data["cp_pF"],
                         'estatus'                   => $data["validacion"],
-                        'idUsuario'                 => $id_usuario,
                         'tipo_identificacion'       => $data["tipo_identificacion_pF"],
                         'num_identificacion'        => $data["num_identificacion_pF"],
                 );
@@ -546,6 +547,13 @@ class PoderController extends Controller
                 }
 
                 $poder->update($data_insertar);
+
+                $historialPayload = array_merge($poder->fresh()->toArray(), $data_insertar);
+                unset($historialPayload['idAbogado'], $historialPayload['created_at'], $historialPayload['updated_at']);
+                $historialPayload['id_abogado'] = $poder->idAbogado;
+                $historialPayload['id_user'] = $id_usuario;
+                HistorialAbogado::create($historialPayload);
+
                 return redirect()->route('poderes');
             }
             else if($data["representate"] == "Si"){
@@ -578,7 +586,6 @@ class PoderController extends Controller
                         'fechaVigencia'                 => $data["fecha_vigencia_pF"],
                         'descipcion_poder'              => $data["descripcion_pF"],
                         'estatus'                       => $data["validacion"],
-                        'idUsuario'                     => $id_usuario,
                         'tipo_identificacion'       => $data["tipo_identificacion_pFCR"],
                         'num_identificacion'        => $data["num_identificacion_pFCR"],
                 );
@@ -617,6 +624,13 @@ class PoderController extends Controller
                 }
 
                 $poder->update($data_insertar);
+
+                $historialPayload = array_merge($poder->fresh()->toArray(), $data_insertar);
+                unset($historialPayload['idAbogado'], $historialPayload['created_at'], $historialPayload['updated_at']);
+                $historialPayload['id_abogado'] = $poder->idAbogado;
+                $historialPayload['id_user'] = $id_usuario;
+                HistorialAbogado::create($historialPayload);
+
                 return redirect()->route('poderes');
             }   
         }
@@ -646,7 +660,6 @@ class PoderController extends Controller
                 'fechaVigencia'                 => $data["fecha_vigencia_Moral"],
                 'descipcion_poder'              => $data["descripcion_Moral"],
                 'estatus'                       => $data["validacion"],
-                'idUsuario'                     => $id_usuario,
                 'reprecentante'                 => "Si",
                 'tipo_identificacion'           => $data["tipo_identificacion_Moral"],
                 'num_identificacion'            => $data["num_identificacion_Moral"]
@@ -686,6 +699,13 @@ class PoderController extends Controller
             }
 
             $poder->update($data_insertar);
+
+            $historialPayload = array_merge($poder->fresh()->toArray(), $data_insertar);
+            unset($historialPayload['idAbogado'], $historialPayload['created_at'], $historialPayload['updated_at']);
+            $historialPayload['id_abogado'] = $poder->idAbogado;
+            $historialPayload['id_user'] = $id_usuario;
+            HistorialAbogado::create($historialPayload);
+
             return redirect()->route('poderes');
         }
 
@@ -712,6 +732,8 @@ class PoderController extends Controller
     public function publico(Request $request)
     {
         $data = $request->all();
+
+        $id_user_historial = Auth::id() ?? 0;
 
         if($data["tipoPersona"] == "Fisica"){
             if($data["representate"] == "No"){
@@ -849,12 +871,17 @@ class PoderController extends Controller
                 $data_insertar["anexo_documeto"] = $nombre_anexo;
                 
                 if(isset($data["num_int_pF"])){
-                   $data_insertar["num_int_pF"] = $data["num_int_pF"];
+                    $data_insertar["mun_int_patronal"] = $data["num_int_pF"];
                 }
-                Poder::create($data_insertar);  
-                $data = Poder::latest('idAbogado')->first();
+                
+                $nuevoAbogado = Poder::create($data_insertar);
+                $historialPayload = $nuevoAbogado->toArray();
+                unset($historialPayload['idAbogado'], $historialPayload['created_at'], $historialPayload['updated_at']);
+                $historialPayload['id_abogado'] = $nuevoAbogado->idAbogado;
+                $historialPayload['id_user'] = $id_user_historial;
+                HistorialAbogado::create($historialPayload);
 
-                $mensaje = "Su registro fue guardado con éxito, tu número de folio es: ".$data["idAbogado"]. " 
+                $mensaje = "Su registro fue guardado con éxito, tu número de folio es: ".$nuevoAbogado->idAbogado. " 
                 *La validación del registro patronal quedará sujeta a la certificación de la documentación que realice la persona conciliadora, lo anterior de conformidad con lo 
                 establecido en el artículo 684-I, fracción I y II, de la Ley Federal del Trabajo; por lo que se le solicita acudir a su siguiente audiencia de conciliación con la 
                 Documentación original en formato físico, a fin de realizar el cotejo correspondiente.";
@@ -934,10 +961,14 @@ class PoderController extends Controller
                     $data_insertar["fechaVigencia"] = $data["fecha_vigencia_pF"];
                 }
                 
-                Poder::create($data_insertar);  
-                $data = Poder::latest('idAbogado')->first();
+                $nuevoAbogado = Poder::create($data_insertar);
+                $historialPayload = $nuevoAbogado->toArray();
+                unset($historialPayload['idAbogado'], $historialPayload['created_at'], $historialPayload['updated_at']);
+                $historialPayload['id_abogado'] = $nuevoAbogado->idAbogado;
+                $historialPayload['id_user'] = $id_user_historial;
+                HistorialAbogado::create($historialPayload);
 
-                $mensaje = "Su registro fue guardado con éxito, tu número de folio es: ".$data["idAbogado"]. " 
+                $mensaje = "Su registro fue guardado con éxito, tu número de folio es: ".$nuevoAbogado->idAbogado. " 
                 *La validación del registro patronal quedará sujeta a la certificación de la documentación que realice la persona conciliadora, lo anterior de conformidad con lo 
                 establecido en el artículo 684-I, fracción I y II, de la Ley Federal del Trabajo; por lo que se le solicita acudir a su siguiente audiencia de conciliación con la 
                 Documentación original en formato físico, a fin de realizar el cotejo correspondiente.";
@@ -1013,10 +1044,14 @@ class PoderController extends Controller
                 $data_insertar["fechaVigencia"] = $data["fecha_vigencia_Moral"];
             }
 
-            Poder::create($data_insertar);  
-            $data = Poder::latest('idAbogado')->first();
+            $nuevoAbogado = Poder::create($data_insertar);
+            $historialPayload = $nuevoAbogado->toArray();
+            unset($historialPayload['idAbogado'], $historialPayload['created_at'], $historialPayload['updated_at']);
+            $historialPayload['id_abogado'] = $nuevoAbogado->idAbogado;
+            $historialPayload['id_user'] = $id_user_historial;
+            HistorialAbogado::create($historialPayload);
 
-            $mensaje = "Su registro fue guardado con éxito, tu número de folio es: ".$data["idAbogado"]. " 
+            $mensaje = "Su registro fue guardado con éxito, tu número de folio es: ".$nuevoAbogado->idAbogado. " 
             *La validación del registro patronal quedará sujeta a la certificación de la documentación que realice la persona conciliadora, lo anterior de conformidad con lo 
             establecido en el artículo 684-I, fracción I y II, de la Ley Federal del Trabajo; por lo que se le solicita acudir a su siguiente audiencia de conciliación con la 
             Documentación original en formato físico, a fin de realizar el cotejo correspondiente.";

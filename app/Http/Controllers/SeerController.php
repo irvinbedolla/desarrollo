@@ -42,6 +42,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Models\HistorialAbogado;
 use Illuminate\Support\Str; //Se utiliza en la imágenes que se suben en los citados
 use App\Models\Sedes;
 use App\Models\Usuarios;
@@ -5843,16 +5844,17 @@ class SeerController extends Controller
                 if(isset($data["num_int_pF"])){
                    $data_insertar["num_int_pF"] = $data["num_int_pF"];
                 }
-                Poder::create($data_insertar);  
-                $data = Poder::latest('idAbogado')->first();
+                     $nuevoAbogado = Poder::create($data_insertar);
 
-                $mensaje = "Su registro fue guardado con éxito, tu número de folio es: ".$data["idAbogado"]. " 
-                *La validación del registro patronal quedará sujeta a la certificación de la documentación que realice la persona conciliadora, lo anterior de conformidad con lo 
-                establecido en el artículo 684-I, fracción I y II, de la Ley Federal del Trabajo; por lo que se le solicita acudir a su siguiente audiencia de conciliación con la 
-                Documentación original en formato físico, a fin de realizar el cotejo correspondiente.";
-                    
-                    
-                return redirect()->back()->with('success', $mensaje);
+                     $id_user_historial = Auth::id() ?? 0;
+                     $historialPayload = $nuevoAbogado->toArray();
+                     unset($historialPayload['idAbogado'], $historialPayload['created_at'], $historialPayload['updated_at']);
+                     $historialPayload['id_abogado'] = $nuevoAbogado->idAbogado;
+                     $historialPayload['id_user'] = $id_user_historial;
+                     HistorialAbogado::create($historialPayload);
+
+                     SeerCitados::find($data['id_citado_2'])->update(['id_abogado' => $nuevoAbogado->idAbogado]);
+                     return back()->with('success', 'Representante legal registrado y asignado correctamente al citado.');
             }
             else if($data["representate"] == "Si"){
                 $data_insertar = array(
@@ -5926,16 +5928,18 @@ class SeerController extends Controller
                 if(isset($data["fecha_vigencia_pF"])){
                     $data_insertar["fechaVigencia"] = $data["fecha_vigencia_pF"];
                 }
-                
-                Poder::create($data_insertar);  
-                $data = Poder::latest('idAbogado')->first();
 
-                $mensaje = "Su registro fue guardado con éxito, tu número de folio es: ".$data["idAbogado"]. " 
-                *La validación del registro patronal quedará sujeta a la certificación de la documentación que realice la persona conciliadora, lo anterior de conformidad con lo 
-                establecido en el artículo 684-I, fracción I y II, de la Ley Federal del Trabajo; por lo que se le solicita acudir a su siguiente audiencia de conciliación con la 
-                Documentación original en formato físico, a fin de realizar el cotejo correspondiente.";
-                        
-                return redirect()->back()->with('success', $mensaje);
+                $nuevoAbogado = Poder::create($data_insertar);
+
+                $id_user_historial = Auth::id() ?? 0;
+                $historialPayload = $nuevoAbogado->toArray();
+                unset($historialPayload['idAbogado'], $historialPayload['created_at'], $historialPayload['updated_at']);
+                $historialPayload['id_abogado'] = $nuevoAbogado->idAbogado;
+                $historialPayload['id_user'] = $id_user_historial;
+                $historialReciente = HistorialAbogado::create($historialPayload);
+
+                SeerCitados::find($data['id_citado_2'])->update(['id_abogado' => $nuevoAbogado->idAbogado, 'id_historial' => $historialReciente->id]);
+                return back()->with('success', 'Representante legal registrado y asignado correctamente al citado.');
             }   
         }
         else if($data["tipoPersona"] == "Moral"){
@@ -6007,23 +6011,20 @@ class SeerController extends Controller
                 $data_insertar["fechaVigencia"] = $data["fecha_vigencia_Moral"];
             }
 
-            Poder::create($data_insertar);  
-            $data = Poder::latest('idAbogado')->first();
+            $nuevoAbogado = Poder::create($data_insertar);
 
-            $mensaje = "Su registro fue guardado con éxito, tu número de folio es: ".$data["idAbogado"]. " 
-            *La validación del registro patronal quedará sujeta a la certificación de la documentación que realice la persona conciliadora, lo anterior de conformidad con lo 
-            establecido en el artículo 684-I, fracción I y II, de la Ley Federal del Trabajo; por lo que se le solicita acudir a su siguiente audiencia de conciliación con la 
-            Documentación original en formato físico, a fin de realizar el cotejo correspondiente.";
-                    
-                    
-            return redirect()->back()->with('success', $mensaje);
+            $id_user_historial = Auth::id() ?? 0;
+            $historialPayload = $nuevoAbogado->toArray();
+            unset($historialPayload['idAbogado'], $historialPayload['created_at'], $historialPayload['updated_at']);
+            $historialPayload['id_abogado'] = $nuevoAbogado->idAbogado;
+            $historialPayload['id_user'] = $id_user_historial;
+            $historialReciente = HistorialAbogado::create($historialPayload);
+
+            SeerCitados::find($data['id_citado_2'])->update(['id_abogado' => $nuevoAbogado->idAbogado, 'id_historial' => $historialReciente->id]);
+            return back()->with('success', 'Representante legal registrado y asignado correctamente al citado.');
         }
 
-        $nuevoAbogado = Poder::create($data_insertar);
-          
-         
-        $A_citado=SeerCitados::find($data['id_citado_2'])->update(['id_abogado' => $nuevoAbogado->idAbogado]);
-        return back()->with('success', 'Representante legal registrado y asignado correctamente al citado.');
+        return back()->with('error', 'Tipo de persona inválido.');
     }
 
     public function editar_citados(Request $request){
@@ -6085,13 +6086,16 @@ class SeerController extends Controller
 
         $sessionKey = "audiencia_data_{$id}";
 
+        $ultimoRegistro = HistorialAbogado::where('id_abogado', $data["abogado"] ?? null)->latest()->first();
+
         if (session()->has($sessionKey)) {
             $sessionData = session($sessionKey);
             $citados = $sessionData['citados'];
             
-            $citados = $citados->map(function ($citado) use ($data) {
+            $citados = $citados->map(function ($citado) use ($data, $ultimoRegistro) {
                 if ((int)$citado->id == (int)$data["citado"]) {
                     $citado->id_abogado = $data["abogado"];
+                    $citado->id_historial = $ultimoRegistro?->id;
                 }
                 return $citado;
             });
@@ -6102,6 +6106,7 @@ class SeerController extends Controller
             SeerCitados::find($data["citado"])
             ->update([
                 'id_abogado'  => $data["abogado"],
+                'id_historial'=> $ultimoRegistro?->id
             ]);
         }
 
@@ -6440,7 +6445,7 @@ class SeerController extends Controller
     public function audiencia_parte2(Request $request){
         $data = $request->all();
         $id = $data["id"];
-        
+
         $sessionKey = "audiencia_data_{$id}";
         
         if (session()->has($sessionKey)) {
@@ -6467,7 +6472,8 @@ class SeerController extends Controller
                     'id_fisica' => $citado->id_fisica,
                     'nombre' => $citado->nombre,
                     'primer_apellido' => $citado->primer_apellido,
-                    'segundo_apellido' => $citado->segundo_apellido
+                    'segundo_apellido' => $citado->segundo_apellido,
+                    'id_historial' => $citado->id_historial
                 ]);
             }
             
@@ -7321,32 +7327,79 @@ class SeerController extends Controller
 
         // Obtener TODOS los representantes/abogados distintos que correspondan a los citados incluidos en el convenio
         $citadoIdsParaConvenio = $citados instanceof \Illuminate\Support\Collection ? $citados->pluck('id')->filter()->values()->all() : [];
+
         if (!empty($citadoIdsParaConvenio)) {
-            $abogadosConvenio = Poder::join('seer_citados as sc', 'sc.id_abogado', '=', 'abogados.idAbogado')
-                ->where('sc.id_solicitud', $id)
-                ->whereIn('sc.id', $citadoIdsParaConvenio)
-                ->select(
-                    'abogados.idAbogado',
-                    'abogados.nombres_patronal',
-                    'abogados.primer_apellido_patronal',
-                    'abogados.segundo_apellido_patronal',
-                    'abogados.descipcion_poder',
-                    'abogados.tipo_identificacion',
-                    'abogados.num_identificacion',
-                    'abogados.nombre_representante',
-                    'abogados.primer_apellido_representante',
-                    'abogados.segundo_apellido_representante',
-                    'abogados.estado_patronal',
-                    'abogados.municipio_patronal',
-                    'abogados.tipo_vialidad_patronal',
-                    'abogados.vialidad_patronal',
-                    'abogados.num_ext_patronal',
-                    'abogados.mun_int_patronal',
-                    'abogados.colonia_patronal',
-                    'abogados.cp_patronal'
-                )
-                ->distinct()
-                ->get();
+            $citadosConHist = $citados->filter(fn($c) => !empty($c->id_historial));
+            $citadosSinHist = $citados->filter(fn($c) => empty($c->id_historial));
+
+            $abogadosConvenio = collect();
+
+            if ($citadosConHist->isNotEmpty()) {
+                $idsConHist = $citadosConHist->pluck('id')->filter()->values()->all();
+
+                $abogadosHist = \App\Models\HistorialAbogado::join('seer_citados as sc', 'sc.id_historial', '=', 'historial_abogados.id')
+                    ->where('sc.id_solicitud', $id)
+                    ->whereIn('sc.id', $idsConHist)
+                    ->select(
+                        'historial_abogados.id',
+                        'historial_abogados.nombres_patronal',
+                        'historial_abogados.primer_apellido_patronal',
+                        'historial_abogados.segundo_apellido_patronal',
+                        'historial_abogados.descipcion_poder',
+                        'historial_abogados.tipo_identificacion',
+                        'historial_abogados.num_identificacion',
+                        'historial_abogados.nombre_representante',
+                        'historial_abogados.primer_apellido_representante',
+                        'historial_abogados.segundo_apellido_representante',
+                        'historial_abogados.estado_patronal',
+                        'historial_abogados.municipio_patronal',
+                        'historial_abogados.tipo_vialidad_patronal',
+                        'historial_abogados.vialidad_patronal',
+                        'historial_abogados.num_ext_patronal',
+                        'historial_abogados.mun_int_patronal',
+                        'historial_abogados.colonia_patronal',
+                        'historial_abogados.cp_patronal',
+                        'historial_abogados.id_abogado as idAbogado'
+                    )
+                    ->distinct()
+                    ->get();
+
+                $abogadosConvenio = $abogadosConvenio->merge($abogadosHist);
+            }
+
+            if ($citadosSinHist->isNotEmpty()) {
+                $idsSinHist = $citadosSinHist->pluck('id')->filter()->values()->all();
+
+                $abogadosPoder = Poder::join('seer_citados as sc', 'sc.id_abogado', '=', 'abogados.idAbogado')
+                    ->where('sc.id_solicitud', $id)
+                    ->whereIn('sc.id', $idsSinHist)
+                    ->select(
+                        'abogados.idAbogado',
+                        'abogados.nombres_patronal',
+                        'abogados.primer_apellido_patronal',
+                        'abogados.segundo_apellido_patronal',
+                        'abogados.descipcion_poder',
+                        'abogados.tipo_identificacion',
+                        'abogados.num_identificacion',
+                        'abogados.nombre_representante',
+                        'abogados.primer_apellido_representante',
+                        'abogados.segundo_apellido_representante',
+                        'abogados.estado_patronal',
+                        'abogados.municipio_patronal',
+                        'abogados.tipo_vialidad_patronal',
+                        'abogados.vialidad_patronal',
+                        'abogados.num_ext_patronal',
+                        'abogados.mun_int_patronal',
+                        'abogados.colonia_patronal',
+                        'abogados.cp_patronal'
+                    )
+                    ->distinct()
+                    ->get();
+
+                $abogadosConvenio = $abogadosConvenio->merge($abogadosPoder);
+            }
+
+            $abogadosConvenio = $abogadosConvenio->unique('idAbogado')->values();
 
             $abogado = $abogadosConvenio->first();
             foreach ($abogadosConvenio as $rep) {
@@ -12454,6 +12507,7 @@ class SeerController extends Controller
                 if ($citado->id == $id) {
                     $citado->id_abogado = null;
                     $citado->id_fisica = null;
+                    $citado->id_historial = null;
                 }
                 return $citado;
             });
@@ -12462,6 +12516,7 @@ class SeerController extends Controller
             $citado = SeerCitados::findOrFail($id);
             $citado->id_abogado = null;
             $citado->id_fisica = null;
+            $citado->id_historial = null;
             $citado->save();
         }
 
@@ -13378,7 +13433,18 @@ class SeerController extends Controller
                 'estados.nombre as estado_domicilio'
             )
             ->first();
-            $abogado = Poder::join("turnos", "turnos.idAbogado", "=", "abogados.idAbogado")
+
+            if($ratificacion->id_historial){
+                $abogado = HistorialAbogado::join("turnos", "turnos.id_historial", "=", "historial_abogados.id")
+                ->where("turnos.id", "=", $id)
+                ->select(
+                    "historial_abogados.*",
+                    "turnos.tipo_identificacion as tipo_identificacion_turno",
+                    "turnos.num_identificacion as num_identificacion_turno"
+                )
+                ->first();
+            } else {
+                $abogado = Poder::join("turnos", "turnos.idAbogado", "=", "abogados.idAbogado")
                 ->where("turnos.id", "=", $id)
                 ->select(
                     "abogados.*",
@@ -13386,6 +13452,8 @@ class SeerController extends Controller
                     "turnos.num_identificacion as num_identificacion_turno"
                 )
                 ->first();
+            }
+            
             $html = view('PDF/Caratula', compact('id','ratificacion','abogado','bandera'))->render();
         } else {
             $solicitud = SeerPerGeneral::find($id);

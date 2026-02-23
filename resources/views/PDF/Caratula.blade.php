@@ -358,7 +358,7 @@
                             <strong>{{ $index + 1 }}.-</strong> {{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido }}<br>
                         @endforeach
                     @else
-                        {{ $abogado->nombres_patronal }} {{ $abogado->primer_apellido_patronal }} {{ $abogado->segundo_apellido_patronal }}
+                        {{ $abogado->nombres_patronal }} {{ $abogado->primer_apellido_patronal ?? '' }} {{ $abogado->segundo_apellido_patronal ?? ''}}
                     @endif
                 </div>
             </td>
