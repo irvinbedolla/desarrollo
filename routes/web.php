@@ -263,7 +263,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         //Ruta de enlace
         Route::post('/seer/store_enlace',               [SeerController::class, 'store_enlace'])->name('seer.store_enlace');
         Route::get('/notificaciones/consultar/{id}',    [SeerController::class, 'mostrar_citados'])->name('editar_citado');
-        Route::get('notificaciones/editar',             [SeerController::class, 'editar_citados'])->name('editar_citado_enlace');  
+        //Route::get('notificaciones/editar',             [SeerController::class, 'editar_citados'])->name('editar_citado_enlace');  
         Route::post('notificaciones/actualizar',        [SeerController::class, 'editar_citados'])->name('actualizar_enlace');  
         Route::post('/seer/store_auxiliar',             [SeerController::class, 'store_auxiliares'])->name('seer.store_auxiliar');
         Route::post('/seer/store_conciliador',          [SeerController::class, 'store_conciliadores'])->name('seer.store_conciliador');

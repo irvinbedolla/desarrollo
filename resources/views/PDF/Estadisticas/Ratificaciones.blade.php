@@ -181,8 +181,8 @@
                             <td>{{ $estadistica->trabajador }} {{ $estadistica->primero_trabajador }} {{ $estadistica->segundo_trabajador }}</td>
                             <td class="monto-cell">${{ number_format($estadistica->monto, 2) }}</td>
                             <td>{{ $estadistica->delegacion }}</td>
-                            <td>{{ $estadistica->name }}</td>
-                            <td>{{ $estadistica->auxiliar }}</td>
+                            <td>{{ $estadistica->conciliador_name }}</td>
+                            <td>{{ $estadistica->auxiliar_name }}</td>
                             <td><span class="estatus-pill">{{ $estadistica->estatus }}</span></td>
                         </tr>
                         @php 
@@ -209,6 +209,14 @@
                         <tr class="grand-total">
                             <td>MONTO TOTAL:</td>
                             <td align="right">${{ number_format($totalMonto, 2) }}</td>
+                        </tr>
+                        <tr class="grand-total">
+                            <td>TOTAL PAGADO:</td>
+                            <td align="right">${{ number_format($ratificacionePagadas->pagado_monto, 2) }}</td>
+                        </tr>
+                        <tr class="grand-total">
+                            <td>TOTAL PENDIENTES:</td>
+                            <td align="right">${{ number_format($totalMonto - $ratificacionePagadas->pagado_monto, 2) }}</td>
                         </tr>
                     </tbody>
                 </table>

@@ -9,17 +9,17 @@
     <table>
         <thead style="background-color: #869b9c;">
             <tr>
-                <th style="color: #fff;  text-align: center;">Fecha</th>
-                <th style="color: #fff;  text-align: center;">Hora</th>
-                <th style="color: #fff;  text-align: center;">NUE</th>
-                <th style="color: #fff;  text-align: center;">Empleador</th>
-                <th style="color: #fff;  text-align: center;">Trabajador</th>
-                <th style="color: #fff;  text-align: center;">Descripción</th>
-                <th style="color: #fff;  text-align: center;">Monto</th>
-                <th style="color: #fff;  text-align: center;">Giro Comercial</th>
-                <th style="color: #fff;  text-align: center;">Delegacion</th>
-                <th style="color: #fff;  text-align: center;">Conciliador</th>
-                <th style="color: #fff;  text-align: center;">Estatus</th>
+                <th width="15" style="background-color: #869b9c; color: #ffffff;">Fecha</th>
+                <th width="10" style="background-color: #869b9c; color: #ffffff;">Hora</th>
+                <th width="25" style="background-color: #869b9c; color: #ffffff;">NUE</th>
+                <th width="40" style="background-color: #869b9c; color: #ffffff;">Empleador</th>
+                <th width="40" style="background-color: #869b9c; color: #ffffff;">Trabajador</th>
+                <th width="30" style="background-color: #869b9c; color: #ffffff;">Descripción</th>
+                <th width="15" style="background-color: #869b9c; color: #ffffff;">Monto</th>
+                <th width="15" style="background-color: #869b9c; color: #ffffff;">Conciliador</th>
+                <th width="40" style="background-color: #869b9c; color: #ffffff;">Giro Comercial</th>
+                <th width="20" style="background-color: #869b9c; color: #ffffff;">Delegacion</th>
+                <th width="15" style="background-color: #869b9c; color: #ffffff;">Estatus</th>
             </tr>
         </thead>
         <tbody>
@@ -62,16 +62,19 @@
     <div>Cumplimiento en Audiencia</div>
     <table>
         <thead style="background-color: #869b9c;">
-            <th style="color: #fff;  text-align: center;">Fecha</th>
-            <th style="color: #fff;  text-align: center;">Hora</th>
-            <th style="color: #fff;  text-align: center;">NUE</th>
-            <th style="color: #fff;  text-align: center;">Empleador</th>
-            <th style="color: #fff;  text-align: center;">Trabajador</th>
-            <th style="color: #fff;  text-align: center;">Descripción</th>
-            <th style="color: #fff;  text-align: center;">Monto</th>
-            <th style="color: #fff;  text-align: center;">Delegacion</th>
-            <th style="color: #fff;  text-align: center;">Conciliador</th>
-            <th style="color: #fff;  text-align: center;">Estatus</th>
+            <tr>
+                <th width="15" style="background-color: #869b9c; color: #ffffff;">Fecha</th>
+                <th width="10" style="background-color: #869b9c; color: #ffffff;">Hora</th>
+                <th width="25" style="background-color: #869b9c; color: #ffffff;">NUE</th>
+                <th width="40" style="background-color: #869b9c; color: #ffffff;">Empleador</th>
+                <th width="40" style="background-color: #869b9c; color: #ffffff;">Trabajador</th>
+                <th width="30" style="background-color: #869b9c; color: #ffffff;">Descripción</th>
+                <th width="15" style="background-color: #869b9c; color: #ffffff;">Monto</th>
+                <th width="25" style="background-color: #869b9c; color: #ffffff;">Conciliador</th>
+                <th width="40" style="background-color: #869b9c; color: #ffffff;">Giro Comercial</th>
+                <th width="20" style="background-color: #869b9c; color: #ffffff;">Delegacion</th>
+                <th width="15" style="background-color: #869b9c; color: #ffffff;">Estatus</th>
+            </tr>
         </thead>
         <tbody>
             @php
@@ -79,15 +82,16 @@
             @endphp
             @foreach($pagosAudiencias as $estadistica)
                 <tr>
-                    <td style=" text-align: center;">{{ date_format($estadistica->fecha, 'd-m-Y') }}</td>
+                    <td style=" text-align: center;">{{ $estadistica->fecha ? date_format($estadistica->fecha, 'd-m-Y') : '---' }}</td>
                     <td style=" text-align: center;">{{ date_format($estadistica->hora, 'H:i:s') }}</td>
                     <td style=" text-align: center;">{{ $estadistica->NUE }}</td>
-                    <td style=" text-align: center;">{{ $estadistica->empresa_representante }}</td>
+                    <td style=" text-align: center;">{{ $estadistica->nombre_empleador }}</td>
                     <td style=" text-align: center;">{{ $estadistica->nombre_trabajador }}</td>
                     <td style=" text-align: center;">{{ $estadistica->descripcion }}</td>
                     <td style=" text-align: center;">${{ number_format($estadistica->monto, 2) }}</td>
-                    <td style=" text-align: center;">{{ $estadistica->turno_delegacion }}</td>
                     <td style=" text-align: center;">{{ $estadistica->conciliador_name }}</td>
+                    <td style=" text-align: center;">{{ $estadistica->giroComercial }}</td>
+                    <td style=" text-align: center;">{{ $estadistica->turno_delegacion }}</td>
                     <td style=" text-align: center;">{{ $estadistica->estatus }}</td>
                 </tr>
                 @php
