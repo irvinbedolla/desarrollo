@@ -21,7 +21,7 @@ use App\Models\Municipios;
 use App\Models\Estados;
 use App\Models\Deducciones;
 use App\Models\DocumentosSolicitud;
-
+use App\Models\HistorialAbogado;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -580,6 +580,8 @@ class TurnosController extends Controller
 
         if(isset($data["folio"])){
             $representante  = Poder::find($data["folio"]);
+            $ultimoRegistro = HistorialAbogado::where('id_abogado', $data["folio"])->latest()->first();
+
             if(!isset($representante)){
                 return back()->with('error', 'El representante legal no existe');
             }
@@ -642,6 +644,7 @@ class TurnosController extends Controller
                 'num_identificacion'=> $data["num_identificacion"],
                 'estado_rat'        => $data["estado_rat"],
                 'año'               => $año_actual,
+                'id_historial'      => $ultimoRegistro->id ?? NULL
             ); 
             $nombre = $data["trabajador"];
             
@@ -909,7 +912,7 @@ class TurnosController extends Controller
         while ($fecha <= $fin) {
             if ($fecha->format('N') < 6) { 
                 $slotDt = new \DateTime($fecha->format('Y-m-d') . ' 08:30:00');
-                $slotEndDt = new \DateTime($fecha->format('Y-m-d') . ' 13:30:00');
+                $slotEndDt = new \DateTime($fecha->format('Y-m-d') . ' 14:30:00');
 
                 while ($slotDt <= $slotEndDt) {
                         $hora_str = $slotDt->format('H:i:s');
@@ -956,7 +959,7 @@ class TurnosController extends Controller
                             ];
                         } else if ($esInhabil){
                             $todosLosEventos[] = [
-                                'title' => 'Inhábil',
+                                'title' => 'No disponible',
                                 'start' => $slotStart,
                                 'color' => '#3B78DB',
                                 'extendedProps' => ['estado' => 'inhabil', 'espacios_disponibles' => 0]
@@ -1038,7 +1041,18 @@ class TurnosController extends Controller
         /*$abogado  = Poder::join("turnos","turnos.idAbogado","=","abogados.idAbogado");
         $abogado = $abogado->where("turnos.id", "=", $id)
         ->first();*/
-        $abogado = Poder::join("turnos", "turnos.idAbogado", "=", "abogados.idAbogado")
+
+        if($solicitud->id_historial){
+            $abogado = HistorialAbogado::join("turnos", "turnos.id_historial", "=", "historial_abogados.id")
+            ->where("turnos.id", "=", $id)
+            ->select(
+                "historial_abogados.*",
+                "turnos.tipo_identificacion as tipo_identificacion_turno",
+                "turnos.num_identificacion as num_identificacion_turno"
+            )
+            ->first();
+        } else {
+            $abogado = Poder::join("turnos", "turnos.idAbogado", "=", "abogados.idAbogado")
             ->where("turnos.id", "=", $id)
             ->select(
                 "abogados.*",
@@ -1046,6 +1060,8 @@ class TurnosController extends Controller
                 "turnos.num_identificacion as num_identificacion_turno"
             )
             ->first();
+        }
+
         // $abogado = Poder::where('idAbogado', $id)->get();
         //dd($abogado);
         //$prestacionesLab = Concepto::where('id_solicitud', $id)->first();
@@ -1229,16 +1245,28 @@ class TurnosController extends Controller
     //PDF Acta de Audiencia
     public function VerPDFAudiencia($id){
         $solicitud = Turnos::find($id);
-        //$solicitud = Turnos::find($id);
         $pagos = Pagos::where('id_solicitud', $id)->get();
-        $abogado = Poder::join("turnos", "turnos.idAbogado", "=", "abogados.idAbogado")
-           ->where("turnos.id", "=", $id)
-           ->select(
-           "abogados.*",
-           "turnos.tipo_identificacion as tipo_identificacion_turno",
-           "turnos.num_identificacion as num_identificacion_turno"
-        )
-        ->first();
+
+        if($solicitud->id_historial){
+            $abogado = HistorialAbogado::join("turnos", "turnos.id_historial", "=", "historial_abogados.id")
+            ->where("turnos.id", "=", $id)
+            ->select(
+                "historial_abogados.*",
+                "turnos.tipo_identificacion as tipo_identificacion_turno",
+                "turnos.num_identificacion as num_identificacion_turno"
+            )
+            ->first();
+        } else {
+            $abogado = Poder::join("turnos", "turnos.idAbogado", "=", "abogados.idAbogado")
+            ->where("turnos.id", "=", $id)
+            ->select(
+                "abogados.*",
+                "turnos.tipo_identificacion as tipo_identificacion_turno",
+                "turnos.num_identificacion as num_identificacion_turno"
+            )
+            ->first();
+        }
+
         //$prestacionesLab = Concepto::where('id_solicitud', $id)->first();
         //dd($prestaciones);
        $prestaciones = Concepto::where('id_solicitud', $id)->get();
@@ -1445,8 +1473,8 @@ class TurnosController extends Controller
         $userRole = $user->roles->pluck('name')->all();
         $relacionEloquent = 'roles';
 
-        if($sede == "Morelia" || $sede =='Zitacuaro' || $sede =='Zitácuaro'){
-            $delegaciones = ['Morelia', 'Zitacuaro', 'Zitácuaro'];
+        if($sede == "Morelia" || $sede =='Zitácuaro'){
+            $delegaciones = ['Morelia', 'Zitácuaro'];
         }else if($sede == "Uruapan" || $sede == "Lázaro Cárdenas"){
             $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
         }else if($sede == "Zamora" || $sede =='Sahuayo'){

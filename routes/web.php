@@ -53,6 +53,7 @@ use App\Http\Controllers\IncidenciasController;
 
     Route::get('levantar_solicitud',                    [SeerController::class, 'solicitudesLinea'])->name('solicitudEnLinea');
     Route::get('tipoIndustria/{tipo_solicitud}',        [SeerController::class, 'Industrias'])->name('solicitud.industria');
+     Route::get('tipoIndustriaP/{tipo_solicitud}',      [SeerController::class, 'Industrias_p'])->name('solicitud.industria_p'); //Solicitud patronal
     Route::get('/registro_tercer_encuentro',            [SeerController::class, 'registro_tercer_encuentro'])->name('registro_tercer_encuentro');
     Route::post('/registro_tercer_encuentro/guardar',   [SeerController::class, 'tercer_encuentro_registro'])->name('tercer_encuentro_registro');
     Route::get('GeneraConstancia',                      [SeerController::class, 'genera_constancia']);
@@ -115,6 +116,14 @@ use App\Http\Controllers\IncidenciasController;
     Route::get('/validar_folio_abogado/{folio}',[TurnosController::class, 'validarFolio'])->name('validar_folio_abogado'); //valida si existe ya un abogado
     Route::get('/Confirmacion/{id}',            [CitaDireccionController::class, 'codigoQR'])->name('revisarCitaQR');
 
+    //Solicitudes en línea Patronal
+    Route::get('Patronal/{tipo_solicitud}',     [SeerController::class, 'patron'])->name('solicitud_patron');
+    Route::post('guardar_patronal',             [SeerController::class, 'solicitud_patronal'])->name('parte1Patronal');
+    Route::get('solicitud_continuar',           [SeerController::class, 'vista_solicitanteP'])->name('solicitantePatronal.ver');
+    Route::post('solicitante_patronal',         [SeerController::class, 'inserta_solicitanteP'])->name('solicitantePatronal');
+    Route::get('/agrega_citadoP/{id}',          [SeerController::class, 'vista_citadoPatronal'])->name('agregar_citadoPatronal'); //Agregar citado patronal 
+    Route::post('/agrega_citadoP',              [SeerController::class, 'guardar_citadoPatronal'])->name('seer.citadosPatronal');
+
     //Pre registro de solicitudes
     Route::get('registro', [SeerController::class, 'RTemportal'])->name('PreRegistro');
     Route::post('registro_solicitud', [SeerController::class, 'GuardarRTemportal'])->name('guardar_registro_solicitud');
@@ -133,7 +142,7 @@ use App\Http\Controllers\IncidenciasController;
     Route::post('/agrega_citado',               [SeerController::class, 'guardar_citado'])->name('seer.citados');
     Route::get('/agrega_documento/{id}',        [SeerController::class, 'vista_documentos'])->name('agregar_documentos');
     Route::get('/finaliza/{id}',                [SeerController::class, 'guardar_solicitud'])->name('seer.finaliza');
-    Route::get('/cancelar_edicion',             [SeerController::class, 'cancelar_edicion'])->name('cancelar_edicion');    
+    Route::get('/cancelar_edicion',             [SeerController::class, 'cancelar_edicion'])->name('cancelar_edicion');   
     //Constancias
     Route::post('GeneraConstancia',         [SeerController::class, 'genera_constancia'])->name('generaConstancia');
     Route::post('crear_constancia/',        [SeerController::class, 'crear_constancia'])->name('ValidarConstancia');
@@ -254,7 +263,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         //Ruta de enlace
         Route::post('/seer/store_enlace',               [SeerController::class, 'store_enlace'])->name('seer.store_enlace');
         Route::get('/notificaciones/consultar/{id}',    [SeerController::class, 'mostrar_citados'])->name('editar_citado');
-        Route::get('notificaciones/editar',             [SeerController::class, 'editar_citados'])->name('editar_citado_enlace');  
+        //Route::get('notificaciones/editar',             [SeerController::class, 'editar_citados'])->name('editar_citado_enlace');  
         Route::post('notificaciones/actualizar',        [SeerController::class, 'editar_citados'])->name('actualizar_enlace');  
         Route::post('/seer/store_auxiliar',             [SeerController::class, 'store_auxiliares'])->name('seer.store_auxiliar');
         Route::post('/seer/store_conciliador',          [SeerController::class, 'store_conciliadores'])->name('seer.store_conciliador');

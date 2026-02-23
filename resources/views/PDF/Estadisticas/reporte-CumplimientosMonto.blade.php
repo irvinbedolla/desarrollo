@@ -3,48 +3,24 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <meta name="csrf-token" content="{{ csrf_token() }}"/>
-        <title>Sí Concilio</title>
+        <title>Sí Concilio - Reporte de Estadísticas</title>
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
 
-        <!-- Bootstrap 5.3.3 -->
-        <link href="../public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
         <style>
-           @page {
+            @page {
                 margin: 0px 0px;
             }
-            body{
-                padding-top: 85px;
+            body {
+                margin: 0;
+                padding: 0;
+                font-family: 'Helvetica', 'Arial', sans-serif;
+                color: #333;
             }
-            main{
-                margin: 50px 50px 50px 40px; /*Para colocar el texto*/
-            }
-            header {
-                position: fixed;
-                top: -100px;
-                left: 0;
-                right: 0;
-                height: 100px;
-                text-align: center;
-                font-size: 14px;
-            }
-
-            footer {
-                position: fixed;
-                bottom: -60px;
-                left: 0;
-                right: 0;
-                height: 50px;
-                text-align: center;
-                font-size: 12px;
-            }
-            .content {
-                font-family: sans-serif;
-                font-size: 12px;
-                text-align: justify;
-                margin-top: 50px;
+            /* Control exacto del espacio para no encimar el membrete */
+            main {
+                margin: 110px 45px 60px 45px;
             }
             .fondo-membrete {
                 position: fixed;
@@ -52,109 +28,163 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                z-index: -1;
+                z-index: -1000;
             } 
-            .page-break {
-                page-break-after: always;
-            }
-        </style>
             
+            /* Estilo de Encabezado Superior */
+            .info-top-container {
+                width: 100%;
+                margin-bottom: 30px;
+                border-bottom: 2px solid #869b9c;
+                padding-bottom: 10px;
+            }
+            .title-main {
+                color: #5a6a6b;
+                font-size: 18px;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+            .date-range {
+                text-align: right;
+                font-size: 13px;
+                color: #666;
+            }
+
+            /* Títulos de sección profesionales */
+            .section-header {
+                background-color: #f8f9fa;
+                border-left: 5px solid #869b9c;
+                padding: 8px 15px;
+                font-weight: bold;
+                font-size: 14px;
+                color: #445455;
+                margin-top: 25px;
+                margin-bottom: 15px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            /* Tablas estilizadas */
+            .table-custom {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 11px;
+                margin-bottom: 20px;
+            }
+            .table-custom thead th {
+                background-color: #869b9c;
+                color: #ffffff;
+                text-align: center;
+                padding: 10px;
+                border: 1px solid #758a8b;
+            }
+            .table-custom tbody td {
+                padding: 8px;
+                border: 1px solid #dee2e6;
+                vertical-align: middle;
+            }
+            .table-custom tbody tr:nth-child(even) {
+                background-color: #f2f4f4;
+            }
+            
+            .font-bold { font-weight: bold; }
+            .text-center { text-align: center; }
+            .text-right { text-align: right; }
+        </style>
     </head>
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
-        <footer>
-            
-        </footer>
+
         <main>
-            <div class="content">
-                <div class="table-responsive">
-                    <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
-                            <tr>   
-                                <td><b>Centro de Conciliación Laboral </b></td>
-                              
-                                <td>{{ \Carbon\Carbon::parse($fecha_inicial)->format('d/m/y') }} a {{ \Carbon\Carbon::parse($fecha_final)->format('d/m/y') }}</td>
-                            </tr>
-                    </table>
-                </div><br><br><br>
-                <div class="table-responsive">
-                    <spam>Ratificaciones</spam>
-                    <table class="table table-striped mt-2">
-                        <thead style="background-color: #869b9c;">
-                            <th style="color: #fff;  text-align: center;">Tipo</th>
-                            <th style="color: #fff;  text-align: center;">Cantidad</th>
-                            <th style="color: #fff;  text-align: center;">Monto</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style=" text-align: center;">Cumplimientos en Ratificaciones Totales</td>
-                                <td style=" text-align: center;">{{ ($pagosRatificacionPagado->ratificaciones+$pagosRatificacionPendiente->ratificaciones) }}</td>
-                                <td style=" text-align: center;">${{ number_format(($pagosRatificacionMontoPendiente->ratificacionesMonto+$pagosRatificacionMontoPagado->ratificacionesMonto),2) }}</td>
-                            </tr>
-                            <tr>
-                                <td style=" text-align: center;">Cumplimientos en Ratificaciones Pagadas</td>
-                                <td style=" text-align: center;">{{ $pagosRatificacionPagado->ratificaciones }}</td>
-                                <td style=" text-align: center;">${{ number_format($pagosRatificacionMontoPagado->ratificacionesMonto,2) }}</td>
-                            </tr>
-                            <tr>
-                                <td style=" text-align: center;">Cumplimientos en Ratificaciones Pendientes</td>
-                                <td style=" text-align: center;">{{ $pagosRatificacionPendiente->ratificaciones }}</td>
-                                <td style=" text-align: center;">${{ number_format($pagosRatificacionMontoPendiente->ratificacionesMonto,2) }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <table class="info-top-container">
+                <tr>
+                    <td class="title-main">Centro de Conciliación Laboral</td>
+                    <td class="date-range">
+                        <strong>Periodo:</strong> 
+                        {{ \Carbon\Carbon::parse($fecha_inicial)->format('d/m/y') }} al {{ \Carbon\Carbon::parse($fecha_final)->format('d/m/y') }}
+                    </td>
+                </tr>
+            </table>
 
-                <div class="table-responsive">
-                    <spam>Audiencias</spam>
-                    <table class="table table-striped mt-2">
-                        <thead style="background-color: #869b9c;">
-                            <th style="color: #fff;  text-align: center;">Tipo</th>
-                            <th style="color: #fff;  text-align: center;">Cantidad</th>
-                            <th style="color: #fff;  text-align: center;">Monto</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style=" text-align: center;">Cumplimientos en Audiencia</td>
-                                <td style=" text-align: center;">{{ $pagosAudiencias->audiencias }}</td>
-                                <td style=" text-align: center;">${{ number_format($pagosAudienciasMonto->audienciasMonto,2) }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="section-header">Resumen de Ratificaciones</div>
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th style="width: 50%;">Concepto</th>
+                        <th style="width: 20%;">Cantidad</th>
+                        <th style="width: 30%;">Monto Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="font-bold">Total de Ratificaciones</td>
+                        <td class="text-center">{{ ($pagosRatificacionPagado->ratificaciones + $pagosRatificacionPendiente->ratificaciones) }}</td>
+                        <td class="text-center font-bold">${{ number_format(($pagosRatificacionMontoPendiente->ratificacionesMonto + $pagosRatificacionMontoPagado->ratificacionesMonto), 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Ratificaciones Pagadas</td>
+                        <td class="text-center">{{ $pagosRatificacionPagado->ratificaciones }}</td>
+                        <td class="text-center text-success">${{ number_format($pagosRatificacionMontoPagado->ratificacionesMonto, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Ratificaciones Pendientes</td>
+                        <td class="text-center">{{ $pagosRatificacionPendiente->ratificaciones }}</td>
+                        <td class="text-center text-danger">${{ number_format($pagosRatificacionMontoPendiente->ratificacionesMonto, 2) }}</td>
+                    </tr>
+                </tbody>
+            </table>
 
-                <div class="table-responsive">
-                    <spam>Promedio</spam>
-                    <table class="table table-striped mt-2">
-                        <thead style="background-color: #869b9c;">
-                            <th>Sede</th>
-                            <th>Pagos Totales</th>
-                            <th>Días Activos</th>
-                            <th>Promedio Diario</th>
-                        </thead>
-                        <tbody> 
-                            @foreach($promediosPagos as $info)
-                                <tr>
-                                    <td>{{ $info['sede'] }}</td>
-                                    <td class="text-center">{{ $info['total_pagos'] }}</td>
-                                    <td class="text-center">{{ $info['dias_con_actividad'] }}</td>
-                                    <td class="text-center font-weight-bold">
-                                        {{ number_format($info['promedio_diario'], 2) }}
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <div class="section-header">Resumen de Audiencias</div>
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th style="width: 50%;">Concepto</th>
+                        <th style="width: 20%;">Cantidad</th>
+                        <th style="width: 30%;">Monto Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="font-bold">Cumplimientos en Audiencia</td>
+                        <td class="text-center">{{ $pagosAudiencias->audiencias }}</td>
+                        <td class="text-center font-bold">${{ number_format($pagosAudienciasMonto->audienciasMonto, 2) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="section-header">Promedio Diario por Sede</div>
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th>Sede</th>
+                        <th>Pagos Totales</th>
+                        <th>Días Activos</th>
+                        <th>Promedio Diario</th>
+                    </tr>
+                </thead>
+                <tbody> 
+                    @foreach($promediosPagos as $info)
+                        <tr>
+                            <td class="font-bold">{{ $info['sede'] }}</td>
+                            <td class="text-center">{{ $info['total_pagos'] }}</td>
+                            <td class="text-center">{{ $info['dias_con_actividad'] }}</td>
+                            <td class="text-center font-bold" style="color: #2c3e50; font-size: 12px;">
+                                {{ number_format($info['promedio_diario'], 2) }}
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
             <script type="text/php">
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");
-                    $size = 10;
+                    $size = 9;
                     $y = $pdf->get_height() - 30;
-                    $x = ($pdf->get_width() / 2) - 50;
-                    $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
-                    $pdf->page_text($x, $y, $text, $font, $size, array(0, 0, 0));
+                    $x = ($pdf->get_width() / 2) - 35;
+                    $pdf->page_text($x, $y, "Página {PAGE_NUM} de {PAGE_COUNT}", $font, $size, array(0.3, 0.3, 0.3));
                 }
             </script>
         </main>
     </body>
+</html>

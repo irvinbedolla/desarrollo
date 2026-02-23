@@ -94,7 +94,7 @@
             @endif
         </div>
         <div class="section-body">
-            <?php $fecha_actual = date('d-m-Y');?>
+            <?php $fecha_actual->format('d/m/Y') ?>
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
@@ -130,6 +130,7 @@
                                     @csrf
                                     <input type="hidden" name="id" value="{{$id}}">
                                     <input type="hidden" name="isAudiencia" value="1">
+                                    <input type="hidden" name="esAudiencia" value="{{ $isAudiencia }}">
                                     <div class="tab">
                                         <a class="btn btn-info" onclick="openCity(event, 'detalles')">Detalles</a>
                                         <a class="btn btn-info" onclick="openCity(event, 'solicitante')">Solicitante</a>
@@ -648,7 +649,16 @@
                                                 <div class="form-group">
                                                     <h4 class="text-center">Datos Citado(s)</h4>
                                                 </div>
-                                            </div><br>
+                                            </div>
+                                            
+                                            @if(($general->estatus !== "Conciliacion") || ($general->estatus !== "No conciliacion") || ($general->estatus !== "Archivada"))
+                                                <div class="col-xs-12 col-sm-12 col-md-12"><br>
+                                                    <a type="button" class="btn btn-warning open-modal mb-3" data-bs-toggle="modal" 
+                                                    data-bs-target="#exampleModal1" data-id="{{ $id }}">Agregar Citado</a>
+                                                    <a type="button" class="btn btn-warning open-modal mb-3" data-bs-toggle="modal" 
+                                                    data-bs-target="#exampleModal2" data-id="{{ $id }}">Borrar Citado</a>
+                                                </div>
+                                            @endif<br>
 
                                             @foreach($citados as $citado)
                                                 @php
@@ -847,6 +857,7 @@
                                                 <div class="col-xs-12 col-sm-6 col-md-3">
                                                     <div class="form-group">
                                                         <label for="password">Colonia<span style="color:red;"> (*)</span></label>
+                                                        <input type="hidden" name="id_citado[]" value="{{ $citado->id ?? ($citado['id'] ?? '') }}">
                                                         <input type="text" class="form-control" name="colonia_citado[]" value="{{ $citado['colonia'] ?? '' }}" required>
                                                         <div class="invalid-feedback">
                                                             El campo colonia es obligatorio.
@@ -925,14 +936,7 @@
                                                 
                                                 
                                             @endforeach
-                                            @if(($general->estatus !== "Conciliacion") || ($general->estatus !== "No conciliacion") || ($general->estatus !== "Archivada"))
-                                                <div class="col-xs-12 col-sm-12 col-md-12"><br>
-                                                    <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
-                                                    data-bs-target="#exampleModal1" data-id="{{ $id }}">Agregar Citado</a>
-                                                    <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
-                                                    data-bs-target="#exampleModal2" data-id="{{ $id }}">Borrar Citado</a>
-                                                </div>
-                                            @endif
+                                            
                                         </div>
                                     </div>
                                     <div id="citados" class="tabcontent">
@@ -964,14 +968,21 @@
                                                 
                                                                         <div class="col-sm-4">
                                                                             <label>Citatorio</label><br>
-                                                                            <a class="btn btn-success btn-xs"
-                                                                            href="{{ route('pdfCitatorioAudiencia', [
-                                                                                'id' => $citado->id,
-                                                                                'id_audiencia' => $audiencia_historial->id 
-                                                                            ]) }}"
-                                                                            target="_blank">
-                                                                                Visualizar
-                                                                            </a>
+                                                                            @if(!empty($citado->id))
+                                                                                <a class="btn btn-success btn-xs"
+                                                                                href="{{ route('pdfCitatorioAudiencia', [
+                                                                                    'id' => $citado->id,
+                                                                                    'id_audiencia' => $audiencia_historial->id 
+                                                                                ]) }}"
+                                                                                target="_blank">
+                                                                                    Visualizar
+                                                                                </a>
+                                                                            @else
+                                                                                <button type="button" class="btn btn-secondary btn-xs" disabled
+                                                                                    title="Guarda la audiencia/solicitud para generar el citatorio">
+                                                                                    Visualizar
+                                                                                </button>
+                                                                            @endif
                                                                         </div>
                                                                     </div>
                                                                 @endforeach
@@ -1315,20 +1326,24 @@
                                                     @if($citadosCount > 0)
 
                                                         @if($isAudiencia == 'No' && $general->estatus == 'Pendiente')
-                                                        <button type="submit" class="btn btn-primary" name="toquen" value="1">Guardar Edición</button>
-                                                        @elseif($isAudiencia == 'Si')
-                                                        <button type="submit" class="btn btn-primary" name="toquen" value="1">Guardar Edición</button>
-                                                        @else
-                                                        @auth
-                                                            @hasanyrole('Enlace|Super Usuario')
+                                                            <button type="submit" class="btn btn-primary" name="toquen" value="1">Guardar Edición</button>
+                                                        @elseif($fecha_actual->isSameDay($general->fecha_confirmacion) && auth()->user()->hasRole('Auxiliar'))
+                                                            @hasanyrole('Auxiliar')
                                                                 <button type="submit" class="btn btn-primary" name="toquen" value="1">Guardar Edición</button>
                                                             @endhasanyrole
-                                                        @endauth
+                                                        @elseif($isAudiencia == 'Si' && auth()->user()->hasRole('Conciliador'))
+                                                            <button type="submit" class="btn btn-primary" name="toquen" value="1">Guardar Edición</button>
+                                                        @else
+                                                            @auth
+                                                                @hasanyrole('Enlace|Super Usuario')
+                                                                    <button type="submit" class="btn btn-primary" name="toquen" value="1">Guardar Edición</button>
+                                                                @endhasanyrole
+                                                            @endauth
                                                         @endif
 
-                                                        @if( $isAudiencia == 'Si' && $ultimaEstatus == 'Pendiente')
-                                                        <button type="submit" class="btn btn-success" name="toquen" value="iniciar_audiencia"> Guardar e Iniciar Audiencia </button>
-                                                        {{--<a class="btn btn-success" href="{{ route('inicioAudiencia', $audiencia->id_solicitud, 'Confirmado') }}" value="1">Guardar e Iniciar Audiencia</button>--}}
+                                                        @if( $isAudiencia == 'Si' && $ultimaEstatus == 'Pendiente' && auth()->user()->hasRole('Conciliador'))
+                                                            <button type="submit" class="btn btn-success" name="toquen" value="iniciar_audiencia"> Guardar e Iniciar Audiencia </button>
+                                                            {{--<a class="btn btn-success" href="{{ route('inicioAudiencia', $audiencia->id_solicitud, 'Confirmado') }}" value="1">Guardar e Iniciar Audiencia</button>--}}
                                                         @endif
                                                     @else
                                                         <button type="button" class="btn btn-secondary" disabled title="Agregue al menos un citado para poder guardar."  name="toquen" value="1">Guardar Edición</button>

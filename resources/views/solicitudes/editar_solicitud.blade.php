@@ -616,6 +616,13 @@ select[name="municipio_citado"] option {
                                                     <h4 class="text-center">Datos Citado(s)</h4>
                                                 </div>
                                             </div><br>
+                                            
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <a type="button" class="btn btn-warning open-modal mb-3" data-bs-toggle="modal" 
+                                                    data-bs-target="#exampleModal1" data-id="{{ $id }}">Agregar Citado</a>
+                                                <a type="button" class="btn btn-warning open-modal mb-3" data-bs-toggle="modal" 
+                                                    data-bs-target="#exampleModal2" data-id="{{ $id }}">Borrar Citado</a>
+                                            </div>
 
                                             @foreach($citados as $citado)
                                                 @php
@@ -877,12 +884,7 @@ select[name="municipio_citado"] option {
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-12"><br></div>
                                             @endforeach
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
-                                                    data-bs-target="#exampleModal1" data-id="{{ $id }}">Agregar Citado</a>
-                                                <a type="button" class="btn btn-warning open-modal" data-bs-toggle="modal" 
-                                                    data-bs-target="#exampleModal2" data-id="{{ $id }}">Borrar Citado</a>
-                                            </div>
+                                            
                                         </div>
                                     </div>
 
@@ -914,7 +916,7 @@ select[name="municipio_citado"] option {
                                                             <option value="Pasaporte"        {{ $solicitante['identificacion'] == 'Pasaporte' ? "selected" : '' }} >Pasaporte</option>
                                                             <option value="Cédula profesional"        {{ $solicitante['identificacion'] == 'Cédula profesional' ? "selected" : '' }} >Calzada</option>
                                                             <option value="Licencia de conducir"          {{ $solicitante['identificacion'] == 'Licencia de conducir' ? "selected" : '' }}   >Licencia de conducir</option>
-                                                            <option value="Otros"        {{ $solicitante['identificacion'] == 'Otros' ? "selected" : '' }} >Otros</option>
+                                                            <option value="Otro"        {{ $solicitante['identificacion'] == 'Otro' ? "selected" : '' }} >Otros</option>
                                                             <option value="Credencial de inapam"        {{ $solicitante['identificacion'] == 'Credencial de inapam' ? "selected" : '' }} >Credencial de inapam</option>
                                                             <option value="Cartilla militar"          {{ $solicitante['identificacion'] == 'Cartilla militar' ? "selected" : '' }}   >Cartilla militar</option>
                                                             <option value="Documento migratorio"        {{ $solicitante['identificacion'] == 'Documento migratorio' ? "selected" : '' }} >Documento migratorio</option>

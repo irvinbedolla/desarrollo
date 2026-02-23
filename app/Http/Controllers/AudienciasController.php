@@ -65,7 +65,8 @@ class AudienciasController extends Controller
             if($sedeUsuario == "Morelia") $delegacionesPermitidas = ['Morelia', 'Zitácuaro'];
             elseif($sedeUsuario == "Uruapan") $delegacionesPermitidas = ['Uruapan', 'Lázaro Cárdenas'];
             elseif($sedeUsuario == "Zamora") $delegacionesPermitidas = ['Zamora', 'Sahuayo'];
-
+            elseif($sedeUsuario == "Zitácuaro") $delegacionesPermitidas = ['Zitácuaro'];
+            
             $query->whereIn('audiencias.delegacion', $delegacionesPermitidas);
         } 
         else if ($userRole[0] == "Conciliador") {
@@ -300,7 +301,7 @@ class AudienciasController extends Controller
         $sedesAconsultar = $mapaSedes[$user->delegacion] ?? [$user->delegacion];
 
         // Iniciamos la consulta base
-        $query = Turnos::join('users','users.id','turnos.id_conciliador')
+        $query = Turnos::leftjoin('users','users.id','turnos.id_conciliador')
         ->select('turnos.*','users.name');
 
         if($userRole[0] != "Super Usuario"){
@@ -351,10 +352,11 @@ class AudienciasController extends Controller
                     $color = '#CCCCCC';
                 }
 
+                $trabajador = $rati->trabajador." ".$rati->primero_trabajador." ".$rati->segundo_trabajador;
                 $eventos[] = [
                     'id' => $rati->id,
                     'title' => $rati->empresa,
-                    'solicitante' => $rati->nombre,
+                    'solicitante' => $trabajador,
                     'start' => $rati->fecha . 'T' . $rati->hora,
                     'extendedProps' => [
                         'hora' => $rati->hora,
@@ -366,6 +368,7 @@ class AudienciasController extends Controller
                         'usuario' => $userID,
                         'tipo' => $tipo,
                         'conciliador' => $rati->name,
+                        'solicitante' => $trabajador,
                     ]
                 ];
         }

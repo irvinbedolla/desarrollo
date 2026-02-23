@@ -42,6 +42,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Models\HistorialAbogado;
 use Illuminate\Support\Str; //Se utiliza en la imágenes que se suben en los citados
 use App\Models\Sedes;
 use App\Models\Usuarios;
@@ -155,7 +156,7 @@ class SeerController extends Controller
         }
         if($userRole[0] == "Enlace"){
             if($delegacion == "Morelia"){
-                $delegaciones = ["Morelia", "Zítacuaro"];
+                $delegaciones = ["Morelia", "Zitácuaro"];
             }
             else if($delegacion == "Uruapan"){
                 $delegaciones = ["Uruapan", "Lázaro Cárdenas"];
@@ -594,10 +595,50 @@ class SeerController extends Controller
             $pagosAudiencias      = (object)['audiencias' => $audienciasData->total_count];
             $pagosAudienciasMonto = (object)['audienciasMonto' => $audienciasData->total_monto];
     
+            // 3. Consulta para Promedios por Sede
+            $promediosPagos = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
+                ->when($sede !== "Todos", function ($q) use ($sede) {
+                    if ($sede === "TodosDelegado") {
+                        $user = User::find(auth()->id());
+                        $sedeUsuario = $user->delegacion;
+                        
+                        $mapping = [
+                            'Morelia' => ['Morelia', 'Zitácuaro'],
+                            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+                            'Zamora'  => ['Zamora', 'Sahuayo']
+                        ];
+
+                        if (isset($mapping[$sedeUsuario])) {
+                            return $q->whereIn('pago_solicitud.delegacion', $mapping[$sedeUsuario]);
+                        }
+                    }
+                    return $q->where('pago_solicitud.delegacion', $sede);
+                })
+                ->selectRaw("
+                    pago_solicitud.delegacion as sede,
+                    COUNT(pago_solicitud.id) as total_pagos,
+                    COUNT(DISTINCT DATE(pago_solicitud.fecha)) as dias_con_actividad
+                ")
+                ->groupBy('pago_solicitud.delegacion')
+                ->get()
+                ->map(function ($item) {
+                    // Calculamos el promedio evitando división por cero
+                    $promedio = $item->dias_con_actividad > 0 
+                        ? $item->total_pagos / $item->dias_con_actividad 
+                        : 0;
+
+                    return [
+                        'sede'               => $item->sede,
+                        'total_pagos'        => $item->total_pagos,
+                        'dias_con_actividad' => $item->dias_con_actividad,
+                        'promedio_diario'    => $promedio
+                    ];
+                });
+                
             $pdf = \PDF::loadView('PDF/Estadisticas/reporte-CumplimientosMonto', 
             compact('fecha_inicial','fecha_final','pagosRatificacion','pagosRatificacionMonto',
             'pagosAudiencias','pagosAudienciasMonto','pagosRatificacionPagado','pagosRatificacionMontoPagado',
-            'pagosRatificacionPendiente','pagosRatificacionMontoPendiente'));
+            'pagosRatificacionPendiente','pagosRatificacionMontoPendiente','promediosPagos'));
             return $pdf->stream('archivo.pdf');
         }
         else if ($data["tipo_reporte"] == "CumplimientosGrafica"){
@@ -693,7 +734,7 @@ class SeerController extends Controller
         }
         else if($data["tipo_reporte"] == "Ratificaciones"){
             if ($data["tipo"] == "2") {
-                return Excel::download(new RatificacionesFromViewExport($fecha_inicial, $fecha_final, $sede), 'productos.xlsx');
+                return Excel::download(new RatificacionesFromViewExport($fecha_inicial, $fecha_final, $sede), 'Ratificaciones.xlsx');
             }
             
             // 1. Construir la consulta base
@@ -731,9 +772,40 @@ class SeerController extends Controller
             
             // 2. Ejecutar la consulta
             $Ratificacion = $query->get();
-            
+
+             // 1. Consulta Unificada para Ratificaciones
+            $ratificacionePagadas = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
+            ->join('turnos', 'turnos.id', 'pago_solicitud.id_solicitud')
+            ->where('pago_solicitud.tipo_pago', 'Ratificacion')
+            ->when($sede !== "Todos", function ($q) use ($sede) {
+                // Si es el caso especial de Delegado, filtramos por el array de sedes
+                if ($sede === "TodosDelegado") {
+                    $id = auth()->user()->id;
+                    $user = User::find($id);
+                    $sedeUsuario = $user->delegacion;
+    
+                    if($sedeUsuario == "Morelia"){
+                        $delegaciones = ['Morelia', 'Zitácuaro'];
+                        return $q->whereIn('pago_solicitud.delegacion', $delegaciones);
+                    }
+                    else if($sedeUsuario == "Uruapan"){
+                        $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
+                        return $q->whereIn('pago_solicitud.delegacion', $delegaciones);
+                    }
+                    else if($sedeUsuario == "Zamora"){
+                        $delegaciones = ['Zamora', 'Sahuayo'];
+                        return $q->whereIn('pago_solicitud.delegacion', $delegaciones);
+                    }
+                }
+                return $q->where('pago_solicitud.delegacion', $sede);
+            })
+            ->selectRaw("
+                SUM(CASE WHEN pago_solicitud.estatus = 'Pagado' THEN pago_solicitud.monto ELSE 0 END) as pagado_monto
+            ")
+            ->first();
+
             // 3. Generar y retornar PDF
-            return \PDF::loadView('PDF/Estadisticas/Ratificaciones', compact('fecha_inicial', 'fecha_final', 'Ratificacion'))
+            return \PDF::loadView('PDF/Estadisticas/Ratificaciones', compact('fecha_inicial', 'fecha_final', 'Ratificacion','ratificacionePagadas'))
                 ->setPaper('a4', 'landscape')
                 ->stream('ratificaciones.pdf');
         }
@@ -804,7 +876,34 @@ class SeerController extends Controller
                 ->orderBy('turnos.fecha', 'asc') // Opcional: ordena por fecha para facilitar la lectura
                 ->get();
     
-            $pdf = \PDF::loadView('PDF/Estadisticas/RatificacionUsuario',compact('fecha_inicial','fecha_final','usuariosTotal','usuariosDias'));
+            // 1. Obtenemos los totales y el conteo de días con actividad por sede
+            $promedios = Turnos::whereBetween('turnos.fecha', [$fecha_inicial, $fecha_final])
+                ->when($sede !== "Todos", function ($query) use ($sede) {
+                    if ($sede === "TodosDelegado") {
+                        $sedeUsuario = auth()->user()->delegacion;
+                        $mapping = [
+                            'Morelia' => ['Morelia', 'Zitácuaro'],
+                            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+                            'Zamora'  => ['Zamora', 'Sahuayo'],
+                        ];
+                        return $query->whereIn('turnos.delegacion', $mapping[$sedeUsuario] ?? [$sedeUsuario]);
+                    }
+                    return $query->where('turnos.delegacion', $sede);
+                })
+                ->select(
+                    'turnos.delegacion as sede',
+                    DB::raw('COUNT(turnos.id) as total'),
+                    // Contamos fechas únicas para saber cuántos días realmente se trabajó
+                    DB::raw('COUNT(DISTINCT turnos.fecha) as dias_activos')
+                )
+                ->groupBy('turnos.delegacion')
+                ->get()
+                ->map(function ($item) {
+                    // Calculamos el promedio: Total / Días Activos
+                    $item->promedio = $item->dias_activos > 0 ? ($item->total / $item->dias_activos) : 0;
+                    return $item;
+                });
+            $pdf = \PDF::loadView('PDF/Estadisticas/RatificacionUsuario',compact('fecha_inicial','fecha_final','usuariosTotal','usuariosDias','promedios'));
             //$pdf->setPaper('a4', 'landscape');
             return $pdf->stream('archivo.pdf');
         }
@@ -886,6 +985,7 @@ class SeerController extends Controller
                 'seer_general.delegacion',
                 'seer_general.actividad',
                 'seer_solicitante.nombre',
+                'seer_general.tipo_solicitud',
                 DB::raw('GROUP_CONCAT(catalogo_motivos.motivo SEPARATOR ", ") as motivos')
             )
             ->groupBy(
@@ -896,7 +996,8 @@ class SeerController extends Controller
                 'seer_general.estatus', 
                 'seer_general.delegacion', 
                 'seer_general.actividad', 
-                'seer_solicitante.nombre'
+                'seer_solicitante.nombre',
+                'seer_general.tipo_solicitud'
             )
             ->orderBy('seer_general.consecutivo', 'desc')
             ->get();
@@ -1211,9 +1312,12 @@ class SeerController extends Controller
                     ->get();    
                 
                 
+            /*
             $pdf = \PDF::loadView('PDF/Estadisticas/reporte_cuantitativo', compact('solicitudes','audiencias','notificaciones'));
             $pdf->setPaper('legal', 'landscape');
             return $pdf->stream('archivo.pdf');
+            */
+            return Excel::download(new ReporteGeneral($fecha_inicial, $fecha_final,$sede), 'reporte.xlsx');
         }
         else if($data["tipo_reporte"] == "GeneralSede"){
             //Auxiliares
@@ -2154,6 +2258,7 @@ class SeerController extends Controller
                     'notificacion'                => $notificacion,
                     'updated_at'                  => $fechaEspecifica,
                 ]);
+
                 
                 //dd("llego");
         } else {
@@ -2162,7 +2267,6 @@ class SeerController extends Controller
             //$citados = SeerCitados::where('id_solicitud', $solicitud["id_solicitud"])->get();
             
             $citados = SeerCitados::where('id_solicitud', $solicitud["id_solicitud"])->where('estatus', 'pendiente')->get();
-
             foreach ($citados as $citado) {
                 SeerCitados::find($citado["id"])
                     ->update([
@@ -2198,6 +2302,7 @@ class SeerController extends Controller
                         'notificacion'                => $notificacion,
                         //'updated_at'                  => DB::raw("'" . $fechaEspecifica->format('Y-m-d H:i:s') . "'") //da un objeto "expression"
                         'updated_at'                => $fechaEspecifica->toDateTimeString()
+
                     ]);
                     
             }
@@ -3845,7 +3950,6 @@ class SeerController extends Controller
              $citados_data = session('citados_trabajador_data', []);
              
              if (!$solicitud_data || !$solicitante_data) {
-                 // En el flujo Centro, si la sesión expira regresamos al inicio del flujo Centro.
                  return redirect()->route('solicitudEnLineaCentro')->with('error', 'Sesión expirada o datos incompletos.');
              }
 
@@ -3857,7 +3961,7 @@ class SeerController extends Controller
                     'actividad'       =>  $solicitud_data["actividad"],
                     'delegacion'      =>  $solicitud_data["delegacion"],
                     'tipo_solicitud'  =>  $solicitud_data["tipo_solicitud"],
-                    'tipo_generacion' =>  $solicitud_data["tipo_generacion"],
+                    'tipo_generacion' =>  1000,
                     'consecutivo'     =>  $solicitud_data["consecutivo"],
                     'año'             =>  $solicitud_data["año"],
                     'caso_excepcion'  =>  $solicitante_data['excepcion']
@@ -4028,15 +4132,11 @@ class SeerController extends Controller
         return view('solicitudes.avisoCentro',compact('id','mensaje','delegacion'));
     }
 
-    /**
-     * Finaliza la solicitud del flujo "Centro".
-     * Importante: esta acción guarda en BD (cuando el flujo trae id='session'), por eso debe ser POST.
-     */
+
     public function guardar_solicitudCentro_post(Request $request)
     {
         $id = $request->input('id');
 
-        // En este flujo, casi siempre debe ser 'session'. Si llega vacío, intentamos usar el valor esperado.
         if (!$id) {
             $id = 'session';
         }
@@ -4258,6 +4358,7 @@ class SeerController extends Controller
         // 2. Iniciamos la consulta base (Se define una sola vez)
         $query = SeerPerGeneral::join('catalogo_rama', 'catalogo_rama.id', '=', 'seer_general.id_rama')
             ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
+            ->leftjoin('users','users.id','seer_general.user_id')
             ->select(
                 'seer_general.id',
                 'seer_general.consecutivo',
@@ -4267,7 +4368,9 @@ class SeerController extends Controller
                 'seer_general.actividad',
                 'catalogo_rama.rama_industrial',
                 'seer_general.tipo_solicitud',
-                'seer_general.estatus'
+                'seer_general.estatus',
+                'seer_general.tipo_generacion',
+                'users.name'
             )
             ->where('validado_conciliador', 'Pendiente')
             ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
@@ -4302,7 +4405,7 @@ class SeerController extends Controller
 
         // 4. Ejecución final
         $solicitudes = $query->get();
-
+        
         return view('solicitudes.solicitudes_pendientes', compact('solicitudes'));
     }
 
@@ -4473,26 +4576,45 @@ class SeerController extends Controller
         }
 
         //Citados
-        SeerCitados::where('id_solicitud',$data["id"])->delete();
-        $cont = count($data["colonia_citado"]);
+
+        $citadosDelete = session('citados_edicion_delete', []);
+        if (!empty($citadosDelete)) {
+            SeerCitados::where('id_solicitud', $data["id"])->whereIn('id', $citadosDelete)->delete();
+        }
+
+        $cont = is_array($data["colonia_citado"] ?? null) ? count($data["colonia_citado"]) : 0;
         for($i = 0; $i < $cont; $i++) {
 
-            $foto1 = $data["imagen_domicilio1"][$i] ?? 'Sin documento';
-            $foto2 = $data["imagen_domicilio2"][$i] ?? 'Sin documento';
-        
+            $citadoId = null;
+            if (isset($data['id_citado']) && is_array($data['id_citado'])) {
+                $citadoId = $data['id_citado'][$i] ?? null;
+            }
+
+            $citado = null;
+            if (!empty($citadoId)) {
+                $citado = SeerCitados::where('id_solicitud', $data["id"])->where('id', $citadoId)->first();
+            }
+            if (!$citado) {
+                $citado = new SeerCitados();
+                $citado->id_solicitud = $data["id"];
+            }
+
+            $foto1 = $citado->imagen_domicilio1 ?? ($data["imagen_domicilio1"][$i] ?? 'Sin documento');
+            $foto2 = $citado->imagen_domicilio2 ?? ($data["imagen_domicilio2"][$i] ?? 'Sin documento');
+
             if ($request->hasFile("foto1.$i")) {
                 $file = $request->file("foto1")[$i];
                 $foto1 = $data["id"] . "-citado_foto1_" . Str::random(8) . "." . $file->getClientOriginalExtension();
                 Storage::putFileAs('documentosSolicitud', $file, $foto1);
             }
-        
+
             if ($request->hasFile("foto2.$i")) {
                 $file = $request->file("foto2")[$i];
                 $foto2 = $data["id"] . "-citado_foto2_" . Str::random(8) . "." . $file->getClientOriginalExtension();
                 Storage::putFileAs('documentosSolicitud', $file, $foto2);
             }
-            $data_insert=array(
-                'id_solicitud'      => $data["id"],
+
+            $data_update = array(
                 'colonia'           => $data["colonia_citado"][$i],
                 'cp'                => $data["cp_citado"][$i],
                 'n_ext'             => $data["n_ext_citado"][$i],
@@ -4515,20 +4637,23 @@ class SeerController extends Controller
                 'imagen_domicilio2' => $foto2,
                 'resulte_responsable' => $data['resulte_responsable'][$i] ?? 'No',
             );
-            
+
             if(isset($data["traductor"])){
                 $val = $data["traductor"][ $i ] ?? null;
-                $requires = ($val === 'Si' || $val === '1' || $val === 1);
-                $data_insert["traductor"] = $requires ? 1 : 0;
-                $data_insert["lenguaje"]  = $data["lenguaje"][ $i ] ?? null;
+                $requires = ($val === 'Si' || $val === '1' || $val === 1 || $val === 'on' || $val === true);
+                $data_update["traductor"] = $requires ? 1 : 0;
+                $data_update["lenguaje"]  = $data["lenguaje"][ $i ] ?? null;
             }
+
             if(isset($data["calle1"])){
                 SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle1' => $data["calle1_citado"] ]);
             }
             if(isset($data["calle2"])){
                 SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle2' => $data["calle2_citado"] ]);
             }
-            SeerCitados::create($data_insert);
+
+            $citado->fill($data_update);
+            $citado->save();
         }
 
         $curpBase = $data['curp_solicitante'];
@@ -4554,7 +4679,12 @@ class SeerController extends Controller
 
                 return redirect()->route('inicioAudiencia', ['id' => $audiencia->id_solicitud, 'estatus' => 'Confirmado']);
             }
-            return redirect()->route('todas_audiencias'); 
+
+            if($data["esAudiencia"] == 'No'){
+                return redirect()->route('todas_solicitudes');
+            } else {
+                return redirect()->route('todas_audiencias'); 
+            }
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -5325,7 +5455,7 @@ class SeerController extends Controller
 
         // 1. Mapeo de Sedes y Oficinas de Apoyo (Consistente con tus otros módulos)
         $mapaSedes = [
-            'Morelia' => ['Morelia', 'Zitacuaro'],
+            'Morelia' => ['Morelia', 'Zitácuaro'],
             'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
             'Zamora'  => ['Zamora', 'Sahuayo'],
         ];
@@ -5368,7 +5498,7 @@ class SeerController extends Controller
             $personas = User::whereHas('roles', function ($query) {
                 return $query->where('name', '=', 'Notificador');
             })
-            ->where('delegacion', ["Morelia", "Zitacuaro"])
+            ->where('delegacion', ["Morelia", "Zitácuaro" , "Zitácuaro"])
             ->get();
         } else if ($user["delegacion"] == "Uruapan"){
             $personas = User::whereHas('roles', function ($query) {
@@ -5381,6 +5511,13 @@ class SeerController extends Controller
                 return $query->where('name', '=', 'Notificador');
             })
             ->where('delegacion', ["Zamora", "Sahuayo"])
+            ->get();
+        }
+        else if ($user["delegacion"] == "Zitácuaro" || $user["delegacion"] == "Zitácuaro"){
+            $personas = User::whereHas('roles', function ($query) {
+                return $query->where('name', '=', 'Notificador');
+            })
+            ->whereIN('delegacion', ["Zamora", "Zitácuaro"])
             ->get();
         }
 
@@ -5826,16 +5963,17 @@ class SeerController extends Controller
                 if(isset($data["num_int_pF"])){
                    $data_insertar["num_int_pF"] = $data["num_int_pF"];
                 }
-                Poder::create($data_insertar);  
-                $data = Poder::latest('idAbogado')->first();
+                     $nuevoAbogado = Poder::create($data_insertar);
 
-                $mensaje = "Su registro fue guardado con éxito, tu número de folio es: ".$data["idAbogado"]. " 
-                *La validación del registro patronal quedará sujeta a la certificación de la documentación que realice la persona conciliadora, lo anterior de conformidad con lo 
-                establecido en el artículo 684-I, fracción I y II, de la Ley Federal del Trabajo; por lo que se le solicita acudir a su siguiente audiencia de conciliación con la 
-                Documentación original en formato físico, a fin de realizar el cotejo correspondiente.";
-                    
-                    
-                return redirect()->back()->with('success', $mensaje);
+                     $id_user_historial = Auth::id() ?? 0;
+                     $historialPayload = $nuevoAbogado->toArray();
+                     unset($historialPayload['idAbogado'], $historialPayload['created_at'], $historialPayload['updated_at']);
+                     $historialPayload['id_abogado'] = $nuevoAbogado->idAbogado;
+                     $historialPayload['id_user'] = $id_user_historial;
+                     HistorialAbogado::create($historialPayload);
+
+                     SeerCitados::find($data['id_citado_2'])->update(['id_abogado' => $nuevoAbogado->idAbogado]);
+                     return back()->with('success', 'Representante legal registrado y asignado correctamente al citado.');
             }
             else if($data["representate"] == "Si"){
                 $data_insertar = array(
@@ -5909,16 +6047,18 @@ class SeerController extends Controller
                 if(isset($data["fecha_vigencia_pF"])){
                     $data_insertar["fechaVigencia"] = $data["fecha_vigencia_pF"];
                 }
-                
-                Poder::create($data_insertar);  
-                $data = Poder::latest('idAbogado')->first();
 
-                $mensaje = "Su registro fue guardado con éxito, tu número de folio es: ".$data["idAbogado"]. " 
-                *La validación del registro patronal quedará sujeta a la certificación de la documentación que realice la persona conciliadora, lo anterior de conformidad con lo 
-                establecido en el artículo 684-I, fracción I y II, de la Ley Federal del Trabajo; por lo que se le solicita acudir a su siguiente audiencia de conciliación con la 
-                Documentación original en formato físico, a fin de realizar el cotejo correspondiente.";
-                        
-                return redirect()->back()->with('success', $mensaje);
+                $nuevoAbogado = Poder::create($data_insertar);
+
+                $id_user_historial = Auth::id() ?? 0;
+                $historialPayload = $nuevoAbogado->toArray();
+                unset($historialPayload['idAbogado'], $historialPayload['created_at'], $historialPayload['updated_at']);
+                $historialPayload['id_abogado'] = $nuevoAbogado->idAbogado;
+                $historialPayload['id_user'] = $id_user_historial;
+                $historialReciente = HistorialAbogado::create($historialPayload);
+
+                SeerCitados::find($data['id_citado_2'])->update(['id_abogado' => $nuevoAbogado->idAbogado, 'id_historial' => $historialReciente->id]);
+                return back()->with('success', 'Representante legal registrado y asignado correctamente al citado.');
             }   
         }
         else if($data["tipoPersona"] == "Moral"){
@@ -5990,23 +6130,20 @@ class SeerController extends Controller
                 $data_insertar["fechaVigencia"] = $data["fecha_vigencia_Moral"];
             }
 
-            Poder::create($data_insertar);  
-            $data = Poder::latest('idAbogado')->first();
+            $nuevoAbogado = Poder::create($data_insertar);
 
-            $mensaje = "Su registro fue guardado con éxito, tu número de folio es: ".$data["idAbogado"]. " 
-            *La validación del registro patronal quedará sujeta a la certificación de la documentación que realice la persona conciliadora, lo anterior de conformidad con lo 
-            establecido en el artículo 684-I, fracción I y II, de la Ley Federal del Trabajo; por lo que se le solicita acudir a su siguiente audiencia de conciliación con la 
-            Documentación original en formato físico, a fin de realizar el cotejo correspondiente.";
-                    
-                    
-            return redirect()->back()->with('success', $mensaje);
+            $id_user_historial = Auth::id() ?? 0;
+            $historialPayload = $nuevoAbogado->toArray();
+            unset($historialPayload['idAbogado'], $historialPayload['created_at'], $historialPayload['updated_at']);
+            $historialPayload['id_abogado'] = $nuevoAbogado->idAbogado;
+            $historialPayload['id_user'] = $id_user_historial;
+            $historialReciente = HistorialAbogado::create($historialPayload);
+
+            SeerCitados::find($data['id_citado_2'])->update(['id_abogado' => $nuevoAbogado->idAbogado, 'id_historial' => $historialReciente->id]);
+            return back()->with('success', 'Representante legal registrado y asignado correctamente al citado.');
         }
 
-        $nuevoAbogado = Poder::create($data_insertar);
-          
-         
-        $A_citado=SeerCitados::find($data['id_citado_2'])->update(['id_abogado' => $nuevoAbogado->idAbogado]);
-        return back()->with('success', 'Representante legal registrado y asignado correctamente al citado.');
+        return back()->with('error', 'Tipo de persona inválido.');
     }
 
     public function editar_citados(Request $request){
@@ -6068,13 +6205,16 @@ class SeerController extends Controller
 
         $sessionKey = "audiencia_data_{$id}";
 
+        $ultimoRegistro = HistorialAbogado::where('id_abogado', $data["abogado"] ?? null)->latest()->first();
+
         if (session()->has($sessionKey)) {
             $sessionData = session($sessionKey);
             $citados = $sessionData['citados'];
             
-            $citados = $citados->map(function ($citado) use ($data) {
+            $citados = $citados->map(function ($citado) use ($data, $ultimoRegistro) {
                 if ((int)$citado->id == (int)$data["citado"]) {
                     $citado->id_abogado = $data["abogado"];
+                    $citado->id_historial = $ultimoRegistro?->id;
                 }
                 return $citado;
             });
@@ -6085,6 +6225,7 @@ class SeerController extends Controller
             SeerCitados::find($data["citado"])
             ->update([
                 'id_abogado'  => $data["abogado"],
+                'id_historial'=> $ultimoRegistro?->id
             ]);
         }
 
@@ -6356,6 +6497,16 @@ class SeerController extends Controller
                     'delegacion'       => $audienciaOld->delegacion ?? null,
                     'estatus'          => 'Pendiente'
                 ]);
+                /*
+                $citados = SeerCitados::where('id_solicitud', $data["id"])->get();
+                foreach($citados as $citado){
+                    if($citado->notificacion == "Trabajador"){
+                            $nuevo_citado = $citado->replicate();
+                            $nuevo_citado->notificacion = 'Centro';
+                            $nuevo_citado->save();
+                    }
+                }
+                    */
             } else {
                 // Si no existe audiencia previa, crear una nueva simple
                 $new_folio = str_pad('1', 4, '0', STR_PAD_LEFT) . '/' . date('Y');
@@ -6413,7 +6564,7 @@ class SeerController extends Controller
     public function audiencia_parte2(Request $request){
         $data = $request->all();
         $id = $data["id"];
-        
+
         $sessionKey = "audiencia_data_{$id}";
         
         if (session()->has($sessionKey)) {
@@ -6440,7 +6591,8 @@ class SeerController extends Controller
                     'id_fisica' => $citado->id_fisica,
                     'nombre' => $citado->nombre,
                     'primer_apellido' => $citado->primer_apellido,
-                    'segundo_apellido' => $citado->segundo_apellido
+                    'segundo_apellido' => $citado->segundo_apellido,
+                    'id_historial' => $citado->id_historial
                 ]);
             }
             
@@ -6533,6 +6685,7 @@ class SeerController extends Controller
 
     public function audienciaParte3($id){
         $solicitud = SeerPerGeneral::find($id);
+        $conciliadorId = $solicitud->conciliador_id;
         $sede = $solicitud["delegacion"];
 
         $raw_fecha = Audiencias::where('id_solicitud', $id)->value('fecha');
@@ -6567,7 +6720,7 @@ class SeerController extends Controller
 
         $bandera = request()->query('bandera', null);
 
-        return view('/audiencias/parte3',compact('id', 'sede','representantes', 'fechaConfirmacion', 'NUE', 'previewData', 'audiencia_fecha', 'audiencia_hora', 'bandera'));
+        return view('/audiencias/parte3',compact('id', 'sede','representantes', 'fechaConfirmacion', 'NUE', 'previewData', 'audiencia_fecha', 'audiencia_hora', 'bandera', 'conciliadorId'));
     }
 
     public function historial_notificador(Request $request){
@@ -6622,19 +6775,18 @@ class SeerController extends Controller
     }
     
     public function ObtenerAudiencia($delegacion, $notificion) {
-        $array_horarios = array();
-        $relacionEloquent = 'roles';
-        $id = auth()->user()->id;
-        $user = User::find($id);
-        $bandera = 0;
+    $array_horarios = array();
+    $relacionEloquent = 'roles';
+    $id = auth()->user()->id;
+    $user = User::find($id);
+    $bandera = 0;
 
         // 1. Configuración de Fechas
         $hoy = \Carbon\Carbon::now();
         $fecha_limite_natural = $hoy->copy()->addDays(45);
         $fecha_inicio_busqueda = $hoy->copy();
 
-
-        // 2. Cálculo del margen mínimo y construcción del mensaje
+        // 2. Cálculo del margen mínimo
         if ($notificion == "Trabajador") {
             /*$dias_sumados = 0;
             while ($dias_sumados < 7) {
@@ -6660,7 +6812,8 @@ class SeerController extends Controller
             $mensaje_ajuste .= " (Ajustado al límite legal de 45 días).";
         }
 
-        if($delegacion == "Morelia"){
+        // Hardcode temporal para Morelia según tu lógica original
+        if($delegacion == "Morelia" || $delegacion == "Zitácuaro"){
             $fecha_revisar = '2026-02-25';
         } else {
             $fecha_revisar = $fecha_inicio_busqueda->format('Y-m-d');
@@ -6668,13 +6821,66 @@ class SeerController extends Controller
 
         $horarios_disponibles = ["09:00:00", "10:15:00", "11:30:00", "12:45:00", "14:00:00"];
 
-        // 3. Conciliadores y Sedes
-        $tipo_permiso = in_array($delegacion, ["Morelia", "Uruapan", "Zamora"]) ? ["Ambos", "Precencial"] : ["Ambos", "Virtual"];
-        $mapa_sedes = ["Zitácuaro" => "Morelia", "Lázaro Cárdenas" => "Uruapan", "Sahuayo" => "Zamora"];
+        // 3. Mapeo de Sedes y Filtro de Conciliadores por Permiso
+        $mapa_sedes = [
+            "Zitácuaro" => "Morelia", 
+            "Lázaro Cárdenas" => "Uruapan", 
+            "Sahuayo" => "Zamora"
+        ];
+        
         $oficina = $mapa_sedes[$delegacion] ?? $delegacion;
 
-        $conciliadores = User::whereHas('roles', function ($q) { $q->where('name', 'Conciliador'); })
-            ->where('delegacion', $oficina)->get();
+        // Lógica de validación de permisos solicitada:
+        // Si es una subsede (Zitácuaro, etc), buscamos conciliadores con permiso 'Ambos' o 'Virtual'
+        // Para las sedes principales (Morelia, Uruapan, Zamora), buscamos permiso 'Precencial' únicamente (o 'Ambos')
+        if (array_key_exists($delegacion, $mapa_sedes)) {
+            $permisos_requeridos = ["Ambos", "Virtual"];
+        } else {
+            $permisos_requeridos = ["Ambos", "Precencial"];
+        }
+
+    
+        $conciliadores = User::whereHas('roles', function ($q) {
+                $q->where('name', 'Conciliador');
+            })
+            ->where('delegacion', $oficina)
+            ->whereIn('id', function ($q) use ($permisos_requeridos) {
+                $q->select('id_conciliador')
+                    ->from('permisos_conciliador')
+                    ->whereIn('tipo', $permisos_requeridos);
+            })
+            ->get();
+
+        if ($conciliadores->isEmpty()) {
+            return response()->json(['error' => 'No hay conciliadores configurados con los permisos requeridos para esta sede.'], 404);
+        }
+
+        //Validamos si un centro completo está inhábil en una fecha
+        $centroInhabilEnFecha = function (string $fechaYmd) use ($oficina) {
+            return DiasInhabiles::where('centro', $oficina)
+                ->whereNull('user_id')
+                ->where('fecha_inicio', '<=', $fechaYmd)
+                ->where('fecha_final', '>=', $fechaYmd)
+                ->exists();
+        };
+
+        //Validamos si un conciliador está inhábil en una fecha y hora
+        //Si horario_inicio/horario_final vienen NULL, el día completo se considera inhábil para el conciliador.
+        $conciliadorInhabilEnSlot = function (int $conciliadorId, string $fechaYmd, string $horaHms) use ($oficina) {
+            return DiasInhabiles::where('centro', $oficina)
+                ->where('user_id', $conciliadorId)
+                ->where('fecha_inicio', '<=', $fechaYmd)
+                ->where('fecha_final', '>=', $fechaYmd)
+                ->where(function ($q) use ($horaHms) {
+                    $q->whereNull('horario_inicio')
+                      ->orWhereNull('horario_final')
+                      ->orWhere(function ($q2) use ($horaHms) {
+                          $q2->where('horario_inicio', '<=', $horaHms)
+                             ->where('horario_final', '>=', $horaHms);
+                      });
+                })
+                ->exists();
+        };
 
         // 4. Bucle de búsqueda
         do {
@@ -6684,8 +6890,7 @@ class SeerController extends Controller
                 return response()->json(['error' => 'No hay disponibilidad en el rango de 45 días'], 404);
             }
 
-            $es_inhabit_centro = DiasInhabiles::where('fecha_inicio', $fecha_revisar)
-                ->where('centro', $user->delegacion)->whereNull('user_id')->exists();
+            $es_inhabit_centro = $centroInhabilEnFecha($fecha_revisar);
 
             if ($carbon_revisar->isWeekend() || $es_inhabit_centro) {
                 $fecha_revisar = $carbon_revisar->addDay()->format('Y-m-d');
@@ -6693,6 +6898,8 @@ class SeerController extends Controller
             }
 
             foreach ($horarios_disponibles as $h) {
+                // Si es subsede, validamos que no haya otra audiencia de la MISMA subsede a esa hora
+                // (Para no saturar el canal virtual/espacio físico de la subsede)
                 if (isset($mapa_sedes[$delegacion])) {
                     if (Audiencias::where('fecha', $fecha_revisar)->where('hora', $h)->where('delegacion', $delegacion)->exists()) {
                         continue; 
@@ -6701,6 +6908,10 @@ class SeerController extends Controller
 
                 $disponibles = [];
                 foreach ($conciliadores as $c) {
+                    // Si el conciliador tiene un día/horario inhábil configurado, lo saltamos
+                    if ($conciliadorInhabilEnSlot((int)$c->id, $fecha_revisar, $h)) {
+                        continue;
+                    }
                     $ocupado = Audiencias::where('fecha', $fecha_revisar)->where('hora', $h)->where('id_conciliador', $c->id)->exists();
                     if (!$ocupado) $disponibles[] = $c->id;
                 }
@@ -6708,16 +6919,14 @@ class SeerController extends Controller
                 if (!empty($disponibles)) {
                     $bandera = 1;
                     $conciliador_id = $disponibles[array_rand($disponibles)];
-                    
-                    // Formatear fecha amigable (Ej: "Miércoles 25 de Febrero, 2026")
                     $fecha_amigable = $carbon_revisar->isoFormat('dddd D [de] MMMM');
 
                     return [
-                        $fecha_revisar,           // [0] Para la base de datos
-                        $h,                       // [1] Hora
-                        ucfirst($fecha_amigable), // [2] Fecha para mostrar al usuario
-                        $conciliador_id,          // [3] ID Conciliador
-                        $mensaje_ajuste           // [4] Explicación del sistema
+                        $fecha_revisar,
+                        $h,
+                        ucfirst($fecha_amigable),
+                        $conciliador_id,
+                        $mensaje_ajuste
                     ];
                 }
             }
@@ -7237,32 +7446,79 @@ class SeerController extends Controller
 
         // Obtener TODOS los representantes/abogados distintos que correspondan a los citados incluidos en el convenio
         $citadoIdsParaConvenio = $citados instanceof \Illuminate\Support\Collection ? $citados->pluck('id')->filter()->values()->all() : [];
+
         if (!empty($citadoIdsParaConvenio)) {
-            $abogadosConvenio = Poder::join('seer_citados as sc', 'sc.id_abogado', '=', 'abogados.idAbogado')
-                ->where('sc.id_solicitud', $id)
-                ->whereIn('sc.id', $citadoIdsParaConvenio)
-                ->select(
-                    'abogados.idAbogado',
-                    'abogados.nombres_patronal',
-                    'abogados.primer_apellido_patronal',
-                    'abogados.segundo_apellido_patronal',
-                    'abogados.descipcion_poder',
-                    'abogados.tipo_identificacion',
-                    'abogados.num_identificacion',
-                    'abogados.nombre_representante',
-                    'abogados.primer_apellido_representante',
-                    'abogados.segundo_apellido_representante',
-                    'abogados.estado_patronal',
-                    'abogados.municipio_patronal',
-                    'abogados.tipo_vialidad_patronal',
-                    'abogados.vialidad_patronal',
-                    'abogados.num_ext_patronal',
-                    'abogados.mun_int_patronal',
-                    'abogados.colonia_patronal',
-                    'abogados.cp_patronal'
-                )
-                ->distinct()
-                ->get();
+            $citadosConHist = $citados->filter(fn($c) => !empty($c->id_historial));
+            $citadosSinHist = $citados->filter(fn($c) => empty($c->id_historial));
+
+            $abogadosConvenio = collect();
+
+            if ($citadosConHist->isNotEmpty()) {
+                $idsConHist = $citadosConHist->pluck('id')->filter()->values()->all();
+
+                $abogadosHist = \App\Models\HistorialAbogado::join('seer_citados as sc', 'sc.id_historial', '=', 'historial_abogados.id')
+                    ->where('sc.id_solicitud', $id)
+                    ->whereIn('sc.id', $idsConHist)
+                    ->select(
+                        'historial_abogados.id',
+                        'historial_abogados.nombres_patronal',
+                        'historial_abogados.primer_apellido_patronal',
+                        'historial_abogados.segundo_apellido_patronal',
+                        'historial_abogados.descipcion_poder',
+                        'historial_abogados.tipo_identificacion',
+                        'historial_abogados.num_identificacion',
+                        'historial_abogados.nombre_representante',
+                        'historial_abogados.primer_apellido_representante',
+                        'historial_abogados.segundo_apellido_representante',
+                        'historial_abogados.estado_patronal',
+                        'historial_abogados.municipio_patronal',
+                        'historial_abogados.tipo_vialidad_patronal',
+                        'historial_abogados.vialidad_patronal',
+                        'historial_abogados.num_ext_patronal',
+                        'historial_abogados.mun_int_patronal',
+                        'historial_abogados.colonia_patronal',
+                        'historial_abogados.cp_patronal',
+                        'historial_abogados.id_abogado as idAbogado'
+                    )
+                    ->distinct()
+                    ->get();
+
+                $abogadosConvenio = $abogadosConvenio->merge($abogadosHist);
+            }
+
+            if ($citadosSinHist->isNotEmpty()) {
+                $idsSinHist = $citadosSinHist->pluck('id')->filter()->values()->all();
+
+                $abogadosPoder = Poder::join('seer_citados as sc', 'sc.id_abogado', '=', 'abogados.idAbogado')
+                    ->where('sc.id_solicitud', $id)
+                    ->whereIn('sc.id', $idsSinHist)
+                    ->select(
+                        'abogados.idAbogado',
+                        'abogados.nombres_patronal',
+                        'abogados.primer_apellido_patronal',
+                        'abogados.segundo_apellido_patronal',
+                        'abogados.descipcion_poder',
+                        'abogados.tipo_identificacion',
+                        'abogados.num_identificacion',
+                        'abogados.nombre_representante',
+                        'abogados.primer_apellido_representante',
+                        'abogados.segundo_apellido_representante',
+                        'abogados.estado_patronal',
+                        'abogados.municipio_patronal',
+                        'abogados.tipo_vialidad_patronal',
+                        'abogados.vialidad_patronal',
+                        'abogados.num_ext_patronal',
+                        'abogados.mun_int_patronal',
+                        'abogados.colonia_patronal',
+                        'abogados.cp_patronal'
+                    )
+                    ->distinct()
+                    ->get();
+
+                $abogadosConvenio = $abogadosConvenio->merge($abogadosPoder);
+            }
+
+            $abogadosConvenio = $abogadosConvenio->unique('idAbogado')->values();
 
             $abogado = $abogadosConvenio->first();
             foreach ($abogadosConvenio as $rep) {
@@ -7747,84 +8003,75 @@ class SeerController extends Controller
         return view('/cumplimientos/index',compact('auxiliares','conciliadores'));
     }
 
-    public function solicitud_audiencia_revisar($id, Request $request){
+    public function solicitud_audiencia_revisar($id, Request $request) {
         if (!session('preserve_edit_session')) {
             session()->forget(['citados_edicion_new', 'citados_edicion_delete', 'motivos_edicion_delete']);
         }
 
-        $id_user = auth()->user()->id;
-        $user = User::find($id_user);
+        $user = auth()->user(); // Ya trae el objeto, no necesitas buscarlo por ID de nuevo
         $isAudiencia = $request->query('isAudiencia', null);
-        $general        = SeerPerGeneral::find($id);
-        $ramas          = SolicitudRama::all();
-        $solicitantes   = SeerSolicitante::where("id_solicitud",$id)->get();
-        $citados        = SeerCitados::where("id_solicitud",$id)->get();
-        $citadosConMulta = $citados->where('tipo_notificacion', 'Multa');
-        $citadosNew = session('citados_edicion_new', []);
+        
+        // Usamos with() si existen relaciones definidas en el modelo para evitar el problema N+1
+        $general = SeerPerGeneral::findOrFail($id);
+        $ramas = SolicitudRama::all();
+        $solicitantes = SeerSolicitante::where("id_solicitud", $id)->get();
+        
+        // Citados
+        $dbCitados = SeerCitados::where("id_solicitud", $id)->get();
         $citadosDelete = session('citados_edicion_delete', []);
-        
-        $citados = $citados->filter(function($c) use ($citadosDelete) {
-            return !in_array($c->id, $citadosDelete);
-        });
-        
+        $citadosNew = session('citados_edicion_new', []);
+
+        // Filtrar y empujar nuevos citados en una sola colección
+        $citados = $dbCitados->reject(fn($c) => in_array($c->id, $citadosDelete));
         foreach ($citadosNew as $cData) {
-            $cModel = new SeerCitados($cData);
-            $cModel->id = $cData['id'];
-            $citados->push($cModel);
+            $citados->push(new SeerCitados($cData + ['id' => $cData['id']]));
         }
 
-        $estados        = Estados::orderby('nombre','asc')->get();
-        $municipios     = Municipios::orderby('nombre','asc')->get();
-        $conciliadores = User::whereHas('roles', function ($query) {
-            return $query->where('name', '=', 'Conciliador');
-        })
-        ->where('delegacion', $user["delegacion"])
-        ->get();
-        // Obtener todos los citados notificados de la solicitud
-        $notificaciones = SeerCitados::where('id_solicitud', $id)
-        ->get()
-        ->keyBy('id');
-        //Catalogo de motivos
-        //$mostrarMotivos = SolicitudMotivo::all();
+        $citadosConMulta = $dbCitados->where('tipo_notificacion', 'Multa');
+        $notificaciones = $dbCitados->keyBy('id');
+
+        // Catálogos
+        $estados = Estados::orderBy('nombre', 'asc')->get();
+        $municipios = Municipios::orderBy('nombre', 'asc')->get();
+        
+        // Conciliadores con carga de relación optimizada
+        $conciliadores = User::role('Conciliador')
+            ->where('delegacion', $user->delegacion)
+            ->get();
+
+        // Motivos
         $mostrarMotivos = SolicitudMotivo::where('tipo_solicitud', $general->tipo_solicitud)->get();
-        //Motivos capturados
-        $motivos        = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
-        ->where('id_solicitud',$id)
-        ->select('catalogo_motivos.motivo','seer_motivos.id')->get();
-
         $motivosDelete = session('motivos_edicion_delete', []);
-        $motivos = $motivos->filter(function($m) use ($motivosDelete) {
-            return !in_array((string)$m->id, array_map('strval', $motivosDelete));
-        })->values();
+        $motivos = SeerMotivo::join('catalogo_motivos', 'catalogo_motivos.id', '=', 'seer_motivos.id_motivo')
+            ->where('id_solicitud', $id)
+            ->select('catalogo_motivos.motivo', 'seer_motivos.id')
+            ->get()
+            ->reject(fn($m) => in_array((string)$m->id, array_map('strval', $motivosDelete)))
+            ->values();
 
-        $historial_audiencias = Audiencias::where('id_solicitud', $id)
-        ->orderBy('fecha', 'desc')
-        ->get();
+        $historial_audiencias = Audiencias::where('id_solicitud', $id)->orderBy('fecha', 'desc')->get();
+        $ultimaEstatus = $historial_audiencias->first()->estatus ?? null;
 
-        $idsAbogados = SeerCitados::where('id_solicitud', $id)
-        ->whereNotNull('id_abogado')
-        ->pluck('id_abogado');
+        // Validación de datos incompletos
+        $idsAbogados = $dbCitados->whereNotNull('id_abogado')->pluck('id_abogado');
+        $solIncompleto = SeerSolicitante::where('id_solicitud', $id)
+            ->where(fn($q) => $q->whereNull('identificacion')->orWhere('identificacion', ''))
+            ->exists();
+        
+        $abogIncompleto = Poder::whereIn('idAbogado', $idsAbogados)
+            ->where(fn($q) => $q->whereNull('tipo_identificacion')->orWhere('tipo_identificacion', ''))
+            ->exists();
 
-        $datosIncompletos = SeerSolicitante::where('id_solicitud', $id)
-        ->where(fn($q) =>
-            $q->whereNull('identificacion')
-            ->orWhereNull('num_identificacion')
-            ->orWhere('identificacion', '')
-            ->orWhere('num_identificacion', '')
-        )
-        ->exists();
-        $datosIncompletos = $datosIncompletos || Poder::whereIn('idAbogado', $idsAbogados)
-        ->where(fn($q) =>
-            $q->whereNull('tipo_identificacion')
-            ->orWhereNull('num_identificacion')
-            ->orWhere('tipo_identificacion', '')
-            ->orWhere('num_identificacion', '')
-        )
-        ->exists();
+        $datosIncompletos = $solIncompleto || $abogIncompleto;
+        
+        // PASAMOS LA FECHA ACTUAL DESDE EL CONTROLADOR
+        $fecha_actual = now(); 
 
-        $ultimaEstatus = Audiencias::where('id_solicitud', $id)->latest()->value('estatus');
-
-        return view('audiencias.revisar_audiencia', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores', 'isAudiencia','notificaciones','historial_audiencias','datosIncompletos','citadosConMulta', 'ultimaEstatus'));
+        return view('audiencias.revisar_audiencia', compact(
+            'id','general','solicitantes','citados','ramas','estados','municipios',
+            'mostrarMotivos','motivos','conciliadores', 'isAudiencia','notificaciones',
+            'historial_audiencias','datosIncompletos','citadosConMulta', 'ultimaEstatus', 'fecha_actual'
+        )); 
     }
 
 
@@ -9451,7 +9698,7 @@ class SeerController extends Controller
         $delegacion = $user->delegacion;
         if($userRole[0] == "Enlace"){
             if($delegacion == "Morelia"){
-                $delegaciones = ["Morelia", "Zítacuaro"];
+                $delegaciones = ["Morelia", "Zitácuaro"];
             }
             else if($delegacion == "Uruapan"){
                 $delegaciones = ["Uruapan", "Lázaro Cárdenas"];
@@ -10366,6 +10613,151 @@ class SeerController extends Controller
         return response()->json($todosLosEventos);
     }
 
+    public function obtenerCumplimientosFiltrado(Request $request)
+    {
+        $fecha_inicio_str = $request->input('start', now()->format('Y-m-d'));
+        $fecha_fin_str = $request->input('end', now()->addDays(700)->format('Y-m-d'));
+
+        $fecha_inicio_dt = (new \DateTime($fecha_inicio_str))->setTime(0, 0, 0);
+        $fecha_fin_dt = (new \DateTime($fecha_fin_str))->setTime(23, 59, 59);
+
+        $sede = $request->input('sede');
+        $conciliador_id = $request->input('conciliador_id');
+
+        $centrosConciliador = [$sede];
+        if (in_array($sede, ['Morelia', 'Zitácuaro', 'Zitácuaro'], true)) {
+            $centrosConciliador = ['Morelia', 'Zitácuaro', 'Zitácuaro'];
+        } elseif (in_array($sede, ['Uruapan', 'Lázaro Cárdenas'], true)) {
+            $centrosConciliador = ['Uruapan', 'Lázaro Cárdenas'];
+        } elseif (in_array($sede, ['Zamora', 'Sahuayo'], true)) {
+            $centrosConciliador = ['Zamora', 'Sahuayo'];
+        }
+
+        $inhabiles = DiasInhabiles::where(function ($q) use ($sede, $centrosConciliador, $conciliador_id) {
+                $q->where(function ($q2) use ($sede) {
+                    $q2->where('centro', $sede)
+                        ->whereNull('user_id');
+                });
+
+                if (!empty($conciliador_id)) {
+                    $q->orWhere(function ($q3) use ($centrosConciliador, $conciliador_id) {
+                        $q3->whereIn('centro', $centrosConciliador)
+                            ->where('user_id', $conciliador_id);
+                    });
+                }
+            })
+            ->where(function($query) use ($fecha_inicio_dt, $fecha_fin_dt) {
+                $query->where('fecha_inicio', '<=', $fecha_fin_dt)
+                    ->where('fecha_final', '>=', $fecha_inicio_dt);
+            })
+            ->get();
+
+        $ocupados = Pagos::whereBetween('fecha', [$fecha_inicio_dt, $fecha_fin_dt])
+            ->where('delegacion', $sede)
+            ->get();
+
+        $ocupadosMap = [];
+        foreach ($ocupados as $cumplimiento) {
+            $slotKey = $cumplimiento->fecha->format('Y-m-d') . 'T' . $cumplimiento->hora->format('H:i:s');
+            if (isset($ocupadosMap[$slotKey])) {
+                $ocupadosMap[$slotKey]++;
+            } else {
+                $ocupadosMap[$slotKey] = 1;
+            }
+        }
+
+        $pagosPorDia = Pagos::where('tipo_pago', 'Audiencia')
+            ->where('delegacion', $sede)
+            ->whereBetween('fecha', [$fecha_inicio_dt, $fecha_fin_dt])
+            ->select('fecha', DB::raw('COUNT(*) as total'))
+            ->groupBy('fecha')
+            ->get();
+
+        $pagosPorDiaMap = [];
+        foreach ($pagosPorDia as $dia) {
+            $pagosPorDiaMap[$dia->fecha->format('Y-m-d')] = $dia->total;
+        }
+
+        $ahora = new \DateTime();
+        $todosLosEventos = [];
+        $fecha = (new \DateTime($fecha_inicio_str))->setTime(0,0,0);
+        $fin = (new \DateTime($fecha_fin_str))->setTime(0,0,0);
+
+        while ($fecha <= $fin) {
+            if ($fecha->format('N') < 6) {
+                $inicioJornada = (clone $fecha)->setTime(9, 0, 0);
+                $finJornada    = (clone $fecha)->setTime(15, 0, 0);
+
+                $fecha_str = $fecha->format('Y-m-d');
+                $conteoDiario = $pagosPorDiaMap[$fecha_str] ?? 0;
+                $diaEstaLleno = ($conteoDiario > 16);
+
+                $slot = clone $inicioJornada;
+                while ($slot < $finJornada) {
+                    $slotStart = $slot->format('Y-m-d\\TH:i:s');
+
+                    $conteoOcupados = $ocupadosMap[$slotStart] ?? 0;
+                    $ocupado = ($conteoOcupados >= 1);
+
+                    $esInhabil = false;
+                    foreach($inhabiles as $dia){
+                        $fechaInhabilInicio = $dia->fecha_inicio . 'T' . $dia->horario_inicio;
+                        $fechaInhabilFinal = $dia->fecha_final . 'T' . $dia->horario_final;
+                        if($slotStart >= $fechaInhabilInicio && $slotStart <= $fechaInhabilFinal){
+                            $esInhabil = true;
+                            break;
+                        }
+                    }
+
+                    if ($diaEstaLleno) {
+                        $estado = 'ocupado';
+                    } elseif ($ocupado) {
+                        $estado = 'ocupado';
+                    } elseif ($esInhabil) {
+                        $estado = 'inhabil';
+                    } elseif ($ahora > $slot) {
+                        $estado = 'expirado';
+                    } else {
+                        $estado = 'disponible';
+                    }
+
+                    switch ($estado) {
+                        case 'ocupado':
+                            $todosLosEventos[] = [
+                                'title' => 'Ocupado', 'start' => $slotStart,
+                                'color' => '#DA0909', 'extendedProps' => ['estado' => 'ocupado']
+                            ];
+                            break;
+                        case 'inhabil':
+                            $todosLosEventos[] = [
+                                'title' => 'Inhábil', 'start' => $slotStart,
+                                'color' => '#3B78DB', 'extendedProps' => ['estado' => 'inhabil']
+                            ];
+                            break;
+                        case 'expirado':
+                            $todosLosEventos[] = [
+                                'title' => 'Expirado', 'start' => $slotStart,
+                                'color' => '#F59727', 'extendedProps' => ['estado' => 'expirado']
+                            ];
+                            break;
+                        case 'disponible':
+                        default:
+                            $todosLosEventos[] = [
+                                'title' => 'Disponible', 'start' => $slotStart,
+                                'color' => '#00CE1C', 'extendedProps' => ['estado' => 'disponible']
+                            ];
+                            break;
+                    }
+
+                    $slot->modify('+30 minutes');
+                }
+            }
+            $fecha->modify('+1 day');
+        }
+
+        return response()->json($todosLosEventos);
+    }
+
     //Calcula la fecha mínima a partir de la cual se puede reagendar,
     private function calcularFechaMinimaHabil(string $sede, int $diasHabiles = 16): \DateTime
     {
@@ -10400,48 +10792,71 @@ class SeerController extends Controller
 
     public function obtenerAudienciasParte3(Request $request)
     {
-        
+        $request->validate([
+            'sede' => 'required|string',
+            'conciliador' => 'required|integer',
+        ]);
+
         $fecha_inicio_str = $request->input('start', now()->format('Y-m-d'));
         $fecha_fin_str = $request->input('end', now()->addDays(300)->format('Y-m-d'));
         
         $fecha_inicio = (new \DateTime($fecha_inicio_str))->setTime(0, 0, 0);
         $fecha_fin = (new \DateTime($fecha_fin_str))->setTime(23, 59, 59);
 
-        $sede = $request->input('sede'); 
-
-        $id_conciliador = $request->input('conciliador') ?? auth()->id();
+    $sede = $request->input('sede');
+    $id_conciliador = (int) $request->input('conciliador');
         $tipoConciliador = PermisosConciliador::where('id_conciliador', $id_conciliador)->value('tipo');
+
+        $soloSedePrincipal = $request->boolean('solo_sede_principal', false);
 
         // Calcular fecha mínima para reagendar: permitir desde el siguiente día natural
         $fechaMinima = (new \DateTime())->setTime(0,0,0)->modify('+1 day');
         $minDateStr = $fechaMinima->format('Y-m-d');
-     
-        $centros = [$sede];
 
-        if ($sede === 'Zitacuaro' || $sede =='Zitácuaro') {
-            $centros = ['Zitácuaro', 'Zitacuaro'];
-        }
-
-        if ($tipoConciliador == 'Ambos'){
-            if ($sede === 'Morelia' || $sede === 'Zitácuaro' || $sede === 'Zitacuaro') {
-                $centros = ['Morelia', 'Zitácuaro', 'Zitacuaro'];
-            } elseif ($sede === 'Uruapan' || $sede === 'Lázaro Cárdenas') {
-                $centros = ['Uruapan', 'Lázaro Cárdenas'];
-            } elseif ($sede === 'Zamora' || $sede === 'Sahuayo') {
-                $centros = ['Zamora', 'Sahuayo'];
+        if ($soloSedePrincipal) {
+            // Solo inhábiles generales de la sede principal (sin subsedes y sin user_id del conciliador)
+            $inhabiles = DiasInhabiles::where('centro', $sede)
+                ->whereNull('user_id')
+                ->where(function ($query) use ($fecha_inicio, $fecha_fin) {
+                    $query->where('fecha_inicio', '<=', $fecha_fin)
+                        ->where('fecha_final', '>=', $fecha_inicio);
+                })
+                ->get();
+        } else {
+            $centrosNull = [$sede];
+            if ($sede === 'Zitácuaro' || $sede === 'Zitácuaro') {
+                // Para generales acepto ambas variantes si existe mezcla en BD.
+                $centrosNull = ['Zitácuaro', 'Zitácuaro'];
             }
-        }
 
-        $inhabiles = DiasInhabiles::whereIn('centro', $centros)
-            ->where(function($query) use ($id_conciliador) {
-                $query->whereNull('user_id')
-                    ->orWhere('user_id', $id_conciliador);
-            })
-            ->where(function($query) use ($fecha_inicio, $fecha_fin) {
-                $query->where('fecha_inicio', '<=', $fecha_fin)
-                    ->where('fecha_final', '>=', $fecha_inicio);
-            })
-            ->get();
+            $centrosConciliador = [$sede];
+            if ($tipoConciliador === 'Ambos') {
+                if (in_array($sede, ['Morelia', 'Zitácuaro', 'Zitácuaro'], true)) {
+                    $centrosConciliador = ['Morelia', 'Zitácuaro', 'Zitácuaro'];
+                } elseif (in_array($sede, ['Uruapan', 'Lázaro Cárdenas'], true)) {
+                    $centrosConciliador = ['Uruapan', 'Lázaro Cárdenas'];
+                } elseif (in_array($sede, ['Zamora', 'Sahuayo'], true)) {
+                    $centrosConciliador = ['Zamora', 'Sahuayo'];
+                }
+            }
+
+            $inhabiles = DiasInhabiles::where(function ($q) use ($centrosNull, $centrosConciliador, $id_conciliador) {
+                    $q->where(function ($q2) use ($centrosNull) {
+                        $q2->whereIn('centro', $centrosNull)
+                            ->whereNull('user_id');
+                    });
+
+                    $q->orWhere(function ($q3) use ($centrosConciliador, $id_conciliador) {
+                        $q3->whereIn('centro', $centrosConciliador)
+                            ->where('user_id', $id_conciliador);
+                    });
+                })
+                ->where(function ($query) use ($fecha_inicio, $fecha_fin) {
+                    $query->where('fecha_inicio', '<=', $fecha_fin)
+                        ->where('fecha_final', '>=', $fecha_inicio);
+                })
+                ->get();
+        }
 
         $audienciasPorSlot = Audiencias::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
             ->where('id_conciliador', $id_conciliador)
@@ -10546,13 +10961,13 @@ class SeerController extends Controller
 
         $centros = [$sede];
 
-        if ($sede === 'Zitacuaro' || $sede =='Zitácuaro') {
-            $centros = ['Zitácuaro', 'Zitacuaro'];
+        if ($sede === 'Zitácuaro' || $sede =='Zitácuaro') {
+            $centros = ['Zitácuaro', 'Zitácuaro'];
         }
 
         if ($tipoConciliador == 'Ambos'){
-            if ($sede === 'Morelia' || $sede === 'Zitácuaro' || $sede === 'Zitacuaro') {
-                $centros = ['Morelia', 'Zitácuaro', 'Zitacuaro'];
+            if ($sede === 'Morelia' || $sede === 'Zitácuaro' || $sede === 'Zitácuaro') {
+                $centros = ['Morelia', 'Zitácuaro', 'Zitácuaro'];
             } elseif ($sede === 'Uruapan' || $sede === 'Lázaro Cárdenas') {
                 $centros = ['Uruapan', 'Lázaro Cárdenas'];
             } elseif ($sede === 'Zamora' || $sede === 'Sahuayo') {
@@ -10656,7 +11071,7 @@ class SeerController extends Controller
         }
 
         $rangos = DiasInhabiles::where('centro', $centro)
-            ->get(['fecha_inicio', 'fecha_final', 'horario_inicio', 'horario_final']);
+            ->get(['fecha_inicio', 'fecha_final', 'horario_inicio', 'horario_final', 'user_id', 'centro']);
 
         return response()->json($rangos);
     }
@@ -11448,7 +11863,7 @@ class SeerController extends Controller
 
 
         if($delegacion == "Morelia"){
-            $delegaciones = ["Morelia", "Zítacuaro"];
+            $delegaciones = ["Morelia", "Zitácuaro"];
         }
         else if($delegacion == "Uruapan"){
             $delegaciones = ["Uruapan", "Lázaro Cárdenas"];
@@ -12211,6 +12626,7 @@ class SeerController extends Controller
                 if ($citado->id == $id) {
                     $citado->id_abogado = null;
                     $citado->id_fisica = null;
+                    $citado->id_historial = null;
                 }
                 return $citado;
             });
@@ -12219,6 +12635,7 @@ class SeerController extends Controller
             $citado = SeerCitados::findOrFail($id);
             $citado->id_abogado = null;
             $citado->id_fisica = null;
+            $citado->id_historial = null;
             $citado->save();
         }
 
@@ -12234,7 +12651,14 @@ class SeerController extends Controller
     public function mostrar_citatorios($id) {
         
         // Obtener los citados
-        $citados = SeerCitados::select('id','nombre','primer_apellido','segundo_apellido')->where('id_solicitud', $id)->get();
+        $citadoCentro = SeerCitados::where('id_solicitud', $id)->where('notificacion', 'Centro')->exists();
+
+        if($citadoCentro){
+            $citados = SeerCitados::where('id_solicitud', $id)->where('notificacion', 'Centro')->get();
+        } else{
+            $citados = SeerCitados::select('id','nombre','primer_apellido','segundo_apellido')->where('id_solicitud', $id)->get();
+        }
+
         if ($citados->isEmpty()) {
             return redirect()->back()->with('error', 'No hay citados para esta solicitud.');
         }
@@ -12966,13 +13390,36 @@ class SeerController extends Controller
             ->select('name')
             ->first();
 
-        $imagenes = [];
+        /*$imagenes = [];
 
         for ($i = 1; $i <= 3; $i++) {
             $path = storage_path("app/documentos_notificacion/{$citado->id}-foto{$i}.jpg");
 
             if (file_exists($path)) {
                 $imagenes[] = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($path));
+            } else {
+                $imagenes[] = null;
+            }
+        }*/
+        $imagenes = [];
+    
+        $camposImagen = [
+            $citado->documento ?? null,
+            $citado->documento1 ?? null,
+            $citado->documento2 ?? null,
+        ];
+        
+        foreach ($camposImagen as $img) {    
+            if (!$img || $img === 'Sin documento') {
+                $imagenes[] = null;
+                continue;
+            }
+        
+            $path = storage_path("app/documentos_notificacion/{$img}");
+        
+            if (file_exists($path)) {
+                $mime = mime_content_type($path);
+                $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
             } else {
                 $imagenes[] = null;
             }
@@ -13044,85 +13491,61 @@ class SeerController extends Controller
         return $pdf->stream($nombreArchivo);                  
     }
 
-    public function todas_solicitudes(){
-        $id = auth()->user()->id;
-        $user = User::find($id);
-        $roles = Role::pluck('name','name')->all();
-        $userRole = $user->roles->pluck('name')->all();
+    public function todas_solicitudes() {
+        $user = auth()->user();
+        // Obtenemos el nombre del primer rol asignado
+        $userRole = $user->roles->pluck('name')->first(); 
         $isAudiencia = 'No';
 
-        if($userRole[0] == "Auxiliar" || $userRole[0] == "Excepcion"){
-            $solicitudes = SeerPerGeneral::where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(1500)->get();
-            foreach ($solicitudes as $solicitud) {
-                $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
-                $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
+        // 1. Iniciamos el Query base con la relación y la validación de estatus
+        // Usamos 'solicitante:id,id_solicitud,nombre' para traer solo las columnas necesarias
+        $query = SeerPerGeneral::with('solicitante:id,id_solicitud,nombre')
+            ->where('estatus', '!=', 'Pendiente')
+            ->orderBy('created_at', 'desc')
+            ->limit(1500);
+
+        // 2. Definimos el mapa de delegaciones para evitar IFs repetitivos
+        $mapaDelegaciones = [
+            "Morelia" => ["Morelia", "Zitácuaro"],
+            "Uruapan" => ["Uruapan", "Lázaro Cárdenas"],
+            "Zamora"  => ["Zamora", "Sahuayo"],
+            "Sahuayo" => ["Sahuayo", "Zamora"],
+        ];
+
+        // 3. Aplicamos los filtros de seguridad según el Rol
+        if (in_array($userRole, ["Auxiliar", "Excepcion"])) {
+            $query->where('delegacion', $user->delegacion);
+        } 
+        elseif ($userRole == "Conciliador") {
+            $permisos = PermisosConciliador::where('id_conciliador', $user->id)->first();
+            // Si tiene permiso "Ambos", aplicamos el mapeo de sedes
+            if ($permisos && $permisos->tipo == "Ambos" && isset($mapaDelegaciones[$user->delegacion])) {
+                $query->whereIn('delegacion', $mapaDelegaciones[$user->delegacion]);
+            } else {
+                $query->where('delegacion', $user->delegacion);
+            }
+        } 
+        elseif (in_array($userRole, ["Delegado", "Enlace"])) {
+            if (isset($mapaDelegaciones[$user->delegacion])) {
+                $query->whereIn('delegacion', $mapaDelegaciones[$user->delegacion]);
+            } else {
+                $query->where('delegacion', $user->delegacion);
             }
         }
-        else if($userRole[0] == "Conciliador"){
-            $permisos = PermisosConciliador::where('id_conciliador',$id)->first();
-            if($permisos["tipo"] == "Ambos"){
-                if($user["delegacion"] == "Morelia"){
-                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(1500)->get();
-                    foreach ($solicitudes as $solicitud) {
-                        $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
-                        $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-                    }
-                }
-                if($user["delegacion"] == "Uruapan"){
-                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(1500)->get();
-                    foreach ($solicitudes as $solicitud) {
-                        $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
-                        $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-                    }
-                }
-                if($user["delegacion"] == "Sahuayo"){
-                    $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(1500)->get();
-                    foreach ($solicitudes as $solicitud) {
-                        $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
-                        $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-                    }
-                }
-            }
-            else{
-                $solicitudes = SeerPerGeneral::where('seer_general.delegacion', $user["delegacion"])->orderBy('created_at', 'desc')->limit(1500)->get();
-                foreach ($solicitudes as $solicitud) {
-                    $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
-                    $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-                }
-            }
-        }
-        else if($userRole[0] == "Delegado" || $userRole[0] == "Enlace"){
-            if($user["delegacion"] == "Morelia"){
-                $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Morelia", "Zitácuaro"])->orderBy('created_at', 'desc')->limit(1500)->get();
-                foreach ($solicitudes as $solicitud) {
-                    $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
-                    $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-                }
-            }
-            if($user["delegacion"] == "Uruapan"){
-                $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Uruapan", "Lázaro Cárdenas"])->orderBy('created_at', 'desc')->limit(1500)->get();
-                foreach ($solicitudes as $solicitud) {
-                    $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
-                    $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-                }
-            }
-            if($user["delegacion"] == "Zamora"){
-                $solicitudes = SeerPerGeneral::whereIn('seer_general.delegacion', ["Sahuayo", "Zamora"])->orderBy('created_at', 'desc')->limit(1500)->get();
-                foreach ($solicitudes as $solicitud) {
-                    $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
-                    $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-                }
-            }
-        }
-        else if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador"){
-            $solicitudes = SeerPerGeneral::orderBy('created_at', 'desc')->limit(1500)->get();
-            foreach ($solicitudes as $solicitud) {
-                $solicitante = SeerSolicitante::where('id_solicitud', $solicitud->id)->first();
-                $solicitud->nombre = $solicitante ? $solicitante->nombre : 'Sin solicitante';
-            }
-        }
-        return view('solicitudes.solicitudes_todas',compact('solicitudes', 'isAudiencia'));
+        // Para Super Usuario / Administrador no se agregan filtros (ve todo)
+
+        // 4. Ejecutamos la consulta
+        $solicitudes = $query->get();
+
+        // 5. Mapeamos el nombre del solicitante al objeto principal para no romper tu vista actual
+        $solicitudes->transform(function ($solicitud) {
+            $solicitud->nombre = $solicitud->solicitante->nombre ?? 'Sin solicitante';
+            return $solicitud;
+        });
+
+        return view('solicitudes.solicitudes_todas', compact('solicitudes', 'isAudiencia'));
     }
+
     public function VerPDFCaratula($id, $tipo){
         $bandera = ($tipo == 'ratificacion') ? 'Ratificación' : 'Solicitud';
 
@@ -13136,7 +13559,18 @@ class SeerController extends Controller
                 'estados.nombre as estado_domicilio'
             )
             ->first();
-            $abogado = Poder::join("turnos", "turnos.idAbogado", "=", "abogados.idAbogado")
+
+            if($ratificacion->id_historial){
+                $abogado = HistorialAbogado::join("turnos", "turnos.id_historial", "=", "historial_abogados.id")
+                ->where("turnos.id", "=", $id)
+                ->select(
+                    "historial_abogados.*",
+                    "turnos.tipo_identificacion as tipo_identificacion_turno",
+                    "turnos.num_identificacion as num_identificacion_turno"
+                )
+                ->first();
+            } else {
+                $abogado = Poder::join("turnos", "turnos.idAbogado", "=", "abogados.idAbogado")
                 ->where("turnos.id", "=", $id)
                 ->select(
                     "abogados.*",
@@ -13144,6 +13578,8 @@ class SeerController extends Controller
                     "turnos.num_identificacion as num_identificacion_turno"
                 )
                 ->first();
+            }
+            
             $html = view('PDF/Caratula', compact('id','ratificacion','abogado','bandera'))->render();
         } else {
             $solicitud = SeerPerGeneral::find($id);
@@ -13181,5 +13617,578 @@ class SeerController extends Controller
 
         $nombreArchivo = 'Captura_caratula' .'.pdf';
         return $pdf->stream($nombreArchivo);  
+    }
+        //Solicitud en línea patronal
+    public function Industrias_p($tipo_solicitud){
+        return view('solicitudes.patronal.tipoIndustria_p', compact('tipo_solicitud'));
+    }
+    public function patron($tipo_solicitud){  
+        if ($tipo_solicitud == "1") {
+            $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '1') ->get();
+        }
+        elseif ($tipo_solicitud == "2") {
+            $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '2') ->get();
+        }
+        elseif ($tipo_solicitud == "3") {
+            $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '3') ->get();
+        }
+        elseif ($tipo_solicitud == "4") {
+            $mostrarMotivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '4') ->get();
+        }
+        $ramas = SolicitudRama::all();
+       // $actividad=SolicitudEconomica::all();
+        $del=Sedes::all();
+        $municipios=Municipios::where('estado',16)->get();
+       /* if($tipo_solicitud[0] == "1"){
+            //$personas = null;
+            $motivos = SolicitudMotivo::where('catalogo_motivos.tipo_solicitud', '1')
+            ->select('catalogo_motivos.motivo','seer_general.NUE','seer_general.solicitante','seer_citados.nombre','seer_citados.direccion','seer_citados.estatus')
+            ->get();
+        }*/
+        return view('solicitudes.patronal.solicitud_p', compact('ramas','del','municipios','tipo_solicitud','mostrarMotivos'));
+    }
+    public function solicitud_patronal(Request $request){
+        $data = $request->all();
+        /*
+        if($data["delegacion"] == "Lázaro Cárdenas"){
+            $data["delegacion"] = "Uruapan";
+        }
+        if($data["delegacion"] == "Zitácuaro"){
+            $data["delegacion"] = "Morelia";
+        }
+        if($data["delegacion"] == "Sahuayo"){
+            $data["delegacion"] = "Zamora";
+        }
+        */
+        //validando información
+        
+        $request->validate([
+            'ramaIndustrial'      => 'required',
+            'actividad_economica' => 'required',
+            'motivo_solicitud'    => 'required',
+
+        ]);
+        
+        $año_actual = date('Y');
+        $numero_consecutivo = 0;
+        $consecutivo  = SeerPerGeneral::latest('consecutivo')
+        ->where('delegacion',$data["delegacion"])
+        ->where('año',$año_actual)->
+        first();
+
+        if(empty($consecutivo)){
+            $numero_consecutivo = 1;
+        }
+        else{
+            $numero_consecutivo = $consecutivo["consecutivo"];
+            $numero_consecutivo++;
+        }
+
+        $data_insert=array(
+            'id_rama'         =>  $data["ramaIndustrial"],
+            'actividad'       =>  $data["actividad_economica"],
+            'delegacion'      =>  $data["delegacion"],
+            'tipo_solicitud'  =>  $data["tipo_solicitud"],
+            'tipo_generacion' => auth()->check() ? auth()->id() :0,
+            'consecutivo'    => $numero_consecutivo,    
+            'año'            => $año_actual,
+        );
+       
+        /*SeerPerGeneral::create($data_insert); 
+        $id_general  = SeerPerGeneral::latest('id')->first();
+        $id=$id_general["id"];
+        $tipo_generacion=$id_general->tipo_generacion;
+
+        if (!empty($data["motivo_solicitud"])) {
+            foreach ($data["motivo_solicitud"] as $motivoId) {
+                SeerMotivo::create([
+                    'id_solicitud'    => $id_general["id"],
+                    'id_motivo'       => $motivoId,
+                    
+                ]);
+            }
+        }*/
+
+        // Guardar en sesión
+        $solicitud_data = array(
+            'id_rama'         =>  $data["ramaIndustrial"],
+            'actividad'       =>  $data["actividad_economica"],
+            'delegacion'      =>  $data["delegacion"],
+            'tipo_solicitud'  =>  $data["tipo_solicitud"],
+            'tipo_generacion' => auth()->check() ? auth()->id() : 0,
+            'consecutivo'     => $numero_consecutivo,
+            'año'             => $año_actual,
+            'motivo_solicitud' => $data["motivo_solicitud"] ?? []
+        );
+       
+        session(['solicitud_trabajador_data' => $solicitud_data]);
+        
+        // Limpiar sesiones anteriores
+        session()->forget('solicitante_trabajador_data');
+        session()->forget('citados_trabajador_data');
+
+        $id = 'session';
+
+        $estados = Estados::all();
+        $municipios = Municipios::all();
+
+        /*if($tipo_generacion != 0){
+            return view('solicitudes.auxiliares.solicitanteAux', compact('estados','municipios','id'));
+        }*/
+        return view('solicitudes.patronal.solicitante_p', compact('estados','municipios','id'));
+        //return redirect()->route('parte2.ver', ['id' => $id]);
+    }
+
+    public function vista_solicitanteP(Request $request)
+    {
+        $id = $request->input('id');
+        //dd($request);
+        if (!$id) {
+            return redirect()->route('publico');
+        }
+
+        if ($id == 'session') {
+            $solicitud_data = session('solicitud_trabajador_data');
+            if (!$solicitud_data) {
+                return redirect()->route('publico')->with('error', 'Sesión expirada.');
+            }
+            $tipo_generacion = $solicitud_data['tipo_generacion'];
+        } else {
+            $solicitud = SeerPerGeneral::find($id);
+
+            if (!$solicitud) {
+                return redirect()->route('publico')->with('error', 'La solicitud no existe.');
+            }
+            $tipo_generacion = $solicitud->tipo_generacion;
+        }
+
+        $estados = Estados::all();
+        $municipios = Municipios::all();
+
+        if($tipo_generacion != 0){
+            return view('solicitudes.auxiliares.solicitanteAux', compact('estados','municipios','id'));
+        }
+        
+        return view('solicitudes.patronal.solicitante_p', compact('estados','municipios','id'));
+    }
+    
+    public function inserta_solicitanteP(Request $request){
+        $data = $request->all();
+        $id_solicitud = $data['id'];
+
+        if (empty($data['folio'])) {
+            return back()->withErrors(['folio' => 'El folio es obligatorio'])->withInput();
+        }
+
+        $poder = Poder::find($data['folio']);
+
+        if (!$poder) {
+            return back()->withErrors(['folio' => 'El folio ingresado no existe'])->withInput();
+        }
+        $nombreCompleto = trim(
+            ($poder->nombres_patronal ?? '') . ' ' .
+            ($poder->primer_apellido_patronal ?? '') . ' ' .
+            ($poder->segundo_apellido_patronal ?? '')
+        );
+        $data['nombre'] = preg_replace('/\s+/', ' ', $nombreCompleto);
+        $data_solicitante = [
+            'id_solicitud'         => $id_solicitud,
+            'curp'                 => $poder->curp_patronal,
+            'rfc'                  => $poder->rfc_patronal,
+            'nombre'               => $nombreCompleto,
+            'primer_apellido'      => $poder->primer_apellido_patronal,
+            'segundo_apellido'     => $poder->segundo_apellido_patronal,
+            'estado_domicilio'     => $poder->estado_patronal,
+            'municipio_domicilio'  => $poder->municipio_patronal,
+            'tipo_vialidad'        => $poder->tipo_vialidad_patronal,
+            'calle'                => $poder->vialidad_patronal,
+            'n_ext'                => $poder->num_ext_patronal,
+            'n_int'                => $poder->mun_int_patronal,
+            'colonia'              => $poder->colonia_patronal,
+            'cp'                   => $poder->cp_patronal,
+            'telefono1'            => $poder->telefono_patronal,
+            'email'                => $poder->email_patronal ?? $poder->correo_representante,
+            'num_ext'              => $poder->num_ext_patronal,
+            'codigo_postal'        => $poder->cp_patronal,
+            //'colonia'              => $poder->colonia_patronal,
+            /*'curp'                 => $data["curp"],
+            'nombre'               => $data["nombre"],
+            //'sexo'                 => $data["genero"], // H, M, NC
+            'estado'               => $data["estado_nacimiento"],
+           
+            'email'                => $data["correo"],
+            'estado_domicilio'     => $data["estado_solicitante"],
+            'tipo_vialidad'        => $data["vialidad"],
+            'calle'                => $data["vialidad_calle"],
+            'num_ext'              => $data["numExt"],
+            'num_int'              => $data["numInt"] ?? null,
+            'colonia'              => $data["colonia_solicitante"],
+            'municipio_domicilio'  => $data["municipio_solicitante"],
+            'codigo_postal'        => $data["cp"],*/
+            'puesto'               => $data["puesto"],
+            'pago'                 => $data["pago"],
+            'periodo_pago'         => $data["periodo_pago"],
+            'horas_semana'         => $data["horas"],
+            'fecha_ingreso'        => $data["fecha_ingreso"],
+            'fecha_nacimiento'     => $data["fecha_nacimiento"] ?? null,
+            'edad'                 => $data["edad"] ?? null,
+            //'nacionalidad'         => $data["nacionalidad"] ?? 'Mexicana',
+            'identificacion'       => $data["identificacion"],
+            'num_identificacion'   => $data["num_identificacion"],
+            'descripcionSolicitud' => $data["descripcionSolicitud"],
+            'labora'               => isset($data["labora"]) ? "Si" : "No",
+            //'rfc'                  => $data["rfc"] ?? null,
+            'nss'                  => $data["seguro"] ?? null,
+            'fecha_salida'         => $data["fecha_salida"] ?? null,
+            'estado'               => $poder->estado_patronal
+        ];
+
+        // Manejo de traductor
+        if (isset($data["traductor"])) {
+            $val = $data["traductor"];
+            $data_solicitante["traductor"] = ($val === 'Si' || $val === '1' || $val === 'on') ? 'Si' : 'No';
+            $data_solicitante["lenguaje"] = $data["lenguaje"] ?? null;
+        }
+         $solicitante_data = [
+            'solicitante' => $data_solicitante,
+            'excepcion' => $data["excepcion"],
+            //'excepcion_data' => $excepcion_data
+        ];
+        
+        session(['solicitante_trabajador_data' => $solicitante_data]);
+        //SeerSolicitante::create($data_solicitante);
+       
+        $data_citado = [
+            'id_solicitud'      => $id_solicitud,
+            //'fecha'             => now(),
+            'tipo_persona'      => $poder->tipo,
+           /* 'curp'              => $poder->curp_patronal,
+            'rfc'               => $poder->rfc_patronal,
+            'nombre'            => $nombrePatron,
+            'primer_apellido'   => $poder->primer_apellido_patronal,
+            'segundo_apellido'  => $poder->segundo_apellido_patronal,
+            'estado_solicitante'=> $poder->estado_patronal,
+            'municipio_citado'  => $poder->municipio_patronal,
+            'tipo_vialidad'     => $poder->tipo_vialidad_patronal,
+            'calle'             => $poder->vialidad_patronal,
+            'n_ext'             => $poder->num_ext_patronal,
+            'n_int'             => $poder->mun_int_patronal,
+            'colonia'           => $poder->colonia_patronal,
+            'cp'                => $poder->cp_patronal,*/
+            'estatus'           => 'Pendiente',
+            'id_abogado'        => $poder->idAbogado,
+            //'notificacion'      => 'Centro',
+            //'tipo_notificacion' => 'Citatorio'
+        ];
+
+        SeerCitados::create($data_citado);
+
+        SeerPerGeneral::where('id', $id_solicitud)->update([
+            'caso_excepcion' => $data["excepcion"]
+        ]);
+
+        if ($data["excepcion"] === "Si") {
+            SeerCasosExcepcion::create([
+                'id_solicitud'               => $id_solicitud,
+                'frecuencia_hechos'          => $data["frecuencia_hechos"] ?? null,
+                'cambios_situacionL'         => $data["cambios_situacionL"] ?? null,
+                'comunico_hechos'            => $data["comunico_hechos"] ?? null,
+                'descripcion_conducta'       => $data["descripcion_conducta"] ?? null,
+                'responsable_cargo'          => $data["responsable_cargo"] ?? null,
+                'actos_cometidos'            => $data["actos_cometidos"] ?? null,
+                'momento_hechos'             => $data["momento_hechos"] ?? null,
+                'lugar_hechos'               => $data["lugar_hechos"] ?? null,
+                'constancia_hechos'          => $data["constancia_hechos"] ?? null,
+                'solicito_apoyo'             => $data["solicito_apoyo"] ?? null,
+                'continuacion_solicto_apoyo' => $data["continuacion_solicto_apoyo"] ?? null,
+                'incidencia_directa'         => $data["incidencia_directa"] ?? null,
+                'recibio_atencion'           => $data["recibio_atencion"] ?? null,
+            ]);
+        }
+        
+        return redirect()->route('agregar_citadoPatronal', ['id' => $id_solicitud]);
+    }
+    public function vista_citadoPatronal($id){
+        $estados = Estados::all();
+        $municipios = Municipios::all();
+        if ($id == 'session') {
+            $citados_data = session('citados_trabajador_data', []);
+            $citados = count($citados_data);
+        } else {
+            $citados = SeerCitados::where('id_solicitud', $id)->count(); //LLeva el conteo de los citados agregados
+        }
+        return view('solicitudes.patronal.citados_p',compact('estados','id','citados','municipios'));
+    }
+    public function guardar_citadoPatronal(Request $request){
+        $data = $request->all();
+        $imagen_domicilio1 = "Sin documento";
+        $imagen_domicilio2 = "Sin documento";
+
+        // Usar ID temporal si es sesión
+        $tempId = ($data['id'] == 'session') ? uniqid('session_') : $data['id'];
+
+        if ($request->hasFile('foto1')) {
+            $imagen_domicilio1 = $tempId . "-domicilio_Citado1.jpg" . Str::random(8) . ".jpg";
+            Storage::putFileAs('documentosSolicitud', $request->file('foto1'), $imagen_domicilio1);
+        }
+        
+        if ($request->hasFile('foto2')) {
+            $imagen_domicilio2 = $tempId . "-domicilio_Citado2.jpg" . Str::random(8) . ".jpg";
+            Storage::putFileAs('documentosSolicitud', $request->file('foto2'), $imagen_domicilio2);
+        }
+        $foto1 = $imagen_domicilio1;
+        $foto2 = $imagen_domicilio2;
+        //validando información
+        $request->validate([
+            'id'                => 'required',
+            'colonia'           => 'required',
+            'vialidad'          => 'required',
+            'cp'                => 'required|numeric',
+            'calle'             => 'required',
+            'exterior'          => 'required',
+            'referencia'        => 'required',
+            'municipio_citado'  => 'required',
+            'estado_citado'     => 'required',
+            'vialidad'          => 'required'
+        ]);
+        
+        $data_insert=array(
+            'id_solicitud'      => $data["id"],
+            'colonia'           => $data["colonia"],
+            'cp'                => $data["cp"],
+            'n_ext'             => $data["exterior"],
+            'calle'             => $data["calle"],
+            'tipo_vialidad'     => $data["vialidad"],
+            'referencia'        => $data["referencia"],
+            'municipio_citado'  => $data["municipio_citado"],
+            'imagen_domicilio1' => $foto1,
+            'imagen_domicilio2' => $foto2, 
+            'estado_citado'     => $data["estado_citado"],
+        );
+        $data_insert["notificacion"] =  $data["notificacion"];
+
+        if(isset($data["rfc"])){
+            $data_insert["rfc"] =  $data["rfc"];
+        }
+        if(isset($data["curp"])){
+            $data_insert["curp"] =  $data["curp"];
+        }
+        if(isset($data["traductor"])){
+            $val = $data["traductor"];
+            $requires = ($val === 'Si' || $val === '1' || $val === 1 || $val === 'on' || $val === true);
+            $data_insert["traductor"] = $requires ? 1 : 0;
+            if (isset($data["lenguaje"])) {
+                $data_insert["lenguaje"] = is_array($data["lenguaje"]) ? ($data["lenguaje"][0] ?? null) : ($data["lenguaje"] ?? null);
+            } else {
+                $data_insert["lenguaje"] = null;
+            }
+        }
+        if(isset($data["interior"])){
+            $data_insert["n_int"] =  $data["interior"];
+        }
+        if(isset($data["calle1"])){
+            $data_insert["calle1"] =  $data["calle1"];
+        }
+        if(isset($data["calle2"])){
+            $data_insert["calle2"] =  $data["calle2"];
+        }
+        if(isset($data["nombre"])){
+            $data_insert["nombre"] =  $data["nombre"];
+        }
+        if(isset($data["curp"])){
+            $data_insert["curp"] =  $data["curp"];
+        }
+        if(isset($data["nombre"])){
+            $data_insert["nombre"] =  $data["nombre"];
+        }
+        if(isset($data["primer_apellido"])){
+            $data_insert["primer_apellido"] =  $data["primer_apellido"];
+        }
+        if(isset($data["segundo_apellido"])){
+            $data_insert["segundo_apellido"] =  $data["segundo_apellido"];
+        }
+        if (isset($data["tipo"])) {
+            $data_insert["tipo_persona"] = $data["tipo"];
+        
+            /*if ($data["tipo"] == "Moral" && isset($data["razon"])) {
+                $data_insert["nombre"] = $data["razon"];
+            }*/
+        
+            if ($data["tipo"] == "Fisica" && isset($data["nombre"])) {
+                $data_insert["nombre"] = $data["nombre"];
+            }
+        }
+
+        //Se van a generar el citatorio
+        $data_insert['resulte_responsable'] = 'No';
+        //SeerCitados::create($data_insert); 
+        // Si es persona física, elimina los apellidos para este citado
+        if (isset($data["tipo"]) && $data["tipo"] === "Fisica") {
+            unset($data_insert["primer_apellido"], $data_insert["segundo_apellido"]);
+        }
+
+        $municipio = Municipios::find($data["municipio_citado"]); 
+        $estado = Estados::find($data["estado_citado"]);
+        $municipioNombre = $municipio ? mb_strtoupper($municipio->nombre, 'UTF-8') : '';
+        $estadoNombre = $estado ? mb_strtoupper($estado->nombre, 'UTF-8') : '';
+
+        //Validar si existe quien resulta responsable con la misma direccion
+
+        /*$data_insert["nombre"] = "QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN " .
+        $data["vialidad"] . " " . $data["calle"] . ", NÚMERO " . $data["exterior"];
+        if (!empty($data["interior"])) {
+            $data_insert["nombre"] .= " INT. " . $data["interior"];
+        }
+        $data_insert["nombre"] .= " COLONIA " . $data["colonia"] . ", " . $municipioNombre . ", " . $estadoNombre . ", C.P. " . $data["cp"] . ".";
+
+        // Marcar este nuevo registro como el "quien resulte" y crear solo si no existe ya uno igual
+        $data_insert['resulte_responsable'] = 'Si';
+        $direccionNombre = $data_insert["nombre"];
+        */
+        if ($data['id'] == 'session') {
+            $citados_list = session('citados_trabajador_data', []);
+            
+            $citado_original = array(
+                'id_solicitud'      => $data["id"],
+                'colonia'           => $data["colonia"],
+                'cp'                => $data["cp"],
+                'n_ext'             => $data["exterior"],
+                'calle'             => $data["calle"],
+                'tipo_vialidad'     => $data["vialidad"],
+                'referencia'        => $data["referencia"],
+                'municipio_citado'  => $data["municipio_citado"],
+                'imagen_domicilio1' => $foto1,
+                'imagen_domicilio2' => $foto2, 
+                'estado_citado'     => $data["estado_citado"],
+                'notificacion'      => $data["notificacion"],
+                'resulte_responsable' => 'No'
+            );
+            
+            if(isset($data["rfc"])) $citado_original["rfc"] = $data["rfc"];
+            if(isset($data["curp"])) $citado_original["curp"] = $data["curp"];
+            if(isset($data["traductor"])) {
+                $val = $data["traductor"];
+                $requires = ($val === 'Si' || $val === '1' || $val === 1 || $val === 'on' || $val === true);
+                $citado_original["traductor"] = $requires ? 1 : 0;
+                $citado_original["lenguaje"] = isset($data["lenguaje"]) ? (is_array($data["lenguaje"]) ? ($data["lenguaje"][0] ?? null) : $data["lenguaje"]) : null;
+            }
+            if(isset($data["interior"])) $citado_original["n_int"] = $data["interior"];
+            if(isset($data["calle1"])) $citado_original["calle1"] = $data["calle1"];
+            if(isset($data["calle2"])) $citado_original["calle2"] = $data["calle2"];
+            
+            if (isset($data["tipo"])) {
+                $citado_original["tipo_persona"] = $data["tipo"];
+                /*if ($data["tipo"] == "Moral" && isset($data["razon"])) {
+                    $citado_original["nombre"] = $data["razon"];
+                }*/
+                if ($data["tipo"] == "Fisica" && isset($data["nombre"])) {
+                    $citado_original["nombre"] = $data["nombre"];
+                    if(isset($data["primer_apellido"])) $citado_original["primer_apellido"] = $data["primer_apellido"];
+                    if(isset($data["segundo_apellido"])) $citado_original["segundo_apellido"] = $data["segundo_apellido"];
+                }
+            } else {
+                 if(isset($data["nombre"])) $citado_original["nombre"] = $data["nombre"];
+                 if(isset($data["primer_apellido"])) $citado_original["primer_apellido"] = $data["primer_apellido"];
+                 if(isset($data["segundo_apellido"])) $citado_original["segundo_apellido"] = $data["segundo_apellido"];
+            }
+
+            $citados_list[] = $citado_original;
+
+            // Verificar si existe "quien resulte" en la sesión
+            //$existe = false;
+            /*foreach ($citados_list as $c) {
+                if (isset($c['resulte_responsable']) && $c['resulte_responsable'] == 'Si' && $c['nombre'] == $direccionNombre) {
+                    $existe = true;
+                    break;
+                }
+            }
+            
+            if (!$existe) {
+                $citados_list[] = $data_insert; // Este ya tiene el nombre modificado y resulte_responsable='Si'
+            }*/
+            
+            session(['citados_trabajador_data' => $citados_list]);
+            
+        } else {
+            // Lógica original BD
+            // Reconstruir data_insert original para guardar el primero
+             $citado_original_bd = array(
+                'id_solicitud'      => $data["id"],
+                'colonia'           => $data["colonia"],
+                'cp'                => $data["cp"],
+                'n_ext'             => $data["exterior"],
+                'calle'             => $data["calle"],
+                'tipo_vialidad'     => $data["vialidad"],
+                'referencia'        => $data["referencia"],
+                'municipio_citado'  => $data["municipio_citado"],
+                'imagen_domicilio1' => $foto1,
+                'imagen_domicilio2' => $foto2, 
+                'estado_citado'     => $data["estado_citado"],
+                'notificacion'      => $data["notificacion"],
+                'resulte_responsable' => 'No'
+            );
+             
+             if (isset($data["tipo"])) {
+                $citado_original_bd["tipo_persona"] = $data["tipo"];
+                /*if ($data["tipo"] == "Moral" && isset($data["razon"])) {
+                    $citado_original_bd["nombre"] = $data["razon"];
+                }*/
+                if ($data["tipo"] == "Fisica" && isset($data["nombre"])) {
+                    $citado_original_bd["nombre"] = $data["nombre"];
+                }
+            }
+            
+             $data_insert_bd = array(
+                'id_solicitud'      => $data["id"],
+                'colonia'           => $data["colonia"],
+                'cp'                => $data["cp"],
+                'n_ext'             => $data["exterior"],
+                'calle'             => $data["calle"],
+                'tipo_vialidad'     => $data["vialidad"],
+                'referencia'        => $data["referencia"],
+                'municipio_citado'  => $data["municipio_citado"],
+                'imagen_domicilio1' => $foto1,
+                'imagen_domicilio2' => $foto2, 
+                'estado_citado'     => $data["estado_citado"],
+                'notificacion'      => $data["notificacion"],
+                'resulte_responsable' => 'No'
+            );
+
+            if(isset($data["rfc"])) $data_insert_bd["rfc"] = $data["rfc"];
+            if(isset($data["curp"])) $data_insert_bd["curp"] = $data["curp"];
+            if(isset($data["traductor"])) {
+                $val = $data["traductor"];
+                $requires = ($val === 'Si' || $val === '1' || $val === 1 || $val === 'on' || $val === true);
+                $data_insert_bd["traductor"] = $requires ? 1 : 0;
+                $data_insert_bd["lenguaje"] = isset($data["lenguaje"]) ? (is_array($data["lenguaje"]) ? ($data["lenguaje"][0] ?? null) : $data["lenguaje"]) : null;
+            }
+            if(isset($data["interior"])) $data_insert_bd["n_int"] = $data["interior"];
+            if(isset($data["calle1"])) $data_insert_bd["calle1"] = $data["calle1"];
+            if(isset($data["calle2"])) $data_insert_bd["calle2"] = $data["calle2"];
+            if(isset($data["nombre"])) $data_insert_bd["nombre"] = $data["nombre"];
+            if(isset($data["primer_apellido"])) $data_insert_bd["primer_apellido"] = $data["primer_apellido"];
+            if(isset($data["segundo_apellido"])) $data_insert_bd["segundo_apellido"] = $data["segundo_apellido"];
+            
+             if (isset($data["tipo"])) {
+                $data_insert_bd["tipo_persona"] = $data["tipo"];
+                /*if ($data["tipo"] == "Moral" && isset($data["razon"])) {
+                    $data_insert_bd["nombre"] = $data["razon"];
+                }*/
+                if ($data["tipo"] == "Fisica" && isset($data["nombre"])) {
+                    $data_insert_bd["nombre"] = $data["nombre"];
+                }
+            }
+            
+            SeerCitados::create($data_insert_bd);
+            
+           /* $existe = SeerCitados::where('id_solicitud', $data['id'])
+                    ->where('nombre', $direccionNombre)
+                    ->where('resulte_responsable', 'Si')
+                    ->exists();*/
+            /*if (!$existe) {
+                SeerCitados::create($data_insert); // Este usa el $data_insert modificado con el nombre largo
+            }*/
+        }
+        return back()->with('success', 'Citado agregado correctamente, puedes agregar otro o continuar.');
     }
 }

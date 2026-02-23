@@ -1479,6 +1479,108 @@
         });
     </script>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function cargarMunicipiosSolicitante(estadoId) {
+                var $municipio = $('#municipio_pF');
+                if (!$municipio.length) return;
+                $municipio.html('<option value="">Cargando...</option>');
+                if (!estadoId) {
+                    $municipio.html('<option value="">Seleccione</option>');
+                    return;
+                }
+                $.get(base_url + '/api/munSolicitante/' + estadoId, function (data) {
+                    var html = '<option value="">Seleccione</option>';
+                    data.forEach(function (m) {
+                        html += '<option value="' + m.id + '">' + m.nombre + '</option>';
+                    });
+                    $municipio.html(html);
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    $.get(base_url + '/munSolicitante/' + estadoId, function (data) {
+                        var html = '<option value="">Seleccione</option>';
+                        data.forEach(function (m) {
+                            html += '<option value="' + m.id + '">' + m.nombre + '</option>';
+                        });
+                        $municipio.html(html);
+                    }).fail(function (jq2, t2, e2) {
+                        $municipio.html('<option value="">Error cargando municipios</option>');
+                        if (typeof iziToast !== 'undefined') {
+                            iziToast.error({
+                                title: 'Error',
+                                message: 'No se pudieron cargar los municipios. HTTP: ' + (jqXHR.status || jq2.status || 'N/A') + ' - ' + (errorThrown || e2 || textStatus),
+                                position: 'topRight'
+                            });
+                        } else {
+                            alert('No se pudieron cargar los municipios.');
+                        }
+                    });
+                });
+            }
+
+            var $estadoSolicitante = $('#estado_pF');
+            var base_url = "{{ url('') }}";
+
+            if ($estadoSolicitante.length) {
+                $estadoSolicitante.on('change', function () {
+                    cargarMunicipiosSolicitante(this.value);
+                });
+                var inicial = $estadoSolicitante.val();
+                if (inicial) cargarMunicipiosSolicitante(inicial);
+            }
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function cargarMunicipiosSolicitante(estadoId) {
+                var $municipio = $('#municipio_moral');
+                if (!$municipio.length) return;
+                $municipio.html('<option value="">Cargando...</option>');
+                if (!estadoId) {
+                    $municipio.html('<option value="">Seleccione</option>');
+                    return;
+                }
+                $.get(base_url + '/api/munSolicitante/' + estadoId, function (data) {
+                    var html = '<option value="">Seleccione</option>';
+                    data.forEach(function (m) {
+                        html += '<option value="' + m.id + '">' + m.nombre + '</option>';
+                    });
+                    $municipio.html(html);
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    $.get(base_url + '/munSolicitante/' + estadoId, function (data) {
+                        var html = '<option value="">Seleccione</option>';
+                        data.forEach(function (m) {
+                            html += '<option value="' + m.id + '">' + m.nombre + '</option>';
+                        });
+                        $municipio.html(html);
+                    }).fail(function (jq2, t2, e2) {
+                        $municipio.html('<option value="">Error cargando municipios</option>');
+                        if (typeof iziToast !== 'undefined') {
+                            iziToast.error({
+                                title: 'Error',
+                                message: 'No se pudieron cargar los municipios. HTTP: ' + (jqXHR.status || jq2.status || 'N/A') + ' - ' + (errorThrown || e2 || textStatus),
+                                position: 'topRight'
+                            });
+                        } else {
+                            alert('No se pudieron cargar los municipios.');
+                        }
+                    });
+                });
+            }
+
+            var $estadoSolicitante = $('#estado_moral');
+            var base_url = "{{ url('') }}";
+
+            if ($estadoSolicitante.length) {
+                $estadoSolicitante.on('change', function () {
+                    cargarMunicipiosSolicitante(this.value);
+                });
+                var inicial = $estadoSolicitante.val();
+                if (inicial) cargarMunicipiosSolicitante(inicial);
+            }
+        });
+    </script>
+
 @section('scripts')
     <script src="public/js/poderes/general.js"></script>
 @endsection

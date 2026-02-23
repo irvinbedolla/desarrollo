@@ -80,6 +80,7 @@ class ReporteMexicoRati implements FromView
             ->leftJoin('municipios', 'municipios.id', '=', 'seer_solicitante.municipio_domicilio')
             ->leftJoin('abogados', 'abogados.idAbogado', '=', 'seer_citados.id_abogado') 
             ->leftJoin('municipios as mun_abogado', 'mun_abogado.id', '=', 'abogados.municipio_patronal')
+            //->where('seer_general.estatus','=!','Pendiente')
             ->when($this->sede !== "Todos", function ($q) use ($sedeUsuario) {
                 return $this->aplicarFiltroSede($q, 'seer_general', $sedeUsuario);
             })
@@ -110,7 +111,7 @@ class ReporteMexicoRati implements FromView
             return $item;
         });
 
-        return view('excel.reporte-mexico', ['reportes' => $reportes]);
+        return view('excel.reporte-mexico', ['reportes' => $todoJunto]);
     }
 
     /**

@@ -278,7 +278,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" id="sede" value="{{ Auth::user()->delegacion ?? ($sede ?? '') }}">
+                    <input type="hidden" id="sedeReagendar" value="{{ $sede ?? '' }}">
                     <div id="calendarReagendar"></div>
                     <input type="hidden" name="fecha" id="fechaSeleccionada">
                     <input type="hidden" name="hora" id="horaSeleccionada">
@@ -946,7 +946,7 @@
                     })(),
                     end: (() => {
                         const now = new Date();
-                        return new Date(now.getFullYear(), now.getMonth() + 3, 0).toISOString().split('T')[0];
+                        return new Date(now.getFullYear(), now.getMonth() + 7, 0).toISOString().split('T')[0];
                     })()
                 },
                 events: function(fetchInfo, successCallback, failureCallback) {
@@ -954,10 +954,11 @@
                     var sede = document.getElementById('sede').value;
                     // Hacer petición AJAX con parámetro sede
                     $.ajax({
-                        url: '{{ url("/api/obtenerCumplimientos") }}',
+                        url: '{{ url("/api/obtenerCumplimientosFiltrado") }}',
                         method: 'GET',
                         data: {
                             sede: sede,
+                            conciliador_id: {{ $conciliadorId }},
                             start: fetchInfo.startStr,
                             end: fetchInfo.endStr
                         },
@@ -1161,27 +1162,12 @@
             if (!calEl) return;
             if (calendarReagendar) { calendarReagendar.destroy(); }
             // Calcular fecha mínima (16 días hábiles) para posicionar el calendario directamente en la primera semana válida.
-            const sede = $('#sede').val();
-            const conciliadorId = '{{ auth()->id() ?? "" }}';
+            const sede = $('#sedeReagendar').val();
+            const conciliadorId = Number(@json($conciliadorId));
             const hoy = new Date();
             hoy.setHours(0,0,0,0);
             let fechaCursor = new Date(hoy);
             let habilesContados = 0;
-            let fechasInhabilesCentro = window.__diasInhabilesCentroCache || null;
-            function cargarInhabilesSync(){
-                if(fechasInhabilesCentro) return Promise.resolve();
-                return fetch(`{{ url('/api/dias-inhabiles-centro') }}?centro=${encodeURIComponent(sede)}`)
-                    .then(r=>r.json())
-                    .then(data=>{ fechasInhabilesCentro = data.map(d=>({inicio:d.fecha_inicio, fin:d.fecha_final})); window.__diasInhabilesCentroCache = fechasInhabilesCentro; })
-                    .catch(()=>{ fechasInhabilesCentro = []; });
-            }
-            function esInhabil(fecha){
-                const fStr = fecha.toISOString().slice(0,10);
-                for(const r of fechasInhabilesCentro){
-                    if(r.inicio <= fStr && r.fin >= fStr){ return true; }
-                }
-                return false;
-            }
             function calcularFechaMinima(){
                 const siguiente = new Date(hoy);
                 siguiente.setDate(siguiente.getDate() + 1);
@@ -1207,19 +1193,14 @@
                 const [y, m, d] = ymd.split('-').map(Number);
                 let dt = new Date(y, m - 1, d); // local
                 let added = 0;
-                // esInhabil espera un objeto Date y usa fechasInhabilesCentro cargadas por cargarInhabilesSync
                 while (added < n) {
                     dt.setDate(dt.getDate() + 1);
-                    // Si la fecha cae dentro de un rango inhábil, la saltamos
-                    if (typeof esInhabil === 'function' && esInhabil(dt)) {
-                        continue;
-                    }
                     added++;
                 }
                 return toYMD(dt);
             }
 
-            cargarInhabilesSync().then(()=>{
+            (function(){
 
                 const fechaMinima = calcularFechaMinima();
                 const fechaMinimaStr = fechaMinima.toISOString().slice(0,10);
@@ -1230,8 +1211,7 @@
                 const startOfWeekStr = fechaSemanaInicio.toISOString().slice(0,10);
 
                 const fechaConfirmacion = document.getElementById('fechaConfirmacion').value;
-                // Calcula la fecha límite sumando 46 días hábiles (excluye inhábiles cargados)
-                const fechaLimite = fechaConfirmacion ? addBusinessDaysYMD(fechaConfirmacion, 46) : null;
+                const fechaLimite = fechaConfirmacion ? addDaysYMD(fechaConfirmacion, 45) : null;
 
 
                 calendarReagendar = new FullCalendar.Calendar(calEl, {
@@ -1285,10 +1265,11 @@
                 });
                 calendarReagendar.render();
                 setTimeout(function(){ if (calendarReagendar) { calendarReagendar.updateSize(); calendarReagendar.refetchEvents(); } }, 200);
-            });
+            })();
         });
 
-        $('#sede').on('change', function(){ 
+        $('#sede').on('change', function(){
+            $('#sedeReagendar').val($('#sede').val());
             if(typeof calendarModal !== 'undefined' && calendarModal){ calendarModal.refetchEvents(); }
             if(typeof calendarReagendar !== 'undefined' && calendarReagendar){ calendarReagendar.refetchEvents(); }
         });
