@@ -40,25 +40,22 @@
                                                 <label multiple for="name">Tipo de reporte</label>
                                                 <select id="reporte" class="form-control" name="tipo_reporte" required>
                                                     <option value="">Seleccione</option>
-                                                    <option value="Cumplimientos">Cumplimientos Detallado</option>
-                                                    <option value="CumplimientosResumen">Cumplimientos Montos</option>
-                                                    <option value="CumplimientosGrafica">Cumplimientos Graficas</option>
-
-                                                    <option value="Ratificaciones">Ratificaciones Detallado</option>
-                                                    <option value="RatificacionesUsuario">Ratificaciones Por Usuario</option>
-                                                    <option value="RatificacionesGraficas">Ratificaciones Grafica</option> 
-
+                                                    <option value="Cumplimientos">Cumplimientos</option>
+                                                    <option value="Ratificaciones">Ratificaciones</option>
                                                     <option value="Notificaciones">Notificaciones</option>
+                                                    <option value="Solicitudes">Solicitudes</option>
 
-                                                    <option value="Solicitudes">Solicitudes Detallado</option>
-                                                    <option value="SolicitudesResumen">Solicitudes Cantidades</option>
+                                                    <option value="CumplimientosGrafica">Cumplimientos Graficas</option>
+                                                    <option value="RatificacionesGraficas">Ratificaciones Grafica</option> 
                                                     <option value="SolicitudesGraficas">Solicitudes Graficas</option>
+
+
+                                                    <option value="Productividad">Productividad</option>
 
 
                                                     <option value="EstadisticaMexico">INEGI</option> 
                                                     <option value="Concentrado">General</option>
                                                     <option value="GeneralSede">General por Sede</option>
-
                                                     <option value="SeguroSocial">Seguro Social</option>
                                                 </select>
                                                 <div class="invalid-feedback">
@@ -189,7 +186,7 @@
                 $('#reporte-notificador').css('display','none');
                 $('#Grafica').css('display','none');
             }
-            else if(valorCambiado == "CumplimientosResumen"){
+            else if(valorCambiado == "Productividad"){
                 $('#PDF').css('display','block');
                 $('#Excel').css('display','none');
                 $('#Excel-PDF').css('display','none');

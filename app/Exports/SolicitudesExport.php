@@ -81,9 +81,11 @@ class SolicitudesExport implements FromView
             // --- LÓGICA DE AUDIENCIAS POR REGISTRO ---
             // Contamos el total de audiencias
             DB::raw("COUNT(DISTINCT audiencias.id) as total_audiencias"),
-            // Conteo por estatus específico (ejemplo: 'Celebrada', 'Cancelada', etc.)
-            // Puedes repetir esta línea para cada estatus que necesites trackear
-            DB::raw("GROUP_CONCAT(DISTINCT audiencias.estatus SEPARATOR ', ') as estados_audiencias")
+            // Formateamos como: FECHA (ESTATUS) y separamos cada audiencia con una coma
+            DB::raw("GROUP_CONCAT(DISTINCT 
+            CONCAT(DATE_FORMAT(audiencias.fecha, '%d/%m/%Y'), ' (', audiencias.estatus, ')') 
+            ORDER BY audiencias.fecha ASC SEPARATOR ', ') as detalle_audiencias")
+            //DB::raw("GROUP_CONCAT(DISTINCT audiencias.estatus SEPARATOR ', ') as estados_audiencias")
         )
         ->groupBy(
             'users.name', 
