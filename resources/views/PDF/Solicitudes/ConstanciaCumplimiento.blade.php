@@ -170,7 +170,7 @@
                         </p>
                         <br><br><br>
                         <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:10px;">
-                            <tr>
+                            <!--tr>
                                 <td style="width:60%; vertical-align:top; padding:0 10px;">
                                     <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
                                     <b> {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador }} {{ $solicitud->segundo_trabajador }}<br>
@@ -183,8 +183,8 @@
                                         LA PARTE EMPLEADORA
                                     </b>
                                 </td>
-                            </tr>
-                            <br><br><br>
+                            </!--tr>
+                            <br><br><br-->
                             <tr>
                                 <td style="width:60%; vertical-align:top; padding:0 10px;"><b>Doy fe</b><br><br><br><br>
                                     <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>

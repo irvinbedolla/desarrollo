@@ -116,7 +116,19 @@
                     @endif --}}
                     La parte citada:
                     @foreach ($citados as $citado)
-                        <b>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido ?? ''}}</b>,
+                        @if($citado->id_abogado)
+                            @if ($citado->abogado->reprecentante == 'No')
+                                <b>{{ $citado->abogado->nombres_patronal }} {{ $citado->abogado->primer_apellido_patronal }} {{ $citado->abogado->segundo_apellido_patronal }}</b>
+                            @else
+                            <b>{{ $citado->abogado->nombre_representante }} {{ $citado->abogado->primer_apellido_representante }} {{ $citado->abogado->segundo_apellido_representante }}</b>
+                            @endif
+                            en representación de <b>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido ?? ''}}</b>,  
+                            @if($citado->abogado->tipo_identificacion)
+                            quien se identifica con <b>{{ strtoupper($citado->abogado->tipo_identificacion) }}</b>, de Número <b>{{ $citado->abogado->num_identificacion }}</b>,
+                            @endif
+                        @else
+                            <b>{{ $citado->nombre }}{{ $citado->primer_apellido ?? ''}} {{ $citado->segundo_apellido ?? ''}}</b>,
+                        @endif
                     @endforeach y, por la parte solicitante <b>{{ $solicitante->nombre }}</b> quien se identifica con 
                     <b>{{ mb_strtoupper($solicitante->identificacion, 'UTF-8') }}</b>, de Número <b>{{ $solicitante->num_identificacion }}</b> expedida a su favor por 
                     <b>{{ $descripcionIdentificacionS }}</b>, identificaciones que concuerdan fisionómicamente con las partes y, que, en este acto, se agrega copia cotejada al 

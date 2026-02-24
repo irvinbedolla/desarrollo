@@ -8735,6 +8735,46 @@ class SeerController extends Controller
                         ->get();
         }
 
+        $abogados = collect();
+        $idsHistorial = $citados->pluck('id_historial')->filter()->unique()->values()->all();
+        $idsAbogadoPoder = $citados->pluck('id_abogado')->filter()->unique()->values()->all();
+
+        if (!empty($idsHistorial)) {
+            $abogadosHist = \App\Models\HistorialAbogado::whereIn('id', $idsHistorial)->get();
+            $abogados = $abogados->merge($abogadosHist);
+        }
+
+        if (!empty($idsAbogadoPoder)) {
+            $abogadosPoder = Poder::whereIn('idAbogado', $idsAbogadoPoder)->get();
+            $abogados = $abogados->merge($abogadosPoder);
+        }
+
+        $abogados = $abogados->unique(function ($a) {
+            $clase = is_object($a) ? get_class($a) : '';
+            $id = $a->id ?? ($a->idAbogado ?? null);
+            return $clase . ':' . (string) $id;
+        })->values();
+
+        $historialMap = !empty($idsHistorial)
+            ? $abogadosHist->keyBy('id')
+            : collect();
+        $poderMap = !empty($idsAbogadoPoder)
+            ? $abogadosPoder->keyBy('idAbogado')
+            : collect();
+
+        foreach ($citados as $c) {
+            if (!empty($c->id_historial) && $historialMap->has($c->id_historial)) {
+                $c->abogado = $historialMap->get($c->id_historial);
+                $c->abogado_fuente = 'historial';
+            } elseif (!empty($c->id_abogado) && $poderMap->has($c->id_abogado)) {
+                $c->abogado = $poderMap->get($c->id_abogado);
+                $c->abogado_fuente = 'poder';
+            } else {
+                $c->abogado = null;
+                $c->abogado_fuente = null;
+            }
+        }
+
             /*$abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
                 ->where('seer_citados.aparece_convenio', 1)
                 ->where('id_solicitud',$id)
