@@ -2332,8 +2332,9 @@ class SeerController extends Controller
             }
         }
         $registro = SeerCitados::find($data["id"]);
-
         
+        $fecha_formateada = \Carbon\Carbon::parse($registro->fecha)->format('Y-m-d');
+        $hora_formateada  = \Carbon\Carbon::parse($registro->fecha)->format('H:i');
 
         if($data["vista_previa"] == '0'){
             // Redirigir al listado
@@ -2372,7 +2373,7 @@ class SeerController extends Controller
             }
 
             // Retornamos la vista pasando la variable url_pdf
-            return view('notificaciones.vista_previa', compact('registro','municipios','estados', 'NUE', 'nombre_estado', 'nombre_municipio', 'url_pdf', 'hora_notificacion', 'tipo_llenado'));
+            return view('notificaciones.vista_previa', compact('registro','municipios','estados', 'NUE', 'nombre_estado', 'nombre_municipio', 'url_pdf', 'hora_formateada','fecha_formateada', 'tipo_llenado'));
             
         }
           
@@ -13323,7 +13324,16 @@ class SeerController extends Controller
             'imagen_domicilio2' => $foto2, 
             'estado_citado'     => $data["estado_citado"],
         );
-        $data_insert["notificacion"] =  $data["notificacion"];
+        //Hacer un if para indicar la notificaacion
+        $valor = session()->get('citados_data');
+        if($valor[0]){
+            $data_insert["notificacion"] = $valor[0]['notificacion'];
+            
+        }
+        else{
+            $data_insert["notificacion"] =  $data["notificacion"];
+        }
+        
 
         if(isset($data["rfc"])){
             $data_insert["rfc"] =  $data["rfc"];
@@ -13387,7 +13397,9 @@ class SeerController extends Controller
         } else {
             SeerCitados::create($data_insert); 
         }
-
+        $checando = session()->get('citados_data');
+        dd($checando);
+        
         // Si es persona física, elimina los apellidos para este citado
         if (isset($data["tipo"]) && $data["tipo"] === "Fisica") {
             unset($data_insert["primer_apellido"], $data_insert["segundo_apellido"]);

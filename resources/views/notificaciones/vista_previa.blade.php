@@ -438,13 +438,13 @@
                                     <div class="col-xs-12 col-sm-6 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Fecha de notificación <span style="color:red;">(*)</span></label>
-                                            <input type="date" class="form-control" name="fecha_notificacion" value="{{ $registro->fecha }}" required>
+                                            <input type="date" class="form-control" name="fecha_notificacion" value="{{ $fecha_formateada }}" required>
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-6">
                                         <div class="form-group">
                                             <label for="name">Hora de notificación <span style="color:red;">(*)</span></label>
-                                            <input type="time" class="form-control" name="hora_notificacion" value="<?=$hora_notificacion;?>" required>
+                                            <input type="time" class="form-control" name="hora_notificacion" value="{{ $hora_formateada }}" required>
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
