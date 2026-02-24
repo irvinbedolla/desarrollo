@@ -205,8 +205,8 @@
             }
             else if(valorCambiado == "Ratificaciones"){
                 $('#PDF').css('display','none');
-                $('#Excel').css('display','none');
-                $('#Excel-PDF').css('display','block');
+                $('#Excel').css('display','block');
+                $('#Excel-PDF').css('display','none');
                 $('#reporte-notificador').css('display','none');
                 $('#Grafica').css('display','none');
             }
@@ -229,6 +229,13 @@
                 $('#Excel').css('display','block');
                 $('#Excel-PDF').css('display','none');
                 $('#reporte-notificador').css('display','block');
+                $('#Grafica').css('display','none');
+            }
+            else if(valorCambiado == "Solicitudes"){
+                $('#PDF').css('display','none');
+                $('#Excel').css('display','block');
+                $('#Excel-PDF').css('display','none');
+                $('#reporte-notificador').css('display','none');
                 $('#Grafica').css('display','none');
             }
             else if(valorCambiado == "Concentrado" || valorCambiado == "Detallado" 

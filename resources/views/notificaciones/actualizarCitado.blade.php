@@ -440,7 +440,7 @@
                                                 <textarea class="form-control" name="observaciones" rows="4" oninput="this.value = this.value.toUpperCase()" required></textarea>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-3">
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
                                                         <label for="name">Giro comercial <span style="color:red;">(*)</span> </label>
                                                         <input type="text" name="giro_comercial" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 

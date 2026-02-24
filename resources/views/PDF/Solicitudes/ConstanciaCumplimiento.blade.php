@@ -195,7 +195,7 @@
                                     </b>
                                 </td>
                                 <td style="width:60%; vertical-align:top; padding:0 10px;"><b>Vo. Bo.</b><br><br><br><br>
-                                    <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                                    <div style="width:80%; margin: 0 auto 5px auto;"></div>
                                     <b>{{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
                                         {{ $nombramiento_delegado }}            
                                     </b>
