@@ -63,6 +63,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\MailAceptacionRechazo;
 use App\Exports\ReporteMexicoRati;
 use App\Exports\EmpresaSinSeguro;
+use App\Exports\SolicitudesExport;
 
 class SeerController extends Controller
 {   
@@ -949,6 +950,9 @@ class SeerController extends Controller
             return view('PDF.Estadisticas.graficaRatificaciones', compact('nombres', 'totales'));
         }
         else if($data["tipo_reporte"] == "Solicitudes"){
+
+            return Excel::download(new SolicitudesExport($fecha_inicial, $fecha_final, $sede), 'Solicitudes.xlsx');
+            /*
             // Obtenemos los usuarios con sus solicitudes y pagos filtrados por fecha y sede
             $detalleSolicitantes = DB::table('seer_general')
             ->join('users', 'users.id', '=', 'seer_general.user_id')
@@ -1005,6 +1009,7 @@ class SeerController extends Controller
             $pdf = \PDF::loadView('PDF/Estadisticas/SolicitudesDetallado',compact('fecha_inicial','fecha_final','detalleSolicitantes'));
             $pdf->setPaper('a4', 'landscape');
             return $pdf->stream('solicitudes.pdf');
+            */
         }
         else if($data["tipo_reporte"] == "SolicitudesResumen"){
             $solicitudes = SeerPerGeneral::join("users", "users.id", "=", "seer_general.user_id")
@@ -11839,7 +11844,7 @@ class SeerController extends Controller
         ->leftJoin('users', 'seer_citados.id_notificador', '=', 'users.id')
         
         // Filtros
-        ->where('seer_citados.estatus', "!=", 'Pendiente')
+        ->where('seer_citados.estatus', "!=", 'Sin asignar')
         ->whereIn('seer_general.delegacion', $delegacionesFiltrar) // Corregido: ahora usa el array de grupos
         
         // Selección de campos específica
@@ -11861,7 +11866,7 @@ class SeerController extends Controller
             'users.name as notificador_nombre'
         )
         ->orderBy('seer_citados.created_at', 'desc')
-        ->limit(500)
+        ->limit(1000)
         ->get();
         /*
         $id = auth()->user()->id;

@@ -17,4 +17,8 @@ class Turnos extends Model {
     'vacaciones_dias','aguinaldo_dias','otros_dias','horario','comida',/*'domicilio',*/'resolucion_primera','resolucion_trabajadores','resolucion_justificacion','resolucion_segunda',
     'NUE','observaciones','id_conciliador','municipio_rat','tipo_vialidad','calle','colonia','num_ext','num_int','codigo_postal','idAbogado','user_id','num_identificacion','estado_rat','año', 'id_historial'];  
 
+    public function pagos()
+    {
+        return $this->hasMany(Pagos::class, 'id_solicitud', 'id');
+    }
 }
