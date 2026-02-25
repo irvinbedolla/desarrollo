@@ -148,7 +148,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-4">
                                             <div class="form-group">
                                                 <label for="name">Horario laboral</label>
-                                                <input type="text" name="horario" class="form-control" placeholder="Ejemplo: De lunes a viernes de 9Am a 5PM y Sábados de 9 Am a 2 PM" > 
+                                                <input type="text" name="horario" maxlength="120" class="form-control" placeholder="Ejemplo: De lunes a viernes de 9Am a 5PM y Sábados de 9 Am a 2 PM" > 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -157,7 +157,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-3">
                                             <div class="form-group">
                                                 <label for="name">Horario de comida</label>
-                                                <input type="text" name="comida" class="form-control" placeholder="De 2PM a 3 PM o 13:30 a 15:00" > 
+                                                <input type="text" name="comida" maxlength="50" class="form-control" placeholder="De 2PM a 3 PM o 13:30 a 15:00" > 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
@@ -684,7 +684,7 @@
                     html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                     html += '<div class="form-group">';
                     html += '<label for="password">Descripción</label>';
-                    html +='<input type="text" class="form-control" name="descripcion_deduccion[]"  oninput="this.value = this.value.toUpperCase()" >';
+                    html +='<input type="text" class="form-control" name="descripcion_deduccion[]" required oninput="this.value = this.value.toUpperCase()" >';
                     html += '<div class="invalid-feedback">';
                     html += 'La Descripción es obligatoria.';
                     html += '</div> </div> </div>';
@@ -693,7 +693,7 @@
                     html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                     html += '<div class="form-group">';
                     html += '<label for="password">Monto a pagar</label>';
-                    html +='<input type="text" class="form-control" name="monto_deduccion[]" oninput="validarNumero(this)" placeholder="$ Solo números y puntos" >';
+                    html +='<input type="text" class="form-control" name="monto_deduccion[]" required oninput="validarNumero(this)" placeholder="$ Solo números y puntos" >';
                     html += '<div class="invalid-feedback">';
                     html += 'El monto es obligatorio.';
                     html += '</div> </div> </div>';
@@ -705,6 +705,10 @@
                 html += '</div>';
 
             $('#newRowDeduccion').append(html);
+            
+            var $row = $('#newRowDeduccion').children().last();
+            $row.find('input[name="descripcion_deduccion[]"]').prop('required', true);
+            $row.find('input[name="monto_deduccion[]"]').prop('required', true);
         });
 
         // Borrar pago
@@ -750,6 +754,12 @@
         const tipo_iden = document.getElementById('tipo_de_conclucion');
         tipo_iden.addEventListener('change', function() {
             const valorSeleccionado = this.value;
+
+            const convenio = (valorSeleccionado === 'Conciliacion');
+            document.querySelectorAll('select[name="tipo_pago[]"]').forEach(function(sel){
+                sel.required = convenio;
+            });
+
             // Realiza la validación o acciones necesarias
             if (valorSeleccionado === 'Conciliacion') {
                 document.getElementById('no_conciliacion').style.display = "none";
@@ -895,6 +905,14 @@
                 tau4.required = false;
             }
         });
+
+        (function(){
+            if(!tipo_iden) return;
+            const convenio = (tipo_iden.value === 'Conciliacion');
+            document.querySelectorAll('select[name="tipo_pago[]"]').forEach(function(sel){
+                sel.required = convenio;
+            });
+        })();
 
          $('.open-modal').click(function() {
             const id = $(this).data('id'); // Obtiene el valor de data-id
