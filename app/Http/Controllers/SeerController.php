@@ -5134,7 +5134,7 @@ class SeerController extends Controller
             //Morelia
                 case 45:
                     $sala = "Sala 1"; break; //Daniel Buitron
-                case 16:
+                case 39:
                     $sala = "Sala 2"; break; //Rosa Isela
                 case 14:
                     $sala = "Sala 3"; break; //Natalia Itzel
@@ -13324,15 +13324,16 @@ class SeerController extends Controller
             'imagen_domicilio2' => $foto2, 
             'estado_citado'     => $data["estado_citado"],
         );
+        $data_insert["notificacion"] =  $data["notificacion"];
         //Hacer un if para indicar la notificaacion
-        $valor = session()->get('citados_data');
+        /*$valor = session()->get('citados_data');
         if($valor[0]){
             $data_insert["notificacion"] = $valor[0]['notificacion'];
             
         }
         else{
             $data_insert["notificacion"] =  $data["notificacion"];
-        }
+        }*/
         
 
         if(isset($data["rfc"])){
@@ -13397,8 +13398,8 @@ class SeerController extends Controller
         } else {
             SeerCitados::create($data_insert); 
         }
-        $checando = session()->get('citados_data');
-        dd($checando);
+        /*$checando = session()->get('citados_data');
+        dd($checando);*/
         
         // Si es persona física, elimina los apellidos para este citado
         if (isset($data["tipo"]) && $data["tipo"] === "Fisica") {
