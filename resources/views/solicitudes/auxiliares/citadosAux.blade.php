@@ -175,27 +175,29 @@
                                             </div>
                                         </div>
                                     </div>
-
+                                    @if(!$session_notificacion)
+                                        <div class = "row">
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">¿Quién entregará los citatorios? <span style="color:red;">(*)</span></label>
+                                                    <select name="notificacion" class="form-control" required>
+                                                        <option value="">SELECCIONE</option>
+                                                        <option value="Trabajador" {{ old('notificacion') == 'Trabajador' ? 'selected' : '' }}>Solicitante</option>
+                                                        <option value="Centro" {{ old('notificacion') == 'Centro' ? 'selected' : '' }}>Centro de conciliación Laboral</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo ¿quién entregará los citatorios? es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
                                     <div class="row"> 
                                         <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:30px;">
                                             <div class="form-group">
                                                 <h4 class="text-center">Dirección de la fuente de empleo</h4>
                                             </div>
                                         </div>    
-
-                                        <div class="col-xs-12 col-sm-12 col-md-3">
-                                            <div class="form-group">
-                                                <label for="name">¿Quién entregará los citatorios? <span style="color:red;">(*)</span></label>
-                                                <select name="notificacion" class="form-control" required>
-                                                    <option value="">SELECCIONE</option>
-                                                    <option value="Trabajador">Solicitante</option>
-                                                    <option value="Centro">Centro de conciliación Laboral</option>
-                                                </select>
-                                                <div class="invalid-feedback">
-                                                    El campo ¿quién entregará los citatorios? es obligatorio.
-                                                </div>
-                                            </div>
-                                        </div>
 
                                         <div class="col-xs-12 col-sm-12 col-md-3">
                                             <div class="form-group">

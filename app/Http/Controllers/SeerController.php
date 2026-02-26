@@ -13258,6 +13258,7 @@ class SeerController extends Controller
     public function vista_citadoAux($id){
         $estados = Estados::all();
         $municipios = Municipios::all();
+        $session_notificacion = session('citados_data.0.notificacion');
         
         if ($id == 'session') {
             $citados = count(session('citados_data', []));
@@ -13271,7 +13272,7 @@ class SeerController extends Controller
         
         //return view('solicitudes.aviso',compact('folio'));
         if($tipo_generacion != 0){*/
-            return view('solicitudes.auxiliares.citadosAux',compact('estados','id','citados','municipios'));
+        return view('solicitudes.auxiliares.citadosAux',compact('estados','id','citados','municipios', 'session_notificacion'));
 
         /*}
         return view('solicitudes.citados',compact('estados','id','citados','municipios'));*/
@@ -13321,7 +13322,7 @@ class SeerController extends Controller
             'imagen_domicilio2' => $foto2, 
             'estado_citado'     => $data["estado_citado"],
         );
-        $data_insert["notificacion"] =  $data["notificacion"];
+        //$data_insert["notificacion"] =  $data["notificacion"];
         //Hacer un if para indicar la notificaacion
         /*$valor = session()->get('citados_data');
         if($valor[0]){
@@ -13331,6 +13332,9 @@ class SeerController extends Controller
         else{
             $data_insert["notificacion"] =  $data["notificacion"];
         }*/
+        
+        //dd($valor);
+        $data_insert["notificacion"] = session('citados_data.0.notificacion', $data['notificacion'] ?? null);
         
 
         if(isset($data["rfc"])){
