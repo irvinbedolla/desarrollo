@@ -143,7 +143,7 @@
                     de Trabajo; artículos 5 y 27 de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo; y artículos 17 y 20 del Reglamento 
                     Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<br><br>
 
-                    Y toda vez que la solicitud de Ratificación de Convenio presentada y admitida de conformidad con lo establecido por los artículos 33 párrafo segundo, 
+                    Y toda vez que la solicitud de conciliación, fue presentada y admitida de conformidad con lo establecido por los artículos 33 párrafo segundo, 
                     684-C y 684-E de la Ley Federal del Trabajo. Señalándose 
                     <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{$audiencia->hora}}
                     </b> horas para la Audiencia, se notificó a la parte 

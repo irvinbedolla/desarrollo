@@ -45,11 +45,7 @@
                                                     <option value="Notificaciones">Notificaciones</option>
                                                     <option value="Solicitudes">Solicitudes</option>
 
-                                                    <option value="CumplimientosGrafica">Cumplimientos Graficas</option>
-                                                    <option value="RatificacionesGraficas">Ratificaciones Grafica</option> 
-                                                    <option value="SolicitudesGraficas">Solicitudes Graficas</option>
-
-
+                                                    <option value="CumplimientosGrafica">Graficas</option>
                                                     <option value="Productividad">Productividad</option>
 
 
