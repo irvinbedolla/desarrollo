@@ -243,6 +243,15 @@
                                                 </div-->
                                             </div>
                                         </div>
+                                        <div id="num_identificacion" class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="form-group">
+                                                <label for="name">Núm de identificación</label>
+                                                <input type="text" name="num_identificacion" maxlength="50" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                <div class="invalid-feedback">
+                                                     El campo núm. de identificación es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div id="motivo_identificacion" class="col-xs-12 col-sm-12 col-md-12 ">
                                             <div class="form-group">
                                                 <label for="name">Motivo de la no identificación</label>
@@ -660,6 +669,7 @@
             const selectIdentificacion = document.getElementById('identificacion_notificacion');
             const mediaFiliacionDiv = document.getElementById('media-filiacion');
             const motivoIdenDiv = document.getElementById('motivo_identificacion');
+            const numIdenDiv = document.getElementById('num_identificacion');
             const dqrGroups = Array.from(document.querySelectorAll('.dqr-group'));
 
             function setRequiredInGroups(groups, enabled) {
@@ -679,11 +689,14 @@
             function actualizarFormulario() {
                 const quienAtiende = selectQuienAtiende ? selectQuienAtiende.value : '';
                 const idenValor = selectIdentificacion ? selectIdentificacion.value : '';
+                const numIdenValor = numIdenDiv ? numIdenDiv.value : '';
 
                 if (idenValor === 'NO PROPORCIONA' || idenValor === 'NO ATIENDE PRESENCIALMENTE') {
                     motivoIdenDiv.style.display = "block";
+                    numIdenDiv.style.display = "none";
                 } else {
                     motivoIdenDiv.style.display = "none";
+                    numIdenDiv.style.display = "block";
                 }
 
                 const personasQuePuedenRecibir = ['OTRA PERSONA', 'CITADO O REPRESENTANTE'];
@@ -703,6 +716,10 @@
             }
             if (selectIdentificacion) {
                 selectIdentificacion.addEventListener('change', actualizarFormulario);
+
+            }
+            if (numIdenDiv) {
+                numIdenDiv.addEventListener('input', actualizarFormulario);
             }
 
             actualizarFormulario();

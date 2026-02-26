@@ -2203,6 +2203,7 @@ class SeerController extends Controller
             'ojos'                        => 'nullable',
             'particulares'                => 'nullable',
             'especificar'                 => 'nullable',
+            'num_identificacion'          => 'nullable',
         ]);
 
         $seercitado = SeerCitados::find($data["id"]);
@@ -2273,6 +2274,7 @@ class SeerController extends Controller
                     'id_notificador'              => $id_notificador,
                     'notificacion'                => $notificacion,
                     'updated_at'                  => $fechaEspecifica,
+                    'num_identificacion'          => $data["num_identificacion"],
                 ]);
 
                 
@@ -2317,8 +2319,8 @@ class SeerController extends Controller
                         'id_notificador'              => $id_notificador,
                         'notificacion'                => $notificacion,
                         //'updated_at'                  => DB::raw("'" . $fechaEspecifica->format('Y-m-d H:i:s') . "'") //da un objeto "expression"
-                        'updated_at'                => $fechaEspecifica->toDateTimeString()
-
+                        'updated_at'                  => $fechaEspecifica->toDateTimeString(),
+                        'num_identificacion'          => $data["num_identificacion"],
                     ]);
                     
             }
@@ -8329,13 +8331,14 @@ class SeerController extends Controller
         return view('cumplimientos/actuales',compact('complimientos_ratificacion','complimientos_audiencias'));
     }
 
-    //PDF NOTIFICADORES Razón de notificación
+    //PDF NOTIFICADORES Razón de notificación Cuando atiende el citado
     public function VerPDFRNotificacion($id, $id_solicitud){
         $solicitud = SeerPerGeneral::find($id_solicitud);
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
         ->first();
-
+        $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id")
+        ->where("audiencias.id_solicitud", "=", $solicitud["id"])->latest('audiencias.created_at')->first();
         $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
         ->where("seer_citados.id", $id)
         ->first();
@@ -8390,7 +8393,7 @@ class SeerController extends Controller
                 $imagenes[] = null;
             }
         }
-        $html = view('PDF/Solicitudes/razonNotificacion', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado'))->render();
+        $html = view('PDF/Solicitudes/razonNotificacion', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado','audiencia'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
