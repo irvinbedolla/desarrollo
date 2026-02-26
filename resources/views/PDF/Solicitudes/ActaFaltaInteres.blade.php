@@ -100,7 +100,7 @@
     
                 <p><b>
                     Solicitante: {{ $solicitante->nombre }} <br>
-                    Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{$audiencia->hora}} horas<br>
+                    Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{\Carbon\Carbon::parse($audiencia->hora)->translatedFormat('H:i')}} horas<br>
                     Asistencia del solicitante: No
                 </b></p>  
                 <center><p><b>ARCHIVO POR FALTA DE INTERÉS</b></p></center>
@@ -126,7 +126,7 @@
 
                     <b>Segundo.</b> El <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, el Centro de Conciliación <b>{{ $solicitud->delegacion }}</b> admitió la 
                     solicitud de Conciliación, señalando que la celebración de la Audiencia de Conciliación se realizaría el <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las<b>
-                    {{ $audiencia->hora }}</b> horas, en las instalaciones de este Centro.<br><br>
+                    {{ \Carbon\Carbon::parse($audiencia->hora)->translatedFormat('H:i') }}</b> horas, en las instalaciones de este Centro.<br><br>
 
                     <b>Tercero.</b> El <b>{{ \Carbon\Carbon::parse($citado->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, se concluyó la notificación personal de él(los) citado(s).<br><br>
 
@@ -145,7 +145,7 @@
 
                     Y toda vez que la solicitud de conciliación, fue presentada y admitida de conformidad con lo establecido por los artículos 33 párrafo segundo, 
                     684-C y 684-E de la Ley Federal del Trabajo. Señalándose 
-                    <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{$audiencia->hora}}
+                    <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{\Carbon\Carbon::parse($audiencia->hora)->translatedFormat('H:i')}}
                     </b> horas para la Audiencia, se notificó a la parte 
                     solicitante <b>{{ $solicitante->nombre }}</b>, sin embargo, no acudió, no obrando una causa justificada de la incomparecencia. <br><br> 
                     Por lo anteriormente expuesto, se:

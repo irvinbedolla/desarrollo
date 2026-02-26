@@ -5715,12 +5715,11 @@ class SeerController extends Controller
             'fecha_terminacion' => $fecha_actual, 
             'estatus'           => 'Archivada',
             'observaciones'     => $data["observaciones"], 
-            'conciliador_id'    => $user->id
         ]);
 
         $numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
         Audiencias::where('id_solicitud',$data["id"])
-        ->orderBy('id_solicitud','desc')
+        ->latest()
         ->first()
         ->update([
             'numero_audiencia'  =>  $numAudiencia+1,
@@ -6280,7 +6279,7 @@ class SeerController extends Controller
         $motivos = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
         ->where('id_solicitud',$id)
         ->select('catalogo_motivos.motivo')->get();
-        $audiencia = Audiencias::where("id_solicitud",$solicitud["id"])->first();
+        $audiencia = Audiencias::where("id_solicitud",$solicitud["id"])->latest()->first();
 
         $html = view('PDF/Solicitudes/ActaFaltaInteres', compact('id', 'solicitud','conciliador','solicitante','citados','motivos','audiencia'))->render();
 
