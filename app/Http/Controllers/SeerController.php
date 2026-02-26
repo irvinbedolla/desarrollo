@@ -6838,11 +6838,8 @@ class SeerController extends Controller
         }
 
         // Hardcode temporal para Morelia según tu lógica original
-        if($delegacion == "Morelia" || $delegacion == "Zitácuaro"){
-            $fecha_revisar = '2026-02-25';
-        } else {
-            $fecha_revisar = $fecha_inicio_busqueda->format('Y-m-d');
-        }
+ 
+        $fecha_revisar = $fecha_inicio_busqueda->format('Y-m-d');
 
         $horarios_disponibles = ["09:00:00", "10:15:00", "11:30:00", "12:45:00", "14:00:00"];
 
