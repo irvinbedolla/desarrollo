@@ -58,10 +58,9 @@
                 page-break-after: always;
             }
         </style>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     </head>
     <body>
         <img src="{{ public_path('../../assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
@@ -85,7 +84,7 @@
                         },
                         series: [{
                             name: 'Efectividad',
-                            data: @json($labels)
+                            data: @json($data)
                         }],
                         xaxis: {
                             categories: @json($labels)
@@ -122,12 +121,13 @@
                                 const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
                                 
                                 pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                                pdf.save('estadisticas_evaluacion.pdf');
+                                pdf.save('estadisticas.pdf');
                                 
                                 button.removeAttribute('data-kt-indicator');
                             });
                         }, 1000);
                     }
+
                 </script>
 
 

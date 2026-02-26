@@ -6280,7 +6280,7 @@ class SeerController extends Controller
         $motivos = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
         ->where('id_solicitud',$id)
         ->select('catalogo_motivos.motivo')->get();
-        $audiencia = SeerPerConciliador::where("id_solicitud",$solicitud["id"])->first();
+        $audiencia = Audiencia::where("id_solicitud",$solicitud["id"])->first();
 
         $html = view('PDF/Solicitudes/ActaFaltaInteres', compact('id', 'solicitud','conciliador','solicitante','citados','motivos','audiencia'))->render();
 
