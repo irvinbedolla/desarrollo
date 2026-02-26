@@ -93,7 +93,7 @@
                         {{ $citado->nombre }} {{ $citado->primer_apellido ?? ''}} {{ $citado->segundo_apellido ?? ''}}<br>
                     @endforeach
                     Funcionario/a Conciliador/a Responsable: {{$conciliador->name}}<br>
-                    Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
+                    Fecha y hora de audiencia: @if($pagos->id_solicitud == NULL) {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> @else {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ \Carbon\Carbon::parse($audiencia->hora)->translatedFormat('H:i') }} horas.<br> @endif
                     Asistencia de los interesados: Si<br>
                     Convenio conciliatorio: Si
                 </b></p>  
@@ -104,8 +104,8 @@
                     Michoacán de Ocampo.<br><br>
 
                     <b>Motivación:</b> Conforme a la determinación de dar por terminado el conflicto laboral, la parte <b>TRABAJADORA</b> y la parte <b>EMPLEADORA</b>, celebraron el Convenio de Conciliación 
-                    de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> ante esta Autoridad Conciliadora como resultado de la audiencia de conciliación 
-                    celebrada <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> de 
+                    de fecha <b> @if($pagos->id_solicitud == NULL) {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} @else {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} @endif</b> ante esta Autoridad Conciliadora como resultado de la audiencia de conciliación 
+                    celebrada <b>@if($pagos->id_solicitud == NULL) {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} @else {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} @endif</b> de 
                     <b>{{$solicitud->hora}}</b> a <b>{{$solicitud->hora_fin}}</b> hrs.<br><br>
 
                     Las <b>PARTES</b> acordaron <b>PAGOS DIFERIDOS</b> en el convenio referido, en este sentido, el <b>EMPLEADOR</b> da cumplimiento ante esta Autoridad Conciliadora al siguiente concepto:<br>
@@ -143,7 +143,7 @@
                     </table>
                     <br>
                     <p style="font-size: 10px;">
-                        LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DE LA CONSTANCIA DE CUMPLIMIENTO PARCIAL DE CONVENIO DE FECHA <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> EXPEDIENTE NÚMERO <b>{{ $solicitud->NUE }}</b> DEL CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO.
+                        LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DE LA CONSTANCIA DE CUMPLIMIENTO PARCIAL DE CONVENIO DE FECHA <b>@if($pagos->id_solicitud == NULL) {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} @else {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} @endif</b> EXPEDIENTE NÚMERO <b>{{ $solicitud->NUE }}</b> DEL CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO.
                     </p>  
                 </div>
             </div>

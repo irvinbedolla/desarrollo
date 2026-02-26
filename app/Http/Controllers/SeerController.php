@@ -12080,6 +12080,9 @@ class SeerController extends Controller
             $html = view('PDF/Cumplimientos/pagosParciales', compact('id', 'solicitud','conciliador','pagos','delegado'))->render();
         }else{
             $solicitud = SeerPerGeneral::find($pagos["id_solicitud"]);
+            $audiencia = Audiencias::where('id_solicitud', $pagos["id_solicitud"])
+                ->latest()
+                ->first();
             $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id")
             ->where("seer_general.id", "=", $solicitud["id"])
             ->select('users.name')
@@ -12096,11 +12099,11 @@ class SeerController extends Controller
                     ->select('users.id', 'users.name', 'users.delegacion')
                     ->first();
             }
-
+            
             $solicitanteNombre = SeerSolicitante::where('id_solicitud', $pagos["id_solicitud"])->value('nombre');
             $citados = SeerCitados::where('id_solicitud', $pagos["id_solicitud"])->where('aparece_convenio', 1)->where('resulte_responsable', 'No')->get();
 
-            $html = view('PDF/Solicitudes/pagosParciales', compact('id', 'solicitud','conciliador','pagos', 'delegado', 'delegacion', 'solicitanteNombre', 'citados'))->render();
+            $html = view('PDF/Solicitudes/pagosParciales', compact('id', 'solicitud','conciliador','pagos', 'delegado', 'delegacion', 'solicitanteNombre', 'citados', 'audiencia'))->render();
         }
 
         $pdf = \PDF::loadHTML($html)
