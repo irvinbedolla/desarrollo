@@ -516,9 +516,6 @@ class SeerController extends Controller
                 ->stream('CumplimientosDetalles.pdf');
             
         }
-        else if($data["tipo_reporte"] == "CumplimientosResumen"){
-            
-        }
         else if ($data["tipo_reporte"] == "CumplimientosGrafica"){
             // 1. Consulta Unificada para Ratificaciones
             $ratificacionesData = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
@@ -608,7 +605,123 @@ class SeerController extends Controller
             $pagosAudienciaMontoPendiente = (object)['audienciasMonto' => $audienciasData->pendiente_monto];
     
     
-            return view('PDF.Estadisticas.graficaCumplimientos', compact('ratificacionesData', 'audienciasData'));
+
+            $usuarios = Turnos::whereBetween('turnos.fecha', [$fecha_inicial, $fecha_final])
+                ->join('users', 'users.id', 'turnos.user_id')
+                // Aplicamos el filtro de sede solo si no es "Todos"
+                ->when($sede !== "Todos", function ($query) use ($sede) {
+                    if ($sede === "TodosDelegado") {
+                        $id = auth()->user()->id;
+                        $user = User::find($id);
+                        $sedeUsuario = $user->delegacion;
+    
+                        if($sedeUsuario == "Morelia"){
+                            $delegaciones = ['Morelia', 'Zitácuaro'];
+                            return $query->whereIn('turnos.delegacion', $delegaciones);
+                        }
+                        else if($sedeUsuario == "Uruapan"){
+                            $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
+                            return $query->whereIn('turnos.delegacion', $delegaciones);
+                        }
+                        else if($sedeUsuario == "Zamora"){
+                            $delegaciones = ['Zamora', 'Sahuayo'];
+                            return $query->whereIn('turnos.delegacion', $delegaciones);
+                        }
+                    }
+                    return $query->where('turnos.delegacion', $sede);
+                })
+                ->select(
+                    'users.name', 
+                    DB::raw('COUNT(turnos.id) as ratificacion'), 
+                    DB::raw('SUM(turnos.monto) as ratificacionesMonto')
+                )
+                ->groupBy('users.id', 'users.name')
+                ->get();
+    
+                // Extraemos los nombres para las etiquetas del eje X
+                $nombres_rati = $usuarios->pluck('name')->toArray();
+                // Extraemos las cantidades para las barras
+                $totales_rati = $usuarios->pluck('ratificacion')->toArray();
+    
+            
+            // 1. Obtenemos los datos detallados (usando la consulta anterior)
+            $detalleSolicitantes = DB::table('seer_general')
+                ->join('users', 'users.id', '=', 'seer_general.user_id')
+                ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
+                ->when($sede !== "Todos", function ($q) use ($sede) {
+                    if ($sede === "TodosDelegado") {
+                        $id = auth()->user()->id;
+                        $user = User::find($id);
+                        $sedeUsuario = $user->delegacion;
+        
+                        if($sedeUsuario == "Morelia"){
+                            $delegaciones = ['Morelia', 'Zitácuaro'];
+                            return $q->whereIn('seer_general.delegacion', $delegaciones);
+                        }
+                        else if($sedeUsuario == "Uruapan"){
+                            $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
+                            return $q->whereIn('seer_general.delegacion', $delegaciones);
+                        }
+                        else if($sedeUsuario == "Zamora"){
+                            $delegaciones = ['Zamora', 'Sahuayo'];
+                            return $q->whereIn('seer_general.delegacion', $delegaciones);
+                        }
+                    }
+                    return $q->where("seer_general.delegacion", $sede);
+                })
+                ->select('users.name as auxiliar', 'seer_general.id')
+                ->get();
+        
+                // 2. Procesar los datos para la gráfica usando colecciones de Laravel
+                // Contamos cuántas veces aparece cada nombre de auxiliar
+                $conteoPorUsuario = $detalleSolicitantes->countBy('auxiliar');
+        
+                $nombres = $conteoPorUsuario->keys();  
+                $totales = $conteoPorUsuario->values(); 
+    
+                $conciliadores = User::role('Conciliador')->select('id','name')->get();
+                $i = 0;
+                foreach ($conciliadores as $conciliador) {
+                    $conciliacion  = SeerPerGeneral::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final])
+                    ->join("seer_conciliadores","seer_conciliadores.id_solicitud","=","seer_general.id")
+                    ->select(DB::raw('count(seer_conciliadores.id) as Conciliacion'))
+                    ->where('seer_general.conciliador_id',$conciliador->id)
+                    ->where('seer_conciliadores.estatus_conciliacion','Conciliacion')
+                    ->first();
+        
+                    $noconciliacion  = SeerPerGeneral::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final])
+                    ->join("seer_conciliadores","seer_conciliadores.id_solicitud","=","seer_general.id")
+                    ->select(DB::raw('count(seer_conciliadores.id) as NoConciliacion'))
+                    ->where('seer_general.conciliador_id',$conciliador->id)
+                    ->where('seer_conciliadores.estatus_conciliacion','No conciliacion')
+                    ->first();
+        
+                    $conciliadores[$i]->conciliador     = $conciliacion->Conciliacion;
+                    $conciliadores[$i]->noconciliador   = $noconciliacion->NoConciliacion;
+                    
+                    if($conciliacion->Conciliacion == 0){
+                        $conciliadores[$i]->total = 0;
+                    }else{
+                        $resultado = ($conciliacion->Conciliacion / ($conciliacion->Conciliacion + $noconciliacion->NoConciliacion)) * 100;
+                        $conciliadores[$i]->total = round($resultado, 2);
+                        //$conciliadores[$i]->total           = ($conciliacion->Conciliacion / ($conciliacion->Conciliacion + $noconciliacion->NoConciliacion)) *100;
+                    }
+                    
+                    $i++;
+                }
+                // Ahora, extraemos las etiquetas (meses) y los datos (counts)
+                $labels = $conciliadores->pluck('name')->toArray();;
+                $data   = $conciliadores->pluck('total')->toArray();;
+    
+           
+    
+            return view('PDF/Estadisticas/Graficas',compact('labels','data','ratificacionesData', 'audienciasData','nombres_rati', 'totales_rati', 'detalleSolicitantes','nombres', 'totales'));
+
+            //return view('PDF.Estadisticas.graficaSolicitudes', compact('nombres', 'totales', 'detalleSolicitantes'));
+
+            //return view('PDF.Estadisticas.graficaRatificaciones', compact('nombres', 'totales'));
+
+            //return view('PDF.Estadisticas.graficaCumplimientos', compact('ratificacionesData', 'audienciasData'));
         }
         else if($data["tipo_reporte"] == "Ratificaciones"){
             if ($data["tipo"] == "2") {
@@ -687,50 +800,6 @@ class SeerController extends Controller
                 ->setPaper('a4', 'landscape')
                 ->stream('ratificaciones.pdf');
         }
-        else if($data["tipo_reporte"] == "RatificacionesUsuario"){
-            
-        }
-        else if($data["tipo_reporte"] == "RatificacionesGraficas"){
-            $usuarios = Turnos::whereBetween('turnos.fecha', [$fecha_inicial, $fecha_final])
-                ->join('users', 'users.id', 'turnos.user_id')
-                // Aplicamos el filtro de sede solo si no es "Todos"
-                ->when($sede !== "Todos", function ($query) use ($sede) {
-                    if ($sede === "TodosDelegado") {
-                        $id = auth()->user()->id;
-                        $user = User::find($id);
-                        $sedeUsuario = $user->delegacion;
-    
-                        if($sedeUsuario == "Morelia"){
-                            $delegaciones = ['Morelia', 'Zitácuaro'];
-                            return $query->whereIn('turnos.delegacion', $delegaciones);
-                        }
-                        else if($sedeUsuario == "Uruapan"){
-                            $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
-                            return $query->whereIn('turnos.delegacion', $delegaciones);
-                        }
-                        else if($sedeUsuario == "Zamora"){
-                            $delegaciones = ['Zamora', 'Sahuayo'];
-                            return $query->whereIn('turnos.delegacion', $delegaciones);
-                        }
-                    }
-                    return $query->where('turnos.delegacion', $sede);
-                })
-                ->select(
-                    'users.name', 
-                    DB::raw('COUNT(turnos.id) as ratificacion'), 
-                    DB::raw('SUM(turnos.monto) as ratificacionesMonto')
-                )
-                ->groupBy('users.id', 'users.name')
-                ->get();
-    
-                // Extraemos los nombres para las etiquetas del eje X
-                $nombres = $usuarios->pluck('name')->toArray();
-    
-                // Extraemos las cantidades para las barras
-                $totales = $usuarios->pluck('ratificacion')->toArray();
-    
-            return view('PDF.Estadisticas.graficaRatificaciones', compact('nombres', 'totales'));
-        }
         else if($data["tipo_reporte"] == "Solicitudes"){
 
             return Excel::download(new SolicitudesExport($fecha_inicial, $fecha_final, $sede), 'Solicitudes.xlsx');
@@ -793,86 +862,9 @@ class SeerController extends Controller
             return $pdf->stream('solicitudes.pdf');
             */
         }
-        else if($data["tipo_reporte"] == "SolicitudesResumen"){
-            
-        }
-        else if($data["tipo_reporte"] == "SolicitudesGraficas"){
-            // 1. Obtenemos los datos detallados (usando la consulta anterior)
-            $detalleSolicitantes = DB::table('seer_general')
-            ->join('users', 'users.id', '=', 'seer_general.user_id')
-            ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
-            ->when($sede !== "Todos", function ($q) use ($sede) {
-                if ($sede === "TodosDelegado") {
-                    $id = auth()->user()->id;
-                    $user = User::find($id);
-                    $sedeUsuario = $user->delegacion;
-    
-                    if($sedeUsuario == "Morelia"){
-                        $delegaciones = ['Morelia', 'Zitácuaro'];
-                        return $q->whereIn('seer_general.delegacion', $delegaciones);
-                    }
-                    else if($sedeUsuario == "Uruapan"){
-                        $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
-                        return $q->whereIn('seer_general.delegacion', $delegaciones);
-                    }
-                    else if($sedeUsuario == "Zamora"){
-                        $delegaciones = ['Zamora', 'Sahuayo'];
-                        return $q->whereIn('seer_general.delegacion', $delegaciones);
-                    }
-                }
-                return $q->where("seer_general.delegacion", $sede);
-            })
-            ->select('users.name as auxiliar', 'seer_general.id')
-            ->get();
-    
-            // 2. Procesar los datos para la gráfica usando colecciones de Laravel
-            // Contamos cuántas veces aparece cada nombre de auxiliar
-            $conteoPorUsuario = $detalleSolicitantes->countBy('auxiliar');
-    
-            $nombres = $conteoPorUsuario->keys();  
-            $totales = $conteoPorUsuario->values(); 
-    
-            return view('PDF.Estadisticas.graficaSolicitudes', compact('nombres', 'totales', 'detalleSolicitantes'));
-        }
         else if($data["tipo_reporte"] == "Notificaciones"){
             //Notificaciones
             return Excel::download(new NotificacionesExport($fecha_inicial, $fecha_final, $sede, $auxiliar , $notificador), 'notificaciones.xlsx');
-        }
-        else if($data["tipo_reporte"] == "Graficas"){
-    
-            $conciliadores = User::role('Conciliador')->select('id','name')->get();
-            $i = 0;
-            foreach ($conciliadores as $conciliador) {
-                $conciliacion  = SeerPerGeneral::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final])
-                ->join("seer_conciliadores","seer_conciliadores.id_solicitud","=","seer_general.id")
-                ->select(DB::raw('count(seer_conciliadores.id) as Conciliacion'))
-                ->where('seer_general.conciliador_id',$conciliador->id)
-                ->where('seer_conciliadores.estatus_conciliacion','Conciliacion')
-                ->first();
-    
-                $noconciliacion  = SeerPerGeneral::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final])
-                ->join("seer_conciliadores","seer_conciliadores.id_solicitud","=","seer_general.id")
-                ->select(DB::raw('count(seer_conciliadores.id) as NoConciliacion'))
-                ->where('seer_general.conciliador_id',$conciliador->id)
-                ->where('seer_conciliadores.estatus_conciliacion','No conciliacion')
-                ->first();
-    
-                $conciliadores[$i]->conciliador     = $conciliacion->Conciliacion;
-                $conciliadores[$i]->noconciliador   = $noconciliacion->NoConciliacion;
-                if($conciliacion->Conciliacion == 0){
-                    $conciliadores[$i]->total = 0;
-                }else{
-                    $conciliadores[$i]->total           = $conciliacion->Conciliacion / ($conciliacion->Conciliacion + $noconciliacion->NoConciliacion);
-                }
-                $i++;
-            }
-            // Ahora, extraemos las etiquetas (meses) y los datos (counts)
-            $labels = $conciliadores->pluck('name')->toArray();;
-            $data   = $conciliadores->pluck('total')->toArray();;
-    
-           
-    
-            return view('PDF/Estadisticas/Graficas',compact('labels','data'));
         }
         else if($data["tipo_reporte"] == "Concentrado"){
             //Auxiliares
