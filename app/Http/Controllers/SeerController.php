@@ -5517,31 +5517,32 @@ class SeerController extends Controller
             $personas = User::whereHas('roles', function ($query) {
                 return $query->where('name', '=', 'Notificador');
             })
-            ->where('delegacion', ["Morelia", "Zitácuaro" , "Zitácuaro"])
+            ->whereIn('delegacion', ["Morelia", "Zitácuaro" , "Zitácuaro"])
             ->get();
-        } else if ($user["delegacion"] == "Uruapan"){
+        }else if ($user["delegacion"] == "Uruapan"){
             $personas = User::whereHas('roles', function ($query) {
                 return $query->where('name', '=', 'Notificador');
             })
-            ->where('delegacion', ["Uruapan", "Lázaro Cárdenas"])
+            ->whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])
             ->get();
         }else if ($user["delegacion"] == "Zamora"){
             $personas = User::whereHas('roles', function ($query) {
                 return $query->where('name', '=', 'Notificador');
             })
-            ->where('delegacion', ["Zamora", "Sahuayo"])
+            ->whereIn('delegacion', ["Zamora", "Sahuayo"])
             ->get();
         }
-        else if ($user["delegacion"] == "Zitácuaro" || $user["delegacion"] == "Zitácuaro"){
+        else if ($user["delegacion"] == "Zitácuaro"){
             $personas = User::whereHas('roles', function ($query) {
                 return $query->where('name', '=', 'Notificador');
             })
-            ->whereIN('delegacion', ["Zamora", "Zitácuaro"])
+            ->where('delegacion', ["Zitácuaro"])
             ->get();
         }
 
         return view('notificaciones.index',compact('personas','mis_notificaciones','userRole'));
     }
+
 
     //Conciliadores en solicitudes audiencias
     public function indexA(){
