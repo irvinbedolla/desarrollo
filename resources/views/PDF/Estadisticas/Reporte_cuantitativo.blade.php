@@ -1,303 +1,298 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <meta name="csrf-token" content="{{ csrf_token() }}"/>
-        <title>Sí Concilio</title>
-        <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Reporte Cuantitativo - Sí Concilio</title>
+    <style>
+        /* Tipografía institucional */
+        @page { margin: 1.5cm; }
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            color: #333;
+            font-size: 9px; /* Tamaño optimizado para Landscape */
+            margin: 0;
+            padding-top: 60px;
+        }
 
-        <!-- Bootstrap 5.3.3 -->
-        <link href="../public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    
-        <style>
-           @page {
-                margin: 0px 0px;
-            }
-            body{
-                padding-top: 85px;
-            }
-            main{
-                margin: 50px 50px 50px 40px; /*Para colocar el texto*/
-            }
-            header {
-                position: fixed;
-                top: -100px;
-                left: 0;
-                right: 0;
-                height: 100px;
-                text-align: center;
-                font-size: 14px;
-            }
+        /* Membrete y Fondos */
+        .fondo-membrete {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1000;
+        }
 
-            footer {
-                position: fixed;
-                bottom: -60px;
-                left: 0;
-                right: 0;
-                height: 50px;
-                text-align: center;
-                font-size: 12px;
-            }
-            .content {
-                font-family: sans-serif;
-                font-size: 12px;
-                text-align: justify;
-                margin-top: 50px;
-            }
-            .fondo-membrete {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                z-index: -1;
-            } 
-            .page-break {
-                page-break-after: always;
-            }
-        </style>
-            
-    </head>
-    <body>
-        <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
-        <footer>
-            
-        </footer>
-        <main>
-            <div class="content">
-                <div class="table-responsive">
-                    <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
-                            <tr>   
-                                <td><b>Centro de Conciliación Laboral </b></td>
-                                
-                            </tr>
-                    </table>
-                </div><br><br><br>
+        /* Encabezados de Sección */
+        .section-header {
+            background-color: #f2f4f4;
+            border-left: 5px solid #869b9c;
+            padding: 8px 12px;
+            margin: 20px 0 10px 0;
+            font-size: 11px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-transform: uppercase;
+        }
+
+        /* Estilo de Tablas Profesional */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            table-layout: fixed;
+        }
+        th {
+            background-color: #869b9c;
+            color: #ffffff;
+            padding: 8px 4px;
+            border: 1px solid #758a8b;
+            text-align: center;
+        }
+        td {
+            padding: 6px 4px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+            word-wrap: break-word;
+        }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+
+        /* Pie de página de tabla (Totales) */
+        tfoot tr td {
+            background-color: #e8eded;
+            font-weight: bold;
+            color: #2c3e50;
+            border-top: 2px solid #869b9c;
+        }
+
+        .monto { color: #2e7d32; font-weight: bold; }
+        .page-break { page-break-after: always; }
+        
+        .header-top {
+            width: 100%;
+            border-bottom: 2px solid #869b9c;
+            margin-bottom: 20px;
+        }
+        /* Estilos para indicadores visuales */
+        .kpi-container {
+            width: 100%;
+            margin-bottom: 25px;
+        }
+        .kpi-card {
+            width: 30%;
+            display: inline-block;
+            vertical-align: top;
+            padding: 10px;
+            background: #ffffff;
+            border: 1px solid #dee2e6;
+            text-align: center;
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            height: 15px;
+            margin-top: 10px;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background-color: #869b9c;
+            border-radius: 4px;
+        }
+        .kpi-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #5a6a6b;
+        }
+    </style>
+</head>
+<body>
+    <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
+
+    <main>
+        <table class="header-top">
+            <tr>
+                <td style="text-align: left; border: none; background: none;">
+                    <h2 style="margin:0; color:#869b9c;">REPORTE CUANTITATIVO</h2>
+                    <span style="font-size: 12px;">Centro de Conciliación Laboral</span>
+                </td>
+                <td style="text-align: right; border: none; background: none;">
+                    <b>Periodo:</b> {{ $fecha_inicial }} - {{ $fecha_final }}
+                </td>
+            </tr>
+        </table>
+
+        <div class="section-header">Indicadores</div>
+            <div class="kpi-container">
                 
-                            <div class="table-responsive">
-                                <spam>Auxiliares</spam>
-                                <table class="table table-striped mt-2">
-                                    <thead style="background-color: #869b9c;">
-                                        <th style="color: #fff;  text-align: center;">Nombre</th>
-                                        <th style="color: #fff;  text-align: center;">Solicitudes</th>
-                                        <th style="color: #fff;  text-align: center;">Solicitudes Confirmadas</th>
-                                        <th style="color: #fff;  text-align: center;">Ratificaciones</th>
-                                        <th style="color: #fff;  text-align: center;">Incompetencias</th>
-                                        <th style="color: #fff;  text-align: center;">Cumplimientos</th>
-                                        <th style="color: #fff;  text-align: center;">Monto en Audiencia</th>
-                                        <th style="color: #fff;  text-align: center;">Monto en Ratificaciones</th>
-                                    </thead>
-                                    <tbody>
-                                        @php
-                                            $total_solicitudes = 0;
-                                            $total_confirmadas = 0;
-                                            $total_ratificaciones = 0;
-                                            $total_incopetencia = 0;
-                                            $total_cumplimientos = 0;
-                                            $total_audiencia = 0;
-                                            $total_monto_ratificacion = 0;
-                                        @endphp
-                                        @foreach($solicitudes as $solicitud)
-                                            <tr>
-                                                <td style=" text-align: center;">{{ $solicitud->name}}</td>
-                                                <td style=" text-align: center;">{{ $solicitud->solicitudes}}</td>
-                                                <td style=" text-align: center;">{{ $solicitud->confirmadas}}</td>
-                                                <td style=" text-align: center;">{{ $solicitud->ratificaciones}}</td>
-                                                <td style=" text-align: center;">{{ $solicitud->incompetencia}}</td>
-                                                <th style=" text-align: center;">{{ $solicitud->cumplimientoRatificacion + $solicitud->cumplimientoAudiencia }}</th>
-                                                <td style=" text-align: center;">${{ number_format($solicitud->cumplimientoAudienciaMonto, 2) }}</td>
-                                                <td style=" text-align: center;">${{ number_format($solicitud->cumplimientoRatificacionMonto, 2) }}</td>
-                                                @php 
-                                                    $total_solicitudes = $total_solicitudes + $solicitud->solicitudes;
-                                                    $total_confirmadas = $total_confirmadas + $solicitud->confirmadas;
-                                                    $total_ratificaciones = $total_ratificaciones + $solicitud->ratificaciones;
-                                                    $total_incopetencia = $total_incopetencia + $solicitud->incompetencia;
-                                                    $total_cumplimientos = $total_cumplimientos + $solicitud->cumplimientoRatificacion + $solicitud->cumplimientoAudiencia;
-                                                    $total_audiencia = $total_audiencia + $solicitud->cumplimientoAudienciaMonto;
-                                                    $total_monto_ratificacion = $total_monto_ratificacion + $solicitud->cumplimientoRatificacionMonto;
-                                                @endphp
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td style=" text-align: center;">Totales:</td>
-                                            <td style=" text-align: center;">{{ $total_solicitudes }}</td>
-                                            <td style=" text-align: center;">{{ $total_confirmadas }}</td>
-                                            <td style=" text-align: center;">{{ $total_ratificaciones }}</td>
-                                            <td style=" text-align: center;">{{ $total_incopetencia }}</td>
-                                            <td style=" text-align: center;">{{ $total_cumplimientos }}</td>
-                                            <td style=" text-align: center;">${{ number_format($total_audiencia,2) }}</td>
-                                            <td style=" text-align: center;">${{ number_format($total_monto_ratificacion,2) }}</td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
+                <div class="kpi-card" style="margin-left: 3%;">
+                    <span style="font-size: 10px; color: #666;">TOTAL RECAUDADO (AUD + RAT)</span><br>
+                    <span class="kpi-value">${{ number_format($solicitudes->sum('cumplimientoAudienciaMonto') + $solicitudes->sum('cumplimientoRatificacionMonto'), 2) }}</span>
+                </div>
 
-             <div class="page-break"></div><br><br>
-                            <div class="table-responsive">
-                                <spam>Conciliadores</spam>
-                                <table class="table table-striped mt-2">
-                                    <thead style="background-color: #869b9c;">
-                                        <th style="color: #fff;  text-align: center;">Nombre</th>
-                                        <th style="color: #fff;  text-align: center;">N° de Audiencias</th>
-                                        <th style="color: #fff;  text-align: center;">N° Cumplimientos en Audiencia</th>
-                                        <th style="color: #fff;  text-align: center;">Monto</th>
-                                        <th style="color: #fff;  text-align: center;">Convenios</th>
-                                        <th style="color: #fff;  text-align: center;">Archivada por falta de interés</th>
-                                        <th style="color: #fff;  text-align: center;">Archivada por incompetencia</th>
-                                        <th style="color: #fff;  text-align: center;">Número de Multas</th>
-                                        <th style="color: #fff;  text-align: center;">Audiencias Virtuales</th>
-                                        <th style="color: #fff;  text-align: center;">Concluida en una Audiencia</th>
-                                        <th style="color: #fff;  text-align: center;">Concluida en dos Audiencias</th>
-                                        <th style="color: #fff;  text-align: center;">Concluida en tres Audiencias</th>
-                                    </thead>
-                                    <tbody>
-                                        @php
-                                            $total_audiencias = 0;
-                                            $total_cumplimientoAudiencia = 0;
-                                            $total_cumplimientoAudienciaMonto = 0;
-                                            $total_cumplimientoAudienciaConvenio = 0;
-                                            $total_cumplimientoAudienciaFalta = 0;
-                                            $total_cumplimientoAudienciaIncompetencia = 0;
-                                            $total_multas = 0;
-                                            $total_audiencias_virtuales = 0;
-                                            $total_una_audiencias = 0;
-                                            $total_dos_audiencias = 0;
-                                            $total_tres_audiencias = 0;
-                                        @endphp
-                                        @foreach($audiencias as $audiencia)
-                                            <tr>
-                                                <td style=" text-align: center;">{{ $audiencia->name}}</td>
-                                                <td style=" text-align: center;">{{ $audiencia->total_audiencias}}</td>
-                                                <td style=" text-align: center;">{{ $audiencia->cumplimientoAudiencia }}</td>
-                                                <td style=" text-align: center;">${{ number_format($audiencia->cumplimientoAudienciaMonto, 2) }}</td>
-                                                <td style=" text-align: center;">{{ $audiencia->cumplimientoAudienciaConvenio}}</td>
-                                                <td style=" text-align: center;">{{ $audiencia->cumplimientoAudienciaFalta}}</td>
-                                                <td style=" text-align: center;">{{ $audiencia->cumplimientoAudienciaIncompetencia}}</td>
-                                                <td style=" text-align: center;">{{ $audiencia->multas}}</td>
-                                                <td style=" text-align: center;">{{ $audiencia->audiencias_virtuales}}</td>
-                                                <td style=" text-align: center;">{{ $audiencia->una_audiencia}}</td>
-                                                <td style=" text-align: center;">{{ $audiencia->dos_audiencias}}</td>
-                                                <td style=" text-align: center;">{{ $audiencia->tres_audiencias}}</td>
-                                                @php 
-                                                    $total_audiencias = $total_audiencias + $audiencia->total_audiencias;
-                                                    $total_cumplimientoAudiencia = $total_cumplimientoAudiencia + $audiencia->cumplimientoAudiencia;
-                                                    $total_cumplimientoAudienciaMonto = $total_cumplimientoAudienciaMonto + $audiencia->cumplimientoAudienciaMonto;
-                                                    $total_cumplimientoAudienciaConvenio = $total_cumplimientoAudienciaConvenio + $audiencia->cumplimientoAudienciaConvenio;
-                                                    $total_cumplimientoAudienciaFalta = $total_cumplimientoAudienciaFalta + $audiencia->cumplimientoAudienciaFalta;
-                                                    $total_cumplimientoAudienciaIncompetencia = $total_cumplimientoAudienciaIncompetencia + $audiencia->cumplimientoAudienciaIncompetencia;
-                                                    $total_multas = $total_multas + $audiencia->multas;
-                                                    $total_audiencias_virtuales = $total_audiencias_virtuales + $audiencia->audiencias_virtuales;
-                                                    $total_una_audiencias = $total_una_audiencias + $audiencia->una_audiencia;
-                                                    $total_dos_audiencias = $total_dos_audiencias + $audiencia->dos_audiencias;
-                                                    $total_tres_audiencias = $total_tres_audiencias + $audiencia->tres_audiencias;
-                                                @endphp
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td style=" text-align: center;">Totales:</td>
-                                            <td style=" text-align: center;">{{ $total_audiencias }}</td>
-                                            <td style=" text-align: center;">{{ $total_cumplimientoAudiencia }}</td>
-                                            <td style=" text-align: center;">${{ number_format($total_cumplimientoAudienciaMonto, 2) }}</td>
-                                            <td style=" text-align: center;">{{ $total_cumplimientoAudienciaConvenio }}</td>
-                                            <td style=" text-align: center;">{{ $total_cumplimientoAudienciaFalta }}</td>
-                                            <td style=" text-align: center;">{{ $total_cumplimientoAudienciaIncompetencia }}</td>
-                                            <td style=" text-align: center;">{{ $total_multas }}</td>
-                                            <td style=" text-align: center;">{{ $total_audiencias_virtuales }}</td>
-                                            <td style=" text-align: center;">{{ $total_una_audiencias }}</td>
-                                            <td style=" text-align: center;">{{ $total_dos_audiencias }}</td>
-                                            <td style=" text-align: center;">{{ $total_tres_audiencias }}</td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                
-                <div class="page-break"></div>
+                <div class="kpi-card" style="margin-left: 3%;">
+                    <span style="font-size: 10px; color: #666;">AUDIENCIAS CELEBRADAS</span><br>
+                    <span class="kpi-value">{{ $audiencias->sum('total_audiencias') }}</span>
+                </div>
+            </div>
+        </div>
 
-                            <div class="table-responsive">
-                                <spam>Notificadores</spam>
-                                <table class="table table-striped mt-2">
-                                    <thead style="background-color: #869b9c;">
-                                        <th style="color: #fff;  text-align: center;">Nombre</th>
-                                        <th style="color: #fff;  text-align: center;">Notificaciones</th>
-                                        <th style="color: #fff;  text-align: center;">Notificada</th>
-                                        <th style="color: #fff;  text-align: center;">No notificada</th>
-                                        <th style="color: #fff;  text-align: center;">Pendiente</th>
-                                        <th style="color: #fff;  text-align: center;">Exhorto</th>
-                                        <th style="color: #fff;  text-align: center;">No exitosa se constituye</th>
-                                        <th style="color: #fff;  text-align: center;">No exitosa no se constituye</th>
-                                        <th style="color: #fff;  text-align: center;">Finalizado exitosamente</th>
-                                        <th style="color: #fff;  text-align: center;">Recibe pero no firma</th>
-                                    </thead>
-                                    <tbody>
-                                        @php
-                                            $total_notificaciones = 0;
-                                            $total_Notificada = 0;
-                                            $total_notificacion_Nonotificada = 0;
-                                            $total_notificacion_pendientes = 0;
-                                            $total_notificacion_exhortos = 0;
-                                            $total_notificacion_NESC = 0;
-                                            $total_notificacion_NENSC = 0;
-                                            $total_exitosamente = 0;
-                                            $total_firma = 0;
-                                        @endphp
-                                        @foreach($notificaciones as $notificacion)
-                                            <tr>
-                                                <td style=" text-align: center;">{{ $notificacion->name}}</td>
-                                                <td style=" text-align: center;">{{ $notificacion->Todas_notificaciones}}</td>
-                                                <td style=" text-align: center;">{{ $notificacion->notificada}}</td>
-                                                <td style=" text-align: center;">{{ $notificacion->notificacion_Nonotificada}}</td>
-                                                <td style=" text-align: center;">{{ $notificacion->notificacion_pendientes}}</td>
-                                                <td style=" text-align: center;">{{ $notificacion->notificacion_exhortos}}</td>
-                                                <td style=" text-align: center;">{{ $notificacion->notificacion_NESC}}</td>
-                                                <td style=" text-align: center;">{{ $notificacion->notificacion_NENSC}}</td>
-                                                <td style=" text-align: center;">{{ $notificacion->exitosamente}}</td>
-                                                <td style=" text-align: center;">{{ $notificacion->firma}}</td>
-                                                @php 
-                                                    $total_notificaciones = $total_notificaciones + $notificacion->Todas_notificaciones;
-                                                    $total_Notificada = $total_Notificada + $notificacion->cumplimientoAudiencia;
-                                                    $total_notificacion_Nonotificada = $total_notificacion_Nonotificada + $notificacion->cumplimientoAudienciaMonto;
-                                                    $total_notificacion_pendientes = $total_notificacion_pendientes + $notificacion->notificacion_pendientes;
-                                                    $total_notificacion_exhortos = $total_notificacion_exhortos + $notificacion->notificacion_exhortos;
-                                                    $total_notificacion_NESC = $total_notificacion_NESC + $notificacion->notificacion_NESC;
-                                                    $total_notificacion_NENSC = $total_notificacion_NENSC + $notificacion->notificacion_NENSC;
-                                                    $total_exitosamente = $total_exitosamente + $notificacion->exitosamente;
-                                                    $total_firma = $total_firma + $notificacion->firma;
-                                                @endphp
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td style=" text-align: center;">Totales:</td>
-                                            <td style=" text-align: center;">{{ $total_notificaciones }}</td>
-                                            <td style=" text-align: center;">{{ $total_Notificada }}</td>
-                                            <td style=" text-align: center;">{{ $total_notificacion_Nonotificada }}</td>
-                                            <td style=" text-align: center;">{{ $total_notificacion_pendientes }}</td>
-                                            <td style=" text-align: center;">{{ $total_notificacion_exhortos }}</td>
-                                            <td style=" text-align: center;">{{ $total_notificacion_NESC }}</td>
-                                            <td style=" text-align: center;">{{ $total_notificacion_NENSC }}</td>
-                                            <td style=" text-align: center;">{{ $total_exitosamente }}</td>
-                                            <td style=" text-align: center;">{{ $total_firma }}</td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
+        <div class="section-header">Desempeño de Auxiliares</div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 15%;">Nombre</th>
+                    <th>Solicitudes</th>
+                    <th>Confirmadas</th>
+                    <th>Ratificaciones</th>
+                    <th>Incomplimientos</th>
+                    <th>Cumplimientos</th>
+                    <th>Monto Audiencia</th>
+                    <th>Monto Ratificación</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php $t = ['s'=>0, 'c'=>0, 'r'=>0, 'i'=>0, 'cu'=>0, 'ma'=>0, 'mr'=>0]; @endphp
+                @foreach($solicitudes as $s)
+                <tr>
+                    <td>{{ $s->name }}</td>
+                    <td>{{ $s->solicitudes }}</td>
+                    <td>{{ $s->confirmadas }}</td>
+                    <td>{{ $s->ratificaciones }}</td>
+                    <td>{{ $s->incompetencia }}</td>
+                    <td>{{ $s->cumplimientoRatificacion + $s->cumplimientoAudiencia }}</td>
+                    <td class="monto">${{ number_format($s->cumplimientoAudienciaMonto, 2) }}</td>
+                    <td class="monto">${{ number_format($s->cumplimientoRatificacionMonto, 2) }}</td>
+                </tr>
+                @php
+                    $t['s'] += $s->solicitudes; $t['c'] += $s->confirmadas;
+                    $t['r'] += $s->ratificaciones; $t['i'] += $s->incompetencia;
+                    $t['cu'] += ($s->cumplimientoRatificacion + $s->cumplimientoAudiencia);
+                    $t['ma'] += $s->cumplimientoAudienciaMonto; $t['mr'] += $s->cumplimientoRatificacionMonto;
+                @endphp
+                @endforeach
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>TOTALES</td>
+                    <td>{{ $t['s'] }}</td><td>{{ $t['c'] }}</td>
+                    <td>{{ $t['r'] }}</td><td>{{ $t['i'] }}</td>
+                    <td>{{ $t['cu'] }}</td>
+                    <td>${{ number_format($t['ma'], 2) }}</td>
+                    <td>${{ number_format($t['mr'], 2) }}</td>
+                </tr>
+            </tfoot>
+        </table>
+        <div class="page-break"></div>
 
-            <script type="text/php">
-                if (isset($pdf)) {
-                    $font = $fontMetrics->get_font("Arial", "normal");
-                    $size = 10;
-                    $y = $pdf->get_height() - 30;
-                    $x = ($pdf->get_width() / 2) - 50;
-                    $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
-                    $pdf->page_text($x, $y, $text, $font, $size, array(0, 0, 0));
-                }
-            </script>
-        </main>
-    </body>
+        <div class="section-header">Estadísticas de Conciliadores</div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 12%;">Nombre</th>
+                    <th>Audiencias</th>
+                    <th>Cumpl.</th>
+                    <th>Monto</th>
+                    <th>Conv.</th>
+                    <th>Falta Int.</th>
+                    <th>Incomp.</th>
+                    <th>Multas</th>
+                    <th>Virtual</th>
+                    <th>1 Aud.</th>
+                    <th>2 Aud.</th>
+                    <th>3+ Aud.</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($audiencias as $a)
+                <tr>
+                    <td>{{ $a->name }}</td>
+                    <td>{{ $a->total_audiencias }}</td>
+                    <td>{{ $a->cumplimientoAudiencia }}</td>
+                    <td class="monto">${{ number_format($a->cumplimientoAudienciaMonto, 2) }}</td>
+                    <td>{{ $a->cumplimientoAudienciaConvenio }}</td>
+                    <td>{{ $a->cumplimientoAudienciaFalta }}</td>
+                    <td>{{ $a->cumplimientoAudienciaIncompetencia }}</td>
+                    <td>{{ $a->multas }}</td>
+                    <td>{{ $a->audiencias_virtuales }}</td>
+                    <td>{{ $a->una_audiencia }}</td>
+                    <td>{{ $a->dos_audiencias }}</td>
+                    <td>{{ $a->tres_audiencias }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+        <div class="page-break"></div> <div class="section-header">Gestión de Notificaciones por Notificador</div>
+            <table class="table-report">
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">Nombre</th>
+                        <th>Total Notif.</th>
+                        <th>Notificada</th>
+                        <th>No Notif.</th>
+                        <th>Pendiente</th>
+                        <th>Exhorto</th>
+                        <th>NESC*</th>
+                        <th>NENSC**</th>
+                        <th>Exitosa</th>
+                        <th>Sin Firma</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php
+                        $tn = ['t'=>0, 'n'=>0, 'nn'=>0, 'p'=>0, 'e'=>0, 'nesc'=>0, 'nensc'=>0, 'ex'=>0, 'f'=>0];
+                    @endphp
+                    @foreach($notificaciones as $notificacion)
+                        <tr>
+                            <td class="text-left bold">{{ $notificacion->name }}</td>
+                            <td>{{ $notificacion->Todas_notificaciones }}</td>
+                            <td>{{ $notificacion->notificada }}</td>
+                            <td>{{ $notificacion->notificacion_Nonotificada }}</td>
+                            <td>{{ $notificacion->notificacion_pendientes }}</td>
+                            <td>{{ $notificacion->notificacion_exhortos }}</td>
+                            <td>{{ $notificacion->notificacion_NESC }}</td>
+                            <td>{{ $notificacion->notificacion_NENSC }}</td>
+                            <td>{{ $notificacion->exitosamente }}</td>
+                            <td>{{ $notificacion->firma }}</td>
+                        </tr>
+                        @php 
+                            $tn['t'] += $notificacion->Todas_notificaciones;
+                            $tn['n'] += $notificacion->notificada;
+                            $tn['nn'] += $notificacion->notificacion_Nonotificada;
+                            $tn['p'] += $notificacion->notificacion_pendientes;
+                            $tn['e'] += $notificacion->notificacion_exhortos;
+                            $tn['nesc'] += $notificacion->notificacion_NESC;
+                            $tn['nensc'] += $notificacion->notificacion_NENSC;
+                            $tn['ex'] += $notificacion->exitosamente;
+                            $tn['f'] += $notificacion->firma;
+                        @endphp
+                    @endforeach
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="text-left">TOTALES GENERALES</td>
+                        <td>{{ $tn['t'] }}</td>
+                        <td>{{ $tn['n'] }}</td>
+                        <td>{{ $tn['nn'] }}</td>
+                        <td>{{ $tn['p'] }}</td>
+                        <td>{{ $tn['e'] }}</td>
+                        <td>{{ $tn['nesc'] }}</td>
+                        <td>{{ $tn['nensc'] }}</td>
+                        <td>{{ $tn['ex'] }}</td>
+                        <td>{{ $tn['f'] }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <p style="font-size: 8px; color: #666;">
+                *NESC: No exitosa se constituye / **NENSC: No exitosa no se constituye
+            </p>
+    </main>
+
+    <script type="text/php">
+        if (isset($pdf)) {
+            $font = $fontMetrics->get_font("Arial", "normal");
+            $pdf->page_text(500, 570, "Página {PAGE_NUM} de {PAGE_COUNT}", $font, 8, array(0.5, 0.5, 0.5));
+        }
+    </script>
+</body>
+</html>
