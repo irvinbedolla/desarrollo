@@ -118,7 +118,7 @@
                                                 <th style="color: #fff;">Documentos</th>
                                             </thead>
                                             <tbody>
-                                                @foreach($complimientos_ratificacion as $ratificacion)
+                                                @foreach($cumplimientos_ratificacion as $ratificacion)
                                                     <tr>
                                                         <td>{{ \Carbon\Carbon::parse($ratificacion->fecha)->format('d/m/Y') }}</td>
                                                         <td>{{\Carbon\Carbon::parse($ratificacion->hora)->translatedFormat('h:i')}} Hrs.</td>
@@ -161,10 +161,10 @@
                                                 <th style="color: #fff;">Documentos</th>
                                             </thead>
                                             <tbody>
-                                                @foreach($complimientos_audiencias as $audiencia)
+                                                @foreach($cumplimientos_audiencias as $audiencia)
                                                     <tr>
-                                                        <td>{{$audiencia->fecha}}</td> 
-                                                        <td>{{$audiencia->hora}}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($audiencia->fecha)->format('d/m/Y') }}</td>
+                                                        <td>{{\Carbon\Carbon::parse($audiencia->hora)->translatedFormat('h:i')}} Hrs.</td>
                                                         <td>{{$audiencia->NUE}}</td>
                                                         <td>{{$audiencia->trabajador}}</td>
                                                         <td>{{$audiencia->descripcion}}</td>
