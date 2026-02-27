@@ -9928,6 +9928,7 @@ class SeerController extends Controller
             ->leftJoin('persona_fisica', 'persona_fisica.id', '=', 'seer_citados.id_fisica')
             ->where('seer_citados.id_solicitud', $id)
             ->where('seer_citados.notificacion', 'Centro')
+            ->whereNotNull('seer_citados.id_abogado')
             ->select('seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido','seer_citados.rfc',
             'abogados.nombres_patronal as nombre_abogado','abogados.primer_apellido_patronal as primero_abogado','abogados.segundo_apellido_patronal as segundo_abogado',
             'persona_fisica.nombre as nombre_fisica','persona_fisica.primer_apellido as primer_fisica','persona_fisica.segundo_apellido as segundo_fisica',
@@ -9938,6 +9939,7 @@ class SeerController extends Controller
             leftjoin('abogados', 'abogados.idAbogado', '=', 'seer_citados.id_abogado')
             ->leftJoin('persona_fisica', 'persona_fisica.id', '=', 'seer_citados.id_fisica')
             ->where('seer_citados.id_solicitud', $id)
+            ->whereNotNull('seer_citados.id_abogado')
             ->select('seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido','seer_citados.rfc',
             'abogados.nombres_patronal as nombre_abogado','abogados.primer_apellido_patronal as primero_abogado','abogados.segundo_apellido_patronal as segundo_abogado',
             'persona_fisica.nombre as nombre_fisica','persona_fisica.primer_apellido as primer_fisica','persona_fisica.segundo_apellido as segundo_fisica',
