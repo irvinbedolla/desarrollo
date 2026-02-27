@@ -62,7 +62,7 @@
 
                             @if($mostrarEmitirMultasTop)
                                 <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#ModalEmitirMultas" data-id="{{ $id }}">
-                                    Emitir multas
+                                    Emitir Constancias de No Conciliación
                                 </button>
                             @endif
                             <div class="table-responsive">
@@ -1295,8 +1295,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" id="sede" value="{{ $solicitud->delegacion ?? ($sede ?? '') }}">
-                    <div id="calendar"></div>
+                    <input type="hidden" id="sedeReagendar" value="{{ $solicitud->delegacion ?? ($sede ?? '') }}">
+                    <div id="calendarReagendar"></div>
                     <input type="hidden" name="fecha" id="fechaSeleccionada">
                     <input type="hidden" name="hora" id="horaSeleccionada">
                 </div>
@@ -1446,13 +1446,16 @@
                 </div>
                 <div class="modal-body">
                     <p class="mb-2">
+                        Se procederá a emitir las constancias de No Conciliación.
+                    </p>
+                    <p class="mb-2">
                         Se detectó que <b>los citados notificados por el Centro</b> no tienen comparecencia.
-                        Confirma para continuar con la emisión de multas.
+                        Confirma para continuar con la <b>emisión de multas</b>.
                     </p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-danger">Emitir multas</button>
+                    <button type="submit" class="btn btn-danger">Emitir</button>
                 </div>
             </div>
         </div>
@@ -1615,7 +1618,7 @@
             font-size: 12px !important; 
             cursor: pointer; 
         }
-        #calendar{ 
+        #calendarReagendar{ 
             width: 100%; 
             min-height: 500px; 
         }
@@ -1898,13 +1901,13 @@
 
 
     <script>
-        let calendar;
+        let calendarReagendar;
         $('#ModalReagendar').on('shown.bs.modal', function () {
-            const calEl = document.getElementById('calendar');
+            const calEl = document.getElementById('calendarReagendar');
             if (!calEl) return;
-            if (calendar) { calendar.destroy(); }
+            if (calendarReagendar) { calendarReagendar.destroy(); }
             //Calculamos fecha mínima (5 días hábiles) para posicionar el calendario directamente en la primera semana válida.
-            const sede = $('#sede').val();
+            const sede = $('#sedeReagendar').val();
             const conciliadorId = '{{ $conciliador->id ?? "" }}';
             const hoy = new Date();
             hoy.setHours(0,0,0,0);
@@ -1923,8 +1926,12 @@
                 return toYMD(dt);
             }
 
-            function fetchEventosParte3(startDate, endDate, opciones = {}){
-                const soloSedePrincipal = opciones && opciones.soloSedePrincipal ? 1 : 0;
+            function isWeekend(dt){
+                const day = dt.getDay();
+                return day === 0 || day === 6;
+            }
+
+            function fetchEventosGlobales(startDate, endDate){
                 return new Promise((resolve, reject) => {
                     $.ajax({
                         url: '{{ url('/api/obtenerAudienciasParte3') }}',
@@ -1932,8 +1939,7 @@
                             sede: sede,
                             start: startDate.toISOString(),
                             end: endDate.toISOString(),
-                            conciliador: conciliadorId,
-                            solo_sede_principal: soloSedePrincipal
+                            conciliador: conciliadorId
                         },
                         success: (data)=> resolve(Array.isArray(data) ? data : []),
                         error: (xhr, status, err)=> reject(err || status || 'error')
@@ -1941,88 +1947,65 @@
                 });
             }
 
-            function indexDiaEstado(eventos){
-                // Regresa un Map yyyy-mm-dd -> { hasNonInhabil: bool }
-                const map = new Map();
-                for(const ev of eventos){
+            function buildInhabilIndex(eventos){
+                const set = new Set();
+                for(const ev of (eventos || [])){
                     if(!ev || !ev.start) continue;
                     const ymd = String(ev.start).slice(0,10);
                     const estado = ev.extendedProps && ev.extendedProps.estado ? ev.extendedProps.estado : null;
-                    if(!map.has(ymd)) map.set(ymd, { hasNonInhabil: false });
-                    if(estado && estado !== 'inhabil'){
-                        map.get(ymd).hasNonInhabil = true;
+                    const userId = (ev.extendedProps && (ev.extendedProps.user_id ?? ev.extendedProps.userId)) ?? null;
+                    if(estado === 'inhabil' && (userId === null || userId === '')){
+                        set.add(ymd);
                     }
                 }
-                return map;
+                return set;
             }
 
-            async function calcularFechaMinimaAsync(){
-                // Se requiere dejar al menos 6 días hábiles.
-                const diasMinimosHabiles = 6;
+            async function calcularFechaMinimaNotificacionAsync(){
+                const diasHabilesNecesarios = 8;
                 let cursor = new Date(hoy);
                 let contados = 0;
 
                 const ventanaInicio = new Date(hoy);
                 ventanaInicio.setHours(0,0,0,0);
                 const ventanaFin = new Date(hoy);
-                ventanaFin.setDate(ventanaFin.getDate() + 90);
+                ventanaFin.setDate(ventanaFin.getDate() + 120);
                 ventanaFin.setHours(23,59,59,999);
 
-                const eventos = await fetchEventosParte3(ventanaInicio, ventanaFin, { soloSedePrincipal: true });
-                const idx = indexDiaEstado(eventos);
+                let eventos = [];
+                try {
+                    eventos = await fetchEventosGlobales(ventanaInicio, ventanaFin);
+                } catch(e){
+                    eventos = [];
+                }
+                const inhabilSet = buildInhabilIndex(eventos);
 
-                while(contados < diasMinimosHabiles){
+                while(contados < diasHabilesNecesarios){
                     cursor.setDate(cursor.getDate() + 1);
-                    const day = cursor.getDay();
-                    const esFinSemana = (day === 0 || day === 6);
-                    if(esFinSemana) continue;
-
+                    if(isWeekend(cursor)) continue;
                     const ymd = toYMD(cursor);
-                    const info = idx.get(ymd);
-
-                    if(info && info.hasNonInhabil === false){
-                        continue;
-                    }
-
+                    if(inhabilSet.has(ymd)) continue;
                     contados++;
                 }
-                return new Date(cursor);
+
+                return cursor;
             }
 
-            async function addBusinessDaysYMDAsync(ymd, n) {
-                const [y, m, d] = ymd.split('-').map(Number);
-                let dt = new Date(y, m - 1, d); // local
-                let added = 0;
-
-                const ventanaInicio = new Date(dt);
-                ventanaInicio.setHours(0,0,0,0);
-                const ventanaFin = new Date(dt);
-                ventanaFin.setDate(ventanaFin.getDate() + 180);
-                ventanaFin.setHours(23,59,59,999);
-
-                const eventos = await fetchEventosParte3(ventanaInicio, ventanaFin, { soloSedePrincipal: true });
-                const idx = indexDiaEstado(eventos);
-
-                while (added < n) {
-                    dt.setDate(dt.getDate() + 1);
-                    const day = dt.getDay();
-                    const esFinSemana = (day === 0 || day === 6);
-                    if(esFinSemana) continue;
-
-                    const ymd2 = toYMD(dt);
-                    const info = idx.get(ymd2);
-                    if(info && info.hasNonInhabil === false){
-                        continue;
-                    }
-                    added++;
-                }
-                return toYMD(dt);
+            function calcularFechaMinima(){
+                const siguiente = new Date(hoy);
+                siguiente.setDate(siguiente.getDate() + 1);
+                siguiente.setHours(0,0,0,0);
+                return siguiente;
             }
 
             (async function(){
 
-                const fechaMinima = await calcularFechaMinimaAsync();
+                const fechaMinima = calcularFechaMinima();
                 const fechaMinimaStr = fechaMinima.toISOString().slice(0,10);
+
+                //Fecha mínima para notificación (8 días hábiles) SOLO para aviso
+                const fechaMinNotificacion = await calcularFechaMinimaNotificacionAsync();
+                const fechaMinNotificacionStr = toYMD(fechaMinNotificacion);
                 // Ajustar a lunes de la semana que contiene la fecha mínima para no cortar la semana
                 const fechaSemanaInicio = new Date(fechaMinima);
                 const desplazamientoLunes = (fechaSemanaInicio.getDay() + 6) % 7;
@@ -2030,11 +2013,10 @@
                 const startOfWeekStr = fechaSemanaInicio.toISOString().slice(0,10);
 
                 const fechaConfirmacion = document.getElementById('fechaConfirmacion').value;
-                // Calcula la fecha límite sumando 46 días hábiles (excluye inhábiles cargados)
-                const fechaLimite = fechaConfirmacion ? await addBusinessDaysYMDAsync(fechaConfirmacion, 46) : null;
+                const fechaLimite = fechaConfirmacion ? addDaysYMD(fechaConfirmacion, 45) : null;
 
 
-                calendar = new FullCalendar.Calendar(calEl, {
+                calendarReagendar = new FullCalendar.Calendar(calEl, {
                     locale: 'es',
                     firstDay: 1,
                     initialDate: fechaMinimaStr,
@@ -2056,7 +2038,24 @@
                     eventTimeFormat: { hour: '2-digit', minute: '2-digit' },
                     eventClick: function(info) {
                         const slot = new Date(info.event.start);
-                        if (info.event.extendedProps.estado === 'disponible' && slot > new Date() && slot.toISOString().slice(0,10) >= fechaMinimaStr) {
+                        const slotYMD = slot.toISOString().slice(0,10);
+                        const estadoClick = info.event.extendedProps && info.event.extendedProps.estado ? info.event.extendedProps.estado : null;
+                        const titulo = (info.event && info.event.title) ? String(info.event.title) : '';
+
+                        if (estadoClick === 'ocupado' || /audiencia\s*\(/i.test(titulo)) {
+                            if (window.Swal && typeof Swal.fire === 'function') {
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: 'Horario ocupado',
+                                    html: 'Este horario ya cuenta con una audiencia programada. <br><br>Si continúas, la <b>audiencia se empalmará</b>.',
+                                });
+                            }
+                        }
+
+                        const estadoSeleccionable = (estadoClick === 'disponible' || estadoClick === 'ocupado' || /audiencia\s*\(/i.test(titulo));
+                        const fechaSeleccionable = (slot > new Date() && slot.toISOString().slice(0,10) >= fechaMinimaStr);
+
+                        if (estadoSeleccionable && fechaSeleccionable) {
                             $('.fc-event-selected').removeClass('fc-event-selected');
                             info.el.classList.add('fc-event-selected');
                             const fecha = slot.toISOString().split('T')[0];
@@ -2064,11 +2063,22 @@
                             $('#fechaSeleccionada').val(fecha);
                             $('#horaSeleccionada').val(hora+':00');
                             $('#btnGuardarReagenda').prop('disabled', false);
+
+                            if (slotYMD < fechaMinNotificacionStr) {
+                                if (window.Swal && typeof Swal.fire === 'function') {
+                                    Swal.fire({
+                                        icon: 'warning',
+                                        title: 'Aviso de notificación',
+                                        html: 'La fecha seleccionada está <b>dentro de los 8 días hábiles</b> requeridos para notificar.' +
+                                            '<br><br>Fecha mínima sugerida: <b>' + fechaMinNotificacionStr + '</b>.',
+                                    });
+                                }
+                            }
                         } else {
                             Swal.fire({
                                 icon: 'warning',
-                                title: 'Uups...',
-                                text: 'Se necesitan 5 días hábiles para notificar.',
+                                title: 'Ups...',
+                                text: 'Horario no disponible',
                             });
                         }
                     },
@@ -2077,12 +2087,12 @@
                         if(estado){ info.el.classList.add('fc-est-'+estado); info.el.classList.add('fc-event-'+estado); }
                     }
                 });
-                calendar.render();
-                setTimeout(function(){ if (calendar) { calendar.updateSize(); calendar.refetchEvents(); } }, 200);
+                calendarReagendar.render();
+                setTimeout(function(){ if (calendarReagendar) { calendarReagendar.updateSize(); calendarReagendar.refetchEvents(); } }, 200);
             })();
         });
 
-        $('#sede').on('change', function(){ if(calendar){ calendar.refetchEvents(); }});
+        $('#sedeReagendar').on('change', function(){ if(calendarReagendar){ calendarReagendar.refetchEvents(); }});
 
         const formReagendar = document.querySelector('#ModalReagendar form');
         if(formReagendar){

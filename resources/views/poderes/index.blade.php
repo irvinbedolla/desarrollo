@@ -110,7 +110,18 @@
                                                     </td>
                                                     <td>
                                                         @can('editar-abogado')
-                                                            <a class="btn btn-info" href="{{ route('poderes.edit', $persona->idAbogado)}}" onclick=editar_poder();>Editar</a>
+                                                            <div class="d-flex flex-column gap-1">
+                                                                <a class="btn btn-info"
+                                                                href="{{ route('poderes.edit', $persona->idAbogado) }}"
+                                                                onclick="editar_poder();">
+                                                                    Editar
+                                                                </a>
+
+                                                                <a class="btn btn-warning"
+                                                                href="{{ route('poderes.history', $persona->idAbogado) }}">
+                                                                    Historial
+                                                                </a>
+                                                            </div>
                                                         @endcan
                                                     </td>
                                                     <td>

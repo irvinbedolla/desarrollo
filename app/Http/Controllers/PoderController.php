@@ -396,6 +396,45 @@ class PoderController extends Controller
         return view('poderes.editar', compact('poder','estados','municipios'));
     }
 
+    public function history($id){
+        $historiales = HistorialAbogado::where('id_abogado', $id)->get();
+        $oldest = HistorialAbogado::where('id_abogado', $id)->oldest()->first();
+        foreach ($historiales as $historial){
+            if($historial->created_at == $oldest->created_at){
+                $historial->tipo_cambio = "Creación";
+            }
+            else{
+                $historial->tipo_cambio = "Modificación";
+            }
+        }
+        return view('poderes.historial', compact('historiales'));
+    }
+
+    public function historyDetail($id)
+    {
+        $historial = HistorialAbogado::with(['usuario', 'estadoPatronal', 'municipioPatronal'])->find($id);
+
+        if (!$historial) {
+            return response()->json(['message' => 'Historial no encontrado'], 404);
+        }
+        $historial->makeHidden([
+            'updated_at',
+            'created_at',
+        ]);
+
+        if ($historial->usuario) {
+            $historial->usuario->makeHidden([
+                'email',
+                'email_verified_at',
+                'password',
+                'remember_token',
+                'created_at',
+                'updated_at',
+            ]);
+        }
+
+        return response()->json($historial);
+    }
 
     public function update(Request $request, $id)
     {

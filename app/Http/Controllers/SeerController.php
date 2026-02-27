@@ -5670,7 +5670,7 @@ class SeerController extends Controller
              $representantes->push($rep);
         }
         $abogados = Poder::all();
-        SeerPerGeneral::find($id)->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
+        //SeerPerGeneral::find($id)->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
         $estados        = Estados::all();
         $municipios     = Municipios::all();
         return view('/audiencias/audiencias',compact('id','solicitudes','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios', 'fechaConfirmacion', 'allCentro', 'NUE'));

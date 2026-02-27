@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Estados;
+use App\Models\Municipios;
 
 class HistorialAbogado extends Model
 {
@@ -64,4 +66,15 @@ class HistorialAbogado extends Model
         return $this->belongsTo(User::class, 'id_user');
     }
 
+    public function estadoPatronal()
+    {
+        return $this->belongsTo(Estados::class, 'estado_patronal');
+    }
+
+    public function municipioPatronal()
+    {
+        return $this->belongsTo(Municipios::class, 'municipio_patronal');
+    }
+
 }
+

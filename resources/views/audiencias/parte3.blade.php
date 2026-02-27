@@ -1260,7 +1260,23 @@
                     eventTimeFormat: { hour: '2-digit', minute: '2-digit' },
                     eventClick: function(info) {
                         const slot = new Date(info.event.start);
-                        if (info.event.extendedProps.estado === 'disponible' && slot > new Date() && slot.toISOString().slice(0,10) >= fechaMinimaStr) {
+                        const estadoClick = info.event.extendedProps && info.event.extendedProps.estado ? info.event.extendedProps.estado : null;
+                        const titulo = (info.event && info.event.title) ? String(info.event.title) : '';
+
+                        if (estadoClick === 'ocupado' || /audiencia\s*\(/i.test(titulo)) {
+                            if (window.Swal && typeof Swal.fire === 'function') {
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: 'Horario ocupado',
+                                    html: 'Este horario ya cuenta con una audiencia programada. <br><br>Si continúas, la <b>audiencia se empalmará</b>.',
+                                });
+                            }
+                        }
+
+                        const estadoSeleccionable = (estadoClick === 'disponible' || estadoClick === 'ocupado' || /audiencia\s*\(/i.test(titulo));
+                        const fechaSeleccionable = (slot > new Date() && slot.toISOString().slice(0,10) >= fechaMinimaStr);
+
+                        if (estadoSeleccionable && fechaSeleccionable) {
                             $('.fc-event-selected').removeClass('fc-event-selected');
                             info.el.classList.add('fc-event-selected');
                             const fecha = slot.toISOString().split('T')[0];

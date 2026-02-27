@@ -195,6 +195,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/poderes/index',           [PoderController::class, 'index'])->name('poderes');
         Route::get('/poderes/create',          [PoderController::class, 'create'])->name('poderes.create');
         Route::get('/poderes/edit/{id}',       [PoderController::class, 'edit'])->name('poderes.edit');
+        Route::get('/poderes/history/{id}',    [PoderController::class, 'history'])->name('poderes.history');
+        Route::get('/poderes/history/detail/{id}', [PoderController::class, 'historyDetail'])->name('poderes.historyDetail');
         Route::post('/poderes/store',          [PoderController::class, 'store'])->name('poderes.store');
         Route::patch('/poderes/update/{post}', [PoderController::class, 'update'])->name('poderes.update');
         Route::delete('/poderes/destroy/{id}', [PoderController::class, 'destroy'])->name('poderes.destroy');

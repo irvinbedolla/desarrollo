@@ -399,7 +399,7 @@
                                                 </div>  
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="">CURP</label>
+                                                        <label for="">CURP<span style="color:red;"> (*)</span></label>
                                                         <input type="text" class="form-control"  aria-label="CURP" name="curp_representante_pF" id="curp_representante_pF" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
                                                             La CURP es obligatoria.
@@ -824,7 +824,7 @@
                                                 </div>  
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
-                                                        <label for="">CURP</label>
+                                                        <label for="">CURP<span style="color:red;"> (*)</span></label>
                                                         <input type="text" class="form-control"  aria-label="CURP" name="curp_moral" id="curp_moral" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
                                                             La CURP es obligatoria.
