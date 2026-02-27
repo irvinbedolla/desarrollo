@@ -16,7 +16,7 @@
                                 <div class="table-responsive">
                                     <table id="example" class="table table-striped mt-2">
                                         <thead style="background-color: #4A001F;">
-                                            <th style="color: #fff;">Fecha</th>
+                                            <th style="color: #fff;">Fecha</th> 
                                             <th style="color: #fff;">Hora</th>
                                             <th style="color: #fff;">Monto</th>
                                             <th style="color: #fff;">Estatus</th>
@@ -40,8 +40,22 @@
                                                         @endif
                                                     </td>
                                                     <td>
+                                                        @php
+                                                            $totalRegistros = $cumplimientos->count();
+                                                        @endphp
+
                                                         @if($pago->estatus == "Pagado")
-                                                            <a class="btn btn-success" href="{{ route('PDFcumplimientoParcial', $pago->id) }}" target="_blank">PDF</a>
+                                                            @if($totalRegistros == 1)
+                                                                <a class="btn btn-success" href="{{ route('PDFcumplimientoTotal', $pago->id_solicitud) }}" target="_blank">
+                                                                    PDF
+                                                                </a>
+                                                            @else
+                                                                <a class="btn btn-success" href="{{ route('PDFcumplimientoParcial', $pago->id) }}" target="_blank">
+                                                                    PDF
+                                                                </a>
+                                                            @endif
+                                                        {{--@if($pago->estatus == "Pagado")
+                                                            <a class="btn btn-success" href="{{ route('PDFcumplimientoParcial', $pago->id) }}" target="_blank">PDF</a>--}}
                                                         @elseif($pago->estatus == "No pagado")
                                                             <a class="btn btn-info" href="{{ route('PDFincumplimientoAudiencia', $pago->id) }}" target="_blank">PDF</a>
                                                         @elseif($pago->estatus == "Incomparecencia trabajador")
