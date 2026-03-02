@@ -372,6 +372,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/VerpdfactaAudiencia/{id}',                         [SeerController::class, 'VerPDFAudiencia'])->name('VerPDFAudiencia');
         Route::get('/VerpdfmultaNot/{id}/{id_solicitud}',               [SeerController::class, 'VerPDFMultaNotificacion'])->name('PDFmultaNotificacion'); // Notificación de multa
         Route::get('/PDF/captura/{id}/{tipo}',                          [SeerController::class, 'VerPDFCaratula'])->name('PDFCaratulaInfo'); //Formato llenado por los solicitantes
+        Route::get('/VerPDFNoConciliacionIndividual/{id}',              [SeerController::class, 'VerPDFNoConciliacionIndividual'])->name('PDFnoConciliacionIndividual'); //Genera las constancias de no conciliación para mostrar de manera invividual por achivo
     //Fin de PDF
     //Ratificaciones
         Route::get('/ratificaciones/atender',               [TurnosController::class, 'revisar_ratificaciones_hoy'])->name('ratificacion_atender');
@@ -568,6 +569,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/conciliador/firmaCitatorios',      [SeerController::class, 'firmaCitatorios_index'])->name('firma_citatorio'); //Citatorios a firmar por los conciliadores
         Route::get('/conciliador/prueba',               [TurnosController::class, 'actualizar_folio']);
         Route::get('/ObtenerCitatorios/{id}',           [SeerController::class, 'mostrar_citatorios']);
+         Route::get('/ObtenerConstancias/{id}',         [SeerController::class, 'mostrar_noConciliacion']); //Constancias de no conciliación para visualizar en un modal
     //Fin Conciliadores
     //Indidencias
         Route::get('/indidencias/index',                [IncidenciasController::class, 'index_usuario'])->name('crear_inidencia');
