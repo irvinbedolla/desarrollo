@@ -126,7 +126,8 @@
                                                                 </button>
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Documentos Digitales</a></li>
-                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFno_conciliacion', $audiencia->id_solicitud) }}" target="_blank">Constancias de no conciliación</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFno_conciliacion', $audiencia->id_solicitud) }}" target="_blank">Constancias de no conciliación (En un solo archivo)</a></li>
+                                                                    <li><button type="button" class="btn btn-info btn-mostrar-registros" style="width: 100%" data-bs-toggle="modal" data-bs-target="#noConciliacion" data-id="{{ $audiencia->id_solicitud }}">Constancias de no conciliación</button></li>
                                                                     <li><button type="button" class="btn btn-info btn-mostrar-registros" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $audiencia->id_solicitud }}">Citatorios</button></li>
                                                                 </ul>
                                                             </div>
@@ -256,6 +257,28 @@
         </div>
     </form>
 </div>
+<!-- Modal Constancias de no conciliación -->
+<div class="modal fade" id="noConciliacion" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Constancias de No Conciliación</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+            <table class="table table-striped" style="width: 100%; text-align: center;">
+                <thead style="background-color: #D2D3D5;">
+                  <tr>
+                    <th>Citado</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="listaNoConciliacion"></tbody> 
+            </table>
+        </div>
+      </div>
+    </div>
+</div>
 <div id="nuevo_poder" style ="display: none;">
     <div>.</div>
     <div class="loader"></div>
@@ -264,7 +287,7 @@
 @section('scripts')
     <script src="../public/assets/js/poderes/general.js"></script>
     <script>
-        const pdfsUrlBase = "{{ url('solicitud/pdfs') }}";
+        const pdfsUrlBase  = "{{ url('solicitud/pdfs') }}";
     </script>
     <script>
         $(document).ready(function() {
@@ -321,6 +344,50 @@
             $('#documentos').on('hidden.bs.modal', function () {
                 $('.modal-backdrop').remove();
                 $('body').removeClass('modal-open');
+            });
+        });
+    </script>
+    <script>//Constancias de no conciliación individuales en modal
+        $(document).on('click', '[data-bs-target="#noConciliacion"]', function() {
+            const idSolicitud = $(this).data('id');
+            const tabla = $('#listaNoConciliacion');
+            const urlData = "{{ url('ObtenerConstancias') }}/" + idSolicitud;
+            
+            // Ruta base para el PDF individual
+            const routePdfBase = "{{ route('PDFnoConciliacionIndividual', ['id' => 'XXX']) }}";
+
+            tabla.empty().append('<tr><td colspan="2">Cargando...</td></tr>');
+
+            $.ajax({
+                url: urlData,
+                type: 'GET',
+                success: function(data) {
+                    tabla.empty();
+                    if (data.length > 0) {
+                        $.each(data, function(index, registro) {
+                            // Reemplazamos el placeholder XXX por el ID del citado
+                            const finalPdfUrl = routePdfBase.replace('XXX', registro.id);
+                            
+                            const row = `
+                                <tr>
+                                    <td style="text-align: left;">
+                                        <strong>${registro.nombre} ${registro.primer_apellido} ${registro.segundo_apellido || ''}</strong>
+                                    </td>
+                                    <td>
+                                        <a href="${finalPdfUrl}" class="btn btn-danger btn-sm" target="_blank">
+                                           Ver PDF
+                                        </a>
+                                    </td>
+                                </tr>`;
+                            tabla.append(row);
+                        });
+                    } else {
+                        tabla.append('<tr><td colspan="2">No hay registros disponibles.</td></tr>');
+                    }
+                },
+                error: function() {
+                    tabla.empty().append('<tr><td colspan="2" class="text-danger">Error al cargar datos.</td></tr>');
+                }
             });
         });
     </script>

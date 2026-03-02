@@ -8089,7 +8089,6 @@ class SeerController extends Controller
         )); 
     }
 
-
     public function pdfCitatorioAudiencia($id) {
         $citado = SeerCitados::find($id);
         $solicitud = SeerPerGeneral::where('id',$citado["id_solicitud"])->first();   
@@ -10824,7 +10823,7 @@ class SeerController extends Controller
                             break;
                     }
 
-                    $slot->modify('+30 minutes');
+                    $slot->modify('+15 minutes'); //Musestra el periodo de tiempo en el que se van a mostrar los horarios para agendar cumplimientos dentro de la audiencia
                 }
             }
             $fecha->modify('+1 day');
@@ -13597,7 +13596,7 @@ class SeerController extends Controller
             ->where('estatus', '!=', 'Pendiente')
             ->orderBy('created_at', 'desc')
             ->limit(1500);
-
+    
         // 2. Definimos el mapa de delegaciones para evitar IFs repetitivos
         $mapaDelegaciones = [
             "Morelia" => ["Morelia", "Zitácuaro"],
@@ -13631,6 +13630,26 @@ class SeerController extends Controller
         // 4. Ejecutamos la consulta
         $solicitudes = $query->get();
 
+        $idsSolicitudes = $solicitudes->pluck('id');
+        //citadosSolicitud trae todos los citados de las solicitudes obtenidas, agrupados por id_solicitud
+        $citadosSolicitud = DB::table('seer_citados')
+            ->whereIn('id_solicitud', $idsSolicitudes)
+            ->where('resulte_responsable', 'No')
+            ->get()
+            ->groupBy('id_solicitud');
+        $solicitudes->transform(function ($solicitud) use ($citadosSolicitud) {           
+            if (isset($citadosSolicitud[$solicitud->id])) {
+                $solicitud->lista_citados = $citadosSolicitud[$solicitud->id]
+                    ->map(function($citado) {
+                        return trim("{$citado->nombre} {$citado->primer_apellido} {$citado->segundo_apellido}");
+                    })
+                    ->filter()
+                    ->implode(', ');
+            } else {
+                $solicitud->lista_citados = 'Sin citados';
+            }
+            return $solicitud;
+        });
         // 5. Mapeamos el nombre del solicitante al objeto principal para no romper tu vista actual
         $solicitudes->transform(function ($solicitud) {
             $solicitud->nombre = $solicitud->solicitante->nombre ?? 'Sin solicitante';
@@ -14253,5 +14272,44 @@ class SeerController extends Controller
             }*/
         }
         return back()->with('success', 'Citado agregado correctamente, puedes agregar otro o continuar.');
+    }
+    public function mostrar_noConciliacion($id) {
+        $citados = SeerCitados::select('id','nombre','primer_apellido','segundo_apellido')->where('id_solicitud', $id)->get();
+
+        if ($citados->isEmpty()) {
+            return redirect()->back()->with('error', 'No hay constancias para esta solicitud.');
+        }
+        return response()->json($citados);
+    }
+    // Genera de manera individual las constancias de no conciliación para cada citado
+    public function VerPDFNoConciliacionIndividual($id_citado) {
+        $citado = SeerCitados::find($id_citado);
+        $solicitud = SeerPerGeneral::find($citado->id_solicitud);
+        $solicitante = SeerPerGeneral::join("seer_solicitante", "seer_solicitante.id_solicitud", "=", "seer_general.id")
+            ->where("seer_solicitante.id_solicitud", "=", $solicitud->id)
+            ->first();
+        $conciliador = User::join("seer_general", "seer_general.conciliador_id", "=", "users.id")
+            ->where("seer_general.conciliador_id", "=", $solicitud->conciliador_id)
+            ->select('users.name')
+            ->first();
+        $audiencia = SeerPerGeneral::join("audiencias", "audiencias.id_solicitud", "=", "seer_general.id")
+            ->where("audiencias.id_solicitud", "=", $solicitud->id)
+            ->first();
+        $municipio = Municipios::find($citado->municipio_citado);
+        $municipioEmpresa = $municipio ? $municipio->nombre : 'No definido';
+        $estado = Estados::find($citado->estado_citado);
+        $estadoEmpresa = $estado ? $estado->nombre : 'No definido';
+
+        $html = '<html><head><meta charset="utf-8"><style>body{font-family:DejaVu Sans; font-size:12px;}</style></head><body>';
+        $html .= view('PDF/Solicitudes/NoConciliacion', compact(
+            'solicitud', 'conciliador', 'citado', 'audiencia', 'solicitante', 'municipioEmpresa', 'estadoEmpresa'
+        ))->render();
+        $html .= '</body></html>';
+
+        $pdf = \PDF::loadHTML($html)->setPaper('a4', 'portrait');
+        $nombreArchivo = 'No_Conciliacion_'.$citado->nombre.'.pdf';
+        $nombreArchivo = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $nombreArchivo); //Elimina los caracteres especiales no permitidos en archivos
+
+        return $pdf->stream($nombreArchivo);
     }
 }
