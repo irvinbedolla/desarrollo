@@ -1248,7 +1248,6 @@
                             url: '{{ url('/api/obtenerAudienciasParte3') }}',
                             data: { sede: sede, start: fetchInfo.startStr, end: fetchInfo.endStr, conciliador: conciliadorId },
                             success: function(data){
-                                //console.log('calendarReagendar: audiencias recibidas', data && data.length);
                                 success(data);
                             },
                             error: function(xhr,status,err){
@@ -1263,17 +1262,28 @@
                         const estadoClick = info.event.extendedProps && info.event.extendedProps.estado ? info.event.extendedProps.estado : null;
                         const titulo = (info.event && info.event.title) ? String(info.event.title) : '';
 
-                        if (estadoClick === 'ocupado' || /audiencia\s*\(/i.test(titulo)) {
+                        if (estadoClick === 'ocupado') {
+                            if (window.Swal && typeof Swal.fire === 'function') {
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Horario ocupado',
+                                    text: 'Este horario ya está ocupado y no se puede seleccionar.',
+                                });
+                            }
+                            return;
+                        }
+
+                        if (/audiencia\s*\(/i.test(titulo)) {
                             if (window.Swal && typeof Swal.fire === 'function') {
                                 Swal.fire({
                                     icon: 'info',
-                                    title: 'Horario ocupado',
+                                    title: 'Horario con audiencia',
                                     html: 'Este horario ya cuenta con una audiencia programada. <br><br>Si continúas, la <b>audiencia se empalmará</b>.',
                                 });
                             }
                         }
 
-                        const estadoSeleccionable = (estadoClick === 'disponible' || estadoClick === 'ocupado' || /audiencia\s*\(/i.test(titulo));
+                        const estadoSeleccionable = (estadoClick === 'disponible' || /audiencia\s*\(/i.test(titulo));
                         const fechaSeleccionable = (slot > new Date() && slot.toISOString().slice(0,10) >= fechaMinimaStr);
 
                         if (estadoSeleccionable && fechaSeleccionable) {

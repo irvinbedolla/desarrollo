@@ -1441,16 +1441,22 @@
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="ModalEmitirMultasLabel">Emisión de Multas</h5>
+                    <h5 class="modal-title" id="ModalEmitirMultasLabel">Emisión de Constancias de No Conciliación.</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <br>
+                    <div class="text-center">
+                        <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 100px; line-height: 1; align-items: center;"></i>
+                    </div>
+                    <br>
                     <p class="mb-2">
-                        Se procederá a emitir las constancias de No Conciliación.
+                        Se procederá a emitir las Constancias de No Conciliación, por Incomparecencia de los citados.
                     </p>
+                    <br>
                     <p class="mb-2">
-                        Se detectó que <b>los citados notificados por el Centro</b> no tienen comparecencia.
-                        Confirma para continuar con la <b>emisión de multas</b>.
+                        Se detectó que <b>los citados fueron notificados por el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo</b>, y que no ha sido registrada ninguna comparecencia.<br><br>Por lo tanto, al dar click en el botón "Emitir", se generarán la Constancias de No Conciliación, así como las multas de los citados que hayan sido notificados de manera exitosa.
+                        Confirma para continuar con la <b>emisión de dichos documentos</b>.
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -2042,17 +2048,29 @@
                         const estadoClick = info.event.extendedProps && info.event.extendedProps.estado ? info.event.extendedProps.estado : null;
                         const titulo = (info.event && info.event.title) ? String(info.event.title) : '';
 
-                        if (estadoClick === 'ocupado' || /audiencia\s*\(/i.test(titulo)) {
+                        
+                        if (estadoClick === 'ocupado') {
+                            if (window.Swal && typeof Swal.fire === 'function') {
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Horario ocupado',
+                                    text: 'Este horario ya está ocupado y no se puede seleccionar.',
+                                });
+                            }
+                            return;
+                        }
+
+                        if (/audiencia\s*\(/i.test(titulo)) {
                             if (window.Swal && typeof Swal.fire === 'function') {
                                 Swal.fire({
                                     icon: 'info',
-                                    title: 'Horario ocupado',
+                                    title: 'Horario con audiencia',
                                     html: 'Este horario ya cuenta con una audiencia programada. <br><br>Si continúas, la <b>audiencia se empalmará</b>.',
                                 });
                             }
                         }
 
-                        const estadoSeleccionable = (estadoClick === 'disponible' || estadoClick === 'ocupado' || /audiencia\s*\(/i.test(titulo));
+                        const estadoSeleccionable = (estadoClick === 'disponible' || /audiencia\s*\(/i.test(titulo));
                         const fechaSeleccionable = (slot > new Date() && slot.toISOString().slice(0,10) >= fechaMinimaStr);
 
                         if (estadoSeleccionable && fechaSeleccionable) {
