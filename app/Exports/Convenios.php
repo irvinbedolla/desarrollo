@@ -4,10 +4,12 @@ namespace App\Exports;
 
 use App\Models\SeerPerGeneral;
 use App\Models\Pagos;
+use App\Models\Audiencias;
 use App\Models\User; // Importación necesaria
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class Convenios implements FromView
 {
@@ -34,57 +36,52 @@ class Convenios implements FromView
 
         // 1. Consulta de Turnos con contadores y sumas individuales
         // Asumimos que en el modelo Turnos existe la relación: public function pagos() { return $this->hasMany(Pagos::class, 'id_solicitud'); }
-        $ratificaciones = SeerPerGeneral::whereBetween('seer_general.fecha', [$this->fecha_inicial, $this->fecha_final])
-            ->join('users', 'users.id', '=', 'seer_general.id_conciliador')
-            ->join('users as user_usuario', 'user_usuario.id', '=', 'turnos.user_id')
-            ->select('turnos.*', 'users.name as conciliador_name', 'user_usuario.name as auxiliar')
+        $convenios = Audiencias::whereBetween('audiencias.fecha', [$this->fecha_inicial, $this->fecha_final])
+            ->join('seer_general', 'seer_general.id', '=', 'audiencias.id_solicitud')
+            ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
+            ->join('seer_citados', 'seer_citados.id_solicitud','=', 'seer_general.id')
+            ->join('users', 'users.id', '=', 'audiencias.id_conciliador')
             
-            // Contamos cuántos pagos tiene cada turno según su estatus
-            ->withCount([
-                'pagos as pagos_pendientes_count' => function ($query) {
-                    $query->where('estatus', 'Pendiente');
-                },
-                'pagos as pagos_pagados_count' => function ($query) {
-                    $query->where('estatus', 'Pagado');
-                }
-            ])
-            // Sumamos los montos de cada turno según su estatus
-            ->withSum(['pagos as monto_pendientes' => function ($query) {
-                $query->where('estatus', 'Pendiente');
-            }], 'monto')
-            ->withSum(['pagos as monto_pagados' => function ($query) {
-                $query->where('estatus', 'Pagado');
-            }], 'monto')
-
-            ->when($this->sede !== "Todos", function ($query) use ($sedeUsuario, $grupos) {
-                if ($this->sede === "TodosDelegado") {
-                    $listaSedes = $grupos[$sedeUsuario] ?? [$sedeUsuario];
-                    return $query->whereIn('turnos.delegacion', $listaSedes);
-                }
-                return $query->where('turnos.delegacion', $this->sede);
+            // Join para Pagos (Filtrado por tipo)
+            ->leftJoin('pago_solicitud', function($join) {
+                $join->on('pago_solicitud.id_solicitud', '=', 'seer_general.id')
+                    ->whereIn('pago_solicitud.tipo_pago', ["Audiencia", "Conciliador"]);
             })
-            ->orderBy('user_usuario.name')
-            ->get();
-
-        // 2. Totales Globales (Para el resumen al final del Excel)
-        $totalesGlobales = Pagos::whereBetween('pago_solicitud.fecha', [$this->fecha_inicial, $this->fecha_final])
-            ->where('pago_solicitud.tipo_pago', "Ratificacion")
             ->when($this->sede !== "Todos", function ($q) use ($sedeUsuario, $grupos) {
                 if ($this->sede === "TodosDelegado") {
-                    $listaSedes = $grupos[$sedeUsuario] ?? [$sedeUsuario];
-                    return $q->whereIn('pago_solicitud.delegacion', $listaSedes);
+                    $delegaciones = $grupos[$sedeUsuario] ?? [$sedeUsuario];
+                    return $q->whereIn('seer_general.delegacion', $delegaciones);
                 }
-                return $q->where('pago_solicitud.delegacion', $this->sede);
+                return $q->where("seer_general.delegacion", $this->sede);
             })
-            ->selectRaw("
-                SUM(CASE WHEN estatus = 'Pendiente' THEN monto ELSE 0 END) as global_monto_pendientes,
-                SUM(CASE WHEN estatus = 'Pagado' THEN monto ELSE 0 END) as global_monto_pagados
-            ")
-            ->first();
+            ->where('seer_citados.resulte_responsable', 'No')
 
-        return view('excel.ratificaciones', [
-            'Ratificacion' => $ratificaciones,
-            'TotalesGlobales' => $totalesGlobales
+            ->select(
+                DB::raw('DATE_FORMAT(audiencias.fecha, "%d-%m-%Y") as fecha_formateada'), 
+                DB::raw('DATE_FORMAT(audiencias.hora, "%H:%i") as hora_formateada'),
+                'seer_general.NUE', 'seer_solicitante.nombre','users.name as conciliador_name','audiencias.estatus',
+                DB::raw("GROUP_CONCAT(
+                CONCAT_WS(' ', seer_citados.nombre, seer_citados.primer_apellido, seer_citados.segundo_apellido) 
+                    SEPARATOR ', '
+                ) as citados"),
+                // Lógica de Pagos
+                DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pagado' THEN pago_solicitud.id END) as cantidad_pagados"),
+                DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN pago_solicitud.id END) as cantidad_pendientes"),
+                DB::raw("SUM(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pagado' THEN pago_solicitud.monto ELSE 0 END) as monto_pagado"),
+                DB::raw("SUM(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN pago_solicitud.monto ELSE 0 END) as monto_pendiente"),
+            )
+            ->groupBy(
+                'audiencias.fecha', 
+                'audiencias.hora', 
+                'seer_general.NUE', 
+                'seer_solicitante.nombre',
+                'users.name',
+                'audiencias.estatus'
+            )
+            ->get();
+
+        return view('excel.convenios', [
+            'Convenios' => $convenios
         ]);
     }
 }

@@ -64,6 +64,7 @@ use App\Mail\MailAceptacionRechazo;
 use App\Exports\ReporteMexicoRati;
 use App\Exports\EmpresaSinSeguro;
 use App\Exports\SolicitudesExport;
+use App\Exports\Convenios;
 
 class SeerController extends Controller
 {   
@@ -951,7 +952,7 @@ class SeerController extends Controller
                     // Left Joins para traer datos de otras tablas sin perder registros de la principal
                     ->leftJoin('pago_solicitud', function($join) {
                         $join->on('seer_general.id', '=', 'pago_solicitud.id_solicitud')
-                            ->where('pago_solicitud.tipo_pago', '=', 'Conciliador');
+                            ->whereIN('pago_solicitud.tipo_pago', ['Conciliador','Audiencia']);
                     })
                     ->leftJoin('seer_citados', function($join) {
                         $join->on('seer_general.id', '=', 'seer_citados.id_solicitud')
@@ -1054,12 +1055,26 @@ class SeerController extends Controller
                     ->get();    
                 
                 
-            /*
-            $pdf = \PDF::loadView('PDF/Estadisticas/reporte_cuantitativo', compact('solicitudes','audiencias','notificaciones'));
+            
+           // Cálculo de efectividad global para el encabezado del reporte
+            $total_gral_solicitudes = $solicitudes->sum('solicitudes');
+            $total_gral_confirmadas = $solicitudes->sum('confirmadas');
+            $porcentaje_confirmacion = ($total_gral_solicitudes > 0) 
+                ? ($total_gral_confirmadas / $total_gral_solicitudes) * 100 
+                : 0;
+
+            $pdf = \PDF::loadView('PDF/Estadisticas/reporte_cuantitativo', compact(
+                'fecha_inicial',
+                'fecha_final',
+                'solicitudes',
+                'audiencias',
+                'notificaciones',
+                'porcentaje_confirmacion'
+            ));
             $pdf->setPaper('legal', 'landscape');
-            return $pdf->stream('archivo.pdf');
-            */
-            return Excel::download(new ReporteGeneral($fecha_inicial, $fecha_final,$sede), 'reporte.xlsx');
+            return $pdf->stream('Reporte_General.pdf');
+            
+            //return Excel::download(new ReporteGeneral($fecha_inicial, $fecha_final,$sede), 'reporte.xlsx');
         }
         else if($data["tipo_reporte"] == "GeneralSede"){
             //Auxiliares
@@ -1149,7 +1164,7 @@ class SeerController extends Controller
                     ->join('audiencias', 'seer_general.id', '=', 'audiencias.id_solicitud')
                     ->leftJoin('pago_solicitud', function($join) {
                         $join->on('seer_general.id', '=', 'pago_solicitud.id_solicitud')
-                            ->where('pago_solicitud.tipo_pago', '=', 'Conciliador');
+                            ->where('pago_solicitud.tipo_pago', '=', ['Audiencia','Conciliador']);
                     })
                     ->leftJoin('seer_citados', function($join) {
                         $join->on('seer_general.id', '=', 'seer_citados.id_solicitud')
@@ -1639,6 +1654,9 @@ class SeerController extends Controller
                 'pagosRatificacionPendiente','pagosRatificacionMontoPendiente','promediosPagos'));
                 return $pdf->stream('archivo.pdf');
             */
+        }
+        else if($data["tipo_reporte"] == "Convenios"){
+            return Excel::download(new Convenios($fecha_inicial, $fecha_final, $sede), 'Convenios.xlsx');
         }
     }
 
