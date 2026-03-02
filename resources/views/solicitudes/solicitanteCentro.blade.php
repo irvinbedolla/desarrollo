@@ -441,7 +441,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Salario <span style="color:red;">(*)</span></label>
-                                                    <input type="number" name="pago" class="form-control soloMontos" required> 
+                                                    <input type="number" step="0.001" name="pago" class="form-control soloMontos" required> 
                                                     <div class="invalid-feedback">
                                                         El campo salario es obligatorio.
                                                     </div>
