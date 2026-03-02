@@ -1348,6 +1348,8 @@
             }
         }
 
+        $hayAlMenosUnaComparecencia = ($totalCitadosConComparecencia > 0);
+
         $todasComparecencias = ($totalCitados > 0 && $totalCitadosConComparecencia === $totalCitados);
 
         $hayNotificacionCentro = false;
@@ -1366,7 +1368,7 @@
 
         $casoMultasCentroSinComparecencia = ($totalCentro >= 1 && $totalCentroSinComparecencia === $totalCentro);
 
-        $bloquearContinuar = (!$hayNotificacionCentro && !$todasComparecencias);
+    $bloquearContinuar = (!$hayNotificacionCentro && !$hayAlMenosUnaComparecencia);
 
         $bandera = 0;
         foreach ($representantes as $representante) {
@@ -1381,13 +1383,13 @@
     @endphp
 
     @if($hayNotificacionCentro)
-        <div class="modal-dialog modal-l">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     @if($casoMultasCentroSinComparecencia)
                         Ningún citado notificado por el Centro presenta comparecencia. Debes emitir multas.
                     @elseif($bandera != 0)
-                        Se multará a los citados que no tengan un representante asignado.
+                        Se multará a los citados que no tengan un representante asignado y hayan sido notificados exitosamente.
                     @else
                         Continuar con la audiencia.
                     @endif
@@ -1455,7 +1457,7 @@
                     </p>
                     <br>
                     <p class="mb-2">
-                        Se detectó que <b>los citados fueron notificados por el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo</b>, y que no ha sido registrada ninguna comparecencia.<br><br>Por lo tanto, al dar click en el botón "Emitir", se generarán la Constancias de No Conciliación, así como las multas de los citados que hayan sido notificados de manera exitosa.
+                        Se detectó que <b>los citados fueron notificados por el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo</b>, y que no ha sido registrada ninguna comparecencia.<br><br>Por lo tanto, al dar click en el botón "Emitir", se generarán la Constancias de No Conciliación, así como las <b>MULTAS</b> de los citados que hayan sido notificados <b>de manera exitosa</b>.
                         Confirma para continuar con la <b>emisión de dichos documentos</b>.
                     </p>
                 </div>

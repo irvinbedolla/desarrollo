@@ -5777,7 +5777,7 @@ class SeerController extends Controller
             'estatus'           => 'No conciliacion',
         ]);
 
-        SeerCitados::where('id_solicitud', $data["id"])->where('notificacion', 'Centro')->update(['tipo_notificacion' => 'Multa']);
+        SeerCitados::where('id_solicitud', $data["id"])->where('notificacion', 'Centro')->whereIn('estatus', ['Notificada', 'Finalizado exitosamente'])->update(['tipo_notificacion' => 'Multa']);
 
         return redirect()->route('todas_audiencias');
     }
@@ -6665,9 +6665,8 @@ class SeerController extends Controller
                 $cont_total = count($total_citados);
                 
                 for($i = 0; $i < $cont; $i++) {
-                    $update = SeerCitados::find($citados[$i]["id"])->update([
+                    $update = SeerCitados::find($citados[$i]["id"])->where('notificacion', 'Centro')->whereIn('estatus', ['Notificada', 'Finalizado exitosamente'])->update([
                         'tipo_notificacion' => 'Multa',
-                        'conciliador_id'    => $user->id
                     ]);
                 }
                 if($cont == $cont_total){
