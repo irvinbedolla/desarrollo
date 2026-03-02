@@ -17,6 +17,7 @@
                                         <th style="color: #fff;">Fecha Captura</th>
                                         <th style="color: #fff;">Expediente</th>
                                         <th style="color: #fff;">Solicitante</th>
+                                        <th style="color: #fff;">Citados</th>
                                         <th style="color: #fff;">Actividad Económica</th>
                                         <th style="color: #fff;">Tipo Solicitante</th>
                                         <th style="color: #fff;">Estatus</th>
@@ -30,6 +31,7 @@
                                                 <td>{{$solicitud->fecha}}</td>
                                                 <td>{{$solicitud->NUE}}</td>
                                                 <td>{{$solicitud->nombre}}</td>
+                                                <td>{{$solicitud->lista_citados}}</td>
                                                 <td>{{$solicitud->actividad}}</td>
                                                 @if($solicitud->tipo_solicitud == 1)
                                                     <td>Trabajador</td>

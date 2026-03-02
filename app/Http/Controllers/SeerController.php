@@ -13598,7 +13598,7 @@ class SeerController extends Controller
             ->where('estatus', '!=', 'Pendiente')
             ->orderBy('created_at', 'desc')
             ->limit(1500);
-
+    
         // 2. Definimos el mapa de delegaciones para evitar IFs repetitivos
         $mapaDelegaciones = [
             "Morelia" => ["Morelia", "Zitácuaro"],
@@ -13632,6 +13632,26 @@ class SeerController extends Controller
         // 4. Ejecutamos la consulta
         $solicitudes = $query->get();
 
+        $idsSolicitudes = $solicitudes->pluck('id');
+        //citadosSolicitud trae todos los citados de las solicitudes obtenidas, agrupados por id_solicitud
+        $citadosSolicitud = DB::table('seer_citados')
+            ->whereIn('id_solicitud', $idsSolicitudes)
+            ->where('resulte_responsable', 'No')
+            ->get()
+            ->groupBy('id_solicitud');
+        $solicitudes->transform(function ($solicitud) use ($citadosSolicitud) {           
+            if (isset($citadosSolicitud[$solicitud->id])) {
+                $solicitud->lista_citados = $citadosSolicitud[$solicitud->id]
+                    ->map(function($citado) {
+                        return trim("{$citado->nombre} {$citado->primer_apellido} {$citado->segundo_apellido}");
+                    })
+                    ->filter()
+                    ->implode(', ');
+            } else {
+                $solicitud->lista_citados = 'Sin citados';
+            }
+            return $solicitud;
+        });
         // 5. Mapeamos el nombre del solicitante al objeto principal para no romper tu vista actual
         $solicitudes->transform(function ($solicitud) {
             $solicitud->nombre = $solicitud->solicitante->nombre ?? 'Sin solicitante';
