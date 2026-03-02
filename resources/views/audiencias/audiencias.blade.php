@@ -295,6 +295,12 @@
         </div>
     </form>
 </div>
+
+@php
+    $hoy = \Carbon\Carbon::now()->format('Y-m-d');
+    $isCurrent = true;
+@endphp
+
 <!-- Modal Citados -->
 <div class="modal fade" id="modalCitados" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
@@ -326,7 +332,21 @@
                                     <td>{{$abogado->rfc_patronal}}</td>
                                     <td>{{$abogado->nombre_representante}} {{$abogado->primer_apellido_representante}} {{$abogado->segundo_apellido_representante}}</td>
                                     <td>
-                                        <button class="btn btn-info" onclick=editar_rol(); type="submit" name="abogado" value="{{$abogado->idAbogado}}">Seleccionar</button>
+                                        @php
+                                            //Vigencia vencida => fechaVigencia menor a hoy
+                                            $isVencido = (!is_null($abogado->fechaVigencia) && $abogado->fechaVigencia < $hoy);
+                                            $requiereValidacion = ($abogado->estatus != 'Validado');
+                                        @endphp
+                                        @if ($isVencido)
+                                            <button class="btn btn-info" onclick=editar_rol(); type="submit" name="abogado" value="{{$abogado->idAbogado}}" disabled>Seleccionar</button>
+                                            <span class="ms-2 text-danger fw-semibold">Sin vigencia</span>
+                                        @elseif ($requiereValidacion)
+                                            <button class="btn btn-info" onclick=editar_rol(); type="submit" name="abogado" value="{{$abogado->idAbogado}}" disabled>Seleccionar</button>
+                                            <span class="ms-2 text-danger fw-semibold">Requiere validación</span>
+                                        @else
+                                            <button class="btn btn-info" onclick=editar_rol(); type="submit" name="abogado" value="{{$abogado->idAbogado}}">Seleccionar</button>
+                                            <span class="ms-2 text-success fw-semibold">Elegible</span>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

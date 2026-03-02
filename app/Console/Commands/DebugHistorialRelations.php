@@ -7,6 +7,10 @@ use Illuminate\Console\Command;
 
 class DebugHistorialRelations extends Command
 {
+
+    protected $signature = 'debug:historial-relations {id? : ID del historial a inspeccionar}';
+    protected $description = 'Depura relaciones de HistorialAbogado (estado/municipio patronal).';
+
     public function handle(): int
     {
         $id = $this->argument('id');

@@ -6158,7 +6158,7 @@ class SeerController extends Controller
             $historialPayload['id_user'] = $id_user_historial;
             $historialReciente = HistorialAbogado::create($historialPayload);
 
-            SeerCitados::find($data['id_citado_2'])->update(['id_abogado' => $nuevoAbogado->idAbogado, 'id_historial' => $historialReciente->id]);
+            //SeerCitados::find($data['id_citado_2'])->update(['id_abogado' => $nuevoAbogado->idAbogado, 'id_historial' => $historialReciente->id]);
             return back()->with('success', 'Representante legal registrado y asignado correctamente al citado.');
         }
 
@@ -10433,7 +10433,6 @@ class SeerController extends Controller
             ->update([
                 'tipo'                  => $data["tipo_audiencia"],
                 'fecha_terminacion'     => $fecha_actual, 
-                'conciliador_id'        => $user->id,
                 'estatus'               => $data["conclucion"]
             ]);
             
@@ -10730,14 +10729,19 @@ class SeerController extends Controller
             ->where('delegacion', $sede)
             ->get();
 
+        //Capacidad por horario: 2 pagos por slot (cada 30 min)
         $ocupadosMap = [];
         foreach ($ocupados as $cumplimiento) {
-            $slotKey = $cumplimiento->fecha->format('Y-m-d') . 'T' . $cumplimiento->hora->format('H:i:s');
-            if (isset($ocupadosMap[$slotKey])) {
-                $ocupadosMap[$slotKey]++;
-            } else {
-                $ocupadosMap[$slotKey] = 1;
-            }
+            //Normalizar a 30 minutos (00 o 30)
+            $horaDt = $cumplimiento->hora instanceof \DateTimeInterface
+                ? \DateTime::createFromInterface($cumplimiento->hora)
+                : new \DateTime((string) $cumplimiento->hora);
+
+            $horaNormMin = ((int) $horaDt->format('i') >= 30) ? 30 : 0;
+            $horaDt->setTime((int) $horaDt->format('H'), $horaNormMin, 0);
+
+            $slotKey = $cumplimiento->fecha->format('Y-m-d') . 'T' . $horaDt->format('H:i:s');
+            $ocupadosMap[$slotKey] = ($ocupadosMap[$slotKey] ?? 0) + 1;
         }
 
         $pagosPorDia = Pagos::where('tipo_pago', 'Audiencia')
@@ -10771,7 +10775,7 @@ class SeerController extends Controller
                     $slotStart = $slot->format('Y-m-d\\TH:i:s');
 
                     $conteoOcupados = $ocupadosMap[$slotStart] ?? 0;
-                    $ocupado = ($conteoOcupados >= 1);
+                    $ocupado = ($conteoOcupados >= 2);
 
                     $esInhabil = false;
                     foreach($inhabiles as $dia){
@@ -10799,7 +10803,7 @@ class SeerController extends Controller
                         case 'ocupado':
                             $todosLosEventos[] = [
                                 'title' => 'Ocupado', 'start' => $slotStart,
-                                'color' => '#DA0909', 'extendedProps' => ['estado' => 'ocupado']
+                                'color' => '#DA0909', 'extendedProps' => ['estado' => 'ocupado', 'cupos' => $conteoOcupados]
                             ];
                             break;
                         case 'inhabil':
@@ -10816,14 +10820,19 @@ class SeerController extends Controller
                             break;
                         case 'disponible':
                         default:
+                            $titulo = 'Disponible';
+                            if ($conteoOcupados === 1) {
+                                $titulo = 'Cumplimiento(1)';
+                            }
                             $todosLosEventos[] = [
-                                'title' => 'Disponible', 'start' => $slotStart,
-                                'color' => '#00CE1C', 'extendedProps' => ['estado' => 'disponible']
+                                'title' => $titulo, 'start' => $slotStart,
+                                'color' => '#00CE1C', 'extendedProps' => ['estado' => 'disponible', 'cupos' => $conteoOcupados]
                             ];
                             break;
                     }
 
-                    $slot->modify('+15 minutes'); //Musestra el periodo de tiempo en el que se van a mostrar los horarios para agendar cumplimientos dentro de la audiencia
+                    //Muestra los horarios para agendar cumplimientos en bloques de 30 minutos
+                    $slot->modify('+30 minutes');
                 }
             }
             $fecha->modify('+1 day');

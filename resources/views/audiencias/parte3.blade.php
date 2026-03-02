@@ -996,10 +996,11 @@
                     //hour12: false
                 },
                 eventClick: function(info) {
-                    // Solo permitir selección de horarios disponibles
                     let ahora = new Date();
                     let slotDate = new Date(info.event.start);
-                    if (info.event.extendedProps.estado === 'disponible' && slotDate > ahora) {
+                    let estado = info.event.extendedProps && info.event.extendedProps.estado ? info.event.extendedProps.estado : null;
+
+                    if (estado === 'disponible' && slotDate > ahora) {
                         // Deseleccionar evento anterior
                         document.querySelectorAll('.fc-event-selected').forEach(el => {
                             el.classList.remove('fc-event-selected');
