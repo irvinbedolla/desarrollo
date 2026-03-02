@@ -1,192 +1,225 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <meta name="csrf-token" content="{{ csrf_token() }}"/>
-        <title>Sí Concilio</title>
-        <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Reporte Estadístico por Sede - Sí Concilio</title>
+    <style>
+        /* Tipografía Institucional */
+        @page { margin: 0px 0px; }
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            color: #333;
+            font-size: 10px;
+            margin: 0;
+            padding-top: 90px;
+        }
+        main { margin: 20px 40px; }
 
-        <!-- Bootstrap 5.3.3 -->
-        <link href="../public/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    
-        <style>
-           @page {
-                margin: 0px 0px;
-            }
-            body{
-                padding-top: 85px;
-            }
-            main{
-                margin: 50px 50px 50px 40px; /*Para colocar el texto*/
-            }
-            header {
-                position: fixed;
-                top: -100px;
-                left: 0;
-                right: 0;
-                height: 100px;
-                text-align: center;
-                font-size: 14px;
-            }
+        .fondo-membrete {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1000;
+        }
 
-            footer {
-                position: fixed;
-                bottom: -60px;
-                left: 0;
-                right: 0;
-                height: 50px;
-                text-align: center;
-                font-size: 12px;
-            }
-            .content {
-                font-family: sans-serif;
-                font-size: 12px;
-                text-align: justify;
-                margin-top: 50px;
-            }
-            .fondo-membrete {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                z-index: -1;
-            } 
-            .page-break {
-                page-break-after: always;
-            }
-        </style>
-            
-    </head>
-    <body>
-        <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
-        <footer>
-            
-        </footer>
-        <main>
-            <div class="content">
-                <div class="table-responsive">
-                    <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
-                            <tr>   
-                                <td><b>Centro de Conciliación Laboral </b></td>
-                                <td>{{ $fecha_inicial}} a {{ $fecha_final }} </td>
-                            </tr>
-                    </table>
-                </div><br><br><br>
+        /* Títulos de Sección */
+        .section-header {
+            background-color: #f2f4f4;
+            border-left: 5px solid #869b9c;
+            padding: 8px 12px;
+            margin: 25px 0 10px 0;
+            font-size: 12px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-transform: uppercase;
+        }
 
-                    <div class="table-responsive">
-                        <spam>Reporte por sede</spam>
-                            <table class="table table-striped mt-2">
-                                <thead style="background-color: #869b9c;">
-                                    <th style="color: #fff;  text-align: center;">Sede</th>
-                                    <th style="color: #fff;  text-align: center;">Solicitudes</th>
-                                    <th style="color: #fff;  text-align: center;">Solicitudes Confirmadas</th>
+        /* Estilo de Tablas Profesional */
+        .table-report {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+            table-layout: fixed;
+        }
+        .table-report th {
+            background-color: #869b9c;
+            color: #ffffff;
+            padding: 8px 4px;
+            border: 1px solid #758a8b;
+            text-transform: uppercase;
+            font-size: 9px;
+        }
+        .table-report td {
+            padding: 7px 4px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .table-report tr:nth-child(even) { background-color: #f9f9f9; }
 
-                                    <th style="color: #fff;  text-align: center;">Ratificaciones</th>
-                                    <th style="color: #fff;  text-align: center;">Incompetencias</th>
-                                    <th style="color: #fff;  text-align: center;">Cumplimientos</th>
+        /* Clases de Utilidad */
+        .bold { font-weight: bold; }
+        .text-left { text-align: left !important; padding-left: 10px !important; }
+        .monto { color: #2e7d32; font-weight: bold; }
+        .efectividad { font-weight: bold; color: #869b9c; }
 
-                                    <th style="color: #fff;  text-align: center;">Monto en Audiencia</th>
-                                    <th style="color: #fff;  text-align: center;">Monto en Ratificaciones</th>
-                                </thead>
-                                <tbody>
-                                    @foreach($solicitudes as $ciudad => $solicitud)
-                                        <tr>
-                                            <td style=" text-align: center;">{{ $solicitud->sede_nombre}}</td>
-                                            <td style=" text-align: center;">{{ $solicitud->numeroSolicitudes ?? 0 }}</td>
-                                            <td style=" text-align: center;">{{ $solicitud->confirmadas}}</td>
-                                            <td style=" text-align: center;">{{ $solicitud->ratificaciones ?? 0}}</td>
-                                            <td style=" text-align: center;">{{ $solicitud->incompetencia}}</td>
-                                            <th style=" text-align: center;">{{ $solicitud->cumplimientoRatificacion + $solicitud->cumplimientoAudiencia }}</th>
-                                            <td style=" text-align: center;">${{ number_format($solicitud->cumplimientoAudienciaMonto, 2) }}</td>
-                                            <td style=" text-align: center;">${{ number_format($solicitud->cumplimientoRatificacionMonto, 2) }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                    </div>
+        /* Indicadores KPI */
+        .kpi-container { width: 100%; margin-bottom: 20px; }
+        .kpi-card {
+            width: 30%;
+            display: inline-block;
+            background: #fff;
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: center;
+            vertical-align: top;
+        }
+        .kpi-value { font-size: 18px; font-weight: bold; color: #5a6a6b; display: block; }
+        .progress-bar {
+            width: 100%; background: #e9ecef; height: 10px; border-radius: 5px; margin-top: 8px;
+        }
+        .progress-fill { height: 100%; background: #869b9c; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
 
-                    <div class="table-responsive">
-                            <table class="table table-striped mt-2">
-                                <thead style="background-color: #869b9c;">
-                                    <th style="color: #fff;  text-align: center;">Sede</th>
-                                    <th style="color: #fff;  text-align: center;">Audiencias</th>
-                                    <th style="color: #fff;  text-align: center;">Cumplimientos Audiencia</th>
-                                    <th style="color: #fff;  text-align: center;">Monto</th>
+    <main>
+        <table style="width: 100%; border-bottom: 2px solid #869b9c; margin-bottom: 15px;">
+            <tr>
+                <td style="text-align: left; border: none;">
+                    <h2 style="margin:0; color:#869b9c; font-size: 18px;">REPORTE ESTADÍSTICO POR SEDE</h2>
+                    <span style="font-size: 11px;">Consolidado Regional Michoacán</span>
+                </td>
+                <td style="text-align: right; border: none;">
+                    <b>Periodo:</b> {{ $fecha_inicial }} al {{ $fecha_final }}
+                </td>
+            </tr>
+        </table>
 
-                                    <th style="color: #fff;  text-align: center;">Multas</th>
-                                    <th style="color: #fff;  text-align: center;">Audiencia Virtuales</th>
-                                    <th style="color: #fff;  text-align: center;">Una Audiencia</th>
-                                    <th style="color: #fff;  text-align: center;">Dos Audiencias</th>
-                                    <th style="color: #fff;  text-align: center;">Tres Audiecias</th>
-                                </thead>
-                                <tbody>
-                                    @foreach($audiencias as $ciudad => $solicitud)
-                                        <tr>
-                                            <td style=" text-align: center;">{{ $solicitud->sede_nombre}}</td>
-                                            <td style=" text-align: center;">{{ $solicitud->total_audiencias ?? 0 }}</td>
-                                            <td style=" text-align: center;">{{ $solicitud->cumplimientoAudiencia}}</td>
-                                            <td style=" text-align: center;">${{ number_format($solicitud->cumplimientoAudienciaMonto, 2) }}</td>
+        @php
+            $total_sol = $solicitudes->sum('numeroSolicitudes');
+            $total_conf = $solicitudes->sum('confirmadas');
+            $perc_conf = ($total_sol > 0) ? ($total_conf / $total_sol) * 100 : 0;
+        @endphp
+        <div class="kpi-container">
+            <div class="kpi-card" style="margin-left: 2%;">
+                <span style="font-size: 9px; color: #666;">AUDIENCIAS CELEBRADAS</span>
+                <span class="kpi-value">{{ $audiencias->sum('total_audiencias') }}</span>
+                <span style="font-size: 8px; color: #888;">TOTAL REGIONAL</span>
+            </div>
+            <div class="kpi-card" style="margin-left: 2%;">
+                <span style="font-size: 9px; color: #666;">NOTIFICACIONES EXITOSAS</span>
+                <span class="kpi-value">{{ $notificaciones->sum('exitosamente') }}</span>
+                <span style="font-size: 8px; color: #888;">TOTAL REGIONAL</span>
+            </div>
+        </div>
 
-                                            <td style=" text-align: center;">{{ $solicitud->multas ?? 0}}</td>
-                                            <td style=" text-align: center;">{{ $solicitud->audiencias_virtuales ?? 0}}</td>
-                                            <th style=" text-align: center;">{{ $solicitud->una_audiencia }}</th>
-                                            <td style=" text-align: center;">{{ $solicitud->dos_audiencias }}</td>
-                                            <td style=" text-align: center;">{{ $solicitud->tres_audiencias }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                                <tfoot>
-                                    
-                                </tfoot>
-                            </table>
-                        </div>
+        <div class="section-header">Resumen de Solicitudes y Ratificaciones</div>
+        <table class="table-report">
+            <thead>
+                <tr>
+                    <th style="width: 18%;">Sede</th>
+                    <th>Solicitudes</th>
+                    <th>Confirmadas</th>
+                    <th>Efect. %</th>
+                    <th>Ratif.</th>
+                    <th>Incomp.</th>
+                    <th>Cumpl.</th>
+                    <th>Monto Aud.</th>
+                    <th>Monto Rat.</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($solicitudes as $s)
+                @php $efect = ($s->numeroSolicitudes > 0) ? ($s->confirmadas / $s->numeroSolicitudes)*100 : 0; @endphp
+                <tr>
+                    <td class="text-left bold">{{ $s->sede_nombre }}</td>
+                    <td>{{ $s->numeroSolicitudes ?? 0 }}</td>
+                    <td>{{ $s->confirmadas }}</td>
+                    <td class="efectividad">{{ number_format($efect, 1) }}%</td>
+                    <td>{{ $s->ratificaciones ?? 0 }}</td>
+                    <td>{{ $s->incompetencia }}</td>
+                    <td class="bold">{{ $s->cumplimientoRatificacion + $s->cumplimientoAudiencia }}</td>
+                    <td class="monto">${{ number_format($s->cumplimientoAudienciaMonto, 2) }}</td>
+                    <td class="monto">${{ number_format($s->cumplimientoRatificacionMonto, 2) }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
 
-                        <div class="table-responsive">
-                            <table class="table table-striped mt-2">
-                                <thead style="background-color: #869b9c;">
-                                    <th style="color: #fff;  text-align: center;">Sede</th>
-                                    <th style="color: #fff;  text-align: center;">Total Notificaciones</th>
-                                    <th style="color: #fff;  text-align: center;">Notificación Exitosa</th>
-                                    <th style="color: #fff;  text-align: center;">No Notificada</th>
+        <div class="section-header">Resultados de Audiencias de Conciliación</div>
+        <table class="table-report">
+            <thead>
+                <tr>
+                    <th style="width: 18%;">Sede</th>
+                    <th>Audiencias</th>
+                    <th>Cumpl.</th>
+                    <th>Monto Aud.</th>
+                    <th>Multas</th>
+                    <th>Virtuales</th>
+                    <th>1 Aud.</th>
+                    <th>2 Aud.</th>
+                    <th>3+ Aud.</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($audiencias as $a)
+                <tr>
+                    <td class="text-left bold">{{ $a->sede_nombre }}</td>
+                    <td>{{ $a->total_audiencias ?? 0 }}</td>
+                    <td>{{ $a->cumplimientoAudiencia }}</td>
+                    <td class="monto">${{ number_format($a->cumplimientoAudienciaMonto, 2) }}</td>
+                    <td>{{ $a->multas ?? 0 }}</td>
+                    <td>{{ $a->audiencias_virtuales ?? 0 }}</td>
+                    <td>{{ $a->una_audiencia }}</td>
+                    <td>{{ $a->dos_audiencias }}</td>
+                    <td>{{ $a->tres_audiencias }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
 
-                                    <th style="color: #fff;  text-align: center;">Pendientes</th>
-                                    <th style="color: #fff;  text-align: center;">Exhortos</th>
-                                    <th style="color: #fff;  text-align: center;">Existosa se Constituye</th>
-                                    <th style="color: #fff;  text-align: center;">No exitosa se Constituye</th>
-                                </thead>
-                                <tbody>
-                                    @foreach($notificaciones as $ciudad => $solicitud)
-                                        <tr>
-                                            <td style=" text-align: center;">{{ $solicitud->sede_nombre}}</td>
-                                            <td style=" text-align: center;">{{ $solicitud->Todas_notificaciones ?? 0 }}</td>
-                                            <td style=" text-align: center;">{{ $solicitud->exitosamente}}</td>
-                                            <td style=" text-align: center;">{{ $solicitud->notificacion_Nonotificada }}</td>
+        <div class="section-header">Estatus de Notificaciones Regionales</div>
+        <table class="table-report">
+            <thead>
+                <tr>
+                    <th style="width: 18%;">Sede</th>
+                    <th>Total</th>
+                    <th>Exitosa</th>
+                    <th>Efect. %</th>
+                    <th>No Notif.</th>
+                    <th>Pend.</th>
+                    <th>Exhorto</th>
+                    <th>NESC*</th>
+                    <th>NENSC**</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($notificaciones as $n)
+                @php $efect_n = ($n->Todas_notificaciones > 0) ? ($n->exitosamente / $n->Todas_notificaciones)*100 : 0; @endphp
+                <tr>
+                    <td class="text-left bold">{{ $n->sede_nombre }}</td>
+                    <td>{{ $n->Todas_notificaciones ?? 0 }}</td>
+                    <td class="bold">{{ $n->exitosamente }}</td>
+                    <td class="efectividad">{{ number_format($efect_n, 1) }}%</td>
+                    <td>{{ $n->notificacion_Nonotificada }}</td>
+                    <td>{{ $n->notificacion_pendientes }}</td>
+                    <td>{{ $n->notificacion_exhortos }}</td>
+                    <td>{{ $n->notificacion_NESC }}</td>
+                    <td>{{ $n->notificacion_NENSC }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+        <p style="font-size: 8px; color: #888;">*NESC: No exitosa se constituye / **NENSC: No exitosa no se constituye</p>
 
-                                            <td style=" text-align: center;">{{ $solicitud->notificacion_pendientes }}</td>
-                                            <td style=" text-align: center;">{{ $solicitud->notificacion_exhortos }}</td>
-                                            <th style=" text-align: center;">{{ $solicitud->notificacion_NESC }}</th>
-                                            <td style=" text-align: center;">{{ $solicitud->notificacion_NENSC }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                                <tfoot>
-                                    
-                                </tfoot>
-                            </table>
-                        </div>
+    </main>
 
-            <script type="text/php">
-                if (isset($pdf)) {
-                    $font = $fontMetrics->get_font("Arial", "normal");
-                    $size = 10;
-                    $y = $pdf->get_height() - 30;
-                    $x = ($pdf->get_width() / 2) - 50;
-                    $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
-                    $pdf->page_text($x, $y, $text, $font, $size, array(0, 0, 0));
-                }
-            </script>
-        </main>
-    </body>
+    <script type="text/php">
+        if (isset($pdf)) {
+            $font = $fontMetrics->get_font("Arial", "normal");
+            $pdf->page_text(280, 575, "Página {PAGE_NUM} de {PAGE_COUNT} - Centro de Conciliación Laboral", $font, 8, array(0.4, 0.4, 0.4));
+        }
+    </script>
+</body>
+</html>

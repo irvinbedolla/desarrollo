@@ -44,7 +44,7 @@
                                                     <option value="Ratificaciones">Ratificaciones</option>
                                                     <option value="Notificaciones">Notificaciones</option>
                                                     <option value="Solicitudes">Solicitudes</option>
-
+                                                    <option value="Convenios">Convenios</option>
                                                     <option value="CumplimientosGrafica">Graficas</option>
                                                     <option value="Productividad">Productividad</option>
 
