@@ -131,8 +131,13 @@
                 <!-- DELIGENCIA EXITOSA, ATIENDE OTRA PERSONA -->
                 <div class="razon-notificacion">
                     <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p>
-                    <p>Siendo las <b>{{ $citado->updated_at->format('H') }} HORAS CON {{ $citado->updated_at->format('i') }} MINUTOS
-                        DEL DÍA {{ mb_strtoupper($citado->updated_at->translatedFormat('d \D\E F \D\E\L Y')) }}, LIC. {{mb_strtoupper($notificador->name,'UTF-8')}}</b> en mi
+                    @php
+                        $fechaNotificacion = !empty($citado->fecha)
+                            ? \Carbon\Carbon::parse($citado->fecha)
+                            : null;
+                    @endphp
+                    <p>Siendo las <b>{{ $fechaNotificacion ? $fechaNotificacion->format('H') : '' }} HORAS CON {{ $fechaNotificacion ? $fechaNotificacion->format('i') : '' }} MINUTOS
+                        DEL DÍA {{ $fechaNotificacion ? mb_strtoupper($fechaNotificacion->translatedFormat('d \D\E F \D\E\L Y')) : '' }}, LIC. {{mb_strtoupper($notificador->name,'UTF-8')}}</b> en mi
                         calidad de notificador(a) adscrito al Centro de Conciliación Laboral, oficina estatal {{ mb_strtoupper($solicitud->delegacion,'UTF-8') }}, me constituyo física y legalmente
                         en el domicilio ubicado en <b>{{strtoupper($citado->tipo_vialidad)}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) INT. {{$citado->n_int}}@endif, COLONIA {{$citado->colonia}}, 
                         {{mb_strtoupper($municipioCitado, 'UTF-8')}}, CP {{$citado->cp}}, {{mb_strtoupper($estadoCitado,'UTF-8')}}</b>, siendo este el domicilio señalado en la solicitud de Conciliación como el del <b>CITADO:

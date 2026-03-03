@@ -2291,7 +2291,6 @@ class SeerController extends Controller
                     'giro_comercial'              => $data["giro_comercial"],
                     'id_notificador'              => $id_notificador,
                     'notificacion'                => $notificacion,
-                    'updated_at'                  => $fechaEspecifica,
                     'num_identificacion'          => $data["num_identificacion"],
                 ]);
 
@@ -2337,7 +2336,6 @@ class SeerController extends Controller
                         'id_notificador'              => $id_notificador,
                         'notificacion'                => $notificacion,
                         //'updated_at'                  => DB::raw("'" . $fechaEspecifica->format('Y-m-d H:i:s') . "'") //da un objeto "expression"
-                        'updated_at'                  => $fechaEspecifica->toDateTimeString(),
                         'num_identificacion'          => $data["num_identificacion"],
                     ]);
                     
