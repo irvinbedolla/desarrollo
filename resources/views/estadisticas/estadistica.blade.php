@@ -176,7 +176,7 @@
         $('#reporte').change(function(){
             var valorCambiado =$(this).val();
             if((valorCambiado == 'Cumplimientos')){
-                $('#PDF').css('display','none');
+                $('#PDF').css('display','none');w
                 $('#Excel').css('display','none');
                 $('#Excel-PDF').css('display','block');
                 $('#reporte-notificador').css('display','none');
@@ -196,7 +196,7 @@
                 $('#reporte-notificador').css('display','none');
                 $('#Grafica').css('display','block');
             }
-            else if(valorCambiado == "Ratificaciones"){
+            else if(valorCambiado == "Ratificaciones" || valorCambiado == "Convenios"){
                 $('#PDF').css('display','none');
                 $('#Excel').css('display','block');
                 $('#Excel-PDF').css('display','none');
