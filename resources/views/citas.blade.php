@@ -185,6 +185,8 @@
                                                     </div>
                                                 </div>
                                                 <div id="abogado_info" class="mt-2"></div>
+
+                                                <div id="datos_formulario" class="row" style="display:none; width:100%;">
                                                 
                                                 <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:30px;">
                                                     <div class="form-group">
@@ -679,6 +681,7 @@
                                                     <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845; border-color: #CEA845">Regresar</a>    
                                                 </div>
                                             </div>    
+                                        </div>
                                         </form>
                                     </div>
                                 </div>
@@ -708,6 +711,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const folioInput = document.getElementById('folio_input');
             const abogadoInfoDiv = document.getElementById('abogado_info');
+            const datosFormulario = document.getElementById('datos_formulario');
             let timeout = null;
 
             const baseUrl = "{{ url('/validar_folio_abogado') }}";
@@ -718,6 +722,7 @@
                 if (folio === '') {
                     abogadoInfoDiv.textContent = '';
                     abogadoInfoDiv.classList.remove('alert', 'alert-success', 'alert-danger');
+                    if (datosFormulario) datosFormulario.style.display = 'none';
                     return;
                 }
                 timeout = setTimeout(() => {
@@ -737,9 +742,24 @@
                         return response.json();
                     })
                     .then(data => {
-                        abogadoInfoDiv.classList.remove('alert-danger');
-                        abogadoInfoDiv.textContent = `Representante: ${data.nombre}`;
-                        abogadoInfoDiv.classList.add('alert', 'alert-success');
+                        abogadoInfoDiv.classList.remove('alert-success', 'alert-danger');
+
+                        const status = data && data.status ? data.status : null;
+                        const msg = data && data.message ? data.message : '';
+
+                        if (status === 'elegible') {
+                            abogadoInfoDiv.textContent = `Representante: ${data.nombre} — ${msg}`;
+                            abogadoInfoDiv.classList.add('alert', 'alert-success');
+                            if (datosFormulario) datosFormulario.style.display = '';
+                        } else if (status === 'sin_vigencia' || status === 'requiere_validacion') {
+                            abogadoInfoDiv.textContent = `Representante: ${data.nombre} — ${msg}`;
+                            abogadoInfoDiv.classList.add('alert', 'alert-danger');
+                            if (datosFormulario) datosFormulario.style.display = 'none';
+                        } else {
+                            abogadoInfoDiv.textContent = `Representante: ${data.nombre}`;
+                            abogadoInfoDiv.classList.add('alert', 'alert-success');
+                            if (datosFormulario) datosFormulario.style.display = 'none';
+                        }
                     })
                     .catch(error => {
                         abogadoInfoDiv.classList.remove('alert-success');
@@ -747,6 +767,7 @@
                         abogadoInfoDiv.textContent = (error.message === 'Folio no encontrado')
                             ? 'El folio no existe. Por favor, verifica el número.'
                             : 'Ocurrió un error al buscar. Inténtalo de nuevo.';
+                        if (datosFormulario) datosFormulario.style.display = 'none';
                         console.error('Error:', error);
                     });
                 }, 500);

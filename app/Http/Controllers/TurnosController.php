@@ -2056,10 +2056,29 @@ class TurnosController extends Controller
             if ($representante) {
                 $nombre = trim("{$representante->nombres_patronal} {$representante->primer_apellido_patronal} {$representante->segundo_apellido_patronal}");
                 Log::info("Folio encontrado: " . $nombre);
+
+                $hoy = \Carbon\Carbon::now()->format('Y-m-d');
+                $fechaVigencia = $representante->fechaVigencia;
+                $sinVigencia = (!is_null($fechaVigencia) && $fechaVigencia < $hoy);
+                $requiereValidacion = ($representante->estatus !== 'Validado');
+
+                $status = 'elegible';
+                $message = 'Elegible';
+                if ($sinVigencia) {
+                    $status = 'sin_vigencia';
+                    $message = 'Sin Vigencia';
+                } elseif ($requiereValidacion) {
+                    $status = 'requiere_validacion';
+                    $message = 'Requiere validación';
+                }
     
                 return response()->json([
                     'success' => true,
                     'nombre'  => $nombre,
+                    'estatus' => $representante->estatus,
+                    'fechaVigencia' => $fechaVigencia,
+                    'status' => $status,
+                    'message' => $message,
                 ]);
             }
             Log::warning("Folio no encontrado: " . $folio);
