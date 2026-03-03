@@ -761,7 +761,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Núm. Ext. <span style="color:red;">(*)</span></label>
-                                                        <input type="text" class="form-control" placeholder="*Número exterior" name="num_ext_moral" id="num_ext_moral" oninput="this.value = this.value.toUpperCase()" >
+                                                        <input type="text" class="form-control" maxlength="50" placeholder="*Número exterior" name="num_ext_moral" id="num_ext_moral" oninput="this.value = this.value.toUpperCase()" >
                                                         <div class="invalid-feedback">
                                                             El Núm. ext. es obligatorio.
                                                         </div>
@@ -770,7 +770,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Núm. Int.</label>
-                                                        <input type="text" class="form-control" placeholder="Número interior" name="num_int" oninput="this.value = this.value.toUpperCase()">
+                                                        <input type="text" class="form-control" maxlength="30" placeholder="Número interior" name="num_int" oninput="this.value = this.value.toUpperCase()">
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
