@@ -345,6 +345,24 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-3"><br>
+                                            <div class="form-group">
+                                                <label for="name">Pena convencional</label>
+                                                <input type="text" name="pena_convencional" class="form-control" value="{{ $conciliadores["pena_convencional"] }}" readonly> 
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-3"><br>
+                                            <div class="form-group">
+                                                <label for="name">Dirección que aparece en convenio</label>
+                                                <input type="text" name="direccion_convenio" class="form-control" value="{{ $conciliadores["direccion_convenio"] }}" readonly> 
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div id="pagos" class="row home-shape">
                                         <div class="col-xs-12 col-sm-12 col-md-12"></div>

@@ -1388,7 +1388,16 @@
 
         $casoMultasCentroSinComparecencia = ($totalCentro >= 1 && $totalCentroSinComparecencia === $totalCentro);
 
-    $bloquearContinuar = (!$hayNotificacionCentro && !$hayAlMenosUnaComparecencia);
+        $hayAlMenosUnAbogado = 0;
+        foreach ($representantes as $representante) {
+            if (!is_null($representante->id_abogado)) {
+                $hayAlMenosUnAbogado = 1;
+                break;
+            }
+        }
+
+        $bloquearContinuar = (!$hayNotificacionCentro && $hayAlMenosUnAbogado == 0);
+        //$bloquearContinuar = (!$hayNotificacionCentro && !$todasComparecencias);
 
         $bandera = 0;
         foreach ($representantes as $representante) {

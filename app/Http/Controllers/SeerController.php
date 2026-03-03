@@ -6979,7 +6979,7 @@ class SeerController extends Controller
         $user = User::find($id);
         $solicitudOriginal = SeerPerGeneral::find($data["id"]);
         $sede_a_guardar = $solicitudOriginal->delegacion ?? $user->delegacion;
-
+        
         if($data["conclucion"] == "Conciliacion"){
              // --- BLOQUE VISTA PREVIA ---
             if(!isset($data["dias_pagos"])) return back()->withErrors('Debes agregar por lo menos una fecha de pago.');
@@ -7108,13 +7108,17 @@ class SeerController extends Controller
                 //'conciliador_id'        => $user->id,
                 'estatus'               => $data["conclucion"]
             ]);
-
+            
+            $pena_convencional =  $data['pena_convencional'] ?? null;
+            $direccion_convenio = $data['direccion_convenio'] ?? null;
             $numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
             Audiencias::where('id_solicitud',$data["id"])
             ->orderBy('id_solicitud','desc')
             ->update([
                 'numero_audiencia'  =>  $numAudiencia+1,
                 'folio_audiencia'   =>  $numero_audiencia[0],
+                'pena_convencional'  =>  $data['pena_convencional'] ?? null,
+                'direccion_convenio'    =>  $data['direccion_convenio'] ?? null,
                 'estatus'           => 'Archivada',
             ]);
 
@@ -7176,6 +7180,8 @@ class SeerController extends Controller
             ->update([
                 'numero_audiencia'  =>  $numAudiencia+1,
                 'folio_audiencia'   =>  $numero_audiencia[0],
+                'pena_convencional'  =>  $data['pena_convencional'] ?? null,
+                'direccion_convenio'    =>  $data['direccion_convenio'] ?? null,
                 'estatus'           => 'No conciliacion',
             ]);
 
@@ -7307,11 +7313,25 @@ class SeerController extends Controller
                 'comida' => $sessionData['comida'] ?? null,
                 'tipo_audiencia' => $sessionData['tipo_audiencia'] ?? null,
                 'conclucion' => $sessionData['conclucion'] ?? null,
+                'pena_convencional' =>  $sessionData['pena_convencional'] ?? null,
+                'direccion_convenio'    =>  $sessionData['direccion_convenio'] ?? null
             ];
         } else {
             $datosAudiencia = SeerPerConciliador::where('id_solicitud', $id)
                 ->orderBy('numero_audiencias', 'DESC')
                 ->first();
+            $datosExtraAudiencia = Audiencias::where('id_solicitud', $id)->orderBy('numero_audiencia', 'DESC')->first();
+            if($datosAudiencia){
+                $datosAudiencia->pena_convencional = $datosExtraAudiencia ? $datosExtraAudiencia->pena_convencional : '';
+                $datosAudiencia->direccion_convenio = $datosExtraAudiencia ? $datosExtraAudiencia->direccion_convenio : '';
+            }
+            elseif(!$datosAudiencia && $datosExtraAudiencia){
+                $datosAudiencia = (object)[
+                    'pena_convencional' =>  $datosExtraAudiencia->pena_convencional,
+                    'direccion_convenio'    =>  $datosExtraAudiencia->direccion_convenio,
+                ];
+
+            }
         }
         $pagos = Pagos::where('id_solicitud', $id)->where('tipo_pago','Audiencia')->get();
         $municipio = Municipios::find($solicitud->municipio_rat);
@@ -7448,6 +7468,8 @@ class SeerController extends Controller
         $diarioTexto = $this->convertirNumerosALetras($salario_diario);
         $mensualTexto = $this->convertirNumerosALetras($salario_mensual);
         $montoTexto = $this->convertirNumerosALetras($datosAudiencia->monto);
+        $montoPena = is_numeric($datosAudiencia->pena_convencional) ? $datosAudiencia->pena_convencional : 0;
+        $penaTexto = $this->convertirNumerosALetras($montoPena);
 
         $idsSession = session()->get('convenio_citados_' . $id);
 
@@ -7578,7 +7600,7 @@ class SeerController extends Controller
         $descripcionIdentificacionP = $this->descripcionIdentificacion($identificacionPoder);
 
         $html = view('PDF/Solicitudes/convenioSolicitud', 
-        compact('id', 'solicitud', /*'dias_descanso',*/ 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto',/*'vacacionesTexto',
+        compact('id', 'solicitud', /*'dias_descanso',*/ 'salario_diario','salario_mensual','pagos','diarioTexto','penaTexto','mensualTexto','montoTexto',/*'vacacionesTexto',
         'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
         'gratificacionETexto','gratificacionFTexto','otrasTexto',*/'pagosDif','conciliador','prestaciones','solicitante','citados','audiencia','pagoTotal','abogado',
         'conceptosTexto', 'deduccionesTexto','municipioEmpresa', 'estadoEmpresa','descripcionIdentificacionS', 'descripcionIdentificacionP','prestaciones','deducciones','datosAudiencia','delegado',
@@ -9523,11 +9545,25 @@ class SeerController extends Controller
                 'comida' => $sessionData['comida'] ?? null,
                 'tipo_audiencia' => $sessionData['tipo_audiencia'] ?? null,
                 'conclucion' => $sessionData['conclucion'] ?? null,
+                'pena_convencional' =>  $sessionData['pena_convencional'] ?? null,
+                'direccion_convenio'    =>  $sessionData['direccion_convenio'] ?? null
             ];
         } else {
             $datosAudiencia = SeerPerConciliador::where('id_solicitud', $id)
                 ->orderBy('numero_audiencias', 'DESC')
                 ->first();
+            $datosExtraAudiencia = Audiencias::where('id_solicitud', $id)->orderBy('numero_audiencia', 'DESC')->first();
+            if($datosAudiencia){
+                $datosAudiencia->pena_convencional = $datosExtraAudiencia ? $datosExtraAudiencia->pena_convencional : '';
+                $datosAudiencia->direccion_convenio = $datosExtraAudiencia ? $datosExtraAudiencia->direccion_convenio : '';
+            }
+            elseif(!$datosAudiencia && $datosExtraAudiencia){
+                $datosAudiencia = (object)[
+                    'pena_convencional' =>  $datosExtraAudiencia->pena_convencional,
+                    'direccion_convenio'    =>  $datosExtraAudiencia->direccion_convenio,
+                ];
+
+            }
         }
         $pagos = Pagos::where('id_solicitud', $id)->get();
         $municipio = Municipios::find($solicitud->municipio_rat);
@@ -9654,6 +9690,8 @@ class SeerController extends Controller
         $diarioTexto = $this->convertirNumerosALetras($salario_diario);
         $mensualTexto = $this->convertirNumerosALetras($salario_mensual);
         $montoTexto = $this->convertirNumerosALetras($solicitante->monto);
+        $montoPena = is_numeric($datosAudiencia->pena_convencional) ? $datosAudiencia->pena_convencional : 0;
+        $penaTexto = $this->convertirNumerosALetras($montoPena);
 
         $idsSession = session()->get('convenio_citados_' . $id);
 
@@ -9680,7 +9718,7 @@ class SeerController extends Controller
         ->first();
 
         $html = view('PDF/Solicitudes/convenioPTUNoLabora', 
-        compact('id', 'solicitud', /*'dias_descanso',*/ 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','prestaciones','pagoTotal','delegado',
+        compact('id', 'solicitud', /*'dias_descanso',*/ 'salario_diario','salario_mensual','pagos','diarioTexto','mensualTexto','montoTexto','penaTexto','prestaciones','pagoTotal','delegado',
         'pagosDif','conciliador','solicitante','citados','abogado','datosAudiencia','descripcionIdentificacionS','descripcionIdentificacionP','audiencia','conceptosTexto','municipioEmpresa','estadoEmpresa'))
         ->render();
         $pdf = \PDF::loadHTML($html)
@@ -10056,6 +10094,8 @@ class SeerController extends Controller
             $conciliadores->tipo_audiencia = $sData['tipo_audiencia'] ?? $conciliadores->tipo_audiencia;
             // Ensure compatibility if view uses 'tipo'
             $conciliadores->tipo = $conciliadores->tipo_audiencia;
+            $conciliadores->pena_convencional = $sData['pena_convencional'] ?? null;
+            $conciliadores->direccion_convenio = $sData['direccion_convenio'] ?? null;
         }
         // --------------------------
 
@@ -10305,7 +10345,6 @@ class SeerController extends Controller
     public function terminar_audiencia(Request $request){
         $data = $request->all();
         $id_solicitud = $data["id"];
-
         // --- MERGE SESSION (Vista Previa) ---
         $sessionKey = "audiencia_conclucion_data_{$data['id']}";
         if(session()->has($sessionKey)){
@@ -10441,6 +10480,8 @@ class SeerController extends Controller
                         'numero_audiencia'  =>  $numAudiencia+1,
                         'folio_audiencia'   =>  $numero_audiencia[0],
                         'estatus'           => 'Archivada',
+                        'pena_convencional'  =>  $data['pena_convencional'],
+                        'direccion_convenio'    =>  $data['direccion_convenio'],
                     ]);
             }
             if(session()->has("audiencia_conclucion_data_{$data['id']}")) {
@@ -10454,11 +10495,14 @@ class SeerController extends Controller
                 'estatus'               => $data["conclucion"]
             ]);
             
+            //Se actualiza el estatus
             Audiencias::where('id_solicitud', $data["id"])
             ->orderBy('id', 'desc')
             ->first()
             ->update([
                 'estatus' => $data["conclucion"],
+                'pena_convencional'  =>  $data['pena_convencional'],
+                'direccion_convenio'    =>  $data['direccion_convenio'],
             ]);
 
             //Validar la bandera para mostrar documento o 

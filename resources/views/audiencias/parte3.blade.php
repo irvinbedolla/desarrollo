@@ -163,6 +163,24 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-2"><br>
+                                            <div class="form-group">
+                                                <label for="name">Pena convencional</label>
+                                                <input type="number" step="0.001" name="pena_convencional" class="form-control" placeholder="Ingrese solo 3 decimales" > 
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-3">
+                                            <div class="form-group">
+                                                <label for="name">Dirección que aparece en convenio</label>
+                                                <input type="text" name="direccion_convenio" maxlength="50" class="form-control" placeholder=" " > 
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div id="pagos" style="display:none">
@@ -1469,6 +1487,8 @@
                 if(data.otros) $('input[name="otros"]').val(data.otros);
                 if(data.horario) $('input[name="horario"]').val(data.horario);
                 if(data.comida) $('input[name="comida"]').val(data.comida);
+                if(data.pena_convencional) $('input[name="pena_convencional"]').val(data.pena_convencional);
+                if(data.direccion_convenio) $('input[name="direccion_convenio"]').val(data.direccion_convenio);
                 if(data.conclucion) { $('#tipo_de_conclucion').val(data.conclucion).trigger('change'); }
                 if(data.tipo_audiencia) $('select[name="tipo_audiencia"]').val(data.tipo_audiencia);
 
