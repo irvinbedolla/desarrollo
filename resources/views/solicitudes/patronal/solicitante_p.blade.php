@@ -433,9 +433,43 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+
+
                                             <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
                                                 <h3 class="text-center" style="color:black">Datos laborales del trabajador</h3>
-                                            </div>  
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">Nacionalidad <span style="color:red;">(*)</span></label>
+                                                    <select name="nacionalidad" class="form-control" required>
+                                                        <option value="">SELECCIONE</option>
+                                                        <option value="MEXICANA">MEXICANA</option>
+                                                        <option value="OTRA">OTRA</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo nacionalidad es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="div1" class="col-xs-12 col-sm-12 col-md-2">
+                                                <div class="form-group">
+                                                    <label for="name">Fecha de Nacimiento <span style="color:red;">(*)</span></label>
+                                                    <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" onchange="validarfechaNacimiento(this)" class="form-control" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo fecha de nacimiento es obligatoria.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="div1" class="col-xs-12 col-sm-12 col-md-2">
+                                                <div class="form-group">
+                                                    <label for="name">Edad<span style="color:red;">(*)</span></label>
+                                                    <input type="number" min="0" name="edad" class="form-control" id="años_edad" required> 
+                                                    <div class="invalid-feedback">
+                                                        El campo edad es obligatoria.
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Número de Seguro Social (Opcional)</label>
@@ -483,6 +517,32 @@
                                                     <input type="number" name="horas" min="0" class="form-control" required> 
                                                     <div class="invalid-feedback">
                                                         El campo cantidad de horas trabajadas es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-6 col-sm-12 col-md-3"><br>
+                                                <spam for="btncheck1">¿Requiere traductor?</spam>
+                                                <input type="checkbox" class="btn-check" id="check_len" name="traductor" autocomplete="off">
+                                            </div>
+                                            <div class="col-xs-6 col-sm-12 col-md-6" id="lenguaje_señ">
+                                                <div class="form-group">
+                                                    <label for="name">¿Qué tipo de lenguaje require?</label>
+                                                    <input type="text" name="lenguaje" class="form-control" id="lenguajeRequerido" oninput="this.value = this.value.toUpperCase()">
+                                                    <div class="invalid-feedback">
+                                                        Debe especificar el idioma o lengua requerida.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-2">
+                                                <spam for="btncheck1">¿Tiene discapacidad?</spam>
+                                                <input type="checkbox" class="btn-check" id="check_discapacidad" name="discapacidad" value="Si" autocomplete="off">
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4" id="discapacidad" style="display:none;">
+                                                <div class="form-group">
+                                                    <label for="name">¿Cuál es su discapacidad?</label>
+                                                    <input type="text" name="tipo_discapacidad" class="form-control" id="discapacidadRequerida" oninput="this.value = this.value.toUpperCase()">
+                                                    <div class="invalid-feedback">
+                                                        Debe especificar la discapacidad.
                                                     </div>
                                                 </div>
                                             </div>
@@ -959,7 +1019,29 @@
 
     @yield('scripts')
     <script src="./public/assets/js/validaciones.js"></script> 
+
     <script> 
+        $(function(){
+            $('#check_len').on('change', validarcheckseñales);
+        })
+
+        function validarcheckseñales(){
+            const check = document.getElementById("check_len");
+            const divLenguaje = document.getElementById("lenguaje_señ");
+            const inputLenguaje = document.getElementById("lenguajeRequerido");
+
+            // Si el checkbox está marcado (checked es true)
+            if (check.checked) {
+                // Muestra el div y haz el input requerido
+                divLenguaje.style.display = "block";
+                inputLenguaje.required = true;
+            } else {
+                // Si no está marcado, oculta el div, quita el required y limpia el valor
+                divLenguaje.style.display = "none";
+                inputLenguaje.required = false;
+                inputLenguaje.value = '';
+            }
+        }
         function sedes(){
             document.getElementById("fecha").removeAttribute("disabled");
         }
@@ -979,6 +1061,9 @@
         document.addEventListener("DOMContentLoaded", function () {
             const inicio = document.querySelector('input[name="fecha_ingreso"]');
             const termino = document.querySelector('input[name="fecha_salida"]');
+
+            document.getElementById("lenguaje_señ").style.display = "none";
+
 
             // Función para obtener hoy en formato 'YYYY-MM-DD'
             function obtenerFechaHoyFormato() {
@@ -1199,8 +1284,10 @@
                 }
 
                 const checkLanguage = document.getElementById('check_lenguaje');
+                console.log(checkLanguage);
                 const lenguajeInput = document.getElementById('lenguajeRequerido');
                 if (checkLanguage && checkLanguage.checked) {
+                    console.log("Validando campo de lenguaje requerido");
                     checkAndMark(lenguajeInput, requiredFilled);
                 } else if (lenguajeInput) {
                     markValid(lenguajeInput);
@@ -1355,3 +1442,4 @@
             }
         });
     </script>
+    

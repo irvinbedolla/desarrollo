@@ -13970,45 +13970,64 @@ class SeerController extends Controller
         if (!$poder) {
             return back()->withErrors(['folio' => 'El folio ingresado no existe'])->withInput();
         }
+
         $nombreCompleto = trim(
             ($poder->nombres_patronal ?? '') . ' ' .
             ($poder->primer_apellido_patronal ?? '') . ' ' .
             ($poder->segundo_apellido_patronal ?? '')
         );
         $data['nombre'] = preg_replace('/\s+/', ' ', $nombreCompleto);
+
         $data_solicitante = [
-            'id_solicitud'         => $id_solicitud,
-            'curp'                 => $poder->curp_patronal,
-            'rfc'                  => $poder->rfc_patronal,
-            'nombre'               => $nombreCompleto,
-            'primer_apellido'      => $poder->primer_apellido_patronal,
-            'segundo_apellido'     => $poder->segundo_apellido_patronal,
-            'estado_domicilio'     => $poder->estado_patronal,
-            'municipio_domicilio'  => $poder->municipio_patronal,
-            'tipo_vialidad'        => $poder->tipo_vialidad_patronal,
-            'calle'                => $poder->vialidad_patronal,
-            'n_ext'                => $poder->num_ext_patronal,
-            'n_int'                => $poder->mun_int_patronal,
-            'colonia'              => $poder->colonia_patronal,
-            'cp'                   => $poder->cp_patronal,
-            'telefono1'            => $poder->telefono_patronal,
-            'email'                => $poder->email_patronal ?? $poder->correo_representante,
-            'num_ext'              => $poder->num_ext_patronal,
-            'codigo_postal'        => $poder->cp_patronal,
-            'puesto'               => $data["puesto"],
-            'pago'                 => $data["pago"],
-            'periodo_pago'         => $data["periodo_pago"],
-            'horas_semana'         => $data["horas"],
-            'fecha_ingreso'        => $data["fecha_ingreso"],
-            'fecha_nacimiento'     => $data["fecha_nacimiento"] ?? null,
-            'edad'                 => $data["edad"] ?? null,
-            'nacionalidad'         => $data["nacionalidad"] ?? null,
-            'identificacion'       => $data["identificacion"],
-            'num_identificacion'   => $data["num_identificacion"],
-            'descripcionSolicitud' => $data["descripcionSolicitud"],
-            'labora'               => isset($data["labora"]) ? "Si" : "No",
-            'nss'                  => $data["seguro"] ?? null,
-            'fecha_salida'         => $data["fecha_salida"] ?? null,
+            // --- DATOS OBTENIDOS DEL REGISTRO DEL PODER ($poder) ---
+            'curp'                => $poder['curp_representante'],
+            'nombre'              => $nombreCompleto,
+            'sexo'                => $poder['sexo_representante'],
+            'email'               => $poder['correo_representante'],
+            'telefono1'           => $poder['numero_representante'],
+            'identificacion'      => $poder['tipo_identificacion'],
+            'num_identificacion'  => $poder['num_identificacion'],
+            'estado_domicilio'    => $poder['estado_patronal'],
+            'municipio_domicilio' => $poder['municipio_patronal'],
+            'tipo_vialidad'       => $poder['tipo_vialidad_patronal'],
+            'calle'               => $poder['vialidad_patronal'],
+            'num_ext'             => $poder['num_ext_patronal'],
+            'num_int'             => $poder['mun_int_patronal'], // Puede ser NULL
+            'colonia'             => $poder['colonia_patronal'],
+            'codigo_postal'       => $poder['cp_patronal'],
+
+            // --- DATOS OBTENIDOS DEL FORMULARIO ($data) ---
+            // Campos Obligatorios
+            'id_solicitud'        => $id_solicitud,
+            'nacionalidad'        => $data['nacionalidad'],
+            'fecha_nacimiento'    => $data['fecha_nacimiento'],
+            'edad'                => $data['edad'],
+            'puesto'              => $data['puesto'],
+            'pago'                => $data['pago'],
+            'horas_semana'        => $data['horas'],
+            'fecha_ingreso'       => $data['fecha_ingreso'],
+            'descripcionSolicitud'=> $data['descripcionSolicitud'],
+            'traductor'           => $data['traductor'] ?? 'No', // Usar 'No' si no viene
+            'discapacidad'        => $data['discapacidad'] ?? 'No', // Usar 'No' si no viene
+            'labora'              => $data['labora'] ?? 'No', // Usar 'No' si no viene
+
+            // Campos Opcionales (usar el operador de fusión de null ?? para seguridad)
+            'tipo_persona'        => $data['tipo_persona'] ?? null,
+            'rfc'                 => $data['rfc'] ?? null,
+            'lenguaje'            => $data['lenguaje'] ?? null,
+            'tipo_discapacidad'   => $data['tipo_discapacidad'] ?? null,
+            'telefono2'           => $data['telefono2'] ?? null,
+            'referencia'          => $data['referencia'] ?? null,
+            'calle2'              => $data['calle2'] ?? null,
+            'calle3'              => $data['calle3'] ?? null,
+            'nss'                 => $data['nss'] ?? null,
+            'periodo_pago'        => $data['periodo_pago'] ?? null,
+            'fecha_salida'        => $data['fecha_salida'] ?? null,
+            'jornada'             => $data['jornada'] ?? null,
+            
+            // Campos de documentos (se llenarán si se suben archivos)
+            'documentoCurp'           => $data['documentoCurp'] ?? null,
+            'documentoIdentificacion' => $data['documentoIdentificacion'] ?? null,
         ];
 
         // Manejo de traductor
@@ -14017,7 +14036,7 @@ class SeerController extends Controller
             $data_solicitante["traductor"] = ($val === 'Si' || $val === '1' || $val === 'on') ? 'Si' : 'No';
             $data_solicitante["lenguaje"] = $data["lenguaje"] ?? null;
         }
-         $solicitante_data = [
+        $solicitante_data = [
             'solicitante' => $data_solicitante,
             'excepcion' => $data["excepcion"],
             //'excepcion_data' => $excepcion_data
@@ -14034,11 +14053,11 @@ class SeerController extends Controller
             'tipo_notificacion' => 'Citatorio'
         ];
 
-        SeerCitados::create($data_citado);
+        //SeerCitados::create($data_citado);
 
-        SeerPerGeneral::where('id', $id_solicitud)->update([
-            'caso_excepcion' => $data["excepcion"]
-        ]);
+        //SeerPerGeneral::where('id', $id_solicitud)->update([
+        //    'caso_excepcion' => $data["excepcion"]
+        //]);
 
         if ($data["excepcion"] === "Si") {
             SeerCasosExcepcion::create([
