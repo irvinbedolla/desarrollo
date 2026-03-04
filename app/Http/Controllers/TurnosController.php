@@ -521,7 +521,6 @@ class TurnosController extends Controller
             request()->validate([
                 'folio'             => 'required',
                 'primero_trabajador'=> 'required',
-                'segundo_trabajador'=> 'required',
                 'trabajador'        => 'required',
                 'trabajador_edad'   => 'required',
                 'trabajador_sexo'   => 'required',
@@ -602,7 +601,7 @@ class TurnosController extends Controller
                 'segundo_empresa'   => $representante["segundo_apellido_patronal"],
                 'nombre_empresa'    => $representante["nombres_patronal"],
                 'primero_trabajador'=> $data["primero_trabajador"],
-                'segundo_trabajador'=> $data["segundo_trabajador"],
+                'segundo_trabajador'=> $data["segundo_trabajador"] ?? null,
                 'trabajador'        => $data["trabajador"],
                 'edad'              => $data["trabajador_edad"],
                 'sexo'              => $data["trabajador_sexo"],
@@ -644,7 +643,8 @@ class TurnosController extends Controller
                 'num_identificacion'=> $data["num_identificacion"],
                 'estado_rat'        => $data["estado_rat"],
                 'año'               => $año_actual,
-                'id_historial'      => $ultimoRegistro->id ?? NULL
+                'id_historial'      => $ultimoRegistro->id ?? NULL,
+                'nacionalidad'      => $data["nacionalidad"],
             ); 
             $nombre = $data["trabajador"];
             
@@ -661,7 +661,7 @@ class TurnosController extends Controller
                 'documentoIne'              => $data["documentoIne"],
                 'documentoPoder'            => $data["documentoPoder"],
                 'primero_trabajador'        => $data["primero_trabajador"],
-                'segundo_trabajador'        => $data["segundo_trabajador"],
+                'segundo_trabajador'        => $data["segundo_trabajador"] ?? null,
                 'trabajador'                => $data["trabajador"],
                 'edad'                      => $data["trabajador_edad"],
                 'sexo'                      => $data["trabajador_sexo"],
@@ -700,6 +700,7 @@ class TurnosController extends Controller
                 'codigo_postal'             => $data["cp"],
                 'estado_rat'                => $data["estado_rat"],
                 'año'                       => $año_actual,
+                'nacionalidad'              => $data["nacionalidad"],
             ); 
             $nombre = $data["trabajador"];
             $email  = $data["email"];
