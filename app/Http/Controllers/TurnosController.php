@@ -1038,7 +1038,7 @@ class TurnosController extends Controller
             ->select('users.id', 'users.name', 'users.delegacion')
             ->first();
         }
-        $pagos = Pagos::where('id_solicitud', $id)->get();
+        $pagos = Pagos::where('id_solicitud', $id)->where('tipo_pago','Ratificacion')->get();
         /*$abogado  = Poder::join("turnos","turnos.idAbogado","=","abogados.idAbogado");
         $abogado = $abogado->where("turnos.id", "=", $id)
         ->first();*/
@@ -1073,8 +1073,8 @@ class TurnosController extends Controller
         $estadoEmpresa = $estado ? $estado->nombre : 'No definido';
 
         // Obtener prestaciones y deducciones
-        $prestaciones = Concepto::where('id_solicitud', $id)->get();
-        $deducciones = Deducciones::where('id_solicitud', $id)->get();
+        $prestaciones = Concepto::where('id_solicitud', $id)->where('tipo_pago','Ratificacion')->get();
+        $deducciones = Deducciones::where('id_solicitud', $id)->where('tipo_pago','Ratificacion')->get();
 
         $conceptosTexto = [];
         $deduccionesTexto = [];
