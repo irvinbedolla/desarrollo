@@ -5634,7 +5634,7 @@ class SeerController extends Controller
         if (!session()->has($sessionKey)) {
             $solicitanteDB = SeerSolicitante::where('id_solicitud', $id)->first();
             if($allCentro == 0){
-                $citadosDB = SeerCitados::where('id_solicitud', $id)->where('notificacion', 'Centro')->get();
+                $citadosDB = SeerCitados::where('id_solicitud', $id)->where('notificacion', 'Centro')->where('tipo_notificacion', '!=', 'Multa')->get();
             } else {
                 $citadosDB = SeerCitados::where('id_solicitud', $id)->get();
             }
@@ -5796,7 +5796,14 @@ class SeerController extends Controller
             'estatus'           => 'No conciliacion',
         ]);
 
-        SeerCitados::where('id_solicitud', $data["id"])->where('notificacion', 'Centro')->whereIn('estatus', ['Notificada', 'Finalizado exitosamente'])->update(['tipo_notificacion' => 'Multa']);
+        //SeerCitados::where('id_solicitud', $data["id"])->where('notificacion', 'Centro')->whereIn('estatus', ['Notificada', 'Finalizado exitosamente'])->update(['tipo_notificacion' => 'Multa']);
+
+        $citados = SeerCitados::where('id_solicitud', $data["id"])->where('notificacion', 'Centro')->where('tipo_notificacion', '!=', 'Multa')->whereIn('estatus', ['Notificada', 'Finalizado exitosamente'])->get();
+        foreach($citados as $citado){
+            $nuevo_citado = $citado->replicate();
+            $nuevo_citado->tipo_notificacion = 'Multa';
+            $nuevo_citado->save();
+        }
 
         return redirect()->route('todas_audiencias');
     }
@@ -6288,6 +6295,7 @@ class SeerController extends Controller
         ->select('users.name')
         ->first();
         $citados = SeerCitados::where("id_solicitud",$id)
+        ->where('tipo_notificacion', '!=', 'Multa')
         ->select('nombre','primer_apellido','segundo_apellido')
         ->get();
         $motivos = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
@@ -6580,6 +6588,7 @@ class SeerController extends Controller
         ->select('users.name')
         ->first();
         $citados = SeerCitados::where("id_solicitud",$id)
+        ->where('tipo_notificacion', '!=', 'Multa')
         ->select('nombre','primer_apellido','segundo_apellido')
         ->get();
         $motivos = SeerMotivo::join('catalogo_motivos','catalogo_motivos.id','seer_motivos.id_motivo')
@@ -6673,7 +6682,7 @@ class SeerController extends Controller
             }
             else if($citados->notificacion == "Centro"){
                 //Si va por el centro se van a generar las multas a los que no tiene reprecentante legal
-                $total_citados = SeerCitados::where("id_solicitud",$data["id"])
+                /*$total_citados = SeerCitados::where("id_solicitud",$data["id"])
                 ->where('notificacion',"Centro")
                 ->get();
                 $citados = SeerCitados::where("id_solicitud",$data["id"])
@@ -6681,19 +6690,21 @@ class SeerController extends Controller
                 ->whereNull("id_abogado")
                 ->get();
                 $cont = count($citados);
-                $cont_total = count($total_citados);
+                $cont_total = count($total_citados);*/
                 
-                for($i = 0; $i < $cont; $i++) {
-                    $update = SeerCitados::find($citados[$i]["id"])->where('notificacion', 'Centro')->whereIn('estatus', ['Notificada', 'Finalizado exitosamente'])->update([
-                        'tipo_notificacion' => 'Multa',
-                    ]);
+                $citados = SeerCitados::where('id_solicitud', $data["id"])->where('notificacion', 'Centro')->where('tipo_notificacion', '!=', 'Multa')->whereNULL("id_abogado")->whereIn('estatus', ['Notificada', 'Finalizado exitosamente'])->get();
+                foreach($citados as $citado){
+                    $nuevo_citado = $citado->replicate();
+                    $nuevo_citado->tipo_notificacion = 'Multa';
+                    $nuevo_citado->save();
                 }
-                if($cont == $cont_total){
+
+                /*if($cont == $cont_total){
                     $update = SeerPerGeneral::find($id)->update(['estatus' => 'No conciliacion']);
                 }
-                else{
+                else{*/
                     return redirect()->route('audiencias.parte3',compact('id'));
-                }                
+                //}                
             }
             return redirect()->route('todas_audiencias');
         }
@@ -7492,6 +7503,7 @@ class SeerController extends Controller
             if($allCentro == 0) {
                 $citados = SeerCitados::where('id_solicitud', $id)
                         ->where('aparece_convenio', 1)
+                        ->where('tipo_notificacion', '!=', 'Multa')
                         ->where('notificacion', 'Centro')
                         ->get();
             }
@@ -8001,7 +8013,7 @@ class SeerController extends Controller
             ->where("audiencias.id_solicitud", "=", $solicitud->id)
             ->first();
 
-        $citados = SeerCitados::where("id_solicitud", $solicitud->id)->get();
+        $citados = SeerCitados::where("id_solicitud", $solicitud->id)->where('tipo_notificacion', '!=', 'Multa')->get();
         $html = '<html>
             <head>
                 <meta charset="utf-8">
@@ -8791,6 +8803,7 @@ class SeerController extends Controller
         if($hayCentro){
             $citados = SeerCitados::where('id_solicitud', $id)
                         ->where('notificacion', 'Centro')
+                        ->where('tipo_notificacion', '!=', 'Multa')
                         ->where('resulte_responsable', 'No')
                         ->get();
         } else {
@@ -8943,7 +8956,6 @@ class SeerController extends Controller
                 'num_identificacion' => null,
             ];
         }*/
-
         $html = view('PDF/Solicitudes/ActaAudiencia', compact('id','solicitud','conciliador','prestaciones','deducciones','deduccionesTexto','pagoTotal','descripcionIdentificacionS',
         'descripcionIdentificacionP','conceptosTexto','solicitante','audiencia','datosAudiencia','citados'))->render();
 
@@ -9991,6 +10003,7 @@ class SeerController extends Controller
             ->leftJoin('persona_fisica', 'persona_fisica.id', '=', 'seer_citados.id_fisica')
             ->where('seer_citados.id_solicitud', $id)
             ->where('seer_citados.notificacion', 'Centro')
+            ->where('seer_citados.tipo_notificacion', '!=', 'Multa')
             ->whereNotNull('seer_citados.id_abogado')
             ->select('seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido','seer_citados.rfc',
             'abogados.nombres_patronal as nombre_abogado','abogados.primer_apellido_patronal as primero_abogado','abogados.segundo_apellido_patronal as segundo_abogado',
@@ -13584,7 +13597,7 @@ class SeerController extends Controller
         }
 
         if ($allCentro == 0){
-            $solicitud->citados = SeerCitados::where('id_solicitud', $id)->where('notificacion', 'Centro')->get();
+            $solicitud->citados = SeerCitados::where('id_solicitud', $id)->where('notificacion', 'Centro')->where('tipo_notificacion', '!=', 'Multa')->get();
         }
         else {
             $solicitud->citados = SeerCitados::where('id_solicitud', $id)->get();
@@ -14332,7 +14345,7 @@ class SeerController extends Controller
         return back()->with('success', 'Citado agregado correctamente, puedes agregar otro o continuar.');
     }
     public function mostrar_noConciliacion($id) {
-        $citados = SeerCitados::select('id','nombre','primer_apellido','segundo_apellido')->where('id_solicitud', $id)->get();
+        $citados = SeerCitados::select('id','nombre','primer_apellido','segundo_apellido')->where('tipo_notificacion', '!=', 'Multa')->where('id_solicitud', $id)->get();
 
         if ($citados->isEmpty()) {
             return redirect()->back()->with('error', 'No hay constancias para esta solicitud.');

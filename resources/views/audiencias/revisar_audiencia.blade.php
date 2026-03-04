@@ -666,7 +666,13 @@
                                                 @endphp
                                                 <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:30px;">
                                                     <div class="form-group">
-                                                        <h4 class="text-center">Citado</h4>
+                                                        @if($citado->tipo_notificacion == 'Multa')
+                                                            <h4 class="text-center">Multa <i class="bi bi-exclamation-triangle-fill text-danger"></i></h4>
+                                                        @elseif ($citado->tipo_notificacion == 'Citatorio' && $citado->notificacion == 'Centro')
+                                                            <h4 class="text-center">Citado por el Centro  <i class="bi bi-bank"></i></h4>
+                                                        @elseif ($citado->tipo_notificacion == 'Citatorio' && $citado->notificacion == 'Trabajador')
+                                                            <h4 class="text-center">Citado por el Solicitante  <i class="bi bi-person-fill"></i></h4>
+                                                        @endif
                                                     </div>
                                                 </div><br>
                                                 <div class="col-xs-12 col-sm-6 col-md-4" id="nombre_wrap_{{$loop->index}}">
@@ -1748,7 +1754,7 @@
                         <table class="table table-striped mt-2">
                             <thead style="background-color: #4A001F;">
                                 <th style="color: #fff;">Nombre</th>
-                                <th style="color: #fff;">CURP</th>
+                                <th style="color: #fff;">Tipo de Notificación</th>
                                 <th style="color: #fff;">Dirección</th>
                                 <th style="color: #fff;">Acciones</th>
                             </thead>
@@ -1756,7 +1762,11 @@
                                 @foreach($citados as $citado)
                                 <tr>
                                     <td>{{$citado->nombre}}</td>
-                                    <td>{{$citado->curp}}</td>
+                                    @if($citado->tipo_notificacion == 'Multa')
+                                    <td>{{$citado->tipo_notificacion}}</td>
+                                    @else
+                                    <td>{{$citado->notificacion}}</td>
+                                    @endif
                                     <td>{{$citado->colonia}}." ".{{$citado->calle}}</td>
                                     <td>
                                         <form method="POST" action="{{ route('borrar_citado_edicion') }} ">
