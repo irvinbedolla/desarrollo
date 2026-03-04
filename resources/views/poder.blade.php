@@ -807,7 +807,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="primer_Moral" id="primer_Moral" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" name="primer_Moral" maxlength="100" id="primer_Moral" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                         <div class="invalid-feedback">
                                                             El primer apellido es obligatorio.
                                                         </div>
@@ -816,7 +816,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="name">Segundo apellido <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="segundo_Moral" id="segundo_Moral" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                                        <input type="text" name="segundo_Moral" maxlength="100" id="segundo_Moral" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
                                                         <div class="invalid-feedback">
                                                             El segundo apellido es obligatorio.
                                                         </div>
