@@ -131,9 +131,15 @@
                 <!-- DELIGENCIA NO EXITOSA, SE CONSTITUYE, CERRADO -->
                 <div class="razon-notificacion"> 
                     <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p>
+
+                    @php
+                        $fechaNotificacion = !empty($citado->fecha)
+                            ? \Carbon\Carbon::parse($citado->fecha)
+                            : null;
+                    @endphp
                             
-                    <p>Siendo las <b>{{ $citado->updated_at->format('H') }} HORAS CON {{ $citado->updated_at->format('i') }} MINUTOS
-                        DEL DÍA {{ $citado->updated_at->translatedFormat('d \d\e F \d\e\l Y') }}, LIC. {{$notificador->name}}</b>, en mi
+                    <p>Siendo las <b>{{ $fechaNotificacion ? $fechaNotificacion->format('H') : '' }} HORAS CON {{ $fechaNotificacion ? $fechaNotificacion->format('i') : '' }} MINUTOS
+                        DEL DÍA {{ $fechaNotificacion ? mb_strtoupper($fechaNotificacion->translatedFormat('d \D\E F \D\E\L Y')) : '' }}, LIC. {{$notificador->name}}</b>, en mi
                         calidad de notificador(a) adscrito al Centro de Conciliación Laboral, oficina estatal {{ $solicitud->delegacion }}, a efecto de dar cumplimiento al <b>CITATORIO DE CONCILIACIÓN</b> de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
                         en el expediente citado, en el que se ordena NOTIFICAR <b>AL CITADO: {{$citado->nombre}}@if($citado->primer_apellido!=null) {{$citado->primer_apellido}}@endif
                         @if($citado->segundo_apellido!=null) {{$citado->segundo_apellido}}@endif</b>en el domicilio señalado en <b>{{$citado->tipo_vialidad}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) INT. {{$citado->n_int}}@endif, 

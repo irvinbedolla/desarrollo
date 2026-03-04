@@ -131,9 +131,15 @@
                 <!-- DELIGENCIA NO EXITOSA, NO SE LOCALIZA INTERIOR -->
                 <div class="razon-notificacion"> 
                     <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p><br>
+
+                    @php
+                        $fechaNotificacion = !empty($citado->fecha)
+                            ? \Carbon\Carbon::parse($citado->fecha)
+                            : null;
+                    @endphp
                             
-                    <p>Siendo las <b>{{ $citado->updated_at->format('H') }} HORAS CON {{ $citado->updated_at->format('i') }} MINUTOS
-                        DEL DÍA {{ $citado->updated_at->translatedFormat('d \d\e F \d\e\l Y') }}, LIC. {{$notificador->name}}</b> en mi
+                    <p>Siendo las <b>{{ $fechaNotificacion ? $fechaNotificacion->format('H') : '' }} HORAS CON {{ $fechaNotificacion ? $fechaNotificacion->format('i') : '' }} MINUTOS
+                        DEL DÍA {{ $fechaNotificacion ? mb_strtoupper($fechaNotificacion->translatedFormat('d \D\E F \D\E\L Y')) : '' }}, LIC. {{$notificador->name}}</b> en mi
                         calidad de notificador(a) adscrito al Centro de Conciliación Laboral, oficina estatal {{ $solicitud->delegacion }}, en 
                         ejercicio de las facultades conferidas en los artículos de la Ley Orgánica del Centro de Conciliación Laboral del 
                         Estado de Michoacán de Ocampo y 21 del reglamento interior del Centro de Conciliación Laboral del Estado de Michoacán 
