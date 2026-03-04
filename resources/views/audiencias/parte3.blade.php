@@ -773,13 +773,13 @@
         tipo_iden.addEventListener('change', function() {
             const valorSeleccionado = this.value;
 
-            const convenio = (valorSeleccionado === 'Conciliacion');
+            const convenio = (valorSeleccionado === 'Conciliacion' || valorSeleccionado === 'Reinstalacion');
             document.querySelectorAll('select[name="tipo_pago[]"]').forEach(function(sel){
                 sel.required = convenio;
             });
 
             // Realiza la validación o acciones necesarias
-            if (valorSeleccionado === 'Conciliacion') {
+            if (valorSeleccionado === 'Conciliacion' || valorSeleccionado === 'Reinstalacion') {
                 document.getElementById('no_conciliacion').style.display = "none";
                 document.getElementById('archivada').style.display = "none";
                 document.getElementById("pagos").style.display = "block";
@@ -789,12 +789,16 @@
                 var agu = document.querySelector('input[name="aguinaldo"]');
                 var hor = document.querySelector('input[name="horario"]');
                 var com = document.querySelector('input[name="comida"]');
+                var pen = document.querySelector('input[name="pena_convencional"]');
+                var dirc = document.querySelector('input[name="direccion_convenio"]');
 
                 //var tau = document.querySelector('[name="tipo_audiencia"]');
                 if(vac) vac.required = true;
                 if(agu) agu.required = true;
                 if(hor) hor.required = true;
                 if(com) com.required = true;
+                if(pen) pen.required = true;
+                if(dirc) dirc.required = true;
                 //if(tau) tau.required = true;
                 const tau = document.getElementById('tipo_audiencia');
                 tau.required = true;
@@ -809,11 +813,15 @@
                 var agu2 = document.querySelector('input[name="aguinaldo"]');
                 var hor2 = document.querySelector('input[name="horario"]');
                 var com2 = document.querySelector('input[name="comida"]');
+                var pen2 = document.querySelector('input[name="pena_convencional"]');
+                var dirc2 = document.querySelector('input[name="direccion_convenio"]');
                 //var tau2 = document.querySelector('[name="tipo_audiencia"]');
                 if(vac2) vac2.required = false;
                 if(agu2) agu2.required = false;
                 if(hor2) hor2.required = false;
                 if(com2) com2.required = false;
+                if(pen2) pen2.required = false;
+                if(dirc2) dirc2.required = false;
                 //if(tau2) tau2.required = false;
                 const tau2 = document.getElementById('tipo_audiencia');
                 tau2.required = false;
@@ -823,6 +831,11 @@
                 document.getElementById('archivada').style.display = "none"
                 document.getElementById("pagos").style.display = "none";
                 document.getElementById('dias').style.display = "none";
+
+                var penR = document.querySelector('input[name="pena_convencional"]');
+                var dircR = document.querySelector('input[name="direccion_convenio"]');
+                if(penR) penR.required = false;
+                if(dircR) dircR.required = false;
 
                 const tau2 = document.getElementById('tipo_audiencia');
                 tau2.required = false;
@@ -879,6 +892,11 @@
                     document.getElementById("pagos").style.display = "none";
                     document.getElementById('dias').style.display = "none";
 
+                    var penA = document.querySelector('input[name="pena_convencional"]');
+                    var dircA = document.querySelector('input[name="direccion_convenio"]');
+                    if(penA) penA.required = false;
+                    if(dircA) dircA.required = false;
+
                     const tau3 = document.getElementById('tipo_audiencia');
                     tau3.required = false;
                 } else {
@@ -892,11 +910,15 @@
                     var agu3 = document.querySelector('input[name="aguinaldo"]');
                     var hor3 = document.querySelector('input[name="horario"]');
                     var com3 = document.querySelector('input[name="comida"]');
+                    var pen3 = document.querySelector('input[name="pena_convencional"]');
+                    var dirc3 = document.querySelector('input[name="direccion_convenio"]');
                     //var tau3 = document.querySelector('[name="tipo_audiencia"]');
                     if(vac3) vac3.required = false;
                     if(agu3) agu3.required = false;
                     if(hor3) hor3.required = false;
                     if(com3) com3.required = false;
+                    if(pen3) pen3.required = false;
+                    if(dirc3) dirc3.required = false;
                     if(tau3) tau3.required = false;
                     const tau3 = document.getElementById('tipo_audiencia');
                     tau3.required = false;
@@ -913,11 +935,15 @@
                 var agu4 = document.querySelector('input[name="aguinaldo"]');
                 var hor4 = document.querySelector('input[name="horario"]');
                 var com4 = document.querySelector('input[name="comida"]');
+                var pen4 = document.querySelector('input[name="pena_convencional"]');
+                var dirc4 = document.querySelector('input[name="direccion_convenio"]');
                 //var tau4 = document.querySelector('[name="tipo_audiencia"]');
                 if(vac4) vac4.required = false;
                 if(agu4) agu4.required = false;
                 if(hor4) hor4.required = false;
                 if(com4) com4.required = false;
+                if(pen4) pen4.required = false;
+                if(dirc4) dirc4.required = false;
                 if(tau4) tau4.required = false;
                 const tau4 = document.getElementById('tipo_audiencia');
                 tau4.required = false;
@@ -926,10 +952,15 @@
 
         (function(){
             if(!tipo_iden) return;
-            const convenio = (tipo_iden.value === 'Conciliacion');
+            const convenio = (tipo_iden.value === 'Conciliacion' || tipo_iden.value === 'Reinstalacion');
             document.querySelectorAll('select[name="tipo_pago[]"]').forEach(function(sel){
                 sel.required = convenio;
             });
+
+            var penInit = document.querySelector('input[name="pena_convencional"]');
+            var dircInit = document.querySelector('input[name="direccion_convenio"]');
+            if(penInit) penInit.required = convenio;
+            if(dircInit) dircInit.required = convenio;
         })();
 
          $('.open-modal').click(function() {
@@ -944,7 +975,7 @@
 
             // Escuchar cuando se cambie la opción del select
             select.addEventListener('change', function () {
-                if (select.value === 'Conciliacion') {
+                if (select.value === 'Conciliacion' || select.value === 'Reinstalacion') {
                     dias.style.display = 'flex'; // o 'block' si quieres que sea vertical
                 } else {
                     dias.style.display = 'none';
