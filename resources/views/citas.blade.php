@@ -193,6 +193,7 @@
                                                         <h4 class="text-center">Datos del Trabajador</h4>
                                                     </div>
                                                 </div>
+                                                
 
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
@@ -206,10 +207,8 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Segundo apellido <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="segundo_trabajador" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()" required> 
-                                                        <div class="invalid-feedback">
-                                                            El campo es obligatorio.
-                                                        </div>
+                                                        <input type="text" name="segundo_trabajador" id ="segundo_apellido" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()" required> 
+                                                        
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
@@ -218,6 +217,19 @@
                                                         <input type="text" name="trabajador" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()" required> 
                                                         <div class="invalid-feedback">
                                                             El nombre es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-2">
+                                                    <div class="form-group">
+                                                        <label for="name">Nacionalidad <span style="color:red;">(*)</span></label>
+                                                        <select name="nacionalidad" class="form-control" id="nacionalidad" required>
+                                                            <option value="">SELECCIONE</option>
+                                                            <option value="MEXICANA">MEXICANA</option>
+                                                            <option value="EXTRANJERA">EXTRANJERA</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo nacionalidad es obligatoria.
                                                         </div>
                                                     </div>
                                                 </div>
@@ -294,7 +306,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-4"> 
                                                     <div class="form-group">
                                                         <label for="name">Núm de identificación <span style="color:red;">(*)</span> <span data-bs-toggle="modal" data-bs-target="#helpModal" style="cursor: pointer;">❓</span></label>
-                                                        <input type="text" name="num_identificacion" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                        <input type="text" name="num_identificacion" maxlength="13" minlength="6" class="form-control" oninput="this.value = this.value.toUpperCase()" placeholder="De 3 a 13 caracteres" required> 
                                                         <div class="invalid-feedback">
                                                             El campo núm. de identificación es obligatorio.
                                                         </div>
@@ -1238,6 +1250,29 @@
             }
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectNacionalidad = document.getElementById('nacionalidad');
+            const apellido = document.getElementById('segundo_apellido');
+            
+            function actualizarApellido() {
+                if (!selectNacionalidad) return;
+                const valor = selectNacionalidad.value;
+                const shouldBeRequiredByDefault = apellido.hasAttribute('data-required-default') || apellido.hasAttribute('required');
+                    
+                    if (valor === 'MEXICANA' || valor === '') {
+                        apellido.setAttribute('required', '');
+
+                    } else if (valor === 'EXTRANJERA') {
+                        
+                        apellido.removeAttribute('required');
+                    }
+            }
+            if (selectNacionalidad) selectNacionalidad.addEventListener('change', actualizarApellido);
+            actualizarApellido();
+        });
+    </script>
+
     <div id="crear_poder" style ="display: none;">
         <div>.</div>
         <div class="loader"></div>
