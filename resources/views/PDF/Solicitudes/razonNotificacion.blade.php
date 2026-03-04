@@ -101,6 +101,20 @@
                 'RÓTULOS VISIBLES' => 'LOS RÓTULOS VISIBLES EN EL INMUEBLE'
             ];
         @endphp
+        @php
+            if($citado->firma === 'FIRMA'){
+                $descripcionFirma = 'FIRMA PARA CONSTANCIA LEGAL.';
+            }
+            if($citado->firma === 'NO FIRMA'){
+                $descripcionFirma = 'NO FIRMA POR NO CONSIDERARLO NECESARIO, A PESAR DE HABÉRSELO REQUERIDO.';
+            }
+            if($citado->firma === 'FIRMA Y SELLA'){
+                $descripcionFirma = 'FIRMA Y SELLA PARA CONSTANCIA LEGAL.';
+            }
+            if($citado->firma === 'SELLA'){
+                $descripcionFirma = 'SELLA PARA CONSTANCIA LEGAL.';
+            }
+        @endphp
     </head>
     
     <body>
@@ -265,7 +279,7 @@
                         <!--<div class="page-break"></div>--> <!-- Genera un salto de línea-->
                         <!--<br><br><br><br><br><br><br>-->
                     <div class="seccion-firma">
-                        <b>FIRMA PARA CONSTANCIA LEGAL.</b><br>
+                        <b>{{ $descripcionFirma}}</b><br>
                         Anexando impresión fotográfica para constancia legal.<br>
                         <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. Doy fe.</b>
                         <div class="espaciador-firma"><br>

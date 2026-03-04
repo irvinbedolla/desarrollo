@@ -113,7 +113,7 @@
                                         </div>
                                     </div>
                                     <div class='row mcd-group'>
-                                        <div class="col-xs-12 col-sm-12 col-md-12 " style="background-color:#D2D3D5; width:100%; height:25px;">
+                                        <div class="col-xs-12 col-sm-12 col-md-10 " style="background-color:#D2D3D5; width:100%; height:25px;">
                                             <h5 class="text-center" style="color:black">Medios de cercioramiento de domicilio</h5>
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-6 ">
@@ -350,21 +350,33 @@
                                     <div class='row od-group'>
                                     <!--/div-->
                                     <!-- Fin de Media filiación -->
-                                        <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div class="col-xs-12 col-sm-12 col-md-6">
                                             <div class="form-group">
-                                                <label>Firma </label>
-                                                <select name="firma" class="form-control" >
-                                                    <option value="">Selecciona</option>
-                                                    <option value="NO FIRMA">No firma</option>
-                                                    <option value="FIRMA">Firma</option>
-                                                    <option value="SELLA">Sella</option>
-                                                    <option value="FIRMA Y SELLA">Firma y sella</option>
-                                                </select>
+                                                <label for="name">Giro comercial <span style="color:red;">(*)</span> </label>
+                                                <input type="text" name="giro_comercial" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
                                                 <div class="invalid-feedback">
-                                                    El campo firma es obligatorio.
+                                                    El campo giro comercial es obligatorio.
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-xs-12 col-sm-6 col-md-4">
+                                            <div class="form-group">
+                                                <label>Finalización de diligencia <span style="color:red;">(*)</span></label>
+                                                <select name="estatus" id="estatus" class="form-control" required>
+                                                    <option value="">Selecciona</option>
+                                                    <option value="Finalizado exitosamente">Finalizado exitosamente (persona)</option>
+                                                    <option value="No notificada">Exitoso por instructivo (fijado en puerta)</option>
+                                                    <option value="No exitosa se constituye">No exitoso, se constituye</option>
+                                                    <option value="No exitosa no se constituye">No exitoso, no se constituye (amparo)</option>
+                                                    <option value="Notificada">Notificado</option>
+                                                    <option value="Recibe pero no firma">Recibe pero no firma</option>
+                                                </select>
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
                                         
                                     <!-- Si la respuesta es no existosa, se contituye, beberán contestar está pregunta (Tipo problema)-->
                                         <div class="col-xs-12 col-sm-6 col-md-4 " id="tipo_problema1" style="display:none;">
@@ -416,13 +428,27 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-6 col-md-12">
+                                        <div class="col-xs-12 col-sm-6 col-md-6" id="abundar_motivo" style="display:none;">
                                             <div class="form-group">
-                                                <label for="name">Especificar en caso de que tenga un problema</label>
-                                                <input type="text" class="form-control" name="especificar" oninput="this.value = this.value.toUpperCase()">
+                                                <label for="name"><!--Especificar en caso de que tenga un problema-->Abundar motivo</label>
+                                                <textarea class="form-control" name="especificar" rows="4" oninput="this.value = this.value.toUpperCase()"></textarea>
                                             </div>
                                         </div>
-                                        
+                                        <div class="col-xs-12 col-sm-12 col-md-2" id="firma" style="display:none;">
+                                            <div class="form-group">
+                                                <label>Firma </label>
+                                                <select name="firma" class="form-control" >
+                                                    <option value="">Selecciona</option>
+                                                    <option value="NO FIRMA">No firma</option>
+                                                    <option value="FIRMA">Firma</option>
+                                                    <option value="SELLA">Sella</option>
+                                                    <option value="FIRMA Y SELLA">Firma y sella</option>
+                                                </select>
+                                                <div class="invalid-feedback">
+                                                    El campo firma es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-xs-12 col-sm-6 col-md-4 ">
                                             <div class="form-group">
                                                 <label for="name">Imagen 1 <span style="color:red;">(*)</span></label>
@@ -449,18 +475,10 @@
                                                 <textarea class="form-control" name="observaciones" rows="4" oninput="this.value = this.value.toUpperCase()" required></textarea>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-12">
-                                                    <div class="form-group">
-                                                        <label for="name">Giro comercial <span style="color:red;">(*)</span> </label>
-                                                        <input type="text" name="giro_comercial" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
-                                                        <div class="invalid-feedback">
-                                                            El campo giro comercial es obligatorio.
-                                                        </div>
-                                                    </div>
-                                        </div>
+                                       
                                     </div>
                                     <div class='row de-group'>
-                                        <div class="col-xs-12 col-sm-6 col-md-6">
+                                        <!--<div class="col-xs-12 col-sm-6 col-md-6">
                                             <div class="form-group">
                                                 <label>Finalización de diligencia <span style="color:red;">(*)</span></label>
                                                 <select name="estatus" id="estatus" class="form-control" required>
@@ -476,7 +494,7 @@
                                                     El campo es obligatorio.
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div>-->
                                         <div class="col-xs-12 col-sm-6 col-md-6">
                                             <div class="form-group">
                                                 <label for="name">Fecha de notificación <span style="color:red;">(*)</span></label>
@@ -587,16 +605,16 @@
                         
                     }
 
-                    if (this.value === 'OTRA PERSONA') {
+                    /*if (this.value === 'OTRA PERSONA') {
                         /*mediaFiliacionDiv.style.display = 'block';
                         setRequiredInGroups([mediaFiliacionDiv], true);*/
                         
                         
-                    } else {
+                    /*} else {
                         
                         /*mediaFiliacionDiv.style.display = 'none';
                         setRequiredInGroups([mediaFiliacionDiv], false);*/
-                    }
+                    //}
                 });
                 const initial = selectQuienAtiende.value;
                 actualizarBotonVistaPrevia(initial);
@@ -642,18 +660,23 @@
             const selectEstatus = document.getElementById('estatus');
             const problema1Div = document.getElementById('tipo_problema1');
             const problema2Div = document.getElementById('tipo_problema2');
-
+            const abundarmotivoDiv = document.getElementById('abundar_motivo'); //Cuando se trata de tipo_problea1 o tipo_problema2, mostrar campo para describir el motivo
+            const firmaDiv = document.getElementById('firma'); //Cuando se trata de tipo_problema2, no mostrar el apartado de firma
             function actualizarTipoProblema() {
                 const valor = selectEstatus.value;
 
                 // Oculta ambos inicialmente
                 problema1Div.style.display = 'none';
                 problema2Div.style.display = 'none';
-
+                abundarmotivoDiv.style.display = 'none';
                 if (valor === 'No exitosa se constituye') {
                     problema1Div.style.display = 'block';
+                    abundarmotivoDiv.style.display = 'block';
+                    firmaDiv.style.display = 'block';
                 } else if (valor === 'No exitosa no se constituye') {
                     problema2Div.style.display = 'block';
+                    abundarmotivoDiv.style.display = 'block';
+                    firmaDiv.style.display = 'none';
                 }
             }
 
