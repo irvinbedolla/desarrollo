@@ -108,7 +108,7 @@
 </head>
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="">
-        <img src="public/assets/images/Logos 2.png" class="img" width="260" height="90">
+        <img src="public/assets/images/registro-foro-nacional-consolidacion-justicia-laboral.png" class="img" width="260" height="90">
     </div> 
 </nav>
 <body onload="validarcheckfolio()">
@@ -155,14 +155,8 @@
                                         <div class="col-md-6">
                                             <label for="folio" class="form-label fw-bold">Conferencia/Conversatorio</label>
                                             <select name="constancia" id="constancia" class="form-control">
-                                                @if(isset($constancia) && count($asistencias) > 0)
-                                                    <option value="">Seleccione la constancia a generar</option>
-                                                    @foreach($asistencias as $campo => $nombre)
-                                                        <option value="{{ $campo }}">{{ $nombre }}</option>
-                                                    @endforeach
-                                                @elseif(isset($constancia))
-                                                    <option value="">No tiene asistencias registradas</option>
-                                                @endif 
+                                                <option value="">Seleccione la constancia a generar</option>
+                                                <option value="Genera">Generar Constancia</option>
                                             </select>
                                         </div>
                                     </div>
@@ -225,4 +219,3 @@
 
     <script src="https://cdn.datatables.net/2.1.5/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.1.5/js/dataTables.bootstrap4.js"></script>
-    @yield('page_js')

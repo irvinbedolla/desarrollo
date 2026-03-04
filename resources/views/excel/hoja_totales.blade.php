@@ -1,15 +1,17 @@
 <table>
     <thead>
         <tr>
-            <th style="background-color: #4CAF50; color: #ffffff; font-weight: bold; text-align: center;" colspan="4">
+            <th style="background-color: #4CAF50; color: #ffffff; font-weight: bold; text-align: center;" colspan="6">
                 RESUMEN DE NOTIFICACIONES POR NOTIFICADOR
             </th>
         </tr>
         <tr>
             <th style="background-color: #D3D3D3; font-weight: bold; width: 300px;">Notificador</th>
             <th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">Total Citatorios</th>
-            <th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">Notificadas</th>
-            <th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">No Notificadas</th>
+            <th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">Exitosas</th>
+            <th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">No Exitosas</th>
+            <th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">Pendientes</th>
+            <th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">Exhortos</th>
         </tr>
     </thead>
     <tbody>
@@ -19,6 +21,8 @@
             <td style="text-align: center;">{{ $t['total'] }}</td>
             <td style="text-align: center; color: #008000;">{{ $t['notificadas'] }}</td>
             <td style="text-align: center; color: #FF0000;">{{ $t['no_notificadas'] }}</td>
+            <td style="text-align: center; color: #000;">{{ $t['pendientes'] }}</td>
+            <td style="text-align: center; color: #000;">{{ $t['exhorto'] }}</td>
         </tr>
         @endforeach
     </tbody>
