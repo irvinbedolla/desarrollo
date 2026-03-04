@@ -56,13 +56,34 @@ class ProductsFromViewExport implements FromView
             ->join('turnos', 'turnos.id', '=', 'pago_solicitud.id_solicitud') // Agregué el '=' por buena práctica
             ->leftJoin('users', 'users.id', '=', 'turnos.id_conciliador')
             ->select(
-                'pago_solicitud.*',
-                'turnos.NUE', 'turnos.empresa', 'turnos.primero_empresa', 'turnos.segundo_empresa',
-                'turnos.trabajador', 'turnos.primero_trabajador', 'turnos.segundo_trabajador', 
-                'turnos.delegacion as turno_delegacion',
+                'pago_solicitud.id_solicitud',
+                'pago_solicitud.fecha',
+                'pago_solicitud.estatus',
+                'pago_solicitud.tipo_pago',
+                // Lógica condicional para cada campo
+                DB::raw("CASE WHEN pago_solicitud.id_solicitud != 0 THEN turnos.NUE ELSE pago_solicitud.NUE END as NUE"),
+                /*
+                DB::raw("CASE WHEN pago_solicitud.id_solicitud != 0 
+                            THEN CONCAT_WS(' ', seer_citados.nombre, seer_citados.primer_apellido, seer_citados.segundo_apellido) 
+                            ELSE pago_solicitud.empresa_representante 
+                        END as nombre_empleador"),
+                DB::raw("CASE WHEN pago_solicitud.id_solicitud != 0 THEN seer_solicitante.nombre ELSE pago_solicitud.nombre_trabajador END as nombre_trabajador"),
+                DB::raw("CASE WHEN pago_solicitud.id_solicitud != 0 THEN seer_general.delegacion ELSE pago_solicitud.delegacion END as turno_delegacion"), */
+                DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pagado' THEN pago_solicitud.id END) as cantidad_pagados"),
+                DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN pago_solicitud.id END) as cantidad_pendientes"),
+                DB::raw("SUM(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pagado' THEN pago_solicitud.monto ELSE 0 END) as monto_pagado"),
+                DB::raw("SUM(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN pago_solicitud.monto ELSE 0 END) as monto_pendiente"),
                 'users.name as conciliador_name'
             )
-            ->orderBy('users.name')
+            ->groupBy(
+                'pago_solicitud.id_solicitud',
+                'pago_solicitud.NUE',
+                'pago_solicitud.fecha',
+                'pago_solicitud.estatus',
+                'pago_solicitud.tipo_pago',
+                'turnos.NUE',
+                'users.name'
+            )
             ->get();
             
         // --- Pagos de Audiencias ---
@@ -84,23 +105,33 @@ class ProductsFromViewExport implements FromView
             ->whereIn('pago_solicitud.tipo_pago', ["Audiencia", "Conciliador"])
             
             ->select(
-                'pago_solicitud.*',
+                'pago_solicitud.id_solicitud',
+                'pago_solicitud.fecha',
+                'pago_solicitud.estatus',
+                'pago_solicitud.tipo_pago',
                 // Lógica condicional para cada campo
                 DB::raw("CASE WHEN pago_solicitud.id_solicitud != 0 THEN seer_general.NUE ELSE pago_solicitud.NUE END as NUE"),
-                
-                // Para el Empleador/Citado (concatenamos nombres y apellidos si vienen de la tabla)
+                /*
                 DB::raw("CASE WHEN pago_solicitud.id_solicitud != 0 
                             THEN CONCAT_WS(' ', seer_citados.nombre, seer_citados.primer_apellido, seer_citados.segundo_apellido) 
                             ELSE pago_solicitud.empresa_representante 
                         END as nombre_empleador"),
-                
-                // Para el Trabajador/Solicitante
                 DB::raw("CASE WHEN pago_solicitud.id_solicitud != 0 THEN seer_solicitante.nombre ELSE pago_solicitud.nombre_trabajador END as nombre_trabajador"),
-                
-                // Para la Delegación
-                DB::raw("CASE WHEN pago_solicitud.id_solicitud != 0 THEN seer_general.delegacion ELSE pago_solicitud.delegacion END as turno_delegacion"),
-                
+                DB::raw("CASE WHEN pago_solicitud.id_solicitud != 0 THEN seer_general.delegacion ELSE pago_solicitud.delegacion END as turno_delegacion"), */
+                DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pagado' THEN pago_solicitud.id END) as cantidad_pagados"),
+                DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN pago_solicitud.id END) as cantidad_pendientes"),
+                DB::raw("SUM(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pagado' THEN pago_solicitud.monto ELSE 0 END) as monto_pagado"),
+                DB::raw("SUM(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN pago_solicitud.monto ELSE 0 END) as monto_pendiente"),
                 'users.name as conciliador_name'
+            )
+            ->groupBy(
+                'pago_solicitud.id_solicitud',
+                'pago_solicitud.NUE',
+                'pago_solicitud.fecha',
+                'pago_solicitud.estatus',
+                'pago_solicitud.tipo_pago',
+                'seer_general.NUE',
+                'users.name'
             )
             ->get();
             

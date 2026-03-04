@@ -11,8 +11,8 @@
                     <th width="15" style="background-color: #869b9c; color: #ffffff;">Fecha</th>
                     <th width="10" style="background-color: #869b9c; color: #ffffff;">Hora</th>
                     <th width="25" style="background-color: #869b9c; color: #ffffff;">NUE</th>
-                    <th width="40" style="background-color: #869b9c; color: #ffffff;">Empleador</th>
                     <th width="40" style="background-color: #869b9c; color: #ffffff;">Trabajador</th>
+                    <th width="40" style="background-color: #869b9c; color: #ffffff;">Empleador</th>
                     <th width="30" style="background-color: #869b9c; color: #ffffff;">Parcialidades Totales</th>
                     <th width="30" style="background-color: #869b9c; color: #ffffff;">Monto Total</th>                    
                     <th width="20" style="background-color: #869b9c; color: #ffffff;">Parcialidades Pendientes</th>
@@ -31,8 +31,8 @@
                         <td style=" text-align: center;">{{ $estadistica->fecha_formateada }}</td>
                         <td style=" text-align: center;">{{ $estadistica->hora_formateada}}</td>
                         <td style=" text-align: center;">{{ $estadistica->NUE }}</td>
-                        <td style=" text-align: center;">{{ $estadistica->citados }} </td>
                         <td style=" text-align: center;">{{ $estadistica->nombre }}</td>
+                        <td style=" text-align: center;">{{ $estadistica->citados }} </td>
                         <td style=" text-align: center;">{{ $estadistica->cantidad_pendientes + $estadistica->cantidad_pagados }}</td>
                         <td style=" text-align: center;">${{ number_format($estadistica->monto_pendiente+$estadistica->monto_pagado , 2) }}</td>
                         <td style=" text-align: center;">{{ $estadistica->cantidad_pendientes }}</td>

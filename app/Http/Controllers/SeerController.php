@@ -65,6 +65,9 @@ use App\Exports\ReporteMexicoRati;
 use App\Exports\EmpresaSinSeguro;
 use App\Exports\SolicitudesExport;
 use App\Exports\Convenios;
+use App\Mail\ForoMail;
+use App\Models\ForoNacional;
+
 
 class SeerController extends Controller
 {   
@@ -459,7 +462,7 @@ class SeerController extends Controller
         if($data["tipo_reporte"] == "Cumplimientos"){
             // 1. Manejo de Excel
             if ($data["tipo"] == "2") {
-                return Excel::download(new ProductsFromViewExport($fecha_inicial, $fecha_final, $sede), 'productos.xlsx');
+                return Excel::download(new ProductsFromViewExport($fecha_inicial, $fecha_final, $sede), 'Cumplimientos.xlsx');
             }
             
             // Consulta Base para Pagos
@@ -12494,29 +12497,10 @@ class SeerController extends Controller
         $asistencias = [];
         session(['ultimo_folio' => $id]);
 
-        if ($request->isMethod('post') && $id) {
-            $constancia = TercerEncuentro::find($id);
-
+        if ($id) {
+            $constancia = ForoNacional::find($id);
             if (!$constancia) {
                 return back()->with('error', 'Folio no encontrado.');
-            }
-
-        $conferencias = [
-            'convesatorio1' => 'Conferencia Magistral titulada “Representatividad Sindical en México”',
-            'convesatorio2' => 'Conversatorio titulado “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”',
-            'convesatorio3' => 'Conversatorio titulado “Implicación y Aplicación de la Ley Silla, Regulación del Trabajo en Plataformas Digitales y Reducción de las Jornadas Laborales”',
-            'convesatorio4' => 'Conversatorio titulado “La Seguridad Social como Derecho Humano y su Impacto en las Resoluciones Judiciales”',
-            'convesatorio5' => 'Presentación del Libro “Conciliación y Justicia Laboral” Coordinadores: Andrés Medina Guzmán y Sergio Carmelo Domínguez Mota',
-            'convesatorio6' => 'Conversatorio titulado “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral”',
-            'convesatorio7' => 'Conversatorio titulado “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
-            'convesatorio8' => 'Presentación del Libro “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
-            'convesatorio9' => 'Conferencia Magistral de Clausura',
-        ];
-
-            foreach ($conferencias as $campo => $nombre) {
-                if (!empty($constancia->$campo) && strtolower(trim($constancia->$campo)) === 'si') {
-                    $asistencias[$campo] = $nombre;
-                }
             }
         }
 
@@ -12598,25 +12582,11 @@ class SeerController extends Controller
     //Genera las constacias de cada una de las conferencias asistidas
     public function crear_constancia(Request $request){
         $data = $request->all();
-        $participante = TercerEncuentro::find($data["folio"]); // Objeto participante
+        $participante = ForoNacional::find($data["folio"]); // Objeto participante
         $nombre = $participante->nombre . " " . $participante->primer_apellido . " " . $participante->segundo_apellido;
-        $conferencias = [
-            'convesatorio1' => 'Conferencia Magistral titulada “Representatividad Sindical en México”',
-            'convesatorio2' => 'Conversatorio titulado “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”',
-            'convesatorio3' => 'Conversatorio titulado “Implicación y Aplicación de la Ley Silla, Regulación del Trabajo en Plataformas Digitales y Reducción de las Jornadas Laborales”',
-            'convesatorio4' => 'Conversatorio titulado “La Seguridad Social como Derecho Humano y su Impacto en las Resoluciones Judiciales”',
-            'convesatorio5' => 'Presentación del Libro “Conciliación y Justicia Laboral” Coordinadores: Andrés Medina Guzmán y Sergio Carmelo Domínguez Mota',
-            'convesatorio6' => 'Conversatorio titulado “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral”',
-            'convesatorio7' => 'Conversatorio titulado “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
-            'convesatorio8' => 'Presentación del Libro “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
-            'convesatorio9' => 'Conferencia Magistral de Clausura',
-        ];
-        $NumConferencia = $data["constancia"];
-        $conferencia = $conferencias[$NumConferencia];
-
+       
         $html = view('PDF/TercerEncuentro/constancia', [
             'participante' => $participante,
-            'conferencia' => $conferencia,
         ])->render();
 
         $pdf = \PDF::loadHTML($html)
@@ -14400,4 +14370,30 @@ class SeerController extends Controller
 
         return $pdf->stream($nombreArchivo);
     }
+
+    public function registro_foro_nacional(){
+        return view('foroNacional');
+    }
+
+    public function foroNacionalregistro(Request $request){
+        $data = $request->all();
+        
+        $data_insert=array(
+            'primer_apellido'   => $data["primero_trabajador"],
+            'segundo_apellido'  => $data["segundo_trabajador"],
+            'nombre'            => $data["trabajador"],
+            'correo'            => $data["email"],
+            'telefono'          => $data["telefono"],
+            'lugar'             => $data["trabajador_edad"],
+            'sexo'              => $data["trabajador_sexo"],
+            'estatus'           => "Pendiente",
+        );
+        ForoNacional::create($data_insert);
+
+        // 2. Envío del correo
+        Mail::to($data['email'])->send(new ForoMail($data_insert));
+
+        return back()->with('success', 'Revisa tu bandeja de entrada para verificar tu folio de registro del Foro Nacional por la Consolidación de la Justicia Laboral en México.'); 
+    }
+
 }
