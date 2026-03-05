@@ -102,6 +102,20 @@
             'RÓTULOS VISIBLES' => 'LOS RÓTULOS VISIBLES EN EL INMUEBLE'
         ];
     @endphp
+    @php
+        if($citado->firma === 'FIRMA'){
+            $descripcionFirma = 'FIRMA PARA CONSTANCIA LEGAL.';
+        }
+        if($citado->firma === 'NO FIRMA'){
+            $descripcionFirma = 'NO FIRMA POR NO CONSIDERARLO NECESARIO, A PESAR DE HABÉRSELO REQUERIDO.';
+        }
+        if($citado->firma === 'FIRMA Y SELLA'){
+            $descripcionFirma = 'FIRMA Y SELLA PARA CONSTANCIA LEGAL.';
+        }
+        if($citado->firma === 'SELLA'){
+            $descripcionFirma = 'SELLA PARA CONSTANCIA LEGAL.';
+        }
+    @endphp
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
         <footer></footer>
@@ -170,18 +184,35 @@
                             @endforeach
                         </b>
                         A mayor abundamiento, verifico que cerca del domicilio se encuentran los siguientes puntos  
-                        de referencia: {{$citado->abundar_area}}. De igual forma, he constatado que se trata de un inmueble con las siguientes características: {{$citado->abundar_inmueble}}.</b> Procedí a tocar en repetidas ocasiones, 
-                        sin recibir respuesta. Y después de haber esperado un tiempo prudente, lógico y razonable, nadie acude a mi llamado, sin emabargo cuento con los medios de cercioramiento antes mencionados de que el domicilio 
-                        es el correcto y que el citado labora, habita o tiene su asiento de negocios en este domicilio con base en <b>{{$citado->observaciones}}</b>. Por todo lo anterior en términos de lo previsto en los artículos 741, 
+                        de referencia: {{$citado->abundar_area}}. De igual forma, he constatado que se trata de un inmueble con las siguientes características: {{$citado->abundar_inmueble}}.</b> 
+                        {{-- CUANDO NO ATIENEDE NADIE--}}
+                        @if($citado->quien_atiende ==='NADIE' )
+                            Procedí a tocar en repetidas ocasiones, 
+                            sin recibir respuesta. Y después de haber esperado un tiempo prudente, lógico y razonable, nadie acude a mi llamado, sin emabargo cuento con los medios de cercioramiento antes mencionados de que el domicilio 
+                            es el correcto y que el citado labora, habita o tiene su asiento de negocios en este domicilio con base en <b>{{$citado->observaciones}}</b>.
+                        @elseif($citado->quien_atiende === 'OTRA PERSONA' || $citado->quien_atiende ==='CITADO O REPRESENTANTE')
+                        {{-- CUANDO TE ATIENDEN, PERO NO QUIEREN RECIBIR --}}
+                            Asimismo, por los informes que me proporciona la persona con quien se atiende la presente diligencia, quien dijo llamarse @if($citado->nombre !=null)<b>{{mb_strtoupper($citado->nombre, 'UTF-8')}}@if($citado->primer_apellido!=null) {{mb_strtoupper($citado->primer_apellido, 'UTF-8')}}@endif @if($citado->segundo_apellido!=null) {{mb_strtoupper($citado->segundo_apellido,'UTF-8')}}@endif,</b>
+                            @else <b>SE NIEGA A PROPORCIONAR SU NOMBRE</b>@endif <b>QUIEN @if($citado->identificacion_notificacion != null) SE IDENTIFICA CON {{mb_strtoupper($citado->identificacion_notificacion, 'UTF-8')}} @else NO SE IDENTIFICA ALEGANDO {{mb_strtoupper($citado->motivo_identificacion, 'UTF-8')}}</b>@endif.
+                            , EDAD {{mb_strtoupper($citado->genero, 'UTF-8')}} AÑOS, ALTURA {{mb_strtoupper($citado->genero, 'UTF-8')}} M, COMPLEXIÓN {{mb_strtoupper($citado->genero, 'UTF-8')}}
+                            , CABELLO {{mb_strtoupper($citado->genero, 'UTF-8')}} Y OJOS {{mb_strtoupper($citado->genero, 'UTF-8')}}. </b>
+                            <b>LO ANTERIOR SE HACE DE MANERA APROXIMADA, YA QUE EL SUSCRITO NO ES PERITO EN LA MATERIA</b>. Quien manifiesta que <b>OCUPA EN PUESTO DE {{mb_strtoupper($citado->puesto, 'UTF-8')}}</b> 
+                            en el domicilio en que se actúa. Enseguida me identifico con credencial vigente expedida por el Centro de Conciliación Laboral, oficina estatal MORELIA que me acredita como Notificador 
+                            y le informo el motivo de mi visita, mediante lectura del <b>CITATORIO DE CONCILIACIÓN</b> antes mencionado, requiriendo así la presencia <b>{{mb_strtoupper($citado->nombre, 'UTF-8')}} {{mb_strtoupper($citado->primer_apellido, 'UTF-8')}} {{mb_strtoupper($citado->segundo_apellido, 'UTF-8')}}</b> a fin de NOTIFICARLO; la persona que me atiende manifiesta que el 
+                            citado no se encuentra por el momento, pero que efectivamente tiene su asiento de negocios en este domicilio. La persona que me atiende se rehusa a recibir los documentos a
+                            nombre del citado alegando que <b>{{mb_strtoupper($citado->observaciones, 'UTF-8')}}</b>. Sin embargo al contar con medios de cercioramiento de que el domicilio es el correcto y que el citado labora, habita o tiene su asiento de
+                            negocios en este domicilio.
+                        @endif
+                         Por todo lo anterior en términos de lo previsto en los artículos 741, 
                         742 fracción XIII, 743 y 751 de la Ley Federal del Trabajo procedo a notificar por 
                         instructivo pegando <b>CITATORIO Y CÉDULA DE LEY POR INSTRUCTIVO</b> en la puerta de entrada del domicilio.<br><br>
                     </p>
                     <div class="seccion-firma">
-                        Anexando impresión fotográfica para constancia legal. <br><br>
-                        <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. Doy fe.</b> 
-                    
+                        <b>{{ $descripcionFirma}}</b><br>
+                        Anexando impresión fotográfica para constancia legal.<br>
+                        <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. Doy fe.</b>
                         <div class="espaciador-firma"><br>
-                            <center><b>___________________________________<br>LIC. {{ mb_strtoupper($notificador->name, 'UTF-8')}} <br> FUNCIONARIO/A NOTIFICADOR/A</b></center>
+                            <center><b>___________________________________<br> LIC. {{mb_strtoupper($notificador->name,'UTF-8')}}<br> FUNCIONARIO/A NOTIFICADOR/A</b></center>
                         </div>
                     </div>
                 </div>
