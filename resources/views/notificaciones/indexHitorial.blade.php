@@ -83,9 +83,11 @@
                                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                         <li><a class="dropdown-item" href="{{ route('VerDocumentosAudiencia', $notificacion->id_solicitud) }}"  target="_blank">Identificaciones</a></li>
                                                                         @if($notificacion->tipo_notificacion === "Citatorio")
-                                                                            @if($notificacion->problema_diligencia === "CERRADO")
+                                                                            {{--@if($notificacion->problema_diligencia === "CERRADO")
                                                                                 <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFNoExitosa', [$notificacion->id_citado, $notificacion->id_solicitud]) }}" target="_blank">Notificación</a></li>
-                                                                            @endif
+                                                                            @else--}}
+                                                                                <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerPDFNoExitConstituye', [$notificacion->id_citado, $notificacion->id_solicitud]) }}" target="_blank">Notificación</a></li>
+                                                                            {{--@endif--}}
                                                                         @endif
                                                                         @if($notificacion->tipo_notificacion === "Multa")
                                                                             <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerPDFMultaNoExitConstituye', [$notificacion->id_citado, $notificacion->id_solicitud]) }}" target="_blank">Multa</a></li>

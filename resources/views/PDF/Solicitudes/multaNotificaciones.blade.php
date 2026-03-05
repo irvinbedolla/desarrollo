@@ -114,6 +114,10 @@
             if($citado->firma === 'SELLA'){
                 $descripcionFirma = 'SELLA PARA CONSTANCIA LEGAL.';
             }
+            if($citado->firma === 'NO APLICA'){
+                $descripcionFirma = '';
+            }
+
         @endphp
     </head>
     

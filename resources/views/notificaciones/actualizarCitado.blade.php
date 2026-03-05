@@ -210,7 +210,7 @@
                                                 </div-->
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-6 ">
+                                        <div class="col-xs-12 col-sm-12 col-md-4">
                                             <div class="form-group">
                                                 <label for="name">Puesto </label>
                                                 <input type="text" name="puesto" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
@@ -219,7 +219,7 @@
                                                 </div-->
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="col-xs-12 col-sm-12 col-md-3">
                                             <div class="form-group">
                                                 <label for="name">Identificación </label>
                                                 <select name="identificacion_notificacion" id="identificacion_notificacion" class="form-control">
@@ -243,7 +243,7 @@
                                                 </div-->
                                             </div>
                                         </div>
-                                        <div id="num_identificacion" class="col-xs-12 col-sm-12 col-md-4">
+                                        <div id="num_identificacion" class="col-xs-12 col-sm-12 col-md-5">
                                             <div class="form-group">
                                                 <label for="name">Núm de identificación</label>
                                                 <input type="text" name="num_identificacion" maxlength="50" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
@@ -252,10 +252,10 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div id="motivo_identificacion" class="col-xs-12 col-sm-12 col-md-12 ">
+                                        <div id="motivo_identificacion" class="col-xs-12 col-sm-12 col-md-5">
                                             <div class="form-group">
                                                 <label for="name">Motivo de la no identificación</label>
-                                                <input type="text" name="motivo_identificacion" class="form-control" oninput="this.value = this.value.toUpperCase()"> 
+                                                <textarea class="form-control" name="motivo_identificacion" rows="4" oninput="this.value = this.value.toUpperCase()"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -347,37 +347,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class='row od-group'>
+                                    <!--<div class='row od-group'>-->
                                     <!--/div-->
                                     <!-- Fin de Media filiación -->
-                                        <div class="col-xs-12 col-sm-12 col-md-6">
-                                            <div class="form-group">
-                                                <label for="name">Giro comercial <span style="color:red;">(*)</span> </label>
-                                                <input type="text" name="giro_comercial" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
-                                                <div class="invalid-feedback">
-                                                    El campo giro comercial es obligatorio.
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-6 col-md-4">
-                                            <div class="form-group">
-                                                <label>Finalización de diligencia <span style="color:red;">(*)</span></label>
-                                                <select name="estatus" id="estatus" class="form-control" required>
-                                                    <option value="">Selecciona</option>
-                                                    <option value="Finalizado exitosamente">Finalizado exitosamente (persona)</option>
-                                                    <option value="No notificada">Exitoso por instructivo (fijado en puerta)</option>
-                                                    <option value="No exitosa se constituye">No exitoso, se constituye</option>
-                                                    <option value="No exitosa no se constituye">No exitoso, no se constituye (amparo)</option>
-                                                    <option value="Notificada">Notificado</option>
-                                                    <option value="Recibe pero no firma">Recibe pero no firma</option>
-                                                </select>
-                                                <div class="invalid-feedback">
-                                                    El campo es obligatorio.
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        
                                     <!-- Si la respuesta es no existosa, se contituye, beberán contestar está pregunta (Tipo problema)-->
                                         <div class="col-xs-12 col-sm-6 col-md-4 " id="tipo_problema1" style="display:none;">
                                             <div class="form-group">
@@ -434,6 +406,55 @@
                                                 <textarea class="form-control" name="especificar" rows="4" oninput="this.value = this.value.toUpperCase()"></textarea>
                                             </div>
                                         </div>
+                                        
+                                    <!--</div>-->
+                                    <div class='row de-group'>
+                                        <!--<div class="col-xs-12 col-sm-6 col-md-6">
+                                            <div class="form-group">
+                                                <label>Finalización de diligencia <span style="color:red;">(*)</span></label>
+                                                <select name="estatus" id="estatus" class="form-control" required>
+                                                    <option value="">Selecciona</option>
+                                                    <option value="Finalizado exitosamente">Finalizado exitosamente (persona)</option>
+                                                    <option value="No notificada">Exitoso por instructivo (fijado en puerta)</option>
+                                                    <option value="No exitosa se constituye">No exitoso, se constituye</option>
+                                                    <option value="No exitosa no se constituye">No exitoso, no se constituye (amparo)</option>
+                                                    <option value="Notificada">Notificado</option>
+                                                    <option value="Recibe pero no firma">Recibe pero no firma</option>
+                                                </select>
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>-->
+                                        <div class="col-xs-12 col-sm-12 col-md-12 " style="background-color:#D2D3D5; width:100%; height:25px;">
+                                            <h5 class="text-center" style="color:black">Finalización</h5>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="form-group">
+                                                <label for="name">Giro comercial <span style="color:red;">(*)</span> </label>
+                                                <input type="text" name="giro_comercial" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                <div class="invalid-feedback">
+                                                    El campo giro comercial es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-6 col-md-4">
+                                            <div class="form-group">
+                                                <label>Finalización de diligencia <span style="color:red;">(*)</span></label>
+                                                <select name="estatus" id="estatus" class="form-control" required>
+                                                    <option value="">Selecciona</option>
+                                                    <option value="Finalizado exitosamente">Finalizado exitosamente (persona)</option>
+                                                    <option value="No notificada">Exitoso por instructivo (fijado en puerta)</option>
+                                                    <option value="No exitosa se constituye">No exitoso, se constituye</option>
+                                                    <option value="No exitosa no se constituye">No exitoso, no se constituye (amparo)</option>
+                                                    <option value="Notificada">Notificado</option>
+                                                    <option value="Recibe pero no firma">Recibe pero no firma</option>
+                                                </select>
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-xs-12 col-sm-12 col-md-2" id="firma" style="display:none;">
                                             <div class="form-group">
                                                 <label>Firma </label>
@@ -443,6 +464,7 @@
                                                     <option value="FIRMA">Firma</option>
                                                     <option value="SELLA">Sella</option>
                                                     <option value="FIRMA Y SELLA">Firma y sella</option>
+                                                    <option value="NO APLICA">No aplica</option>
                                                 </select>
                                                 <div class="invalid-feedback">
                                                     El campo firma es obligatorio.
@@ -475,26 +497,6 @@
                                                 <textarea class="form-control" name="observaciones" rows="4" oninput="this.value = this.value.toUpperCase()" required></textarea>
                                             </div>
                                         </div>
-                                       
-                                    </div>
-                                    <div class='row de-group'>
-                                        <!--<div class="col-xs-12 col-sm-6 col-md-6">
-                                            <div class="form-group">
-                                                <label>Finalización de diligencia <span style="color:red;">(*)</span></label>
-                                                <select name="estatus" id="estatus" class="form-control" required>
-                                                    <option value="">Selecciona</option>
-                                                    <option value="Finalizado exitosamente">Finalizado exitosamente (persona)</option>
-                                                    <option value="No notificada">Exitoso por instructivo (fijado en puerta)</option>
-                                                    <option value="No exitosa se constituye">No exitoso, se constituye</option>
-                                                    <option value="No exitosa no se constituye">No exitoso, no se constituye (amparo)</option>
-                                                    <option value="Notificada">Notificado</option>
-                                                    <option value="Recibe pero no firma">Recibe pero no firma</option>
-                                                </select>
-                                                <div class="invalid-feedback">
-                                                    El campo es obligatorio.
-                                                </div>
-                                            </div>
-                                        </div>-->
                                         <div class="col-xs-12 col-sm-6 col-md-6">
                                             <div class="form-group">
                                                 <label for="name">Fecha de notificación <span style="color:red;">(*)</span></label>
@@ -669,10 +671,11 @@
                 problema1Div.style.display = 'none';
                 problema2Div.style.display = 'none';
                 abundarmotivoDiv.style.display = 'none';
+                firmaDiv.style.display = 'block';
                 if (valor === 'No exitosa se constituye') {
                     problema1Div.style.display = 'block';
                     abundarmotivoDiv.style.display = 'block';
-                    firmaDiv.style.display = 'block';
+                    firmaDiv.style.display = 'none';
                 } else if (valor === 'No exitosa no se constituye') {
                     problema2Div.style.display = 'block';
                     abundarmotivoDiv.style.display = 'block';

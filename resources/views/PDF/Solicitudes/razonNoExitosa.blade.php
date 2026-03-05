@@ -103,7 +103,7 @@
             ];
             //texto de el cercioramiento en el prime parrafo del documento
             $textoCercioramiento = match($citado->problema_diligencia) {
-                'CERRADO', 'NO ACCESO AL INMUEBLE', 'NO SEÑALA INTERIOR', 'NO LOGRO LOCALIZAR EL NÚMERO', 'NO SE LOCALIZA EL INMUEBLE CON NÚMERO, MANZANA, LOTE, ETC. SEALADOS' 
+                'CERRADO', 'NO ACCESO AL INMUEBLE', 'NO SEÑALA INTERIOR', 'NO LOGRO LOCALIZAR EL NÚMERO', 'NO SE LOCALIZA EL INMUEBLE CON NÚMERO, MANZANA, LOTE, ETC. SEÑALADOS' 
                     => 'éstos el Municipio, Colonia y Vialidad correctas señaladas en la solicitud de conciliación, por',
                 'NÚMERO INTERIOR SEÑALADO NO SE LOCALIZÓ EN DOMICILIO' 
                     => 'el domicilio correcto por',
@@ -171,7 +171,7 @@
                     <p>Siendo las <b>{{ $fechaNotificacion ? $fechaNotificacion->format('H') : '' }} HORAS CON {{ $fechaNotificacion ? $fechaNotificacion->format('i') : '' }} MINUTOS
                         DEL DÍA {{ $fechaNotificacion ? mb_strtoupper($fechaNotificacion->translatedFormat('d \D\E F \D\E\L Y')) : '' }}, LIC. {{$notificador->name}}</b>, en mi
                         calidad de notificador(a) adscrito al Centro de Conciliación Laboral, oficina estatal <b>{{ $solicitud->delegacion }}</b>, 
-                        a efecto de dar cumplimiento al <b>CITATORIO DE CONCILIACIÓN</b> de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
+                        a efecto de dar cumplimiento al <b>CITATORIO DE CONCILIACIÓN</b> de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha_confirmacion)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
                         en el expediente citado, en el que se ordena NOTIFICAR <b>AL CITADO: {{$citado->nombre}}@if($citado->primer_apellido!=null) {{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null) {{$citado->segundo_apellido}}@endif</b>, 
                         en el domicilio señalado en <b>{{mb_strtoupper($citado->tipo_vialidad, 'UTF-8')}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) INT. {{$citado->n_int}}@endif, COLONIA {{$citado->colonia}}, 
                         {{mb_strtoupper($municipioCitado, 'UTF-8')}}, CP {{$citado->cp}}, {{mb_strtoupper($estadoCitado, 'UTF-8')}}.</b> <br><br>
@@ -271,7 +271,7 @@
 
                         En esa razón, me encuentro imposibilitado para dar cumplimiento a lo ordenado en el <b>CITATORIO DE CONCILIACIÓN</b>; toda vez que no
                         cuento con los elementos de cercioramiento requeridos por el Artículo 743 Fracción I de la Ley Federal del Trabajo, por lo que me es
-                        imposible dar cumplimiento al <b>CITATORIO</b> antes citado.<br><br>
+                        imposible dar cumplimiento al <b>CITATORIO</b> antes citado.
                     </p>
                     <div class="seccion-firma">
                         Anexando impresión fotográfica para constancia legal. <br><br>
