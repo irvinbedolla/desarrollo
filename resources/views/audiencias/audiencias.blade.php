@@ -1945,6 +1945,7 @@
             if (calendarReagendar) { calendarReagendar.destroy(); }
             //Calculamos fecha mínima (5 días hábiles) para posicionar el calendario directamente en la primera semana válida.
             const sede = $('#sedeReagendar').val();
+            const diasHabilesNotificacion = (/morelia/i.test(String(sede || '')) ? 11 : 7);
             const conciliadorId = '{{ $conciliador->id ?? "" }}';
             const hoy = new Date();
             hoy.setHours(0,0,0,0);
@@ -1999,7 +2000,7 @@
             }
 
             async function calcularFechaMinimaNotificacionAsync(){
-                const diasHabilesNecesarios = 8;
+                const diasHabilesNecesarios = diasHabilesNotificacion;
                 let cursor = new Date(hoy);
                 let contados = 0;
 
@@ -2040,7 +2041,7 @@
                 const fechaMinima = calcularFechaMinima();
                 const fechaMinimaStr = fechaMinima.toISOString().slice(0,10);
 
-                //Fecha mínima para notificación (8 días hábiles) SOLO para aviso
+                //Fecha mínima para notificación (dinámica por sede) SOLO para aviso
                 const fechaMinNotificacion = await calcularFechaMinimaNotificacionAsync();
                 const fechaMinNotificacionStr = toYMD(fechaMinNotificacion);
                 // Ajustar a lunes de la semana que contiene la fecha mínima para no cortar la semana
@@ -2118,7 +2119,7 @@
                                     Swal.fire({
                                         icon: 'warning',
                                         title: 'Aviso de notificación',
-                                        html: 'La fecha seleccionada está <b>dentro de los 8 días hábiles</b> requeridos para notificar.' +
+                                        html: 'La fecha seleccionada está <b>dentro de los ' + (diasHabilesNotificacion - 1) + ' días hábiles</b> requeridos para notificar.' +
                                             '<br><br>Fecha mínima sugerida: <b>' + fechaMinNotificacionStr + '</b>.',
                                     });
                                 }
