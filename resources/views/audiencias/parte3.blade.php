@@ -175,7 +175,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-3">
                                             <div class="form-group">
                                                 <label for="name">Dirección que aparece en convenio</label>
-                                                <input type="text" name="direccion_convenio" maxlength="50" class="form-control" placeholder=" " > 
+                                                <input type="text" name="direccion_convenio" maxlength="150" class="form-control" placeholder=" " > 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>

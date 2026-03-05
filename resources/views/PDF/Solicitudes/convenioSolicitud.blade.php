@@ -187,9 +187,7 @@
                         c) Que desempeñaba sus actividades laborales en las siguientes condiciones: <br>
                             - Horario: <b>{{ $datosAudiencia->horario }}.</b><br>
                             - Horario de comida: <b>{{ $datosAudiencia->comida }}.</b><br>
-                            - Domicilio donde prestaba sus servicios: <b>{{ $datosAudiencia->direccion_convenio }} @if(!empty($abogado->mun_int_patronal))
-                                    int. {{ $abogado->mun_int_patronal }}
-                                @endif.</b>
+                            - Domicilio donde prestaba sus servicios: <b>{{ $datosAudiencia->direccion_convenio }}.</b>
                     </p>
                         <!-- (APARTADO QUE LLENA MANUALMENTE QUIEN ATIENDE A LAS PARTES)  -->
                     <p class="sangria">
