@@ -85,7 +85,7 @@
                                 <p><span style="color:red;">*</span> Debes capturar al menos un citado</p>
 
                                 <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                <form class="needs-validation" novalidate method="POST" action="{{route('seer.citadosAux')}}" enctype="multipart/form-data">
+                                <form class="needs-validation" novalidate id="form_concluir" method="POST" action="{{route('seer.citadosAux')}}" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" name="id" value="{{ $id }}">
                                     <div class="row" id="div_datos_citado">
@@ -543,6 +543,39 @@
         <div>.</div>
         <div class="loader"></div>
     </div>
+
+    
+    <div id="submit_loader" style="display:none;">
+        <div>.</div>
+        <div class="loader"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('form_concluir');
+            if (!form) return;
+
+            form.addEventListener('submit', function () {
+                $('#submit_loader').show();
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const concludeBtn = document.getElementById('btn-conclude');
+            if (!concludeBtn) return;
+
+            concludeBtn.addEventListener('click', function (e) {
+                if (concludeBtn.getAttribute('aria-disabled') === 'true') {
+                    e.preventDefault();
+                    return;
+                }
+
+                $('#submit_loader').show();
+            });
+        });
+    </script>
 
 @section('scripts')
     <!--<script src="../public/assets/js/poderes/general.js"></script>-->

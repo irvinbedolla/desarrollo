@@ -1160,6 +1160,11 @@
     <div class="loader"></div>
 </div>
 
+<div id="submit_loader" style="display:none;">
+    <div>.</div>
+    <div class="loader"></div>
+</div>
+
 @section('scripts')
     <script>
          $('.open-modal').click(function() {
@@ -1681,6 +1686,17 @@ function clonarCheckboxes() {
                     });
                 });
             }
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('form_roles');
+            if (!form) return;
+
+            form.addEventListener('submit', function () {
+                $('#submit_loader').show();
+            });
         });
     </script>
 

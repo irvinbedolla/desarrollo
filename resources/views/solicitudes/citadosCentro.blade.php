@@ -668,6 +668,38 @@
         <div class="loader"></div>
     </div>
 
+    <div id="submit_loader" style="display:none;">
+        <div>.</div>
+        <div class="loader"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('form_concluir');
+            if (!form) return;
+
+            form.addEventListener('submit', function () {
+                $('#submit_loader').show();
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const concludeBtn = document.getElementById('btn-conclude');
+            if (!concludeBtn) return;
+
+            concludeBtn.addEventListener('click', function (e) {
+                if (concludeBtn.getAttribute('aria-disabled') === 'true') {
+                    e.preventDefault();
+                    return;
+                }
+
+                $('#submit_loader').show();
+            });
+        });
+    </script>
+
 @section('scripts')
     <script src="../public/assets/js/poderes/general.js"></script>
 @endsection
