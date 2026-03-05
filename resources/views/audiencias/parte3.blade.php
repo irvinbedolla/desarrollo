@@ -165,7 +165,7 @@
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-2"><br>
                                             <div class="form-group">
-                                                <label for="name">Pena convencional</label>
+                                                <label for="name">Especifique el monto que quedara señalado para el concepto de pena convencional</label>
                                                 <input type="number" step="0.001" name="pena_convencional" class="form-control" placeholder="Ingrese solo 3 decimales" > 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
@@ -174,7 +174,7 @@
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-3">
                                             <div class="form-group">
-                                                <label for="name">Dirección que aparece en convenio</label>
+                                                <label for="name">Especifique el domicilio laboral que aparecerá en el convenio</label>
                                                 <input type="text" name="direccion_convenio" maxlength="150" class="form-control" placeholder=" " > 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.

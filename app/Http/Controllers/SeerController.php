@@ -6680,7 +6680,7 @@ class SeerController extends Controller
                 }
                 return redirect()->route('audiencias.parte3',compact('id'));
             }
-            else if($citados->notificacion == "Centro"){
+            else if($citados->notificacion == "Centro" || $citados->notificacion == "Exhorto"){
                 //Si va por el centro se van a generar las multas a los que no tiene reprecentante legal
                 /*$total_citados = SeerCitados::where("id_solicitud",$data["id"])
                 ->where('notificacion',"Centro")
@@ -6850,7 +6850,7 @@ class SeerController extends Controller
             $fecha_inicio_busqueda->addDays(7);
             $mensaje_ajuste = "Se agendó considerando los 7 días naturales mínimos para la notificación del trabajador.";
         } else {
-            $fecha_inicio_busqueda->addDays(15);
+            $fecha_inicio_busqueda->addDays(19);
             $mensaje_ajuste = "Se agendó considerando los 15 días naturales requeridos para la notificación por el Centro.";
         }
 
