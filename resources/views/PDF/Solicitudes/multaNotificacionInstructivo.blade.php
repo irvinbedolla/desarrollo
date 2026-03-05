@@ -101,20 +101,6 @@
                 'RÓTULOS VISIBLES' => 'LOS RÓTULOS VISIBLES EN EL INMUEBLE'
             ];
         @endphp
-        @php
-            if($citado->firma === 'FIRMA'){
-                $descripcionFirma = 'FIRMA PARA CONSTANCIA LEGAL.';
-            }
-            if($citado->firma === 'NO FIRMA'){
-                $descripcionFirma = 'NO FIRMA POR NO CONSIDERARLO NECESARIO, A PESAR DE HABÉRSELO REQUERIDO.';
-            }
-            if($citado->firma === 'FIRMA Y SELLA'){
-                $descripcionFirma = 'FIRMA Y SELLA PARA CONSTANCIA LEGAL.';
-            }
-            if($citado->firma === 'SELLA'){
-                $descripcionFirma = 'SELLA PARA CONSTANCIA LEGAL.';
-            }
-        @endphp
     </head>
     
     <body>
@@ -144,7 +130,7 @@
                 </div>
                 <!-- MULTA -->
                 <div class="razon-notificacion"> 
-                    <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p>
+                    <p><center><b>RAZÓN DE NOTIFICACIÓN POR INSTRUCTIVO</b></center></p>
                     @php
                         $fechaNotificacion = !empty($citado->fecha)
                             ? \Carbon\Carbon::parse($citado->fecha)
@@ -187,36 +173,17 @@
                         </b>
                         A mayor abundamiento, verifico que cerca del domicilio se encuentran los siguientes puntos de referencia:
                         <b>{{$citado->abundar_area}}.</b> De igual forma, he constatado que se trata de un inmueble con las siguientes características: <b>{{$citado->abundar_inmueble}}.</b><br><br>
-                        @if($citado->quien_atiende == "OTRA PERSONA") {{-- CUANDO ATIENDE OTRA PERSONA CON Y SIN IDENTIFICACIÓN --}}
-                            Asimismo, por los informes que me proporciona la persona con quien se entiende la presente diligencia, quien dijo llamarse <b>{{$citado->nombre_notificacion}},
-                            QUIEN @if($citado->identificacion_notificacion=="NO PROPORCIONA")NO SE IDENTIFICA,@else SE IDENTIFICA CON {{$citado->identificacion_notificacion}} de número <b>{{$citado->num_identificacion}}</b>.@endif 
-                            @if($citado->motivo_identificacion!=null){{$citado->motivo_identificacion}}.@endif</b>@if($citado->genero!=null && $citado->cabello!=null && $citado->ojos!=null && 
-                            $citado->tez!=null && $citado->edad_filiacion!=null && $citado->altura!=null &&  $citado->complexion!=null &&  $citado->particulares!=null)
-                            Procedo a especificar su media filiación, que incluye los siguientes rasgos: <b>SEXO {{$citado->genero}}, 
-                            TEZ {{$citado->tez}}, EDAD {{$citado->edad_filiacion}} AÑOS, ALTURA {{$citado->altura}} M., COMPLEXIÓN {{$citado->complexion}}, CABELLO {{$citado->cabello}}, OJOS {{$citado->ojos}} 
-                            Y SEÑAS PARTICULARES: {{$citado->particulares}}. LO ANTERIOR SE HACE DE MANERA APROXIMADA, YA QUE EL SUSCRITO NO ES PERITO EN LA MATERIA</b>.@endif Quien manifiesta que <b>OCUPA EL PUESTO DE 
-                            {{$citado->puesto}}</b> en el domicilio en que se actúa. Enseguida me identifico con credencial vigente expedida por el Centro Conciliación Laboral, oficina estatal <b>{{mb_strtoupper($solicitud->delegacion,'UTF-8')}}</b> que me acredita como Notificador y le informo el 
-                            motivo de mi visita, mediante lectura del <b>ACUERDO DE MULTA</b> antes mencionado, requiriendo así la presencia @if($citado->Tipo_persona=="MORAL")<b>DEL REPRESENTANTE LEGAL DEL CITADO: @elseif($citado->Tipo_persona=="FISICA")<b>DEL CITADO:@endif{{$citado->nombre}}@if($citado->primer_apellido!=null) {{$citado->primer_apellido}}@endif 
-                            @if($citado->segundo_apellido!=null) {{$citado->segundo_apellido}}@endif</b> a fin de NOTIFICARLO; la persona que me atiende manifiesta que el citado no se encuentra por el momento, pero que efectivamente tiene su asiento de  negocios en este 
-                            domicilio. Por todo lo anterior, y de conformidad con lo dispuesto en los artículos 741. 742 fracción XIII, 743 y 751 de la Ley Federal del Trabajo procedo a dejar <b>ACUERDO DE MULTA DE LEY</b> para <b>EL REPRESENTANTE LEGAL DEL CITADO</b>.
-                        @endif
-                        @if($citado->quien_atiende == "CITADO O REPRESENTANTE") {{-- CUANDO ATIENDE EL CITADO CON IDENTIFICACIÓN --}}
-                            En el mismo sentido, corrobora el domicilio la persona que en él me atiende y quien, bajo protesta de decir verdad, asegura que en este domicilio habita, labora y/o tiene su principal asiento de negocios el CITADO.
-                            <br><br>
-                            Enseguida me identifico en este acto con credencial expedida por el Centro de Conciliación Laboral, oficina estatal {{mb_strtoupper($solicitud->delegacion,'UTF-8')}} que me acredita como Notificador y le informo el motivo de mi visita, mediante lectura del <b>ACUERDO DE MULTA</b> antes mencionado, requiriéndole
-                            así la presencia del <b>CITADO: {{$citado->nombre}} @if($citado->primer_apellido!=null){{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null){{$citado->segundo_apellido}}@endif</b> a fin de NOTIFICAR Y EMPLAZAR, en cumplimiento a lo ordenado en el auto de radicación antes citado.<br><br>
 
-                            La persona que me atiende, dice ser <b>{{$citado->nombre}} @if($citado->primer_apellido!=null){{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null){{$citado->segundo_apellido}}@endif, QUIEN SE IDENTIFICA CON {{$citado->identificacion_notificacion}}
-                            de número <b>{{$citado->num_identificacion}}.</b> Documento que se tiene a la vista y del que se desprende la identidad de la persona con quien se entiende la presente diligencia, documental que se devuelve al interesado.<br><br>
-                            
-                            En virtud de lo anterior, con fundamento en los Artículos 739 y 743 Fracción II de la Ley Federal del Trabajo y al ser la persona que me atiende el citado personalmente, procedo en este acto a NOTIFICAR al <b>CITADO: {{$citado->nombre}} @if($citado->primer_apellido!=null){{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null){{$citado->segundo_apellido}}@endif</b>, corriéndole traslado
-                            con copias simples cotejadas y autorizadas de: <b>DE FECHA {{ mb_strtoupper(\Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \D\E F \D\E\L Y'), 'UTF-8') }}</b>, además de la cédula de ley original de conformidad con el Artículo 751 de la Ley Federal del Trabajo.
-                        @endif
+                        {{--@if($citado->quien_atiende == "OTRA PERSONA") {{-- CUANDO NO ATIENDE NADIE --}}
+                            Procedí a tocar en repetidas ocasiones, sin recibir respuesta. Y después de haber esperado un tiempo prudente, lógico y razonable, nadie acude a mi llamado, sin emabargo cuento 
+                            con los medios de cercioramiento antes mencionados de que el domicilio es el correcto y que el citado labora, habita o tiene su asiento de negocios en este domicilio con base en 
+                            <b>{{ $citado->observaciones }}</b> Por todo lo anterior en términos de lo previsto en los artículos 741, 742 fracción XII, 743 y 751 de la Ley Federal del Trabajo procedo a notificar 
+                            por instructivo pegando <b>ACUERDO DE MULTA Y CÉDULA DE LEY POR INSTRUCTIVO</b> en la puerta de entrada del domicilio.
+                        {{--@endif--}}
                     </p>
                         <!--<div class="page-break"></div>--> <!-- Genera un salto de línea-->
                         <!--<br><br><br><br><br><br><br>-->
                     <div class="seccion-firma">
-                        <b>{{$descripcionFirma}}</b><br>
                         Anexando impresión fotográfica para constancia legal.<br>
                         <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. Doy fe.</b>
                         <div class="espaciador-firma"><br>
