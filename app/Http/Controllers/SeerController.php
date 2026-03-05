@@ -8732,6 +8732,7 @@ class SeerController extends Controller
     public function VerPDFAudiencia($id){
         $solicitud = SeerPerGeneral::find($id);
         $pagos = Pagos::where('id_solicitud',$id)->get();
+        $hayCentro = false;
         // Primero revisamos si hay datos temporales en sesión (vista previa)
         $sessionKey = 'audiencia_conclucion_data_' . $id;
         $sessionData = session()->get($sessionKey);
