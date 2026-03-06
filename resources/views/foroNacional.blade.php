@@ -126,14 +126,12 @@
     <link rel="stylesheet" href="public/assets/css/components.css">
     @yield('page_css')
 </head>
-<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-    <!-- Usamos d-flex y justify-content-center para centrar horizontalmente -->
-    <div class="container-fluid d-flex justify-content-center">
-        <a class="navbar-brand m-0" href="#">
+<nav class="navbar navbar-light bg-light fixed-top p-0">
+    <div class="container-fluid p-0">
+        <a class="navbar-brand m-0 w-100" href="#" style="display: flex; justify-content: center; background-color: #f9f1e7;">
             <img src="public/assets/images/registro-foro-nacional-consolidacion-justicia-laboral.png" 
-                 class="img-fluid" 
                  alt="Logo Foro Nacional"
-                 style="max-height: 120px; width: auto;">
+                 style="width: 80%; height: 250px; object-fit: contain; display: block; margin: 0 auto;">
         </a>
     </div> 
 </nav>
@@ -176,7 +174,7 @@
                                             <div class="row">
                                                 <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:30px;">
                                                     <div class="form-group">
-                                                        <h4 class="text-center">Registro del Foro Nacional por la Consolidación de la Justicia Laboral en México.</h4>
+                                                        <h4 class="text-center">Registro del Foro Nacional por la Consolidación de la Justicia Laboral en México</h4>
                                                     </div>
                                                 </div>
 
@@ -195,7 +193,7 @@
                                                         <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
                                                         <input type="text" name="primero_trabajador" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()" required> 
                                                         <div class="invalid-feedback">
-                                                            El campo es obligatorio.
+                                                            El campo primer apellido es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
@@ -204,7 +202,7 @@
                                                         <label for="name">Segundo apellido <span style="color:red;">(*)</span></label>
                                                         <input type="text" name="segundo_trabajador" class="form-control soloLetras" oninput="this.value = this.value.toUpperCase()" required> 
                                                         <div class="invalid-feedback">
-                                                            El campo es obligatorio.
+                                                            El campo segundo apellido es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
@@ -215,16 +213,16 @@
                                                         <label for="name">Email<span style="color:red;">(*)</span></label>
                                                         <input type="email" name="email" class="form-control"required> 
                                                         <div class="invalid-feedback">
-                                                            El campo es obligatorio.
+                                                            El campo email es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div  class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">Telefono<span style="color:red;">(*)</span></label>
+                                                        <label for="name">Teléfono<span style="color:red;">(*)</span></label>
                                                         <input type="number" name="telefono" class="form-control soloNumeros" required> 
                                                         <div class="invalid-feedback">
-                                                            El campo edad es obligatorio.
+                                                            El campo teléfono es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
@@ -249,7 +247,7 @@
                                                         <label for="name">Ocupación <span style="color:red;">(*)</span></label>
                                                         <input type="text" name="trabajador_edad" class="form-control" required> 
                                                         <div class="invalid-feedback">
-                                                            El campo edad es obligatorio.
+                                                            El campo Ocupación es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
@@ -259,7 +257,7 @@
                                                         <label for="name">¿De dónde nos visitas? <span style="color:red;">(*)</span></label>
                                                         <input type="text" name="trabajador_edad" class="form-control" required> 
                                                         <div class="invalid-feedback">
-                                                            El campo edad es obligatorio.
+                                                            El campo ¿De dónde nos visitas? es obligatorio.
                                                         </div>
                                                     </div>
                                                 </div>
