@@ -194,8 +194,8 @@
                                                 <label for="name">Relación (respecto al domicilio)</label>
                                                 <select name="relacion_notificacion" class="form-control">
                                                     <option value="">Selecciona</option>
-                                                    <option value="RESIDE">Reside</option>
-                                                    <option value="TRABAJA">Trabaja</option>
+                                                    <option value="RESIDE" {{ old('relacion_notificacion', $registro->relacion_notificacion) == 'RESIDE' ? 'selected' : '' }}>Reside</option>
+                                                    <option value="TRABAJA" {{ old('relacion_notificacion', $registro->relacion_notificacion) == 'TRABAJA' ? 'selected' : '' }}>Trabaja</option>
                                                 </select> 
                                             </div>
                                         </div>
@@ -225,6 +225,12 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div id="num_identificacion" class="col-xs-12 col-sm-12 col-md-12">
+                                            <div class="form-group">
+                                                <label for="numero_identificacion">Número de identificación</label>
+                                                <input type="text" id="numero_identificacion" name="num_identificacion" class="form-control" value="{{ old('num_identificacion', $registro->num_identificacion ?? '') }}" oninput="this.value = this.value.toUpperCase()">
+                                            </div>
+                                        </div>
                                         <div id="motivo_identificacion" class="col-xs-12 col-sm-12 col-md-12 " style="display:none;">
                                             <div class="form-group">
                                                 <label for="name">Motivo de la no identificación</label>
@@ -233,7 +239,7 @@
                                         </div>
                                     </div>
                                     
-                                    <div class='row mf-group' style="display:none;">
+                                    <div id="media-filiacion" class='row mf-group' style="display:none;">
                                         <div class="col-xs-12 col-sm-12 col-md-12 " style="background-color:#D2D3D5; width:100%; height:25px;">
                                             <h5 class="text-center" style="color:black">Media filiación de persona que recibe</h5>
                                         </div>
@@ -463,17 +469,29 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        const btnVistaPrevia = document.querySelector('button[name="vista_previa"][value="1"]');
         const selectQuienAtiende = document.querySelector('select[name="quien_atiende"]');
         const selectIdentificacion = document.getElementById('identificacion_notificacion');
         const selectEstatus = document.getElementById('estatus');
-        
+
+        document.querySelectorAll('[required]').forEach(el => {
+            el.setAttribute('data-required-default', '1');
+        });
+
         const dqrGroups = Array.from(document.querySelectorAll('.dqr-group'));
+        const mcdGroups = Array.from(document.querySelectorAll('.mcd-group'));
         const odGroups = Array.from(document.querySelectorAll('.od-group'));
-        const mfGroups = Array.from(document.querySelectorAll('.mf-group')); 
-        
+        const mfGroups = Array.from(document.querySelectorAll('.mf-group'));
+        const deGroups = Array.from(document.querySelectorAll('.de-group'));
+
         const motivoIdenDiv = document.getElementById('motivo_identificacion');
+        const numIdenDiv = document.getElementById('num_identificacion');
+        const mediaFiliacionDiv = document.getElementById('media-filiacion');
+
         const problema1Div = document.getElementById('tipo_problema1');
         const problema2Div = document.getElementById('tipo_problema2');
+        const abundarmotivoDiv = document.getElementById('abundar_motivo');
+        const firmaDiv = document.getElementById('firma');
 
         function setRequiredInGroups(groups, enabled) {
             groups.forEach(sectionEl => {
@@ -490,39 +508,85 @@
             });
         }
 
-        function actualizarFormulario() {
-            if (!selectQuienAtiende) return;
-            
-            const quienAtiende = selectQuienAtiende.value;
-            const idenValor = selectIdentificacion ? selectIdentificacion.value : '';
+        function actualizarBotonVistaPrevia(valor) {
+            if (!btnVistaPrevia) return;
+            if (valor === 'EXHORTO') {
+                btnVistaPrevia.disabled = true;
+                btnVistaPrevia.style.opacity = '0.5';
+                btnVistaPrevia.style.cursor = 'not-allowed';
+            } else {
+                btnVistaPrevia.disabled = false;
+                btnVistaPrevia.style.opacity = '1';
+                btnVistaPrevia.style.cursor = 'pointer';
+            }
+        }
 
-            if (quienAtiende === 'NADIE') {
+        function aplicarVisibilidadPorQuienAtiende() {
+            if (!selectQuienAtiende) return;
+            const valor = selectQuienAtiende.value;
+
+            actualizarBotonVistaPrevia(valor);
+
+            if (valor === 'NADIE') {
                 dqrGroups.forEach(el => el.style.display = 'none');
                 setRequiredInGroups(dqrGroups, false);
-                
                 odGroups.forEach(el => el.style.display = 'none');
                 setRequiredInGroups(odGroups, false);
-                
                 mfGroups.forEach(el => el.style.display = 'none');
                 setRequiredInGroups(mfGroups, false);
-            } else {
-                dqrGroups.forEach(el => el.style.display = '');
-                setRequiredInGroups(dqrGroups, true);
-                
-                odGroups.forEach(el => el.style.display = '');
-                setRequiredInGroups(odGroups, true);
+                return;
             }
 
+            if (valor === 'EXHORTO') {
+                mcdGroups.forEach(el => el.style.display = 'none');
+                setRequiredInGroups(mcdGroups, false);
+                dqrGroups.forEach(el => el.style.display = 'none');
+                setRequiredInGroups(dqrGroups, false);
+                odGroups.forEach(el => el.style.display = 'none');
+                setRequiredInGroups(odGroups, false);
+                mfGroups.forEach(el => el.style.display = 'none');
+                setRequiredInGroups(mfGroups, false);
+                deGroups.forEach(el => el.style.display = 'none');
+                setRequiredInGroups(deGroups, false);
+                return;
+            }
+
+            mcdGroups.forEach(el => el.style.display = '');
+            setRequiredInGroups(mcdGroups, true);
+            dqrGroups.forEach(el => el.style.display = '');
+            setRequiredInGroups(dqrGroups, true);
+            odGroups.forEach(el => el.style.display = '');
+            setRequiredInGroups(odGroups, true);
+
+            mfGroups.forEach(el => el.style.display = 'none');
+            setRequiredInGroups(mfGroups, false);
+            deGroups.forEach(el => el.style.display = '');
+            setRequiredInGroups(deGroups, true);
+        }
+
+        function aplicarVisibilidadIdentificacionYMediaFiliacion() {
+            const quienAtiende = selectQuienAtiende ? selectQuienAtiende.value : '';
+            const idenValor = selectIdentificacion ? selectIdentificacion.value : '';
+
             if (idenValor === 'NO PROPORCIONA' || idenValor === 'NO ATIENDE PRESENCIALMENTE') {
-                if (motivoIdenDiv) motivoIdenDiv.style.display = "block";
+                if (motivoIdenDiv) motivoIdenDiv.style.display = 'block';
+                if (numIdenDiv) numIdenDiv.style.display = 'none';
             } else {
-                if (motivoIdenDiv) motivoIdenDiv.style.display = "none";
+                if (motivoIdenDiv) motivoIdenDiv.style.display = 'none';
+                if (numIdenDiv) numIdenDiv.style.display = 'block';
             }
 
             const personasQuePuedenRecibir = ['OTRA PERSONA', 'CITADO O REPRESENTANTE'];
-            const sinIdentificacionValida = ['NO PROPORCIONA'];
 
-            if (personasQuePuedenRecibir.includes(quienAtiende) && sinIdentificacionValida.includes(idenValor)) {
+            if (mediaFiliacionDiv && personasQuePuedenRecibir.includes(quienAtiende)) {
+                mediaFiliacionDiv.style.display = 'block';
+                setRequiredInGroups([mediaFiliacionDiv], true);
+            } else if (mediaFiliacionDiv) {
+                mediaFiliacionDiv.style.display = 'none';
+                setRequiredInGroups([mediaFiliacionDiv], false);
+            }
+
+            if (personasQuePuedenRecibir.includes(quienAtiende)) {
                 mfGroups.forEach(el => el.style.display = '');
                 setRequiredInGroups(mfGroups, true);
             } else {
@@ -537,20 +601,31 @@
 
             if (problema1Div) problema1Div.style.display = 'none';
             if (problema2Div) problema2Div.style.display = 'none';
+            if (abundarmotivoDiv) abundarmotivoDiv.style.display = 'none';
+            if (firmaDiv) firmaDiv.style.display = 'block';
 
             if (valor === 'No exitosa se constituye') {
                 if (problema1Div) problema1Div.style.display = 'block';
+                if (abundarmotivoDiv) abundarmotivoDiv.style.display = 'block';
+                if (firmaDiv) firmaDiv.style.display = 'none';
             } else if (valor === 'No exitosa no se constituye') {
                 if (problema2Div) problema2Div.style.display = 'block';
+                if (abundarmotivoDiv) abundarmotivoDiv.style.display = 'block';
+                if (firmaDiv) firmaDiv.style.display = 'none';
             }
         }
 
-        if (selectQuienAtiende) selectQuienAtiende.addEventListener('change', actualizarFormulario);
-        if (selectIdentificacion) selectIdentificacion.addEventListener('change', actualizarFormulario);
+        function recalcularTodo() {
+            aplicarVisibilidadPorQuienAtiende();
+            aplicarVisibilidadIdentificacionYMediaFiliacion();
+            actualizarTipoProblema();
+        }
+
+        if (selectQuienAtiende) selectQuienAtiende.addEventListener('change', recalcularTodo);
+        if (selectIdentificacion) selectIdentificacion.addEventListener('change', recalcularTodo);
         if (selectEstatus) selectEstatus.addEventListener('change', actualizarTipoProblema);
 
-        actualizarFormulario();
-        actualizarTipoProblema();
+        recalcularTodo();
     });
 </script>
 
