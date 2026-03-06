@@ -6735,7 +6735,7 @@ class SeerController extends Controller
         $solicitud = SeerPerGeneral::find($id);
         $conciliadorId = $solicitud->conciliador_id;
         $sede = $solicitud["delegacion"];
-
+        
         $raw_fecha = Audiencias::where('id_solicitud', $id)->value('fecha');
         $raw_hora  = Audiencias::where('id_solicitud', $id)->value('hora');
 
@@ -6760,15 +6760,66 @@ class SeerController extends Controller
         ->select('seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido','seer_citados.rfc',
         'abogados.nombres_patronal as nombre_abogado','abogados.primer_apellido_patronal as primero_abogado','abogados.segundo_apellido_patronal as segundo_abogado',
         'persona_fisica.nombre as nombre_fisica','persona_fisica.primer_apellido as primer_fisica','persona_fisica.segundo_apellido as segundo_fisica',
-        'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus','seer_citados.aparece_convenio')
+        'seer_citados.id_abogado','seer_citados.id_fisica','seer_citados.id','seer_citados.notificacion','seer_citados.estatus','seer_citados.aparece_convenio', 'seer_citados.id_historial')
         ->get();
+
+        $dato_pena =  null;
+        $solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
+        
+        if($solicitante){
+            if($solicitante->periodo_pago === 'Semanal'){
+                $dato_pena =  $solicitante->pago / 7;
+            }
+            elseif($solicitante->periodo_pago === 'Mensual'){
+                $dato_pena =  $solicitante->pago / 30;
+            }
+            elseif($solicitante->periodo_pago === 'Quincenal'){
+                $dato_pena =  $solicitante->pago / 15;
+            }
+            elseif($solicitante->periodo_pago === 'Diario'){
+                $dato_pena =  $solicitante->pago;
+            }
+        }
+         
+        $direccion_c = 'NO DEFINIDA';
+
+        $citado_historial = $representantes->where('id_historial')->first();
+        $citado_referencia = $representantes->where('id_abogado')->first();
+        
+        //Primero busca en la tabla de Historial Abogados 
+
+        if($citado_historial){
+            $id_h = $citado_historial->id_historial;
+            $historial = HistorialAbogado::where('id', $id_h)->first();
+            if($historial){
+                $municipio = Municipios::find($historial->municipio_patronal);
+                $municipioAbogado = $municipio ? $municipio->nombre : '';
+                $estado = Estados::find($historial->estado_patronal);
+                $estadoAbogado = $estado ? $estado->nombre : '';
+                $direccion_c = $historial->tipo_vialidad_patronal.' '. $historial->vialidad_patronal.' '. $historial->num_ext_patronal.' '. $historial->mun_int_patronal . ' COLONIA '. mb_strtoupper($historial->colonia_patronal) . ', CP ' . $historial->cp_patronal .', '. mb_strtoupper($municipioAbogado) .' '. mb_strtoupper($estadoAbogado);
+            }
+        }
+        elseif($citado_referencia){ //Si no encuentra nada con id_historial anterior busca con referencia al id_abogados
+            $id_a = $citado_referencia->id_abogado;
+            $abogado = Poder::where('idAbogado', $id_a)->first();
+            if($abogado){
+                $municipio = Municipios::find($abogado->municipio_patronal);
+                $municipioAbogado = $municipio ? $municipio->nombre : '';
+                $estado = Estados::find($abogado->estado_patronal);
+                $estadoAbogado = $estado ? $estado->nombre : '';
+                $direccion_c = $abogado->tipo_vialidad_patronal.' '. $abogado->vialidad_patronal.' '. $abogado->num_ext_patronal.' '. $abogado->mun_int_patronal . ', COLONIA '. mb_strtoupper($abogado->colonia_patronal) . ', CP ' . $abogado->cp_patronal .', '. mb_strtoupper($municipioAbogado) .' '. mb_strtoupper($estadoAbogado);
+            }
+        }
+
+        $montoPena = is_numeric($dato_pena) ? $dato_pena : 0;
+        
 
         $sessionKey = 'audiencia_conclucion_data_' . $id;
         $previewData = session($sessionKey, null);
 
         $bandera = request()->query('bandera', null);
 
-        return view('/audiencias/parte3',compact('id', 'sede','representantes', 'fechaConfirmacion', 'NUE', 'previewData', 'audiencia_fecha', 'audiencia_hora', 'bandera', 'conciliadorId'));
+        return view('/audiencias/parte3',compact('id', 'sede','representantes', 'fechaConfirmacion', 'NUE', 'previewData', 'audiencia_fecha', 'audiencia_hora', 'bandera', 'conciliadorId', 'direccion_c', 'montoPena'));
     }
 
     public function historial_notificador(Request $request){

@@ -163,19 +163,19 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-2"><br>
+                                        <div class="col-xs-12 col-sm-12 col-md-4"><br>
                                             <div class="form-group">
                                                 <label for="name">Especifique el monto que quedara señalado para el concepto de pena convencional</label>
-                                                <input type="number" step="0.001" name="pena_convencional" class="form-control" placeholder="Ingrese solo 3 decimales" > 
+                                                <input type="number" step="0.001" name="pena_convencional" class="form-control"  value="<?=number_format($montoPena, 2)?>" oninput="this.value" placeholder="Ingrese solo 3 decimales" > 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-3">
+                                        <div class="col-xs-12 col-sm-12 col-md-7">
                                             <div class="form-group">
                                                 <label for="name">Especifique el domicilio laboral que aparecerá en el convenio</label>
-                                                <input type="text" name="direccion_convenio" maxlength="150" class="form-control" placeholder=" " > 
+                                                <input type="text" name="direccion_convenio" maxlength="150" class="form-control" value="<?=$direccion_c?>" oninput="this.value = this.value.toUpperCase()"  placeholder=" " > 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
                                                 </div>
