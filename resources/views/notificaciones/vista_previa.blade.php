@@ -328,6 +328,7 @@
                                                 <option value="FIRMA" {{ $registro->firma == 'FIRMA' ? 'selected' : '' }}>Firma</option>
                                                 <option value="SELLA" {{ $registro->firma == 'SELLA' ? 'selected' : '' }}>Sella</option>
                                                 <option value="FIRMA Y SELLA" {{ $registro->firma == 'FIRMA Y SELLA' ? 'selected' : '' }}>Firma y sella</option>
+                                                <option value="NO APLICA" {{ $registro->firma == 'NO APLICA' ? 'selected' : '' }}>No aplica</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 El campo firma es obligatorio.

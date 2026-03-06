@@ -119,18 +119,16 @@
             };
             //Texto especifico del problema indicado
             $textoProblemaBasico = match($citado->problema_diligencia) {
-                'CERRADO' => 'Hago constar a la autoridad conciliadora competente que el acceso se encuentra cerrado; no obstante, procedí a tocar en repetidas ocasiones, sin haber recibido respuesta. Y después de haber esperado un tiempo prudente, lógico y razonable, nadie acude a mi llamado, por lo que no tengo persona alguna con quien entender la presente diligencia; ',
+                'CERRADO' => 'Hago constar a la autoridad conciliadora competente que el acceso se encuentra cerrado; no obstante, procedí a tocar en repetidas ocasiones, sin haber recibido respuesta. Y después de haber esperado un tiempo prudente, lógico y razonable, nadie acude a mi llamado, por lo que no tengo persona alguna con quien entender la presente diligencia; adicionalmente hago constar que ',
                 'NO SEÑALA INTERIOR' => 'Hago constar a la autoridad conciliadora competente que al recorrer la parte señalada del inmueble, no logro localizar el número interior proporcionado por la parte solicitante; adicionalmente hago ',
-                'NÚMERO INTERIOR SEÑALADO NO SE LOCALIZÓ EN DOMICILIO', 'NO LOGRO LOCALIZAR EL NÚMERO' => 'Hago constar a la autoridad conciliadora competente que después de haber recorrido en su totalidad dicha vialidad, en el tramo correspondiente a la colonia antes mencionada, no me es posible localizar inmueble alguno marcado con el número oficial proporcionado por el solicitante; adicionalmente hago ',
-                'NO SE LOCALIZA EL INMUEBLE CON NÚMERO, MANZANA, LOTE, ETC. SEALADOS' => 'Hago constar a la autoridad conciliadora competente que después de haber recorrido en su totalidad dicha vialidad, en el tramo correspondiente a la colonia antes mencionada, no me es posible localizar el inmueble marcado; adicionalmente hago ',
-                'NO EXISTE EN COLONIA' => 'De donde se desprende el nombre de las mismas; después de haber recorrido dicha Colonia, no me es posible localizar VIALIDAD alguna que, a la letra, ostente el nombre oficial de la vialidad proporcionada por el solicitante; adicionalmente hago ',
-                'NO EXISTE EN MUNICIPIO' => 'Y después de haber recorrido en dicho Municipio no me es posible localizar colonia alguna que, a la letra, ostente el nombre oficial de la colonia proporcionada por el solicitante; adicionalmente hago ',
-                'OTROS' => '<br><br>Hago ',
+                'NÚMERO INTERIOR SEÑALADO NO SE LOCALIZÓ EN DOMICILIO', 'NO LOGRO LOCALIZAR EL NÚMERO' => 'Hago constar a la autoridad conciliadora competente que después de haber recorrido en su totalidad dicha vialidad, en el tramo correspondiente a la colonia antes mencionada, no me es posible localizar inmueble alguno marcado con el número oficial proporcionado por el solicitante; adicionalmente hago constar que ',
+                'NO SE LOCALIZA EL INMUEBLE CON NÚMERO, MANZANA, LOTE, ETC. SEALADOS' => 'Hago constar a la autoridad conciliadora competente que después de haber recorrido en su totalidad dicha vialidad, en el tramo correspondiente a la colonia antes mencionada, no me es posible localizar el inmueble marcado; adicionalmente hago constar que ',
+                'NO EXISTE EN COLONIA' => 'De donde se desprende el nombre de las mismas; después de haber recorrido dicha Colonia, no me es posible localizar VIALIDAD alguna que, a la letra, ostente el nombre oficial de la vialidad proporcionada por el solicitante; adicionalmente hago constar que ',
+                'NO EXISTE EN MUNICIPIO' => 'Y después de haber recorrido en dicho Municipio no me es posible localizar colonia alguna que, a la letra, ostente el nombre oficial de la colonia proporcionada por el solicitante; adicionalmente hago constar que ',
+                'OTROS' => '<br><br>Hago constar  a esta autoridad conciliadora que ',
                 default => ''
             };
-
         @endphp
-        
     </head>
 
     <body>
@@ -177,7 +175,6 @@
                         {{mb_strtoupper($municipioCitado, 'UTF-8')}}, CP {{$citado->cp}}, {{mb_strtoupper($estadoCitado, 'UTF-8')}}.</b> <br><br>
                         
                         Cerciorándome de ser {{ $textoCercioramiento }} {{-- Texto en el primer parrafo --}}
-
                         <b>
                         @php
                                 $letras = range('A', 'Z');
@@ -218,8 +215,6 @@
 
                         {{-- Como No acceso al inmueble y razon scial tienen mas datos en cuenta se agregan por aparte --}}
                         @if($citado->problema_diligencia === 'NO ACCESO AL INMUEBLE' || $citado->problema_diligencia === 'RAZÓN SOCIAL DIVERSA')
-                            
-                            
                             @if($citado->problema_diligencia === 'NO ACCESO AL INMUEBLE')
                                 Hago constar a la autoridad conciliadora competente que se me niega el acceso al inmueble. La persona que me atiende en la entrada dice llamarse 
                             @else
@@ -228,54 +223,57 @@
                             @endif
 
                             {{-- verifica si se ingreso el nombre --}}
-                            @if($citado->nombre != null)
-                                <b>{{ mb_strtoupper($citado->nombre, 'UTF-8') }}
-                                @if($citado->primer_apellido != null) {{ mb_strtoupper($citado->primer_apellido, 'UTF-8') }} @endif 
-                                @if($citado->segundo_apellido != null) {{ mb_strtoupper($citado->segundo_apellido, 'UTF-8') }} @endif</b>
+                            @if($citado->nombre_notificacion != null)
+                                <b>{{ mb_strtoupper($citado->nombre_notificacion, 'UTF-8') }}</b>
                             @else 
-                                <b>NO PROPORCIONA SU NOMBRE, </b> 
+                                <b>NO PROPORCIONA SU NOMBRE, </b>
                             @endif
                             
-                            <b>QUIEN 
+                            <b>QUIEN</b> 
                                 {{-- Bverifica si se agrego una forma de identificacion y si no, se describe a la persona --}}
                             @if(in_array($citado->identificacion_notificacion, ['NO PROPORCIONA', 'NO ATIENDE PRESENCIALMENTE'])) 
-                                NO SE IDENTIFICA ALEGANDO {{ mb_strtoupper($citado->motivo_identificacion, 'UTF-8') }}.<br>  
+                                <b>NO SE IDENTIFICA {{ mb_strtoupper($citado->motivo_identificacion, 'UTF-8') }}. </b> 
                                 @if($citado->identificacion_notificacion === 'NO PROPORCIONA')
-                                    Procedo a especificar su media filiación, que incluye los siguientes rasgos: <b> SEXO {{ mb_strtoupper($citado->genero, 'UTF-8') }}, 
+                                    Procedo a especificar su media filiación, que incluye los siguientes rasgos: <b>SEXO {{ mb_strtoupper($citado->genero, 'UTF-8') }}, 
                                         TEZ {{ mb_strtoupper($citado->tez, 'UTF-8') }}, EDAD {{ mb_strtoupper($citado->edad, 'UTF-8') }} AÑOS, ALTURA {{ mb_strtoupper($citado->altura, 'UTF-8') }} M, 
                                         COMPLEXIÓN {{ mb_strtoupper($citado->complexion, 'UTF-8') }}, CABELLO {{ mb_strtoupper($citado->cabello, 'UTF-8') }} Y OJOS {{ mb_strtoupper($citado->ojos, 'UTF-8') }}. 
                                         LO ANTERIOR SE HACE DE MANERA APROXIMADA, YA QUE EL SUSCRITO NO ES PERITO EN LA MATERIA.</b>
                                 @endif
                             @else 
-                                SE IDENTIFICA CON {{ mb_strtoupper($citado->identificacion_notificacion, 'UTF-8') }} de número <b>{{$citado->num_identificacion}}</b>
+                                <b>SE IDENTIFICA CON {{ mb_strtoupper($citado->identificacion_notificacion, 'UTF-8') }}</b> de número <b>{{$citado->num_identificacion}}</b>
                             @endif
-                            </b>
 
                             {{-- texto del problema --}}
                             @if($citado->problema_diligencia === 'NO ACCESO AL INMUEBLE')
-                                Dicha persona me niega el acceso; adicionalmente hago
+                                Dicha persona me niega el acceso; adicionalmente hago constar que <b>{{ $citado->especificar }}</b><br><br>
                             @else
                                 Enseguida me identifico en este acto con credencial expedida por el Centro de Conciliación Laboral, oficina estatal {{ mb_strtoupper($solicitud->delegacion,'UTF-8') }}, que me acredita 
-                                como Notificador y le informo el motivo de mi visita, mediante lectura del <p>CITATORIO DE CONCILIACIÓN</p> antes mencionado, requiriéndole 
-                                así la presencia del REPRESENTANTE LEGAL DEL <b>CITADO: {{ $citado->nombre }} @if($citado->primer_apellido != null) {{ $citado->primer_apellido }} @endif 
+                                como Notificador y le informo el motivo de mi visita, mediante lectura del <b>CITATORIO DE CONCILIACIÓN</b> antes mencionado, requiriéndole 
+                                así la presencia del <b>REPRESENTANTE LEGAL DEL CITADO: {{ $citado->nombre }} @if($citado->primer_apellido != null) {{ $citado->primer_apellido }} @endif 
                                 @if($citado->segundo_apellido != null) {{ $citado->segundo_apellido }} @endif</b>, a fin de NOTIFICARLO, en cumplimiento a lo ordenado; la persona que 
                                 me atiende manifiesta que el citado solicitado no habita, labora ni tiene su principal asiento de negocios en el domicilio en el que se actúa, 
-                                acreditando su dicho con la siguiente documentación: {{ $citado->especificar }}.
+                                acreditando su dicho con la siguiente documentación: <b>{{ $citado->especificar }}</b><br><br>
                             @endif
+                            En esa razón, me encuentro imposibilitado para dar cumplimiento a lo ordenado en el <b>CITATORIO DE CONCILIACIÓN</b>; toda vez que no
+                            cuento con los elementos de cercioramiento requeridos por el Artículo 743 Fracción I de la Ley Federal del Trabajo, por lo que me es
+                            imposible dar cumplimiento al <b>CITATORIO</b> antes citado.
                         @endif
 
                         
-                        @if ($citado->problema_diligencia !== 'RAZÓN SOCIAL DIVERSA')
-                            constar que <b>{{$citado->especificar}}</b>
+                        {{--@if ($citado->problema_diligencia !== 'RAZÓN SOCIAL DIVERSA')
+                            Hago constar a la autoridad conciliadora competente que se me niega el acceso al inmueble. La persona que me atiende en la entrada dice 
+                            llamarse <b>{{$citado->especificar}}</b>
+                        @endif--}}
+                        {{--@if ($citado->problema_diligencia === 'CERRADO')--}}
+                        @if ($citado->problema_diligencia !== 'RAZÓN SOCIAL DIVERSA' && $citado->problema_diligencia !== 'NO ACCESO AL INMUEBLE')
+                            <b>{{$citado->especificar}}</b><br><br>
+                            En esa razón, me encuentro imposibilitado para dar cumplimiento a lo ordenado por la autoridad conciliadora; toda vez que no cuento con los elementos de cercioramiento 
+                            requeridos por el Artículo 743 Fracción I de la Ley Federal del Trabajo, por lo que me es imposible dar cumplimiento al <b>CITATORIO</b> antes citado.
                         @endif
-
-                        En esa razón, me encuentro imposibilitado para dar cumplimiento a lo ordenado en el <b>CITATORIO DE CONCILIACIÓN</b>; toda vez que no
-                        cuento con los elementos de cercioramiento requeridos por el Artículo 743 Fracción I de la Ley Federal del Trabajo, por lo que me es
-                        imposible dar cumplimiento al <b>CITATORIO</b> antes citado.
                     </p>
                     <div class="seccion-firma">
                         Anexando impresión fotográfica para constancia legal. <br><br>
-                        <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar.DOY FE.</b>
+                        <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. DOY FE.</b>
                     
                         <div class="espaciador-firma"><br>
                             <center><b>___________________________________<br>LIC. {{ mb_strtoupper($notificador->name, 'UTF-8')}}<br> FUNCIONARIO/A NOTIFICADOR/A</b></center>
