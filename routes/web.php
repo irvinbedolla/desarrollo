@@ -365,7 +365,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/VerpdfRnotificacion/{id}/{id_solicitud}',          [SeerController::class, 'VerPDFRNotificacion'])->name('PDFRazonNoticacion'); // Notificación exitosa, ATIENDE OTRA PERSONA, CITADO O NADIE
         Route::get('/VerpdfNotificacion/{id}/{id_solicitud}',           [SeerController::class, 'PDFnotificadoInstructivo'])->name('PDFInstructivo'); //Notificación por instructivo
         //Route::get('/VerpdfNotificacionNoExitosa/{id}/{id_solicitud}',  [SeerController::class, 'PDFnotificadoNoexitosa'])->name('PDFNoExitosa'); //Notificación No exitosa SE CONSTITUYE, CERRADO
-        //Route::get('/VerpdfNotificacionNoInt/{id}/{id_solicitud}',      [SeerController::class, 'PDFnotificadoNoexitosaInt'])->name('PDFNoExitosaInt'); //Notificación No exitosa NO SE LOCALIZA INTERIOR
+        Route::get('/VerpdfNotificacionNoInt/{id}/{id_solicitud}',      [SeerController::class, 'PDFnotificadoNoexitosaInt'])->name('PDFNoExitosaInt'); //Notificación No exitosa NO SE LOCALIZA INTERIOR
         Route::get('/VerpdfcPTULabora/{id}',                            [SeerController::class, 'VerPDFConvenioPTULabora'])->name('PDFconvenioPTU_SI_S'); //Convenio PTU SIGUE laborando el trabajador
         Route::get('/VerpdfcPTUNLabora/{id}',                           [SeerController::class, 'VerPDFConvenioPTUNoLabora'])->name('PDFconvenioPTU_NO_S'); //Convenio PTU ya NO labora el trabajador
         Route::get('/pdfsinPoder/{id}',                                 [SeerController::class, 'VerPDFCompareceSinPoder'])->name('PDFcompareceSP'); //Comparece representante legal sin poder
