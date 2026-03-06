@@ -13598,11 +13598,18 @@ class SeerController extends Controller
             }
         }
 
-        if ($allCentro == 0){
+        /*if ($allCentro == 0){
             $solicitud->citados = SeerCitados::where('id_solicitud', $id)->where('notificacion', 'Centro')->where('tipo_notificacion', '!=', 'Multa')->get();
         }
         else {
             $solicitud->citados = SeerCitados::where('id_solicitud', $id)->get();
+        }*/
+        if ($allCentro == 0){
+            $solicitud->citados = SeerCitados::where('id_solicitud', $id)->where('aparece_convenio', 1)->where('resulte_responsable', 'No')->where('notificacion', 'Centro')->where('tipo_notificacion', '!=', 'Multa')->get();
+        }
+        else {
+            $solicitud->citados = SeerCitados::where('id_solicitud', $id)->where('aparece_convenio', 1)->where('resulte_responsable', 'No')->get();
+            //$solicitud->citados = SeerCitados::where('id_solicitud', $id)->get();
         }
         
         $pagos = Pagos::where('id_solicitud', $id)->where('tipo_pago','Audiencia')->get();
