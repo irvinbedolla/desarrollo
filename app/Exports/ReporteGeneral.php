@@ -46,11 +46,11 @@ class ReporteGeneral implements FromView
                         return $q->whereIn('seer_general.delegacion', $delegaciones);
                     }
                     else if($sedeUsuario == "Zamora"){
-                |    $delegaciones = ['Zamora', 'Sahuayo'];
-                |            return $q->whereIn('seer_general.delegacion', $delegaciones);
-                |        }
-                |    }
-                |    return $q->where("seer_general.delegacion", $sede);
+                    $delegaciones = ['Zamora', 'Sahuayo'];
+                            return $q->whereIn('seer_general.delegacion', $delegaciones);
+                        }
+                    }
+                    return $q->where("seer_general.delegacion", $sede);
                     })
                     ->select(
                         'users.id as user_id', 

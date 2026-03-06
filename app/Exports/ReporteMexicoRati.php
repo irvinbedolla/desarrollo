@@ -27,10 +27,11 @@ class ReporteMexicoRati implements FromView
         $user = auth()->user();
         $sedeUsuario = $user->delegacion ?? '';
 
+        // Subconsultas (sin cambios)
         $subconsultaMotivos = DB::table('seer_motivos')
-        ->join('catalogo_motivos', 'catalogo_motivos.id', '=', 'seer_motivos.id_motivo')
-        ->whereColumn('seer_motivos.id_solicitud', 'seer_general.id')
-        ->select(DB::raw('COALESCE(GROUP_CONCAT(catalogo_motivos.motivo SEPARATOR ", "), "N/A")'));
+            ->join('catalogo_motivos', 'catalogo_motivos.id', '=', 'seer_motivos.id_motivo')
+            ->whereColumn('seer_motivos.id_solicitud', 'seer_general.id')
+            ->select(DB::raw('COALESCE(GROUP_CONCAT(catalogo_motivos.motivo SEPARATOR ", "), "N/A")'));
 
         $subconsultaPagosTurnos = Pagos::select(DB::raw('SUM(monto)'))
             ->whereColumn('pago_solicitud.id_solicitud', 'turnos.id')
@@ -42,7 +43,7 @@ class ReporteMexicoRati implements FromView
 
         // --- CONSULTA 1: TURNOS ---
         $reportes = Turnos::whereBetween('turnos.fecha', [$this->fecha_inicial, $this->fecha_final])
-            ->whereNotIn('turnos.estatus', ['Pendiente', 'Prevencion']) // Filtro para Turnos
+            ->whereNotIn('turnos.estatus', ['Pendiente', 'Prevencion'])
             ->leftJoin('users', 'users.id', '=', 'turnos.user_id')
             ->leftJoin('estados', 'estados.id', '=', 'turnos.estado_rat')
             ->leftJoin('municipios', 'municipios.id', '=', 'turnos.municipio_rat')
@@ -52,23 +53,24 @@ class ReporteMexicoRati implements FromView
                 return $this->aplicarFiltroSede($q, 'turnos', $sedeUsuario);
             })
             ->select(
-                'turnos.NUE',
-                DB::raw('MONTH(turnos.fecha) as mes'),
-                DB::raw('YEAR(turnos.fecha) as año'),
-                'estados.nombre as estado',
-                'municipios.nombre as municipio',
-                'mun_abogado.nombre as municipio_abogado',
-                'abogados.giroComercial',
-                'abogados.nombres_patronal',
-                'abogados.primer_apellido_patronal',
-                'abogados.segundo_apellido_patronal',
-                'turnos.motivo',
-                'turnos.user_id',
-                'turnos.estatus',
                 'turnos.id',
-                'turnos.sexo'
+                'turnos.NUE',
+                DB::raw('MAX(MONTH(turnos.fecha)) as mes'),
+                DB::raw('MAX(YEAR(turnos.fecha)) as año'),
+                DB::raw('MAX(estados.nombre) as estado'),
+                DB::raw('MAX(municipios.nombre) as municipio'),
+                DB::raw('MAX(mun_abogado.nombre) as municipio_abogado'),
+                DB::raw('MAX(abogados.giroComercial) as giroComercial'),
+                DB::raw('COALESCE(MAX(abogados.nombres_patronal), "No seleccionado") as nombres_patronal'),
+                DB::raw('MAX(abogados.primer_apellido_patronal) as primer_apellido_patronal'),
+                DB::raw('MAX(abogados.segundo_apellido_patronal) as segundo_apellido_patronal'),
+                DB::raw('MAX(turnos.motivo) as motivo'),
+                DB::raw('MAX(turnos.user_id) as user_id'),
+                DB::raw('MAX(turnos.estatus) as estatus'),
+                DB::raw('MAX(turnos.sexo) as sexo')
             )
             ->selectSub($subconsultaPagosTurnos, 'total')
+            ->groupBy('turnos.id', 'turnos.NUE')
             ->get();
 
         // --- CONSULTA 2: SEER GENERAL ---
@@ -85,39 +87,43 @@ class ReporteMexicoRati implements FromView
                 return $this->aplicarFiltroSede($q, 'seer_general', $sedeUsuario);
             })
             ->select(
-                'seer_general.NUE',
-                DB::raw('MONTH(seer_general.fecha) as mes'),
-                DB::raw('YEAR(seer_general.fecha) as año'),
-                'estados.nombre as estado',
-                'municipios.nombre as municipio',
-                'mun_abogado.nombre as municipio_abogado',
-                'abogados.giroComercial',
-                'abogados.nombres_patronal',
-                'abogados.primer_apellido_patronal',
-                'abogados.segundo_apellido_patronal',
-                'seer_general.user_id',
-                'seer_general.estatus',
                 'seer_general.id',
-                'seer_solicitante.sexo'
+                'seer_general.NUE',
+                DB::raw('MAX(MONTH(seer_general.fecha)) as mes'),
+                DB::raw('MAX(YEAR(seer_general.fecha)) as año'),
+                DB::raw('MAX(estados.nombre) as estado'),
+                DB::raw('MAX(municipios.nombre) as municipio'),
+                DB::raw('MAX(mun_abogado.nombre) as municipio_abogado'),
+                DB::raw('MAX(seer_general.actividad) as giroComercial'),
+                // Citados desglosados
+                DB::raw('SUBSTRING_INDEX(GROUP_CONCAT(seer_citados.nombre ORDER BY seer_citados.id ASC SEPARATOR "|"), "|", 1) as nombres_patronal'),
+                DB::raw('SUBSTRING_INDEX(GROUP_CONCAT(seer_citados.primer_apellido ORDER BY seer_citados.id ASC SEPARATOR "|"), "|", 1) as primer_apellido_patronal'),
+                DB::raw('SUBSTRING_INDEX(GROUP_CONCAT(seer_citados.segundo_apellido ORDER BY seer_citados.id ASC SEPARATOR "|"), "|", 1) as segundo_apellido_patronal'),
+                // Abogado
+                //DB::raw('COALESCE(MAX(abogados.nombres_patronal), "No seleccionado") as nombres_patronal'),
+                //DB::raw('MAX(abogados.primer_apellido_patronal) as primer_apellido_patronal'),
+                //DB::raw('MAX(abogados.segundo_apellido_patronal) as segundo_apellido_patronal'),
+                DB::raw('MAX(seer_general.user_id) as user_id'),
+                DB::raw('MAX(seer_general.estatus) as estatus'),
+                DB::raw('MAX(seer_solicitante.sexo) as sexo')
             )
             ->selectSub($subconsultaMotivos, 'motivo') 
             ->selectSub($subconsultaPagosSeer, 'total') 
+            ->groupBy('seer_general.id', 'seer_general.NUE')
             ->get();
 
-        // --- COMBINACIÓN Y FILTRADO ---
+        // --- COMBINACIÓN Y ORDENAMIENTO ---
         $todoJunto = $reportes->concat($reportesSolicitudes)
-            ->unique('NUE') // <-- Esto elimina cualquier fila repetida con el mismo NUE
-            ->values()      // <-- Reindexa el array (0, 1, 2...) para evitar problemas en la vista
             ->map(function($item) {
+                $item->NUE = $item->NUE ? trim(preg_replace('/\s+/', ' ', $item->NUE)) : 'S/N';
                 $item->total = $item->total ?? 0;
                 return $item;
-            });
-
-        // Combinar ambas colecciones
-        $todoJunto = $reportes->concat($reportesSolicitudes)->map(function($item) {
-            $item->total = $item->total ?? 0;
-            return $item;
-        });
+            })
+            ->unique(function ($item) {
+                return $item->id . $item->NUE; 
+            })
+            ->sortBy('NUE', SORT_NATURAL)
+            ->values();
 
         return view('excel.reporte-mexico', ['reportes' => $todoJunto]);
     }

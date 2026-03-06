@@ -168,7 +168,7 @@
                                             </div>
                                         @endif
                                         <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                        <form class="needs-validation" novalidate method="POST" action="{{route('foroNacionalregistro')}}" onsubmit="return validacionCamposInput()">
+                                        <form id="miFormulario" class="needs-validation" novalidate method="POST" action="{{route('foroNacionalregistro')}}">
                                             @csrf
                                             <br><br>
                                             <div class="row">
@@ -244,16 +244,6 @@
 
                                                 <div  class="col-xs-12 col-sm-12 col-md-4">
                                                     <div class="form-group">
-                                                        <label for="name">Ocupación <span style="color:red;">(*)</span></label>
-                                                        <input type="text" name="trabajador_edad" class="form-control" required> 
-                                                        <div class="invalid-feedback">
-                                                            El campo Ocupación es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div  class="col-xs-12 col-sm-12 col-md-4">
-                                                    <div class="form-group">
                                                         <label for="name">¿De dónde nos visitas? <span style="color:red;">(*)</span></label>
                                                         <input type="text" name="trabajador_edad" class="form-control" required> 
                                                         <div class="invalid-feedback">
@@ -262,9 +252,28 @@
                                                     </div>
                                                 </div>
 
+                                                <div  class="col-xs-12 col-sm-12 col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="name">¿Asistes como?<span style="color:red;">(*)</span></label>
+                                                        <select name="ocupacion" class="form-control" required>
+                                                            <option value="">Seleccione</option>
+                                                            <option value="Público general">Público general</option>
+                                                            <option value="Estudiante">Estudiante</option>
+                                                            <option value="Académico">Académico</option>
+                                                            <option value="Servidor público">Servidor público</option>
+                                                            <option value="Barra de Abogados">Barra de Abogados</option>
+                                                            <option value="Sindicato">Sindicato</option>
+                                                            <option value="Ponente">Ponente</option>
+                                                        </select>
+                                                        <div class="invalid-feedback">
+                                                            El campo edad es obligatorio.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div align="center">
-                                                    <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color: #CEA845">Guardar</button>
+                                                    <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color: #CEA845">Enviar</button>
                                                 </div>
                                             </div>    
                                         </form>
@@ -338,6 +347,42 @@
                         console.error('Error:', error);
                     });
                 }, 500);
+            });
+        });
+        document.getElementById('miFormulario').addEventListener('submit', function(e) {
+            var form = this;
+            //var loaderContainer = document.getElementById('crear_poder');
+
+            // 1. Evitamos el envío automático
+            e.preventDefault();
+            e.stopPropagation();
+
+            // 2. Validar si el formulario es válido (campos requeridos)
+            if (!form.checkValidity()) {
+                form.classList.add('was-validated');
+                return; // Si faltan campos, no hace nada más y muestra los errores de Bootstrap
+            }
+
+            // 3. Lanzar SweetAlert
+            swal({
+                title: "¿Estás seguro de que tu informacion esta correca?",
+                text: "Una vez confirmado, se procesará tu registro.",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#CEA845", 
+                confirmButtonText: "Sí, guardar",
+                cancelButtonText: "Cancelar",
+                closeOnConfirm: true // Cerramos la alerta para ver el loader
+            }, function(isConfirm) {
+                
+            if (isConfirm) {
+                if (loaderContainer) {
+                    loaderContainer.style.display = 'block'; 
+                }
+
+                // 4. Enviamos el formulario
+                form.submit();
+            }
             });
         });
     </script>
