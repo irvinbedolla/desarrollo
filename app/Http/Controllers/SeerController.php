@@ -9311,7 +9311,7 @@ class SeerController extends Controller
     }
 
     //PDF Notificación No exitosa SE CONSTITUYE, CERRADO
-    public function PDFnotificadoNoexitosa($id, $id_solicitud){
+    public function VerPDFNoExitConstituye($id, $id_solicitud){
         $solicitud = SeerPerGeneral::find($id_solicitud);
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
@@ -9374,7 +9374,7 @@ class SeerController extends Controller
             }
         }
             
-        $html = view('PDF/Solicitudes/razonNoExitosaCerrado', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado'))->render();
+        $html = view('PDF/Solicitudes/razonNoExitosa', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')

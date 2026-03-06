@@ -351,62 +351,7 @@
                                     <!--/div-->
                                     <!-- Fin de Media filiación -->
                                     <!-- Si la respuesta es no existosa, se contituye, beberán contestar está pregunta (Tipo problema)-->
-                                        <div class="col-xs-12 col-sm-6 col-md-4 " id="tipo_problema1" style="display:none;">
-                                            <div class="form-group">
-                                                <label for="name">Tipo de problema</label>
-                                                <select id="problema1" name="problema_diligencia" class="form-control">
-                                                    <option value="">Selecciona</option>
-                                                        <optgroup label="Domicilio">
-                                                            <option value="CERRADO">Cerrado</option>
-                                                            <option value="NO ACCESO AL INMUEBLE">No acceso al inmueble</option>
-                                                        <optgroup label="Número">
-                                                            <option value="NO SEÑALA INTERIOR">No señala interior</option>
-                                                            <option value="NÚMERO INTERIOR SEÑALADO NO SE LOCALIZÓ EN DOMICILIO">Número interior señalado no se localizó en domicilio</option>
-                                                            <option value="NO LOGRO LOCALIZAR EL NÚMERO">No logro localizar el número</option>
-                                                            <option value="NO SE LOCALIZA EL INMUEBLE CON NÚMERO, MANZANA, LOTE, ETC. SEALADOS">No se localiza el inmueble con número, manzana, lote, etc. señalados</option>
-                                                        <optgroup label="Calle">
-                                                            <option value="NO EXISTE EN COLONIA">No existe en colonia</option>
-                                                        <optgroup label="Colonia">
-                                                            <option value="NO EXISTE EN MUNICIPIO">No existe en municipio</option>
-                                                        <optgroup label="Alguien atiende">
-                                                            <option value="RAZÓN SOCIAL DIVERSA">Razón social diversa</option>
-                                                        <optgroup label="Otros">
-                                                            <option value="OTROS">Otros</option>
-                                                </select>
-                                                <div class="invalid-feedback">
-                                                    El campo es obligatorio.
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- Cuando es no existoso, no se contituye, mostrar estas opciones en (Tipo de problema)-->
-                                        <div class="col-xs-12 col-sm-6 col-md-4" id="tipo_problema2" style="display:none;">
-                                            <div class="form-group">
-                                                <label for="name">Tipo de problema</label>
-                                                <select id="problema2" name="problema_diligencia" class="form-control">
-                                                    <option value="">Selecciona</option>
-                                                        <optgroup label="Domicilio incompleto">
-                                                            <option value="OMITE NÚMERO">Omite número</option>
-                                                            <option value="OMITE VIALIDAD">Omite vialidad</option>
-                                                            <option value="OMITE COLONIA">Omite colonia</option>
-                                                            <option value="OMITE MUNICIPIO">Omite municipio</option>
-                                                        <optgroup label="Domicilio">
-                                                            <option value="FUERA DE LA JURISDICCIÓN">Fuera de la jurisdicción</option>
-                                                        <optgroup label="Copias">
-                                                            <option value="NO HAY COPIAS SUFICIENTES">No hay copias suficientes</option>
-                                        
-                                                </select>
-                                                <div class="invalid-feedback">
-                                                    El campo es obligatorio.
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-6 col-md-6" id="abundar_motivo" style="display:none;">
-                                            <div class="form-group">
-                                                <label for="name"><!--Especificar en caso de que tenga un problema-->Abundar motivo</label>
-                                                <textarea class="form-control" name="especificar" rows="4" oninput="this.value = this.value.toUpperCase()"></textarea>
-                                            </div>
-                                        </div>
-                                        
+                                                                            
                                     <!--</div>-->
                                     <div class='row de-group'>
                                         <!--<div class="col-xs-12 col-sm-6 col-md-6">
@@ -469,6 +414,61 @@
                                                 <div class="invalid-feedback">
                                                     El campo firma es obligatorio.
                                                 </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-6 col-md-4 " id="tipo_problema1" style="display:none;">
+                                            <div class="form-group">
+                                                <label for="name">Tipo de problema</label>
+                                                <select id="problema1" name="problema_diligencia" class="form-control">
+                                                    <option value="">Selecciona</option>
+                                                        <optgroup label="Domicilio">
+                                                            <option value="CERRADO">Cerrado</option>
+                                                            <option value="NO ACCESO AL INMUEBLE">No acceso al inmueble</option>
+                                                        <optgroup label="Número">
+                                                            <option value="NO SEÑALA INTERIOR">No señala interior</option>
+                                                            <option value="NÚMERO INTERIOR SEÑALADO NO SE LOCALIZÓ EN DOMICILIO">Número interior señalado no se localizó en domicilio</option>
+                                                            <option value="NO LOGRO LOCALIZAR EL NÚMERO">No logro localizar el número</option>
+                                                            <option value="NO SE LOCALIZA EL INMUEBLE CON NÚMERO, MANZANA, LOTE, ETC. SEALADOS">No se localiza el inmueble con número, manzana, lote, etc. señalados</option>
+                                                        <optgroup label="Calle">
+                                                            <option value="NO EXISTE EN COLONIA">No existe en colonia</option>
+                                                        <optgroup label="Colonia">
+                                                            <option value="NO EXISTE EN MUNICIPIO">No existe en municipio</option>
+                                                        <optgroup label="Alguien atiende">
+                                                            <option value="RAZÓN SOCIAL DIVERSA">Razón social diversa</option>
+                                                        <optgroup label="Otros">
+                                                            <option value="OTROS">Otros</option>
+                                                </select>
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Cuando es no existoso, no se contituye, mostrar estas opciones en (Tipo de problema)-->
+                                        <div class="col-xs-12 col-sm-6 col-md-4" id="tipo_problema2" style="display:none;">
+                                            <div class="form-group">
+                                                <label for="name">Tipo de problema</label>
+                                                <select id="problema2" name="problema_diligencia" class="form-control">
+                                                    <option value="">Selecciona</option>
+                                                        <optgroup label="Domicilio incompleto">
+                                                            <option value="OMITE NÚMERO">Omite número</option>
+                                                            <option value="OMITE VIALIDAD">Omite vialidad</option>
+                                                            <option value="OMITE COLONIA">Omite colonia</option>
+                                                            <option value="OMITE MUNICIPIO">Omite municipio</option>
+                                                        <optgroup label="Domicilio">
+                                                            <option value="FUERA DE LA JURISDICCIÓN">Fuera de la jurisdicción</option>
+                                                        <optgroup label="Copias">
+                                                            <option value="NO HAY COPIAS SUFICIENTES">No hay copias suficientes</option>
+                                        
+                                                </select>
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-6 col-md-6" id="abundar_motivo" style="display:none;">
+                                            <div class="form-group">
+                                                <label for="name"><!--Especificar en caso de que tenga un problema-->Abundar motivo</label>
+                                                <textarea class="form-control" name="especificar" rows="4" oninput="this.value = this.value.toUpperCase()"></textarea>
                                             </div>
                                         </div>
                                         <div class="col-xs-12 col-sm-6 col-md-4 ">

@@ -158,7 +158,7 @@
                         </tr>
                     </table>
                 </div>
-                <!-- DELIGENCIA NO EXITOSA, SE CONSTITUYE, CERRADO -->
+                <!-- DELIGENCIA NO EXITOSA, SE CONSTITUYE -->
                 <div class="razon-notificacion"> 
                     <p><center><b>RAZÓN DE NOTIFICACIÓN</b></center></p>
 
@@ -247,7 +247,7 @@
                                         LO ANTERIOR SE HACE DE MANERA APROXIMADA, YA QUE EL SUSCRITO NO ES PERITO EN LA MATERIA.</b>
                                 @endif
                             @else 
-                                SE IDENTIFICA CON {{ mb_strtoupper($citado->identificacion_notificacion, 'UTF-8') }} 
+                                SE IDENTIFICA CON {{ mb_strtoupper($citado->identificacion_notificacion, 'UTF-8') }} de número <b>{{$citado->num_identificacion}}</b>
                             @endif
                             </b>
 
@@ -255,7 +255,7 @@
                             @if($citado->problema_diligencia === 'NO ACCESO AL INMUEBLE')
                                 Dicha persona me niega el acceso; adicionalmente hago
                             @else
-                                Enseguida me identifico en este acto con credencial expedida por el Centro de Conciliación Laboral, oficina estatal MORELIA, que me acredita 
+                                Enseguida me identifico en este acto con credencial expedida por el Centro de Conciliación Laboral, oficina estatal {{ mb_strtoupper($solicitud->delegacion,'UTF-8') }}, que me acredita 
                                 como Notificador y le informo el motivo de mi visita, mediante lectura del <p>CITATORIO DE CONCILIACIÓN</p> antes mencionado, requiriéndole 
                                 así la presencia del REPRESENTANTE LEGAL DEL <b>CITADO: {{ $citado->nombre }} @if($citado->primer_apellido != null) {{ $citado->primer_apellido }} @endif 
                                 @if($citado->segundo_apellido != null) {{ $citado->segundo_apellido }} @endif</b>, a fin de NOTIFICARLO, en cumplimiento a lo ordenado; la persona que 
