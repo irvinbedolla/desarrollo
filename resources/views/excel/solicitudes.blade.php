@@ -19,7 +19,7 @@
                     <th width="30" style="background-color: #869b9c; color: #ffffff;">Parcialidades Pagadas</th>
                     <th width="15" style="background-color: #869b9c; color: #ffffff;">Monto Pagado</th>
                     <th width="15" style="background-color: #869b9c; color: #ffffff;">Número de Audiencia</th>        
-                    <th width="15" style="background-color: #869b9c; color: #ffffff;">Estatus Solicitud</th>            
+                    <th width="15" style="background-color: #869b9c; color: #ffffff;">Estatus Solicitud</th>      
                 </tr>
             </thead>
             <tbody>

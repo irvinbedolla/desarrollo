@@ -42,6 +42,7 @@ class ReporteMexicoRati implements FromView
 
         // --- CONSULTA 1: TURNOS ---
         $reportes = Turnos::whereBetween('turnos.fecha', [$this->fecha_inicial, $this->fecha_final])
+            ->whereNotIn('turnos.estatus', ['Pendiente', 'Prevencion']) // Filtro para Turnos
             ->leftJoin('users', 'users.id', '=', 'turnos.user_id')
             ->leftJoin('estados', 'estados.id', '=', 'turnos.estado_rat')
             ->leftJoin('municipios', 'municipios.id', '=', 'turnos.municipio_rat')
@@ -71,16 +72,15 @@ class ReporteMexicoRati implements FromView
             ->get();
 
         // --- CONSULTA 2: SEER GENERAL ---
-        // Corregimos los joins para que apunten a seer_general, no a turnos
         $reportesSolicitudes = SeerPerGeneral::whereBetween('seer_general.fecha', [$this->fecha_inicial, $this->fecha_final])
             ->join('seer_citados','seer_citados.id_solicitud','seer_general.id')
             ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+            ->whereNotIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
             ->leftJoin('users', 'users.id', '=', 'seer_general.user_id')
             ->leftJoin('estados', 'estados.id', '=', 'seer_solicitante.estado')
             ->leftJoin('municipios', 'municipios.id', '=', 'seer_solicitante.municipio_domicilio')
             ->leftJoin('abogados', 'abogados.idAbogado', '=', 'seer_citados.id_abogado') 
             ->leftJoin('municipios as mun_abogado', 'mun_abogado.id', '=', 'abogados.municipio_patronal')
-            //->where('seer_general.estatus','=!','Pendiente')
             ->when($this->sede !== "Todos", function ($q) use ($sedeUsuario) {
                 return $this->aplicarFiltroSede($q, 'seer_general', $sedeUsuario);
             })
@@ -100,10 +100,18 @@ class ReporteMexicoRati implements FromView
                 'seer_general.id',
                 'seer_solicitante.sexo'
             )
-            // Agregamos la cadena de motivos y el total de pagos como subconsultas
             ->selectSub($subconsultaMotivos, 'motivo') 
             ->selectSub($subconsultaPagosSeer, 'total') 
             ->get();
+
+        // --- COMBINACIÓN Y FILTRADO ---
+        $todoJunto = $reportes->concat($reportesSolicitudes)
+            ->unique('NUE') // <-- Esto elimina cualquier fila repetida con el mismo NUE
+            ->values()      // <-- Reindexa el array (0, 1, 2...) para evitar problemas en la vista
+            ->map(function($item) {
+                $item->total = $item->total ?? 0;
+                return $item;
+            });
 
         // Combinar ambas colecciones
         $todoJunto = $reportes->concat($reportesSolicitudes)->map(function($item) {

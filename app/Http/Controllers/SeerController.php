@@ -1306,7 +1306,7 @@ class SeerController extends Controller
             return $pdf->stream('archivo.pdf');
         }
         else if($data["tipo_reporte"] == "EstadisticaMexico"){
-            return Excel::download(new ReporteMexicoRati($fecha_inicial, $fecha_final,$sede), 'reporte.xlsx');
+            return Excel::download(new ReporteMexicoRati($fecha_inicial, $fecha_final,$sede), 'INEGI.xlsx');
         }
         else if($data["tipo_reporte"] == "CCIRSJL"){
             //2 CONCILIACION EN MATERIA LABORAL

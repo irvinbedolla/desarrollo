@@ -115,6 +115,9 @@
             background-color: #530c3a !important;
             color: #fff !important;
         }
+        body {
+            padding-top: 100px; /* Ajusta este valor según el alto de tu logo */
+        }
     </style>
     @livewireStyles
 
@@ -124,8 +127,14 @@
     @yield('page_css')
 </head>
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-    <div class="">
-        <img src="public/assets/images/registro-foro-nacional-consolidacion-justicia-laboral.png" class="img" width="auto" height="100">
+    <!-- Usamos d-flex y justify-content-center para centrar horizontalmente -->
+    <div class="container-fluid d-flex justify-content-center">
+        <a class="navbar-brand m-0" href="#">
+            <img src="public/assets/images/registro-foro-nacional-consolidacion-justicia-laboral.png" 
+                 class="img-fluid" 
+                 alt="Logo Foro Nacional"
+                 style="max-height: 120px; width: auto;">
+        </a>
     </div> 
 </nav>
 <body onload="validarcheckfolio()">
