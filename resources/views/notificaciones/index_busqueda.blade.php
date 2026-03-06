@@ -49,7 +49,7 @@
                                                                     </button>
                                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                         <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFRazonNoticacion', [$notificacion->id, $notificacion->id_solicitud]) }}"  target="_blank">Notificación</a></li>
-                                                                        <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFmulta', [$notificacion->id, $notificacion->id_solicitud]) }}" target="_blank">Multa</a></li>
+                                                                        <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFmultaNotificacion', [$notificacion->id, $notificacion->id_solicitud]) }}" target="_blank">Multa</a></li>
                                                                     </ul>
                                                                 @endif     
                                                                 @if($notificacion->estatus === "No notificada")
@@ -58,16 +58,16 @@
                                                                     </button>
                                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                         <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFInstructivo', [$notificacion->id, $notificacion->id_solicitud]) }}" target="_blank">Notificación</a></li>
-                                                                        <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFmulta', [$notificacion->id, $notificacion->id_solicitud]) }}" target="_blank">Multa</a></li>
+                                                                        <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerPDFMultaInstructivo', [$notificacion->id, $notificacion->id_solicitud]) }}" target="_blank">Multa</a></li>
                                                                     </ul>
                                                                 @endif      
                                                                 @if($notificacion->estatus === "No exitosa se constituye")
                                                                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                                                         Documentos
-                                                                    </button>
+                                                                    </button> 
                                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                                        <li class="mb-2"><a class="btn btn-info" style="width: 100%" href="{{ route('PDFNoExitosa', [$notificacion->id, $notificacion->id_solicitud]) }}" target="_blank">Notificación</a></li>
-                                                                        <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFmulta', [$notificacion->id, $notificacion->id_solicitud]) }}" target="_blank">Multa</a></li>
+                                                                        <li class="mb-2"><a class="btn btn-info" style="width: 100%" href="{{ route('VerPDFNoExitConstituye', [$notificacion->id, $notificacion->id_solicitud]) }}" target="_blank">Notificación</a></li>
+                                                                        <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerPDFMultaNoExitConstituye', [$notificacion->id, $notificacion->id_solicitud]) }}" target="_blank">Multa</a></li>
                                                                     </ul>
                                                                 @endif                                      
                                                                 @if($notificacion->estatus === "No exitosa no se constituye")
