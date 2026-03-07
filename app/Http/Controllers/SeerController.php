@@ -4182,12 +4182,86 @@ class SeerController extends Controller
         return $this->guardar_solicitudCentro($id);
     }
 
+    public function guardar_citado_patronal(Request $request, $id)
+    {
+        $data = $request->all();
+        //dd($data);
+        
+        // Validar campos requeridos
+        $request->validate([
+            'colonia'           => 'required',
+            'vialidad'          => 'required',
+            'cp'                => 'required|numeric',
+            'calle'             => 'required',
+            'exterior'          => 'required',
+            'referencia'        => 'required',
+            'municipio_citado'  => 'required',
+            'estado_citado'     => 'required',
+            'notificacion'      => 'required',
+        ]);
+
+        // Preparar datos del citado para guardar en sesión
+        $citado_data = [
+            'colonia'           => $data["colonia"],
+            'cp'                => $data["cp"],
+            'n_ext'             => $data["exterior"],
+            'calle'             => $data["calle"],
+            'tipo_vialidad'     => $data["vialidad"],
+            'referencia'        => $data["referencia"],
+            'municipio_citado'  => $data["municipio_citado"],
+            'estado_citado'     => $data["estado_citado"],
+            'notificacion'      => $data["notificacion"],
+            'tipo_persona'      => 'Fisica', // Siempre física según tu vista
+        ];
+
+        // Agregar campos opcionales
+        if(isset($data["rfc"])) $citado_data["rfc"] = $data["rfc"];
+        if(isset($data["curp"])) $citado_data["curp"] = $data["curp"];
+        if(isset($data["traductor"])) {
+            $val = $data["traductor"];
+            $requires = ($val === 'Si' || $val === '1' || $val === 1 || $val === 'on' || $val === true);
+            $citado_data["traductor"] = $requires ? 1 : 0;
+            if (isset($data["lenguaje"])) {
+                $citado_data["lenguaje"] = is_array($data["lenguaje"]) ? ($data["lenguaje"][0] ?? null) : ($data["lenguaje"] ?? null);
+            }
+        }
+        if(isset($data["interior"])) $citado_data["n_int"] = $data["interior"];
+        if(isset($data["calle1"])) $citado_data["calle1"] = $data["calle1"];
+        if(isset($data["calle2"])) $citado_data["calle2"] = $data["calle2"];
+        if(isset($data["nombre"])) $citado_data["nombre"] = $data["nombre"];
+        if(isset($data["primer_apellido"])) $citado_data["primer_apellido"] = $data["primer_apellido"];
+        if(isset($data["segundo_apellido"])) $citado_data["segundo_apellido"] = $data["segundo_apellido"];
+
+        // Manejar archivos si existen
+        if ($request->hasFile('foto1')) {
+            $tempId = ($id == 'session') ? uniqid('session_') : $id;
+            $imagen_domicilio1 = $tempId . "-domicilio_Citado1.jpg" . Str::random(8) . ".jpg";
+            Storage::putFileAs('documentosSolicitud', $request->file('foto1'), $imagen_domicilio1);
+            $citado_data['imagen_domicilio1'] = $imagen_domicilio1;
+        }
+
+        if ($request->hasFile('foto2')) {
+            $tempId = ($id == 'session') ? uniqid('session_') : $id;
+            $imagen_domicilio2 = $tempId . "-domicilio_Citado2.jpg" . Str::random(8) . ".jpg";
+            Storage::putFileAs('documentosSolicitud', $request->file('foto2'), $imagen_domicilio2);
+            $citado_data['imagen_domicilio2'] = $imagen_domicilio2;
+        }
+
+        // Guardar en sesión
+        session(['citados_trabajador_data' => $citado_data]);
+
+        // Redirigir a guardar_solicitud
+        return $this->guardar_solicitud($id);
+    }
+
     public function guardar_solicitud($id){
         if ($id == 'session') {
              // Recuperar datos de sesión
              $solicitud_data = session('solicitud_trabajador_data');
              $solicitante_data = session('solicitante_trabajador_data');
-             $citados_data = session('citados_trabajador_data', []);
+             $citado_data = session('citados_trabajador_data'); // Ya solo es un citado
+
+             //dd($'citado_data');
              
              if (!$solicitud_data || !$solicitante_data) {
                  return redirect()->route('solicitudEnLinea')->with('error', 'Sesión expirada o datos incompletos.');
@@ -4204,8 +4278,9 @@ class SeerController extends Controller
                     'tipo_generacion' =>  $solicitud_data["tipo_generacion"],
                     'consecutivo'     =>  $solicitud_data["consecutivo"],
                     'año'             =>  $solicitud_data["año"],
-                    'caso_excepcion'  =>  $solicitante_data['excepcion']
+                    'caso_excepcion'  =>  $solicitante_data['excepcion'] ?? 'No' // En caso de que no venga el campo, se asume "No"
                  ];
+
                  SeerPerGeneral::create($general_insert);
                  $general_record = SeerPerGeneral::latest('id')->first();
                  $new_id = $general_record->id;
@@ -4221,22 +4296,22 @@ class SeerController extends Controller
                  }
                  
                  // 3. Crear SeerSolicitante
-                 $solicitante_insert = $solicitante_data['solicitante'];
+                 $solicitante_insert = $solicitante_data;
                  $solicitante_insert['id_solicitud'] = $new_id;
                  SeerSolicitante::create($solicitante_insert);
                  
                  // 4. Crear SeerCasosExcepcion
-                 if ($solicitante_data['excepcion'] === "Si") {
+                 /*if ($solicitante_data['excepcion'] === "Si") {
                      $excepcion_insert = $solicitante_data['excepcion_data'];
                      $excepcion_insert['id_solicitud'] = $new_id;
                      SeerCasosExcepcion::create($excepcion_insert);
-                 }
+                 }*/
                  
                  // 5. Crear SeerCitados
-                 foreach ($citados_data as $citado) {
-                     $citado['id_solicitud'] = $new_id;
-                     SeerCitados::create($citado);
-                 }
+                 //foreach ($citados_data as $citado) {
+                     $citado_data['id_solicitud'] = $new_id;
+                     SeerCitados::create($citado_data);
+                 //}
                  
                  DB::commit();
                  
@@ -13946,12 +14021,12 @@ class SeerController extends Controller
             'año'             => $año_actual,
             'motivo_solicitud' => $data["motivo_solicitud"] ?? []
         );
-       
-        session(['solicitud_trabajador_data' => $solicitud_data]);
-        
+
         // Limpiar sesiones anteriores
         session()->forget('solicitante_trabajador_data');
         session()->forget('citados_trabajador_data');
+       
+        session(['solicitud_trabajador_data' => $solicitud_data]);
 
         $id = 'session';
 
@@ -14019,16 +14094,39 @@ class SeerController extends Controller
         );
         $data['nombre'] = preg_replace('/\s+/', ' ', $nombreCompleto);
 
+        // Conversión de sexo
+        $sexoMap = [
+            'Femenino' => 'M',
+            'Masculino' => 'H',
+            'Prefiero no responder' => 'NC'
+        ];
+        $sexoMapeado = $sexoMap[$poder['sexo_representante']] ?? 'NC';
+
+        // Conversión de identificación
+        $idenMap = [
+            'Credencial de Elector' => 'Credencial de elector',
+            'Pasaporte' => 'Pasaporte',
+            'Cédula Profesional' => 'Cédula profesional',
+            'Licencia de Conducir' => 'Licencia de conducir',
+            'Otros' => 'Otros',
+            'Credencial de INAPAM' => 'Credencial de inapam',
+            'Cartilla Militar' => 'Cartilla militar',
+            'Documento Migratorio' => 'Documento migratorio',
+            'Constancia de Identidad' => 'Constancia de identidad'
+        ];
+        $idenMapeado = $idenMap[$poder['tipo_identificacion']] ?? 'Otros';
+
         $data_solicitante = [
             // --- DATOS OBTENIDOS DEL REGISTRO DEL PODER ($poder) ---
             'curp'                => $poder['curp_representante'],
             'nombre'              => $nombreCompleto,
-            'sexo'                => $poder['sexo_representante'],
+            'sexo'                => $sexoMapeado,
             'email'               => $poder['correo_representante'],
             'telefono1'           => $poder['numero_representante'],
-            'identificacion'      => $poder['tipo_identificacion'],
+            'identificacion'      => $idenMapeado,
             'num_identificacion'  => $poder['num_identificacion'],
             'estado_domicilio'    => $poder['estado_patronal'],
+            'estado'              => $poder['estado_patronal'],
             'municipio_domicilio' => $poder['municipio_patronal'],
             'tipo_vialidad'       => $poder['tipo_vialidad_patronal'],
             'calle'               => $poder['vialidad_patronal'],
@@ -14077,11 +14175,12 @@ class SeerController extends Controller
             $data_solicitante["traductor"] = ($val === 'Si' || $val === '1' || $val === 'on') ? 'Si' : 'No';
             $data_solicitante["lenguaje"] = $data["lenguaje"] ?? null;
         }
-        $solicitante_data = [
+
+        /*$solicitante_data = [
             'solicitante' => $data_solicitante,
             'excepcion' => $data["excepcion"],
-            //'excepcion_data' => $excepcion_data
-        ];
+            'excepcion_data' => $excepcion_data
+        ];*/
         
         session(['solicitante_trabajador_data' => $data_solicitante]);
        

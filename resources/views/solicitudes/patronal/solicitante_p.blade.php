@@ -524,7 +524,7 @@
                                                 <spam for="btncheck1">¿Requiere traductor?</spam>
                                                 <input type="checkbox" class="btn-check" id="check_len" name="traductor" autocomplete="off">
                                             </div>
-                                            <div class="col-xs-6 col-sm-12 col-md-6" id="lenguaje_señ">
+                                            <div class="col-xs-6 col-sm-12 col-md-6" id="lenguaje_señ" style="display:none;">
                                                 <div class="form-group">
                                                     <label for="name">¿Qué tipo de lenguaje require?</label>
                                                     <input type="text" name="lenguaje" class="form-control" id="lenguajeRequerido" oninput="this.value = this.value.toUpperCase()">
@@ -535,9 +535,9 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <spam for="btncheck1">¿Tiene discapacidad?</spam>
-                                                <input type="checkbox" class="btn-check" id="check_discapacidad" name="discapacidad" value="Si" autocomplete="off">
+                                                <input type="checkbox" class="btn-check" id="check_disc" name="discapacidad" value="Si" autocomplete="off">
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-4" id="discapacidad" style="display:none;">
+                                            <div class="col-xs-12 col-sm-12 col-md-4" id="disc" style="display:none;">
                                                 <div class="form-group">
                                                     <label for="name">¿Cuál es su discapacidad?</label>
                                                     <input type="text" name="tipo_discapacidad" class="form-control" id="discapacidadRequerida" oninput="this.value = this.value.toUpperCase()">
@@ -1042,6 +1042,29 @@
                 inputLenguaje.value = '';
             }
         }
+
+        $(function(){
+            $('#check_disc').on('change', validarcheckdiscapacidad);
+        })
+
+        function validarcheckdiscapacidad(){
+            const check = document.getElementById("check_disc");
+            const divDisc = document.getElementById("disc");
+            const inputDiscapacidad = document.getElementById("discapacidadRequerida");
+
+            // Si el checkbox está marcado (checked es true)
+            if (check.checked) {
+                // Muestra el div y haz el input requerido
+                divDisc.style.display = "block";
+                inputDiscapacidad.required = true;
+            } else {
+                // Si no está marcado, oculta el div, quita el required y limpia el valor
+                divDisc.style.display = "none";
+                inputDiscapacidad.required = false;
+                inputDiscapacidad.value = '';
+            }
+        }
+
         function sedes(){
             document.getElementById("fecha").removeAttribute("disabled");
         }
@@ -1061,9 +1084,6 @@
         document.addEventListener("DOMContentLoaded", function () {
             const inicio = document.querySelector('input[name="fecha_ingreso"]');
             const termino = document.querySelector('input[name="fecha_salida"]');
-
-            document.getElementById("lenguaje_señ").style.display = "none";
-
 
             // Función para obtener hoy en formato 'YYYY-MM-DD'
             function obtenerFechaHoyFormato() {

@@ -117,26 +117,40 @@
                                     <div style="background-color:#D2D3D5; width:100%; height:40px;">
                                         <h3 class="text-center" style="color:black">Ingresa los datos del citado</h3>
                                     </div>    
-                                    <p><span style="color:red;">*</span> Debes capturar al menos un citado</p>
+                                    <!--p><span style="color:red;">*</span> Debes capturar al menos un citado</p-->
 
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                    <form class="needs-validation" novalidate method="POST" action="{{route('seer.citados')}}" enctype="multipart/form-data">
+                                    <form class="needs-validation" novalidate method="POST" action="{{ route('guardar.citado.patronal',$id) }}" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $id }}">
                                         <div class="row" id="div_datos_citado">
-                                            <div class="col-xs-12 col-sm-12 col-md-2">
+                                            <!--div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
                                                     <label for="name">Tipo de persona <span style="color:red;">(*)</span></label>
                                                     <select name="tipo" id="tipo" class="form-control" required>
                                                         <option value="">Seleccione</option>
                                                         <option value="Fisica">Física</option>
-                                                        <!--<option value="Moral">Moral</option>-->
+                                                        <option value="Moral">Moral</option>
                                                     </select>
                                                     <div class="invalid-feedback">
                                                         El tipo de persona es obligatorio.
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div-->
+
+                                            {{-- Campo oculto para enviar siempre el valor "Fisica" --}}
+                                            <input type="hidden" name="tipo" value="Fisica">
+
+                                            {{-- Se elimina el select de tipo de persona --}}
+                                            {{-- <div class="col-xs-12 col-sm-12 col-md-2">
+                                                <div class="form-group">
+                                                    <label for="name">Tipo de persona <span style="color:red;">(*)</span></label>
+                                                    <select name="tipo" id="tipo" class="form-control" required>
+                                                        <option value="">Seleccione</option>
+                                                        <option value="Fisica">Física</option>
+                                                    </select>
+                                                </div>
+                                            </div> --}}
 
                                             <div class="col-xs-12 col-sm-12 col-md-2" id="campo_curp">
                                                 <div class="form-group">
@@ -480,20 +494,18 @@
                                         </div>-->
 
                                         <div class="col-xs-12 col-sm-12 col-md-12">
-                                            <div style="display:flex; justify-content:space-between; gap:12px; align-items:center; width:100%;">
-                                                    <div>
+                                            <div style="display:flex; justify-content:flex-end; gap:12px; align-items:center; width:100%;">
+                                                    <!--div>
                                                         @if($citados == 0)
                                                             <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar citado</button>
                                                         @endif
                                                         @if($citados > 0)
                                                             <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar citado</button>
                                                         @endif
-                                                    </div>
+                                                    </div-->
                                                     <div style="display:flex; flex-direction:column; align-items:flex-end;">
-                                                        @if($citados > 0)
-                                                            <a href="{{ route('seer.finaliza',$id) }}" id="btn-conclude" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Concluir solicitud</a>
-                                                            <div id="conclude-warning" class="text-danger" style="display:none; margin-top:6px;">Guarde el citado antes de concluir</div>
-                                                        @endif
+                                                        <button type="submit" id="btn-conclude" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Concluir solicitud</a>
+                                                        <!--div id="conclude-warning" class="text-danger" style="display:none; margin-top:6px;">Guarde el citado antes de concluir</div-->
                                                     </div>
                                                 </div>
                                         </div>    
@@ -540,41 +552,59 @@
         });
     </script>
     <script>
-        // Deshabilitar/activar el botón "Concluir solicitud" si hay inputs con datos sin guardar
+        // Deshabilitar el botón "Concluir solicitud" hasta que todos los campos obligatorios estén llenos
         document.addEventListener('DOMContentLoaded', function () {
             const form = document.querySelector('form.needs-validation');
             const conclude = document.getElementById('btn-conclude');
-            const concludeWarning = document.getElementById('conclude-warning');
+            //const concludeWarning = document.getElementById('conclude-warning');
             if (!form || !conclude) return;
 
             function updateConcludeState() {
                 try {
-                    const elements = form.querySelectorAll('input:not([type=hidden]):not([type=submit]), textarea, select');
-                    let hasValue = false;
-                    elements.forEach(function (el) {
-                        if (!el) return;
-                        if (el.tagName.toLowerCase() === 'select') {
-                            if (el.value && el.value !== '') hasValue = true;
-                            return;
-                        }
-                        const t = (el.type || '').toLowerCase();
-                        if (t === 'checkbox' || t === 'radio') {
-                            if (el.checked) hasValue = true;
-                        } else if (t === 'file') {
-                            if (el.files && el.files.length) hasValue = true;
+                    // Obtener todos los campos obligatorios (required)
+                    const requiredFields = form.querySelectorAll('[required]');
+                    let allFilled = true;
+
+                    requiredFields.forEach(function (field) {
+                        if (!field) return;
+                        
+                        const fieldType = (field.type || '').toLowerCase();
+                        const tagName = field.tagName.toLowerCase();
+
+                        if (tagName === 'select') {
+                            if (!field.value || field.value === '') {
+                                allFilled = false;
+                            }
+                        } else if (fieldType === 'checkbox' || fieldType === 'radio') {
+                            if (!field.checked) {
+                                allFilled = false;
+                            }
+                        } else if (fieldType === 'file') {
+                            if (!field.files || field.files.length === 0) {
+                                allFilled = false;
+                            }
+                        } else if (tagName === 'textarea') {
+                            if (!field.value || field.value.trim() === '') {
+                                allFilled = false;
+                            }
                         } else {
-                            if (el.value && el.value.trim() !== '') hasValue = true;
+                            if (!field.value || field.value.trim() === '') {
+                                allFilled = false;
+                            }
                         }
                     });
 
-                    if (hasValue) {
+                    // Si NO todos los campos están llenos, deshabilitar el botón
+                    if (!allFilled) {
                         conclude.classList.add('btn-disabled');
                         conclude.setAttribute('aria-disabled', 'true');
-                        if (concludeWarning) concludeWarning.style.display = '';
+                        //conclude.style.pointerEvents = 'none';
+                        //conclude.style.opacity = '0.5';
                     } else {
                         conclude.classList.remove('btn-disabled');
                         conclude.removeAttribute('aria-disabled');
-                        if (concludeWarning) concludeWarning.style.display = 'none';
+                        //conclude.style.pointerEvents = 'auto';
+                        //conclude.style.opacity = '1';
                     }
                 } catch (err) { console.warn('updateConcludeState', err); }
             }
@@ -606,6 +636,9 @@
                 // Intentar la ruta API primero (con base_url), si falla intentar la ruta web
                 $.get(base_url + '/api/munCitado/' + estadoId, function (data) {
                     var html = '<option value="">Seleccione</option>';
+                    data.sort(function(a, b) {
+                        return a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' });
+                    });
                     data.forEach(function (m) {
                         html += '<option value="' + m.id + '">' + m.nombre + '</option>';
                     });
@@ -614,6 +647,9 @@
                     // Intentar ruta sin prefijo /api
                     $.get(base_url + '/munCitado/' + estadoId, function (data) {
                         var html = '<option value="">Seleccione</option>';
+                        data.sort(function(a, b) {
+                            return a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' });
+                        });
                         data.forEach(function (m) {
                             html += '<option value="' + m.id + '">' + m.nombre + '</option>';
                         });
@@ -696,53 +732,53 @@
         }*/
 
         document.addEventListener('DOMContentLoaded', function () {
-            const selectTipo = document.getElementById('tipo');
+            //const selectTipo = document.getElementById('tipo');
             const nombreDiv = document.getElementById('tipoPersona_nombre');
-            const razonDiv = document.getElementById('tipoPersona_razon');
+            //const razonDiv = document.getElementById('tipoPersona_razon');
             const curpDiv = document.getElementById('campo_curp');
 
-            function actualizarTipoPersona() {
-                const valor = selectTipo.value;
+            //const valor = selectTipo.value;
 
-                // Oculta ambos inicialmente
-                nombreDiv.style.display = 'none';
-                razonDiv.style.display = 'none';
-                curpDiv.style.display = 'none';
+            if (nombreDiv) nombreDiv.style.display = 'block';
+            if (curpDiv) curpDiv.style.display = 'block';
+            //razonDiv.style.display = 'none';
 
-                // Reset required state
-                const inputNombre = document.querySelector('input[name="nombre"]');
-                const inputPrimer = document.querySelector('input[name="primer_apellido"]');
-                const inputSegundo = document.querySelector('input[name="segundo_apellido"]');
-                const inputRazon = document.querySelector('input[name="razon"]');
+            // Reset required state
+            const inputNombre = document.querySelector('input[name="nombre"]');
+            const inputPrimer = document.querySelector('input[name="primer_apellido"]');
+            const inputSegundo = document.querySelector('input[name="segundo_apellido"]');
+            const inputRazon = document.querySelector('input[name="razon"]');
 
+            // Persona física: pedir nombre y primer apellido (segundo opcional), mostrar CURP
+            if (inputNombre) inputNombre.required = true;
+            if (inputPrimer) inputPrimer.required = true;
+            if (inputSegundo) inputSegundo.required = false;
+            if (inputRazon) inputRazon.required = false;
+
+            /*if (valor === 'Fisica') {
+                // Persona física: pedir nombre y primer apellido (segundo opcional), mostrar CURP
+                nombreDiv.style.display = 'block';
+                curpDiv.style.display = 'block';
+                if (inputNombre) inputNombre.required = true;
+                if (inputPrimer) inputPrimer.required = true;
+                if (inputSegundo) inputSegundo.required = false;
+                if (inputRazon) inputRazon.required = false;
+            } else if (valor === 'Moral') {
+                // Persona moral: pedir razón social, ocultar campos de nombre
+                razonDiv.style.display = 'block';
+                if (inputRazon) inputRazon.required = true;
                 if (inputNombre) inputNombre.required = false;
                 if (inputPrimer) inputPrimer.required = false;
                 if (inputSegundo) inputSegundo.required = false;
-                if (inputRazon) inputRazon.required = false;
+            }*/
 
-                if (valor === 'Fisica') {
-                    // Persona física: pedir nombre y primer apellido (segundo opcional), mostrar CURP
-                    nombreDiv.style.display = 'block';
-                    curpDiv.style.display = 'block';
-                    if (inputNombre) inputNombre.required = true;
-                    if (inputPrimer) inputPrimer.required = true;
-                    if (inputSegundo) inputSegundo.required = false;
-                    if (inputRazon) inputRazon.required = false;
-                } else if (valor === 'Moral') {
-                    // Persona moral: pedir razón social, ocultar campos de nombre
-                    razonDiv.style.display = 'block';
-                    if (inputRazon) inputRazon.required = true;
-                    if (inputNombre) inputNombre.required = false;
-                    if (inputPrimer) inputPrimer.required = false;
-                    if (inputSegundo) inputSegundo.required = false;
-                }
-            }
+            // Se elimina el listener del select ya que no existe más
 
-            if (selectTipo) {
+            /*if (selectTipo) {
                 selectTipo.addEventListener('change', actualizarTipoPersona);
                 // Ejecutar al cargar por si ya tiene valor
                 actualizarTipoPersona();
-            }
+            }*/
 
             const form = document.querySelector('form.needs-validation');
             form.addEventListener('submit', function(e) {
