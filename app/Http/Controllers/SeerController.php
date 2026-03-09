@@ -1662,7 +1662,7 @@ class SeerController extends Controller
             return Excel::download(new Convenios($fecha_inicial, $fecha_final, $sede), 'Convenios.xlsx');
         }
         else if($data["tipo_reporte"] == "Motivos"){
-            return Excel::download(new Motivos($fecha_inicial, $fecha_final, $sede), 'Motivos.xlsx');
+            return Excel::download(new Motivos($fecha_inicial, $fecha_final, $sede), 'Reporte_motivos.xlsx');
         }
     }
 
