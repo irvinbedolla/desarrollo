@@ -10918,7 +10918,7 @@ class SeerController extends Controller
         $solicitudOriginal = SeerPerGeneral::find($data["id"]);
         $sede = $solicitudOriginal->delegacion ?? $user->delegacion;
 
-        if($data["conclucion"] == "Conciliacion"){
+        if($data["conclucion"] == "Conciliacion" || $data["conclucion"] == "Reinstalacion"){
             //Revisar si existe
             if(isset($data["dias_pagos"])){
                 $conteo = count($data["dias_pagos"]);
@@ -11080,7 +11080,6 @@ class SeerController extends Controller
             ->update([
                 'tipo'                  => "Presencial",
                 'fecha_terminacion'     => $fecha_actual, 
-                'conciliador_id'        => $user->id,
                 'estatus'               => $data["conclucion"]
             ]);
 
