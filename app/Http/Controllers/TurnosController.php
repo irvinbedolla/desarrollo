@@ -1246,7 +1246,7 @@ class TurnosController extends Controller
     //PDF Acta de Audiencia
     public function VerPDFAudiencia($id){
         $solicitud = Turnos::find($id);
-        $pagos = Pagos::where('id_solicitud', $id)->get();
+        $pagos = Pagos::where('id_solicitud', $id)->where('tipo_pago','Ratificacion')->get();
 
         if($solicitud->id_historial){
             $abogado = HistorialAbogado::join("turnos", "turnos.id_historial", "=", "historial_abogados.id")
@@ -1270,8 +1270,8 @@ class TurnosController extends Controller
 
         //$prestacionesLab = Concepto::where('id_solicitud', $id)->first();
         //dd($prestaciones);
-       $prestaciones = Concepto::where('id_solicitud', $id)->get();
-        $deducciones = Deducciones::where('id_solicitud', $id)->get();
+        $prestaciones = Concepto::where('id_solicitud', $id)->where('tipo_pago','Ratificacion')->get();
+        $deducciones = Deducciones::where('id_solicitud', $id)->where('tipo_pago','Ratificacion')->get();
 
         $conceptosTexto = [];
         $deduccionesTexto = [];
