@@ -59,6 +59,9 @@
                             <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#ModalIncopentencia" data-id="{{ $id }}">
                                 Incompetencia
                             </button>
+                            <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#ModalDesistimiento" data-id="{{ $id }}">
+                                Desistimiento
+                            </button>
 
                             @if($mostrarEmitirMultasTop)
                                 <button type="button" class="btn btn-danger open-modal" data-bs-toggle="modal" data-bs-target="#ModalEmitirMultas" data-id="{{ $id }}">
@@ -1349,6 +1352,28 @@
         </div>
     </form>
 </div>
+
+<div class="modal fade" id="ModalDesistimiento" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <form class='needs-validation novalidate'  method='POST' action="{{route('desistimiento_audiencia')}}">
+        @csrf
+        <input type="hidden" id="modal-id-desistimiento" name="id" value="">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Motivo de Desistimiento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea name="observaciones" style="width:100%"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 <div class="modal fade" id="ModalTerminar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     @php
         $hayRepresentante = 0;
@@ -1724,6 +1749,7 @@
             document.getElementById('modal-id-archivar').value = id;
             document.getElementById('modal-id-reagendar').value = id;
             document.getElementById('modal-id-incopentencia').value = id;
+            document.getElementById('modal-id-desistimiento').value = id;
             document.getElementById('modal-id-citado').value = id;
         });
 

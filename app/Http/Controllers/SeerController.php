@@ -2173,8 +2173,13 @@ class SeerController extends Controller
         $id = $citado->id;
         $municipios = Municipios::all();
         $estados = Estados::all();
+        $fecha_formateada = \Carbon\Carbon::parse($citado->fecha)->format('Y-m-d');
+        $hora_formateada  = \Carbon\Carbon::parse($citado->fecha)->format('H:i');
+        $tipo_llenado = null;
+        $flag = true;
+        $estatusSeleccionado = null;
 
-        return view('notificaciones.actualizarCitado', compact('id','municipios','estados', 'citado', 'NUE', 'nombre_estado', 'nombre_municipio'));
+        return view('notificaciones.actualizarCitado', compact('id','municipios','estados', 'citado', 'NUE', 'nombre_estado', 'nombre_municipio', 'fecha_formateada', 'hora_formateada'));
     }
 
     public function update_notificador(Request $request){
@@ -2228,7 +2233,7 @@ class SeerController extends Controller
         ]);
 
         $seercitado = SeerCitados::find($data["id"]);
-        //dd($registro);
+        $estatusOriginal = $seercitado ? $seercitado->estatus : null;
         $solicitud = SeerPerGeneral::where('id', $seercitado->id_solicitud)->first();
         $municipio = Municipios::where('id', $seercitado->municipio_citado)->first();
         $estado = Estados::where('id', $seercitado->estado_citado)->first();
@@ -2244,7 +2249,9 @@ class SeerController extends Controller
         $tipo_llenado = $data["tipo_llenado"];
         
 
-        if($data["quien_atiende"] == 'EXHORTO'){
+        $esVistaPrevia = isset($data['vista_previa']) && (string) $data['vista_previa'] === '1';
+
+        if(!$esVistaPrevia && $data["quien_atiende"] == 'EXHORTO'){
             $data["estatus"] = 'Exhorto';
             $notificacion = 'Exhorto';
             $data["medio"]= null;
@@ -2259,7 +2266,13 @@ class SeerController extends Controller
                 $id_notificador = 59;
             }
         }
-       
+
+        $estatusSeleccionado = $data['estatus'];
+
+        if ($esVistaPrevia && $estatusOriginal !== null) {
+            $data['estatus'] = $estatusOriginal;
+        }
+
         // Tipo de llenado 1: actualizar un solo registro
         if ($data["tipo_llenado"] == 1) {
             SeerCitados::find($data["id"])
@@ -2386,7 +2399,7 @@ class SeerController extends Controller
             }
 
             // Retornamos la vista pasando la variable url_pdf
-            return view('notificaciones.vista_previa', compact('registro','municipios','estados', 'NUE', 'nombre_estado', 'nombre_municipio', 'url_pdf', 'hora_formateada','fecha_formateada', 'tipo_llenado'));
+            return view('notificaciones.vista_previa', compact('registro','municipios','estados', 'NUE', 'nombre_estado', 'nombre_municipio', 'url_pdf', 'hora_formateada','fecha_formateada', 'tipo_llenado', 'estatusSeleccionado'));
             
         }
           
@@ -6432,6 +6445,54 @@ class SeerController extends Controller
             'numero_audiencia'  =>  $numAudiencia+1,
             'folio_audiencia'   =>  $numero_audiencia[0],
             'estatus'           => 'Incompetencia',
+        ]);
+
+        return redirect()->route('todas_audiencias');
+    }
+
+    public function desistimiento_audiencia(Request $request){
+        $data = $request->all();
+        $user = auth()->user();
+        $fecha_actual = date('y-m-d');
+
+        //Guardar registro en SeerConciliador
+        $numero_audiencias = SeerPerConciliador::find($data["id"]);
+        if(!isset($numero_audiencias)){
+            $num_audi = 0;
+        }
+        else{
+            $num_audi = $numero_audiencias->numero_audiencias;
+        }
+        $num_audi = $num_audi+1;
+
+        $numero_audiencia = $this->GeneraAudiencia($data["id"]);
+        $data_conciliador = [
+            'id_solicitud'          => $data["id"],
+            'numero_audiencia'      => $numero_audiencia[0],
+            'numero_audiencias'     => $num_audi,
+            'validado'              => 'Validado',
+            'fecha_conclucion'      =>  $fecha_actual,
+            'consecutivo'           =>  $numero_audiencia[1],
+            'estatus_conciliacion'  => 'Desistimiento'
+        ];
+        
+        SeerPerConciliador::create($data_conciliador);  
+
+        SeerPerGeneral::find($data["id"])
+        ->update([
+            'fecha_terminacion'     => $fecha_actual, 
+            'observaciones'         => $data["observaciones"], 
+            'conciliador_id'        => $user->id,
+            'estatus'               => 'Desistimiento'
+        ]);
+
+        $numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
+        Audiencias::where('id_solicitud',$data["id"])
+        ->orderBy('id_solicitud','desc')
+        ->update([
+            'numero_audiencia'  =>  $numAudiencia+1,
+            'folio_audiencia'   =>  $numero_audiencia[0],
+            'estatus'           => 'Desistimiento',
         ]);
 
         return redirect()->route('todas_audiencias');

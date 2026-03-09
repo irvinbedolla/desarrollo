@@ -103,7 +103,12 @@
                     Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{\Carbon\Carbon::parse($audiencia->hora)->translatedFormat('H:i')}} horas<br>
                     Asistencia del solicitante: No
                 </b></p>  
+                @if($audiencia->estatus == 'Desistimiento')
+                <center><p><b>ARCHIVO POR DESISTIMIENTO</b></p></center>
+                @else
                 <center><p><b>ARCHIVO POR FALTA DE INTERÉS</b></p></center>
+                @endif
+
                 <p>En <b>{{ $solicitud->delegacion }}, Michoacán de Ocampo a {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}.</b></p>
                 <p>
                     <b>VISTO</b> el estado que guarda el expediente identificado con el número <b>{{ $solicitud->NUE }}</b> relativo a la solicitud de conciliación realizada por
