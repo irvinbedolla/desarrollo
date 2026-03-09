@@ -145,7 +145,7 @@
                                                                 </ul>
                                                             </div>
                                                         </div> 
-                                                    @elseif($audiencia->estatus == "Conciliacion" || $audiencia->estatus == "Concluida")
+                                                    @elseif($audiencia->estatus == "Conciliacion" || $audiencia->estatus == "Concluida" || $audiencia->estatus == "Reinstalacion")
                                                         <div class="dropdown">
                                                             <div class="dropdown">
                                                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -154,7 +154,13 @@
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="dropdown-item" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Documentos Digitales</a></li>
                                                                     <li><a class="dropdown-item" href="{{ route('VerPDFAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Acta de Audiencia</a></li>
-                                                                    <li><a class="dropdown-item" href="{{ route('PDFconveniosolicitud', $audiencia->id_solicitud) }}" target="_blank">Convenio</a></li>
+                                                                    <li>
+                                                                        <a class="dropdown-item"
+                                                                           href="{{ $audiencia->estatus == 'Reinstalacion' ? route('PDFconvenioreinstalacion', $audiencia->id_solicitud) : route('PDFconveniosolicitud', $audiencia->id_solicitud) }}"
+                                                                           target="_blank">
+                                                                            Convenio
+                                                                        </a>
+                                                                    </li>
                                                                     @if($audiencia->constancia == 0)
                                                                         <li><a class="dropdown-item" href="{{ route('PDFcumplimientoTotal', $audiencia->id_solicitud) }}"  target="_blank">Constancia de cumplimiento</a></li>
                                                                     @endif

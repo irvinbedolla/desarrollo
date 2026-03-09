@@ -112,6 +112,7 @@
                                                 <option value="Conciliacion">Hubo Convenio</option>
                                                 <option value="No conciliacion">No Hubo Convenio</option>
                                                 <option value="Reagenda">No Hubo Convenio (Se desea reagendar)</option>
+                                                <option value="Reinstalacion">Reinstalación</option>
                                                 <option value="Archivada por incomparecencia">Archivar</option>
                                             </select>
                                         </div>
@@ -165,7 +166,7 @@
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-4"><br>
                                             <div class="form-group">
-                                                <label for="name">Especifique el monto que quedara señalado para el concepto de pena convencional</label>
+                                                <label for="name">Especifique el monto que quedará señalado para el concepto de pena convencional</label>
                                                 <input type="number" step="0.001" name="pena_convencional" class="form-control"  value="<?=number_format($montoPena, 2)?>" oninput="this.value" placeholder="Ingrese solo 3 decimales" > 
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.

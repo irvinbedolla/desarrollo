@@ -18,7 +18,7 @@ class Audiencias extends Model
         'hora' => 'datetime:H:i'
     ];
 
-    public const ESTADOS = ['Conciliación', 'No Conciliación', 'Archivada', 'Incompetencia'];
+    public const ESTADOS = ['Pendiente','Conciliacion','No conciliacion','Reagendada','Archivada','No conciliacion reagendada','Incompetencia','Incomparecencia','Reinstalacion', 'Desistimiento'];
     public const TIPOS = ['Pago Parcial', 'Pago Total'];
 
     // En el archivo app/Models/Audiencias.php

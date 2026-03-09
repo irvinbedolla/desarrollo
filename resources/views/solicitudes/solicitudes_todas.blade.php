@@ -126,7 +126,7 @@
                                                                 </ul>
                                                             </div>
                                                         </div> 
-                                                    @elseif($solicitud->estatus == "Conciliacion" || $solicitud->estatus == "Concluida")
+                                                    @elseif($solicitud->estatus == "Conciliacion" || $solicitud->estatus == "Concluida" || $solicitud->estatus == "Reinstalacion")
                                                         <div class="dropdown">
                                                             <div class="dropdown">
                                                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -138,7 +138,11 @@
                                                                      @if(isset($solicitud->mostrar_ptu) && $solicitud->mostrar_ptu)
                                                                         <li><a class="dropdown-item" href="{{ route('PDFconvenioPTU_NO_S', $solicitud->id) }}" target="_blank" style="background-color: #d4edda; font-weight: bold;">Convenio PTU (No Labora)</a></li>
                                                                     @else
-                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFconveniosolicitud', $solicitud->id) }}" target="_blank">Convenio</a></li>
+                                                                    <li>
+                                                                        <a class="btn btn-info" style="width: 100%"
+                                                                           href="{{ $solicitud->estatus == 'Reinstalacion' ? route('PDFconvenioreinstalacion', $solicitud->id) : route('PDFconveniosolicitud', $solicitud->id) }}"
+                                                                           target="_blank">Convenio</a>
+                                                                    </li>
                                                                     @endif
                                                                     {{--<li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFconveniosolicitud', $solicitud->id) }}" target="_blank">Convenio</a></li>--}}
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFcumplimientoTotal', $solicitud->id) }}"  target="_blank">Constancia de cumplimiento</a></li>

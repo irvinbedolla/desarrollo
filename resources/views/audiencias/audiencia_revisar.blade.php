@@ -145,7 +145,11 @@
                                                     <tr>
                                                     <td  style="display:none">{{$concepto->id}}</td>
                                                         <td>{{ $concepto->descripcion}}</td>
+                                                        @if($concepto->monto)
                                                         <td>${{ number_format($concepto->monto,2) }}</td>
+                                                        @else
+                                                        <td>No Aplica</td>
+                                                        @endif
                                                         <td>
                                                             @if($concepto->id)
                                                                 <form method="POST" action="{{ route('concepto_eliminar_pago', $concepto->id) }} ">
@@ -231,7 +235,11 @@
                                                         <td  style="display:none">{{$pago->id}}</td>
                                                         <td> {{ \Carbon\Carbon::parse($pago->fecha)->translatedFormat('d/m/y') }}<br>{{ \Carbon\Carbon::parse($pago->hora)->format('H:i') }} hrs.</td>
                                                         <td>{{ $pago->descripcion}}</td>
+                                                        @if($pago->monto)
                                                         <td>${{ number_format($pago->monto,2) }}</td>
+                                                        @else
+                                                        <td>No Aplica</td>
+                                                        @endif
                                                         <td>
                                                             @if($pago->id)
                                                                 <form method="POST" action="{{ route('pago_eliminar_pago', $pago->id) }} ">
@@ -294,6 +302,7 @@
                                             <select style="pointer-events: none; background-color: #eee;" id="conclucion" name="conclucion" class="form-control">
                                                 <option>Seleccione</option>
                                                 <option value="Conciliacion" {{ $conciliadores["conclucion"] == "Conciliacion" ? "selected" : '' }}>Hubo Convenio</option>
+                                                <option value="Reinstalacion" {{ $conciliadores["conclucion"] == "Reinstalacion" ? "selected" : '' }}>Reinstalación</option>
                                                 <option value="No conciliacion" {{ $conciliadores["conclucion"] == "No conciliacion" ? "selected" : '' }}>No hubo Convenio</option>
                                                 <!--option value="Archivada por incomparecencia" {{ $conciliadores["conclucion"] == "Archivada por incomparecencia" ? "selected" : '' }}>Archivar</!--option-->
                                             </select>
@@ -1444,7 +1453,7 @@ function clonarCheckboxes() {
         let form = document.getElementById('form_roles');
         form.action = "{{ route('terminar_audiencia', $id) }}";
         form.submit();
-        setTimeout(() => { window.open("{{ route('PDFconveniosolicitud', $id) }}", "_blank"); }, 700);
+    setTimeout(() => { window.open("{{ ($conciliadores["conclucion"] ?? null) === 'Reinstalacion' ? route('PDFconvenioreinstalacion', $id) : route('PDFconveniosolicitud', $id) }}", "_blank"); }, 700);
     });*/
 
     // Acta → guarda antes de abrir PDF
@@ -1615,9 +1624,9 @@ function clonarCheckboxes() {
                     .then(data => {
                         if(data.status === 'success') {
                             // 4. Si se guardó en sesión exitosamente, abrimos el PDF en nueva pestaña
-                            // Usamos la ruta existente 'PDFconveniosolicitud' (VerPDFConvenioSol)
+                            // Convenio: si la conclusión es Reinstalacion, usamos su PDF específico
                             // Ajusta la URL base si tu ruta tiene prefijos
-                            let urlPdf = "{{ route('PDFconveniosolicitud', ':id') }}";
+                            let urlPdf = "{{ ($conciliadores["conclucion"] ?? null) === 'Reinstalacion' ? route('PDFconvenioreinstalacion', ':id') : route('PDFconveniosolicitud', ':id') }}";
                             urlPdf = urlPdf.replace(':id', idSolicitud);
                             
                             window.open(urlPdf, "_blank");
