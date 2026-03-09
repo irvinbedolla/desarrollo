@@ -221,9 +221,9 @@
                         Procedo a especificar su media filiación, que incluye los siguientes rasgos: <b>SEXO {{$citado->sexo}}, TEZ {{ $citado->tez }}, EDAD {{$citado->edad}}, ALTURA {{$citado->altura}} M, COMPLEXIÓN {{$citado->complexion}}, CABELLO {{$citado->cabello}} Y OJOS {{$citado->ojos}}. 
                         LO ANTERIOR SE HACE DE MANERA APROXIMADA, YA QUE EL SUSCRITO NO ES PERITO EN LA MATERIA.</b> Quien manifiesta que @if($citado->puesto=="TRABAJA")<b>OCUPA EL PUESTO DE {{$citado->puesto}}</b>@endif @if($citado->puesto=="RECIDE")<b>{{$citado->puesto}}</b>@endif en el domicilio en que se
                         actúa. Enseguida me identifico con credencial vigente expedida por el Centro de Conciliación Laboral, oficina estatal {{ mb_strtoupper($solicitud->delegacion,'UTF-8') }} que me
-                        acredita como Notificador y le informo el motivo de mi visita, mediante lectura del <b>ACUERDO DE MULTA</b> antes mencionado, requiriendo así la presencia <b>DEL CITADO: {{$citado->nombre}} @if($citado->primer_apellido!=null){{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null){{$citado->segundo_apellido}}@endif</b> 
+                        acredita como Notificador y le informo el motivo de mi visita, mediante lectura del <b>CITATORIO DE CONCILIACIÓN</b> antes mencionado, requiriendo así la presencia <b>DEL CITADO: {{$citado->nombre}} @if($citado->primer_apellido!=null){{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null){{$citado->segundo_apellido}}@endif</b> 
                         a fin de NOTIFICARLO; la persona que me atiende manifiesta que el citado no se encuentra por el momento, pero que efectivamente tiene su asiento de negocios en este domicilio. Por todo lo anterior, y de
-                        conformidad con lo dispuesto en los artículos 741, 742 fracción XII, 743 y 751 de la Ley Federal del Trabajo procedo a dejar <b>ACUERDO DE MULTA</b> DE LEY para EL CITADO.
+                        conformidad con lo dispuesto en los artículos 741, 742 fracción XII, 743 y 751 de la Ley Federal del Trabajo procedo a dejar <b>CITATORIO</b> DE LEY para EL CITADO.
                     </p>
                     @endif
                     {{--<p>Siendo las <b>{{ $citado->updated_at->format('H') }} HORAS CON {{ $citado->updated_at->format('i') }} MINUTOS
