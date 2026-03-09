@@ -29,7 +29,7 @@
 
         body {
             background-color: #f4f6f9;
-            padding-top: 140px; /* Espacio para el navbar fijo */
+            padding-top: 210px; /* Espacio para el navbar fijo */
         }
 
         /* Navbar Responsivo */
@@ -40,9 +40,13 @@
         }
 
         .navbar-brand img {
-            max-height: 120px;
+            max-height: 180px;
             width: auto;
             transition: all 0.3s ease;
+        }
+        .navbar-brand {
+            padding: 0;
+            margin: 0;
         }
 
         /* Loader */
@@ -84,8 +88,8 @@
 
         /* Ajustes Móviles */
         @media (max-width: 768px) {
-            body { padding-top: 100px; }
-            .navbar-brand img { max-height: 70px; }
+            body { padding-top: 105px; }
+            .navbar-brand img { max-height: 75px; }
             h4 { font-size: 1.1rem; }
             .col-md-4 { margin-bottom: 15px; }
         }
