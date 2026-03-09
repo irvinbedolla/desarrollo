@@ -67,7 +67,7 @@ use App\Exports\SolicitudesExport;
 use App\Exports\Convenios;
 use App\Mail\ForoMail;
 use App\Models\ForoNacional;
-
+use App\Exports\Motivos;
 
 class SeerController extends Controller
 {   
@@ -1660,6 +1660,9 @@ class SeerController extends Controller
         }
         else if($data["tipo_reporte"] == "Convenios"){
             return Excel::download(new Convenios($fecha_inicial, $fecha_final, $sede), 'Convenios.xlsx');
+        }
+        else if($data["tipo_reporte"] == "Motivos"){
+            return Excel::download(new Motivos($fecha_inicial, $fecha_final, $sede), 'Motivos.xlsx');
         }
     }
 
@@ -14610,25 +14613,30 @@ class SeerController extends Controller
 
     public function foroNacionalregistro(Request $request){
         $data = $request->all();
-        
+
         $data_insert=array(
             'primer_apellido'   => $data["primero_trabajador"],
             'segundo_apellido'  => $data["segundo_trabajador"],
             'nombre'            => $data["trabajador"],
             'correo'            => $data["email"],
             'telefono'          => $data["telefono"],
-            'lugar'             => $data["trabajador_edad"],
+            'convesatorio1'     => $data["ocupacion"],
+            'lugar'             => $data["lugar"],
             'sexo'              => $data["trabajador_sexo"],
             'estatus'           => "Pendiente",
         );
         ForoNacional::create($data_insert);
 
+        $ultimoRegistro = ForoNacional::latest('id')->first();
+        $ultimoId = $ultimoRegistro->id;
+
         // 2. Envío del correo
-        Mail::to($data['email'])->send(new ForoMail($data_insert));
+        Mail::to($data['email'])->send(new ForoMail($data_insert,$ultimoId));
 
         return back()->with('success', 'Revisa tu bandeja de entrada para verificar tu folio de registro del Foro Nacional por la Consolidación de la Justicia Laboral en México.'); 
     }
-        //PDF Notificación de multa cuando es por instructivo
+    
+    //PDF Notificación de multa cuando es por instructivo
     public function VerPDFMultaInstructivo($id, $id_solicitud){
         $solicitud = SeerPerGeneral::find($id_solicitud);
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
@@ -14689,6 +14697,7 @@ class SeerController extends Controller
         $nombreArchivo = 'multaNotificada_' . $solicitud->empresa .'.pdf';
         return $pdf->stream($nombreArchivo); 
     }
+
     //PDF Notificación de multa cuando es No exitosa, se constituye
     public function VerPDFMultaNoExitConstituye($id, $id_solicitud){
         $solicitud = SeerPerGeneral::find($id_solicitud);

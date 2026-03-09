@@ -67,6 +67,7 @@ class SolicitudesExport implements FromView
             'seer_general.actividad',
             'seer_solicitante.nombre as solicitante_nombre',
             'seer_general.tipo_solicitud',
+            'seer_solicitante.sexo',
             DB::raw('GROUP_CONCAT(DISTINCT catalogo_motivos.motivo SEPARATOR ", ") as motivos'),            
             DB::raw('SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT 
                 CONCAT_WS(" ", seer_citados.nombre, seer_citados.primer_apellido, seer_citados.segundo_apellido) 
@@ -97,7 +98,8 @@ class SolicitudesExport implements FromView
             'seer_general.delegacion', 
             'seer_general.actividad', 
             'seer_solicitante.nombre',
-            'seer_general.tipo_solicitud'
+            'seer_general.tipo_solicitud',
+            'seer_solicitante.sexo'
         )
         ->orderBy('seer_general.consecutivo', 'desc')
         ->get();

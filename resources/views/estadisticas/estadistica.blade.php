@@ -47,9 +47,8 @@
                                                     <option value="Convenios">Convenios</option>
                                                     <option value="CumplimientosGrafica">Graficas</option>
                                                     <option value="Productividad">Productividad</option>
-
-
                                                     <option value="EstadisticaMexico">INEGI</option> 
+                                                     <option value="Motivos">Motivos</option>
                                                     <option value="Concentrado">General</option>
                                                     <option value="GeneralSede">General por Sede</option>
                                                     <option value="SeguroSocial">Seguro Social</option>

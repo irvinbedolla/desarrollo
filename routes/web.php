@@ -53,7 +53,7 @@ use App\Http\Controllers\IncidenciasController;
 
     Route::get('levantar_solicitud',                    [SeerController::class, 'solicitudesLinea'])->name('solicitudEnLinea');
     Route::get('tipoIndustria/{tipo_solicitud}',        [SeerController::class, 'Industrias'])->name('solicitud.industria');
-     Route::get('tipoIndustriaP/{tipo_solicitud}',      [SeerController::class, 'Industrias_p'])->name('solicitud.industria_p'); //Solicitud patronal
+    Route::get('tipoIndustriaP/{tipo_solicitud}',      [SeerController::class, 'Industrias_p'])->name('solicitud.industria_p'); //Solicitud patronal
     Route::get('/registro_tercer_encuentro',            [SeerController::class, 'registro_tercer_encuentro'])->name('registro_tercer_encuentro');
     Route::post('/registro_tercer_encuentro/guardar',   [SeerController::class, 'tercer_encuentro_registro'])->name('tercer_encuentro_registro');
     Route::get('GeneraConstancia',                      [SeerController::class, 'genera_constancia']);
@@ -61,7 +61,7 @@ use App\Http\Controllers\IncidenciasController;
     Route::get('olvidaste_contraseña',                  [SeerController::class, 'olvidaste_contraseña'])->name('olvidaste_contraseña');
     //Foro Nacional
     Route::get('/RegistroForo',                         [SeerController::class, 'registro_foro_nacional'])->name('registro_foro_nacional');
-    Route::post('/registro_tercer_encuentro/guardar',   [SeerController::class, 'foroNacionalregistro'])->name('foroNacionalregistro');
+    Route::post('/ForoNacional/guardar',   [SeerController::class, 'foroNacionalregistro'])->name('foroNacionalregistro');
 
 
     //Rutas para el chat

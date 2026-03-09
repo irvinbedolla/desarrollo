@@ -202,7 +202,7 @@
                                         <div class="col-12 col-md-6">
                                             <div class="form-group">
                                                 <label class="form-label">¿De dónde nos visitas? <span class="text-danger">(*)</span></label>
-                                                <input type="text" name="trabajador_edad" class="form-control" placeholder="Estado / Ciudad" required> 
+                                                <input type="text" name="lugar" class="form-control" placeholder="Estado / Ciudad" required> 
                                             </div>
                                         </div>
 
