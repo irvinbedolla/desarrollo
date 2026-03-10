@@ -2187,6 +2187,7 @@ class SeerController extends Controller
 
     public function update_notificador(Request $request){
         $data = $request->all();
+        
         $fechaEspecifica = Carbon::parse($request->fecha_notificacion . ' ' . $request->hora_notificacion);
 
         // 1. Buscamos el registro ACTUAL en la base de datos primero
@@ -2196,7 +2197,14 @@ class SeerController extends Controller
         $documento = $seercitado->documento ?? "Sin documento";
         $documento1 = $seercitado->documento1 ?? "Sin documento";
         $documento2 = $seercitado->documento2 ?? "Sin documento";
-
+        //Obtine cual fue el tipo de problema para despues guardarlo en bdd
+        $data['problema_diligencia'] = null;
+        if(isset($data['problema_diligencia_1'])){
+            $data['problema_diligencia']= $data['problema_diligencia_1'];
+        }
+        elseif(isset($data['problema_diligencia_2'])){
+            $data['problema_diligencia'] =$data['problema_diligencia_2'];
+        }
         // 3. SOLO si el usuario subió un archivo NUEVO en este request, lo guardamos y actualizamos la variable
         if ($request->hasFile('foto')) {
             $documento = $data["id"] . "-foto1.jpg";

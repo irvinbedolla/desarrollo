@@ -433,7 +433,7 @@
                                         <div class="col-xs-12 col-sm-6 col-md-4 " id="tipo_problema1" style="display:none;">
                                             <div class="form-group">
                                                 <label for="name">Tipo de problema</label>
-                                                <select id="problema1" name="problema_diligencia" class="form-control">
+                                                <select id="problema1" name="problema_diligencia_1" class="form-control">
                                                     <option value="">Selecciona</option>
                                                         <optgroup label="Domicilio">
                                                             <option value="CERRADO">Cerrado</option>
@@ -461,7 +461,7 @@
                                         <div class="col-xs-12 col-sm-6 col-md-4" id="tipo_problema2" style="display:none;">
                                             <div class="form-group">
                                                 <label for="name">Tipo de problema</label>
-                                                <select id="problema2" name="problema_diligencia" class="form-control">
+                                                <select id="problema2" name="problema_diligencia_2" class="form-control">
                                                     <option value="">Selecciona</option>
                                                         <optgroup label="Domicilio incompleto">
                                                             <option value="OMITE NÚMERO">Omite número</option>
@@ -472,7 +472,6 @@
                                                             <option value="FUERA DE LA JURISDICCIÓN">Fuera de la jurisdicción</option>
                                                         <optgroup label="Copias">
                                                             <option value="NO HAY COPIAS SUFICIENTES">No hay copias suficientes</option>
-                                        
                                                 </select>
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
@@ -681,19 +680,28 @@
             function actualizarTipoProblema() {
                 const valor = selectEstatus.value;
 
-                // Oculta ambos inicialmente
+                // Oculta ambos divs inicialmente
                 problema1Div.style.display = 'none';
                 problema2Div.style.display = 'none';
                 abundarmotivoDiv.style.display = 'none';
                 firmaDiv.style.display = 'block';
+
+                // Deshabilita AMBOS selects para que no se envíen en el POST
+                document.getElementById('problema1').disabled = true;
+                document.getElementById('problema2').disabled = true;
+
                 if (valor === 'No exitosa se constituye') {
                     problema1Div.style.display = 'block';
                     abundarmotivoDiv.style.display = 'block';
                     firmaDiv.style.display = 'none';
+                    // Habilita solo el select que se va a usar
+                    document.getElementById('problema1').disabled = false; 
                 } else if (valor === 'No exitosa no se constituye') {
                     problema2Div.style.display = 'block';
                     abundarmotivoDiv.style.display = 'block';
                     firmaDiv.style.display = 'none';
+                    // Habilita solo el select que se va a usar
+                    document.getElementById('problema2').disabled = false; 
                 }
             }
 
