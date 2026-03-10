@@ -8270,7 +8270,7 @@ class SeerController extends Controller
             $estado = Estados::find($citado->estado_citado);
             $municipioNombre = $municipio ? mb_strtoupper($municipio->nombre, 'UTF-8') : '';
             $estadoNombre = $estado ? mb_strtoupper($estado->nombre, 'UTF-8') : '';
-
+            $fechaEmision = $solicitud->fecha_confirmacion;
             $nombreArchivo = 'citatorio_' . $citado->nombre . '_' . $citado->primer_apellido . '.pdf';
             $nombreArchivo = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $nombreArchivo); //Elimina los caracteres especiales no permitidos en archivos
 
@@ -8280,7 +8280,7 @@ class SeerController extends Controller
                 'citado',
                 'motivos',
                 'audiencia',
-                'conciliador','municipioNombre','estadoNombre'
+                'conciliador','municipioNombre','estadoNombre','fechaEmision'
             ))
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
@@ -8680,8 +8680,8 @@ class SeerController extends Controller
         $estado = Estados::find($citado->estado_citado);
         $municipioNombre = $municipio ? mb_strtoupper($municipio->nombre, 'UTF-8') : '';
         $estadoNombre = $estado ? mb_strtoupper($estado->nombre, 'UTF-8') : '';
-
-        $html = view('PDF/Solicitudes/citatorio', compact('solicitud','solicitante','citado','motivos','audiencia','conciliador','municipioNombre','estadoNombre'))->render();
+        $fechaEmision = $audiencia->created_at;
+        $html = view('PDF/Solicitudes/citatorio', compact('solicitud','solicitante','citado','motivos','audiencia','conciliador','municipioNombre','estadoNombre','fechaEmision'))->render();
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
@@ -8917,16 +8917,38 @@ class SeerController extends Controller
 
     //PDF NOTIFICADORES Razón de notificación Cuando atiende el citado
     public function VerPDFRNotificacion($id, $id_solicitud){
-        $solicitud = SeerPerGeneral::find($id_solicitud);
+        $solicitud = SeerPerGeneral::findOrFail($id_solicitud);
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
         ->first();
-        $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id")
+        /*$audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id")
         ->where("audiencias.id_solicitud", "=", $solicitud["id"])->latest('audiencias.created_at')->first();
         $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
         ->where("seer_citados.id", $id)
-        ->first();
+        ->first();*/
+        $citado = SeerCitados::findOrFail($id);
+        $audiencias = \DB::table('audiencias')
+        ->where('id_solicitud', $id_solicitud)
+        ->orderBy('created_at', 'asc')
+        ->get();
 
+        $totalAudiencias = $audiencias->count();
+        $fechaCitatorio = null;
+
+        if ($totalAudiencias == 1 && $citado->notificacion == "Centro") {
+            //if ($citado->notificacion == "Centro") {
+                $fechaCitatorio = $audiencias->first()->created_at;
+            //} 
+        } elseif ($totalAudiencias == 2) {
+            $primeraAudiencia = $audiencias->first();
+            $segundaAudiencia = $audiencias->get(1);
+            if ($citado->notificacion == "Centro") {
+                $fechaCitatorio = $segundaAudiencia->created_at;
+            } 
+        }
+        elseif ($totalAudiencias > 2) {
+            $fechaCitatorio = $audiencias->last()->created_at;
+        }
         $municipioCitado = null;
         if ($citado && $citado->municipio_citado) {
             $municipio = \App\Models\Municipios::find($citado->municipio_citado);
@@ -8977,7 +8999,7 @@ class SeerController extends Controller
                 $imagenes[] = null;
             }
         }
-        $html = view('PDF/Solicitudes/razonNotificacion', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado','audiencia'))->render();
+        $html = view('PDF/Solicitudes/razonNotificacion', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado','fechaCitatorio'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -9776,7 +9798,29 @@ class SeerController extends Controller
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
         ->first();
-       
+        $audiencias = \DB::table('audiencias')
+        ->where('id_solicitud', $id_solicitud)
+        ->orderBy('created_at', 'asc')
+        ->get();
+
+        $totalAudiencias = $audiencias->count();
+        $fechaCitatorio = null;
+
+        if ($totalAudiencias == 1 && $citado->notificacion == "Centro") {
+            //if ($citado->notificacion == "Centro") {
+                $fechaCitatorio = $audiencias->first()->created_at;
+            //} 
+        } elseif ($totalAudiencias == 2) {
+            $primeraAudiencia = $audiencias->first();
+            $segundaAudiencia = $audiencias->get(1);
+            if ($citado->notificacion == "Centro") {
+                $fechaCitatorio = $segundaAudiencia->created_at;
+            } 
+        }
+        elseif ($totalAudiencias > 2) {
+            $fechaCitatorio = $audiencias->last()->created_at;
+        }
+
         $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
         ->where("seer_citados.id", $id)
         ->first();
@@ -9823,7 +9867,7 @@ class SeerController extends Controller
             }
         }
             
-        $html = view('PDF/Solicitudes/razonPorInstructivo', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado'))->render();
+        $html = view('PDF/Solicitudes/razonPorInstructivo', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado','fechaCitatorio'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -9840,7 +9884,29 @@ class SeerController extends Controller
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
         ->first();
-       
+        $audiencias = \DB::table('audiencias')
+        ->where('id_solicitud', $id_solicitud)
+        ->orderBy('created_at', 'asc')
+        ->get();
+
+        $totalAudiencias = $audiencias->count();
+        $fechaCitatorio = null;
+
+        if ($totalAudiencias == 1 && $citado->notificacion == "Centro") {
+            //if ($citado->notificacion == "Centro") {
+                $fechaCitatorio = $audiencias->first()->created_at;
+            //} 
+        } elseif ($totalAudiencias == 2) {
+            $primeraAudiencia = $audiencias->first();
+            $segundaAudiencia = $audiencias->get(1);
+            if ($citado->notificacion == "Centro") {
+                $fechaCitatorio = $segundaAudiencia->created_at;
+            } 
+        }
+        elseif ($totalAudiencias > 2) {
+            $fechaCitatorio = $audiencias->last()->created_at;
+        }
+
         $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
         ->where("seer_citados.id", $id)
         ->first();
@@ -9898,7 +9964,7 @@ class SeerController extends Controller
             }
         }
             
-        $html = view('PDF/Solicitudes/razonNoExitosa', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado'))->render();
+        $html = view('PDF/Solicitudes/razonNoExitosa', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado','fechaCitatorio'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -9915,7 +9981,29 @@ class SeerController extends Controller
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
         ->first();
-        
+        $audiencias = \DB::table('audiencias')
+        ->where('id_solicitud', $id_solicitud)
+        ->orderBy('created_at', 'asc')
+        ->get();
+
+        $totalAudiencias = $audiencias->count();
+        $fechaCitatorio = null;
+
+        if ($totalAudiencias == 1 && $citado->notificacion == "Centro") {
+            //if ($citado->notificacion == "Centro") {
+                $fechaCitatorio = $audiencias->first()->created_at;
+            //} 
+        } elseif ($totalAudiencias == 2) {
+            $primeraAudiencia = $audiencias->first();
+            $segundaAudiencia = $audiencias->get(1);
+            if ($citado->notificacion == "Centro") {
+                $fechaCitatorio = $segundaAudiencia->created_at;
+            } 
+        }
+        elseif ($totalAudiencias > 2) {
+            $fechaCitatorio = $audiencias->last()->created_at;
+        }
+
         $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
         ->where("seer_citados.id", $id)
         ->first();
@@ -9973,7 +10061,7 @@ class SeerController extends Controller
             }
         }
              
-        $html = view('PDF/Solicitudes/razonNumInt', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado'))->render();
+        $html = view('PDF/Solicitudes/razonNumInt', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado','fechaCitatorio'))->render();
  
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')

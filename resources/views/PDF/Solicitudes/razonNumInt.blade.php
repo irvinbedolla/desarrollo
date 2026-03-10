@@ -139,11 +139,11 @@
                     @endphp
                             
                     <p>Siendo las <b>{{ $fechaNotificacion ? $fechaNotificacion->format('H') : '' }} HORAS CON {{ $fechaNotificacion ? $fechaNotificacion->format('i') : '' }} MINUTOS
-                        DEL DÍA {{ $fechaNotificacion ? mb_strtoupper($fechaNotificacion->translatedFormat('d \D\E F \D\E\L Y')) : '' }}, LIC. {{$notificador->name}}</b> en mi
+                        DEL DÍA {{ $fechaNotificacion ? mb_strtoupper($fechaNotificacion->translatedFormat('d \D\E F \D\E\L Y')) : '' }}, LIC. {{mb_strtoupper($notificador->name,'UTF-8')}}</b> en mi
                         calidad de notificador(a) adscrito al Centro de Conciliación Laboral, oficina estatal {{ $solicitud->delegacion }}, en 
                         ejercicio de las facultades conferidas en los artículos de la Ley Orgánica del Centro de Conciliación Laboral del 
                         Estado de Michoacán de Ocampo y 21 del reglamento interior del Centro de Conciliación Laboral del Estado de Michoacán 
-                        de Ocampo, a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
+                        de Ocampo, a efecto de dar cumplimiento al CITATORIO DE CONCILIACIÓN de fecha <b>{{ mb_strtoupper(\Carbon\Carbon::parse($fechaCitatorio)->translatedFormat('d \D\E F \D\E\L Y'), 'UTF-8') }}</b> 
                         en el expediente citado, en el que se ordena NOTIFICAR <b>AL CITADO: {{$citado->nombre}}@if($citado->primer_apellido!=null) {{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null) {{$citado->segundo_apellido}}@endif</b>, 
                         en el domicilio señalado en <b>{{strtoupper($citado->tipo_vialidad)}} {{$citado->calle}} {{$citado->n_ext}}@if($citado->n_int!=null) INT. {{$citado->n_int}}@endif, COLONIA {{$citado->colonia}}, 
                         {{mb_strtoupper($municipioCitado, 'UTF-8')}}, CP {{$citado->cp}}, {{mb_strtoupper($estadoCitado, 'UTF-8')}}.</b> Cerciorándome de ser el domicilio correcto por
@@ -171,19 +171,28 @@
                                     @php $index++; @endphp
                                 @endif
                             @endforeach
-                        </b><br><br>
+                        </b>
+                        Hago constar a la autoridad conciliadora competente que después de haber recorrido en su totalidad dicha vialidad, en el tramo correspondiente a la colonia antes mencionada, no me es posible localizar inmueble 
+                        alguno marcado con el número oficial proporcionado por el solicitante; adicionalmente hago constar que <b>{{ $citado->especificar }}</b>
+                        <br><br>
+                        En esa razón, me encuentro imposibilitado para dar cumplimiento a lo ordenado en el <b>CITATORIO DE CONCILIACIÓn</b>; toda vez que no cuento con los elementos de cercioramiento requeridos por el Artículo 743 
+                        Fracción I de la Ley Federal del Trabajo, por lo que me es imposible dar cumplimiento al <b>CITATORIO</b> antes citado.
+                        {{--A mayor abundamiento, verifico que cerca del domicilio se encuentran los siguientes puntos de referencia: <b>{{$citado->abundar_area}}.</b> 
+                        De igual forma, he constatado que se trata de un inmueble con las siguientes características: <b>{{$citado->abundar_inmueble}}.</b><br><br>
 
-                        Hago constar a la autoridad conciliadora competente que al recorrer la parte señalada del inmueble, no logro localizar el número interior proporcionado 
-                        por la parte solicitante; adicionalmente hago constar que <b>{{$citado->abundar_area}}.</b><br><br>
+                        Hago constar a la autoridad conciliadora competente que después de haber recorrido en su totalidad dicha vialidad, en el tramo correspondiente a la colonia antes 
+                        mencionada, no me es posible localizar inmueble alguno marcado con el número oficial proporcionado por el solicitante ; adicionalmente hago constar que <b>{{$citado->observaciones}}.</b><br><br> 
                         
                         En esa razón, me encuentro imposibilitado para dar cumplimiento a lo ordenado en el citatorio de conciliación; toda vez que no cuento 
                         con los elementos de cercioramiento requeridos por el artículo 743 fracción I de la Ley Federal del Trabajo, por lo que me es imposible 
-                        dar cumplimiento al citatorio antes citado.
-                    </p>
-                    <div class="espaciador-firma">
+                        dar cumplimiento al citatorio antes citado.<br><br>--}}
+                    </p>  
+                    <div class="seccion-firma">
+                        Anexando impresión fotográfica para constancia legal. <br><br>
                         <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. Doy fe.</b> 
+                    
                         <div class="espaciador-firma"><br>
-                            <center><b>___________________________________<br> LIC. {{mb_strtoupper($notificador->name,'UTF-8')}}<br> FUNCIONARIO/A NOTIFICADOR/A</b></center>
+                            <center><b>___________________________________<br>LIC. {{ mb_strtoupper($notificador->name, 'UTF-8')}}<br> FUNCIONARIO/A NOTIFICADOR/A</b></center>
                         </div>
                     </div>
                 </div>

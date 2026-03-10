@@ -106,7 +106,7 @@
                     </table>
                 </div><br><br><br><br>
                 <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br><br>
-                <p><b>FECHA DE EMISIÓN DEL CITATORIO:</b>  {{ $citado->updated_at->translatedFormat('d \d\e F \d\e\l Y') }}<br>
+                <p><b>FECHA DE EMISIÓN DEL CITATORIO: </b>{{ \Carbon\Carbon::parse($fechaEmision)->translatedFormat('d \d\e F \d\e\l Y') }}<br>
                 <b>ASUNTO:</b> CITATORIO DE AUDIENCIA DE CONCILIACIÓN<br>
                 <b> SOLICITANTE:</b> {{ $solicitante->nombre }}<br>
                 <b>CITADO:</b> {{ $citado->nombre}} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}<br>
