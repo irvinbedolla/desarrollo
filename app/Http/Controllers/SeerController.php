@@ -6887,8 +6887,8 @@ class SeerController extends Controller
         $conciliadorId = $solicitud->conciliador_id;
         $sede = $solicitud["delegacion"];
         
-        $raw_fecha = Audiencias::where('id_solicitud', $id)->value('fecha');
-        $raw_hora  = Audiencias::where('id_solicitud', $id)->value('hora');
+        $raw_fecha = Audiencias::where('id_solicitud', $id)->latest('id')->value('fecha');
+        $raw_hora  = Audiencias::where('id_solicitud', $id)->latest('id')->value('hora');
 
         $audiencia_fecha = Carbon::parse($raw_fecha)->format('Y-m-d');
         $audiencia_hora = Carbon::parse($raw_hora)->format('H:i:s');
