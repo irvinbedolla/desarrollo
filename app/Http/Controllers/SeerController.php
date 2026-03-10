@@ -2189,11 +2189,15 @@ class SeerController extends Controller
         $data = $request->all();
         $fechaEspecifica = Carbon::parse($request->fecha_notificacion . ' ' . $request->hora_notificacion);
 
-        $documento = "Sin documento";
-        $documento1 = "Sin documento";
-        $documento2 = "Sin documento";
+        // 1. Buscamos el registro ACTUAL en la base de datos primero
+        $seercitado = SeerCitados::find($data["id"]);
 
-        // Guardar archivos si existen
+        // 2. Si ya existen documentos en la BD, los conservamos como valor por defecto. Si no, ponemos "Sin documento"
+        $documento = $seercitado->documento ?? "Sin documento";
+        $documento1 = $seercitado->documento1 ?? "Sin documento";
+        $documento2 = $seercitado->documento2 ?? "Sin documento";
+
+        // 3. SOLO si el usuario subió un archivo NUEVO en este request, lo guardamos y actualizamos la variable
         if ($request->hasFile('foto')) {
             $documento = $data["id"] . "-foto1.jpg";
             Storage::putFileAs('documentos_notificacion', $request->file('foto'), $documento);
@@ -2297,7 +2301,7 @@ class SeerController extends Controller
                     'identificacion_notificacion'=> $data["identificacion_notificacion"],
                     'motivo_identificacion'      => $data["motivo_identificacion"],
                     'firma'                       => $data["firma"],
-                    'problema_diligencia'         => $data["problema_diligencia"],
+                    'problema_diligencia'         => $data["problema_diligencia"] ?? null,
                     'genero'                      => $data["genero"],
                     'tez'                         => $data["tez"],
                     'edad_filiacion'              => $data["edad_filiacion"],
@@ -2306,7 +2310,7 @@ class SeerController extends Controller
                     'cabello'                     => $data["cabello"],
                     'ojos'                        => $data["ojos"],
                     'particulares'                => $data["particulares"],
-                    'especificar'                 => $data["especificar"],
+                    'especificar'                 => $data["especificar"] ?? null,
                     'giro_comercial'              => $data["giro_comercial"],
                     'id_notificador'              => $id_notificador,
                     'notificacion'                => $notificacion,
@@ -2341,7 +2345,7 @@ class SeerController extends Controller
                         'identificacion_notificacion'=> $data["identificacion_notificacion"],
                         'motivo_identificacion'      => $data["motivo_identificacion"],
                         'firma'                       => $data["firma"],
-                        'problema_diligencia'         => $data["problema_diligencia"],
+                        'problema_diligencia'         => $data["problema_diligencia"] ?? null,
                         'genero'                      => $data["genero"],
                         'tez'                         => $data["tez"],
                         'edad_filiacion'              => $data["edad_filiacion"],
@@ -2350,7 +2354,7 @@ class SeerController extends Controller
                         'cabello'                     => $data["cabello"],
                         'ojos'                        => $data["ojos"],
                         'particulares'                => $data["particulares"],
-                        'especificar'                 => $data["especificar"],
+                        'especificar'                 => $data["especificar"] ?? null,
                         'giro_comercial'              => $data["giro_comercial"],
                         'id_notificador'              => $id_notificador,
                         'notificacion'                => $notificacion,
@@ -2371,9 +2375,9 @@ class SeerController extends Controller
         }
         else{
             $url_pdf = null;
-            
+            $estatus = $estatusSeleccionado;
             // Evaluamos el estatus y el tipo de notificación exactamente igual que en tu index
-            $estatus = $registro->estatus;
+            //$estatus = $registro->estatus;
             $tipo = $registro->tipo_notificacion; // Suponiendo que este campo está en tu tabla
 
             if ($estatus === "Finalizado exitosamente") {
@@ -2392,7 +2396,7 @@ class SeerController extends Controller
             } 
             elseif ($estatus === "No exitosa se constituye") {
                 if ($tipo === "Citatorio") {
-                    $url_pdf = route('PDFNoExitosa', [$registro->id, $registro->id_solicitud]);
+                    $url_pdf = route('VerPDFNoExitConstituye', [$registro->id, $registro->id_solicitud]);
                 } elseif ($tipo === "Multa") {
                     $url_pdf = route('PDFmulta', [$registro->id, $registro->id_solicitud]);
                 }

@@ -113,13 +113,23 @@
                                         <div class="col-xs-12 col-sm-12 col-md-6 ">
                                             <div class="form-group">
                                                 <label>Medio <span style="color:red;">(*)</span></label>
+                                                @php
+                                                    // Preparamos el arreglo de medios seleccionados igual que en la primera vista
+                                                    $medioSeleccionado = old('medio', $registro->medio ?? []);
+                                                    if (is_string($medioSeleccionado)) {
+                                                        $medioSeleccionado = array_filter(array_map('trim', preg_split('/[;,\n\r]+/', $medioSeleccionado)));
+                                                    }
+                                                    if (!is_array($medioSeleccionado)) {
+                                                        $medioSeleccionado = [];
+                                                    }
+                                                @endphp
                                                 <select name="medio[]" id="medio" class="form-select select2" multiple required>
                                                     <option value="">Selecciona</option>
-                                                    <option value="PLACAS OFICIALES" {{ $registro->medio == 'PLACAS OFICIALES' ? 'selected' : '' }}>Placas oficiales</option>
-                                                    <option value="NÚMERO VISIBLE">Número visible</option>
-                                                    <option value="NUMERACIÓN CONSISTENTE" >Numeración consistente</option>
-                                                    <option value="INFORMES DE VECINOS">Informes de vecinos</option>
-                                                    <option value="RÓTULOS VISIBLES" >Rótulos visibles</option>
+                                                    <option value="PLACAS OFICIALES" {{ in_array('PLACAS OFICIALES', $medioSeleccionado, true) ? 'selected' : '' }}>Placas oficiales</option>
+                                                    <option value="NÚMERO VISIBLE" {{ in_array('NÚMERO VISIBLE', $medioSeleccionado, true) ? 'selected' : '' }}>Número visible</option>
+                                                    <option value="NUMERACIÓN CONSISTENTE" {{ in_array('NUMERACIÓN CONSISTENTE', $medioSeleccionado, true) ? 'selected' : '' }}>Numeración consistente</option>
+                                                    <option value="INFORMES DE VECINOS" {{ in_array('INFORMES DE VECINOS', $medioSeleccionado, true) ? 'selected' : '' }}>Informes de vecinos</option>
+                                                    <option value="RÓTULOS VISIBLES" {{ in_array('RÓTULOS VISIBLES', $medioSeleccionado, true) ? 'selected' : '' }}>Rótulos visibles</option>
                                                 </select>
                                                 <div class="invalid-feedback">
                                                     El campo es obligatorio.
@@ -319,139 +329,159 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-4 od-group">
-                                        <div class="form-group">
-                                            <label>Firma </label>
-                                            <select name="firma" class="form-control" >
-                                                <option value="">Selecciona</option>
-                                                <option value="NO FIRMA" {{ $registro->firma == 'NO FIRMA' ? 'selected' : '' }}>No firma</option>
-                                                <option value="FIRMA" {{ $registro->firma == 'FIRMA' ? 'selected' : '' }}>Firma</option>
-                                                <option value="SELLA" {{ $registro->firma == 'SELLA' ? 'selected' : '' }}>Sella</option>
-                                                <option value="FIRMA Y SELLA" {{ $registro->firma == 'FIRMA Y SELLA' ? 'selected' : '' }}>Firma y sella</option>
-                                                <option value="NO APLICA" {{ $registro->firma == 'NO APLICA' ? 'selected' : '' }}>No aplica</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                El campo firma es obligatorio.
+                                    <div class='row de-group'>
+                                        
+                                        <div class="col-xs-12 col-sm-12 col-md-12 " style="background-color:#D2D3D5; width:100%; height:25px;">
+                                            <h5 class="text-center" style="color:black">Finalización</h5>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="form-group">
+                                                <label for="name">Giro comercial <span style="color:red;">(*)</span> </label>
+                                                <input type="text" name="giro_comercial" class="form-control" value="{{ old('name', $registro->giro_comercial) }}" oninput="this.value = this.value.toUpperCase()" required> 
+                                                <div class="invalid-feedback">
+                                                    El campo giro comercial es obligatorio.
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    
-                                    <div class="col-xs-12 col-sm-6 col-md-4 od-group" id="tipo_problema1" style="display:none;">
-                                        <div class="form-group">
-                                            <label for="name">Tipo de problema</label>
-                                            <select id="problema1" name="problema_diligencia" class="form-control">
-                                                <option value="">Selecciona</option>
-                                                    <optgroup label="Domicilio">
-                                                        <option value="CERRADO" {{ $registro->problema_diligencia == 'CERRADO' ? 'selected' : '' }}>Cerrado</option>
-                                                        <option value="NO ACCESO AL INMUEBLE" {{ $registro->problema_diligencia == 'NO ACCESO AL INMUEBLE' ? 'selected' : '' }}>No acceso al inmueble</option>
-                                                    <optgroup label="Número">
-                                                        <option value="NO SEÑALA INTERIOR" {{ $registro->problema_diligencia == 'NO SEÑALA INTERIOR' ? 'selected' : '' }}>No señala interior</option>
-                                                        <option value="NÚMERO INTERIOR SEÑALADO NO SE LOCALIZÓ EN DOMICILIO" {{ $registro->problema_diligencia == 'NÚMERO INTERIOR SEÑALADO NO SE LOCALIZÓ EN DOMICILIO' ? 'selected' : '' }}>Número interior señalado no se localizó en domicilio</option>
-                                                        <option value="NO LOGRO LOCALIZAR EL NÚMERO" {{ $registro->problema_diligencia == 'NO LOGRO LOCALIZAR EL NÚMERO' ? 'selected' : '' }}>No logro localizar el número</option>
-                                                        <option value="NO SE LOCALIZA EL INMUEBLE CON NÚMERO, MANZANA, LOTE, ETC. SEALADOS" {{ $registro->problema_diligencia == 'NO SE LOCALIZA EL INMUEBLE CON NÚMERO, MANZANA, LOTE, ETC. SEALADOS' ? 'selected' : '' }}>No se localiza el inmueble con número, manzana, lote, etc. señalados</option>
-                                                    <optgroup label="Calle">
-                                                        <option value="NO EXISTE EN COLONIA" {{ $registro->problema_diligencia == 'NO EXISTE EN COLONIA' ? 'selected' : '' }}>No existe en colonia</option>
-                                                    <optgroup label="Colonia">
-                                                        <option value="NO EXISTE EN MUNICIPIO" {{ $registro->problema_diligencia == 'NO EXISTE EN MUNICIPIO' ? 'selected' : '' }}>No existe en municipio</option>
-                                                    <optgroup label="Alguien atiende">
-                                                        <option value="RAZÓN SOCIAL DIVERSA" {{ $registro->problema_diligencia == 'RAZÓN SOCIAL DIVERSA' ? 'selected' : '' }}>Razón social diversa</option>
-                                                    <optgroup label="Otros">
-                                                        <option value="OTROS" {{ $registro->problema_diligencia == 'OTROS' ? 'selected' : '' }}>Otros</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                El campo es obligatorio.
+                                        <div class="col-xs-12 col-sm-6 col-md-4">
+                                            <div class="form-group">
+                                                <label>Finalización de diligencia <span style="color:red;">(*)</span></label>
+                                                <select name="estatus" id="estatus" class="form-control" required>
+                                                    <option value="">Selecciona</option>
+                                                    <option value="Finalizado exitosamente" {{ $estatusSeleccionado == 'Finalizado exitosamente' ? 'selected' : '' }}>Finalizado exitosamente (persona)</option>
+                                                    <option value="No notificada" {{ $estatusSeleccionado == 'No notificada' ? 'selected' : '' }}>Exitoso por instructivo (fijado en puerta)</option>
+                                                    <option value="No exitosa se constituye" {{ $estatusSeleccionado == 'No exitosa se constituye' ? 'selected' : '' }}>No exitoso, se constituye</option>
+                                                    <option value="No exitosa no se constituye" {{ $estatusSeleccionado == 'No exitosa no se constituye' ? 'selected' : '' }}>No exitoso, no se constituye (amparo)</option>
+                                                    <option value="Notificada" {{ $estatusSeleccionado == 'Notificada' ? 'selected' : '' }}>Notificado</option>
+                                                    <option value="Recibe pero no firma" {{ $estatusSeleccionado == 'Recibe pero no firma' ? 'selected' : '' }}>Recibe pero no firma</option>
+                                                </select>
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-4 od-group" id="tipo_problema2" style="display:none;">
-                                        <div class="form-group">
-                                            <label for="name">Tipo de problema</label>
-                                            <select id="problema2" name="problema_diligencia" class="form-control">
-                                                <option value="">Selecciona</option>
-                                                    <optgroup label="Domicilio incompleto">
-                                                        <option value="OMITE NÚMERO" {{ $registro->problema_diligencia == 'OMITE NÚMERO' ? 'selected' : '' }}>Omite número</option>
-                                                        <option value="OMITE VIALIDAD" {{ $registro->problema_diligencia == 'OMITE VIALIDAD' ? 'selected' : '' }}>Omite vialidad</option>
-                                                        <option value="OMITE COLONIA" {{ $registro->problema_diligencia == 'OMITE COLONIA' ? 'selected' : '' }}>Omite colonia</option>
-                                                        <option value="OMITE MUNICIPIO" {{ $registro->problema_diligencia == 'OMITE MUNICIPIO' ? 'selected' : '' }}>Omite municipio</option>
-                                                    <optgroup label="Domicilio">
-                                                        <option value="FUERA DE LA JURISDICCIÓN" {{ $registro->problema_diligencia == 'FUERA DE LA JURISDICCIÓN' ? 'selected' : '' }}>Fuera de la jurisdicción</option>
-                                                    <optgroup label="Copias">
-                                                        <option value="NO HAY COPIAS SUFICIENTES" {{ $registro->problema_diligencia == 'NO HAY COPIAS SUFICIENTES' ? 'selected' : '' }}>No hay copias suficientes</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                El campo es obligatorio.
+                                        <div class="col-xs-12 col-sm-12 col-md-2" id="firma" style="display:none;">
+                                            <div class="form-group">
+                                                <label>Firma </label>
+                                                <select name="firma" class="form-control" >
+                                                    <option value="">Selecciona</option>
+                                                    <option value="NO FIRMA" {{ $registro->firma == 'NO FIRMA' ? 'selected' : '' }}>No firma</option>
+                                                    <option value="FIRMA" {{ $registro->firma == 'FIRMA' ? 'selected' : '' }}>Firma</option>
+                                                    <option value="SELLA" {{ $registro->firma == 'SELLA' ? 'selected' : '' }}>Sella</option>
+                                                    <option value="FIRMA Y SELLA" {{ $registro->firma == 'FIRMA Y SELLA' ? 'selected' : '' }}>Firma y sella</option>
+                                                    <option value="NO APLICA" {{ $registro->firma == 'NO APLICA' ? 'selected' : '' }}>No aplica</option>
+                                                </select>
+                                                <div class="invalid-feedback">
+                                                    El campo firma es obligatorio.
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-12 od-group">
-                                        <div class="form-group">
-                                            <label for="name">Especificar en caso de que tenga un problema</label>
-                                            <input type="text" class="form-control" name="especificar" value="{{ old('name', $registro->especificar) }}" oninput="this.value = this.value.toUpperCase()">
+                                        <div class="col-xs-12 col-sm-6 col-md-4 " id="tipo_problema1" style="display:none;">
+                                            <div class="form-group">
+                                                <label for="name">Tipo de problema</label>
+                                                <select id="problema1" name="problema_diligencia" class="form-control">
+                                                    <option value="">Selecciona</option>
+                                                        <optgroup label="Domicilio">
+                                                            <option value="CERRADO" {{ $registro->problema_diligencia == 'CERRADO' ? 'selected' : '' }}>Cerrado</option>
+                                                            <option value="NO ACCESO AL INMUEBLE" {{ $registro->problema_diligencia == 'NO ACCESO AL INMUEBLE' ? 'selected' : '' }}>No acceso al inmueble</option>
+                                                        <optgroup label="Número">
+                                                            <option value="NO SEÑALA INTERIOR" {{ $registro->problema_diligencia == 'NO SEÑALA INTERIOR' ? 'selected' : '' }}>No señala interior</option>
+                                                            <option value="NÚMERO INTERIOR SEÑALADO NO SE LOCALIZÓ EN DOMICILIO" {{ $registro->problema_diligencia == 'NÚMERO INTERIOR SEÑALADO NO SE LOCALIZÓ EN DOMICILIO' ? 'selected' : '' }}>Número interior señalado no se localizó en domicilio</option>
+                                                            <option value="NO LOGRO LOCALIZAR EL NÚMERO" {{ $registro->problema_diligencia == 'NO LOGRO LOCALIZAR EL NÚMERO' ? 'selected' : '' }}>No logro localizar el número</option>
+                                                            <option value="NO SE LOCALIZA EL INMUEBLE CON NÚMERO, MANZANA, LOTE, ETC. SEALADOS" {{ $registro->problema_diligencia == 'NO SE LOCALIZA EL INMUEBLE CON NÚMERO, MANZANA, LOTE, ETC. SEALADOS' ? 'selected' : '' }}>No se localiza el inmueble con número, manzana, lote, etc. señalados</option>
+                                                        <optgroup label="Calle">
+                                                            <option value="NO EXISTE EN COLONIA" {{ $registro->problema_diligencia == 'NO EXISTE EN COLONIA' ? 'selected' : '' }}>No existe en colonia</option>
+                                                        <optgroup label="Colonia">
+                                                            <option value="NO EXISTE EN MUNICIPIO" {{ $registro->problema_diligencia == 'NO EXISTE EN MUNICIPIO' ? 'selected' : '' }}>No existe en municipio</option>
+                                                        <optgroup label="Alguien atiende">
+                                                            <option value="RAZÓN SOCIAL DIVERSA" {{ $registro->problema_diligencia == 'RAZÓN SOCIAL DIVERSA' ? 'selected' : '' }}>Razón social diversa</option>
+                                                        <optgroup label="Otros">
+                                                            <option value="OTROS" {{ $registro->problema_diligencia == 'OTROS' ? 'selected' : '' }}>Otros</option>
+                                                </select>
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    
-                                    <div class="col-xs-12 col-sm-6 col-md-4 od-group">
-                                        <div class="form-group">
-                                            <label for="name">Imagen 1 <span style="color:red;">(*)</span></label>
-                                            <input type="file" class="form-control" name="foto" accept="image/*" required>
+                                        <!-- Cuando es no existoso, no se contituye, mostrar estas opciones en (Tipo de problema)-->
+                                        <div class="col-xs-12 col-sm-6 col-md-4" id="tipo_problema2" style="display:none;">
+                                            <div class="form-group">
+                                                <label for="name">Tipo de problema</label>
+                                                <select id="problema2" name="problema_diligencia" class="form-control">
+                                                    <option value="">Selecciona</option>
+                                                        <optgroup label="Domicilio incompleto">
+                                                            <option value="OMITE NÚMERO" {{ $registro->problema_diligencia == 'OMITE NÚMERO' ? 'selected' : '' }}>Omite número</option>
+                                                            <option value="OMITE VIALIDAD" {{ $registro->problema_diligencia == 'OMITE VIALIDAD' ? 'selected' : '' }}>Omite vialidad</option>
+                                                            <option value="OMITE COLONIA" {{ $registro->problema_diligencia == 'OMITE COLONIA' ? 'selected' : '' }}>Omite colonia</option>
+                                                            <option value="OMITE MUNICIPIO" {{ $registro->problema_diligencia == 'OMITE MUNICIPIO' ? 'selected' : '' }}>Omite municipio</option>
+                                                        <optgroup label="Domicilio">
+                                                            <option value="FUERA DE LA JURISDICCIÓN" {{ $registro->problema_diligencia == 'FUERA DE LA JURISDICCIÓN' ? 'selected' : '' }}>Fuera de la jurisdicción</option>
+                                                        <optgroup label="Copias">
+                                                            <option value="NO HAY COPIAS SUFICIENTES" {{ $registro->problema_diligencia == 'NO HAY COPIAS SUFICIENTES' ? 'selected' : '' }}>No hay copias suficientes</option>
+                                                </select>
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
+                                        <div class="col-xs-12 col-sm-6 col-md-6" id="abundar_motivo" style="display:none;">
+                                            <div class="form-group">
+                                                <label for="name"><!--Especificar en caso de que tenga un problema-->Abundar motivo</label>
+                                                <textarea class="form-control" name="especificar" rows="4" oninput="this.value = this.value.toUpperCase()">{{ $registro->especificar }}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-6 col-md-4 ">
+                                            <div class="form-group">
+                                                <label for="name">Imagen 1 <span style="color:red;">(*)</span></label><br>
+                                                <input type="file" class="form-control" name="foto" accept="image/*" {{ (!empty($registro->documento) && $registro->documento !== 'Sin documento') ? '' : 'required' }}>
+                                                @if(!empty($registro->documento) && $registro->documento !== 'Sin documento')
+                                                    <a target='_blank' href="{{ asset('storage/app/documentos_notificacion/'.$registro->documento) }}" class="badge badge-info mb-2">VER IMAGEN ACTUAL</a>
+                                                    <input type="hidden" name="documento_actual" value="{{ $registro->documento }}">
+                                                @endif
+                                                <small class="text-muted">Selecciona un archivo solo si deseas reemplazar la imagen actual.</small>
+                                            </div>
+                                        </div>
 
-                                    <div class="col-xs-12 col-sm-6 col-md-4 od-group">
-                                        <div class="form-group">
-                                            <label for="name">Imagen 2</label>
-                                            <input type="file" class="form-control" name="foto1" accept="image/*">
+                                        <div class="col-xs-12 col-sm-6 col-md-4">
+                                            <div class="form-group">
+                                                <label for="name">Imagen 2</label><br>
+                                                <input type="file" class="form-control" name="foto1" accept="image/*">
+                                                @if(!empty($registro->documento1) && $registro->documento1 !== 'Sin documento')
+                                                    <a target='_blank' href="{{ asset('storage/app/documentos_notificacion/'.$registro->documento1) }}" class="badge badge-info mb-2">VER IMAGEN ACTUAL</a>
+                                                    <input type="hidden" name="documento1_actual" value="{{ $registro->documento1 }}">
+                                                @endif
+                                                <small class="text-muted">Selecciona un archivo solo si deseas reemplazar la imagen actual.</small>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div class="col-xs-12 col-sm-6 col-md-4 od-group">
-                                        <div class="form-group">
-                                            <label for="name">Imagen 3</label>
-                                            <input type="file" class="form-control" name="foto2" accept="image/*">
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-12 od-group">
-                                        <div class="form-group">
-                                            <label for="name">Observaciones <span style="color:red;">(*)</span></label>
-                                            <textarea class="form-control" name="observaciones" rows="4" required>{{ $registro->observaciones }}</textarea>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-3 od-group">
-                                        <div class="form-group">
-                                            <label for="name">Giro comercial <span style="color:red;">(*)</span> </label>
-                                            <input type="text" name="giro_comercial" class="form-control" value="{{ old('name', $registro->giro_comercial) }}" oninput="this.value = this.value.toUpperCase()" required> 
-                                            <div class="invalid-feedback">
-                                                El campo giro comercial es obligatorio.
+                                        <div class="col-xs-12 col-sm-6 col-md-4">
+                                            <div class="form-group">
+                                                <label for="name">Imagen 3</label><br>
+                                                <input type="file" class="form-control" name="foto2" accept="image/*">
+                                                @if(!empty($registro->documento2) && $registro->documento2 !== 'Sin documento')
+                                                    <a target='_blank' href="{{ asset('storage/app/documentos_notificacion/'.$registro->documento2) }}" class="badge badge-info mb-2">VER IMAGEN ACTUAL</a>
+                                                    <input type="hidden" name="documento2_actual" value="{{ $registro->documento2 }}">
+                                                @endif
+                                                <small class="text-muted">Selecciona un archivo solo si deseas reemplazar la imagen actual.</small>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-6">
-                                        <div class="form-group">
-                                            <label>Finalización de diligencia <span style="color:red;">(*)</span></label>
-                                            <select name="estatus" id="estatus" class="form-control" required>
-                                                <option value="">Selecciona</option>
-                                                <option value="Finalizado exitosamente" {{ $registro->estatus == 'Finalizado exitosamente' ? 'selected' : '' }}>Finalizado exitosamente (persona)</option>
-                                                <option value="No notificada" {{ $registro->estatus == 'No notificada' ? 'selected' : '' }}>Exitoso por instructivo (fijado en puerta)</option>
-                                                <option value="No exitosa se constituye" {{ $registro->estatus == 'No exitosa se constituye' ? 'selected' : '' }}>No exitoso, se constituye</option>
-                                                <option value="No exitosa no se constituye" {{ $registro->estatus == 'No exitosa no se constituye' ? 'selected' : '' }}>No exitoso, no se constituye (amparo)</option>
-                                                <option value="Notificada" {{ $registro->estatus == 'Notificada' ? 'selected' : '' }}>Notificado</option>
-                                                <option value="Recibe pero no firma" {{ $registro->estatus == 'Recibe pero no firma' ? 'selected' : '' }}>Recibe pero no firma</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                El campo es obligatorio.
+                                        <div class="col-xs-12 col-sm-6 col-md-12">
+                                            <div class="form-group">
+                                                <label for="name">Observaciones <span style="color:red;">(*)</span></label>
+                                                <textarea class="form-control" name="observaciones" rows="4" required>{{ $registro->observaciones }} </textarea>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-6">
-                                        <div class="form-group">
-                                            <label for="name">Fecha de notificación <span style="color:red;">(*)</span></label>
-                                            <input type="date" class="form-control" name="fecha_notificacion" value="{{ $fecha_formateada }}" required>
+                                        <div class="col-xs-12 col-sm-6 col-md-6">
+                                            <div class="form-group">
+                                                <label for="name">Fecha de notificación <span style="color:red;">(*)</span></label>
+                                                <input type="date" class="form-control" name="fecha_notificacion" value="{{ $fecha_formateada }}" required>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-6">
-                                        <div class="form-group">
-                                            <label for="name">Hora de notificación <span style="color:red;">(*)</span></label>
-                                            <input type="time" class="form-control" name="hora_notificacion" value="{{ $hora_formateada }}" required>
+                                        <div class="col-xs-12 col-sm-6 col-md-6">
+                                            <div class="form-group">
+                                                <label for="name">Hora de notificación <span style="color:red;">(*)</span></label>
+                                            <input type="time" class="form-control" name="hora_notificacion" value="{{ $hora_formateada }}" required> 
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
@@ -469,167 +499,244 @@
     </section>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const btnVistaPrevia = document.querySelector('button[name="vista_previa"][value="1"]');
-        const selectQuienAtiende = document.querySelector('select[name="quien_atiende"]');
-        const selectIdentificacion = document.getElementById('identificacion_notificacion');
-        const selectEstatus = document.getElementById('estatus');
+        document.getElementById("motivo_identificacion").style.display = "none";
+        document.addEventListener('DOMContentLoaded', function () {
+            const btnVistaPrevia = document.querySelector('button[name="vista_previa"][value="1"]');
+            const selectQuienAtiende = document.querySelector('select[name="quien_atiende"]');
+            const mediaFiliacionDiv = document.getElementById('media-filiacion');
+            const dqrGroups = Array.from(document.querySelectorAll('.dqr-group'));
+            const mcdGroups = Array.from(document.querySelectorAll('.mcd-group'));
+            const odGroups = Array.from(document.querySelectorAll('.od-group'));
+            const mfGroups = Array.from(document.querySelectorAll('.mf-group'));
+            const deGroups = Array.from(document.querySelectorAll('.de-group'));
 
-        document.querySelectorAll('[required]').forEach(el => {
-            el.setAttribute('data-required-default', '1');
-        });
 
-        const dqrGroups = Array.from(document.querySelectorAll('.dqr-group'));
-        const mcdGroups = Array.from(document.querySelectorAll('.mcd-group'));
-        const odGroups = Array.from(document.querySelectorAll('.od-group'));
-        const mfGroups = Array.from(document.querySelectorAll('.mf-group'));
-        const deGroups = Array.from(document.querySelectorAll('.de-group'));
-
-        const motivoIdenDiv = document.getElementById('motivo_identificacion');
-        const numIdenDiv = document.getElementById('num_identificacion');
-        const mediaFiliacionDiv = document.getElementById('media-filiacion');
-
-        const problema1Div = document.getElementById('tipo_problema1');
-        const problema2Div = document.getElementById('tipo_problema2');
-        const abundarmotivoDiv = document.getElementById('abundar_motivo');
-        const firmaDiv = document.getElementById('firma');
-
-        function setRequiredInGroups(groups, enabled) {
-            groups.forEach(sectionEl => {
-                if (!sectionEl) return;
-                const fields = sectionEl.querySelectorAll('input, select, textarea');
-                fields.forEach(el => {
-                    const shouldBeRequiredByDefault = el.hasAttribute('data-required-default') || el.hasAttribute('required');
-                    if (enabled) {
-                        if (shouldBeRequiredByDefault) el.setAttribute('required', '');
-                    } else {
-                        el.removeAttribute('required');
-                    }
+            function setRequiredInGroups(groups, enabled) {
+                groups.forEach(sectionEl => {
+                    const fields = sectionEl.querySelectorAll('input, select, textarea');
+                    fields.forEach(el => {
+                        const shouldBeRequiredByDefault = el.hasAttribute('data-required-default');
+                        if (enabled) {
+                            if (shouldBeRequiredByDefault) el.setAttribute('required', '');
+                        } else {
+                            el.removeAttribute('required');
+                        }
+                    });
                 });
-            });
-        }
+            }
+            function actualizarBotonVistaPrevia(valor) {
+                if (!btnVistaPrevia) return; // Seguridad por si el botón no existe en esta vista
 
-        function actualizarBotonVistaPrevia(valor) {
-            if (!btnVistaPrevia) return;
-            if (valor === 'EXHORTO') {
-                btnVistaPrevia.disabled = true;
-                btnVistaPrevia.style.opacity = '0.5';
-                btnVistaPrevia.style.cursor = 'not-allowed';
+                if (valor === 'EXHORTO') {
+                    btnVistaPrevia.disabled = true;
+                    btnVistaPrevia.style.opacity = '0.5';
+                    btnVistaPrevia.style.cursor = 'not-allowed';
+                } else {
+                    btnVistaPrevia.disabled = false;
+                    btnVistaPrevia.style.opacity = '1';
+                    btnVistaPrevia.style.cursor = 'pointer';
+                }
+            }
+
+            if (selectQuienAtiende) {
+                selectQuienAtiende.addEventListener('change', function () {
+                    console.log("Cambio:", this.value);
+                    actualizarBotonVistaPrevia(this.value);
+                    mfGroups.forEach(el => el.style.display = 'none');
+                    setRequiredInGroups(mfGroups, false);
+                    
+                    if(this.value === 'NADIE'){
+                        dqrGroups.forEach(el => el.style.display = 'none');
+                        setRequiredInGroups(dqrGroups, false);
+                        odGroups.forEach(el => el.style.display = 'none');
+                        setRequiredInGroups(odGroups, false);
+                        mfGroups.forEach(el => el.style.display = 'none');
+                        setRequiredInGroups(mfGroups, false);
+                        
+
+                    }
+                    else if(this.value === 'EXHORTO'){
+                        mcdGroups.forEach(el => el.style.display = 'none');
+                        setRequiredInGroups(mcdGroups, false);
+                        dqrGroups.forEach(el => el.style.display = 'none');
+                        setRequiredInGroups(dqrGroups, false);
+                        odGroups.forEach(el => el.style.display = 'none');
+                        setRequiredInGroups(odGroups, false);
+                        mfGroups.forEach(el => el.style.display = 'none');
+                        setRequiredInGroups(mfGroups, false);
+                        deGroups.forEach(el => el.style.display = 'none');
+                        setRequiredInGroups(deGroups, false);
+
+                    } 
+                    else {
+                        mcdGroups.forEach(el => el.style.display = '');
+                        setRequiredInGroups(mcdGroups, true)
+                        dqrGroups.forEach(el => el.style.display = '');
+                        setRequiredInGroups(dqrGroups, true);
+                        odGroups.forEach(el => el.style.display = '');
+                        setRequiredInGroups(odGroups, true);
+                        mfGroups.forEach(el => el.style.display = '');
+                        setRequiredInGroups(mfGroups, true);
+                        deGroups.forEach(el => el.style.display = '');
+                        setRequiredInGroups(deGroups, true);
+                        
+                    }
+
+                    /*if (this.value === 'OTRA PERSONA') {
+                        /*mediaFiliacionDiv.style.display = 'block';
+                        setRequiredInGroups([mediaFiliacionDiv], true);*/
+                        
+                        
+                    /*} else {
+                        
+                        /*mediaFiliacionDiv.style.display = 'none';
+                        setRequiredInGroups([mediaFiliacionDiv], false);*/
+                    //}
+                });
+                const initial = selectQuienAtiende.value;
+                actualizarBotonVistaPrevia(initial);
+
+                if(initial === 'NADIE'){
+                    dqrGroups.forEach(el => el.style.display = 'none');
+                    setRequiredInGroups(dqrGroups, false);
+                    odGroups.forEach(el => el.style.display = 'none');
+                    setRequiredInGroups(odGroups, false);
+                    mfGroups.forEach(el => el.style.display = 'none');
+                    setRequiredInGroups(mfGroups, false);
+
+                    }
+                else if(initial === 'EXHORTO'){
+                    mcdGroups.forEach(el => el.style.display = 'none');
+                    setRequiredInGroups(mcdGroups, false);
+                    dqrGroups.forEach(el => el.style.display = 'none');
+                    setRequiredInGroups(dqrGroups, false);
+                    odGroups.forEach(el => el.style.display = 'none');
+                    setRequiredInGroups(odGroups, false);
+                    mfGroups.forEach(el => el.style.display = 'none');
+                    setRequiredInGroups(mfGroups, false);
+                    deGroups.forEach(el => el.style.display = 'none');
+                    setRequiredInGroups(deGroups, false);
+                } 
+                else {
+                    dqrGroups.forEach(el => el.style.display = '');
+                    setRequiredInGroups(dqrGroups, true);
+                    odGroups.forEach(el => el.style.display = '');
+                    setRequiredInGroups(odGroups, true);
+                    mfGroups.forEach(el => el.style.display = '');
+                    setRequiredInGroups(mfGroups, true);
+                    deGroups.forEach(el => el.style.display = '');
+                    setRequiredInGroups(deGroups, true);
+                        
+                }
             } else {
-                btnVistaPrevia.disabled = false;
-                btnVistaPrevia.style.opacity = '1';
-                btnVistaPrevia.style.cursor = 'pointer';
-            }
-        }
+                console.warn("No se encontró el select[name='quien_atiende']");
+            }  
 
-        function aplicarVisibilidadPorQuienAtiende() {
-            if (!selectQuienAtiende) return;
-            const valor = selectQuienAtiende.value;
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectEstatus = document.getElementById('estatus');
+            const problema1Div = document.getElementById('tipo_problema1');
+            const problema2Div = document.getElementById('tipo_problema2');
+            const abundarmotivoDiv = document.getElementById('abundar_motivo'); //Cuando se trata de tipo_problea1 o tipo_problema2, mostrar campo para describir el motivo
+            const firmaDiv = document.getElementById('firma'); //Cuando se trata de tipo_problema2, no mostrar el apartado de firma
+            function actualizarTipoProblema() {
+                const valor = selectEstatus.value;
 
-            actualizarBotonVistaPrevia(valor);
-
-            if (valor === 'NADIE') {
-                dqrGroups.forEach(el => el.style.display = 'none');
-                setRequiredInGroups(dqrGroups, false);
-                odGroups.forEach(el => el.style.display = 'none');
-                setRequiredInGroups(odGroups, false);
-                mfGroups.forEach(el => el.style.display = 'none');
-                setRequiredInGroups(mfGroups, false);
-                return;
-            }
-
-            if (valor === 'EXHORTO') {
-                mcdGroups.forEach(el => el.style.display = 'none');
-                setRequiredInGroups(mcdGroups, false);
-                dqrGroups.forEach(el => el.style.display = 'none');
-                setRequiredInGroups(dqrGroups, false);
-                odGroups.forEach(el => el.style.display = 'none');
-                setRequiredInGroups(odGroups, false);
-                mfGroups.forEach(el => el.style.display = 'none');
-                setRequiredInGroups(mfGroups, false);
-                deGroups.forEach(el => el.style.display = 'none');
-                setRequiredInGroups(deGroups, false);
-                return;
+                // Oculta ambos inicialmente
+                problema1Div.style.display = 'none';
+                problema2Div.style.display = 'none';
+                abundarmotivoDiv.style.display = 'none';
+                firmaDiv.style.display = 'block';
+                if (valor === 'No exitosa se constituye') {
+                    problema1Div.style.display = 'block';
+                    abundarmotivoDiv.style.display = 'block';
+                    firmaDiv.style.display = 'none';
+                } else if (valor === 'No exitosa no se constituye') {
+                    problema2Div.style.display = 'block';
+                    abundarmotivoDiv.style.display = 'block';
+                    firmaDiv.style.display = 'none';
+                }
             }
 
-            mcdGroups.forEach(el => el.style.display = '');
-            setRequiredInGroups(mcdGroups, true);
-            dqrGroups.forEach(el => el.style.display = '');
-            setRequiredInGroups(dqrGroups, true);
-            odGroups.forEach(el => el.style.display = '');
-            setRequiredInGroups(odGroups, true);
+            if (selectEstatus) {
+                selectEstatus.addEventListener('change', actualizarTipoProblema);
+                // Ejecutar al cargar por si ya tiene valor
+                actualizarTipoProblema();
+            }
+        });
+        //Ocultar media filiación cuando si se presenta una identificación
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectQuienAtiende = document.querySelector('select[name="quien_atiende"]');
+            const selectIdentificacion = document.getElementById('identificacion_notificacion');
+            const mediaFiliacionDiv = document.getElementById('media-filiacion');
+            const motivoIdenDiv = document.getElementById('motivo_identificacion');
+            const numIdenDiv = document.getElementById('num_identificacion');
+            const dqrGroups = Array.from(document.querySelectorAll('.dqr-group'));
 
-            mfGroups.forEach(el => el.style.display = 'none');
-            setRequiredInGroups(mfGroups, false);
-            deGroups.forEach(el => el.style.display = '');
-            setRequiredInGroups(deGroups, true);
-        }
+            function setRequiredInGroups(groups, enabled) {
+                groups.forEach(sectionEl => {
+                    if (!sectionEl) return;
+                    const fields = sectionEl.querySelectorAll('input, select, textarea');
+                    fields.forEach(el => {
+                        const shouldBeRequiredByDefault = el.hasAttribute('data-required-default') || el.hasAttribute('required');
+                        if (enabled) {
+                            if (shouldBeRequiredByDefault) el.setAttribute('required', '');
+                        } else {
+                            el.removeAttribute('required');
+                        }
+                    });
+                });
+            }
+            function actualizarFormulario() {
+                const quienAtiende = selectQuienAtiende ? selectQuienAtiende.value : '';
+                const idenValor = selectIdentificacion ? selectIdentificacion.value : '';
+                const numIdenValor = numIdenDiv ? numIdenDiv.value : '';
 
-        function aplicarVisibilidadIdentificacionYMediaFiliacion() {
-            const quienAtiende = selectQuienAtiende ? selectQuienAtiende.value : '';
-            const idenValor = selectIdentificacion ? selectIdentificacion.value : '';
+                if (idenValor === 'NO PROPORCIONA' || idenValor === 'NO ATIENDE PRESENCIALMENTE') {
+                    motivoIdenDiv.style.display = "block";
+                    numIdenDiv.style.display = "none";
+                } else {
+                    motivoIdenDiv.style.display = "none";
+                    numIdenDiv.style.display = "block";
+                }
 
-            if (idenValor === 'NO PROPORCIONA' || idenValor === 'NO ATIENDE PRESENCIALMENTE') {
-                if (motivoIdenDiv) motivoIdenDiv.style.display = 'block';
-                if (numIdenDiv) numIdenDiv.style.display = 'none';
-            } else {
-                if (motivoIdenDiv) motivoIdenDiv.style.display = 'none';
-                if (numIdenDiv) numIdenDiv.style.display = 'block';
+                const personasQuePuedenRecibir = ['OTRA PERSONA', 'CITADO O REPRESENTANTE'];
+                const sinIdentificacionValida = ['NO PROPORCIONA'];
+
+                if (personasQuePuedenRecibir.includes(quienAtiende) && sinIdentificacionValida.includes(idenValor)) {
+                    mediaFiliacionDiv.style.display = 'block';
+                    setRequiredInGroups([mediaFiliacionDiv], true);
+                } else {
+                    mediaFiliacionDiv.style.display = 'none';
+                    setRequiredInGroups([mediaFiliacionDiv], false);
+                }
             }
 
-            const personasQuePuedenRecibir = ['OTRA PERSONA', 'CITADO O REPRESENTANTE'];
+            if (selectQuienAtiende) {
+                selectQuienAtiende.addEventListener('change', actualizarFormulario);
+            }
+            if (selectIdentificacion) {
+                selectIdentificacion.addEventListener('change', actualizarFormulario);
 
-            if (mediaFiliacionDiv && personasQuePuedenRecibir.includes(quienAtiende)) {
-                mediaFiliacionDiv.style.display = 'block';
-                setRequiredInGroups([mediaFiliacionDiv], true);
-            } else if (mediaFiliacionDiv) {
-                mediaFiliacionDiv.style.display = 'none';
-                setRequiredInGroups([mediaFiliacionDiv], false);
+            }
+            if (numIdenDiv) {
+                numIdenDiv.addEventListener('input', actualizarFormulario);
             }
 
-            if (personasQuePuedenRecibir.includes(quienAtiende)) {
-                mfGroups.forEach(el => el.style.display = '');
-                setRequiredInGroups(mfGroups, true);
-            } else {
-                mfGroups.forEach(el => el.style.display = 'none');
-                setRequiredInGroups(mfGroups, false);
+            actualizarFormulario();
+        });
+        /*const tipo_iden = document.getElementById('identificacion_notificacion');
+        tipo_iden.addEventListener('change', function() {
+            const valorSeleccionado = this.value;
+            // Realiza la validación o acciones necesarias
+            if (valorSeleccionado === 'NO PROPORCIONA') {
+                document.getElementById('motivo_identificacion').style.display = "block";
             }
-        }
-
-        function actualizarTipoProblema() {
-            if (!selectEstatus) return;
-            const valor = selectEstatus.value;
-
-            if (problema1Div) problema1Div.style.display = 'none';
-            if (problema2Div) problema2Div.style.display = 'none';
-            if (abundarmotivoDiv) abundarmotivoDiv.style.display = 'none';
-            if (firmaDiv) firmaDiv.style.display = 'block';
-
-            if (valor === 'No exitosa se constituye') {
-                if (problema1Div) problema1Div.style.display = 'block';
-                if (abundarmotivoDiv) abundarmotivoDiv.style.display = 'block';
-                if (firmaDiv) firmaDiv.style.display = 'none';
-            } else if (valor === 'No exitosa no se constituye') {
-                if (problema2Div) problema2Div.style.display = 'block';
-                if (abundarmotivoDiv) abundarmotivoDiv.style.display = 'block';
-                if (firmaDiv) firmaDiv.style.display = 'none';
+            else {
+                document.getElementById('motivo_identificacion').style.display = "none";
             }
-        }
-
-        function recalcularTodo() {
-            aplicarVisibilidadPorQuienAtiende();
-            aplicarVisibilidadIdentificacionYMediaFiliacion();
-            actualizarTipoProblema();
-        }
-
-        if (selectQuienAtiende) selectQuienAtiende.addEventListener('change', recalcularTodo);
-        if (selectIdentificacion) selectIdentificacion.addEventListener('change', recalcularTodo);
-        if (selectEstatus) selectEstatus.addEventListener('change', actualizarTipoProblema);
-
-        recalcularTodo();
-    });
-</script>
-
+        });*/
+    </script>
     @if(!empty($url_pdf))
     <script>
         window.addEventListener('load', function() {
