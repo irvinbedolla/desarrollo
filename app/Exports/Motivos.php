@@ -32,7 +32,7 @@ class Motivos implements FromView
             WHEN $columna IN ('Derecho de preferencia', 'Derecho de antigüedad', 'Derecho de ascenso') THEN 'c. Derecho de preferencia (antigüedad o ascenso)'
             WHEN $columna IN ('Pago de prestaciones') THEN 'd. Pago de prestaciones pendientes'
             WHEN $columna IN ('Terminación voluntaria de la relación de trabajo') THEN 'e. Terminación voluntaria de la relación laboral'
-            WHEN $columna IN ('Excepcion') THEN 'f. Supuestos de Excepción 685-Ter LFT'
+            WHEN $columna IN ('Excepcion', 'Excepción') THEN 'f. Supuestos de Excepción 685-Ter LFT'
             ELSE 'g. Otros'
         END";
     }
