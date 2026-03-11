@@ -120,9 +120,9 @@
                             @if ($citado->abogado->reprecentante == 'No')
                                 <b>{{ $citado->abogado->nombres_patronal }} {{ $citado->abogado->primer_apellido_patronal }} {{ $citado->abogado->segundo_apellido_patronal }}</b>
                             @else
-                            <b>{{ $citado->abogado->nombre_representante }} {{ $citado->abogado->primer_apellido_representante }} {{ $citado->abogado->segundo_apellido_representante }}</b>
+                                <b>{{ $citado->abogado->nombre_representante }} {{ $citado->abogado->primer_apellido_representante }} {{ $citado->abogado->segundo_apellido_representante }}</b>
+                                en representación de <b>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido ?? ''}}</b>,  
                             @endif
-                            en representación de <b>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido ?? ''}}</b>,  
                             @if($citado->abogado->tipo_identificacion)
                             quien se identifica con <b>{{ strtoupper($citado->abogado->tipo_identificacion) }}</b>, de Número <b>{{ $citado->abogado->num_identificacion }}</b>,
                             @endif
@@ -281,10 +281,13 @@
                         </tr>
                     </table>
                     <br><br><br>
-                    <p><center><b>___________________________________<br> {{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
-                            DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p>                  
+                    <p><center><b>_____________<br> {{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
+                            DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p>         
+                    <br>
+                    <p style="font-size: 10px;">
+                        LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DE LA ACTA DE AUDIENCIA DE FECHA <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> EXPEDIENTE NÚMERO <b>{{ $solicitud->NUE }}</b> DEL CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO.
+                    </p>           
                 </div>
-            </div>
             <script type="text/php">
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");
