@@ -9806,6 +9806,23 @@ class SeerController extends Controller
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
         ->first();
+
+        $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
+        ->where("seer_citados.id", $id)
+        ->first();
+        if (!empty($citado->medio)) {
+            $citado->medio = json_decode($citado->medio);
+        }
+        $municipioCitado = null;
+        if ($citado && $citado->municipio_citado) {
+            $municipio = \App\Models\Municipios::find($citado->municipio_citado);
+            $municipioCitado = $municipio ? $municipio->nombre : null;
+        }
+        $estadoCitado = null;
+        if ($citado && $citado->estado_citado) {
+            $estado = \App\Models\Estados::find($citado->estado_citado);
+            $estadoCitado = $estado ? $estado->nombre : null;
+        }
         $audiencias = \DB::table('audiencias')
         ->where('id_solicitud', $id_solicitud)
         ->orderBy('created_at', 'asc')
@@ -9827,23 +9844,6 @@ class SeerController extends Controller
         }
         elseif ($totalAudiencias > 2) {
             $fechaCitatorio = $audiencias->last()->created_at;
-        }
-
-        $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
-        ->where("seer_citados.id", $id)
-        ->first();
-        if (!empty($citado->medio)) {
-            $citado->medio = json_decode($citado->medio);
-        }
-        $municipioCitado = null;
-        if ($citado && $citado->municipio_citado) {
-            $municipio = \App\Models\Municipios::find($citado->municipio_citado);
-            $municipioCitado = $municipio ? $municipio->nombre : null;
-        }
-        $estadoCitado = null;
-        if ($citado && $citado->estado_citado) {
-            $estado = \App\Models\Estados::find($citado->estado_citado);
-            $estadoCitado = $estado ? $estado->nombre : null;
         }
         $id_notificador = $citado->id_notificador;
 
@@ -9988,6 +9988,23 @@ class SeerController extends Controller
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
         ->first();
+    
+        $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
+        ->where("seer_citados.id", $id)
+        ->first();
+        if (!empty($citado->medio)) {
+            $citado->medio = json_decode($citado->medio);
+        }
+        $municipioCitado = null;
+        if ($citado && $citado->municipio_citado) {
+            $municipio = \App\Models\Municipios::find($citado->municipio_citado);
+            $municipioCitado = $municipio ? $municipio->nombre : null;
+        }
+        $estadoCitado = null;
+        if ($citado && $citado->estado_citado) {
+            $estado = \App\Models\Estados::find($citado->estado_citado);
+            $estadoCitado = $estado ? $estado->nombre : null;
+        }
         $audiencias = \DB::table('audiencias')
         ->where('id_solicitud', $id_solicitud)
         ->orderBy('created_at', 'asc')
@@ -10009,23 +10026,6 @@ class SeerController extends Controller
         }
         elseif ($totalAudiencias > 2) {
             $fechaCitatorio = $audiencias->last()->created_at;
-        }
-
-        $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
-        ->where("seer_citados.id", $id)
-        ->first();
-        if (!empty($citado->medio)) {
-            $citado->medio = json_decode($citado->medio);
-        }
-        $municipioCitado = null;
-        if ($citado && $citado->municipio_citado) {
-            $municipio = \App\Models\Municipios::find($citado->municipio_citado);
-            $municipioCitado = $municipio ? $municipio->nombre : null;
-        }
-        $estadoCitado = null;
-        if ($citado && $citado->estado_citado) {
-            $estado = \App\Models\Estados::find($citado->estado_citado);
-            $estadoCitado = $estado ? $estado->nombre : null;
         }
         $id_notificador = $citado->id_notificador;
  
