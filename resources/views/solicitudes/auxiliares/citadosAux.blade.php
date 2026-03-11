@@ -552,17 +552,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById('form_concluir');
-            if (!form) return;
-
-            form.addEventListener('submit', function () {
-                $('#submit_loader').show();
-            });
-        });
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
             const concludeBtn = document.getElementById('btn-conclude');
             if (!concludeBtn) return;
 
