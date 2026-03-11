@@ -95,7 +95,7 @@ class AudienciasController extends Controller
                 }
 
                 $eventos[] = [
-                    'id' => $audiencia->id,
+                    'id' => $audiencia->id_solicitud,
                     'id_solicitud' => $audiencia->id_solicitud,
                     'title' => $audiencia->NUE,
                     'solicitante' => $audiencia->nombre,
@@ -117,7 +117,7 @@ class AudienciasController extends Controller
                 ];
             }
         return response()->json($eventos);
-/*    
+    /*    
         if ($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador") {
             $audiencias = Audiencias::join('seer_general','seer_general.id','audiencias.id_solicitud')
             ->join('users','users.id','audiencias.id_conciliador')
@@ -280,7 +280,7 @@ class AudienciasController extends Controller
 
             return response()->json($eventos);
         }
-*/    
+    */    
     }
 
     public function ratificaciones(Request $request) {

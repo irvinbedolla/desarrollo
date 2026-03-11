@@ -8581,26 +8581,60 @@ class SeerController extends Controller
     }
 
     public function audiencias_cumplimiento(){
-        $id = auth()->user()->id;
-        $user = User::find($id);
+        // 1. Obtenemos directamente el objeto del usuario autenticado (evitamos User::find)
+        $user = auth()->user();
 
-        $auxiliares = User::whereHas('roles', function ($query) {
-            return $query->where('name', '=', 'Auxiliar');
-        })
-        ->where('delegacion', $user["delegacion"])
-        ->get();
-        $notificadores = User::whereHas('roles', function ($query) {
-            return $query->where('name', '=', 'Notificador');
-        })
-        ->where('delegacion', $user["delegacion"])
-        ->get();
-        $conciliadores = User::whereHas('roles', function ($query) {
-            return $query->where('name', '=', 'Conciliador');
-        })
-        ->where('delegacion', $user["delegacion"])
+        $cumplimientos = Pagos::where('pago_solicitud.delegacion', $user->delegacion)
+            ->whereIn('pago_solicitud.tipo_pago', ["Ratificacion", "Audiencia", "Conciliador"])
+            ->where('pago_solicitud.id_solicitud', '!=', 0)
+            ->leftJoin('turnos', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
+            ->leftJoin('seer_general', 'seer_general.id', '=', 'pago_solicitud.id_solicitud')
+            ->leftJoin('users', 'users.id', '=', 'pago_solicitud.id_conciliador')
+            ->select(
+            // Agrupador principal (NUE unificado)
+            DB::raw("CASE 
+                WHEN pago_solicitud.tipo_pago = 'Ratificacion' AND pago_solicitud.id_solicitud != 0 THEN turnos.NUE 
+                WHEN pago_solicitud.id_solicitud != 0 THEN seer_general.NUE 
+                ELSE pago_solicitud.NUE 
+            END as NUE_FINAL"),
+            
+            'pago_solicitud.id_solicitud',
+            'pago_solicitud.descripcion',
+            'pago_solicitud.tipo_pago',
+            'users.name as conciliador_name',
+            
+            // Usamos funciones de agregación para campos que pueden variar
+            DB::raw("DATE_FORMAT(MAX(pago_solicitud.fecha), '%d/%m/%Y') as fecha_formateada"),
+            DB::raw("DATE_FORMAT(MAX(pago_solicitud.hora), '%h:%i %p') as hora_formateada"),
+            DB::raw("MAX(pago_solicitud.descripcion) as descripcion_pago"),
+
+            // Agregaciones de montos y cantidades
+            DB::raw("COUNT(pago_solicitud.id) as total_pagos"),
+            DB::raw("SUM(pago_solicitud.monto) as monto_total"),
+            DB::raw("SUM(CASE WHEN pago_solicitud.estatus = 'Pagado' THEN 1 ELSE 0 END) as pagos_realizados"),
+            DB::raw("SUM(CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN 1 ELSE 0 END) as pagos_pendientes")
+        )
+        ->groupBy(
+            // 1. La lógica del CASE completa
+            DB::raw("CASE 
+                WHEN pago_solicitud.tipo_pago = 'Ratificacion' AND pago_solicitud.id_solicitud != 0 THEN turnos.NUE 
+                WHEN pago_solicitud.id_solicitud != 0 THEN seer_general.NUE 
+                ELSE pago_solicitud.NUE 
+            END"),
+            // 2. Las columnas físicas que SQL detecta en la consulta
+            'pago_solicitud.id_solicitud',
+            'pago_solicitud.tipo_pago',
+            'pago_solicitud.NUE',   // El campo de la tabla pagos
+            'turnos.NUE',           // El campo de la tabla turnos (aquí estaba el error)
+            'seer_general.NUE',     // El campo de la tabla seer_general
+            'users.name',            // El nombre del conciliador
+            'pago_solicitud.descripcion'
+        )
+        ->orderBy(DB::raw("MAX(pago_solicitud.fecha)"), 'asc')
+        ->take(1500)
         ->get();
 
-        return view('/cumplimientos/index',compact('auxiliares','conciliadores'));
+        return view('/cumplimientos/index',compact('cumplimientos'));
     }
 
     public function solicitud_audiencia_revisar($id, Request $request) {
