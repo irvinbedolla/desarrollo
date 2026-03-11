@@ -433,7 +433,7 @@
                                         <div class="col-xs-12 col-sm-6 col-md-4 " id="tipo_problema1" style="display:none;">
                                             <div class="form-group">
                                                 <label for="name">Tipo de problema</label>
-                                                <select id="problema1" name="problema_diligencia_1" class="form-control">
+                                                <select id="problema1" name="problema_diligencia" class="form-control">
                                                     <option value="">Selecciona</option>
                                                         <optgroup label="Domicilio">
                                                             <option value="CERRADO">Cerrado</option>
@@ -461,7 +461,7 @@
                                         <div class="col-xs-12 col-sm-6 col-md-4" id="tipo_problema2" style="display:none;">
                                             <div class="form-group">
                                                 <label for="name">Tipo de problema</label>
-                                                <select id="problema2" name="problema_diligencia_2" class="form-control">
+                                                <select id="problema2" name="problema_diligencia" class="form-control">
                                                     <option value="">Selecciona</option>
                                                         <optgroup label="Domicilio incompleto">
                                                             <option value="OMITE NÚMERO">Omite número</option>
