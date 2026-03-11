@@ -50,14 +50,8 @@
             <a class="nav-link" href="{{ route('index_ratificacion') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Ratificaciones</span>
             </a>
-            <a class="nav-link" href="{{ route('genera_cumplimiento') }}">
-                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Registro de Cumplimientos</span>
-            </a>
             <a class="nav-link" href="{{ route('audiencias.cumplimiento') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" >Cumplimientos</span>
-            </a>
-            <a class="nav-link" href="{{ route('cumplimientos_conciliadores') }}">
-                <i class="bi bi-file-person"></i><span class="text-dark" >Cumplimientos en Audiencia</span>
             </a>
             <a class="nav-link" href="{{ route('notificaciones') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Por Notificar</span>
@@ -170,9 +164,6 @@
             </a>
             <a class="nav-link" href="{{ route('index_ratificacion') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Ratificaciones</span>
-            </a>
-            <a class="nav-link" href="{{ route('cumplimientos_conciliadores') }}">
-                <i class="bi bi-file-person"></i><span class="text-dark" >Cumplimientos en Audiencia</span>
             </a>
             <a class="nav-link" href="{{ route('crear_inidencia') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Incidencia</span>
@@ -354,8 +345,8 @@
             <a class="nav-link" href="{{ route('misestadisticas') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadísticas</span>
             </a>
-            <a class="nav-link" href="{{ route('genera_cumplimiento') }}">
-                <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Registro de Cumplimientos</span>
+            <a class="nav-link" href="{{ route('audiencias.cumplimiento') }}">
+                <i class="bi bi-file-person"></i><span class="text-dark" >Cumplimientos</span>
             </a>
             <a class="nav-link" href="{{ route('crear_inidencia') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Incidencia</span>
