@@ -2187,7 +2187,7 @@ class SeerController extends Controller
 
     public function update_notificador(Request $request){
         $data = $request->all();
-        
+        $data['problema_diligencia'] = $request->input('problema_diligencia');
         $fechaEspecifica = Carbon::parse($request->fecha_notificacion . ' ' . $request->hora_notificacion);
 
         // 1. Buscamos el registro ACTUAL en la base de datos primero
@@ -2198,13 +2198,13 @@ class SeerController extends Controller
         $documento1 = $seercitado->documento1 ?? "Sin documento";
         $documento2 = $seercitado->documento2 ?? "Sin documento";
         //Obtine cual fue el tipo de problema para despues guardarlo en bdd
-        $data['problema_diligencia'] = null;
+        /*$data['problema_diligencia'] = null;
         if(isset($data['problema_diligencia_1'])){
             $data['problema_diligencia']= $data['problema_diligencia_1'];
         }
         elseif(isset($data['problema_diligencia_2'])){
             $data['problema_diligencia'] =$data['problema_diligencia_2'];
-        }
+        }*/
         // 3. SOLO si el usuario subió un archivo NUEVO en este request, lo guardamos y actualizamos la variable
         if ($request->hasFile('foto')) {
             $documento = $data["id"] . "-foto1.jpg";
@@ -9892,6 +9892,22 @@ class SeerController extends Controller
         $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
         ->first();
+        $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
+        ->where("seer_citados.id", $id)
+        ->first();
+        if (!empty($citado->medio)) {
+            $citado->medio = json_decode($citado->medio);
+        }
+        $municipioCitado = null;
+        if ($citado && $citado->municipio_citado) {
+            $municipio = \App\Models\Municipios::find($citado->municipio_citado);
+            $municipioCitado = $municipio ? $municipio->nombre : null;
+        }
+        $estadoCitado = null;
+        if ($citado && $citado->estado_citado) {
+            $estado = \App\Models\Estados::find($citado->estado_citado);
+            $estadoCitado = $estado ? $estado->nombre : null;
+        }
         $audiencias = \DB::table('audiencias')
         ->where('id_solicitud', $id_solicitud)
         ->orderBy('created_at', 'asc')
@@ -9913,23 +9929,6 @@ class SeerController extends Controller
         }
         elseif ($totalAudiencias > 2) {
             $fechaCitatorio = $audiencias->last()->created_at;
-        }
-
-        $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
-        ->where("seer_citados.id", $id)
-        ->first();
-        if (!empty($citado->medio)) {
-            $citado->medio = json_decode($citado->medio);
-        }
-        $municipioCitado = null;
-        if ($citado && $citado->municipio_citado) {
-            $municipio = \App\Models\Municipios::find($citado->municipio_citado);
-            $municipioCitado = $municipio ? $municipio->nombre : null;
-        }
-        $estadoCitado = null;
-        if ($citado && $citado->estado_citado) {
-            $estado = \App\Models\Estados::find($citado->estado_citado);
-            $estadoCitado = $estado ? $estado->nombre : null;
         }
         $id_notificador = $citado->id_notificador;
 
