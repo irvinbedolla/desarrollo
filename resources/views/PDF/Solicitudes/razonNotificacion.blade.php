@@ -204,7 +204,7 @@
 
                         En virtud de lo anterior, con fundamento en los Artículos 739 y 743 Fracción II de la Ley Federal del Trabajo y al ser la persona que me atiende el citado personalmente, procedo en este acto a NOTIFICAR al <b>CITADO:
                         {{$citado->nombre}} @if($citado->primer_apellido!=null){{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null){{$citado->segundo_apellido}}@endif</b>, corriéndole traslado con copias simples cotejadas y autorizadas 
-                        de: <b>DE FECHA {{ mb_strtoupper(\Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \D\E F \D\E\L Y'), 'UTF-8') }}</b>, además de la cédula de ley original de conformidad con el Artículo 751 de la Ley Federal del Trabajo.
+                        de: <b>DE FECHA {{ mb_strtoupper(\Carbon\Carbon::parse($fechaCitatorio)->translatedFormat('d \D\E F \D\E\L Y'), 'UTF-8') }}</b>, además de la cédula de ley original de conformidad con el Artículo 751 de la Ley Federal del Trabajo.
                     </p>
                     {{-- CUANDO ATIENDE OTRA PERSONA Y SE IDENTIFICA --}}
                     @elseif($citado->quien_atiende == "OTRA PERSONA" && $citado->identificacion_notificacion != "NO PROPORCIONA" && $citado->identificacion_notificacion != "NO ATIENDE PRESENCIALMENTE")
