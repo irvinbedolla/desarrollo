@@ -11,7 +11,7 @@ class Audiencias extends Model
 
     protected $table = 'audiencias';
     protected $primaryKey = 'id';
-    protected $fillable = ['id_solicitud','numero_audiencia','folio_audiencia', 'estatus', 'tipo', 'fecha','hora','id_conciliador','delegacion','sala','proxima_audiencia','pena_convencional','direccion_convenio'];
+    protected $fillable = ['id_solicitud','numero_audiencia','folio_audiencia', 'estatus', 'tipo', 'fecha','hora','id_conciliador','delegacion','sala','proxima_audiencia','pena_convencional','direccion_convenio', 'incidencia'];
 
     protected $casts = [
         'fecha' => 'date',

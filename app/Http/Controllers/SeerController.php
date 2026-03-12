@@ -4718,6 +4718,8 @@ class SeerController extends Controller
 
         //Citados
 
+        $audienciaId = Audiencias::where('id_solicitud', $data['id'])->latest('id')->value('id');
+
         $citadosDelete = session('citados_edicion_delete', []);
         if (!empty($citadosDelete)) {
             SeerCitados::where('id_solicitud', $data["id"])->whereIn('id', $citadosDelete)->delete();
@@ -4738,6 +4740,7 @@ class SeerController extends Controller
             if (!$citado) {
                 $citado = new SeerCitados();
                 $citado->id_solicitud = $data["id"];
+                $citado->audiencia_id = $audienciaId;
             }
 
             $foto1 = $citado->imagen_domicilio1 ?? ($data["imagen_domicilio1"][$i] ?? 'Sin documento');
@@ -5141,66 +5144,6 @@ class SeerController extends Controller
             SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle3' => $data["calle3_solicitante"] ]);
         }
 
-        //Citados
-        SeerCitados::where('id_solicitud',$data["id"])->delete();
-        $cont = count($data["colonia_citado"]);
-        for($i = 0; $i < $cont; $i++) {
-            $tipo_notificacion = $data["notificacion"][0];
-            $foto1 = $data["imagen_domicilio1"][$i] ?? 'Sin documento';
-            $foto2 = $data["imagen_domicilio2"][$i] ?? 'Sin documento';
-        
-            if ($request->hasFile("foto1.$i")) {
-                $file = $request->file("foto1")[$i];
-                $foto1 = $data["id"] . "-citado_foto1_" . Str::random(8) . "." . $file->getClientOriginalExtension();
-                Storage::putFileAs('documentosSolicitud', $file, $foto1);
-            }
-        
-            if ($request->hasFile("foto2.$i")) {
-                $file = $request->file("foto2")[$i];
-                $foto2 = $data["id"] . "-citado_foto2_" . Str::random(8) . "." . $file->getClientOriginalExtension();
-                Storage::putFileAs('documentosSolicitud', $file, $foto2);
-            }
-            $data_insert=array(
-                'id_solicitud'      => $data["id"],
-                'colonia'           => $data["colonia_citado"][$i],
-                'cp'                => $data["cp_citado"][$i],
-                'n_ext'             => $data["n_ext_citado"][$i],
-                'n_int'             => $data["n_int_citado"][$i],
-                'calle'             => $data["n_int_citado"][$i],
-                'tipo_vialidad'     => $data["vialidad_citado"][$i],
-                'referencia'        => $data["referencia_citado"][$i],
-                'municipio_citado'  => $data["municipio_citado"][$i],
-                'tipo_persona'      => $data["tipo_persona_citado"][$i],
-                'nombre'            => $data["nombre_citado"][$i],
-                'notificacion'      => $data["notificacion"][$i],
-                'primer_apellido'   => $data["primer_apellido"][$i] ?? null,
-                'segundo_apellido'  => $data["segundo_apellido"][$i] ?? null,
-                'calle'             => $data["calle_citado"][$i],
-                'calle1'            => $data["calle1_citado"][$i],
-                'calle2'            => $data["calle2_citado"][$i],
-                'curp'              => $data["curp_citado"][$i] ?? null,
-                'rfc'               => $data["rfc_citado"][$i],
-                'estado_citado'     => $data["estado_citado"][$i],
-                'imagen_domicilio1' => $foto1,
-                'imagen_domicilio2' => $foto2,
-                'resulte_responsable' => $data['resulte_responsable'][$i] ?? 'No',
-            );
-            
-            if(isset($data["traductor"])){
-                $val = is_array($data["traductor"]) ? ($data["traductor"][$i] ?? null) : $data["traductor"];
-                $requires = ($val === 'Si' || $val === '1' || $val === 1 || $val === 'on' || $val === true);
-                $data_insert["traductor"] = $requires ? 1 : 0;
-                $data_insert["lenguaje"]  = is_array($data["lenguaje"]) ? ($data["lenguaje"][$i] ?? null) : ($data["lenguaje"] ?? null);
-            }
-            if(isset($data["calle1"])){
-                SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle1' => $data["calle1_citado"] ]);
-            }
-            if(isset($data["calle2"])){
-                SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle2' => $data["calle2_citado"] ]);
-            }
-            SeerCitados::create($data_insert);
-        }
-
         $solActual = SeerSolicitante::where('id_solicitud', $data['id'])->first();
         $curpBase = $data['curp_solicitante'] ?? ($data['curp'] ?? ($solActual->curp ?? ('solicitud_' . $data['id'])));
 
@@ -5226,6 +5169,8 @@ class SeerController extends Controller
             }
         }
         
+        $tipo_notificacion = $data["notificacion"][0];
+
         //Si se va confirmar si el valor es 2 solo se va editar lo anterior
         //if($data["toquen"] == 1){
             $numero_audiencia = $this->GeneraAudiencia($data["id"]);
@@ -5330,7 +5275,8 @@ class SeerController extends Controller
                 'delegacion'        => $delegacion["delegacion"],
                 'estatus'           => 'Pendiente'
             );
-            Audiencias::create($audiencia_insert);
+            $audiencia = Audiencias::create($audiencia_insert);
+            $audiencia_id = $audiencia->id;
             //Actualizar genera
             if (isset($data["notificacion"][0]) && $data["notificacion"][0] == 'Trabajador') {
                 SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $Audiencia[3], 'estatus' => 'Confirmado', 'pendiente_firma' => 'Si' ]);
@@ -5338,6 +5284,66 @@ class SeerController extends Controller
             else{
                 SeerPerGeneral::find($data["id"])->update(['conciliador_id' => $Audiencia[3], 'estatus' => 'Confirmado' ]);
             }
+
+            //Citados
+        SeerCitados::where('id_solicitud',$data["id"])->delete();
+        $cont = count($data["colonia_citado"]);
+        for($i = 0; $i < $cont; $i++) {
+            $foto1 = $data["imagen_domicilio1"][$i] ?? 'Sin documento';
+            $foto2 = $data["imagen_domicilio2"][$i] ?? 'Sin documento';
+        
+            if ($request->hasFile("foto1.$i")) {
+                $file = $request->file("foto1")[$i];
+                $foto1 = $data["id"] . "-citado_foto1_" . Str::random(8) . "." . $file->getClientOriginalExtension();
+                Storage::putFileAs('documentosSolicitud', $file, $foto1);
+            }
+        
+            if ($request->hasFile("foto2.$i")) {
+                $file = $request->file("foto2")[$i];
+                $foto2 = $data["id"] . "-citado_foto2_" . Str::random(8) . "." . $file->getClientOriginalExtension();
+                Storage::putFileAs('documentosSolicitud', $file, $foto2);
+            }
+            $data_insert=array(
+                'id_solicitud'      => $data["id"],
+                'colonia'           => $data["colonia_citado"][$i],
+                'cp'                => $data["cp_citado"][$i],
+                'n_ext'             => $data["n_ext_citado"][$i],
+                'n_int'             => $data["n_int_citado"][$i],
+                'calle'             => $data["n_int_citado"][$i],
+                'tipo_vialidad'     => $data["vialidad_citado"][$i],
+                'referencia'        => $data["referencia_citado"][$i],
+                'municipio_citado'  => $data["municipio_citado"][$i],
+                'tipo_persona'      => $data["tipo_persona_citado"][$i],
+                'nombre'            => $data["nombre_citado"][$i],
+                'notificacion'      => $data["notificacion"][$i],
+                'primer_apellido'   => $data["primer_apellido"][$i] ?? null,
+                'segundo_apellido'  => $data["segundo_apellido"][$i] ?? null,
+                'calle'             => $data["calle_citado"][$i],
+                'calle1'            => $data["calle1_citado"][$i],
+                'calle2'            => $data["calle2_citado"][$i],
+                'curp'              => $data["curp_citado"][$i] ?? null,
+                'rfc'               => $data["rfc_citado"][$i],
+                'estado_citado'     => $data["estado_citado"][$i],
+                'imagen_domicilio1' => $foto1,
+                'imagen_domicilio2' => $foto2,
+                'resulte_responsable' => $data['resulte_responsable'][$i] ?? 'No',
+                'audiencia_id' => $audiencia_id,
+            );
+            
+            if(isset($data["traductor"])){
+                $val = is_array($data["traductor"]) ? ($data["traductor"][$i] ?? null) : $data["traductor"];
+                $requires = ($val === 'Si' || $val === '1' || $val === 1 || $val === 'on' || $val === true);
+                $data_insert["traductor"] = $requires ? 1 : 0;
+                $data_insert["lenguaje"]  = is_array($data["lenguaje"]) ? ($data["lenguaje"][$i] ?? null) : ($data["lenguaje"] ?? null);
+            }
+            if(isset($data["calle1"])){
+                SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle1' => $data["calle1_citado"] ]);
+            }
+            if(isset($data["calle2"])){
+                SeerSolicitante::where('id_solicitud', $data["id"])->update(['calle2' => $data["calle2_citado"] ]);
+            }
+            SeerCitados::create($data_insert);
+        }
             
             //Mandar un correo
             $user = [
@@ -6558,15 +6564,6 @@ class SeerController extends Controller
         ];        
         SeerPerConciliador::create($data_conciliador);
         
-        $citados = SeerCitados::where('id_solicitud', $data["id"])->get();
-        foreach($citados as $citado){
-            if($citado->notificacion == "Trabajador"){
-                    $nuevo_citado = $citado->replicate();
-                    $nuevo_citado->notificacion = 'Centro';
-                    $nuevo_citado->save();
-            }
-        }
-        
         \DB::transaction(function() use ($user, $data) {
             //Obtener la audiencia mas reciente
             $audienciaOld = Audiencias::where('id_solicitud', $data["id"])->orderBy('id', 'desc')->first();
@@ -6594,7 +6591,7 @@ class SeerController extends Controller
                 }
 
                 // Crear nueva audiencia con estatus Pendiente y datos copiados
-                Audiencias::create([
+                $audiencia = Audiencias::create([
                     'id_conciliador'   => $audienciaOld->id_conciliador,
                     'id_solicitud'     => $audienciaOld->id_solicitud,
                     'numero_audiencia' => $new_num,
@@ -6608,7 +6605,7 @@ class SeerController extends Controller
             } else {
                 // Si no existe audiencia previa, crear una nueva simple
                 $new_folio = str_pad('1', 4, '0', STR_PAD_LEFT) . '/' . date('Y');
-                Audiencias::create([
+                $audiencia = Audiencias::create([
                     'id_conciliador'   => $user->id,
                     'id_solicitud'     => $data["id"],
                     'numero_audiencia' => 1,
@@ -6619,6 +6616,16 @@ class SeerController extends Controller
                     'delegacion'       => null,
                     'estatus'          => 'Pendiente'
                 ]);
+            }
+
+            $citados = SeerCitados::where('id_solicitud', $data["id"])->get();
+            foreach($citados as $citado){
+                if($citado->notificacion == "Trabajador"){
+                        $nuevo_citado = $citado->replicate();
+                        $nuevo_citado->notificacion = 'Centro';
+                        $nuevo_citado->audiencia_id = $audiencia->id;
+                        $nuevo_citado->save();
+                }
             }
         });
     
@@ -8680,15 +8687,22 @@ class SeerController extends Controller
         $solicitante = SeerSolicitante::where('id_solicitud', $citado["id_solicitud"])->first();
         $motivoIds = SeerMotivo::where('id_solicitud', $citado["id_solicitud"])->pluck('id_motivo');
         $motivos = SolicitudMotivo::whereIn('id', $motivoIds)->get();
-        $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id")
-        ->where("audiencias.id_solicitud", "=", $solicitud["id"])->latest('audiencias.created_at')->first();
+        if (!empty($citado->audiencia_id)) {
+            $audiencia = Audiencias::where('id', $citado->audiencia_id)
+                ->where('id_solicitud', $solicitud["id"])
+                ->first();
+        } else {
+            $audiencia = Audiencias::where('id_solicitud', $solicitud["id"])
+                ->orderBy('id', 'asc')
+                ->first();
+        }
         $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
         $conciliador = $conciliador->where("seer_general.conciliador_id", "=", $solicitud["conciliador_id"])->select('users.name')->first();
         $municipio = Municipios::find($citado->municipio_citado);
         $estado = Estados::find($citado->estado_citado);
         $municipioNombre = $municipio ? mb_strtoupper($municipio->nombre, 'UTF-8') : '';
         $estadoNombre = $estado ? mb_strtoupper($estado->nombre, 'UTF-8') : '';
-        $fechaEmision = $audiencia->created_at;
+        $fechaEmision = $audiencia ? $audiencia->created_at : now();
         $html = view('PDF/Solicitudes/citatorio', compact('solicitud','solicitante','citado','motivos','audiencia','conciliador','municipioNombre','estadoNombre','fechaEmision'))->render();
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -12073,8 +12087,13 @@ class SeerController extends Controller
             'pagos'        => function($q) {
                 $q->where('estatus', 'Pendiente')->where('tipo_pago', 'Audiencia');
             }
-        ])->select('id_solicitud', 'fecha', 'hora', 'id_conciliador', 'estatus', 'delegacion', 'created_at')
-          ->distinct();
+        ])
+            //Excluir audiencias cuyo expediente esté marcado como incidencia
+            ->whereHas('expediente', function ($q) {
+                $q->whereNull('incidencia')->orWhere('incidencia', 0);
+            })
+            ->select('id_solicitud', 'fecha', 'hora', 'id_conciliador', 'estatus', 'delegacion', 'created_at')
+            ->distinct();
     
         // 2. Mapeo de delegaciones para evitar IFs repetitivos
         $mapaDelegaciones = [
@@ -12134,7 +12153,7 @@ class SeerController extends Controller
         $userRole = $user->roles->pluck('name')->all();
 
         if($userRole[0] == "Auxiliar" || $userRole[0] == "Excepcion"){
-            $solicitudes = Turnos::where('delegacion', $user["delegacion"])->where('tipo','Ratificación')->orderBy('created_at', 'desc')->limit(500)->get();
+            $solicitudes = Turnos::where('delegacion', $user["delegacion"])->where('tipo','Ratificación')->where('incidencia', 0)->orderBy('created_at', 'desc')->limit(500)->get();
             foreach ($solicitudes as $audiencia) {
                 $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
                 if(count($pendientes) == 0){
@@ -12150,7 +12169,7 @@ class SeerController extends Controller
             $permisos = PermisosConciliador::where('id_conciliador',$id)->first();
             if($permisos["tipo"] == "Ambos"){
                 if($user["delegacion"] == "Morelia"){
-                    $solicitudes = Turnos::whereIn('delegacion', ["Morelia", "Zitácuaro"])->where('tipo','Ratificación')->orderBy('created_at', 'desc')->limit(500)->get();
+                    $solicitudes = Turnos::whereIn('delegacion', ["Morelia", "Zitácuaro"])->where('tipo','Ratificación')->whereNull('incidencia')->orWhere('incidencia', 0)->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($solicitudes as $audiencia) {
                         $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
                         if(count($pendientes) == 0){
@@ -12163,7 +12182,7 @@ class SeerController extends Controller
                     }
                 }
                 if($user["delegacion"] == "Uruapan"){
-                    $solicitudes = Turnos::whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->where('tipo','Ratificación')->orderBy('created_at', 'desc')->limit(500)->get();
+                    $solicitudes = Turnos::whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->where('tipo','Ratificación')->whereNull('incidencia')->orWhere('incidencia', 0)->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($solicitudes as $audiencia) {
                         $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
                         if(count($pendientes) == 0){
@@ -12176,7 +12195,7 @@ class SeerController extends Controller
                     }
                 }
                 if($user["delegacion"] == "Zamora"){
-                     $solicitudes = Turnos::whereIn('delegacion', ["Sahuayo", "Zamora"])->where('tipo','Ratificación')->orderBy('created_at', 'desc')->limit(500)->get();
+                     $solicitudes = Turnos::whereIn('delegacion', ["Sahuayo", "Zamora"])->where('tipo','Ratificación')->whereNull('incidencia')->orWhere('incidencia', 0)->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($solicitudes as $audiencia) {
                         $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
                         if(count($pendientes) == 0){
@@ -12190,7 +12209,7 @@ class SeerController extends Controller
                 }
             }
             else{
-                $solicitudes = Turnos::where('delegacion', $user["delegacion"])->where('tipo','Ratificación')->orderBy('created_at', 'desc')->limit(500)->get();
+                $solicitudes = Turnos::where('delegacion', $user["delegacion"])->where('tipo','Ratificación')->whereNull('incidencia')->orWhere('incidencia', 0)->orderBy('created_at', 'desc')->limit(500)->get();
                 foreach ($solicitudes as $audiencia) {
                     $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
                     if(count($pendientes) == 0){
@@ -12205,7 +12224,7 @@ class SeerController extends Controller
         }
         else if($userRole[0] == "Delegado" || $userRole[0] == "Enlace"){
             if($user["delegacion"] == "Morelia"){
-                    $solicitudes = Turnos::whereIn('delegacion', ["Morelia", "Zitácuaro"])->where('tipo','Ratificación')->orderBy('created_at', 'desc')->limit(500)->get();
+                    $solicitudes = Turnos::whereIn('delegacion', ["Morelia", "Zitácuaro"])->where('tipo','Ratificación')->whereNull('incidencia')->orWhere('incidencia', 0)->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($solicitudes as $audiencia) {
                         $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
                         if(count($pendientes) == 0){
@@ -12218,7 +12237,7 @@ class SeerController extends Controller
                     }
                 }
                 if($user["delegacion"] == "Uruapan"){
-                    $solicitudes = Turnos::whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->where('tipo','Ratificación')->orderBy('created_at', 'desc')->limit(500)->get();
+                    $solicitudes = Turnos::whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->where('tipo','Ratificación')->whereNull('incidencia')->orWhere('incidencia', 0)->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($solicitudes as $audiencia) {
                         $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
                         if(count($pendientes) == 0){
@@ -12231,7 +12250,7 @@ class SeerController extends Controller
                     }
                 }
                 if($user["delegacion"] == "Zamora"){
-                     $solicitudes = Turnos::whereIn('delegacion', ["Sahuayo", "Zamora"])->where('tipo','Ratificación')->orderBy('created_at', 'desc')->limit(500)->get();
+                     $solicitudes = Turnos::whereIn('delegacion', ["Sahuayo", "Zamora"])->where('tipo','Ratificación')->whereNull('incidencia')->orWhere('incidencia', 0)->orderBy('created_at', 'desc')->limit(500)->get();
                     foreach ($solicitudes as $audiencia) {
                         $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
                         if(count($pendientes) == 0){
@@ -12245,7 +12264,7 @@ class SeerController extends Controller
                 }
         }
         else if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador"){
-            $solicitudes = Turnos::where('tipo','Ratificación')->orderBy('created_at', 'desc')->limit(500)->get();
+            $solicitudes = Turnos::where('tipo','Ratificación')->whereNull('incidencia')->orWhere('incidencia', 0)->orderBy('created_at', 'desc')->limit(500)->get();
             foreach ($solicitudes as $audiencia) {
                 $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
                 if(count($pendientes) == 0){
@@ -14273,6 +14292,8 @@ class SeerController extends Controller
         // Usamos 'solicitante:id,id_solicitud,nombre' para traer solo las columnas necesarias
         $query = SeerPerGeneral::with('solicitante:id,id_solicitud,nombre')
             ->where('estatus', '!=', 'Pendiente')
+            ->whereNull('incidencia')
+            ->orWhere('incidencia', 0)
             ->orderBy('created_at', 'desc')
             ->limit(1500);
     

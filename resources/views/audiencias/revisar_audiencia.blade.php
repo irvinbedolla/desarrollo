@@ -964,7 +964,6 @@
                                                         <h4 class="text-center">Citatorios</h4>
                                                         <hr>
                                                         <div class="form-group">
-                                                            @foreach($historial_audiencias as $audiencia_historial)
                                                                 @foreach($citados as $citado) 
                                                                     <div class="row" style="margin-bottom: 5px; border-bottom: 1px dotted #ccc; padding: 5px 0;">
                                                                         <div class="col-sm-5">
@@ -978,7 +977,6 @@
                                                                                 <a class="btn btn-success btn-xs"
                                                                                 href="{{ route('pdfCitatorioAudiencia', [
                                                                                     'id' => $citado->id,
-                                                                                    'id_audiencia' => $audiencia_historial->id 
                                                                                 ]) }}"
                                                                                 target="_blank">
                                                                                     Visualizar
@@ -992,7 +990,6 @@
                                                                         </div>
                                                                     </div>
                                                                 @endforeach
-                                                            @endforeach
                                                         </div>
                                                     </div>
                                                     <div class="col-xs-12 col-sm-12 col-md-6">

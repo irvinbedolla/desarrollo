@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\SeerPerGeneral;
 use App\Http\Controllers\IncidenciasController;
+use App\Http\Controllers\IncidenciasBusquedaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -588,6 +589,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/indidencias/atender/{id}',         [IncidenciasController::class, 'incidencia_atender'])->name('incidencia_atender');
         Route::post('/indidencias/update',              [IncidenciasController::class, 'incidencias_update'])->name('incidencias_update');
     //Fin de incidencias
+
+    //Búsqueda incidencias
+        Route::get('/incidencias/index_search',          [IncidenciasBusquedaController::class, 'index'])->name('incidencias.busqueda.index');
+        Route::post('/incidencias/marcar',               [IncidenciasBusquedaController::class, 'marcar'])->name('incidencias.busqueda.marcar');
+		Route::post('/incidencias/desmarcar',            [IncidenciasBusquedaController::class, 'desmarcar'])->name('incidencias.busqueda.desmarcar');
+    //Fin Búsqueda incidencias
+
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);
         Route::resource('/user-management/roles', RoleManagementController::class);

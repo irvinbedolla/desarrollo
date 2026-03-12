@@ -11,7 +11,7 @@ class Pagos extends Model
     protected $table = 'pago_solicitud';
     protected $primaryKey = 'id';
     protected $fillable = ['id_solicitud','fecha','hora','monto','descripcion','observaciones','estatus','tipo_pago','delegacion','NUE','id_conciliador','nombre_trabajador',
-    'empresa_representante','tipo_generacion','forma_pago','fecha_audiencia','hora_audiencia'];
+    'empresa_representante','tipo_generacion','forma_pago','fecha_audiencia','hora_audiencia', 'incidencia'];
     protected $casts = [
         'fecha' => 'date',
         'hora' => 'datetime:H:i'
