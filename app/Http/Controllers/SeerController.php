@@ -12121,7 +12121,7 @@ class SeerController extends Controller
         // Si es Super Usuario o Admin, no se agregan filtros adicionales (ve todo)
     
         // 4. Ejecutar consulta (Límite 500)
-        $audiencias = $query->orderBy('created_at', 'desc')->limit(1500)->get();
+        $audiencias = $query->orderBy('created_at', 'desc')->limit(2000)->get();
         
         // 5. Procesar resultados (Formateo)
         $audiencias->transform(function ($audiencia) {
