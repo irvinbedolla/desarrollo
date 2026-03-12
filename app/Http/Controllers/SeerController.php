@@ -13266,35 +13266,17 @@ class SeerController extends Controller
 
     //Envio de constancia final a todos los que cumplieron cn el 80% de asistencia
     public function enviarConstanciaFinal(){
-        $participantes = TercerEncuentro::all();
-        $conferencias = [
-            'convesatorio1' => 'Conferencia Magistral titulada “Representatividad Sindical en México”',
-            'convesatorio2' => 'Conversatorio titulado “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”',
-            'convesatorio3' => 'Conversatorio titulado “Implicación y Aplicación de la Ley Silla, Regulación del Trabajo en Plataformas Digitales y Reducción de las Jornadas Laborales”',
-            'convesatorio4' => 'Conversatorio titulado “La Seguridad Social como Derecho Humano y su Impacto en las Resoluciones Judiciales”',
-            'convesatorio5' => 'Presentación del Libro “Conciliación y Justicia Laboral” Coordinadores: Andrés Medina Guzmán y Sergio Carmelo Domínguez Mota',
-            'convesatorio6' => 'Conversatorio titulado “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral”',
-            'convesatorio7' => 'Conversatorio titulado “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
-            'convesatorio8' => 'Presentación del Libro “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
-            'convesatorio9' => 'Conferencia Magistral de Clausura',
-        ];
+        $participantes = ForoNacional::all();
+        //$participantes = ForoNacional::where("id",1)->get();
 
         foreach ($participantes as $participante) {
-            $asistencias = [];
-            foreach ($conferencias as $campo => $nombre) {
-                if ($participante->$campo === 'Si') {
-                    $asistencias[$campo] = $nombre;
-                }
-            }
-            $totalAsistencias = count($asistencias);
-
-            if ($totalAsistencias >= 6) {
                 $id = $participante->id;
-                $nombre = "{$participante->nombre} {$participante->primer_apellido} {$participante->segundo_apellido}";
+                //$nombre = "{$participante->nombre} {$participante->primer_apellido} {$participante->segundo_apellido}";
+                $nombre = $participante->nombre . " " . $participante->primer_apellido . " " . $participante->segundo_apellido;
                 $correo = $participante->correo;
 
                 // Generar PDF
-                $pdf = \PDF::loadView('PDF/TercerEncuentro/constanciaFinal', compact('nombre'));
+                $pdf = \PDF::loadView('PDF/TercerEncuentro/constancia', compact('participante'));
                 $pdfContent = $pdf->output();
 
                 // Datos del correo
@@ -13304,12 +13286,10 @@ class SeerController extends Controller
                 ];
                 $destinatario = $correo;
                 
-                // 3. Enviar el Mailable, pasando el contenido del PDF y los datos del mensaje
                 Mail::to($destinatario)->send(new CorreoAcuseConfirmacion($pdfContent, $datosMensaje));
-                // Mail::to($correo)->send(new CorreoAcuseConfirmacion($pdfContent, $datosMensaje));
-            } 
         }
-        return "Correos enviados a todos los participantes con 6 o más asistencias.";
+
+        return "Correos enviados a todos los participantes.";
     }
     public function firmaCitatorios_index(){
         $user = auth()->user();
