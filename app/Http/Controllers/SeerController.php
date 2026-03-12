@@ -12148,140 +12148,61 @@ class SeerController extends Controller
         return view('audiencias.todas_audiencias', compact('audiencias', 'isAudiencia'));
     }
 
-    public function todas_ratificaciones(){
-        $id = auth()->user()->id;
-        $user = User::find($id);
-        $roles = Role::pluck('name','name')->all();
-        $userRole = $user->roles->pluck('name')->all();
+    public function todas_ratificaciones() {
+        $user = auth()->user();
+        // Obtenemos el nombre del rol principal directamente
+        $userRole = $user->roles->first()?->name; 
 
-        if($userRole[0] == "Auxiliar" || $userRole[0] == "Excepcion"){
-            $solicitudes = Turnos::where('delegacion', $user["delegacion"])->where('tipo','Ratificación')->where('incidencia', 0)->orderBy('created_at', 'desc')->limit(500)->get();
-            foreach ($solicitudes as $audiencia) {
-                $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
-                if(count($pendientes) == 0){
-                    //Si la contancia es 0 no tiene pagos pendientes
-                    $audiencia->constancia = 0;
-                }
-                else{
-                    $audiencia->constancia = 1;
-                }
-            }
-        }
-        else if($userRole[0] == "Conciliador"){
-            $permisos = PermisosConciliador::where('id_conciliador',$id)->first();
-            if($permisos["tipo"] == "Ambos"){
-                if($user["delegacion"] == "Morelia"){
-                    $solicitudes = Turnos::whereIn('delegacion', ["Morelia", "Zitácuaro"])->where('tipo','Ratificación')->whereNull('incidencia')->orWhere('incidencia', 0)->orderBy('created_at', 'desc')->limit(500)->get();
-                    foreach ($solicitudes as $audiencia) {
-                        $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
-                        if(count($pendientes) == 0){
-                            //Si la contancia es 0 no tiene pagos pendientes
-                            $audiencia->constancia = 0;
-                        }
-                        else{
-                            $audiencia->constancia = 1;
-                        }
-                    }
-                }
-                if($user["delegacion"] == "Uruapan"){
-                    $solicitudes = Turnos::whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->where('tipo','Ratificación')->whereNull('incidencia')->orWhere('incidencia', 0)->orderBy('created_at', 'desc')->limit(500)->get();
-                    foreach ($solicitudes as $audiencia) {
-                        $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
-                        if(count($pendientes) == 0){
-                            //Si la contancia es 0 no tiene pagos pendientes
-                            $audiencia->constancia = 0;
-                        }
-                        else{
-                            $audiencia->constancia = 1;
-                        }
-                    }
-                }
-                if($user["delegacion"] == "Zamora"){
-                     $solicitudes = Turnos::whereIn('delegacion', ["Sahuayo", "Zamora"])->where('tipo','Ratificación')->whereNull('incidencia')->orWhere('incidencia', 0)->orderBy('created_at', 'desc')->limit(500)->get();
-                    foreach ($solicitudes as $audiencia) {
-                        $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
-                        if(count($pendientes) == 0){
-                            //Si la contancia es 0 no tiene pagos pendientes
-                            $audiencia->constancia = 0;
-                        }
-                        else{
-                            $audiencia->constancia = 1;
-                        }
-                    }
-                }
-            }
-            else{
-                $solicitudes = Turnos::where('delegacion', $user["delegacion"])->where('tipo','Ratificación')->whereNull('incidencia')->orWhere('incidencia', 0)->orderBy('created_at', 'desc')->limit(500)->get();
-                foreach ($solicitudes as $audiencia) {
-                    $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
-                    if(count($pendientes) == 0){
-                        //Si la contancia es 0 no tiene pagos pendientes
-                        $audiencia->constancia = 0;
-                    }
-                    else{
-                        $audiencia->constancia = 1;
-                    }
-            }
-            }
-        }
-        else if($userRole[0] == "Delegado" || $userRole[0] == "Enlace"){
-            if($user["delegacion"] == "Morelia"){
-                    $solicitudes = Turnos::whereIn('delegacion', ["Morelia", "Zitácuaro"])->where('tipo','Ratificación')->whereNull('incidencia')->orWhere('incidencia', 0)->orderBy('created_at', 'desc')->limit(500)->get();
-                    foreach ($solicitudes as $audiencia) {
-                        $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
-                        if(count($pendientes) == 0){
-                            //Si la contancia es 0 no tiene pagos pendientes
-                            $audiencia->constancia = 0;
-                        }
-                        else{
-                            $audiencia->constancia = 1;
-                        }
-                    }
-                }
-                if($user["delegacion"] == "Uruapan"){
-                    $solicitudes = Turnos::whereIn('delegacion', ["Uruapan", "Lázaro Cárdenas"])->where('tipo','Ratificación')->whereNull('incidencia')->orWhere('incidencia', 0)->orderBy('created_at', 'desc')->limit(500)->get();
-                    foreach ($solicitudes as $audiencia) {
-                        $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
-                        if(count($pendientes) == 0){
-                            //Si la contancia es 0 no tiene pagos pendientes
-                            $audiencia->constancia = 0;
-                        }
-                        else{
-                            $audiencia->constancia = 1;
-                        }
-                    }
-                }
-                if($user["delegacion"] == "Zamora"){
-                     $solicitudes = Turnos::whereIn('delegacion', ["Sahuayo", "Zamora"])->where('tipo','Ratificación')->whereNull('incidencia')->orWhere('incidencia', 0)->orderBy('created_at', 'desc')->limit(500)->get();
-                    foreach ($solicitudes as $audiencia) {
-                        $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
-                        if(count($pendientes) == 0){
-                            //Si la contancia es 0 no tiene pagos pendientes
-                            $audiencia->constancia = 0;
-                        }
-                        else{
-                            $audiencia->constancia = 1;
-                        }
-                    }
-                }
-        }
-        else if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador"){
-            $solicitudes = Turnos::where('tipo','Ratificación')->whereNull('incidencia')->orWhere('incidencia', 0)->orderBy('created_at', 'desc')->limit(500)->get();
-            foreach ($solicitudes as $audiencia) {
-                $pendientes = Pagos::where('id_solicitud',$audiencia["id"])->where('estatus',"Pendiente")->where('tipo_pago',"Ratificacion")->get();
-                if(count($pendientes) == 0){
-                    //Si la contancia es 0 no tiene pagos pendientes
-                    $audiencia->constancia = 0;
-                }
-                else{
-                    $audiencia->constancia = 1;
-                }
-            }
-        }
+        // Mapeo de delegaciones para evitar repetir bloques IF
+        $mapaDelegaciones = [
+            'Morelia' => ['Morelia', 'Zitácuaro'],
+            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+            'Zamora'  => ['Sahuayo', 'Zamora'],
+        ];
 
-        return view('ratificaciones.ratificaciones_todas',compact('solicitudes','userRole'));
+        // Iniciamos la consulta base
+        $query = Turnos::where('tipo', 'Ratificación')
+            ->where(function($q) {
+                // Agrupamos esto para que el OR no interfiera con los otros WHERE
+                $q->whereNull('incidencia')->orWhere('incidencia', 0);
+            })
+            ->withExists(['pagos as tiene_pendientes' => function($q) {
+                $q->where('estatus', 'Pendiente')
+                ->where('tipo_pago', 'Ratificacion');
+            }])
+            ->orderBy('created_at', 'desc')
+            ->limit(500);
+
+        // Aplicamos filtros de seguridad según Rol
+        if (in_array($userRole, ["Auxiliar", "Excepcion"])) {
+            $query->where('delegacion', $user->delegacion);
+        } 
+        elseif ($userRole == "Conciliador") {
+            $permisos = PermisosConciliador::where('id_conciliador', $user->id)->first();
+            
+            if ($permisos && $permisos->tipo == "Ambos" && isset($mapaDelegaciones[$user->delegacion])) {
+                $query->whereIn('delegacion', $mapaDelegaciones[$user->delegacion]);
+            } else {
+                $query->where('delegacion', $user->delegacion);
+            }
+        } 
+        elseif (in_array($userRole, ["Delegado", "Enlace"])) {
+            $delegaciones = $mapaDelegaciones[$user->delegacion] ?? [$user->delegacion];
+            $query->whereIn('delegacion', $delegaciones);
+        }
+        // "Super Usuario" y "Administrador" pasan sin filtros adicionales
+
+        $solicitudes = $query->get();
+
+        // Transformamos el resultado para que tu vista siga recibiendo la variable 'constancia'
+        $solicitudes->transform(function ($audiencia) {
+            $audiencia->constancia = $audiencia->tiene_pendientes ? 1 : 0;
+            return $audiencia;
+        });
+
+        return view('ratificaciones.ratificaciones_todas', compact('solicitudes', 'userRole'));
     }
-
+    
     public function todos_complimientos(){
         $id = auth()->user()->id;
         $user = User::find($id);
