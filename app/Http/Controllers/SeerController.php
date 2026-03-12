@@ -8588,26 +8588,60 @@ class SeerController extends Controller
     }
 
     public function audiencias_cumplimiento(){
-        $id = auth()->user()->id;
-        $user = User::find($id);
+        // 1. Obtenemos directamente el objeto del usuario autenticado (evitamos User::find)
+        $user = auth()->user();
 
-        $auxiliares = User::whereHas('roles', function ($query) {
-            return $query->where('name', '=', 'Auxiliar');
-        })
-        ->where('delegacion', $user["delegacion"])
-        ->get();
-        $notificadores = User::whereHas('roles', function ($query) {
-            return $query->where('name', '=', 'Notificador');
-        })
-        ->where('delegacion', $user["delegacion"])
-        ->get();
-        $conciliadores = User::whereHas('roles', function ($query) {
-            return $query->where('name', '=', 'Conciliador');
-        })
-        ->where('delegacion', $user["delegacion"])
+        $cumplimientos = Pagos::where('pago_solicitud.delegacion', $user->delegacion)
+            ->whereIn('pago_solicitud.tipo_pago', ["Ratificacion", "Audiencia", "Conciliador"])
+            ->where('pago_solicitud.id_solicitud', '!=', 0)
+            ->leftJoin('turnos', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
+            ->leftJoin('seer_general', 'seer_general.id', '=', 'pago_solicitud.id_solicitud')
+            ->leftJoin('users', 'users.id', '=', 'pago_solicitud.id_conciliador')
+            ->select(
+            // Agrupador principal (NUE unificado)
+            DB::raw("CASE 
+                WHEN pago_solicitud.tipo_pago = 'Ratificacion' AND pago_solicitud.id_solicitud != 0 THEN turnos.NUE 
+                WHEN pago_solicitud.id_solicitud != 0 THEN seer_general.NUE 
+                ELSE pago_solicitud.NUE 
+            END as NUE_FINAL"),
+            
+            'pago_solicitud.id_solicitud',
+            'pago_solicitud.descripcion',
+            'pago_solicitud.tipo_pago',
+            'users.name as conciliador_name',
+            
+            // Usamos funciones de agregación para campos que pueden variar
+            DB::raw("DATE_FORMAT(MAX(pago_solicitud.fecha), '%d/%m/%Y') as fecha_formateada"),
+            DB::raw("DATE_FORMAT(MAX(pago_solicitud.hora), '%h:%i %p') as hora_formateada"),
+            DB::raw("MAX(pago_solicitud.descripcion) as descripcion_pago"),
+
+            // Agregaciones de montos y cantidades
+            DB::raw("COUNT(pago_solicitud.id) as total_pagos"),
+            DB::raw("SUM(pago_solicitud.monto) as monto_total"),
+            DB::raw("SUM(CASE WHEN pago_solicitud.estatus = 'Pagado' THEN 1 ELSE 0 END) as pagos_realizados"),
+            DB::raw("SUM(CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN 1 ELSE 0 END) as pagos_pendientes")
+        )
+        ->groupBy(
+            // 1. La lógica del CASE completa
+            DB::raw("CASE 
+                WHEN pago_solicitud.tipo_pago = 'Ratificacion' AND pago_solicitud.id_solicitud != 0 THEN turnos.NUE 
+                WHEN pago_solicitud.id_solicitud != 0 THEN seer_general.NUE 
+                ELSE pago_solicitud.NUE 
+            END"),
+            // 2. Las columnas físicas que SQL detecta en la consulta
+            'pago_solicitud.id_solicitud',
+            'pago_solicitud.tipo_pago',
+            'pago_solicitud.NUE',   // El campo de la tabla pagos
+            'turnos.NUE',           // El campo de la tabla turnos (aquí estaba el error)
+            'seer_general.NUE',     // El campo de la tabla seer_general
+            'users.name',            // El nombre del conciliador
+            'pago_solicitud.descripcion'
+        )
+        ->orderBy(DB::raw("MAX(pago_solicitud.fecha)"), 'asc')
+        ->take(1500)
         ->get();
 
-        return view('/cumplimientos/index',compact('auxiliares','conciliadores'));
+        return view('/cumplimientos/index',compact('cumplimientos'));
     }
 
     public function solicitud_audiencia_revisar($id, Request $request) {
@@ -13251,35 +13285,17 @@ class SeerController extends Controller
 
     //Envio de constancia final a todos los que cumplieron cn el 80% de asistencia
     public function enviarConstanciaFinal(){
-        $participantes = TercerEncuentro::all();
-        $conferencias = [
-            'convesatorio1' => 'Conferencia Magistral titulada “Representatividad Sindical en México”',
-            'convesatorio2' => 'Conversatorio titulado “La Conciliación Laboral como Mecanismo de la Solución Pacífica de los Conflictos Laborales”',
-            'convesatorio3' => 'Conversatorio titulado “Implicación y Aplicación de la Ley Silla, Regulación del Trabajo en Plataformas Digitales y Reducción de las Jornadas Laborales”',
-            'convesatorio4' => 'Conversatorio titulado “La Seguridad Social como Derecho Humano y su Impacto en las Resoluciones Judiciales”',
-            'convesatorio5' => 'Presentación del Libro “Conciliación y Justicia Laboral” Coordinadores: Andrés Medina Guzmán y Sergio Carmelo Domínguez Mota',
-            'convesatorio6' => 'Conversatorio titulado “Criterios Relevantes en la Ejecución de las Sentencias en Materia Laboral”',
-            'convesatorio7' => 'Conversatorio titulado “Modelo de la Conciliación Laboral Comparada Internacionalmente”',
-            'convesatorio8' => 'Presentación del Libro “El Despido en Latinoamérica: Una Visión de Derecho Comparado”',
-            'convesatorio9' => 'Conferencia Magistral de Clausura',
-        ];
+        $participantes = ForoNacional::all();
+        //$participantes = ForoNacional::where("id",1)->get();
 
         foreach ($participantes as $participante) {
-            $asistencias = [];
-            foreach ($conferencias as $campo => $nombre) {
-                if ($participante->$campo === 'Si') {
-                    $asistencias[$campo] = $nombre;
-                }
-            }
-            $totalAsistencias = count($asistencias);
-
-            if ($totalAsistencias >= 6) {
                 $id = $participante->id;
-                $nombre = "{$participante->nombre} {$participante->primer_apellido} {$participante->segundo_apellido}";
+                //$nombre = "{$participante->nombre} {$participante->primer_apellido} {$participante->segundo_apellido}";
+                $nombre = $participante->nombre . " " . $participante->primer_apellido . " " . $participante->segundo_apellido;
                 $correo = $participante->correo;
 
                 // Generar PDF
-                $pdf = \PDF::loadView('PDF/TercerEncuentro/constanciaFinal', compact('nombre'));
+                $pdf = \PDF::loadView('PDF/TercerEncuentro/constancia', compact('participante'));
                 $pdfContent = $pdf->output();
 
                 // Datos del correo
@@ -13289,12 +13305,10 @@ class SeerController extends Controller
                 ];
                 $destinatario = $correo;
                 
-                // 3. Enviar el Mailable, pasando el contenido del PDF y los datos del mensaje
                 Mail::to($destinatario)->send(new CorreoAcuseConfirmacion($pdfContent, $datosMensaje));
-                // Mail::to($correo)->send(new CorreoAcuseConfirmacion($pdfContent, $datosMensaje));
-            } 
         }
-        return "Correos enviados a todos los participantes con 6 o más asistencias.";
+
+        return "Correos enviados a todos los participantes.";
     }
     public function firmaCitatorios_index(){
         $user = auth()->user();

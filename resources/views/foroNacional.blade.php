@@ -107,7 +107,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-light fixed-top navbar-custom">
         <div class="container justify-content-center">
-            <a class="navbar-brand m-0" href="#">
+            <a class="navbar-brand m-0" href="https://foro-nacional.cclmichoacan.gob.mx/">
                 <img src="public/assets/images/registro-foro-nacional-consolidacion-justicia-laboral.png" alt="Logo Foro Nacional">
             </a>
         </div> 
@@ -141,7 +141,7 @@
                                     @csrf
                                     
                                     <div class="header-registro text-center">
-                                        <h4 class="m-0">Registro del Foro Nacional por la Consolidación de la Justicia Laboral en México</h4>
+                                        <h4 class="m-0">Registro al Foro Nacional por la Consolidación de la Justicia Laboral en México</h4>
                                     </div>
 
                                     <div class="row g-3">
@@ -223,6 +223,9 @@
                                                     <option value="Barra de Abogados">Barra de Abogados</option>
                                                     <option value="Sindicato">Sindicato</option>
                                                     <option value="Ponente">Ponente</option>
+                                                    <option value="Ponente">Acompañante CONACENTROS</option>
+                                                    <option value="Ponente">Titular de CONACENTROS</option>
+                                                    <option value="Ponente">Prensa</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -230,7 +233,7 @@
 
                                     <div class="mt-5 text-center">
                                         <button type="submit" class="btn btn-lg px-5 text-white" style="background-color: var(--color-dorado); border-radius: 30px;">
-                                            <i class="fas fa-save me-2"></i> Guardar Registro
+                                            Enviar Registro
                                         </button>
                                     </div>
                                 </form>
@@ -266,12 +269,12 @@
 
             // 3. Confirmación SweetAlert
             swal({
-                title: "¿Estás seguro del guardado?",
-                text: "Confirma que tus datos son correctos antes de enviar.",
+                title: "¿Tus datos son correctos?",
+                text: "Le solicitamos validar su información, ya que así se imprimirán en el documento oficial de Reconocimiento.",
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#CEA845",
-                confirmButtonText: "Sí, guardar",
+                confirmButtonText: "Sí, enviar",
                 cancelButtonText: "Cancelar",
                 closeOnConfirm: true 
             }, function(isConfirm) {
