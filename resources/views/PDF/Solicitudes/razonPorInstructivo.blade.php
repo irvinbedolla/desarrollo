@@ -106,19 +106,21 @@
         if($citado->firma === 'FIRMA'){
             $descripcionFirma = 'FIRMA PARA CONSTANCIA LEGAL.';
         }
-        if($citado->firma === 'NO FIRMA'){
+        else if($citado->firma === 'NO FIRMA'){
             $descripcionFirma = 'NO FIRMA POR NO CONSIDERARLO NECESARIO, A PESAR DE HABÉRSELO REQUERIDO.';
         }
-        if($citado->firma === 'FIRMA Y SELLA'){
+        else if($citado->firma === 'FIRMA Y SELLA'){
             $descripcionFirma = 'FIRMA Y SELLA PARA CONSTANCIA LEGAL.';
         }
-        if($citado->firma === 'SELLA'){
+        else if($citado->firma === 'SELLA'){
             $descripcionFirma = 'SELLA PARA CONSTANCIA LEGAL.';
         }
-        if($citado->firma === 'NO APLICA'){
+        else if($citado->firma === 'NO APLICA'){
+            $descripcionFirma = '';
+        }else {
             $descripcionFirma = '';
         }
-    @endphp
+        @endphp
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
         <footer></footer>
