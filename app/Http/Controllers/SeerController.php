@@ -8988,6 +8988,8 @@ class SeerController extends Controller
         ->orderBy('created_at', 'asc')
         ->get();
 
+        $audiencia = Audiencias::where('id_solicitud', $id_solicitud)->latest()->get();
+
         $totalAudiencias = $audiencias->count();
         $fechaCitatorio = null;
 
@@ -9055,7 +9057,7 @@ class SeerController extends Controller
                 $imagenes[] = null;
             }
         }
-        $html = view('PDF/Solicitudes/razonNotificacion', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado','fechaCitatorio'))->render();
+        $html = view('PDF/Solicitudes/razonNotificacion', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado','fechaCitatorio', 'audiencia'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
