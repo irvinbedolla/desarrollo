@@ -62,37 +62,16 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
-                                    @endif 
+                                    @endif
                                     <div style="background-color:#D2D3D5; width:100%; height:40px;">
-                                        <h3 class="text-center" style="color:black">Datos del Solicitante Patronal</h3>
-                                    </div>
+                                        <h3 class="text-center" style="color:black">Datos del Solicitante</h3>
+                                    </div>    
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                                     <form class="needs-validation" novalidate method="POST" action="{{route('guardaSolicitanteA')}}" enctype='multipart/form-data'>
-                                        @csrf  
+                                        @csrf
                                         <input type="hidden" name="id" value="{{$id}}">
                                         <div class="row">
-                                            <div class="col-xs-12 col-sm-12 col-md-12" >
-                                                <div class="form-group">
-                                                    <label>En caso de no contar con un Folio Interno, puede registrarse en la siguiente liga:</label>
-                                                    <a href="{{ route('poder-crear'); }}" target="_black" class="btn btn-primary mt-2">Registrar</a>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
-                                                <div class="form-group">
-                                                    <label for="">Folio Interno de Registro <span style="color:red;">(*)</span></label>
-                                                    <input type="number"  name="folio" id="folio_input" class="form-control" required> 
-                                                    <div class="invalid-feedback">
-                                                        El folio es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-8" >
-                                                <div id="abogado_info" class="mt-3"></div>
-                                            </div>
-                                            <div style="background-color:#D2D3D5; width:100%; height:40px;">
-                                                <h3 class="text-center" style="color:black">Datos del Solicitante</h3>
-                                            </div>
-                                            <!-- <input type="hidden" name="tipo" value="Fisica"> -->
+                                            <input type="hidden" name="tipo" value="Fisica">
                                             <!--<div class="col-xs-12 col-sm-12 col-md-4">
                                                 <label for="name">Tipo de Persona (*)</label>
                                                 <select name="tipo" class="form-control" required>
@@ -101,7 +80,7 @@
                                                     <option value="Moral">MORAL</option>
                                                 </select>
                                             </div>-->
-                                            <!-- <div class="col-xs-12 col-sm-12 col-md-8">
+                                            <div class="col-xs-12 col-sm-12 col-md-8">
                                                 <div class="form-group">
                                                     <label for="name">Nombre(s) y Apellidos del Solicitante <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="nombre" maxlength="150" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
@@ -109,8 +88,9 @@
                                                         El campo nombre es obligatorio.
                                                     </div>
                                                 </div>
-                                            </div> -->
-                                            <!-- <div class="col-xs-12 col-sm-12 col-md-4">
+                                            </div>
+                                            
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">CURP/No. de Migración <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="curp" maxlength="18" id="curp_input" oninput="validarInput(this)"class="form-control" required> 
@@ -119,8 +99,8 @@
                                                         El campo CURP es obligatorio.
                                                     </div>
                                                 </div>
-                                            </div> -->
-                                            <div id="div1" class="col-xs-12 col-sm-12 col-md-4">
+                                            </div>
+                                            <div id="div1" class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
                                                     <label for="name">Fecha de Nacimiento <span style="color:red;">(*)</span></label>
                                                     <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" onchange="validarfechaNacimiento(this)" class="form-control" required> 
@@ -129,7 +109,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="div1" class="col-xs-12 col-sm-12 col-md-4">
+                                            <div id="div1" class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
                                                     <label for="name">Edad<span style="color:red;">(*)</span></label>
                                                     <input type="number" min="0" name="edad" class="form-control" id="años_edad" required> 
@@ -138,13 +118,13 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">RFC del Solicitante (Campo opcional)</label>
                                                     <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()"> 
                                                 </div>
-                                            </div> -->
-                                            <!-- <div class="col-xs-12 col-sm-12 col-md-2">
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
                                                     <label for="name">Sexo <span style="color:red;">(*)</span></label>
                                                     <select name="genero" class="form-control" required>
@@ -157,8 +137,8 @@
                                                         El campo sexo es obligatorio.
                                                     </div>
                                                 </div>
-                                            </div> -->
-                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
                                                     <label for="name">Nacionalidad <span style="color:red;">(*)</span></label>
                                                     <select name="nacionalidad" class="form-control" required>
@@ -171,7 +151,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- <div class="col-xs-12 col-sm-12 col-md-3">
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Entidad Federativa de Nacimiento <span style="color:red;">(*)</span></label>
                                                     <select id="estado_nacimiento" name="estado_nacimiento" class="form-control" required>
@@ -184,7 +164,7 @@
                                                         El campo entidad federativa de nacimiento es obligatoria.
                                                     </div>
                                                 </div>
-                                            </div> -->
+                                            </div>
                                             <div class="col-xs-6 col-sm-12 col-md-3"><br>
                                                 <label for="btncheck1">¿Requiere traductor?</label>
                                                 <input type="checkbox" id="check_lenguaje" name="traductor" autocomplete="off">
@@ -211,10 +191,10 @@
                                                     </div>
                                                 </div>
                                             </div> 
-                                            <!-- <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
+                                            <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
                                                 <h3 class="text-center" style="color:black">Contacto</h3>
-                                            </div> -->
-                                            <!-- <div class="col-xs-12 col-sm-12 col-md-4">
+                                            </div>  
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Teléfono Celular <span style="color:red;">(*)</span></label>
                                                     <input type="number" name="telefono1" minlength="10" maxlength="10" class="form-control numeroTelefonico" required>
@@ -240,8 +220,8 @@
                                                         El campo correo electrónico es obligatorio.
                                                     </div>
                                                 </div>
-                                            </div> -->
-                                            <!-- <!-- <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
                                                 <h3 class="text-center" style="color:black">Domicilio</h3>
                                             </div>
                                             
@@ -347,9 +327,9 @@
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Código Postal <span style="color:red;">(*)</span></label>
-                                                    <input type="number" name="cp" id="cp" class="form-control soloNumeros" maxlength="5" required> -->
+                                                    <input type="number" name="cp" id="cp" class="form-control soloNumeros" maxlength="5" required>
                                                     <!--<input type="number" name="cp" class="form-control soloNumeros" minlength="5" maxlength="5" required>--> 
-                                                    <!-- <div class="invalid-feedback">
+                                                    <div class="invalid-feedback">
                                                         El campo código postal es obligatorio. Debe tener 5 dígitos
                                                     </div>
                                                 </div>
@@ -381,7 +361,7 @@
                                                         El campo referencia es obligatorio.
                                                     </div>
                                                 </div>
-                                            </div> -->
+                                            </div>
                                             <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
                                                 <h3 class="text-center" style="color:black">Datos laborales</h3>
                                             </div>  
@@ -478,13 +458,8 @@
                                             <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
                                                 <h3 class="text-center" style="color:black">Documentos</h3>
                                             </div>
-  
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <div class="form-group">
-                                                    <h4 class="text-center">En caso de ser mayor de edad subir su identificación y en caso de ser menor su identificación es su Acta de Nacimiento</h4>
-                                                </div>
-                                            </div>
-                                            <!-- <div class="col-xs-12 col-sm-12 col-md-4">
+                                            
+                                            <!--<div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label>CURP/No. de Migración <span style="color:red;">(*)</span></label>
                                                     <input type="file" name="documentoCurp" class="form-control" accept=".pdf" required>
@@ -492,8 +467,13 @@
                                                         El campo curp es obligatorio.
                                                     </div>
                                                 </div>
-                                            </div> -->
-                                            <!-- <div class="col-xs-12 col-sm-12 col-md-4">
+                                            </div>-->
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <h4 class="text-center">En caso de ser mayor de edad subir su identificación y en caso de ser menor su identificación es su Acta de Nacimiento</h4>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Tipo de identificación <span style="color:red;">(*)</span></label>
                                                     <select name="identificacion" class="form-control" required>
@@ -512,8 +492,8 @@
                                                         El tipo de identificaión es obligatorio.
                                                     </div>
                                                 </div>
-                                            </div> -->
-                                            <!-- <div class="col-xs-12 col-sm-12 col-md-4">
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Núm de identificación <span style="color:red;">(*)</span> <span data-bs-toggle="modal" data-bs-target="#helpModal" style="cursor: pointer;">❓</span></label>
                                                     <input type="text" name="num_identificacion" maxlength="50" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
@@ -521,7 +501,7 @@
                                                         El campo núm. de identificación es obligatorio.
                                                     </div>
                                                 </div>
-                                            </div> -->
+                                            </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label>Subir Identificación oficial <span style="color:red;">(*)</span></label>
@@ -1172,55 +1152,4 @@
             }
             $('#años_edad').val(anios);
         }
-    </script>
-
-    <script>
-        //dependiendo del folio ingresado para el abogado indica el nombre del representante y la empresa, o una leyenda en caso de no existir
-        document.addEventListener('DOMContentLoaded', function () {
-            const folioInput = document.getElementById('folio_input');
-            const abogadoInfoDiv = document.getElementById('abogado_info');
-            let timeout = null;
-
-            const baseUrl = "{{ url('/validar_folio_abogado') }}";
-
-            folioInput.addEventListener('keyup', function () {
-                clearTimeout(timeout);
-                const folio = this.value.trim();
-                if (folio === '') {
-                    abogadoInfoDiv.textContent = '';
-                    abogadoInfoDiv.classList.remove('alert', 'alert-success', 'alert-danger');
-                    return;
-                }
-                timeout = setTimeout(() => {
-                    const finalUrl = `${baseUrl}/${folio}`;
-                    fetch(finalUrl, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest',
-                        }
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            if (response.status === 404) throw new Error('Folio no encontrado');
-                            throw new Error('Error en la petición');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        abogadoInfoDiv.classList.remove('alert-danger');
-                        abogadoInfoDiv.textContent = `Representante: ${data.nombre}`;
-                        abogadoInfoDiv.classList.add('alert', 'alert-success');
-                    })
-                    .catch(error => {
-                        abogadoInfoDiv.classList.remove('alert-success');
-                        abogadoInfoDiv.classList.add('alert', 'alert-danger');
-                        abogadoInfoDiv.textContent = (error.message === 'Folio no encontrado')
-                            ? 'El folio no existe. Por favor, verifica el número.'
-                            : 'Ocurrió un error al buscar. Inténtalo de nuevo.';
-                        console.error('Error:', error);
-                    });
-                }, 500);
-            });
-        });
     </script>

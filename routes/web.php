@@ -347,8 +347,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/agregar_solicitanteA',                [SeerController::class, 'solicitud_parte1Aux'])->name('agregaSolicitanteA');
         Route::post('guardar_solicitanteA',                 [SeerController::class, 'solicitud_parte2Aux'])->name('guardaSolicitanteA');
         Route::get('/agrega_citadoA/{id}',                  [SeerController::class, 'vista_citadoAux'])->name('agrega_citadoAux');
-        Route::post('/guardar_citadoA/{id}',                     [SeerController::class, 'guardar_citadoAux'])->name('seer.citadosAux');
-        Route::post('/finalizaAux/{id}',                     [SeerController::class, 'guardar_solicitudAux'])->name('seer.finalizaAux');
+        Route::post('/guardar_citadoA',                     [SeerController::class, 'guardar_citadoAux'])->name('seer.citadosAux');
+        Route::get('/finalizaAux/{id}',                     [SeerController::class, 'guardar_solicitudAux'])->name('seer.finalizaAux');
         Route::get('/VerpdfcumplimientoTotal/{id}',         [SeerController::class, 'VerPDFCumplimientoTotal'])->name('PDFcumplimientoTotal');
     //Fin de Solicitudes
     //PDF Solicitudes    

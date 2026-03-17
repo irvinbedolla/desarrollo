@@ -13418,101 +13418,7 @@ class SeerController extends Controller
 
     public function guardar_solicitudAux($id){
         $id_usuario = auth()->user()->id;
-        if ($id == 'session') {
-            // Recuperar datos de la sesión
-            $solicitudData = session('solicitud_data');
-            $solicitudMotivos = session('solicitud_motivos', []);
-            $solicitanteData = session('solicitante_data');
-            $citadosData = session('citados_data'/* , [] */); // Ya solo es un citado
-            $excepcionData = session('excepcion_data');
-
-            //dd($citadosData);
-
-            if (!$solicitudData || !$solicitanteData || !$citadosData) {
-                return redirect()->back()->with('error', 'No hay datos de solicitud en la sesión.');
-            }
-
-            DB::beginTransaction();
-            try {
-                // 1. Guardar SeerPerGeneral inicial
-                $general = SeerPerGeneral::create($solicitudData);
-                $id = $general->id;
-
-                $consecutivo = $general->consecutivo;
-                $delegacion = $general->delegacion;
-                
-                // 2. Guardar Motivos
-                if (!empty($solicitudMotivos)) {
-                    foreach ($solicitudMotivos as $motivoId) {
-                        SeerMotivo::create([
-                            'id_solicitud'    => $id,
-                            'id_motivo'       => $motivoId,
-                        ]);
-                    }
-                }
-
-                // 3. Guardar Solicitante
-                $solicitanteData['id_solicitud'] = $id;
-                SeerSolicitante::create($solicitanteData);
-
-                // 4. Guardar Caso Excepción (si existe)
-                if ($excepcionData) {
-                    $excepcionData['id_solicitud'] = $id;
-                    SeerCasosExcepcion::create($excepcionData);
-                }
-
-                // 5. Guardar Citados
-                /* foreach ($citadosData as $citado) { */
-                    $citadosData['id_solicitud'] = $id;
-                    SeerCitados::create($citadosData);
-                /* } */
-
-                DB::commit();
-
-                if ($id == 'session' || session()->has('solicitud_data')) {
-                    // Limpiar sesión
-                    session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
-                }
-            } catch (\Exception $e) {
-                DB::rollBack();
-                    $solicitante = session('solicitante_data', []);
-                    if (!empty($solicitante) && is_array($solicitante)) {
-                        $fileKeys = ['documentoIdentificacion', 'documentoCurp'];
-                        foreach ($fileKeys as $key) {
-                            if (!empty($solicitante[$key]) && is_string($solicitante[$key])) {
-                                $filename = basename($solicitante[$key]);
-                                $path = 'documentosSolicitud/' . $filename;
-                                if (\Storage::exists($path)) {
-                                    \Storage::delete($path);
-                                }
-                            }
-                        }
-                    }
-
-                    $citados = session('citados_data', /* [] */);
-                    if (!empty($citados) && is_array($citados)) {
-                        foreach ($citados as $citado) { 
-                            if (is_array($citado)) {
-                                foreach ($citado as $k => $v) {
-                                    if (is_string($v) && preg_match('/\.(pdf|jpg|jpeg|png)$/i', $v)) {
-                                        $filename = basename($v);
-                                        $path = 'documentosSolicitud/' . $filename;
-                                        if (\Storage::exists($path)) {
-                                            \Storage::delete($path);
-                                        }
-                                        
-                                    }
-                                }
-                            }
-                        } 
-                    }
-                    session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
-
-                return redirect()->route('solicitudes_index')->with('error', 'Ocurrió un error al finalizar la solicitud. Se descartaron los datos de captura.');
-            }
-        }
-
-        /* DB::beginTransaction();
+        DB::beginTransaction();
         try {
             if ($id == 'session') {
                 // Recuperar datos de la sesión
@@ -13604,7 +13510,7 @@ class SeerController extends Controller
                 session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
 
             return redirect()->route('solicitudes_index')->with('error', 'Ocurrió un error al finalizar la solicitud. Se descartaron los datos de captura.');
-        } */
+        }
 
         $delegacion = SeerPerGeneral::find($id);
         // 1. Carga de relaciones necesarias (Eager Loading para evitar múltiples consultas)
@@ -13806,7 +13712,7 @@ class SeerController extends Controller
 
     public function solicitud_parte2Aux(Request $request){
         $data = $request->all();
-        $id_solicitud = $data['id'];
+        $id = $data['id'];
 
         //validando información
        /*$request->validate([
@@ -13856,49 +13762,10 @@ class SeerController extends Controller
             'incidencia_directa' => 'required_if:solicito_apoyo,Si',
             'recibio_atencion' => 'required_if:excepcion,Si',
         ]);*/
-
-        if (empty($data['folio'])) {
-            return back()->withErrors(['folio' => 'El folio es obligatorio'])->withInput();
-        }
         
-        $poder = Poder::find($data['folio']);
-
-        if (!$poder) {
-            return back()->withErrors(['folio' => 'El folio ingresado no existe'])->withInput();
-        }
-
-        $nombreCompleto = trim(
-            ($poder->nombres_patronal ?? '') . ' ' .
-            ($poder->primer_apellido_patronal ?? '') . ' ' .
-            ($poder->segundo_apellido_patronal ?? '')
-        );
-        $data['nombre'] = preg_replace('/\s+/', ' ', $nombreCompleto);
-
-         // Conversión de sexo
-        $sexoMap = [
-            'Femenino' => 'M',
-            'Masculino' => 'H',
-            'Prefiero no responder' => 'NC'
-        ];
-        $sexoMapeado = $sexoMap[$poder['sexo_representante']] ?? 'NC';
-
-        // Conversión de identificación
-        $idenMap = [
-            'Credencial de Elector' => 'Credencial de elector',
-            'Pasaporte' => 'Pasaporte',
-            'Cédula Profesional' => 'Cédula profesional',
-            'Licencia de Conducir' => 'Licencia de conducir',
-            'Otros' => 'Otros',
-            'Credencial de INAPAM' => 'Credencial de inapam',
-            'Cartilla Militar' => 'Cartilla militar',
-            'Documento Migratorio' => 'Documento migratorio',
-            'Constancia de Identidad' => 'Constancia de identidad'
-        ];
-        $idenMapeado = $idenMap[$poder['tipo_identificacion']] ?? 'Otros';
-        
-        /* $data_insert=array(
+        $data_insert=array(
             'id_solicitud'         => $data["id"],
-            //'tipo_persona'         => $data["tipo"],
+            /*'tipo_persona'         => $data["tipo"],*/
             'curp'                 => $data["curp"],
             'nombre'               => $data["nombre"],
             'fecha_nacimiento'     => $data["fecha_nacimiento"],
@@ -13915,9 +13782,9 @@ class SeerController extends Controller
             'colonia'              => $data["colonia_solicitante"],
             'municipio_domicilio'  => $data["municipio_solicitante"],
             'codigo_postal'        => $data["cp"],
-            //'referencia'           => $data["referencias"],
-            //'calle2'               => $data["calle1"],
-            //'calle3'               => $data["calle2"],
+            /*'referencia'           => $data["referencias"],
+            'calle2'               => $data["calle1"],
+            'calle3'               => $data["calle2"],*/
             'puesto'               => $data["puesto"],
             'pago'                 => $data["pago"],
             'periodo_pago'         => $data["periodo_pago"],
@@ -13927,63 +13794,11 @@ class SeerController extends Controller
             'identificacion'       => $data["identificacion"],
             'num_identificacion'   => $data["num_identificacion"],
             'descripcionSolicitud' => $data["descripcionSolicitud"],
-        ); */
+        ); 
 
-        $data_insert = [
-            // --- DATOS OBTENIDOS DEL REGISTRO DEL PODER ($poder) ---
-            'curp'                => $poder['curp_representante'],
-            'nombre'              => $nombreCompleto,
-            'sexo'                => $sexoMapeado,
-            'email'               => $poder['correo_representante'],
-            'telefono1'           => $poder['numero_representante'],
-            'identificacion'      => $idenMapeado,
-            'num_identificacion'  => $poder['num_identificacion'],
-            'estado_domicilio'    => $poder['estado_patronal'],
-            'estado'              => $poder['estado_patronal'],
-            'municipio_domicilio' => $poder['municipio_patronal'],
-            'tipo_vialidad'       => $poder['tipo_vialidad_patronal'],
-            'calle'               => $poder['vialidad_patronal'],
-            'num_ext'             => $poder['num_ext_patronal'],
-            'num_int'             => $poder['mun_int_patronal'], // Puede ser NULL
-            'colonia'             => $poder['colonia_patronal'],
-            'codigo_postal'       => $poder['cp_patronal'],
-            'rfc'                 => $poder['rfc_patronal'],
-
-            // --- DATOS OBTENIDOS DEL FORMULARIO ($data) ---
-            // Campos Obligatorios
-            'id_solicitud'        => $id_solicitud,
-            'nacionalidad'        => $data['nacionalidad'],
-            'fecha_nacimiento'    => $data['fecha_nacimiento'],
-            'edad'                => $data['edad'],
-            'puesto'              => $data['puesto'],
-            'pago'                => $data['pago'],
-            'horas_semana'        => $data['horas'],
-            'fecha_ingreso'       => $data['fecha_ingreso'],
-            'descripcionSolicitud'=> $data['descripcionSolicitud'],
-            'jornada'             => $data['jornada'],
-            'traductor'           => $data['traductor'] ?? 'No', //Usar 'No' si no viene
-            'discapacidad'        => $data['discapacidad'] ?? 'No', // Usar 'No' si no viene
-            'labora'              => $data['labora'] ?? 'No', // Usar 'No' si no viene
-
-            // Campos Opcionales (usar el operador de fusión de null ?? para seguridad)
-            'tipo_persona'        => $data['tipo_persona'] ?? null,
-            'lenguaje'            => $data['lenguaje'] ?? null,
-            'tipo_discapacidad'   => $data['tipo_discapacidad'] ?? null,
-            'telefono2'           => $data['telefono2'] ?? null,
-            'referencia'          => $data['referencia'] ?? null,
-            'calle2'              => $data['calle2'] ?? null,
-            'calle3'              => $data['calle3'] ?? null,
-            'nss'                 => $data['nss'] ?? null,
-            'periodo_pago'        => $data['periodo_pago'] ?? null,
-            'fecha_salida'        => $data['fecha_salida'] ?? null,
-            
-            // Campos de documentos (se llenarán si se suben archivos)
-            'documentoCurp'           => $data['documentoCurp'] ?? null,
-            'documentoIdentificacion' => $data['documentoIdentificacion'] ?? null,
-        ];
-        /* if(isset($data["rfc"])){
+        if(isset($data["rfc"])){
             $data_insert["rfc"] =  $data["rfc"];
-        } */
+        }
         if(isset($data["traductor"])){
             $val = $data["traductor"];
             $requires = ($val === 'Si' || $val === '1' || $val === 1 || $val === 'on' || $val === true);
@@ -13998,9 +13813,9 @@ class SeerController extends Controller
                 $data_insert["lenguaje"] = null;
             }
         }
-        /* if(isset($data["numInt"])){
+        if(isset($data["numInt"])){
             $data_insert["num_int"] =  $data["numInt"];
-        } */
+        }
         if(isset($data["discapacidad"])){
             $data_insert["discapacidad"] =  "Si";
             $data_insert["tipo_discapacidad"] =  $data["tipo_discapacidad"];
@@ -14009,16 +13824,16 @@ class SeerController extends Controller
             $data_insert["labora"] =  "Si";
             //$data_insert["fecha_salida"]  =  $data["fecha_salida"];
         }
-        /* if(isset($data["telefono2"])){
+        if(isset($data["telefono2"])){
             $data_insert["telefono2"] =  $data["telefono2"];
-        } */
+        }
         if(isset($data["seguro"])){
             $data_insert["nss"] =  $data["seguro"];
         }
         if(isset($data["fecha_salida"])){
             $data_insert["fecha_salida"] =  $data["fecha_salida"];
         }
-        /* if(isset($data["referencias"])){
+        if(isset($data["referencias"])){
             $data_insert["referencia"] =  $data["referencias"];
         }
         if(isset($data["calle1"])){
@@ -14026,32 +13841,28 @@ class SeerController extends Controller
         }
         if(isset($data["calle2"])){
             $data_insert["calle3"] =  $data["calle2"];
-        }  */
-        
+        } 
         //CURP
-        /* $documento = $data["curp"]."_CURP.pdf"; */
+        $documento = $data["curp"]."_CURP.pdf";
         /*$path = Storage::putFileAs(
             'documentosSolicitud', $request->file('documentoCurp'), $documento
         );*/
         //Acta de nacimiento
         if(isset($data["documentoIdentificacion"])){
-            $documentoidentificacion = $data_insert["curp"]."_Identificacion.pdf";
+            $documentoidentificacion = $data["curp"]."_Identificacion.pdf";
             $path = Storage::putFileAs(
                 'documentosSolicitud', $request->file('documentoIdentificacion'), $documentoidentificacion
-            );
-            $data_insert["documentoIdentificacion"] = $documentoidentificacion; // Guardar solo el nombre
-
+        );
         }
         else{
-            /* $documentoidentificacion = $data["curp"]."_Acta.pdf";
+            $documentoidentificacion = $data["curp"]."_Acta.pdf";
             $path = Storage::putFileAs(
                 'documentosSolicitud', $request->file('documentoActa'), $documentoidentificacion
-            ); */
-            $data_insert["documentoIdentificacion"] = null;
+            );
         }
 
         //$data_insert["documentoCurp"] = $documento;
-        /*$data_insert["documentoIdentificacion"] = $documentoidentificacion; */
+        $data_insert["documentoIdentificacion"] = $documentoidentificacion;
        
         // SeerSolicitante::create($data_insert);
         // SeerPerGeneral::where('id', $id)
@@ -14093,7 +13904,7 @@ class SeerController extends Controller
         
         //return view('solicitudes.aviso',compact('folio'));
         if($tipo_generacion != 0){*/
-        return redirect()->route('agrega_citadoAux', ['id' => $id_solicitud] );
+            return redirect()->route('agrega_citadoAux', ['id' => $id] );
         //}
         //$estados=Estados::all();
         //return redirect()->route('agregar_citado', ['id' => $id] ); 
@@ -14101,15 +13912,10 @@ class SeerController extends Controller
     public function vista_citadoAux($id){
         $estados = Estados::all();
         $municipios = Municipios::all();
-        /* $session_notificacion = session('citados_data.0.notificacion'); */
-
-        // citados_data ahora es un solo registro (array asociativo)
-        $session_notificacion = session('citados_data.notificacion');
+        $session_notificacion = session('citados_data.0.notificacion');
         
         if ($id == 'session') {
-            /* $citados = count(session('citados_data', [])); */
-            // si existe un citado en sesión, el conteo es 1
-            $citados = session()->has('citados_data') ? 1 : 0;
+            $citados = count(session('citados_data', []));
         } else {
             $citados = SeerCitados::where('id_solicitud', $id)->count(); //LLeva el conteo de los citados agregados
         }
@@ -14125,7 +13931,7 @@ class SeerController extends Controller
         /*}
         return view('solicitudes.citados',compact('estados','id','citados','municipios'));*/
     }
-    public function guardar_citadoAux(Request $request, $id){
+    public function guardar_citadoAux(Request $request){
         $data = $request->all();
         $imagen_domicilio1 = "Sin documento";
         $imagen_domicilio2 = "Sin documento";
@@ -14182,9 +13988,7 @@ class SeerController extends Controller
         }*/
         
         //dd($valor);
-        /* $data_insert["notificacion"] = session('citados_data.0.notificacion', $data['notificacion'] ?? null); */
-
-        $data_insert["notificacion"] = session('citados_data.notificacion', $data['notificacion'] ?? null);
+        $data_insert["notificacion"] = session('citados_data.0.notificacion', $data['notificacion'] ?? null);
         
 
         if(isset($data["rfc"])){
@@ -14242,20 +14046,20 @@ class SeerController extends Controller
         //Se van a generar el citatorio
         $data_insert['resulte_responsable'] = 'No';
         
-        /* if ($data["id"] == 'session') {
+        if ($data["id"] == 'session') {
             $citados = session('citados_data', []);
             $citados[] = $data_insert;
             session(['citados_data' => $citados]);
         } else {
             SeerCitados::create($data_insert); 
-        } */
+        }
         /*$checando = session()->get('citados_data');
         dd($checando);*/
         
         // Si es persona física, elimina los apellidos para este citado
-        /* if (isset($data["tipo"]) && $data["tipo"] === "Fisica") {
+        if (isset($data["tipo"]) && $data["tipo"] === "Fisica") {
             unset($data_insert["primer_apellido"], $data_insert["segundo_apellido"]);
-        } */
+        }
 
         $municipio = Municipios::find($data["municipio_citado"]); 
         $estado = Estados::find($data["estado_citado"]);
@@ -14275,7 +14079,7 @@ class SeerController extends Controller
         $data_insert['resulte_responsable'] = 'Si';
         $direccionNombre = $data_insert["nombre"];
         
-        /* if ($data["id"] == 'session') {
+        if ($data["id"] == 'session') {
             $citados = session('citados_data', []);
             $existe = false;
             foreach ($citados as $citado) {
@@ -14296,14 +14100,8 @@ class SeerController extends Controller
             if (!$existe) {
                 SeerCitados::create($data_insert);
             }
-        } */
-
-        // Guardar en sesión el citado
-        session(['citados_data' => $data_insert]);
-
-        /* return back()->with('success', 'Citado agregado correctamente, puedes agregar otro o continuar.'); */
-
-        return $this->guardar_solicitudAux($id);
+        }
+        return back()->with('success', 'Citado agregado correctamente, puedes agregar otro o continuar.');
     }
     
     //PDF Notificación de multa cuando es exitosa
@@ -14791,7 +14589,7 @@ class SeerController extends Controller
         ];
         $idenMapeado = $idenMap[$poder['tipo_identificacion']] ?? 'Otros';
 
-        $data_insert = [
+        $data_solicitante = [
             // --- DATOS OBTENIDOS DEL REGISTRO DEL PODER ($poder) ---
             'curp'                => $poder['curp_representante'],
             'nombre'              => $nombreCompleto,
@@ -14844,64 +14642,29 @@ class SeerController extends Controller
             'documentoIdentificacion' => $data['documentoIdentificacion'] ?? null,
         ];
 
-        if(isset($data["traductor"])){
+        // Manejo de traductor
+        if (isset($data["traductor"])) {
             $val = $data["traductor"];
-            $requires = ($val === 'Si' || $val === '1' || $val === 1 || $val === 'on' || $val === true);
-            $data_insert["traductor"] = $requires ? 1 : 0;
-            if (isset($data["lenguaje"])) {
-                if (is_array($data["lenguaje"])) {
-                    $data_insert["lenguaje"] = $data["lenguaje"][0] ?? null;
-                } else {
-                    $data_insert["lenguaje"] = $data["lenguaje"] ?? null;
-                }
-            } else {
-                $data_insert["lenguaje"] = null;
-            }
+            $data_solicitante["traductor"] = ($val === 'Si' || $val === '1' || $val === 'on') ? 'Si' : 'No';
+            $data_solicitante["lenguaje"] = $data["lenguaje"] ?? null;
         }
-        if(isset($data["discapacidad"])){
-            $data_insert["discapacidad"] =  "Si";
-            $data_insert["tipo_discapacidad"] =  $data["tipo_discapacidad"];
-        }
-        if(isset($data["labora"])){
-            $data_insert["labora"] =  "Si";
-            //$data_insert["fecha_salida"]  =  $data["fecha_salida"];
-        }
-        if(isset($data["seguro"])){
-            $data_insert["nss"] =  $data["seguro"];
-        }
-        if(isset($data["fecha_salida"])){
-            $data_insert["fecha_salida"] =  $data["fecha_salida"];
-        }
-
-        /* if(isset($data["documentoIdentificacion"])){
-            $documentoidentificacion = $data["curp"]."_Identificacion.pdf";
-            $path = Storage::putFileAs(
-                'documentosSolicitud', $request->file('documentoIdentificacion'), $documentoidentificacion
-        );
-        }
-        else{
-            $documentoidentificacion = $data["curp"]."_Acta.pdf";
-            $path = Storage::putFileAs(
-                'documentosSolicitud', $request->file('documentoActa'), $documentoidentificacion
-            );
-        } */
 
         /*$solicitante_data = [
-            'solicitante' => $data_insert,
+            'solicitante' => $data_solicitante,
             'excepcion' => $data["excepcion"],
             'excepcion_data' => $excepcion_data
         ];*/
         
-        session(['solicitante_trabajador_data' => $data_insert]);
+        session(['solicitante_trabajador_data' => $data_solicitante]);
        
-        /* $data_citado = [
+        $data_citado = [
             'id_solicitud'      => $id_solicitud,
             'tipo_persona'      => $poder->tipo,
             'estatus'           => 'Pendiente',
             'id_abogado'        => $poder->idAbogado,
             //'notificacion'      => 'Centro',
             'tipo_notificacion' => 'Citatorio'
-        ]; */
+        ];
 
         //SeerCitados::create($data_citado);
 

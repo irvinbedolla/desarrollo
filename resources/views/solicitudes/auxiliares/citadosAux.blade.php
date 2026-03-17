@@ -85,12 +85,11 @@
                                 <p><span style="color:red;">*</span> Debes capturar al menos un citado</p>
 
                                 <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                <form class="needs-validation" novalidate id="form_concluir" method="POST" action="{{ route('seer.citadosAux', ['id' => $id]) }}" enctype="multipart/form-data">
+                                <form class="needs-validation" novalidate id="form_concluir" method="POST" action="{{route('seer.citadosAux')}}" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" name="id" value="{{ $id }}">
                                     <div class="row" id="div_datos_citado">
-                                        <input type="hidden" name="tipo" value="Fisica">
-                                        <!-- <div class="col-xs-12 col-sm-12 col-md-2">
+                                        <div class="col-xs-12 col-sm-12 col-md-2">
                                             <div class="form-group">
                                                 <label for="name">Tipo de persona <span style="color:red;">(*)</span></label>
                                                 <select name="tipo" id="tipo" class="form-control" required>
@@ -102,7 +101,7 @@
                                                     El tipo de persona es obligatorio.
                                                 </div>
                                             </div>
-                                        </div> -->
+                                        </div>
 
                                         <div class="col-xs-12 col-sm-12 col-md-2" id="campo_curp">
                                             <div class="form-group">
@@ -371,13 +370,15 @@
                                     </div>
 
                                     <div class="col-xs-12 col-sm-12 col-md-12">
-                                        <div style="display:flex; justify-content:flex-end; gap:12px; align-items:center; width:100%;">
-                                            <!-- <div>
+                                        <div style="display:flex; justify-content:space-between; gap:12px; align-items:center; width:100%;">
+                                            <div>
                                                 <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;" id="btn-add-citado">Agregar Citado</button>
-                                            </div> -->
+                                            </div>
                                             <div style="display:flex; flex-direction:column; align-items:flex-end;">
-                                                <button type="submit" id="btn-conclude" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Concluir solicitud</button>
-                                                <!-- <div id="conclude-warning" class="text-danger" style="display:none; margin-top:6px;">Guarde el citado antes de concluir</div> -->
+                                                @if($citados > 0)
+                                                    <a href="{{ route('seer.finalizaAux',$id) }}" id="btn-conclude" class="btn btn-success" style=" background-color:#CEA845;border-color:#CEA845;">Concluir solicitud</a>
+                                                    <div id="conclude-warning" class="text-danger" style="display:none; margin-top:6px;">Guarde el citado antes de concluir</div>
+                                                @endif
                                             </div>
                                        </div>
                                     </div>    
@@ -591,8 +592,8 @@
     @yield('scripts')
     <script src="../public/assets/js/validaciones.js"></script> 
     <script>
-        /* 
-        $(function(){
+        
+       /* $(function(){
             $('#check_datos').on('change', mostrarDatos);
             console.log("llego");
         })
@@ -607,176 +608,74 @@
                 document.getElementById("div_datos_citado").style.display = "none";
             }
         }*/
-        document.addEventListener('DOMContentLoaded', function () {
-            //const selectTipo = document.getElementById('tipo');
-            const nombreDiv = document.getElementById('tipoPersona_nombre');
-            //const razonDiv = document.getElementById('tipoPersona_razon');
-            const curpDiv = document.getElementById('campo_curp');
-            //const form = document.querySelector('form.needs-validation');
+    document.addEventListener('DOMContentLoaded', function () {
+    const selectTipo = document.getElementById('tipo');
+    const nombreDiv = document.getElementById('tipoPersona_nombre');
+    const razonDiv = document.getElementById('tipoPersona_razon');
+    const curpDiv = document.getElementById('campo_curp');
+    const form = document.querySelector('form.needs-validation');
 
-            //function actualizarTipoPersona() {
-            //if (!selectTipo) return;
-            //const valor = selectTipo.value;
+    function actualizarTipoPersona() {
+        if (!selectTipo) return;
+        const valor = selectTipo.value;
 
-            /* if (nombreDiv) nombreDiv.style.display = (valor === 'Fisica') ? 'block' : 'none';
-            if (curpDiv) curpDiv.style.display = (valor === 'Fisica') ? 'block' : 'none'; */
-            if (nombreDiv) nombreDiv.style.display = 'block';
-            if (curpDiv) curpDiv.style.display = 'block';
-            //if (razonDiv) razonDiv.style.display = (valor === 'Moral') ? 'block' : 'none';
-            //}
+        if (nombreDiv) nombreDiv.style.display = (valor === 'Fisica') ? 'block' : 'none';
+        if (curpDiv) curpDiv.style.display = (valor === 'Fisica') ? 'block' : 'none';
+        if (razonDiv) razonDiv.style.display = (valor === 'Moral') ? 'block' : 'none';
+    }
 
-            // Reset required state
-            const inputNombre = document.querySelector('input[name="nombre"]');
-            const inputPrimer = document.querySelector('input[name="primer_apellido"]');
-            const inputSegundo = document.querySelector('input[name="segundo_apellido"]');
-            const inputRazon = document.querySelector('input[name="razon"]');
+    if (selectTipo) {
+        selectTipo.addEventListener('change', actualizarTipoPersona);
+        actualizarTipoPersona(); 
+    }
 
-            // Persona física: pedir nombre y primer apellido (segundo opcional), mostrar CURP
-            if (inputNombre) inputNombre.required = true;
-            if (inputPrimer) inputPrimer.required = true;
-            if (inputSegundo) inputSegundo.required = false;
-            if (inputRazon) inputRazon.required = false;
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            let esValido = true;
+            const tipo = selectTipo ? selectTipo.value : '';
 
-            // Se elimina el listener del select ya que solo existe Tipo de persona Física
+            const inputNombre = document.getElementById('nombre');
+            const inputApellido = document.querySelector('input[name="primer_apellido"]');
+            const inputRazon = document.getElementById('razon');
+            const inputCP = document.getElementById('cp');
 
-            /* if (selectTipo) {
-                selectTipo.addEventListener('change', actualizarTipoPersona);
-                actualizarTipoPersona(); 
-            } */
+            [inputNombre, inputApellido, inputRazon, inputCP].forEach(el => el?.classList.remove('is-invalid'));
 
-            const form = document.querySelector('form.needs-validation');
-            form.addEventListener('submit', function(e) {
-
-                const checkLanguage = document.getElementById('check_lenguaje');
-                if (checkLanguage.checked) {
-                    const languageRequired = document.getElementById('lenguajeRequerido');
-                    languageRequired.required = true;
+            if (inputCP) {
+                if (inputCP.value.length !== 5) {
+                    console.log("Fallo en CP");
+                    inputCP.classList.add('is-invalid');
+                    swal("Error", "El Código Postal debe tener 5 dígitos", "error");
+                    esValido = false;
                 }
-                else {
-                    const languageRequired = document.getElementById('lenguajeRequerido');
-                    languageRequired.required = false;
-                }
-            });
-
-            /* if (form) {
-                form.addEventListener('submit', function (e) {
-                    let esValido = true;
-                    const tipo = selectTipo ? selectTipo.value : '';
-
-                    const inputNombre = document.getElementById('nombre');
-                    const inputApellido = document.querySelector('input[name="primer_apellido"]');
-                    const inputRazon = document.getElementById('razon');
-                    const inputCP = document.getElementById('cp');
-
-                    [inputNombre, inputApellido, inputRazon, inputCP].forEach(el => el?.classList.remove('is-invalid'));
-
-                    if (inputCP) {
-                        if (inputCP.value.length !== 5) {
-                            console.log("Fallo en CP");
-                            inputCP.classList.add('is-invalid');
-                            swal("Error", "El Código Postal debe tener 5 dígitos", "error");
-                            esValido = false;
-                        }
-                    }
-
-                    if (tipo === 'Fisica') {
-                        if (!inputNombre?.value.trim() || !inputApellido?.value.trim()) {
-                            console.log("Fallo en campos de Persona Física");
-                            if (!inputNombre?.value.trim()) inputNombre?.classList.add('is-invalid');
-                            if (!inputApellido?.value.trim()) inputApellido?.classList.add('is-invalid');
-                            swal("Error", "Nombre y Apellido son obligatorios", "warning");
-                            esValido = false;
-                        }
-                    } else if (tipo === 'Moral') {
-                        if (!inputRazon?.value.trim()) {
-                            console.log("Fallo en Razón Social");
-                            inputRazon?.classList.add('is-invalid');
-                            swal("Error", "La Razón Social es obligatoria", "warning");
-                            esValido = false;
-                        }
-                    }
-
-                    if (!esValido) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                    } else {
-                    
-                        if (typeof loading === 'function') loading();
-                    }
-                }, false);    
-            } */
-        });
-    </script>
-    <script>
-        // Deshabilitar el botón "Concluir solicitud" hasta que todos los campos obligatorios estén llenos
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.querySelector('form.needs-validation');
-            const conclude = document.getElementById('btn-conclude');
-            //const concludeWarning = document.getElementById('conclude-warning');
-            if (!form || !conclude) return;
-
-            function updateConcludeState() {
-                try {
-                    // Obtener todos los campos obligatorios (required)
-                    const requiredFields = form.querySelectorAll('[required]');
-                    let allFilled = true;
-
-                    requiredFields.forEach(function (field) {
-                        if (!field) return;
-                        
-                        const fieldType = (field.type || '').toLowerCase();
-                        const tagName = field.tagName.toLowerCase();
-
-                        if (tagName === 'select') {
-                            if (!field.value || field.value === '') {
-                                allFilled = false;
-                            }
-                        } else if (fieldType === 'checkbox' || fieldType === 'radio') {
-                            if (!field.checked) {
-                                allFilled = false;
-                            }
-                        } else if (fieldType === 'file') {
-                            if (!field.files || field.files.length === 0) {
-                                allFilled = false;
-                            }
-                        } else if (tagName === 'textarea') {
-                            if (!field.value || field.value.trim() === '') {
-                                allFilled = false;
-                            }
-                        } else {
-                            if (!field.value || field.value.trim() === '') {
-                                allFilled = false;
-                            }
-                        }
-                    });
-
-                    // Si NO todos los campos están llenos, deshabilitar el botón
-                    if (!allFilled) {
-                        conclude.classList.add('btn-disabled');
-                        conclude.setAttribute('aria-disabled', 'true');
-                        //conclude.style.pointerEvents = 'none';
-                        //conclude.style.opacity = '0.5';
-                    } else {
-                        conclude.classList.remove('btn-disabled');
-                        conclude.removeAttribute('aria-disabled');
-                        //conclude.style.pointerEvents = 'auto';
-                        //conclude.style.opacity = '1';
-                    }
-                } catch (err) { console.warn('updateConcludeState', err); }
             }
 
-            updateConcludeState();
-
-            form.addEventListener('input', updateConcludeState);
-            form.addEventListener('change', updateConcludeState);
-
-            conclude.addEventListener('click', function (e) {
-                if (conclude.getAttribute('aria-disabled') === 'true') {
-                    e.preventDefault();
-                    return false;
+            if (tipo === 'Fisica') {
+                if (!inputNombre?.value.trim() || !inputApellido?.value.trim()) {
+                    console.log("Fallo en campos de Persona Física");
+                    if (!inputNombre?.value.trim()) inputNombre?.classList.add('is-invalid');
+                    if (!inputApellido?.value.trim()) inputApellido?.classList.add('is-invalid');
+                    swal("Error", "Nombre y Apellido son obligatorios", "warning");
+                    esValido = false;
                 }
-            });
-        });
+            } else if (tipo === 'Moral') {
+                if (!inputRazon?.value.trim()) {
+                    console.log("Fallo en Razón Social");
+                    inputRazon?.classList.add('is-invalid');
+                    swal("Error", "La Razón Social es obligatoria", "warning");
+                    esValido = false;
+                }
+            }
+
+            if (!esValido) {
+                e.preventDefault();
+                e.stopPropagation();
+            } else {
+            
+                if (typeof loading === 'function') loading();
+            }
+        }, false);    }
+    });
     </script>
 @endsection
 @endsection
