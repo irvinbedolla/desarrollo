@@ -50,9 +50,9 @@
             <a class="nav-link" href="{{ route('index_ratificacion') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Ratificaciones</span>
             </a>
-            <a class="nav-link" href="{{ route('audiencias.cumplimiento') }}">
+            <!--a class="nav-link" href="{{ route('audiencias.cumplimiento') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" >Cumplimientos</span>
-            </a>
+            </!--a-->
             <a class="nav-link" href="{{ route('notificaciones') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Por Notificar</span>
             </a>
@@ -123,9 +123,9 @@
             <a class="nav-link" href="{{ route('solicitudes_index') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Solicitudes</span>
             </a>
-            <a class="nav-link" href="{{ route('audiencias.cumplimiento') }}">
+            <!--a class="nav-link" href="{{ route('audiencias.cumplimiento') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" >Cumplimientos</span>
-            </a>
+            </!--a-->
             <a class="nav-link" href="{{ route('index_ratificacion') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Ratificaciones</span>
             </a>
@@ -162,9 +162,9 @@
              <a class="nav-link" href="{{ route('solicitudes_index') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" onclick="consultar_estadistica()">Solicitudes</span>
             </a>
-            <a class="nav-link" href="{{ route('audiencias.cumplimiento') }}">
+            <!--a class="nav-link" href="{{ route('audiencias.cumplimiento') }}">
                 <i class="bi bi-file-person"></i><span class="text-dark" >Cumplimientos</span>
-            </a>
+            </a-->
             <a class="nav-link" href="{{ route('index_ratificacion') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Ratificaciones</span>
             </a>
