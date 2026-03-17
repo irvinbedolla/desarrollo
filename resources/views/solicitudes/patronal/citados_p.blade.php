@@ -504,7 +504,7 @@
                                                         @endif
                                                     </div-->
                                                     <div style="display:flex; flex-direction:column; align-items:flex-end;">
-                                                        <button type="submit" id="btn-conclude" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Concluir solicitud</a>
+                                                        <button type="submit" id="btn-conclude" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Concluir solicitud</button>
                                                         <!--div id="conclude-warning" class="text-danger" style="display:none; margin-top:6px;">Guarde el citado antes de concluir</div-->
                                                     </div>
                                                 </div>
