@@ -71,9 +71,9 @@
             <a class="nav-link" href="{{ route('create_asesoria') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Asesorias</span>
             </a>
-            <a class="nav-link" href="{{ route('incidencias.busqueda.index') }}">
+            <!--a class="nav-link" href="{{ route('incidencias.busqueda.index') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Incidencias</span>
-            </a>
+            </!--a-->
         @endrole
     @endauth
 
@@ -234,9 +234,9 @@
             <a class="nav-link" href="{{ route('create_asesoria') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Asesorias</span>
             </a>
-            <a class="nav-link" href="#">
+            <!--a class="nav-link" href="#">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Incidencias</span>
-            </a>
+            </!--a-->
         @endrole
     @endauth
 
