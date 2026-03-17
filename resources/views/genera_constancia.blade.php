@@ -98,6 +98,72 @@
             background-color: #530c3a !important;
             color: #fff !important;
         }
+         body {
+            background-color: #f4f6f9;
+            padding-top: 100px; /* Espacio para el navbar fijo */
+        }
+
+        /* Navbar Responsivo */
+        .navbar-custom {
+            background-color: var(--color-fondo) !important;
+            border-bottom: 3px solid var(--color-dorado);
+            padding: 10px 0;
+        }
+
+        .navbar-brand img {
+            max-height: 180px;
+            width: auto;
+            transition: all 0.3s ease;
+        }
+        .navbar-brand {
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Loader */
+        .loader-container {
+            position: fixed;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            z-index: 99999;
+            background: rgba(255,255,255, 0.9);
+            display: none; /* Oculto por defecto */
+        }
+
+        .loader-img {
+            position: absolute;
+            left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+        }
+
+        /* Estilos de Card y Formulario */
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .header-registro {
+            background-color: #D2D3D5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        /* Ajustes Móviles */
+        @media (max-width: 768px) {
+            body { padding-top: 105px; }
+            .navbar-brand img { max-height: 75px; }
+            h4 { font-size: 1.1rem; }
+            .col-md-4 { margin-bottom: 15px; }
+        }
     </style>
     @livewireStyles
 
@@ -106,11 +172,14 @@
     <link rel="stylesheet" href="public/assets/css/components.css">
     @yield('page_css')
 </head>
-<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-    <div class="">
-        <img src="public/assets/images/registro-foro-nacional-consolidacion-justicia-laboral.png" class="img" width="260" height="90">
+<nav class="navbar navbar-light fixed-top navbar-custom">
+    <div class="container justify-content-center">
+        <a class="navbar-brand m-0" href="https://foro-nacional.cclmichoacan.gob.mx/">
+            <img src="public/assets/images/registro-foro-nacional-consolidacion-justicia-laboral.png" alt="Logo Foro Nacional">
+        </a>
     </div> 
 </nav>
+
 <body onload="validarcheckfolio()">
     <main>
         <div class="container">
@@ -142,7 +211,7 @@
                                     </div>
                                 @endif
                                 <div style="background-color:#D2D3D5; width:100%; height:40px;">
-                                    <h3 class="text-center" style="color:black">Genera tu constancia</h3>
+                                    <h3 class="text-center" style="color:black">Genera tu constancia</h3> 
                                 </div>
                                 <form method="POST" action="{{ route('generaConstancia') }}" id="formConstancia">
                                     @csrf
@@ -159,6 +228,7 @@
                                                 <option value="Genera">Generar Constancia</option>
                                             </select>
                                         </div>
+                                        <center><p>Si no recibiste un <b>folio</b> en el correo eléctronico que ingresaste en tu registro, envia un correo con tu nombre completo a la siguiente dirección <b>aleal@cclmichoacan.gob.mx</b> solicitando tu folio.</p></center>
                                     </div>
                                 </form>
                             </div>
