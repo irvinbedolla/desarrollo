@@ -12122,10 +12122,10 @@ class SeerController extends Controller
         }
         // Si es Super Usuario o Admin, no se agregan filtros adicionales (ve todo)
     
-        // 4. Ejecutar consulta (Límite 500)
+        //$audiencias = $query->orderBy('created_at', 'desc')->paginate(50);
         $audiencias = $query->orderBy('created_at', 'desc')->limit(2000)->get();
         
-        // 5. Procesar resultados (Formateo)
+        //$audiencias->through(function ($audiencia) {
         $audiencias->transform(function ($audiencia) {
             $audiencia->estatus_modelo = $audiencia->estatus;
             
@@ -12202,7 +12202,7 @@ class SeerController extends Controller
 
         return view('ratificaciones.ratificaciones_todas', compact('solicitudes', 'userRole'));
     }
-    
+
     public function todos_complimientos(){
         $id = auth()->user()->id;
         $user = User::find($id);
@@ -14215,8 +14215,10 @@ class SeerController extends Controller
         // Usamos 'solicitante:id,id_solicitud,nombre' para traer solo las columnas necesarias
         $query = SeerPerGeneral::with('solicitante:id,id_solicitud,nombre')
             ->where('estatus', '!=', 'Pendiente')
-            ->whereNull('incidencia')
-            ->orWhere('incidencia', 0)
+            ->where(function ($q) {
+                $q->whereNull('incidencia')
+                    ->orWhere('incidencia', 0);
+            })
             ->orderBy('created_at', 'desc')
             ->limit(1500);
     
