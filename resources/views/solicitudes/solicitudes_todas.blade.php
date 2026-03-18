@@ -10,6 +10,17 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
+                            <div class="row">
+                                <form method="GET" action="{{ route('todas_solicitudes') }}" class="mb-3">
+                                    <div class="input-group" style="max-width: 600px; float: right;">
+                                        <input type="text" name="search" class="form-control" placeholder="Buscar por NUE, solicitante, citados, Actividad Económica o Estatus..." value="{{ $searchTerm ?? '' }}">
+                                        <button class="btn btn-primary" type="submit">Buscar</button>
+                                        @if(isset($searchTerm))
+                                            <a href="{{ route('todas_solicitudes') }}" class="btn btn-danger">Limpiar</a>
+                                        @endif
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </form>
                              <div class="table-responsive">
                                     <table id="example" class="table table-striped mt-1">
                                     <thead style="background-color: #4A001F;">
@@ -203,8 +214,8 @@
                                 </table>
                             </div>
                             <!-- Centramos la paginación a la derecha-->
-                            <div class="pagination justify-content-end">
-                               
+                            <div class="d-flex justify-content-end mt-3">
+                                {{ $solicitudes->withQueryString()->links('pagination::bootstrap-5') }}
                             </div>                        
                         </div>
                     </div>
@@ -335,6 +346,17 @@
                     }
                 });
              });
+        });
+
+        $('#example').DataTable({
+            paging: false,
+            info: false,
+            lengthChange: false,
+            searching: false,
+            ordering: false,
+            dom: 'ft',
+            responsive: true,
+            destroy: true
         });
 
         $(document).on('click', '.open-expediente-modal', function() {

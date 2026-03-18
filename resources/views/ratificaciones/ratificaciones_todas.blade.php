@@ -12,6 +12,16 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
+                                <form method="GET" action="{{ route('todas_ratificaciones') }}" class="mb-3">
+                                    <div class="input-group" style="max-width: 600px; float: right;">
+                                        <input type="text" name="search" class="form-control" placeholder="Buscar por Folio, NUE, Empresa, Trabajador, Teléfono, Correo, etc ..." value="{{ $searchTerm ?? '' }}">
+                                        <button class="btn btn-primary" type="submit">Buscar</button>
+                                        @if(isset($searchTerm))
+                                            <a href="{{ route('todas_ratificaciones') }}" class="btn btn-danger">Limpiar</a>
+                                        @endif
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </form>
                                 <div class="table-responsive">
                                     <table id="example" class="table table-striped mt-2"> 
                                         <thead style="background-color: #4A001F;">
@@ -140,7 +150,8 @@
                                 </div>
 
                             <!-- Centramos la paginación a la derecha-->
-                            <div class="pagination justify-content-end">
+                            <div class="d-flex justify-content-end mt-3">
+                                {{ $solicitudes->withQueryString()->links('pagination::bootstrap-5') }}
                             </div>
 
                             
@@ -224,6 +235,17 @@
             // 2. Capturar el 'data-id'
             var idRegistro = $(this).data('id');            
             document.getElementById('expediente_audiencia_id').value = idRegistro;
+        });
+
+         $('#example').DataTable({
+            paging: false,
+            info: false,
+            lengthChange: false,
+            searching: false,
+            ordering: false,
+            dom: 'ft',
+            responsive: true,
+            destroy: true
         });
     </script>
     <script src="../public/assets/js/poderes/general.js"></script>

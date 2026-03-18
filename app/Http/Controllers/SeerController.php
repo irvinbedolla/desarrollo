@@ -12112,16 +12112,18 @@ class SeerController extends Controller
         return Excel::download(new CitasExport, 'pagos.xlsx');
     }
     
-    public function todas_audiencias() {
+    public function todas_audiencias(Request $request) {
         $user = auth()->user();
         $userRole = $user->roles->pluck('name')->first();
         $isAudiencia = 'Si';
+
+        $searchTerm = $request->input('search');
     
         // 1. Definir el Query base con sus relaciones (Eager Loading)
         $query = Audiencias::with([
-            'solicitante', // Asumiendo relación en el modelo Audiencia
-            'expediente',  // Asumiendo relación con SeerPerGeneral
-            'conciliador', // Asumiendo relación con User
+            'solicitante',
+            'expediente',
+            'conciliador',
             'pagos'        => function($q) {
                 $q->where('estatus', 'Pendiente')->where('tipo_pago', 'Audiencia');
             }
@@ -12135,13 +12137,19 @@ class SeerController extends Controller
     
         // 2. Mapeo de delegaciones para evitar IFs repetitivos
         $mapaDelegaciones = [
-            'Morelia' => ['Morelia', 'Zitácuaro'],
+            'Morelia' => ['Morelia', 'Zitácuaro', 'Zitacuaro'],
             'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
             'Zamora'  => ['Sahuayo', 'Zamora'],
+            'Sahuayo' => ['Sahuayo'],
+            'Zitácuaro' => ['Zitácuaro', 'Zitacuaro'],
+            'Lázaro Cárdenas' => ['Lázaro Cárdenas'],
         ];
     
         // 3. Aplicar filtros según Rol
-        if ($userRole == "Conciliador") {
+        if (in_array($userRole, ["Auxiliar", "Excepcion"])) {
+            $query->where('delegacion', $user->delegacion);
+        } 
+        else if ($userRole == "Conciliador") {
             $permisos = PermisosConciliador::where('id_conciliador', $user->id)->first();
             $query->where('id_conciliador', $user->id);
             
@@ -12156,23 +12164,42 @@ class SeerController extends Controller
             $delegaciones = $mapaDelegaciones[$user->delegacion] ?? [$user->delegacion];
             $query->whereIn('delegacion', $delegaciones);
         }
-        // Si es Super Usuario o Admin, no se agregan filtros adicionales (ve todo)
+
+        if ($searchTerm) {
+            $searchTermTrim = trim((string) $searchTerm);
+            $query->where(function($q) use ($searchTermTrim) {
+                // Buscar por NUE en la tabla del expediente
+                $q->whereHas('expediente', function($qExp) use ($searchTermTrim) {
+                    $qExp->where('NUE', 'LIKE', '%' . $searchTermTrim . '%');
+                })
+                // O buscar por el nombre en la tabla del solicitante
+                ->orWhereHas('solicitante', function($qSol) use ($searchTermTrim) {
+                    $qSol->where('nombre', 'LIKE', '%' . $searchTermTrim . '%');
+                })
+                // O por nombre del conciliador
+                ->orWhereHas('conciliador', function($qCon) use ($searchTermTrim) {
+                    $qCon->where('name', 'LIKE', '%' . $searchTermTrim . '%');
+                })
+                // O por estatus de la audiencia
+                ->orWhere('estatus', 'LIKE', '%' . $searchTermTrim . '%')
+                // O por fecha/hora (se guarda en DB separado; la búsqueda es por coincidencia parcial)
+                ->orWhere('fecha', 'LIKE', '%' . $searchTermTrim . '%')
+                ->orWhere('hora', 'LIKE', '%' . $searchTermTrim . '%');
+            });
+        }
     
-        //$audiencias = $query->orderBy('created_at', 'desc')->paginate(50);
-        $audiencias = $query->orderBy('created_at', 'desc')->limit(2000)->get();
+        // 5. Paginar dinámicamente desde el servidor
+        //$audiencias = $query->orderBy('created_at', 'desc')->limit(2000)->get();
+        $audiencias = $query->orderBy('created_at', 'desc')->paginate(50);
         
-        //$audiencias->through(function ($audiencia) {
-        $audiencias->transform(function ($audiencia) {
+        // 6. Procesar resultados
+        //$audiencias->transform(function ($audiencia) {
+        $audiencias->through(function ($audiencia) {
             $audiencia->estatus_modelo = $audiencia->estatus;
             
-            // Datos del solicitante y expediente (vienen de la relación)
             $audiencia->nombre = $audiencia->solicitante->nombre ?? 'Sin solicitante';
             $audiencia->NUE = $audiencia->expediente->NUE ?? 'Sin Expediente';
             $audiencia->estatus = $audiencia->expediente->estatus ?? 'Sin estatus';
-            
-            // Formateo de fecha y hora
-            //$audiencia->fecha = date('d-m-Y', strtotime($audiencia->fecha));
-            //$audiencia->hora = date('H:i:s', strtotime($audiencia->hora));
             
             // Conciliador y Pagos
             $audiencia->conciliador_nombre = $audiencia->conciliador->name ?? 'Sin Conciliador';
@@ -12181,19 +12208,24 @@ class SeerController extends Controller
             return $audiencia;
         });
     
-        return view('audiencias.todas_audiencias', compact('audiencias', 'isAudiencia'));
+        return view('audiencias.todas_audiencias', compact('audiencias', 'isAudiencia', 'searchTerm'));
     }
 
-    public function todas_ratificaciones() {
+    public function todas_ratificaciones(Request $request) {
         $user = auth()->user();
         // Obtenemos el nombre del rol principal directamente
         $userRole = $user->roles->first()?->name; 
 
+        $searchTerm = $request->input('search');
+    
         // Mapeo de delegaciones para evitar repetir bloques IF
         $mapaDelegaciones = [
-            'Morelia' => ['Morelia', 'Zitácuaro'],
+            'Morelia' => ['Morelia', 'Zitácuaro', 'Zitacuaro'],
             'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
             'Zamora'  => ['Sahuayo', 'Zamora'],
+            'Sahuayo' => ['Sahuayo'],
+            'Zitácuaro' => ['Zitácuaro', 'Zitacuaro'],
+            'Lázaro Cárdenas' => ['Lázaro Cárdenas'],
         ];
 
         // Iniciamos la consulta base
@@ -12206,8 +12238,7 @@ class SeerController extends Controller
                 $q->where('estatus', 'Pendiente')
                 ->where('tipo_pago', 'Ratificacion');
             }])
-            ->orderBy('created_at', 'desc')
-            ->limit(500);
+            ->distinct();
 
         // Aplicamos filtros de seguridad según Rol
         if (in_array($userRole, ["Auxiliar", "Excepcion"])) {
@@ -12228,15 +12259,44 @@ class SeerController extends Controller
         }
         // "Super Usuario" y "Administrador" pasan sin filtros adicionales
 
-        $solicitudes = $query->get();
+        if ($searchTerm) {
+            $searchTermTrim = trim((string) $searchTerm);
+            $query->where(function($q) use ($searchTermTrim) {
+                //Buscar por el nombre en la tabla del solicitante
+                $q->where('empresa', 'LIKE', '%' . $searchTermTrim . '%')
+                ->orWhere('primero_empresa', 'LIKE', '%' . $searchTermTrim . '%')
+                ->orWhere('segundo_empresa', 'LIKE', '%' . $searchTermTrim . '%')
+                // Para cuando el usuario escribe el nombre completo en un solo string
+                ->orWhere(DB::raw("CONCAT_WS(' ', empresa, primero_empresa, segundo_empresa)"), 'LIKE', '%' . $searchTermTrim . '%')
+                // O buscar por Actividad en la tabla del expediente
+                ->orWhere('telefono', 'LIKE', '%' . $searchTermTrim . '%')
+                ->orWhere('email', 'LIKE', '%' . $searchTermTrim . '%')
+                ->orWhere('trabajador', 'LIKE', '%' . $searchTermTrim . '%')
+                ->orWhere('primero_trabajador', 'LIKE', '%' . $searchTermTrim . '%')
+                ->orWhere('segundo_trabajador', 'LIKE', '%' . $searchTermTrim . '%')
+                ->orWhere(DB::raw("CONCAT_WS(' ', trabajador, primero_trabajador, segundo_trabajador)"), 'LIKE', '%' . $searchTermTrim . '%')
+                // O buscar por NUE en la tabla del expediente
+                ->orWhere('NUE', 'LIKE', '%' . $searchTermTrim . '%')
+                // O por estatus de la audiencia
+                ->orWhere('estatus', 'LIKE', '%' . $searchTermTrim . '%')
+                // O por fecha/hora (se guarda en DB separado; la búsqueda es por coincidencia parcial)
+                ->orWhere('fecha', 'LIKE', '%' . $searchTermTrim . '%')
+                // O por nombre / apellidos de cualquier citado asociado a la solicitud
+                ->orWhere('id', 'LIKE', '%' . $searchTermTrim . '%');
+            });
+        }
+
+        //$solicitudes = $query->get();
+        $solicitudes = $query->orderBy('created_at', 'desc')->paginate(50);
 
         // Transformamos el resultado para que tu vista siga recibiendo la variable 'constancia'
-        $solicitudes->transform(function ($audiencia) {
+        //$solicitudes->transform(function ($audiencia) {
+        $solicitudes->through(function ($audiencia) {
             $audiencia->constancia = $audiencia->tiene_pendientes ? 1 : 0;
             return $audiencia;
         });
 
-        return view('ratificaciones.ratificaciones_todas', compact('solicitudes', 'userRole'));
+        return view('ratificaciones.ratificaciones_todas', compact('solicitudes', 'userRole', 'searchTerm'));
     }
 
     public function todos_complimientos(){
@@ -14241,7 +14301,7 @@ class SeerController extends Controller
         return $pdf->stream($nombreArchivo);                  
     }
 
-    public function todas_solicitudes() {
+    public function todas_solicitudes(Request $request) {
         $user = auth()->user();
         // Obtenemos el nombre del primer rol asignado
         $userRole = $user->roles->pluck('name')->first(); 
@@ -14255,15 +14315,18 @@ class SeerController extends Controller
                 $q->whereNull('incidencia')
                     ->orWhere('incidencia', 0);
             })
-            ->orderBy('created_at', 'desc')
-            ->limit(1500);
+            ->distinct();
+
+        $searchTerm = $request->input('search');
     
         // 2. Definimos el mapa de delegaciones para evitar IFs repetitivos
         $mapaDelegaciones = [
-            "Morelia" => ["Morelia", "Zitácuaro"],
-            "Uruapan" => ["Uruapan", "Lázaro Cárdenas"],
-            "Zamora"  => ["Zamora", "Sahuayo"],
-            "Sahuayo" => ["Sahuayo", "Zamora"],
+            'Morelia' => ['Morelia', 'Zitácuaro', 'Zitacuaro'],
+            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+            'Zamora'  => ['Sahuayo', 'Zamora'],
+            'Sahuayo' => ['Sahuayo'],
+            'Zitácuaro' => ['Zitácuaro', 'Zitacuaro'],
+            'Lázaro Cárdenas' => ['Lázaro Cárdenas'],
         ];
 
         // 3. Aplicamos los filtros de seguridad según el Rol
@@ -14288,8 +14351,40 @@ class SeerController extends Controller
         }
         // Para Super Usuario / Administrador no se agregan filtros (ve todo)
 
+        if ($searchTerm) {
+            $searchTermTrim = trim((string) $searchTerm);
+            $query->where(function($q) use ($searchTermTrim) {
+                //Buscar por el nombre en la tabla del solicitante
+                $q->whereHas('solicitante', function($qSol) use ($searchTermTrim) {
+                    $qSol->where('nombre', 'LIKE', '%' . $searchTermTrim . '%');
+                })
+                // O buscar por Actividad en la tabla del expediente
+                ->orWhere('actividad', 'LIKE', '%' . $searchTermTrim . '%')
+                // O buscar por NUE en la tabla del expediente
+                ->orWhere('NUE', 'LIKE', '%' . $searchTermTrim . '%')
+                // O por estatus de la audiencia
+                ->orWhere('estatus', 'LIKE', '%' . $searchTermTrim . '%')
+                // O por fecha/hora (se guarda en DB separado; la búsqueda es por coincidencia parcial)
+                ->orWhere('fecha', 'LIKE', '%' . $searchTermTrim . '%')
+                // O por nombre / apellidos de cualquier citado asociado a la solicitud
+                ->orWhereExists(function ($sub) use ($searchTermTrim) {
+                    $sub->select(DB::raw(1))
+                        ->from('seer_citados')
+                        ->whereColumn('seer_citados.id_solicitud', 'seer_general.id')
+                        ->where(function ($qCit) use ($searchTermTrim) {
+                            $qCit->where('seer_citados.nombre', 'LIKE', '%' . $searchTermTrim . '%')
+                                ->orWhere('seer_citados.primer_apellido', 'LIKE', '%' . $searchTermTrim . '%')
+                                ->orWhere('seer_citados.segundo_apellido', 'LIKE', '%' . $searchTermTrim . '%')
+                                // Para cuando el usuario escribe el nombre completo en un solo string
+                                ->orWhere(DB::raw("CONCAT_WS(' ', seer_citados.nombre, seer_citados.primer_apellido, seer_citados.segundo_apellido)"), 'LIKE', '%' . $searchTermTrim . '%');
+                        });
+                });
+            });
+        }
+
         // 4. Ejecutamos la consulta
-        $solicitudes = $query->get();
+        //$solicitudes = $query->get();
+        $solicitudes = $query->orderBy('created_at', 'desc')->paginate(50);
 
         $idsSolicitudes = $solicitudes->pluck('id');
         //citadosSolicitud trae todos los citados de las solicitudes obtenidas, agrupados por id_solicitud
@@ -14312,12 +14407,13 @@ class SeerController extends Controller
             return $solicitud;
         });
         // 5. Mapeamos el nombre del solicitante al objeto principal para no romper tu vista actual
-        $solicitudes->transform(function ($solicitud) {
+        //$solicitudes->transform(function ($solicitud) {
+        $solicitudes->through(function ($solicitud) {
             $solicitud->nombre = $solicitud->solicitante->nombre ?? 'Sin solicitante';
             return $solicitud;
         });
 
-        return view('solicitudes.solicitudes_todas', compact('solicitudes', 'isAudiencia'));
+        return view('solicitudes.solicitudes_todas', compact('solicitudes', 'isAudiencia', 'searchTerm'));
     }
 
     public function VerPDFCaratula($id, $tipo){
