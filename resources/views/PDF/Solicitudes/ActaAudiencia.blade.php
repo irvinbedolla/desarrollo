@@ -116,15 +116,19 @@
                     @endif --}}
                     La parte citada:
                     @foreach ($citados as $citado)
-                        @if($citado->id_abogado)
-                            @if ($citado->abogado->reprecentante == 'No')
-                                <b>{{ $citado->abogado->nombres_patronal }} {{ $citado->abogado->primer_apellido_patronal }} {{ $citado->abogado->segundo_apellido_patronal }}</b>
+                        @if($solicitud->tipo_solicitud == 1)
+                            @if($citado->id_abogado)
+                                @if ($citado->abogado->reprecentante == 'No')
+                                    <b>{{ $citado->abogado->nombres_patronal }} {{ $citado->abogado->primer_apellido_patronal }} {{ $citado->abogado->segundo_apellido_patronal }}</b>
+                                @else
+                                    <b>{{ $citado->abogado->nombre_representante }} {{ $citado->abogado->primer_apellido_representante }} {{ $citado->abogado->segundo_apellido_representante }}</b>
+                                    en representación de <b>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido ?? ''}}</b>,  
+                                @endif
+                                @if($citado->abogado->tipo_identificacion)
+                                quien se identifica con <b>{{ strtoupper($citado->abogado->tipo_identificacion) }}</b>, de Número <b>{{ $citado->abogado->num_identificacion }}</b>,
+                                @endif
                             @else
-                                <b>{{ $citado->abogado->nombre_representante }} {{ $citado->abogado->primer_apellido_representante }} {{ $citado->abogado->segundo_apellido_representante }}</b>
-                                en representación de <b>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido ?? ''}}</b>,  
-                            @endif
-                            @if($citado->abogado->tipo_identificacion)
-                            quien se identifica con <b>{{ strtoupper($citado->abogado->tipo_identificacion) }}</b>, de Número <b>{{ $citado->abogado->num_identificacion }}</b>,
+                                <b>{{ $citado->nombre }}{{ $citado->primer_apellido ?? ''}} {{ $citado->segundo_apellido ?? ''}}</b>,
                             @endif
                         @else
                             <b>{{ $citado->nombre }}{{ $citado->primer_apellido ?? ''}} {{ $citado->segundo_apellido ?? ''}}</b>,
@@ -166,8 +170,7 @@
                 <p> Así, resulta procedente exponer a los presentes la propuesta de un acuerdo conciliatorio justo y equitativo que beneficie a ambas partes del conflicto; haciendo de su conocimiento 
                     que, en el caso de estar conformes con dicho acuerdo, se procederá a realizar el convenio por escrito, mismo que deberá ratificarse en el presente acto y, posteriormente, se les 
                     entregará copia certificada del mismo en el que conste su cumplimiento en términos de los artículos 684-E fracción XIV y 684-I, de la ley Federal del Trabajo.<br><br>
-
-                    La propuesta referida para la parte trabajadora, se encuentra formulada en los términos siguientes:<br><br>
+                    La propuesta referida para la parte @if($solicitud->tipo_solicitud == 1) trabajadora, @else solicitate, @endif se encuentra formulada en los términos siguientes:<br><br>
                     @if(!empty($prestaciones) && count($prestaciones) > 0)
                         <table class="table table-bordered table-compacta">
                             <thead>

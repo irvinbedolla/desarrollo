@@ -91,6 +91,7 @@
         if($solicitud->delegacion === 'Zamora' || $solicitud->delegacion === 'Sahuayo') {
             $nombramiento_delegado='DIRECTORA DE LA DELEGACIÓN REGIONAL DE ZAMORA';
         }  
+        
     @endphp
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
@@ -121,10 +122,10 @@
                 <p><center><b>CONVENIO DE CONCILIACIÓN</b></center></p><br>
                 <p>Con fundamento en el artículo 123 apartado A, fracción XXVII, inciso h) párrafo segundo, de la Constitución Política de los Estados Unidos Mexicanos; en los artículos 33, 590-E, 
                     590-F y 684-E de la Ley Federal del Trabajo; artículos 5°, 8°, 26 y 27 de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, 
-                    artículos 33, 53 fracción I y 684-E de la Ley Federal del Trabajo; artículo 20, fracción V y X del Reglamento Interior del Centro de Conciliación Laboral de Michoacán de Ocampo, 
+                    artículos 33, 53 fracción I y 684-E de la Ley Federal del Trabajo; artículo 20, fracción V y X del Reglamento Interior del Centro de Conciliación Laboral de Michoacán de Ocampo,
                     se celebra el presente convenio por una parte <b>{{ $solicitante->nombre }}</b> quién en lo 
-                    subsecuente se denominará la parte <b>“TRABAJADORA”</b> y, por otro <b>@foreach($citados as $citado) {{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido }},@endforeach</b> 
-                    a quién en lo subsecuente se le denominará la parte <b>“EMPLEADORA”</b>, 
+                    subsecuente se denominará la parte @if($solicitud->tipo_solicitud == '1')  <b>“TRABAJADORA”</b> @else <b>"EMPLEADORA"</b> @endif y, por otro <b>@foreach($citados as $citado) {{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido }},@endforeach</b> 
+                    a quién en lo subsecuente se le denominará la parte @if($solicitud->tipo_solicitud == '1') <b>"EMPLEADORA"</b>  @else <b>“TRABAJADORA”</b> @endif, 
                     a quienes en lo sucesivo de forma conjunta se les denominará las <b>“PARTES”</b>, quienes se someten y obligan en términos de las siguientes declaraciones y cláusulas:
                 </p>
 

@@ -126,9 +126,12 @@
                 </p><br>
 
                 <p>
-                    <b>Fundamentación:</b> Artículos 33 párrafo segundo, 590-E, 590-F, 684-C y 684-E, fracción XIV, 684-F, fracción VII de la Ley Federal del Trabajo, 
-                    y artículo 20 del Reglamento Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<br><br>
-
+                    @if($solicitud->tipo_solicitud == 1)
+                        <b>Fundamentación:</b> Artículos 33 párrafo segundo, 590-E, 590-F, 684-C y 684-E, fracción XIV, 684-F, fracción VII de la Ley Federal del Trabajo, 
+                        y artículo 20 del Reglamento Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<br><br>
+                    @else
+                        <b>Fundamentación:</b> Artículos 684-E, fracción XIV, 684-F, fracción VII de la Ley Federal del Trabajo.<br><br>
+                    @endif
                     <b>Motivación:</b> Conforme a la determinación de dar por terminado el conflicto laboral, la parte <b>TRABAJADORA</b> y la parte <b>EMPLEADORA</b>, 
                     celebraron el Convenio de Conciliación de fecha <b>{{ \Carbon\Carbon::parse($audienciaFecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> ante esta 
                     Autoridad Conciliadora como resultado de la audiencia 

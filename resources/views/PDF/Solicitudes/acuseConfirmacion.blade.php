@@ -125,15 +125,33 @@
                         Atendiendo la fracción VII del artículo 689-E de la Ley Federal del Trabajo, las trabajadoras y los trabajadores, deberán acudir personalmente a la audiencia conciliatoria, sin 
                         impedimento de poderse acompañar de una persona de su confianza, pero no se reconocerá a ésta como apoderado, por tratarse de un procedimiento de conciliación y no de un juicio; no 
                         obstante, el trabajador también podrá ser asistido por un licenciado en derecho, abogado o un Procurador de la Defensa del Trabajo. <br><br>
-
-                        El patrón deberá asistir personalmente o por conducto de representante con facultades suficientes para obligarse en su nombre, atendiendo a los requisitos establecidos en el 
-                        artículo 692 de la Ley Federal del Trabajo.
+                        @if($solicitud->tipo_solicitud == 1)
+                            Atendiendo la fracción VII del artículo 689-E de la Ley Federal del Trabajo, las trabajadoras y los trabajadores, deberán acudir personalmente a la audiencia conciliatoria, sin 
+                            impedimento de poderse acompañar de una persona de su confianza, pero no se reconocerá a ésta como apoderado, por tratarse de un procedimiento de conciliación y no de un juicio; no 
+                            obstante, el trabajador también podrá ser asistido por un licenciado en derecho, abogado o un Procurador de la Defensa del Trabajo. <br><br>
+                            
+                            El patrón deberá asistir personalmente o por conducto de representante con facultades suficientes para obligarse en su nombre, atendiendo a los requisitos establecidos en el 
+                            artículo 692 de la Ley Federal del Trabajo.
+                            
+                            <br><br>
+                            En el caso de personas morales empleadoras, se deberá comparecer a través de un representante legal con facultades suficientes y apegándose al artículo señalado con anterioridad.<br><br>
+                            De conformidad con la fracción X del artículo 684-E de la Ley Federal del Trabajo, si a la audiencia de conciliación, sólo comparece el citado, se archivará el expediente por falta 
+                            de interés del solicitante, reanudándose los plazos de prescripción a partir de día siguiente a la fecha de la audiencia.
+                        @else
+                            Atendiendo la fracción VI del artículo 684-E de la Ley Federal del Trabajo, deberán acudir personalmente a la audiencia de conciliación, sin perjuicio de comparecer
+                            acompañado por una persona de su confianza, pero no se reconocerá a ésta como apoderado por tratarse de un
+                            procedimiento de conciliación y no de un juicio, o asistido por un licenciado en derecho, abogado o Procurador de la
+                            Defensa del Trabajo. <br><br>
                         
-                        <br><br>
-                        En el caso de personas morales empleadoras, se deberá comparecer a través de un representante legal con facultades suficientes y apegándose al artículo señalado con anterioridad.<br><br>
-
-                        De conformidad con la fracción X del artículo 684-E de la Ley Federal del Trabajo, si a la audiencia de conciliación, sólo comparece el citado, se archivará el expediente por falta 
-                        de interés del solicitante, reanudándose los plazos de prescripción a partir de día siguiente a la fecha de la audiencia.
+                           Ahora bien, en el caso de personas morales empleadoras, deberán comparecer a través de un representante legal con
+                            facultades suficientes para actuar en su representación y cumplir con los requisitos establecidos en el artículo 692 de la
+                            Ley Federal del Trabajo; por lo que respecta a las personas físicas empleadoras podrán comparecer por su propio
+                            derecho o a través de un representante legal con facultades suficientes para actuar en su representación y deberán
+                            cumplir con los requisitos del artículo anteriormente señalado.<br><br>
+                            Finalmente, en el caso de no comparecer a la audiencia respectiva, su solicitud se archivará por falta de interés de
+                            conformidad con la fracción X del artículo 684-E de la Ley Federal del Trabajo, sin perjuicio de que continúen los plazos
+                            de prescripción previstos en dicha Ley
+                        @endif
                     </p>
                 </div>
             </div>
