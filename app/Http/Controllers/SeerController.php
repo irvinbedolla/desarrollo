@@ -5911,6 +5911,7 @@ class SeerController extends Controller
         foreach($citados as $citado){
             $nuevo_citado = $citado->replicate();
             $nuevo_citado->tipo_notificacion = 'Multa';
+            $nuevo_citado->estatus = 'Pendiente';
             $nuevo_citado->save();
         }
 
@@ -6623,6 +6624,7 @@ class SeerController extends Controller
                 if($citado->notificacion == "Trabajador"){
                         $nuevo_citado = $citado->replicate();
                         $nuevo_citado->notificacion = 'Centro';
+                        $nuevo_citado->estatus = 'Pendiente';
                         $nuevo_citado->audiencia_id = $audiencia->id;
                         $nuevo_citado->save();
                 }
@@ -8590,7 +8592,6 @@ class SeerController extends Controller
     public function audiencias_cumplimiento(){
         // 1. Obtenemos directamente el objeto del usuario autenticado (evitamos User::find)
         $user = auth()->user();
-
 
         $cumplimientos = Pagos::where('pago_solicitud.delegacion', $user->delegacion)
             ->whereIn('pago_solicitud.tipo_pago', ["Ratificacion", "Audiencia", "Conciliador"])
@@ -14693,6 +14694,7 @@ class SeerController extends Controller
         
         return redirect()->route('agregar_citadoPatronal', ['id' => $id_solicitud]);
     }
+
     public function vista_citadoPatronal($id){
         $estados = Estados::all();
         $municipios = Municipios::all();
