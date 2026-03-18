@@ -40,6 +40,7 @@
                                                 <label multiple for="name">Tipo de reporte</label>
                                                 <select id="reporte" class="form-control" name="tipo_reporte" required>
                                                     <option value="">Seleccione</option>
+                                                    <option value="Audiencias">Audiencias</option>
                                                     <option value="Cumplimientos">Cumplimientos</option>
                                                     <option value="Ratificaciones">Ratificaciones</option>
                                                     <option value="Notificaciones">Notificaciones</option>
@@ -48,7 +49,7 @@
                                                     <option value="CumplimientosGrafica">Graficas</option>
                                                     <option value="Productividad">Productividad</option>
                                                     <option value="EstadisticaMexico">INEGI</option> 
-                                                     <option value="Motivos">Motivos</option>
+                                                    <option value="Motivos">Motivos</option>
                                                     <option value="Concentrado">General</option>
                                                     <option value="GeneralSede">General por Sede</option>
                                                     <option value="SeguroSocial">Seguro Social</option>
@@ -103,7 +104,7 @@
                                         </div>
 
                                         <div id="reporte-notificador"  style="display:none">
-                                        <!--
+                                        {{--
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Auxiliar</label>
@@ -115,7 +116,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                        -->
+                                        --}}
                                         <input type="hidden" name="auxiliar" value="Todos">
                                             <div class="col-xs-12 col-sm-12 col-md-4">
                                                 <div class="form-group">
@@ -124,6 +125,20 @@
                                                         <option value="Todos">Todos</option>
                                                         @foreach($usuariosnotificadores as $not)
                                                             <option value="{{$not['id']}}">{{$not['name']}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="reporte-audiencias"  style="display:none">
+                                            <input type="hidden" name="conciliador" value="Todos">
+                                            <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Conciliador</label>
+                                                    <select class="form-control" name="conciliador">
+                                                        <option value="Todos">Todos</option>
+                                                        @foreach($usuariosconciliadores as $conc)
+                                                            <option value="{{$conc['id']}}">{{$conc['name']}}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -175,10 +190,11 @@
         $('#reporte').change(function(){
             var valorCambiado =$(this).val();
             if((valorCambiado == 'Cumplimientos')){
-                $('#PDF').css('display','none');w
+                $('#PDF').css('display','none');
                 $('#Excel').css('display','none');
                 $('#Excel-PDF').css('display','block');
                 $('#reporte-notificador').css('display','none');
+                 $('#reporte-audiencias').css('display','none');
                 $('#Grafica').css('display','none');
             }
             else if(valorCambiado == "Productividad"){
@@ -186,6 +202,7 @@
                 $('#Excel').css('display','none');
                 $('#Excel-PDF').css('display','none');
                 $('#reporte-notificador').css('display','none');
+                 $('#reporte-audiencias').css('display','none');
                 $('#Grafica').css('display','none');
             }
             else if(valorCambiado == "CumplimientosGrafica"){
@@ -193,6 +210,7 @@
                 $('#Excel').css('display','none');
                 $('#Excel-PDF').css('display','none');
                 $('#reporte-notificador').css('display','none');
+                 $('#reporte-audiencias').css('display','none');
                 $('#Grafica').css('display','block');
             }
             else if(valorCambiado == "Ratificaciones" || valorCambiado == "Convenios"){
@@ -200,6 +218,7 @@
                 $('#Excel').css('display','block');
                 $('#Excel-PDF').css('display','none');
                 $('#reporte-notificador').css('display','none');
+                 $('#reporte-audiencias').css('display','none');
                 $('#Grafica').css('display','none');
             }
             else if(valorCambiado == "RatificacionesUsuario"){
@@ -207,6 +226,7 @@
                 $('#Excel').css('display','none');
                 $('#Excel-PDF').css('display','none');
                 $('#reporte-notificador').css('display','none');
+                 $('#reporte-audiencias').css('display','none');
                 $('#Grafica').css('display','none');
             }
             else if(valorCambiado == "RatificacionesGraficas"){
@@ -214,6 +234,7 @@
                 $('#Excel').css('display','none');
                 $('#Excel-PDF').css('display','none');
                 $('#reporte-notificador').css('display','none');
+                 $('#reporte-audiencias').css('display','none');
                 $('#Grafica').css('display','block');
             }
             else if(valorCambiado == "Notificaciones"){
@@ -221,6 +242,7 @@
                 $('#Excel').css('display','block');
                 $('#Excel-PDF').css('display','none');
                 $('#reporte-notificador').css('display','block');
+                 $('#reporte-audiencias').css('display','none');
                 $('#Grafica').css('display','none');
             }
             else if(valorCambiado == "Solicitudes"){
@@ -228,6 +250,7 @@
                 $('#Excel').css('display','block');
                 $('#Excel-PDF').css('display','none');
                 $('#reporte-notificador').css('display','none');
+                 $('#reporte-audiencias').css('display','none');
                 $('#Grafica').css('display','none');
             }
             else if(valorCambiado == "Concentrado" || valorCambiado == "Detallado" 
@@ -240,6 +263,7 @@
                 $('#Excel').css('display','none');
                 $('#Excel-PDF').css('display','none');
                 $('#reporte-notificador').css('display','none');
+                 $('#reporte-audiencias').css('display','none');
                 $('#Grafica').css('display','none');
             }
             else if(valorCambiado == "SolicitudesGraficas"){
@@ -247,7 +271,17 @@
                 $('#Excel').css('display','none');
                 $('#Excel-PDF').css('display','none');
                 $('#reporte-notificador').css('display','none');
+                $('#reporte-audiencias').css('display','none');
                 $('#Grafica').css('display','block');
+            }
+            else if((valorCambiado == 'Audiencias')){
+                $('#PDF').css('display','none');
+                $('#Excel').css('display','block');
+                $('#Excel-PDF').css('display','none');
+                $('#reporte-notificador').css('display','none');
+                $('#reporte-audiencias').css('display','block');
+                $('#Grafica').css('display','none');
+                
             }
         });
     </script>

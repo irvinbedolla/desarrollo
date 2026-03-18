@@ -198,11 +198,11 @@
                         Enseguida me identifico en este acto con credencial expedida por el Centro de Conciliación Laboral, oficina estatal {{ mb_strtoupper($solicitud->delegacion,'UTF-8') }} que me acredita como Notificador y le informo el motivo 
                         de mi visita, mediante lectura del <b>CITATORIO DE CONCILIACIÓN</b> antes mencionado, requiriéndole asé la presencia del <b>CITADO:
                         {{$citado->nombre}} @if($citado->primer_apellido!=null){{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null){{$citado->segundo_apellido}}@endif.</b> a fin de NOTIFICAR Y EMPLAZAR, en cumplimiento a lo 
-                        ordenado en el auto de radicación antes citado. <br><br>
+                        ordenado en el auto de radicación antes citado. <br>
 
                         La persona que me atiende, dice ser <b>{{ $citado->nombre_notificacion }}</b>, <b>QUIEN @if($citado->identificacion_notificacion=="NO PROPORCIONA") NO SE IDENTIFICA, @elseif($citado->identificacion_notificacion=="NO ATIENDE PRESENCIALMENTE") NO ATIENDE PRESENCIALMENTE,
                         @elseif(!in_array($citado->identificacion_notificacion, ["NO PROPORCIONA", "NO ATIENDE PRESENCIALMENTE"])) SE IDENTIFICA CON {{$citado->identificacion_notificacion}}</b> de número <b>{{$citado->num_identificacion}}</b>.@endif 
-                        Documento que se tiene a la vista y del que se desprende la identidad de la persona con quien se entiende la presente diligencia, documental que se devuelve al interesado.<br><br>
+                        Documento que se tiene a la vista y del que se desprende la identidad de la persona con quien se entiende la presente diligencia, documental que se devuelve al interesado.<br>
 
                         En virtud de lo anterior, con fundamento en los Artículos 739 y 743 Fracción II de la Ley Federal del Trabajo y al ser la persona que me atiende el citado personalmente, procedo en este acto a NOTIFICAR al <b>CITADO:
                         {{$citado->nombre}} @if($citado->primer_apellido!=null){{$citado->primer_apellido}}@endif @if($citado->segundo_apellido!=null){{$citado->segundo_apellido}}@endif</b>, corriéndole traslado con copias simples cotejadas y autorizadas 
@@ -287,7 +287,7 @@
                         <b>{{ $descripcionFirma}}</b><br>
                         Anexando impresión fotográfica para constancia legal.<br>
                         <b>Doy cuenta a la autoridad conciliadora competente y lo hago constar para todos los efectos legales a que haya lugar. Doy fe.</b>
-                        <div class="espaciador-firma"><br>
+                        <div class="espaciador-firma">
                             <center><b>___________________________________<br> LIC. {{mb_strtoupper($notificador->name,'UTF-8')}}<br> FUNCIONARIO/A NOTIFICADOR/A</b></center>
                         </div>
                     </div>
