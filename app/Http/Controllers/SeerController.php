@@ -8606,6 +8606,7 @@ class SeerController extends Controller
                 ELSE pago_solicitud.NUE 
             END as NUE_FINAL"),
             
+            'pago_solicitud.id',
             'pago_solicitud.id_solicitud',
             'pago_solicitud.descripcion',
             'pago_solicitud.tipo_pago',
@@ -8630,6 +8631,7 @@ class SeerController extends Controller
                 ELSE pago_solicitud.NUE 
             END"),
             // 2. Las columnas físicas que SQL detecta en la consulta
+            'pago_solicitud.id',
             'pago_solicitud.id_solicitud',
             'pago_solicitud.tipo_pago',
             'pago_solicitud.NUE',   // El campo de la tabla pagos
@@ -12803,6 +12805,15 @@ class SeerController extends Controller
         $cumplimientos = Pagos::join('seer_general','seer_general.id',"=",'pago_solicitud.id_solicitud')
         ->where('pago_solicitud.id_solicitud',$id)
         ->whereIn('tipo_pago',['Audiencia','Conciliador'])
+        ->select('pago_solicitud.id','pago_solicitud.id_solicitud','seer_general.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
+        ->get();
+
+        return view('/cumplimientos/pagar_audiencia',compact('cumplimientos'));
+    }
+
+    public function ver_pago_cumplimiento($id_pago){
+        $cumplimientos = Pagos::join('seer_general','seer_general.id',"=",'pago_solicitud.id_solicitud')
+        ->where('pago_solicitud.id',$id_pago)
         ->select('pago_solicitud.id','pago_solicitud.id_solicitud','seer_general.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
         ->get();
 

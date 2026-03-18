@@ -27,7 +27,7 @@
                                             @foreach($cumplimientos as $pago)
                                                 <tr>
                                                     <td>{{date_format($pago->fecha,"d-m-Y")}}</td> 
-                                                    <td>{{date_format($pago->hora,"h:m:s")}}</td>
+                                                    <td>{{date_format($pago->hora,"H:i:s")}}</td>
                                                     <td>${{number_format($pago->monto, 2)}}</td>
                                                     <td>{{$pago->estatus}}</td>
                                                     <td>
@@ -36,7 +36,14 @@
                                                                 Pagar
                                                             </button>
                                                             <a class="btn btn-danger" href="{{ route('cumplimiento_rechazar', $pago->id) }}" onclick=consultar_estadistica();>Rechazar</a>
-                                                            <a class="btn btn-danger" href="{{ route('cumplimiento_incomparecencia', $pago->id) }}" onclick=consultar_estadistica();>No comparece trabajador</a>
+                                                            <form method="POST" action="{{ route('cumplimiento_incomparecencia', $pago->id) }}" style="display:inline;">
+                                                                @csrf
+                                                                <input type="hidden" name="fecha_audiencia" value="{{ $pago->fecha }}">
+                                                                <input type="hidden" name="hora_audiencia" value="{{ $pago->hora }}">
+                                                                <button type="submit" class="btn btn-danger" onclick="consultar_estadistica();">
+                                                                    No comparece trabajador
+                                                                </button>
+                                                            </form>
                                                         @endif
                                                     </td>
                                                     <td>

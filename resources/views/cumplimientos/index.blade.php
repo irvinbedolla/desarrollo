@@ -28,7 +28,7 @@
                                                     <td>{{$audiencia->NUE_FINAL}}</td>
                                                     <td>{{$audiencia->tipo_pago}}</td>
                                                     <td>{{$audiencia->descripcion}}</td>
-                                                    <td><a class="btn btn-primary" href="{{ route('audiencia_cumplimientos', $audiencia->id_solicitud) }}">Cumplimiento</a></td>
+                                                    <td><a class="btn btn-primary" href="{{ route('pago_cumplimiento', $audiencia->id) }}">Cumplimiento</a></td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

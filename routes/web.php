@@ -478,6 +478,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/solicitudes/terminar_audiencia',      [SeerController::class, 'terminar_audiencia'])->name('terminar_audiencia');
         Route::post('/audiencias/eliminar_item_sesion/{id}', [SeerController::class, 'eliminar_item_sesion'])->name('eliminar_item_sesion');
         Route::get('/audienicas/cumplimietos/{id}',         [SeerController::class, 'ver_pagos_audiencia'])->name('audiencia_cumplimientos');
+        Route::get('/cumplimientos/detalle/{id}',           [SeerController::class, 'ver_pago_cumplimiento'])->name('pago_cumplimiento');
         Route::post('/guardar_edicion_audiencia',           [SeerController::class, 'audiencia_confirmar'])->name('audiencia_confirmar');
         Route::post('/audiencias/pagoA',                    [SeerController::class, 'pagoA_audiencia'])->name('pagoA_audiencia'); // cumplimiento en audiencias
         Route::post('/representante/quitar',                [SeerController::class, 'quitarRepresentante'])->name('representante.quitar'); //Eliminar/Quitar representante legal asiganado al iniciar la audiencia
