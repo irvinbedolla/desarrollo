@@ -111,6 +111,7 @@ use App\Http\Controllers\IncidenciasBusquedaController;
     Route::get('home',                  [HomeController::class, 'home'])->name('home');
     Route::get('/poder-crear',          [PoderController::class, 'registro'])->name('poder-crear');
     Route::get('/poder',                [App\Http\Controllers\PoderController::class, 'show'])->name('poder');
+    Route::get('/poderes/publico',      fn () => redirect()->route('poder-crear'));
     Route::post('/poderes/publico',     [PoderController::class, 'publico'])->name('poderes.publico');
     Route::get('/cita_turno',           [HomeController::class, 'citas'])->name('citas');
     Route::post('/turnos_guardar',      [HomeController::class, 'turnos_publico'])->name('turnos_publico'); 
