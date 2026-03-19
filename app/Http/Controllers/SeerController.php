@@ -9118,8 +9118,13 @@ class SeerController extends Controller
         }
         //Audiencias
         else if($tipo == 5){
-            $url = route('solicitud_audiencia', $id) . '?isAudiencia=Si';
-            return redirect()->to($url);
+            $audiencia = Audiencias::where('id_solicitud', $id)
+                        ->orderBy('fecha', 'desc')
+                        ->first();
+
+            return redirect()->route('inicioAudiencia', ['id' => $audiencia->id_solicitud, 'estatus' => 'Confirmado']);
+            //$url = route('solicitud_audiencia', $id) . '?isAudiencia=Si';
+            //return redirect()->to($url);
         }
         //Cumplimientos , Ratificacion, Audiencia y generales
         else if($tipo == 6){
