@@ -68,6 +68,7 @@ use App\Exports\Convenios;
 use App\Mail\ForoMail;
 use App\Models\ForoNacional;
 use App\Exports\Motivos;
+use App\Exports\AudienciasExport;
 
 class SeerController extends Controller
 {   
@@ -405,6 +406,11 @@ class SeerController extends Controller
             })
             ->get();
             $estadisticas = Sedes::all();
+            $usuariosconciliadores = User::whereHas($relacionEloquent, function ($query) {
+                return $query->where('name', '=', 'Conciliador');
+            })
+            ->get();
+            $estadisticas = Sedes::all();
         }
         else if($userRole[0] == "Enlace" || $userRole[0] == "Delegado"){
             $usuariosconciliador = User::whereHas($relacionEloquent, function ($query) {
@@ -422,13 +428,18 @@ class SeerController extends Controller
             })
             ->where('delegacion', $user["delegacion"])
             ->get();
+            $usuariosconciliadores = User::whereHas($relacionEloquent, function ($query) {
+                return $query->where('name', '=', 'Conciliador');
+            })
+            ->get();
+            $estadisticas = Sedes::all();
             $esta = Sedes::where('nombre', $user["delegacion"])->first();
             $estadisticas = Sedes::where('nombre', $user["delegacion"])->ORwhere('oficina_apoyo', $esta["id"])->get();
         }
         $estados = Estados::all();
         $municipios = Municipios::all();
     
-        return view('estadisticas.estadistica', compact('user','userRole','estadisticas','usuariosconciliador','usuariosauxiliares','usuariosnotificadores','estados','municipios'));
+        return view('estadisticas.estadistica', compact('user','userRole','estadisticas','usuariosconciliador','usuariosauxiliares','usuariosnotificadores','estados','municipios','usuariosconciliadores'));
     }
     
     public function mostrar_reporte(Request $request){
@@ -1663,6 +1674,10 @@ class SeerController extends Controller
         }
         else if($data["tipo_reporte"] == "Motivos"){
             return Excel::download(new Motivos($fecha_inicial, $fecha_final, $sede), 'Reporte_motivos.xlsx');
+        }
+        else if ($data["tipo_reporte"] == "Audiencias"){
+            $conciliador = $data['conciliador'] ?? 'Todos';
+            return Excel::download(new AudienciasExport($fecha_inicial, $fecha_final, $sede, $conciliador), 'audiencias.xlsx');
         }
     }
 
@@ -8565,10 +8580,13 @@ class SeerController extends Controller
             ->select('users.name')
             ->first();
 
+        /*$audiencia = SeerPerGeneral::join("audiencias", "audiencias.id_solicitud", "=", "seer_general.id")
+            ->where("audiencias.id_solicitud", "=", $solicitud->id)
+            ->first();*/
         $audiencia = SeerPerGeneral::join("audiencias", "audiencias.id_solicitud", "=", "seer_general.id")
             ->where("audiencias.id_solicitud", "=", $solicitud->id)
+            ->latest('audiencias.created_at')
             ->first();
-
         $citados = SeerCitados::where("id_solicitud", $solicitud->id)->where('tipo_notificacion', '!=', 'Multa')->get();
         $html = '<html>
             <head>

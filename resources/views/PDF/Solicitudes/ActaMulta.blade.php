@@ -120,7 +120,7 @@
                         </tr> 
                     </table>
                 </div><br><br><br>
-                <center><p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br> <br><br>
+                <center><p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br><br>
                         ACTA DE MULTA POR INCOMPARECENCIA</b></p></center>
                 <p>En <b>{{ $direccion_sede }}</b> a <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, el(la) funcionario(a) 
                     conciliador(a) <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}</b>, adscrito al Centro 
@@ -166,14 +166,18 @@
                             @if(!empty($citado->segundo_apellido)) {{ $citado->segundo_apellido }} @endif
                         </td>
                     </tr>
-                    <tr>
-                        <td>CURP:</td>
-                        <td>@if(!empty($citado->curp)){{ $citado->curp }}@endif</td>
-                    </tr>
-                    <tr>
-                        <td>RFC:</td>
-                        <td>@if(!empty($citado->rfc)){{ $citado->rfc }}@endif</td>
-                    </tr>
+                    @if(!empty($citado->curp))
+                        <tr>
+                            <td>CURP:</td>
+                            <td>{{ $citado->curp }}</td>
+                        </tr>
+                    @endif
+                    @if(!empty($citado->rfc))
+                        <tr>
+                            <td>RFC:</td>
+                            <td>{{ $citado->rfc }}</td>
+                        </tr>
+                    @endif
                     <tr>
                         <td>Domicilio:</td>
                         <td>
@@ -189,14 +193,11 @@
                     </tr>
                 </table><br>
                 <p><b>
-                    Notifíquese personalmente a la parte citada dentro de los próximos 15 días hábiles y por buzón electrónico a la parte solicitante.
-                </b></p>
-
-                <p>
+                    Notifíquese personalmente a la parte citada dentro de los próximos 15 días hábiles y por buzón electrónico a la parte solicitante.<br>
+                </b>
                     Así lo proveyó <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}</b>, funcionario(a) conciliador(a) adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
-                </p>
-               <br><br><br>
-                <p><center><b>___________________________________<br> {{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br>FUNCIONARIO/A CONCILIADOR/A<br>{{$cargo_conciliador}} </b></center> </p>                
+                </p><br>
+                <p><center><b>___________________________________<br>{{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br>FUNCIONARIO/A CONCILIADOR/A<br>{{$cargo_conciliador}} </b></center> </p>                
             </div>
             <script type="text/php">
                 if (isset($pdf)) {
