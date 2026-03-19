@@ -6745,6 +6745,23 @@ class SeerController extends Controller
         $conciliador = $conciliador->where("seer_general.id", "=", $id)
         ->select('users.name')
         ->first();
+        $delegadosEspeciales = [
+            'Zitácuaro'        => 11,
+            'Lázaro Cárdenas'  => 43,
+            'Sahuayo'          => 26,
+        ];
+        $delegacion = $solicitud->delegacion;
+        if (array_key_exists($delegacion, $delegadosEspeciales)) {
+            $delegado = User::select('id', 'name', 'delegacion')
+            ->find($delegadosEspeciales[$delegacion]);
+        } else {
+            $delegado = User::where('delegacion', $delegacion)
+                ->whereHas('roles', function ($query) {
+                $query->where('name', 'Delegado');
+            })
+            ->select('users.id', 'users.name', 'users.delegacion')
+            ->first();
+        }
         $citados = SeerCitados::where("id_solicitud",$id)
         ->where('tipo_notificacion', '!=', 'Multa')
         ->select('nombre','primer_apellido','segundo_apellido')
@@ -6754,7 +6771,7 @@ class SeerController extends Controller
         ->select('catalogo_motivos.motivo')->get();
         $audiencia = SeerPerConciliador::where("id_solicitud",$solicitud["id"])->first();
 
-        $html = view('PDF/Solicitudes/incompetencia', compact('id', 'solicitud','conciliador','solicitante','citados','motivos','audiencia'))->render();
+        $html = view('PDF/Solicitudes/incompetencia', compact('id', 'solicitud','conciliador','solicitante','citados','motivos','audiencia','delegado', 'delegacion'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')

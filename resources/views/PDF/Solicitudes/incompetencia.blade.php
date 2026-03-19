@@ -54,9 +54,30 @@
                 height: 100%;
                 z-index: -1;
             } 
+            /* Contenedor que agrupa las firmas */
+            .salto-inteligente {
+                display: block;
+                height: 2cm;           
+                margin-bottom: -2cm;    
+                page-break-inside: avoid;
+            }
+            .contenedor-firmas {
+                page-break-inside: avoid; 
+            }
         </style>
-        
     </head>
+    @php
+        $nombramiento_delegado='';
+        if($solicitud->delegacion === 'Morelia' || $solicitud->delegacion === 'Zitácuaro'){
+            $nombramiento_delegado='DIRECTOR DE LA DELEGACIÓN REGIONAL DE MORELIA';
+        }    
+        if($solicitud->delegacion === 'Uruapan' || $solicitud->delegacion === 'Lázaro Cárdenas'){
+            $nombramiento_delegado='DIRECTORA DE LA DELEGACIÓN REGIONAL DE URUAPAN';
+        }
+        if($solicitud->delegacion === 'Zamora' || $solicitud->delegacion === 'Sahuayo') {
+            $nombramiento_delegado='DIRECTORA DE LA DELEGACIÓN REGIONAL DE ZAMORA';
+        }  
+    @endphp
     <body>
         <img src="{{ public_path('assets/images/pdf_Siconcilio.jpg') }}" class="fondo-membrete">
         <footer>
@@ -75,16 +96,16 @@
                                 <td>{{ $solicitud->delegacion }} </td>
                             </tr>
                     </table>
-                </div><br><br><br>
+                </div><br><br>
                 <p><center><b>CONSTANCIA DE INCOMPETENCIA</b></center></p><br>
                 <p><b>
                     Solicitante: {{ $solicitante->nombre }} <br> 
-                    Citado(s): <br>
+                    Citado(s):
                     @foreach($citados as $citado)    
                         {{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}<br>
                     @endforeach
                     <br>
-                    Fecha de presentación de solicitud: {{ $solicitud->fecha }} <br>
+                    Fecha de presentación de solicitud: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} <br>
                     Posible prescripción de derechos: No <br>
                 </b></p>  
                 <p>
@@ -104,21 +125,39 @@
                     En este sentido y de conformidad con los principios constitucionales de legalidad, imparcialidad, confiabilidad, eficacia, confidencialidad, objetividad, profesionalismo, transparencia y publicidad, se notifica al Solicitante 
                     de la incompetencia por declinatoria y se remite copia certificada de la presente constancia al Centro de Conciliación Laboral competente.<br><br>
 
-                    Se emite la presente constancia con fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> dejando a salvo los derechos del solicitante para continuar con el procedimiento de conciliación 
-                    ante la Autoridad Conciliadora competente.<br><br>
-
-                    Finalmemnte, se dejan a salvo los derechos de los interesados para continuar con el procedimiento de conciliación ante el Centro de Conciliación Laboral competente, en términos de los artículos 527 y 684-E fracción 
-                    V párrafo segundo de la Ley Federal del Trabajo. Artículo 18 fracción XII del Reglamento Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<b>Doy Fe.</b>
+                    Se emite la presente constancia con fecha <b>{{ $solicitud->updated_at->translatedFormat('d \d\e F \d\e\l Y') }}</b> dejando a salvo los derechos del solicitante para continuar con el procedimiento de conciliación 
+                    ante la Autoridad Conciliadora competente.
                 </p>
-
-                <br>       
-                <center><br><br> <p><b>___________________________________<br>MTRO. ADOLFO CECILIO CAMPOS MARCIAL <br>NOMBRE Y FIRMA DEL DIRECTOR/A DEL CENTRO</b></p></center>           
+                <div class="salto-inteligente"></div>
+                <div class="contenedor-firmas">
+                    <p>
+                        Finalmemnte, se dejan a salvo los derechos de los interesados para continuar con el procedimiento de conciliación ante el Centro de Conciliación Laboral competente, en términos de los artículos 527 y 684-E fracción 
+                        V párrafo segundo de la Ley Federal del Trabajo. Artículo 18 fracción XII del Reglamento Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<b>Doy Fe.</b>
+                    </p>
+                    <table style="width: 100%; margin-top: 50px;">
+                        <tr>
+                            <td style="width: 100%; vertical-align: top; padding: 0 5px; text-align: center;">
+                                <b>Vo. Bo.</b><br><br><br><br>
+                                
+                                <div style="border-top: 2px solid #000; width: 50%; margin: 0 auto 5px auto;"></div>
+                                
+                                <b>
+                                    {{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
+                                    {{ $nombramiento_delegado }}
+                                </b>
+                            </td>
+                        </tr>
+                    </table> <br>
+                    <p style="font-size: 10px;">
+                        LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DE LA CONSTANCIA DE INCOMPETENCIA DE FECHA <b>{{ $solicitud->updated_at->translatedFormat('d \d\e F \d\e\l Y') }}</b> EXPEDIENTE NÚMERO <b>{{ $solicitud->NUE }}</b> DEL CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO.
+                    </p>  
+                </div>     
             </div>
             <script type="text/php">
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");
                     $size = 10;
-                    $y = $pdf->get_height() - 30;
+                    $y = $pdf->get_height() - 44;
                     $x = ($pdf->get_width() / 2) - 50;
                     $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
                     $pdf->page_text($x, $y, $text, $font, $size, array(0, 0, 0));
