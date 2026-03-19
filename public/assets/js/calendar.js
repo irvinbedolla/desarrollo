@@ -177,7 +177,10 @@ function handleEventClick(info, calendarType) {
             <strong>Sala:</strong> ${props.sala}<br>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <a href="cumplimiento/consulta/${info.event.id}/${props.tipo}" class="btn btn-info">Ir Audiencia</a>
+                ${ props.estatus === 'pendiente' ? 
+                `<a href="cumplimiento/consulta/${info.event.id}/${props.tipo}" class="btn btn-info">Ir Audiencia</a>` 
+                : '' 
+                }
             </div>
         `;
     }
