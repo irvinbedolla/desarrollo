@@ -137,10 +137,7 @@
                     <table style="width: 100%; margin-top: 50px;">
                         <tr>
                             <td style="width: 100%; vertical-align: top; padding: 0 5px; text-align: center;">
-                                <b>Vo. Bo.</b><br><br><br><br>
-                                
                                 <div style="border-top: 2px solid #000; width: 50%; margin: 0 auto 5px auto;"></div>
-                                
                                 <b>
                                     {{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
                                     {{ $nombramiento_delegado }}
