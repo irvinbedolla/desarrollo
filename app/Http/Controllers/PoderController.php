@@ -836,6 +836,7 @@ class PoderController extends Controller
             }
         }   
         else {
+            
             request()->validate([
                 "razon"                         => 'required',
                 "rfc_moral"                     => 'required',
@@ -926,7 +927,7 @@ class PoderController extends Controller
                 Documentación original en formato físico, a fin de realizar el cotejo correspondiente.";
                     
                     
-                return redirect()->back()->with('success', $mensaje);
+                return redirect()->route('poder-crear')->with('success', $mensaje);
             }
             else if($data["representate"] == "Si"){
                 $data_insertar = array(
@@ -1012,7 +1013,7 @@ class PoderController extends Controller
                 establecido en el artículo 684-I, fracción I y II, de la Ley Federal del Trabajo; por lo que se le solicita acudir a su siguiente audiencia de conciliación con la 
                 Documentación original en formato físico, a fin de realizar el cotejo correspondiente.";
                         
-                return redirect()->back()->with('success', $mensaje);
+                return redirect()->route('poder-crear')->with('success', $mensaje);
             }   
         }
         else if($data["tipoPersona"] == "Moral"){
@@ -1048,7 +1049,7 @@ class PoderController extends Controller
                     'reprecentante'                 => "Si",
                     'tipo_identificacion'           => $data["tipo_identificacion_Moral"],
                     'num_identificacion'            => $data["num_identificacion_Moral"]
-            );
+            );       
 
             $nombre_ine = $data["razon"]."-MORAL"."_IDENTIFICACION.pdf";
             $path = Storage::putFileAs(
@@ -1095,8 +1096,7 @@ class PoderController extends Controller
             establecido en el artículo 684-I, fracción I y II, de la Ley Federal del Trabajo; por lo que se le solicita acudir a su siguiente audiencia de conciliación con la 
             Documentación original en formato físico, a fin de realizar el cotejo correspondiente.";
                     
-                    
-            return redirect()->back()->with('success', $mensaje);
+            return redirect()->route('poder-crear')->with('success', $mensaje);
         }
     }
      //PDF Acuse de confirmación de registro de abogados
