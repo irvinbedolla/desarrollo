@@ -2388,10 +2388,7 @@ class TurnosController extends Controller
             //$general    = SeerPerGeneral::find($pagos["id_solicitud"]);
             $salario_diario = $this->calcularSalarioDiario($solicitud->salario, $solicitud->frecuencia);
 
-            $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
-            $conciliador = $conciliador->where("seer_general.id", "=", $general["id"])
-            ->select('users.name')
-            ->first();
+            $conciliador = User::where('id', $solicitud->id_conciliador)->first();
             $html = view('PDF/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
         }
        

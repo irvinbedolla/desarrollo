@@ -69,19 +69,17 @@
                     <table id="tabla_solicitud" class="table-striped" style="width:60%; float: right;">
                         <tr>   
                             <td><b>Oficina: </b></td>
-                            <td>{{ mb_strtoupper($general->delegacion) }} </td>
+                            <td>{{ mb_strtoupper($solicitud->delegacion) }} </td>
                         </tr>
                         <tr>    
                             <td><b>Número de identificación único: </b></td>
-                            <td>{{ $general->NUE }} </td>
+                            <td>{{ $solicitud->NUE }} </td>
                         </tr>    
                     </table>
                 </div><br><br><br><br><br>
                 <p><b>
                     Trabajador(a): {{ $solicitud->nombre }}<br> 
-                    Empleador(a): @foreach ($citados as $citado)
-                        {{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido ?? ''}} <br>
-                    @endforeach
+                    Empleador(a): {{ $solicitud->empresa }} {{ $solicitud->primera_empresa ?? '' }} {{ $solicitud->segunda_empresa ?? '' }}<br>
                     Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
                     Fecha en que se emite la constancia de incumplimiento: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}<br>
                     Pena Convencional: Si<br>
