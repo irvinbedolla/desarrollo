@@ -9107,11 +9107,17 @@ class SeerController extends Controller
     public function consulta_cumplimiento($id,$tipo){
         $pago = Pagos::find($id);
         if($tipo == 1){
-            $solicitudes = Pagos::join('turnos','turnos.id',"=",'pago_solicitud.id_solicitud')
+            /*$solicitudes = Pagos::join('turnos','turnos.id',"=",'pago_solicitud.id_solicitud')
             ->where('pago_solicitud.id',$id)
             ->select('pago_solicitud.id','turnos.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
             ->get();
-            return view('/cumplimientos/pagar_ratificacion',compact('solicitudes'));
+
+            return view('/cumplimientos/pagar_ratificacion',compact('solicitudes'));*/
+            $solicitudes = Pagos::where('id_solicitud', $id)->get();
+            $id_pago = $solicitudes->id;
+
+            return route('pago_cumplimiento', $id_pago);
+
         }
         else if($tipo == 2){
             $solicitudes = Pagos::join('seer_general','seer_general.id',"=",'pago_solicitud.id_solicitud')

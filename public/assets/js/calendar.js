@@ -145,7 +145,7 @@ function handleEventClick(info, calendarType) {
             <strong>Observaciones:</strong> ${props.observaciones}<br>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <!--a href="cumplimiento/consulta/${info.event.id}/${props.tipo}" class="btn btn-info">Ver Cumplimiento</a-->
+                <a href="cumplimiento/consulta/${info.event.id}/${props.tipo}" class="btn btn-info">Ver Cumplimiento</a>
             </div>
         `;
     }
