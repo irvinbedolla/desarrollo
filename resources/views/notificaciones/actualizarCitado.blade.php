@@ -402,7 +402,7 @@
                                                     <option value="">Selecciona</option>
                                                     @php($estatusSel = old('estatus', $citados->estatus ?? ''))
                                                     <option value="Finalizado exitosamente" {{ $estatusSel === 'Finalizado exitosamente' ? 'selected' : '' }}>Finalizado exitosamente (persona)</option>
-                                                    <option value="No notificada" {{ $estatusSel === 'No notificada' ? 'selected' : '' }}>Exitoso por instructivo (fijado en puerta)</option>
+                                                    <option value="Exitosa por Instructivo" {{ $estatusSel === 'Exitosa por Instructivo' ? 'selected' : '' }}>Exitoso por instructivo (fijado en puerta)</option>
                                                     <option value="No exitosa se constituye" {{ $estatusSel === 'No exitosa se constituye' ? 'selected' : '' }}>No exitoso, se constituye</option>
                                                     <option value="No exitosa no se constituye" {{ $estatusSel === 'No exitosa no se constituye' ? 'selected' : '' }}>No exitoso, no se constituye (amparo)</option>
                                                     <option value="Notificada" {{ $estatusSel === 'Notificada' ? 'selected' : '' }}>Notificado</option>

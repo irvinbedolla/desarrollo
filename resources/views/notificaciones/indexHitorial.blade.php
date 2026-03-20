@@ -61,7 +61,7 @@
                                                                         <button type="button" class="btn btn-warning open-expediente-modal" data-bs-toggle="modal" data-bs-target="#expediente" data-id="{{ $notificacion->id_solicitud }}">Subir Documento</button><br>
                                                                     </ul>
                                                             @endif    
-                                                            @if($notificacion->estatus === "No notificada")
+                                                            @if($notificacion->estatus === "No notificada" || $notificacion->estatus === "Exitosa por Instructivo")
                                                                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                                                         Documentos
                                                                     </button>

@@ -39,7 +39,7 @@
                                                         <td>{{$notificacion->tipo_notificacion}}</td>
                                                         @if($notificacion->estatus == "Pendiente" || $notificacion->estatus == "Sin asignar")
                                                         <td>
-                                                            <form method="POST" action="{{ route('seer.store_enlace') }}" class="needs-validation novalidate">
+                                                            <form method="POST" action="{{ route('seer.store_enlace', $notificacion->id_citado) }}" class="needs-validation novalidate">
                                                                 @csrf
                                                                 <input type="hidden" name="id" value="{{$notificacion->id_solicitud}}">
                                                                 <select class="form-control" name="notificador" required>

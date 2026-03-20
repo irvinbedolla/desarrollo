@@ -2205,6 +2205,8 @@ class SeerController extends Controller
         $data['problema_diligencia'] = $request->input('problema_diligencia');
         $fechaEspecifica = Carbon::parse($request->fecha_notificacion . ' ' . $request->hora_notificacion);
 
+        $id_notificador = auth()->user()->id;
+
         // 1. Buscamos el registro ACTUAL en la base de datos primero
         $seercitado = SeerCitados::find($data["id"]);
 
@@ -2272,7 +2274,6 @@ class SeerController extends Controller
         $NUE = $solicitud->NUE;
         $municipios = Municipios::all();
         $estados = Estados::all();
-        $id_notificador = SeerCitados::where('id_solicitud', $seercitado->id_solicitud)->pluck('id_notificador')->first();
         $notificacion = SeerCitados::where('id_solicitud', $seercitado->id_solicitud)->pluck('notificacion')->first();
 
         $hora_notificacion = $data["hora_notificacion"];
@@ -2340,14 +2341,13 @@ class SeerController extends Controller
                     'num_identificacion'          => $data["num_identificacion"],
                 ]);
 
-                
-                //dd("llego");
         } else {
             // Tipo de llenado 2: actualizar varios registros de la misma solicitud
             $solicitud = SeerCitados::find($data["id"]);
             //$citados = SeerCitados::where('id_solicitud', $solicitud["id_solicitud"])->get();
             
-            $citados = SeerCitados::where('id_solicitud', $solicitud["id_solicitud"])->where('estatus', 'pendiente')->get();
+            $citados = SeerCitados::where('id_solicitud', $solicitud["id_solicitud"])->where('id_notificador', $id_notificador)->where('estatus', 'pendiente')->get();
+
             foreach ($citados as $citado) {
                 SeerCitados::find($citado["id"])
                     ->update([
@@ -2435,10 +2435,11 @@ class SeerController extends Controller
           
     }
 
-    public function store_enlace(Request $request){
+    public function store_enlace(Request $request, $id_citado){
         $data = $request->all();
-        $registrosActualizados = SeerCitados::where('id_solicitud', $data["id"])
+        $registrosActualizados = SeerCitados::where('id', $id_citado)->where('id_solicitud', $data["id"])
         ->update(['id_notificador' => $data["notificador"], 'estatus' => "Pendiente"]);
+
         return redirect()->route('notificaciones');
     }
 
@@ -5922,10 +5923,12 @@ class SeerController extends Controller
 
         //SeerCitados::where('id_solicitud', $data["id"])->where('notificacion', 'Centro')->whereIn('estatus', ['Notificada', 'Finalizado exitosamente'])->update(['tipo_notificacion' => 'Multa']);
 
-        $citados = SeerCitados::where('id_solicitud', $data["id"])->where('notificacion', 'Centro')->where('tipo_notificacion', '!=', 'Multa')->whereIn('estatus', ['Notificada', 'Finalizado exitosamente'])->get();
+        $citados = SeerCitados::where('id_solicitud', $data["id"])->where('notificacion', 'Centro')->where('tipo_notificacion', '!=', 'Multa')->whereIn('estatus', ['Notificada', 'Finalizado exitosamente', 'Exitosa por Instructivo', 'No notificada'])->get();
         foreach($citados as $citado){
             $nuevo_citado = $citado->replicate();
             $nuevo_citado->tipo_notificacion = 'Multa';
+            $nuevo_citado->estatus = 'Sin asignar';
+            $nuevo_citado->id_notificador = 0;
             $nuevo_citado->save();
         }
 
@@ -6882,10 +6885,13 @@ class SeerController extends Controller
                 $cont = count($citados);
                 $cont_total = count($total_citados);*/
                 
-                $citados = SeerCitados::where('id_solicitud', $data["id"])->where('notificacion', 'Centro')->where('tipo_notificacion', '!=', 'Multa')->whereNULL("id_abogado")->whereIn('estatus', ['Notificada', 'Finalizado exitosamente'])->get();
+                $citados = SeerCitados::where('id_solicitud', $data["id"])->where('notificacion', 'Centro')->where('tipo_notificacion', '!=', 'Multa')->whereNULL("id_abogado")->whereIn('estatus', ['Notificada', 'Finalizado exitosamente', 'Exitosa por Instructivo', 'No notificada'])->get();
                 foreach($citados as $citado){
                     $nuevo_citado = $citado->replicate();
                     $nuevo_citado->tipo_notificacion = 'Multa';
+                    $nuevo_citado->estatus = 'Sin asignar';
+                    $nuevo_citado->id_notificador = 0;
+
                     $nuevo_citado->save();
                 }
 

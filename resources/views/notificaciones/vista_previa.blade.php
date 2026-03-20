@@ -349,7 +349,7 @@
                                                 <select name="estatus" id="estatus" class="form-control" required>
                                                     <option value="">Selecciona</option>
                                                     <option value="Finalizado exitosamente" {{ $estatusSeleccionado == 'Finalizado exitosamente' ? 'selected' : '' }}>Finalizado exitosamente (persona)</option>
-                                                    <option value="No notificada" {{ $estatusSeleccionado == 'No notificada' ? 'selected' : '' }}>Exitoso por instructivo (fijado en puerta)</option>
+                                                    <option value="Exitosa por Instructivo" {{ $estatusSeleccionado == 'Exitosa por Instructivo' ? 'selected' : '' }}>Exitoso por instructivo (fijado en puerta)</option>
                                                     <option value="No exitosa se constituye" {{ $estatusSeleccionado == 'No exitosa se constituye' ? 'selected' : '' }}>No exitoso, se constituye</option>
                                                     <option value="No exitosa no se constituye" {{ $estatusSeleccionado == 'No exitosa no se constituye' ? 'selected' : '' }}>No exitoso, no se constituye (amparo)</option>
                                                     <option value="Notificada" {{ $estatusSeleccionado == 'Notificada' ? 'selected' : '' }}>Notificado</option>
