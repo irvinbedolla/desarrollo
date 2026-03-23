@@ -38,6 +38,10 @@ class SolicitudesExport implements FromView
         ->join('catalogo_motivos', 'catalogo_motivos.id', '=', 'seer_motivos.id_motivo')
         ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
         ->leftJoin('seer_citados', 'seer_citados.id_solicitud', '=', 'seer_general.id')
+        ->where(function($query) {
+                $query->where('seer_general.incidencia', 0)
+                    ->orWhereNull('seer_general.incidencia');
+            })
         
         // Join para Pagos (Filtrado por tipo)
         ->leftJoin('pago_solicitud', function($join) {

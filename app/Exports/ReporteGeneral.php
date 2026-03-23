@@ -30,6 +30,10 @@ class ReporteGeneral implements FromView
         $solicitudes = DB::table('users')
             ->join('seer_general', 'users.id', '=', 'seer_general.user_id')
             ->leftJoin('pago_solicitud', 'seer_general.id', '=', 'pago_solicitud.id_solicitud')
+            ->where(function($query) {
+                $query->where('seer_general.incidencia', 0)
+                    ->orWhereNull('seer_general.incidencia');
+            })
             ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
             ->when($sede !== "Todos", function ($q) use ($sede) {
                 if ($sede === "TodosDelegado") {
@@ -82,6 +86,10 @@ class ReporteGeneral implements FromView
                 // 2. Consulta de Turnos (La parte de Ratificaciones que viene de otra tabla)
                 $dataTurnos = DB::table('turnos')
                     ->join('pago_solicitud', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
+                    ->where(function($query) {
+                        $query->where('turnos.incidencia', 0)
+                            ->orWhereNull('turnos.incidencia');
+                    })
                     ->whereBetween('turnos.fecha', [$fecha_inicial, $fecha_final])
                     ->when($sede !== "Todos", function ($q) use ($sede) {
                         return $q->where('turnos.delegacion', $sede);

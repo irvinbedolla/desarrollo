@@ -98,6 +98,10 @@ class Motivos implements FromView
             ->join('seer_general', 'seer_general.id', '=', 'seer_motivos.id_solicitud')
             ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
             ->where(fn($q) => $aplicarFiltros($q, 'seer_general'))
+            ->where(function($query) {
+                $query->where('seer_general.incidencia', 0)
+                    ->orWhereNull('seer_general.incidencia');
+            })
             ->select(DB::raw("$sqlCaseM as categoria"), 
                      DB::raw("SUM(CASE WHEN seer_solicitante.sexo = 'H' THEN 1 ELSE 0 END) as total_hombres"),
                      DB::raw("SUM(CASE WHEN seer_solicitante.sexo = 'M' THEN 1 ELSE 0 END) as total_mujeres"),
@@ -111,6 +115,10 @@ class Motivos implements FromView
             ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
             ->whereNotIn('seer_general.estatus',['Pendiente','Prevencion'])
             ->where(fn($q) => $aplicarFiltros($q, 'seer_general'))
+            ->where(function($query) {
+                $query->where('seer_general.incidencia', 0)
+                    ->orWhereNull('seer_general.incidencia');
+            })
             ->select(DB::raw("$sqlCaseM as categoria"), 
                      DB::raw("SUM(CASE WHEN seer_solicitante.sexo = 'H' THEN 1 ELSE 0 END) as total_hombres"),
                      DB::raw("SUM(CASE WHEN seer_solicitante.sexo = 'M' THEN 1 ELSE 0 END) as total_mujeres"),
@@ -120,6 +128,10 @@ class Motivos implements FromView
         // 3. Ratificaciones (Turnos)
         $ratificaciones = DB::table('turnos')
             ->where(fn($q) => $aplicarFiltros($q, 'turnos'))
+            ->where(function($query) {
+                $query->where('turnos.incidencia', 0)
+                    ->orWhereNull('turnos.incidencia');
+            })
             ->select(DB::raw("$sqlCaseT as categoria"), 
                      DB::raw("SUM(CASE WHEN sexo = 'H' THEN 1 ELSE 0 END) as total_hombres"),
                      DB::raw("SUM(CASE WHEN sexo = 'M' THEN 1 ELSE 0 END) as total_mujeres"),
@@ -128,6 +140,10 @@ class Motivos implements FromView
         // 4. Ratificaciones (Turnos)
         $ratificacionesConcluidas = DB::table('turnos')
             ->whereIn('turnos.estatus',['Concluida','Concluida Pagos'])
+            ->where(function($query) {
+                $query->where('turnos.incidencia', 0)
+                    ->orWhereNull('turnos.incidencia');
+            })
             ->where(fn($q) => $aplicarFiltros($q, 'turnos'))
             ->select(DB::raw("$sqlCaseT as categoria"), 
                 DB::raw("SUM(CASE WHEN sexo = 'H' THEN 1 ELSE 0 END) as total_hombres"),
@@ -141,6 +157,10 @@ class Motivos implements FromView
             ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
             ->join('audiencias', 'audiencias.id_solicitud', '=', 'seer_general.id')
             ->whereIn('audiencias.estatus', ['Conciliacion'])
+            ->where(function($query) {
+                $query->where('seer_general.incidencia', 0)
+                    ->orWhereNull('seer_general.incidencia');
+            })
             ->where(fn($q) => $aplicarFiltros($q, 'seer_general'))
             ->select(DB::raw("$sqlCaseM as categoria"), 
                      DB::raw("SUM(CASE WHEN seer_solicitante.sexo = 'H' THEN 1 ELSE 0 END) as total_hombres"),
@@ -154,6 +174,10 @@ class Motivos implements FromView
             ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
             ->join('audiencias', 'audiencias.id_solicitud', '=', 'seer_general.id')
             ->where('audiencias.estatus', 'Archivada')
+            ->where(function($query) {
+                $query->where('seer_general.incidencia', 0)
+                    ->orWhereNull('seer_general.incidencia');
+            })
             ->where(fn($q) => $aplicarFiltros($q, 'seer_general'))
             ->select(DB::raw("$sqlCaseM as categoria"), 
                      DB::raw("SUM(CASE WHEN seer_solicitante.sexo = 'H' THEN 1 ELSE 0 END) as total_hombres"),
@@ -166,6 +190,10 @@ class Motivos implements FromView
             ->join('seer_general', 'seer_general.id', '=', 'seer_motivos.id_solicitud')
             ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
             ->join('audiencias', 'audiencias.id_solicitud', '=', 'seer_general.id')
+            ->where(function($query) {
+                $query->where('seer_general.incidencia', 0)
+                    ->orWhereNull('seer_general.incidencia');
+            })
             ->whereNotIn('audiencias.estatus', ['Pendiente','Conciliacion','No conciliacion reagendada','No conciliacion'])
             ->where(fn($q) => $aplicarFiltros($q, 'seer_general'))
             ->select(DB::raw("$sqlCaseM as categoria"), 
@@ -180,6 +208,10 @@ class Motivos implements FromView
             ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
             ->join('audiencias', 'audiencias.id_solicitud', '=', 'seer_general.id')
             ->whereIn('audiencias.estatus', ['Conciliacion','No conciliacion','No conciliacion reagendada','Reinstalacion'])
+            ->where(function($query) {
+                $query->where('seer_general.incidencia', 0)
+                    ->orWhereNull('seer_general.incidencia');
+            })
             ->where(fn($q) => $aplicarFiltros($q, 'seer_general'))
             ->select(DB::raw("$sqlCaseM as categoria"), 
                      DB::raw("SUM(CASE WHEN seer_solicitante.sexo = 'H' THEN 1 ELSE 0 END) as total_hombres"),
@@ -194,6 +226,10 @@ class Motivos implements FromView
             ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
             ->join('audiencias', 'audiencias.id_solicitud', '=', 'seer_general.id')
             ->whereIn('audiencias.estatus', ['No conciliacion'])
+            ->where(function($query) {
+                $query->where('seer_general.incidencia', 0)
+                    ->orWhereNull('seer_general.incidencia');
+            })
             ->where(fn($q) => $aplicarFiltros($q, 'seer_general'));
 
         // 1. No Conciliación (Al menos un abogado)

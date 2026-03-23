@@ -55,7 +55,11 @@ class Convenios implements FromView
                 return $q->where("seer_general.delegacion", $this->sede);
             })
             ->where('seer_citados.resulte_responsable', 'No')
-
+            ->where(function($query) {
+                $query->where('seer_general.incidencia', 0)
+                    ->orWhereNull('seer_general.incidencia');
+            })
+            
             ->select(
                 DB::raw('DATE_FORMAT(audiencias.fecha, "%d-%m-%Y") as fecha_formateada'), 
                 DB::raw('DATE_FORMAT(audiencias.hora, "%H:%i") as hora_formateada'),
@@ -78,6 +82,7 @@ class Convenios implements FromView
                 'users.name',
                 'audiencias.estatus'
             )
+            ->orderBy('seer_general.consecutivo', 'desc')
             ->get();
 
         return view('excel.convenios', [

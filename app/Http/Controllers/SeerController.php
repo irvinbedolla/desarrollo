@@ -12058,6 +12058,13 @@ class SeerController extends Controller
             $solicitante = SeerSolicitante::where('id_solicitud',$pagos->id_solicitud)->first();
             $solicitud = SeerPerGeneral::where('id', $pagos->id_solicitud)->first();
             $delegacion = $solicitud->delegacion;
+            $delegacion = $solicitud->delegacion;
+            $delegado = User::where('delegacion', $delegacion)
+            ->whereHas('roles', function ($query) {
+                $query->where('name', 'Delegado');
+            })
+            ->select('users.id', 'users.name', 'users.delegacion')
+            ->first(); 
             //$salario_diario = $this->calcularSalarioDiario($solicitud->pago, $solicitud->periodo_pago);
 
             $citados = SeerCitados::where('id_solicitud', $solicitud->id)->where('aparece_convenio', 1)->get();
@@ -12086,12 +12093,6 @@ class SeerController extends Controller
             $conciliador = $conciliador->where("seer_general.id", "=", $pagos->id_solicitud)
             ->select('users.name')
             ->first();
-            $delegado = User::where('delegacion', $delegacion)
-            ->whereHas('roles', function ($query) {
-                $query->where('name', 'Delegado');
-            })
-            ->select('users.id', 'users.name', 'users.delegacion')
-            ->first(); 
             $html = view('PDF/Cumplimientos/incomparecenciaTrabajadorAudiencia', compact('id','solicitud','conciliador',/*'salario_diario',*/'pagos','delegado','citados','representantes', 'solicitante'))->render();
         }
         $pdf = \PDF::loadHTML($html)
