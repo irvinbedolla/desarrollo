@@ -78,8 +78,11 @@
                     </table>
                 </div><br><br><br><br><br>
                 <p><b>
-                    Trabajador(a): {{ $solicitud->trabajador }} {{ $solicitud->primero_trabajador ?? '' }} {{ $solicitud->segundo_trabajador ?? '' }}<br> 
-                    Empleador(a): {{ $solicitud->empresa }} {{ $solicitud->primera_empresa ?? '' }} {{ $solicitud->segunda_empresa ?? '' }}<br>
+                    Solicitante: {{$solicitante->nombre}}<br> 
+                    Citado(s): 
+                    @foreach ($citados as $citado)
+                    {{ $citado->nombre }} {{ $citado->primer_apellido ?? '' }} {{ $citado->segundo_apellido ?? '' }}<br>
+                    @endforeach
                     Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
                     Fecha en que se emite la constancia de incumplimiento: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}<br>
                     Pena Convencional: Si<br>

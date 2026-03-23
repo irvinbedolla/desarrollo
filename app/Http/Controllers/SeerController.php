@@ -9311,18 +9311,19 @@ class SeerController extends Controller
             $html = view('PDF/Cumplimientos/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos'))->render();
         }
         else{
-            $solicitud = SeerSolicitante::where('id_solicitud',$pagos["id_solicitud"])->first();
+            $solicitante = SeerSolicitante::where('id_solicitud',$pagos["id_solicitud"])->first();
+            $solicitud = SeerPerGeneral::where('id', $pagos["id_solicitud"])->first();
             $pagos      = Pagos::find($id);
             $general    = SeerPerGeneral::find($pagos["id_solicitud"]);
             $citados = SeerCitados::where('id_solicitud',$pagos["id_solicitud"])->where('aparece_convenio', 1)->get();
 
-            $salario_diario = $this->calcularSalarioDiario($solicitud->pago, $solicitud->periodo_pago);
+            $salario_diario = $this->calcularSalarioDiario($solicitante->pago, $solicitante->periodo_pago);
     
             $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
             $conciliador = $conciliador->where("seer_general.id", "=", $general["id"])
             ->select('users.name')
             ->first();
-            $html = view('PDF/Incumplimiento', compact('id', 'solicitud','conciliador','salario_diario','pagos','general', 'citados'))->render();
+            $html = view('PDF/IncumplimientoAudiencia', compact('id', 'solicitud','conciliador','salario_diario','pagos','general', 'citados', 'solicitante'))->render();
         }
        
         $pdf = \PDF::loadHTML($html)
