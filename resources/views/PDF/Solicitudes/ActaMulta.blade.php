@@ -122,13 +122,18 @@
                 </div><br><br><br>
                 <center><p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br><br>
                         ACTA DE MULTA POR INCOMPARECENCIA</b></p></center>
+                @php
+                    $fechaNotificacion = !empty($citado->fecha)
+                    ? \Carbon\Carbon::parse($citado->fecha)
+                    : null;
+                @endphp
                 <p>En <b>{{ $direccion_sede }}</b> a <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, el(la) funcionario(a) 
                     conciliador(a) <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}</b>, adscrito al Centro 
                     de Conciliación Laboral del Estado de Michoacán de Ocampo, <b>hace constar y certifica</b> que la parte citada 
                     <b>{{ $citado->nombre }} @if(!empty($citado->primer_apellido)){{ $citado->primer_apellido }}@endif  @if(!empty($citado->segundo_apellido)){{ $citado->segundo_apellido }}@endif no compareció,</b> 
                     a la Audiencia de Conciliación prevista para las 
                     <b>{{ \Carbon\Carbon::parse($audiencia->hora)->format('H:i') }}</b> horas de esta misma fecha, a pesar de encontrarse debidamente notificado(a) para tal efecto, circunstancia que se corrobora 
-                    con <b>la razón de notificación de fecha {{ \Carbon\Carbon::parse($citado->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}. Doy fe</b>.
+                    con <b>la razón de notificación de fecha {{ $fechaNotificacion ? mb_strtoupper($fechaNotificacion->translatedFormat('d \D\E F \D\E\L Y')) : '' }}. Doy fe</b>.
                 </p>
                 <p>
                     <b>Michoacán de Ocampo</b>, a <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>.
@@ -136,7 +141,7 @@
                 <p>
                     Advirtiéndose así, que la parte citada <b>{{ $citado->nombre }} @if(!empty($citado->primer_apellido)){{ $citado->primer_apellido }}@endif  @if(!empty($citado->segundo_apellido)){{ $citado->segundo_apellido }}@endif</b>, no compareció a la 
                     audiencia de conciliación prevista para las <b>{{ \Carbon\Carbon::parse($audiencia->hora)->format('H:i') }}</b> horas de esta misma fecha, a pesar de encontrarse debidamente notificado(a) para tal efecto, circunstancia que se 
-                    corrobora con la notificación de fecha <b>{{ \Carbon\Carbon::parse($citado->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, por lo que con fundamento en los artículos 16, primer párrafo, 
+                    corrobora con la notificación de fecha <b>{{ $fechaNotificacion ? mb_strtoupper($fechaNotificacion->translatedFormat('d \D\E F \D\E\L Y')) : '' }}</b>, por lo que con fundamento en los artículos 16, primer párrafo, 
                     de la Constitución Política de los Estados Unidos Mexicanos; 590-E, 590-F, 684-E, fracciones IV, X, 684-I, fracción II de la Ley Federal del Trabajo; y 27 de 
                     la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo; artículos 19 fracción {{ $fraccion }} y 20 fracción XVI y XVII del Reglamento Interior del Centro de 
                     Conciliación del Estado de Michoacán de Ocampo, <b>SE ACUERDA</b>:
@@ -148,7 +153,7 @@
                 </p>
 
                 <p>
-                    En este acto, <b>se hace efectivo el apercibimiento decretado</b> en el citatorio notificado el <b>{{ \Carbon\Carbon::parse($citado->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
+                    En este acto, <b>se hace efectivo el apercibimiento decretado</b> en el citatorio notificado el <b>{{ $fechaNotificacion ? mb_strtoupper($fechaNotificacion->translatedFormat('d \D\E F \D\E\L Y')) : '' }}</b> 
                     y se impone a la parte citada <b>{{ $citado->nombre }} @if(!empty($citado->primer_apellido)){{ $citado->primer_apellido }}@endif  @if(!empty($citado->segundo_apellido)){{ $citado->segundo_apellido }}@endif una 
                     multa mínima por el monto de $5,865.50 (cinco mil ochocientos sesenta y cinco pesos 50/100 M.N.)(equivalente a Cincuenta veces la Unidad de Medida y Actualización)</b>.
                 </p>
