@@ -8283,7 +8283,29 @@ class SeerController extends Controller
         ->where("seer_general.id", "=", $id_solicitud)
         ->select('users.name')
         ->first();
-        $citado = SeerCitados::find($id);
+        //$citado = SeerCitados::find($id);
+        $multa = SeerCitados::find($id);
+        if (!$multa) {
+            return redirect()->back()->with('error', 'No se encontró el registro del citado.');
+        }
+        // Buscamos el registro de notificación (tipo Citatorio y Notificación Centro) 
+        // que coincida con los datos personales y de domicilio del citado
+        $citado = SeerCitados::where('id_solicitud', $id_solicitud)
+            ->where('nombre', $multa->nombre)
+            ->where('primer_apellido', $multa->primer_apellido)
+            ->where('segundo_apellido', $multa->segundo_apellido)
+            ->where('calle', $multa->calle)
+            ->where('n_ext', $multa->n_ext)
+            ->where('colonia', $multa->colonia)
+            ->where('tipo_notificacion', 'Citatorio')
+            ->where('notificacion', 'Centro')
+            ->whereIn('estatus', [
+                'Finalizado exitosamente', 
+                'Exitoso por instructivo', 
+                'No notificada'
+            ])
+            ->first();
+                
         $audiencia = Audiencias::where('id_solicitud', $id_solicitud)
         ->orderBy('fecha', 'desc')
         ->first();
