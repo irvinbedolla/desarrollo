@@ -10,7 +10,7 @@
                 <tr>
                     <th width="15" style="background-color: #869b9c; color: #ffffff;">Fecha</th>
                     <th width="25" style="background-color: #869b9c; color: #ffffff;">NUE</th>
-                    <th width="35" style="background-color: #869b9c; color: #ffffff;">Motivo Solicitud</th>
+                    <th width="60" style="background-color: #869b9c; color: #ffffff;">Motivo Solicitud</th>
                     <th width="25" style="background-color: #869b9c; color: #ffffff;">Genero</th>
                     <th width="40" style="background-color: #869b9c; color: #ffffff;">Empleador</th>
                     <th width="40" style="background-color: #869b9c; color: #ffffff;">Trabajador</th>
