@@ -30,6 +30,10 @@ class NotificacionesExport implements WithMultipleSheets
             ->join('seer_solicitante', 'seer_general.id', '=', 'seer_solicitante.id_solicitud')
             ->join('users as auxiliar', 'auxiliar.id', '=', 'seer_general.user_id')
             ->leftJoin('users as notificador', 'notificador.id', '=', 'seer_citados.id_notificador')
+            ->where(function($query) {
+                $query->where('seer_general.incidencia', 0)
+                ->orWhereNull('seer_general.incidencia');
+            })
             ->when($this->sede !== "Todos", function ($q) use ($sedeUsuario) {
                 if ($this->sede === "TodosDelegado") {
                     $grupos = ['Morelia' => ['Morelia', 'Zitácuaro'], 'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'], 'Zamora' => ['Zamora', 'Sahuayo']];
@@ -53,6 +57,10 @@ class NotificacionesExport implements WithMultipleSheets
             ->join('seer_solicitante', 'seer_general.id', '=', 'seer_solicitante.id_solicitud')
             ->join('users as auxiliar', 'auxiliar.id', '=', 'seer_general.user_id')
             ->leftJoin('users as notificador', 'notificador.id', '=', 'seer_citados.id_notificador')
+            ->where(function($query) {
+                $query->where('seer_general.incidencia', 0)
+                ->orWhereNull('seer_general.incidencia');
+            })
             ->when($this->sede !== "Todos", function ($q) use ($sedeUsuario) {
                 if ($this->sede === "TodosDelegado") {
                     $grupos = ['Morelia' => ['Morelia', 'Zitácuaro'], 'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'], 'Zamora' => ['Zamora', 'Sahuayo']];
@@ -85,7 +93,7 @@ class NotificacionesExport implements WithMultipleSheets
             return [
                 'nombre' => $row->first()->nombre_notificador ?? 'Sin asignar',
                 'total' => $row->count(),
-                'notificadas' => $row->whereIn('estatus', ['Notificada','Finalizado exitosamente','Recibe pero no firma'])->count(),
+                'notificadas' => $row->whereIn('estatus', ['Notificada','Finalizado exitosamente','Recibe pero no firma','Exitosa por Instructivo'])->count(),
                 'no_notificadas' => $row->whereIn('estatus', ['No notificada','No exitosa se constituye','No exitosa no se constituye'])->count(),
                 'pendientes' => $row->whereIn('estatus', ['Pendiente'])->count(),
                 'exhorto' => $row->whereIn('estatus', ['Exhorto'])->count(),
