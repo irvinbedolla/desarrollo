@@ -12001,22 +12001,45 @@ class SeerController extends Controller
             $html = view('PDF/cumplimientos/incomparecenciaTrabajador', compact('id', 'solicitud','conciliador',/*'salario_diario',*/'pagos','delegado'))->render();
         }
         else{
-            $solicitud = SeerSolicitante::where('id_solicitud',$id)->first();
             $pagos = Pagos::find($id);
+            $solicitante = SeerSolicitante::where('id_solicitud',$pagos->id_solicitud)->first();
+            $solicitud = SeerPerGeneral::where('id', $pagos->id_solicitud)->first();
+            $delegacion = $solicitud->delegacion;
             //$salario_diario = $this->calcularSalarioDiario($solicitud->pago, $solicitud->periodo_pago);
 
+            $citados = SeerCitados::where('id_solicitud', $solicitud->id)->where('aparece_convenio', 1)->get();
+
+            $historialIds = $citados->pluck('id_historial')->filter()->unique()->values();
+            $abogadoIds   = $citados->whereNull('id_historial')->pluck('id_abogado')->filter()->unique()->values();
+
+            $representantesHistorial = $historialIds->isNotEmpty()
+                ? HistorialAbogado::whereIn('id', $historialIds)->get()
+                : collect();
+
+            $representantesPoder = $abogadoIds->isNotEmpty()
+                ? Poder::whereIn('idAbogado', $abogadoIds)->get()
+                : collect();
+
+            // Colección final con ambos tipos (puedes iterar en la vista)
+            $representantes = $representantesHistorial
+                ->concat($representantesPoder)
+                ->unique(function ($rep) {
+                    // Evita duplicados entre tablas: HistorialAbogado usa id, Poder usa idAbogado
+                    return $rep instanceof \App\Models\HistorialAbogado ? 'H:' . $rep->id : 'P:' . $rep->idAbogado;
+                })
+                ->values();
+
             $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
-            $conciliador = $conciliador->where("seer_general.id", "=", $id)
+            $conciliador = $conciliador->where("seer_general.id", "=", $pagos->id_solicitud)
             ->select('users.name')
             ->first();
-            $delegacion = $solicitud->delegacion;
             $delegado = User::where('delegacion', $delegacion)
             ->whereHas('roles', function ($query) {
                 $query->where('name', 'Delegado');
             })
             ->select('users.id', 'users.name', 'users.delegacion')
             ->first(); 
-            $html = view('PDF/Cumplimientos/incomparecenciaTrabajador', compact('id','solicitud','conciliador',/*'salario_diario',*/'pagos','delegado'))->render();
+            $html = view('PDF/Cumplimientos/incomparecenciaTrabajadorAudiencia', compact('id','solicitud','conciliador',/*'salario_diario',*/'pagos','delegado','citados','representantes', 'solicitante'))->render();
         }
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -12047,12 +12070,18 @@ class SeerController extends Controller
             $html = view('PDF/cumplimientos/incomparecenciaTrabajador', compact('id', 'solicitud','conciliador',/*'salario_diario',*/'pagos','delegado'))->render();
         }
         else{
-            $solicitud = SeerSolicitante::where('id_solicitud', $pagos->id_solicitud)->first();
             $pagos = Pagos::find($id);
             //$salario_diario = $this->calcularSalarioDiario($solicitud->pago, $solicitud->periodo_pago);
+            $solicitud = Turnos::where('id', $pagos->id_solicitud)->first();
 
-            $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
-            $conciliador = $conciliador->where("seer_general.id", "=", $id)
+            if($solicitud->id_historial){
+                $representante = HistorialAbogado::where('id', $solicitud->id_historial)->first();
+            } else {
+                $representante = Poder::where('idAbogado', $solicitud->idAbogado)->first();
+            }
+
+            $conciliador  = User::join("turnos","turnos.id_conciliador","=","users.id");
+            $conciliador = $conciliador->where("turnos.id", "=", $pagos->id_solicitud)
             ->select('users.name')
             ->first();
 
@@ -12063,7 +12092,7 @@ class SeerController extends Controller
             })
             ->select('users.id', 'users.name', 'users.delegacion')
             ->first(); 
-            $html = view('PDF/Cumplimientos/incomparecenciaTrabajador', compact('id','solicitud','conciliador',/*'salario_diario',*/'pagos','delegado'))->render();
+            $html = view('PDF/Cumplimientos/incomparecenciaTrabajador', compact('id','solicitud','conciliador',/*'salario_diario',*/'pagos','delegado', 'representante'))->render();
         }
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -12868,18 +12897,18 @@ class SeerController extends Controller
         $tipo = Pagos::where('id', $id_pago)->value('tipo_pago');
 
         if($tipo == 'Ratificacion'){
-            $cumplimientos = Pagos::join('turnos','turnos.id',"=",'pago_solicitud.id_solicitud')
+            $solicitudes = Pagos::join('turnos','turnos.id',"=",'pago_solicitud.id_solicitud')
             ->where('pago_solicitud.id',$id_pago)
             ->select('pago_solicitud.id','pago_solicitud.id_solicitud','turnos.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
             ->get();
+            return view('/cumplimientos/pagar_ratificacion',compact('solicitudes'));
         } else {
             $cumplimientos = Pagos::join('seer_general','seer_general.id',"=",'pago_solicitud.id_solicitud')
             ->where('pago_solicitud.id',$id_pago)
             ->select('pago_solicitud.id','pago_solicitud.id_solicitud','seer_general.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
             ->get();
+            return view('/cumplimientos/pagar_audiencia',compact('cumplimientos'));
         }
-
-        return view('/cumplimientos/pagar_audiencia',compact('cumplimientos'));
     }
 
     public function seer_detalles($id){

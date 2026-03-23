@@ -29,7 +29,7 @@
                                                     <!--td>{{\Carbon\Carbon::parse($pago->fecha)->translatedFormat('d-m-Y')}}</!--td--> 
                                                     <!--td>{{\Carbon\Carbon::parse($pago->hora)->translatedFormat('d-m-Y')}}</!--td-->
                                                     <td>{{date_format($pago->fecha,"d-m-Y")}}</td> 
-                                                    <td>{{date_format($pago->hora,"h:m:s")}}</td>
+                                                    <td>{{date_format($pago->hora,"H:i:s")}}</td>
                                                     <td>${{number_format($pago->monto, 2)}}</td>
                                                     <td>{{$pago->estatus}}</td>
                                                     <td>

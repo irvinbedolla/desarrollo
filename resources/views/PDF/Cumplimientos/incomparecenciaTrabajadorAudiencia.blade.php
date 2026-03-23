@@ -77,8 +77,12 @@
                     </table>
                 </div><br><br><br><br><br>
                 <p><b>
-                    Trabajador: {{$solicitud->trabajador}} {{$solicitud->primero_trabajador ?? ''}} {{$solicitud->segundo_trabajador ?? ''}}<br> 
-                    Empresa/Patrón: {{ $solicitud->empresa }} {{ $solicitud->primero_empresa ?? ''}} {{ $solicitud->segundo_empresa ?? ''}}<br>
+                    Solicitante: {{$solicitante->nombre}}<br> 
+                    Citado(s): 
+                    @foreach ($citados as $citado)
+                    {{ $citado->nombre }} {{ $citado->primer_apellido ?? '' }} {{ $citado->segundo_apellido ?? '' }}<br>
+                    @endforeach
+                    <br>
                 </b></p><br>  
                 <p>
                     En la Ciudad de <b>{{ $solicitud->delegacion }}</b>, Michoacán, siendo las <b>{{\Carbon\Carbon::parse($solicitud->hora)->translatedFormat('h:i')}}</b> horas, del día 
@@ -92,13 +96,15 @@
                 </p>
                 <p><center><b>CERTIFICACIÓN:</b></center></p><br>
                 <p>
-                    Que comparece la persona de nombre <b>C. 
-                    @if($representante->nombre_representante != NULL)
-                        {{ $representante->nombre_representante }} {{ $representante->primer_apellido_representante }} {{ $representante->segundo_apellido_representante ?? '' }} </b> en su carácter de representante 
-                        legal de la parte patronal <b>{{$solicitud->empresa}}</b>
-                    @else
-                        {{ $representante->nombre_representante }} {{ $representante->primer_apellido_representante }} {{ $representante->segundo_apellido_representante ?? '' }} </b>
-                    @endif
+                    Que comparece la(s) persona(s) de nombre <b>C. 
+                    @foreach ($representantes as $representante)
+                        @if($representante->nombre_representante != NULL)
+                            {{ $representante->nombre_representante }} {{ $representante->primer_apellido_representante }} {{ $representante->segundo_apellido_representante ?? '' }} </b> en su carácter de representante 
+                            legal de la parte patronal <b>{{$solicitud->empresa}}</b>
+                        @else
+                            {{ $representante->nombre_representante }} {{ $representante->primer_apellido_representante }} {{ $representante->segundo_apellido_representante ?? '' }} </b>
+                        @endif
+                    @endforeach
                     , a dar cumplimiento al Convenio celebrado entre las partes ante este Centro el día 
                     <b>{{ \Carbon\Carbon::parse($solicitud->fecha_audiencia)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{ \Carbon\Carbon::parse($solicitud->hora_audiencia)->translatedFormat('h:i') }}</b> hrs., 
                     haciendo constar la inasistencia de la parte trabajadora, no obstante de encontrarse legal y debidamente notificada de la fecha y hora del cumplimiento de pago de convenio, 
