@@ -7879,22 +7879,26 @@ class SeerController extends Controller
         ->where('aparece_convenio', 1)
         ->get();*/
 
-        $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
+        /*$audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
         $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
-        ->first();
+        ->first();*/
+        $audiencia = SeerPerGeneral::join("audiencias", "audiencias.id_solicitud", "=", "seer_general.id")
+            ->where("audiencias.id_solicitud", "=", $solicitud->id)
+            ->latest('audiencias.created_at')
+            ->first();
 
         // Descripción del tipo de identificación para los solicitantes y poderes
         $identificacionSolicitante = $solicitante->identificacion;
         $descripcionIdentificacionS = $this->descripcionIdentificacion($identificacionSolicitante);
         $identificacionPoder = $abogado ? $abogado->tipo_identificacion : null;
         $descripcionIdentificacionP = $this->descripcionIdentificacion($identificacionPoder);
-
+        $ultimoCitatorio = SeerCitados::where('id_solicitud', $id)->latest()->first();
         $html = view('PDF/Solicitudes/convenioSolicitud', 
         compact('id', 'solicitud', /*'dias_descanso',*/ 'salario_diario','salario_mensual','pagos','diarioTexto','penaTexto','mensualTexto','montoTexto',/*'vacacionesTexto',
         'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
         'gratificacionETexto','gratificacionFTexto','otrasTexto',*/'pagosDif','conciliador','prestaciones','solicitante','citados','audiencia','pagoTotal','abogado',
         'conceptosTexto', 'deduccionesTexto','municipioEmpresa', 'estadoEmpresa','descripcionIdentificacionS', 'descripcionIdentificacionP','prestaciones','deducciones','datosAudiencia','delegado',
-        'abogadosConvenio', 'descripcionIdentificacionPMap'))
+        'abogadosConvenio', 'descripcionIdentificacionPMap','ultimoCitatorio'))
         ->render();
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
