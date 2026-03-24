@@ -112,7 +112,7 @@
                                                 <option value="Conciliacion">Hubo Convenio</option>
                                                 <option value="No conciliacion">No Hubo Convenio</option>
                                                 <option value="Reagenda">No Hubo Convenio (Se desea reagendar)</option>
-                                                <option value="Reinstalacion">Reinstalación</option>
+                                                <!--option value="Reinstalacion">Reinstalación</!--option-->
                                                 <option value="Archivada por incomparecencia">Archivar</option>
                                             </select>
                                         </div>
@@ -447,7 +447,7 @@
                 html += '<div class="col-xs-12 col-sm-12 col-md-6">';
                 html += '<div class="form-group">';
                 html += '<label for="password">Monto a pagar</label>';
-                html +='<input type="text" class="form-control" name="monto_pago[]" required oninput="validarNumero(this)" placeholder="$">';
+                html +='<input type="text" class="form-control" name="monto_pago[]" oninput="validarNumero(this)" placeholder="$">';
                 html += '<div class="invalid-feedback">El monto es obligatorio.</div>';
                 html += '</div> </div>';
 
@@ -457,6 +457,10 @@
                 html += '</div>';
 
                 $('#newRow').append(html);
+                //Aseguramos que el nuevo select respete required según el estatus actual
+                if (typeof syncPrestacionesRequired === 'function') {
+                    syncPrestacionesRequired();
+                }
             });
 
             // Borrar concepto
@@ -771,13 +775,52 @@
         }
 
         const tipo_iden = document.getElementById('tipo_de_conclucion');
-        tipo_iden.addEventListener('change', function() {
-            const valorSeleccionado = this.value;
 
-            const convenio = (valorSeleccionado === 'Conciliacion' || valorSeleccionado === 'Reinstalacion');
-            document.querySelectorAll('select[name="tipo_pago[]"]').forEach(function(sel){
+        //Re-aplicar required a los selects de prestaciones.
+        function syncPrestacionesRequired() {
+            if (!tipo_iden) return;
+            const valor = tipo_iden.value;
+            const convenio = (valor === 'Conciliacion' || valor === 'Reinstalacion');
+
+            document.querySelectorAll('select[name="tipo_pago[]"]').forEach(function(sel) {
                 sel.required = convenio;
+                if (!convenio) sel.classList.remove('is-invalid');
             });
+
+            //El monto de cada prestación solo es requerido cuando aplica convenio
+            document.querySelectorAll('input[name="monto_pago[]"]').forEach(function(inp) {
+                inp.required = convenio;
+                if (!convenio) inp.classList.remove('is-invalid');
+            });
+
+            document.querySelectorAll('.otra-prestacion-input').forEach(function(container) {
+                const input = container.querySelector('input[name="otra_prestacion[]"]');
+                if (!input) return;
+                const select = container.closest('.form-group') ? container.closest('.form-group').querySelector('select[name="tipo_pago[]"]') : null;
+                const otras = !!(select && select.value === 'Otras');
+                input.required = convenio && otras;
+                if (!input.required) input.classList.remove('is-invalid');
+            });
+
+            document.querySelectorAll('select#tipoPago').forEach(function(sel) {
+                sel.required = convenio;
+                sel.disabled = !convenio;
+                if (!convenio) {
+                    sel.classList.remove('is-invalid');
+                    sel.value = '';
+                }
+            });
+            document.querySelectorAll('input[name="monto_pagos[]"]').forEach(function(inp) {
+                inp.required = convenio;
+                if (!convenio) inp.classList.remove('is-invalid');
+            });
+        }
+
+        if (tipo_iden) {
+            tipo_iden.addEventListener('change', function() {
+                const valorSeleccionado = this.value;
+
+                syncPrestacionesRequired();
 
             // Realiza la validación o acciones necesarias
             if (valorSeleccionado === 'Conciliacion' || valorSeleccionado === 'Reinstalacion') {
@@ -949,15 +992,16 @@
                 const tau4 = document.getElementById('tipo_audiencia');
                 tau4.required = false;
             }
-        });
+            });
+        }
 
         (function(){
             if(!tipo_iden) return;
-            const convenio = (tipo_iden.value === 'Conciliacion' || tipo_iden.value === 'Reinstalacion');
-            document.querySelectorAll('select[name="tipo_pago[]"]').forEach(function(sel){
-                sel.required = convenio;
-            });
 
+            //Sync inicial al cargar la vista.
+            syncPrestacionesRequired();
+
+            const convenio = (tipo_iden.value === 'Conciliacion' || tipo_iden.value === 'Reinstalacion');
             var penInit = document.querySelector('input[name="pena_convencional"]');
             var dircInit = document.querySelector('input[name="direccion_convenio"]');
             if(penInit) penInit.required = convenio;
@@ -1431,7 +1475,7 @@
             html += '<div class="col-xs-12 col-sm-12 col-md-6">';
             html += '<div class="form-group">';
             html += '<label for="password">Monto a pagar</label>';
-            html +='<input type="text" class="form-control" name="monto_pago[]" required oninput="validarNumero(this)" placeholder="$" value="'+ (montoVal ? String(montoVal).replace(/"/g,'&quot;') : '') +'">';
+            html +='<input type="text" class="form-control" name="monto_pago[]" oninput="validarNumero(this)" placeholder="$" value="'+ (montoVal ? String(montoVal).replace(/"/g,'&quot;') : '') +'">';
             html += '<div class="invalid-feedback">El monto es obligatorio.</div>';
             html += '</div> </div>';
             html += '<div class="input-group-append">';
@@ -1532,6 +1576,10 @@
                         var otra = data['otra_prestacion'] && data['otra_prestacion'][i] ? data['otra_prestacion'][i] : '';
                         $('#newRow').append(generatePrestacionRow(tipo, monto, otra));
                     }
+                    // Asegura required correcto en selects generados desde preview
+                    if (typeof syncPrestacionesRequired === 'function') {
+                        syncPrestacionesRequired();
+                    }
                 }
 
                 // Deducciones
@@ -1592,11 +1640,22 @@
             $('#form_roles').on('submit', function(e){
                 var valid = true;
 
+                //Solo exigimos validación de pagos/agenda cuando aplica convenio
+                var tipoConcl = $('#tipo_de_conclucion').val();
+                var requiereConvenio = (tipoConcl === 'Conciliacion' || tipoConcl === 'Reinstalacion');
+
                 $('.inputFormRow2').each(function(index){
                     var block = $(this);
+
+                    //Si NO aplica convenio, no validamos fecha/hora/opciones de pago y limpiamos algún input rezagado
+                    if (!requiereConvenio) {
+                        block.find('input[name="dias_pagos[]"], input[name="hora_pagos[]"], input[name="tipo_pagoAgenda[]"]').remove();
+                        return;
+                    }
                     
                     var tipoSelect = block.find('#tipoPago');
-                    if(tipoSelect.length > 0 && !tipoSelect.val()){
+                    //Solo validar cuando el selector aplica (no está deshabilitado)
+                    if(tipoSelect.length > 0 && !tipoSelect.prop('disabled') && !tipoSelect.val()){
                          alert('Por favor selecciona una opción de pago para el pago #' + (index + 1));
                          valid = false;
                          return false; 
