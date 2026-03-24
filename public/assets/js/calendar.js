@@ -167,6 +167,8 @@ function handleEventClick(info, calendarType) {
             </div>
         `;
     } else if (calendarType === 'audiencias') {
+        const audienciaId = props.audiencia_id ?? info.event.id;
+        const idSolicitud = props.id_solicitud;
         modalContent = `
             <strong>NUE:</strong> ${info.event.title}<br>
             <strong>Conciliador:</strong> ${props.conciliador}<br>
@@ -177,8 +179,8 @@ function handleEventClick(info, calendarType) {
             <strong>Sala:</strong> ${props.sala}<br>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                ${ props.estatus === 'pendiente' ? 
-                `<a href="cumplimiento/consulta/${info.event.id}/${props.tipo}" class="btn btn-info">Ir Audiencia</a>` 
+                ${ props.estatus === 'Pendiente' ? 
+                `<a href="solicitud/iniciar/${idSolicitud}?audiencia_id=${audienciaId}" class="btn btn-info">Ir a Audiencia</a>` 
                 : '' 
                 }
             </div>

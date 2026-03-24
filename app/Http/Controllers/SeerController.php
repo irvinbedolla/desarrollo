@@ -4734,7 +4734,10 @@ class SeerController extends Controller
 
         //Citados
 
-        $audienciaId = Audiencias::where('id_solicitud', $data['id'])->latest('id')->value('id');
+        $audienciaId = $data['audiencia_id'] ?? null;
+        if (is_null($audienciaId) || $audienciaId === '') {
+            $audienciaId = Audiencias::where('id_solicitud', $data['id'])->latest('id')->value('id');
+        }
 
         $citadosDelete = session('citados_edicion_delete', []);
         if (!empty($citadosDelete)) {
@@ -4837,7 +4840,13 @@ class SeerController extends Controller
                         ->orderBy('fecha', 'desc')
                         ->first();
 
-                return redirect()->route('inicioAudiencia', ['id' => $audiencia->id_solicitud, 'estatus' => 'Confirmado']);
+                $audienciaId = $data['audiencia_id'] ?? ($audiencia->id ?? null);
+
+                $url = route('inicioAudiencia', ['id' => $audiencia->id_solicitud, 'estatus' => 'Confirmado']);
+                if (!is_null($audienciaId)) {
+                    $url .= '?audiencia_id=' . urlencode((string)$audienciaId);
+                }
+                return redirect($url);
             }
 
             if($data["esAudiencia"] == 'No'){
@@ -8736,6 +8745,7 @@ class SeerController extends Controller
 
         $user = auth()->user(); // Ya trae el objeto, no necesitas buscarlo por ID de nuevo
         $isAudiencia = $request->query('isAudiencia', null);
+        $audiencia_id = $request->query('audiencia_id', null);
         
         // Usamos with() si existen relaciones definidas en el modelo para evitar el problema N+1
         $general = SeerPerGeneral::findOrFail($id);

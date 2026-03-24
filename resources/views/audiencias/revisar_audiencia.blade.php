@@ -131,6 +131,7 @@
                                     <input type="hidden" name="id" value="{{$id}}">
                                     <input type="hidden" name="isAudiencia" value="1">
                                     <input type="hidden" name="esAudiencia" value="{{ $isAudiencia }}">
+                                    <input type="hidden" name="audiencia_id" value="{{ request()->query('audiencia_id') }}">
                                     <div class="tab">
                                         <a class="btn btn-info" onclick="openCity(event, 'detalles')">Detalles</a>
                                         <a class="btn btn-info" onclick="openCity(event, 'solicitante')">Solicitante</a>

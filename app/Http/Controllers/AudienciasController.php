@@ -94,13 +94,16 @@ class AudienciasController extends Controller
                     $color = '#CCCCCC';
                 }
 
-                $eventos[] = [
-                    'id' => $audiencia->id_solicitud,
+                    $eventos[] = [
+                        
+                    'id' => $audiencia->id,
                     'id_solicitud' => $audiencia->id_solicitud,
                     'title' => $audiencia->NUE,
                     'solicitante' => $audiencia->nombre,
                     'start' => $audiencia->fecha->format('Y-m-d') . 'T' . $audiencia->hora->format('H:i:s'),
                     'extendedProps' => [
+                        'audiencia_id' => $audiencia->id,
+                        'id_solicitud' => $audiencia->id_solicitud,
                         'hora' => $audiencia->hora->format('h:i A'),
                         'color' => $color,
                         'numero_audiencia' => $audiencia->numero_audiencia,
