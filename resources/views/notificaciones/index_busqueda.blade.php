@@ -20,6 +20,8 @@
                                                 <th style="color: #fff;">Citado</th>
                                                 <th style="color: #fff;">Dirección</th>
                                                 <th style="color: #fff;">Estatus</th>
+                                                <th style="color: #fff;">Medio</th>
+                                                <th style="color: #fff;">Tipo de notificación</th>"
                                                 <th style="color: #fff;">Editar</th>
                                                 <th style="color: #fff;">Documento</th>
                                             </thead>
@@ -33,6 +35,8 @@
                                                                 INT. {{ $notificacion->n_int }}
                                                             @endif{{mb_strtoupper($notificacion->municipio_citado, 'UTF-8')}}, {{mb_strtoupper($notificacion->estado_citado, 'UTF-8')}}</td>
                                                         <td>{{$notificacion->estatus}}</td>
+                                                        <td>{{$notificacion->notificacion}}</td>
+                                                        <td>{{$notificacion->tipo_notificacion}}</td>
                                                         <td>
                                                             <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('editar_citado_historial')}}">
                                                                 @csrf
@@ -52,7 +56,7 @@
                                                                         <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFmultaNotificacion', [$notificacion->id, $notificacion->id_solicitud]) }}" target="_blank">Multa</a></li>
                                                                     </ul>
                                                                 @endif     
-                                                                @if($notificacion->estatus === "No notificada")
+                                                                @if($notificacion->estatus === "No notificada" || $notificacion->estatus === "Notificada en Audiencia")
                                                                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                                                         Documentos
                                                                     </button>

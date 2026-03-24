@@ -10634,16 +10634,15 @@ class SeerController extends Controller
             ->leftjoin('estados', 'seer_citados.estado_citado', '=', 'estados.id')
             ->whereIn('seer_general.delegacion', $delegaciones)
             ->select('seer_citados.*','seer_general.NUE','municipios.nombre as municipio_citado','estados.nombre as estado_citado')
-            ->orderBy('created_at', 'desc')->limit(1000)->get();
+            ->orderBy('created_at', 'desc')->limit(2000)->get();
         }
         else{
             $notificaciones = SeerCitados::join('seer_general','seer_general.id','seer_citados.id_solicitud')
             ->leftjoin('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
             ->leftjoin('estados', 'seer_citados.estado_citado', '=', 'estados.id')
             ->select('seer_citados.*','seer_general.NUE','municipios.nombre as municipio_citado','estados.nombre as estado_citado')
-            ->orderBy('created_at', 'desc')->limit(1000)->get();
+            ->orderBy('created_at', 'desc')->limit(2000)->get();
         }
-
        
         return view('/notificaciones.index_busqueda',compact('notificaciones'));
     }
