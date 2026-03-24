@@ -135,9 +135,9 @@
                     <b>{{ \Carbon\Carbon::parse($audiencia->hora)->format('H:i') }}</b> horas de esta misma fecha, a pesar de encontrarse debidamente notificado(a) para tal efecto, circunstancia que se corrobora 
                     con <b>la razón de notificación de fecha {{ $fechaNotificacion ? mb_strtoupper($fechaNotificacion->translatedFormat('d \D\E F \D\E\L Y')) : '' }}. Doy fe</b>.
                 </p>
-                <p>
+                {{--<p>
                     <b>Michoacán de Ocampo</b>, a <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>.
-                </p>
+                </p>--}}
                 <p>
                     Advirtiéndose así, que la parte citada <b>{{ $citado->nombre }} @if(!empty($citado->primer_apellido)){{ $citado->primer_apellido }}@endif  @if(!empty($citado->segundo_apellido)){{ $citado->segundo_apellido }}@endif</b>, no compareció a la 
                     audiencia de conciliación prevista para las <b>{{ \Carbon\Carbon::parse($audiencia->hora)->format('H:i') }}</b> horas de esta misma fecha, a pesar de encontrarse debidamente notificado(a) para tal efecto, circunstancia que se 
@@ -161,7 +161,7 @@
                 <p>
                     Gírese atento oficio electrónico <b>al Servicio de Administración Tributaria</b>, para que haga efectivo el cobro de la multa impuesta a la parte 
                     citada <b>{{ $citado->nombre }} @if(!empty($citado->primer_apellido)){{ $citado->primer_apellido }}@endif  @if(!empty($citado->segundo_apellido)){{ $citado->segundo_apellido }}@endif</b> con los datos de identificación con los que se cuenta:
-                </p>
+                
 
                 <table style="margin-left: 20px; font-weight: bold;">
                     <tr>
@@ -197,7 +197,7 @@
                         </td>
                     </tr>
                 </table><br>
-                <p><b>
+                <b>
                     Notifíquese personalmente a la parte citada dentro de los próximos 15 días hábiles y por buzón electrónico a la parte solicitante.<br>
                 </b>
                     Así lo proveyó <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}</b>, funcionario(a) conciliador(a) adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>

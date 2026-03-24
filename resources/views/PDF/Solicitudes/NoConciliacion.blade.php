@@ -107,8 +107,8 @@
                     Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ \Carbon\Carbon::parse($audiencia->hora)->format('H:i') }} hrs.<br>
                     Funcionario(a) conciliador(a) responsable: {{ $conciliador->name }}<br>
                     Asistencia del citado: @if($citado->aparece_convenio==1)Si @else No @endif
-                </b></p>
-                <p>
+                </b>
+                    <center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center><br>
                     <center><b>CONSTANCIA DE NO CONCILIACIÓN</b></center><br>
                 </p> 
                 <p>
@@ -135,16 +135,16 @@
                     fracción XX, de la Constitución Política de los Estados Unidos Mexicanos; 521, fracción III, 870 Bis, de la Ley Federal del Trabajo. <b>Doy fe</b>.
                          
                 </p>    
-                <br><br><br>  
+                <br><br>
                 <center><p><b>___________________________________<br>{{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br> FUNCIONARIO/A CONCILIADOR<br>
                 DEL CENTRO DE CONCILIACIÓN LABORAL DEL<br>ESTADO DE MICHOACÁN DE OCAMPO</b></p></center>   
-                <br>
-                <p style="font-size:10px">En caso de que el conflicto se relacione con prestaciones de seguridad social, pensiones, designación de beneficiarios
+                
+                <p style="font-size:10px"><b>En caso de que el conflicto se relacione con prestaciones de seguridad social, pensiones, designación de beneficiarios
                     y devolución de aportaciones, puedes acudir a la Procuraduría de la Defensa del Trabajo.<br><br>
                     Se hace del conocimiento de los trabajadores, sus beneficiarios y sindicatos que en caso de requerirlo, pueden ser
-                    asesorados y en su caso, representados legalmente para presentar una demanda, por la Procuraduría de la Defensa
+                    asesorados y en su caso, representados legalmente para presentar una demanda de forma GRATUITA, por la Procuraduría de la Defensa
                     del Trabajo, con domicilio en la calle Dr. Miguel Silva G., número 486, de la colonia Centro histórico, en la ciudad de
-                    Morelia, Michoacán. Puedes llamar al teléfono 4433179002 extensiones 107 y 1315.
+                    Morelia, Michoacán. Puedes llamar al teléfono 4433179002 extensiones 107 y 1315.</b>
                 </p> 
             </div>
             <script type="text/php">
