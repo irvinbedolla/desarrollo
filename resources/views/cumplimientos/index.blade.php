@@ -17,7 +17,6 @@
                                             <th style="color: #fff;">Hora</th>
                                             <th style="color: #fff;">Número de Expediente</th>
                                             <th style="color: #fff;">Tipo</th>
-                                            <th style="color: #fff;">Descripción</th>
                                             <th style="color: #fff;">Detalles</th>
                                         </thead>
                                         <tbody class="contenidobusqueda">
@@ -27,7 +26,6 @@
                                                     <td>{{ $audiencia->hora_formateada }}</td>
                                                     <td>{{$audiencia->NUE_FINAL}}</td>
                                                     <td>{{$audiencia->tipo_pago}}</td>
-                                                    <td>{{$audiencia->descripcion}}</td>
                                                     <td><a class="btn btn-primary" href="{{ route('pago_cumplimiento', $audiencia->id) }}">Cumplimiento</a></td>
                                                 </tr>
                                             @endforeach

@@ -8325,8 +8325,8 @@ class SeerController extends Controller
                 'No notificada',
                 'Notificada en Audiencia'
             ])
-            ->first();
-                
+            ->first(); 
+
         $audiencia = Audiencias::where('id_solicitud', $id_solicitud)
         ->orderBy('fecha', 'desc')
         ->first();
@@ -8678,7 +8678,7 @@ class SeerController extends Controller
 
         $cumplimientos = Pagos::where('pago_solicitud.delegacion', $user->delegacion)
             ->whereIn('pago_solicitud.tipo_pago', ["Ratificacion", "Audiencia", "Conciliador"])
-            ->where('pago_solicitud.id_solicitud', '!=', 0)
+            
             ->leftJoin('turnos', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
             ->leftJoin('seer_general', 'seer_general.id', '=', 'pago_solicitud.id_solicitud')
             ->leftJoin('users', 'users.id', '=', 'pago_solicitud.id_conciliador')
@@ -8690,9 +8690,9 @@ class SeerController extends Controller
                 ELSE pago_solicitud.NUE 
             END as NUE_FINAL"),
             
-            'pago_solicitud.id',
+            DB::raw('MAX(pago_solicitud.id) as id'),
             'pago_solicitud.id_solicitud',
-            'pago_solicitud.descripcion',
+            DB::raw('MAX(pago_solicitud.descripcion) as descripcion'),
             'pago_solicitud.tipo_pago',
             'users.name as conciliador_name',
             
@@ -8715,14 +8715,12 @@ class SeerController extends Controller
                 ELSE pago_solicitud.NUE 
             END"),
             // 2. Las columnas físicas que SQL detecta en la consulta
-            'pago_solicitud.id',
             'pago_solicitud.id_solicitud',
             'pago_solicitud.tipo_pago',
             'pago_solicitud.NUE',   // El campo de la tabla pagos
             'turnos.NUE',           // El campo de la tabla turnos (aquí estaba el error)
             'seer_general.NUE',     // El campo de la tabla seer_general
-            'users.name',            // El nombre del conciliador
-            'pago_solicitud.descripcion'
+            'users.name'            // El nombre del conciliador
         )
         ->orderBy(DB::raw("MAX(pago_solicitud.fecha)"), 'asc')
         ->take(1500)
@@ -12948,21 +12946,30 @@ class SeerController extends Controller
 
     public function ver_pago_cumplimiento($id_pago){
 
-        $tipo = Pagos::where('id', $id_pago)->value('tipo_pago');
+        $pago = Pagos::where('id', $id_pago)->first();
 
-        if($tipo == 'Ratificacion'){
-            $solicitudes = Pagos::join('turnos','turnos.id',"=",'pago_solicitud.id_solicitud')
-            ->where('pago_solicitud.id',$id_pago)
-            ->select('pago_solicitud.id','pago_solicitud.id_solicitud','turnos.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
-            ->get();
-            return view('/cumplimientos/pagar_ratificacion',compact('solicitudes'));
+        $idSolicitud = $pago->id_solicitud;
+        $tipo = $pago->tipo_pago;
+
+        if ($idSolicitud == 0) {
+            $cumplimientos = Pagos::where('NUE', $pago->NUE)
+                ->select('id', 'id_solicitud', 'NUE', 'fecha', 'hora', 'monto', 'descripcion', 'estatus', 'forma_pago')
+                ->get();
         } else {
-            $cumplimientos = Pagos::join('seer_general','seer_general.id',"=",'pago_solicitud.id_solicitud')
-            ->where('pago_solicitud.id',$id_pago)
-            ->select('pago_solicitud.id','pago_solicitud.id_solicitud','seer_general.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
-            ->get();
-            return view('/cumplimientos/pagar_audiencia',compact('cumplimientos'));
+            if ($tipo == 'Ratificacion') {
+                $cumplimientos = Pagos::join('turnos','turnos.id',"=",'pago_solicitud.id_solicitud')
+                ->where('pago_solicitud.id_solicitud',$idSolicitud)
+                ->select('pago_solicitud.id','pago_solicitud.id_solicitud','turnos.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
+                ->get();
+            } else {
+                $cumplimientos = Pagos::join('seer_general','seer_general.id',"=",'pago_solicitud.id_solicitud')
+                ->where('pago_solicitud.id_solicitud',$idSolicitud)
+                ->select('pago_solicitud.id','pago_solicitud.id_solicitud','seer_general.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
+                ->get();
+            }
         }
+
+        return view('/cumplimientos/pagar_audiencia',compact('cumplimientos'));
     }
 
     public function seer_detalles($id){
