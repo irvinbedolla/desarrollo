@@ -31,17 +31,17 @@ class AudienciasExport implements WithMultipleSheets
         ];
         $aplicarFiltros = function ($q) use ($sedeUsuario, $grupos) {
             // Filtramos por la fecha de creación de la solicitud (igual que en Motivos)
-            $q->whereBetween("seer_general.fecha", [$this->fecha_inicial, $this->fecha_final]);
+            $q->whereBetween("audiencias.fecha", [$this->fecha_inicial, $this->fecha_final]);
             
             // Excluimos Pendientes y Prevenciones para que no inflen el número
-            $q->whereNotIn('seer_general.estatus', ['Pendiente', 'Prevencion']);
+            //$q->whereNotIn('audiencias.estatus', ['Pendiente', 'Prevencion']);
 
             if ($this->sede !== "Todos") {
                 if ($this->sede === "TodosDelegado") {
                     $delegaciones = $grupos[$sedeUsuario] ?? [$sedeUsuario];
-                    $q->whereIn("seer_general.delegacion", $delegaciones);
+                    $q->whereIn("audiencias.delegacion", $delegaciones);
                 } else {
-                    $q->where("seer_general.delegacion", $this->sede);
+                    $q->where("audiencias.delegacion", $this->sede);
                 }
             }
         };
@@ -49,11 +49,9 @@ class AudienciasExport implements WithMultipleSheets
         $estadisticas = DB::table('users')
             ->join('seer_general', 'users.id', '=', 'seer_general.conciliador_id')
             ->join('audiencias', 'seer_general.id', '=', 'audiencias.id_solicitud')
-            // AÑADIMOS ESTOS JOINS PARA REPLICAR LA DUPLICIDAD DE MOTIVOS
-            ->join('seer_motivos', 'seer_general.id', '=', 'seer_motivos.id_solicitud')
-            ->join('catalogo_motivos', 'catalogo_motivos.id', '=', 'seer_motivos.id_motivo')
-            // Opcional: Join con solicitante si el otro reporte cuenta por solicitante
-            ->join('seer_solicitante', 'seer_general.id', '=', 'seer_solicitante.id_solicitud')
+            //->join('seer_motivos', 'seer_general.id', '=', 'seer_motivos.id_solicitud')
+            //->join('catalogo_motivos', 'catalogo_motivos.id', '=', 'seer_motivos.id_motivo')
+            //->join('seer_solicitante', 'seer_general.id', '=', 'seer_solicitante.id_solicitud')
             
             ->where(fn($q) => $aplicarFiltros($q))
             ->when($this->conciliador !== "Todos", function ($q) {
@@ -111,7 +109,8 @@ class AudienciasExport implements WithMultipleSheets
                 'seer_general.delegacion',
                 'audiencias.estatus'
             )
-            ->distinct() 
+            //->distinct() 
+            ->orderBy('seer_general.consecutivo', 'desc')
             ->get()
             ->map(fn($item) => (array) $item)
             ->toArray();

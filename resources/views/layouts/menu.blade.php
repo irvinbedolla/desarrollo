@@ -129,9 +129,6 @@
             <a class="nav-link" href="{{ route('misestadisticas') }}">
                 <i class="bi bi-clipboard-data-fill"></i><span class="text-dark" onclick="estadistica()">Estadísticas</span>
             </a>
-            <a class="nav-link" href="{{ route('crear_inidencia') }}">
-                <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Incidencia</span>
-            </a>
             <a class="nav-link" href="{{ route('create_asesoria') }}">
                 <i class="bi bi-bank"></i><span class="text-dark" onclick="mis_citas()">Asesorias</span>
             </a>

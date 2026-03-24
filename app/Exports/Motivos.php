@@ -74,217 +74,53 @@ class Motivos implements FromView
             'Zamora'  => ['Zamora', 'Sahuayo']
         ];
 
-        // Definimos la lógica de filtros una vez
-        $aplicarFiltros = function ($q, $tabla) use ($sedeUsuario, $grupos) {
-            $q->whereBetween("$tabla.fecha", [$this->fecha_inicial, $this->fecha_final]);
-            if ($this->sede !== "Todos") {
+        // 1. OBTENER EL MOTIVO PRINCIPAL (UNICO) POR SOLICITUD
+        $motivoPrincipalSub = DB::table('seer_motivos')
+            ->select('id_solicitud', DB::raw('MIN(id_motivo) as id_motivo_principal'))
+            ->groupBy('id_solicitud');
+
+        // 2. OBTENER EL SOLICITANTE PRINCIPAL (UNICO) POR SOLICITUD
+        // Esto evita que si hay 2 solicitantes en una solicitud, se cuente doble.
+        $solicitanteUnicoSub = DB::table('seer_solicitante')
+            ->select('id_solicitud', DB::raw('MIN(sexo) as sexo_principal')) // MIN('H','M') tomará uno consistentemente
+            ->groupBy('id_solicitud');
+
+        // 3. CONSULTA BASE (Para reutilizar filtros)
+        $queryBase = DB::table('seer_general')
+            ->joinSub($motivoPrincipalSub, 'principal', function ($join) {
+                $join->on('seer_general.id', '=', 'principal.id_solicitud');
+            })
+            ->joinSub($solicitanteUnicoSub, 'solicitante', function ($join) {
+                $join->on('seer_general.id', '=', 'solicitante.id_solicitud');
+            })
+            ->join('catalogo_motivos', 'catalogo_motivos.id', '=', 'principal.id_motivo_principal')
+            ->where(function($query) {
+                $query->where('seer_general.incidencia', 0)
+                      ->orWhereNull('seer_general.incidencia');
+            })
+            ->whereBetween('seer_general.fecha', [$this->fecha_inicial, $this->fecha_final])
+            ->when($this->sede !== "Todos", function ($q) use ($sedeUsuario, $grupos) {
                 if ($this->sede === "TodosDelegado") {
                     $delegaciones = $grupos[$sedeUsuario] ?? [$sedeUsuario];
-                    $q->whereIn("$tabla.delegacion", $delegaciones);
-                } else {
-                    $q->where("$tabla.delegacion", $this->sede);
+                    return $q->whereIn('seer_general.delegacion', $delegaciones);
                 }
-            }
-        };
+                return $q->where("seer_general.delegacion", $this->sede);
+            });
 
-        $sqlCaseM = $this->getSqlCase('catalogo_motivos.motivo');
-        $sqlCaseT = $this->getSqlCase('turnos.motivo');
-
-        // --- CONSULTAS ---
-
-        // 1. Solicitudes
-        $solicitudes = DB::table('catalogo_motivos')
-            ->join('seer_motivos', 'catalogo_motivos.id', '=', 'seer_motivos.id_motivo')
-            ->join('seer_general', 'seer_general.id', '=', 'seer_motivos.id_solicitud')
-            ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
-            ->where(fn($q) => $aplicarFiltros($q, 'seer_general'))
-            ->where(function($query) {
-                $query->where('seer_general.incidencia', 0)
-                    ->orWhereNull('seer_general.incidencia');
-            })
-            ->select(DB::raw("$sqlCaseM as categoria"), 
-                     DB::raw("SUM(CASE WHEN seer_solicitante.sexo = 'H' THEN 1 ELSE 0 END) as total_hombres"),
-                     DB::raw("SUM(CASE WHEN seer_solicitante.sexo = 'M' THEN 1 ELSE 0 END) as total_mujeres"),
-                     DB::raw("COUNT(*) as total_general"))
-            ->groupBy(DB::raw($sqlCaseM))->get();
-
-        // 2. Solicitudes Confirmadas
-        $solicitudesConfirmadas = DB::table('catalogo_motivos')
-            ->join('seer_motivos', 'catalogo_motivos.id', '=', 'seer_motivos.id_motivo')
-            ->join('seer_general', 'seer_general.id', '=', 'seer_motivos.id_solicitud')
-            ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
-            ->whereNotIn('seer_general.estatus',['Pendiente','Prevencion'])
-            ->where(fn($q) => $aplicarFiltros($q, 'seer_general'))
-            ->where(function($query) {
-                $query->where('seer_general.incidencia', 0)
-                    ->orWhereNull('seer_general.incidencia');
-            })
-            ->select(DB::raw("$sqlCaseM as categoria"), 
-                     DB::raw("SUM(CASE WHEN seer_solicitante.sexo = 'H' THEN 1 ELSE 0 END) as total_hombres"),
-                     DB::raw("SUM(CASE WHEN seer_solicitante.sexo = 'M' THEN 1 ELSE 0 END) as total_mujeres"),
-                     DB::raw("COUNT(*) as total_general"))
-            ->groupBy(DB::raw($sqlCaseM))->get();
-
-        // 3. Ratificaciones (Turnos)
-        $ratificaciones = DB::table('turnos')
-            ->where(fn($q) => $aplicarFiltros($q, 'turnos'))
-            ->where(function($query) {
-                $query->where('turnos.incidencia', 0)
-                    ->orWhereNull('turnos.incidencia');
-            })
-            ->select(DB::raw("$sqlCaseT as categoria"), 
-                     DB::raw("SUM(CASE WHEN sexo = 'H' THEN 1 ELSE 0 END) as total_hombres"),
-                     DB::raw("SUM(CASE WHEN sexo = 'M' THEN 1 ELSE 0 END) as total_mujeres"),
-                     DB::raw("COUNT(*) as total_general"))
-            ->groupBy(DB::raw($sqlCaseT))->get();
-        // 4. Ratificaciones (Turnos)
-        $ratificacionesConcluidas = DB::table('turnos')
-            ->whereIn('turnos.estatus',['Concluida','Concluida Pagos'])
-            ->where(function($query) {
-                $query->where('turnos.incidencia', 0)
-                    ->orWhereNull('turnos.incidencia');
-            })
-            ->where(fn($q) => $aplicarFiltros($q, 'turnos'))
-            ->select(DB::raw("$sqlCaseT as categoria"), 
-                DB::raw("SUM(CASE WHEN sexo = 'H' THEN 1 ELSE 0 END) as total_hombres"),
-                DB::raw("SUM(CASE WHEN sexo = 'M' THEN 1 ELSE 0 END) as total_mujeres"),
-                DB::raw("COUNT(*) as total_general"))
-            ->groupBy(DB::raw($sqlCaseT))->get();
-        // 5. Convenios (Audiencias)
-        $convenios = DB::table('catalogo_motivos')
-            ->join('seer_motivos', 'catalogo_motivos.id', '=', 'seer_motivos.id_motivo')
-            ->join('seer_general', 'seer_general.id', '=', 'seer_motivos.id_solicitud')
-            ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
-            ->join('audiencias', 'audiencias.id_solicitud', '=', 'seer_general.id')
-            ->whereIn('audiencias.estatus', ['Conciliacion'])
-            ->where(function($query) {
-                $query->where('seer_general.incidencia', 0)
-                    ->orWhereNull('seer_general.incidencia');
-            })
-            ->where(fn($q) => $aplicarFiltros($q, 'seer_general'))
-            ->select(DB::raw("$sqlCaseM as categoria"), 
-                     DB::raw("SUM(CASE WHEN seer_solicitante.sexo = 'H' THEN 1 ELSE 0 END) as total_hombres"),
-                     DB::raw("SUM(CASE WHEN seer_solicitante.sexo = 'M' THEN 1 ELSE 0 END) as total_mujeres"),
-                     DB::raw("COUNT(*) as total_general"))
-            ->groupBy(DB::raw($sqlCaseM))->get();
-        // 6. Convenios (Audiencias)
-        $archivadas = DB::table('catalogo_motivos')
-            ->join('seer_motivos', 'catalogo_motivos.id', '=', 'seer_motivos.id_motivo')
-            ->join('seer_general', 'seer_general.id', '=', 'seer_motivos.id_solicitud')
-            ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
-            ->join('audiencias', 'audiencias.id_solicitud', '=', 'seer_general.id')
-            ->where('audiencias.estatus', 'Archivada')
-            ->where(function($query) {
-                $query->where('seer_general.incidencia', 0)
-                    ->orWhereNull('seer_general.incidencia');
-            })
-            ->where(fn($q) => $aplicarFiltros($q, 'seer_general'))
-            ->select(DB::raw("$sqlCaseM as categoria"), 
-                     DB::raw("SUM(CASE WHEN seer_solicitante.sexo = 'H' THEN 1 ELSE 0 END) as total_hombres"),
-                     DB::raw("SUM(CASE WHEN seer_solicitante.sexo = 'M' THEN 1 ELSE 0 END) as total_mujeres"),
-                     DB::raw("COUNT(*) as total_general"))
-            ->groupBy(DB::raw($sqlCaseM))->get();
-        // 7. programadas (Audiencias)
-        $programadas = DB::table('catalogo_motivos')
-            ->join('seer_motivos', 'catalogo_motivos.id', '=', 'seer_motivos.id_motivo')
-            ->join('seer_general', 'seer_general.id', '=', 'seer_motivos.id_solicitud')
-            ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
-            ->join('audiencias', 'audiencias.id_solicitud', '=', 'seer_general.id')
-            ->where(function($query) {
-                $query->where('seer_general.incidencia', 0)
-                    ->orWhereNull('seer_general.incidencia');
-            })
-            ->whereNotIn('audiencias.estatus', ['Pendiente','Conciliacion','No conciliacion reagendada','No conciliacion'])
-            ->where(fn($q) => $aplicarFiltros($q, 'seer_general'))
-            ->select(DB::raw("$sqlCaseM as categoria"), 
-                     DB::raw("SUM(CASE WHEN seer_solicitante.sexo = 'H' THEN 1 ELSE 0 END) as total_hombres"),
-                     DB::raw("SUM(CASE WHEN seer_solicitante.sexo = 'M' THEN 1 ELSE 0 END) as total_mujeres"),
-                     DB::raw("COUNT(*) as total_general"))
-            ->groupBy(DB::raw($sqlCaseM))->get();
-        // 8. celebradas (Audiencias)
-        $celebradas = DB::table('catalogo_motivos')
-            ->join('seer_motivos', 'catalogo_motivos.id', '=', 'seer_motivos.id_motivo')
-            ->join('seer_general', 'seer_general.id', '=', 'seer_motivos.id_solicitud')
-            ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
-            ->join('audiencias', 'audiencias.id_solicitud', '=', 'seer_general.id')
-            ->whereIn('audiencias.estatus', ['Conciliacion','No conciliacion','No conciliacion reagendada','Reinstalacion'])
-            ->where(function($query) {
-                $query->where('seer_general.incidencia', 0)
-                    ->orWhereNull('seer_general.incidencia');
-            })
-            ->where(fn($q) => $aplicarFiltros($q, 'seer_general'))
-            ->select(DB::raw("$sqlCaseM as categoria"), 
-                     DB::raw("SUM(CASE WHEN seer_solicitante.sexo = 'H' THEN 1 ELSE 0 END) as total_hombres"),
-                     DB::raw("SUM(CASE WHEN seer_solicitante.sexo = 'M' THEN 1 ELSE 0 END) as total_mujeres"),
-                     DB::raw("COUNT(*) as total_general"))
-            ->groupBy(DB::raw($sqlCaseM))->get();
-        // 9. celebradas (Audiencias)
-        // Definimos una base común para evitar repetir código y errores
-        $baseQuery = DB::table('catalogo_motivos')
-            ->join('seer_motivos', 'catalogo_motivos.id', '=', 'seer_motivos.id_motivo')
-            ->join('seer_general', 'seer_general.id', '=', 'seer_motivos.id_solicitud')
-            ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
-            ->join('audiencias', 'audiencias.id_solicitud', '=', 'seer_general.id')
-            ->whereIn('audiencias.estatus', ['No conciliacion'])
-            ->where(function($query) {
-                $query->where('seer_general.incidencia', 0)
-                    ->orWhereNull('seer_general.incidencia');
-            })
-            ->where(fn($q) => $aplicarFiltros($q, 'seer_general'));
-
-        // 1. No Conciliación (Al menos un abogado)
-        $noconciliacion = (clone $baseQuery)
-            ->whereExists(function ($sub) {
-                $sub->select(DB::raw(1))
-                    ->from('seer_citados')
-                    ->whereColumn('seer_citados.id_solicitud', 'seer_general.id')
-                    ->whereNotNull('seer_citados.id_abogado');
-            })
+        // 4. EJECUTAR CONTEOS DE SOLICITUDES
+        $solicitudes = (clone $queryBase)
             ->select(
-                DB::raw("$sqlCaseM as categoria"),
-                DB::raw("COUNT(DISTINCT CASE WHEN seer_solicitante.sexo = 'H' THEN seer_general.id END) as total_hombres"),
-                DB::raw("COUNT(DISTINCT CASE WHEN seer_solicitante.sexo = 'M' THEN seer_general.id END) as total_mujeres"),
-                DB::raw("COUNT(DISTINCT seer_general.id) as total_general")
+                DB::raw($this->getSqlCase('catalogo_motivos.motivo') . " as categoria"),
+                DB::raw("COUNT(seer_general.id) as total_general"),
+                DB::raw("SUM(CASE WHEN solicitante.sexo_principal = 'H' THEN 1 ELSE 0 END) as total_hombres"),
+                DB::raw("SUM(CASE WHEN solicitante.sexo_principal = 'M' THEN 1 ELSE 0 END) as total_mujeres")
             )
-            ->groupBy(DB::raw($sqlCaseM))->get();
+            ->groupBy(DB::raw($this->getSqlCase('catalogo_motivos.motivo')))
+            ->get();
 
-        // 2. Incomparecencias (Ningún abogado)
-        $incomparecencias = (clone $baseQuery)
-            ->whereNotExists(function ($sub) {
-                $sub->select(DB::raw(1))
-                    ->from('seer_citados')
-                    ->whereColumn('seer_citados.id_solicitud', 'seer_general.id')
-                    ->whereNotNull('seer_citados.id_abogado');
-            })
-            ->select(
-                DB::raw("$sqlCaseM as categoria"),
-                DB::raw("COUNT(DISTINCT CASE WHEN seer_solicitante.sexo = 'H' THEN seer_general.id END) as total_hombres"),
-                DB::raw("COUNT(DISTINCT CASE WHEN seer_solicitante.sexo = 'M' THEN seer_general.id END) as total_mujeres"),
-                DB::raw("COUNT(DISTINCT seer_general.id) as total_general")
-            )
-            ->groupBy(DB::raw($sqlCaseM))->get();
-
-        // 3. Suma Total (Sin el filtro de abogados, pero con DISTINCT)
-        $suma = (clone $baseQuery)
-            ->select(
-                DB::raw("$sqlCaseM as categoria"),
-                DB::raw("COUNT(DISTINCT CASE WHEN seer_solicitante.sexo = 'H' THEN seer_general.id END) as total_hombres"),
-                DB::raw("COUNT(DISTINCT CASE WHEN seer_solicitante.sexo = 'M' THEN seer_general.id END) as total_mujeres"),
-                DB::raw("COUNT(DISTINCT seer_general.id) as total_general")
-            )
-            ->groupBy(DB::raw($sqlCaseM))->get();
 
         return view('excel.motivos', [
             'solicitudes'               => $this->formatearResultados($solicitudes),
-            'solicitudesConfirmadas'    => $this->formatearResultados($solicitudesConfirmadas),
-            'ratificaciones'            => $this->formatearResultados($ratificaciones),
-            'ratificacionesConcluidas'  => $this->formatearResultados($ratificacionesConcluidas),
-            'convenios'                 => $this->formatearResultados($convenios),
-            'archivadas'                => $this->formatearResultados($archivadas),
-            'programadas'               => $this->formatearResultados($programadas),
-            'celebradas'                => $this->formatearResultados($celebradas),
-            'noconciliacion'            => $this->formatearResultados($noconciliacion),
-            'incomparecencias'           => $this->formatearResultados($incomparecencias),
         ]);
     }
 }
