@@ -8675,11 +8675,24 @@ class SeerController extends Controller
             }
         }
 
-        $html .= '</body></html>';
+        //$html .= '</body></html>';
+        $html .= '
+            <script type="text/php">
+                if (isset($pdf)) {
+                    $font = $fontMetrics->get_font("Arial", "normal");
+                    $size = 10;
+                    $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
+                    $width = $fontMetrics->get_text_width($text, $font, $size);
+                    $x = ($pdf->get_width() / 2) - 50;
+                    $y = $pdf->get_height() - 44;
+                    $pdf->page_text($x, $y, $text, $font, $size);
+                }
+            </script>';
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
-            ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true);
+            /*->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true);*/
 
         $nombreArchivo = 'No_Conciliacion_' . $solicitante->nombre . '.pdf';
         return $pdf->stream($nombreArchivo);                   
@@ -16086,15 +16099,46 @@ class SeerController extends Controller
         $estado = Estados::find($citado->estado_citado);
         $estadoEmpresa = $estado ? $estado->nombre : 'No definido';
 
-        $html = '<html><head><meta charset="utf-8"><style>body{font-family:DejaVu Sans; font-size:12px;}</style></head><body>';
+         //$html = '<html><head><meta charset="utf-8"><style>body{font-family:DejaVu Sans; font-size:12px;}</style></head><body>';
+        $html = '
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <style>
+                @page {
+                    margin: 100px 50px 80px 50px;
+                }
+                body {
+                    font-family: DejaVu Sans, sans-serif;
+                    font-size: 12px;
+                }
+            </style>
+        </head>
+        <body>';
+
         $html .= view('PDF/Solicitudes/NoConciliacion', compact(
             'solicitud', 'conciliador', 'citado', 'audiencia', 'solicitante', 'municipioEmpresa', 'estadoEmpresa'
         ))->render();
+
+        $html .= '
+        <script type="text/php">
+            if (isset($pdf)) {
+                $font = $fontMetrics->get_font("Arial", "normal");
+                $size = 10;
+                $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
+                $width = $fontMetrics->get_text_width($text, $font, $size);
+                $x = ($pdf->get_width() / 2) - 50;
+                $y = $pdf->get_height() - 44;
+                $pdf->page_text($x, $y, $text, $font, $size);
+            }
+        </script>';
         $html .= '</body></html>';
 
-        $pdf = \PDF::loadHTML($html)->setPaper('a4', 'portrait');
-        $nombreArchivo = 'No_Conciliacion_'.$citado->nombre.'.pdf';
-        $nombreArchivo = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $nombreArchivo); //Elimina los caracteres especiales no permitidos en archivos
+        $pdf = \PDF::loadHTML($html)
+        ->setPaper('a4', 'portrait')
+        ->setOption('isPhpEnabled', true);
+            $nombreArchivo = 'No_Conciliacion_'.$citado->nombre.'.pdf';
+            $nombreArchivo = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $nombreArchivo); //Elimina los caracteres especiales no permitidos en archivos
 
         return $pdf->stream($nombreArchivo);
     }

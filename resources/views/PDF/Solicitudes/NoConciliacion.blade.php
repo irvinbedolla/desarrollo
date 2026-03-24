@@ -19,7 +19,7 @@
                 padding-top: 85px;
             }
             main{
-                margin: 50px 50px 50px 40px; /*Para colocar el texto*/
+                margin: 50px 50px 80px 50px; /*Para colocar el texto*/
             }
             header {
                 position: fixed;
@@ -94,7 +94,8 @@
                             <td>{{ $solicitud->NUE }} </td>
                         </tr> 
                     </table>
-                </div><br><br><br><br>
+                </div><br><br><br>
+                <center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center><br>
                 <p><b>
                     Solicitante: {{ $solicitante->nombre }}<br> 
                     Citado(a): {{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido }}<br>
@@ -108,7 +109,6 @@
                     Funcionario(a) conciliador(a) responsable: {{ $conciliador->name }}<br>
                     Asistencia del citado: @if($citado->aparece_convenio==1)Si @else No @endif
                 </b>
-                    <center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center><br>
                     <center><b>CONSTANCIA DE NO CONCILIACIÓN</b></center><br>
                 </p> 
                 <p>
@@ -147,7 +147,7 @@
                     Morelia, Michoacán. Puedes llamar al teléfono 4433179002 extensiones 107 y 1315.</b>
                 </p> 
             </div>
-            <script type="text/php">
+            <!--<script type="text/php">
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");
                     $size = 10;
@@ -156,7 +156,7 @@
                     $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
                     $pdf->page_text($x, $y, $text, $font, $size, array(0, 0, 0));
                 }
-            </script>
+            </script>-->
         </main>
     </body>
 </html>    
