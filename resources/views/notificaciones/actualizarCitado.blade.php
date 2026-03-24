@@ -504,10 +504,10 @@
                                                 <input type="file" class="form-control" name="foto2" accept="image/*">
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-6 col-md-12">
+                                        <div class="col-xs-12 col-sm-6 col-md-12" id="especificar_motivo">
                                             <div class="form-group">
-                                                <label for="name">Observaciones <span style="color:red;">(*)</span></label>
-                                                <textarea class="form-control" name="observaciones" rows="4" oninput="this.value = this.value.toUpperCase()" required>{{ old('observaciones', $citado->observaciones ?? '') }}</textarea>
+                                                <label for="name">Especificar motivo <span style="color:red;">(*)</span></label>
+                                                <textarea class="form-control" name="observaciones" id="observaciones" ows="4" oninput="this.value = this.value.toUpperCase()" required>{{ old('observaciones', $citado->observaciones ?? '') }}</textarea>
                                             </div>
                                         </div>
                                         <div class="col-xs-12 col-sm-6 col-md-6">
@@ -677,6 +677,7 @@
             const problema2Div = document.getElementById('tipo_problema2');
             const abundarmotivoDiv = document.getElementById('abundar_motivo'); //Cuando se trata de tipo_problea1 o tipo_problema2, mostrar campo para describir el motivo
             const firmaDiv = document.getElementById('firma'); //Cuando se trata de tipo_problema2, no mostrar el apartado de firma
+            const especificarDiv = document.getElementById('especificar_motivo'); // Campo de observaciones para hacer obligatorio cuando se seleccione Exitoso por instructivo
             function actualizarTipoProblema() {
                 const valor = selectEstatus.value;
 
@@ -685,10 +686,13 @@
                 problema2Div.style.display = 'none';
                 abundarmotivoDiv.style.display = 'none';
                 firmaDiv.style.display = 'block';
+                especificarDiv.style.display = 'none';
 
                 // Deshabilita AMBOS selects para que no se envíen en el POST
                 document.getElementById('problema1').disabled = true;
-                document.getElementById('problema2').disabled = true;
+                document.getElementById('problema2').disabled = true;                
+                especificarDiv.disabled = true; // Deshabilita el campo de observaciones al inicio
+                document.getElementById('observaciones').disabled = true; // Asegura que el textarea de observaciones también esté deshabilitado al inicio
 
                 if (valor === 'No exitosa se constituye') {
                     problema1Div.style.display = 'block';
@@ -699,9 +703,15 @@
                 } else if (valor === 'No exitosa no se constituye') {
                     problema2Div.style.display = 'block';
                     abundarmotivoDiv.style.display = 'block';
-                    firmaDiv.style.display = 'none';
+                    firmaDiv.style.display = 'none'; //
                     // Habilita solo el select que se va a usar
                     document.getElementById('problema2').disabled = false; 
+                }
+                else if(valor === 'Exitosa por Instructivo'){
+                    document.getElementById('observaciones').value = ''; // Limpia el campo de observaciones al inicio
+                    especificarDiv.style.display = 'block'; // Muestra el campo de observaciones
+                    document.getElementById('observaciones').disabled = false; // Habilita el campo de observaciones   
+                    document.getElementById('observaciones').setAttribute('required', ''); // Hacer obligatorio el campo de observaciones                 
                 }
             }
 

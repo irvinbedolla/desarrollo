@@ -2278,8 +2278,9 @@ class SeerController extends Controller
 
         $hora_notificacion = $data["hora_notificacion"];
         $tipo_llenado = $data["tipo_llenado"];
-        
-
+        if(!isset($data["observaciones"])){
+            $data["observaciones"] = null;
+        }
         $esVistaPrevia = isset($data['vista_previa']) && (string) $data['vista_previa'] === '1';
 
         if(!$esVistaPrevia && $data["quien_atiende"] == 'EXHORTO'){
