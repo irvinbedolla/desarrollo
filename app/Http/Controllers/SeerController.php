@@ -9485,30 +9485,34 @@ class SeerController extends Controller
         /*$audiencia = Audiencias::where('id_solicitud', $id)
         ->orderByDesc('id')
         ->first();*/
-        $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
+        /*$audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
         $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
-        ->first();
+        ->first();*/
+        $audiencia = SeerPerGeneral::join("audiencias", "audiencias.id_solicitud", "=", "seer_general.id")
+            ->where("audiencias.id_solicitud", "=", $solicitud->id)
+            ->latest('audiencias.created_at')
+            ->first();
 
-    $prestaciones = Concepto::where('id_solicitud', $id)->where('tipo_pago', 'Audiencia')->get();
-    $deducciones = Deducciones::where('id_solicitud', $id)->where('tipo_pago', 'Audiencia')->get();
+        $prestaciones = Concepto::where('id_solicitud', $id)->where('tipo_pago', 'Audiencia')->get();
+        $deducciones = Deducciones::where('id_solicitud', $id)->where('tipo_pago', 'Audiencia')->get();
 
-    // Soporte para selección específica de citados (guardada en sesión desde la vista)
-        $idsSession = session()->get('acta_citados_' . $id);
+        // Soporte para selección específica de citados (guardada en sesión desde la vista)
+            $idsSession = session()->get('acta_citados_' . $id);
 
-        
-        /*if ($idsSession !== null) {
-            $citados = SeerCitados::whereIn('id', $idsSession)
-                        ->where('id_solicitud', $id)
-                        ->where('resulte_responsable', 'No')
-                        ->get();*/
+            
+            /*if ($idsSession !== null) {
+                $citados = SeerCitados::whereIn('id', $idsSession)
+                            ->where('id_solicitud', $id)
+                            ->where('resulte_responsable', 'No')
+                            ->get();*/
 
-        $citadosPorCentro = SeerCitados::where('id_solicitud', $id)->get();
-        foreach($citadosPorCentro as $citado){
-            if($citado->notificacion == 'Centro'){
-                $hayCentro = true;
-                break;
+            $citadosPorCentro = SeerCitados::where('id_solicitud', $id)->get();
+            foreach($citadosPorCentro as $citado){
+                if($citado->notificacion == 'Centro'){
+                    $hayCentro = true;
+                    break;
+                }
             }
-        }
 
             /*$abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
                 ->where('id_solicitud',$id)
