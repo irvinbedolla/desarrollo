@@ -111,7 +111,7 @@ use App\Http\Controllers\IncidenciasBusquedaController;
     Route::get('home',                  [HomeController::class, 'home'])->name('home');
     Route::get('/poder-crear',          [PoderController::class, 'registro'])->name('poder-crear');
     Route::get('/poder',                [App\Http\Controllers\PoderController::class, 'show'])->name('poder');
-    Route::get('/poderes/publico',      fn () => redirect()->route('poder-crear'));
+    //Route::get('/poderes/publico',      fn () => redirect()->route('poder-crear'));
     Route::post('/poderes/publico',     [PoderController::class, 'publico'])->name('poderes.publico');
     Route::get('/cita_turno',           [HomeController::class, 'citas'])->name('citas');
     Route::post('/turnos_guardar',      [HomeController::class, 'turnos_publico'])->name('turnos_publico'); 
@@ -442,7 +442,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('administracion/sedes',                  [AdministracionController::class, 'configuracion_sedes'])->name('configuracion_sedes');
         Route::get('administracion/usuarios',               [AdministracionController::class, 'configuracion_usuarios'])->name('configuracion_usuarios');
         Route::get('administracion/retrocesos',             [AdministracionController::class, 'genera_retroceso'])->name('genera_retroceso');       
-        Route::post('/generar-ratroceso',                   [AdministracionController::class, 'consultar_retroceso'])->name('generar_retroceso'); 
+        Route::post('/generar-retroceso',                   [AdministracionController::class, 'consultar_retroceso'])->name('generar_retroceso'); 
         Route::get('administracion/RC/{id}',                [AdministracionController::class, 'hacer_retroceso_cumplimiento'])->name('accion_retrocesoC');    
         Route::get('administracion/RR/{id}',                [AdministracionController::class, 'hacer_retroceso_ratificacion'])->name('accion_retrocesoR'); 
         Route::post('/bloquear_sede',                       [AdministracionController::class, 'bloqueoSede'])->name('bloqueoSede');  //Bloquear días inhabiles para toda la sede
