@@ -774,7 +774,7 @@ class PoderController extends Controller
 
         $id_user_historial = Auth::id() ?? 0;
 
-        if($data["tipoPersona"] == "Fisica"){
+        /*if($data["tipoPersona"] == "Fisica"){
             if($data["representate"] == "No"){
                 request()->validate([
                     'nombre_pF'     => 'required',
@@ -864,7 +864,7 @@ class PoderController extends Controller
                 "tipo_identificacion_Moral"     => 'required',
                 "num_identificacion_Moral"      => 'required',
             ], $data);
-        }
+        }*/
         
 
         //Vamos insetar los datos para la persona fisica con representante legal
