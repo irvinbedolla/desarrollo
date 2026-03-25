@@ -9182,16 +9182,12 @@ class SeerController extends Controller
     public function consulta_cumplimiento($id,$tipo){
         $pago = Pagos::find($id);
         if($tipo == 1){
-            /*$solicitudes = Pagos::join('turnos','turnos.id',"=",'pago_solicitud.id_solicitud')
+            $solicitudes = Pagos::join('turnos','turnos.id',"=",'pago_solicitud.id_solicitud')
             ->where('pago_solicitud.id',$id)
             ->select('pago_solicitud.id','turnos.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
             ->get();
 
-            return view('/cumplimientos/pagar_ratificacion',compact('solicitudes'));*/
-            $solicitudes = Pagos::where('id_solicitud', $id)->get();
-            $id_pago = $solicitudes->id;
-
-            return route('pago_cumplimiento', $id_pago);
+            return view('/cumplimientos/pagar_ratificacion',compact('solicitudes'));
 
         }
         else if($tipo == 2){
@@ -9217,18 +9213,22 @@ class SeerController extends Controller
         }
         //Audiencias
         else if($tipo == 5){
-            $audiencia = Audiencias::where('id_solicitud', $id)
+            
+            $audiencia = Audiencias::where('id', $id)
                         ->orderBy('fecha', 'desc')
                         ->first();
-
+            
             return redirect()->route('inicioAudiencia', ['id' => $audiencia->id_solicitud, 'estatus' => 'Confirmado']);
             //$url = route('solicitud_audiencia', $id) . '?isAudiencia=Si';
             //return redirect()->to($url);
         }
         //Cumplimientos , Ratificacion, Audiencia y generales
         else if($tipo == 6){
-            $solicitudes = Pagos::where('id',$id)->get();
-            return view('/cumplimientos/pagar_busqueda',compact('solicitudes'));
+            //$solicitudes = Pagos::where('id',$id)->get();
+            //return view('/cumplimientos/pagar_busqueda',compact('solicitudes'));
+            $pago = Pagos::where('id', $id)->first();
+            $id_pago= $pago->id;
+            return redirect()->route('pago_cumplimiento', $id_pago);
         }
         //Ratificaciones
         else if($tipo == 7){
@@ -9500,13 +9500,13 @@ class SeerController extends Controller
         /*$audiencia = Audiencias::where('id_solicitud', $id)
         ->orderByDesc('id')
         ->first();*/
-        /*$audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
+        $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
         $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
-        ->first();*/
-        $audiencia = SeerPerGeneral::join("audiencias", "audiencias.id_solicitud", "=", "seer_general.id")
+        ->first();
+        /*$audiencia = SeerPerGeneral::join("audiencias", "audiencias.id_solicitud", "=", "seer_general.id")
             ->where("audiencias.id_solicitud", "=", $solicitud->id)
             ->latest('audiencias.created_at')
-            ->first();
+            ->first();*/
 
         $prestaciones = Concepto::where('id_solicitud', $id)->where('tipo_pago', 'Audiencia')->get();
         $deducciones = Deducciones::where('id_solicitud', $id)->where('tipo_pago', 'Audiencia')->get();
