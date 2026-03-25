@@ -9350,6 +9350,8 @@ class SeerController extends Controller
     
         if($pagos["id_solicitud"] == 0){
             $solicitud = Pagos::find($id);
+            $solicitud->trabajador = $solicitud->nombre_trabajador;
+            $solicitud->empresa = $solicitud->empresa_representante;
             $salario_diario = 0;
             $conciliador  = User::join("pago_solicitud","pago_solicitud.id_conciliador","=","users.id");
             $conciliador = $conciliador->where("pago_solicitud.id", "=", $id)
@@ -12068,7 +12070,11 @@ class SeerController extends Controller
 
         if($pagos["id_solicitud"] == 0){
             $solicitud = Pagos::find($id);
+            $solicitud->trabajador = $solicitud->nombre_trabajador;
+            $solicitud->empresa = $solicitud->empresa_representante;
             //$salario_diario = 0;
+            $representante = ['empresa_representante' => $pagos->empresa_representante ];
+            
             $conciliador  = User::join("pago_solicitud","pago_solicitud.id_conciliador","=","users.id");
             $conciliador = $conciliador->where("pago_solicitud.id", "=", $id)
             ->select('users.name')
@@ -12080,7 +12086,7 @@ class SeerController extends Controller
             })
             ->select('users.id', 'users.name', 'users.delegacion')
             ->first();
-            $html = view('PDF/cumplimientos/incomparecenciaTrabajador', compact('id', 'solicitud','conciliador',/*'salario_diario',*/'pagos','delegado'))->render();
+            $html = view('PDF/cumplimientos/incomparecenciaTrabajador', compact('id', 'solicitud','conciliador',/*'salario_diario',*/'pagos','delegado','representante'))->render();
         }
         else{
             $pagos = Pagos::find($id);
@@ -12980,6 +12986,7 @@ class SeerController extends Controller
         $pago = Pagos::where('id', $id_pago)->first();
 
         $idSolicitud = $pago->id_solicitud;
+        $id_pago = $pago->id;
         $tipo = $pago->tipo_pago;
 
         if ($idSolicitud == 0) {

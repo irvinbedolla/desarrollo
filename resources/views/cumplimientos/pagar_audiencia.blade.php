@@ -53,9 +53,9 @@
 
                                                         @if($pago->estatus == "Pagado")
                                                             @if($totalRegistros == 1)
-                                                                <a class="btn btn-success" href="{{ route('PDFcumplimientoTotal', $pago->id_solicitud) }}" target="_blank">
+                                                                <a class="btn btn-success" href="{{ route('PDFcumplimientoParcial', $pago->id) }}" target="_blank">
                                                                     PDF
-                                                                </a>
+                                                                </a>    
                                                             @else
                                                                 <a class="btn btn-success" href="{{ route('PDFcumplimientoParcial', $pago->id) }}" target="_blank">
                                                                     PDF

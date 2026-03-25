@@ -93,11 +93,11 @@
                 <p><center><b>CERTIFICACIÓN:</b></center></p><br>
                 <p>
                     Que comparece la persona de nombre <b>C. 
-                    @if($representante->nombre_representante != NULL)
-                        {{ $representante->nombre_representante }} {{ $representante->primer_apellido_representante }} {{ $representante->segundo_apellido_representante ?? '' }} </b> en su carácter de representante 
+                    @if(isset($representante) && !empty($representante['nombre_representante']))
+                        {{ $representante['nombre_representante'] }} {{ $representante['primer_apellido_representante'] ?? '' }} {{ $representante['segundo_apellido_representante'] ?? '' }} </b> en su carácter de representante 
                         legal de la parte patronal <b>{{$solicitud->empresa}}</b>
                     @else
-                        {{ $representante->nombre_representante }} {{ $representante->primer_apellido_representante }} {{ $representante->segundo_apellido_representante ?? '' }} </b>
+                        {{ $representante['nombres_patronal'] ?? $representante['empresa_representante'] ?? '' }} {{ $representante['primer_apellido_patronal'] ?? ''}} {{ $representante['segundo_apellido_patronal'] ?? '' }} </b>
                     @endif
                     , a dar cumplimiento al Convenio celebrado entre las partes ante este Centro el día 
                     <b>{{ \Carbon\Carbon::parse($solicitud->fecha_audiencia)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{ \Carbon\Carbon::parse($solicitud->hora_audiencia)->translatedFormat('h:i') }}</b> hrs., 
