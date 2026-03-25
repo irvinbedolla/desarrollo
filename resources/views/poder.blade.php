@@ -1092,17 +1092,28 @@
             var selectTipo = document.getElementById('tipo_persona');
             const nombreDiv = document.getElementById('persona_fisica');
             const empresaDiv = document.getElementById('persona_moral');
+
+            function toggleSectionDisabled(sectionEl, disabled) {
+                if (!sectionEl) return;
+                sectionEl.querySelectorAll('input, select, textarea, button').forEach(function (el) {
+                    el.disabled = disabled;
+                });
+            }
             
             function actualizarTipoPersona() {
                 const valor = selectTipo.value;
 
-                // Oculta ambos inicialmente
                 nombreDiv.style.display = 'none';
                 empresaDiv.style.display = 'none';
+
+                toggleSectionDisabled(nombreDiv, true);
+                toggleSectionDisabled(empresaDiv, true);
 
                 if (valor === 'Fisica') {
                     nombreDiv.style.display = 'block';
                     empresaDiv.style.display = 'none';
+                    toggleSectionDisabled(nombreDiv, false);
+                    toggleSectionDisabled(empresaDiv, true);
                     /*
                     //Poner los campos requeridos
                     document.getElementById('nombre_pF').setAttribute('required', 'true');
@@ -1156,6 +1167,8 @@
                 } else if (valor === 'Moral') {
                     empresaDiv.style.display = 'block';
                     nombreDiv.style.display = 'none';
+                    toggleSectionDisabled(empresaDiv, false);
+                    toggleSectionDisabled(nombreDiv, true);
                     /*
                     //Las personas fisicas quitar requerido
                     document.getElementById('nombre_pF').removeAttribute('required');
@@ -1208,6 +1221,9 @@
                     document.getElementById('tipo_identificacion_Moral').setAttribute('required', 'true');
                     document.getElementById('num_identificacion_Moral').setAttribute('required', 'true');  
                     */
+                } else {
+                    toggleSectionDisabled(nombreDiv, true);
+                    toggleSectionDisabled(empresaDiv, true);
                 }
             }
 
@@ -1222,16 +1238,28 @@
             const razonDiv = document.getElementById('Conrepresentante');
             const propioDiv = document.getElementById('Sinrepresentante');
 
+            function toggleSectionDisabled(sectionEl, disabled) {
+                if (!sectionEl) return;
+                sectionEl.querySelectorAll('input, select, textarea, button').forEach(function (el) {
+                    el.disabled = disabled;
+                });
+            }
+
             function actualizarRepresentante() {
                 const valor = reprecentante.value;
 
                 // Oculta ambos inicialmente
                 razonDiv.style.display = 'none';
                 propioDiv.style.display = 'none';
+
+                toggleSectionDisabled(razonDiv, true);
+                toggleSectionDisabled(propioDiv, true);
                 
                 if (valor === 'Si') {
                     razonDiv.style.display = 'block';
                     propioDiv.style.display = 'none';
+                    toggleSectionDisabled(razonDiv, false);
+                    toggleSectionDisabled(propioDiv, true);
                     //Poner requeridos los campos
                     /*
                     document.getElementById('nombre_representante_pF').setAttribute('required', 'true');
@@ -1256,6 +1284,8 @@
                 } else if (valor === 'No') {
                     razonDiv.style.display = 'none';
                     propioDiv.style.display = 'block';
+                    toggleSectionDisabled(razonDiv, true);
+                    toggleSectionDisabled(propioDiv, false);
                     //Poner requeridos los campos
                     /*
                     document.getElementById('documentoIne_pFSR').setAttribute('required', 'true');
