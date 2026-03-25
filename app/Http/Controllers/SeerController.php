@@ -9498,13 +9498,13 @@ class SeerController extends Controller
         /*$audiencia = Audiencias::where('id_solicitud', $id)
         ->orderByDesc('id')
         ->first();*/
-        /*$audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
+        $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
         $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
-        ->first();*/
-        $audiencia = SeerPerGeneral::join("audiencias", "audiencias.id_solicitud", "=", "seer_general.id")
+        ->first();
+        /*$audiencia = SeerPerGeneral::join("audiencias", "audiencias.id_solicitud", "=", "seer_general.id")
             ->where("audiencias.id_solicitud", "=", $solicitud->id)
             ->latest('audiencias.created_at')
-            ->first();
+            ->first();*/
 
         $prestaciones = Concepto::where('id_solicitud', $id)->where('tipo_pago', 'Audiencia')->get();
         $deducciones = Deducciones::where('id_solicitud', $id)->where('tipo_pago', 'Audiencia')->get();
