@@ -11,10 +11,16 @@
                     event.stopPropagation();
                     form.classList.add('was-validated');
                 } else {
-                    $('#crear_poder').show();
-                    loading();
+                    if (window.jQuery && $('#crear_poder').length) {
+                        $('#crear_poder').show();
+                    }
+                    if (typeof window.loading === 'function') {
+                        window.loading();
+                    }
                     setTimeout(function() {
-                        $('#menu_carga').hide();
+                        if (window.jQuery && $('#menu_carga').length) {
+                            $('#menu_carga').hide();
+                        }
 
                     }, 3000);
                 }
