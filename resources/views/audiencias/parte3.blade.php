@@ -438,7 +438,7 @@
                     html +='</select>';
                     // Campo para escribir otra prestación (solo si se selecciona "Otras")
                     html += '<div class="otra-prestacion-input" style="display: none; margin-top: 10px;">';
-                    html += '<input type="text" class="form-control" name="otra_prestacion[]" placeholder="Especifique la prestación" />';
+                    html += '<input type="text" class="form-control" name="otra_prestacion[]" maxlength="200" placeholder="Especifique la prestación" />';
                     html += '</div>';
                     html +='<div class="invalid-feedback">El tipo de pago es obligatorio.</div>';
                     html += '</div> </div>';
@@ -707,7 +707,7 @@
                     html += '<div class="col-xs-12 col-sm-12 col-md-12">';
                     html += '<div class="form-group">';
                     html += '<label for="password">Descripción</label>';
-                    html +='<input type="text" class="form-control" name="descripcion_deduccion[]" required oninput="this.value = this.value.toUpperCase()" >';
+                    html +='<input type="text" class="form-control" name="descripcion_deduccion[]" maxlength="150" required oninput="this.value = this.value.toUpperCase()" >';
                     html += '<div class="invalid-feedback">';
                     html += 'La Descripción es obligatoria.';
                     html += '</div> </div> </div>';
