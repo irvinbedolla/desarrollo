@@ -9611,7 +9611,7 @@ class SeerController extends Controller
         $poderMap = !empty($idsAbogadoPoder)
             ? $abogadosPoder->keyBy('idAbogado')
             : collect();
-
+        $descripcionIdentificacionP = '';
         foreach ($citados as $c) {
             if (!empty($c->id_historial) && $historialMap->has($c->id_historial)) {
                 $c->abogado = $historialMap->get($c->id_historial);
@@ -9622,6 +9622,10 @@ class SeerController extends Controller
             } else {
                 $c->abogado = null;
                 $c->abogado_fuente = null;
+            }
+            if ($c->abogado && isset($c->abogado->tipo_identificacion)) {
+                $descripcionIdentificacionP = $this->descripcionIdentificacion($c->abogado->tipo_identificacion);
+                $c->abogado->$descripcionIdentificacionP = $descripcionIdentificacionP;
             }
         }
 
@@ -9713,8 +9717,8 @@ class SeerController extends Controller
         $identificacionSolicitante = $solicitante->identificacion;
         $descripcionIdentificacionS = $this->descripcionIdentificacion($identificacionSolicitante);
 
-        $identificacionPoder = $abogado->tipo_identificacion ?? null;
-        $descripcionIdentificacionP = $identificacionPoder ? $this->descripcionIdentificacion($identificacionPoder) : '';
+        //$identificacionPoder = $abogado->tipo_identificacion ?? null;
+        //$descripcionIdentificacionP = $identificacionPoder ? $this->descripcionIdentificacion($identificacionPoder) : '';
 
         /*if (!$abogado) {
             $abogado = (object) [

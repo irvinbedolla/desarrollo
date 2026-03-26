@@ -114,21 +114,45 @@
                     @else
                     La parte citada <b>(SIN DATOS DE REPRESENTANTE LEGAL)</b> y, por la parte solicitante <b>{{ $solicitante->nombre }}</b> quien se identifica con 
                     @endif --}}
+                   {{--
+                        @if(!$tieneRepresentante)
+                            La parte citada: <b>{{ $rep->nombres_patronal }} {{ $rep->primer_apellido_patronal }} {{ $rep->segundo_apellido_patronal }}</b> quien se identifica con
+                            <b>{{ strtoupper($rep->tipo_identificacion) }}</b>, de Número <b>{{ $rep->num_identificacion }}</b> expedida a su favor por <b>{{ $descId }}</b>,
+                            y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
+                        @else
+                            Declara <b>{{ $nombreRepresentante }}</b>, <b>ser representante legal de la PARTE EMPLEADORA</b>, quien se identifica con
+                            <b>{{ strtoupper($rep->tipo_identificacion) }}</b>, de Número <b>{{ $rep->num_identificacion }}</b> expedida a su favor por <b>{{ $descId }}</b>, así como <b>{{ $rep->descipcion_poder }}</b>
+                        @endif
+                    @endforeach 
+                        
+                       {{-- @if(!$tieneRepresentante)
+                            La parte EMPLEADORA <b>{{ $rep->nombres_patronal }} {{ $rep->primer_apellido_patronal }} {{ $rep->segundo_apellido_patronal }}</b> quien se identifica con
+                            <b>{{ strtoupper($rep->tipo_identificacion) }}</b>, de Número <b>{{ $rep->num_identificacion }}</b> expedida a su favor por <b>{{ $descId }}</b>,
+                            y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
+                        @else
+                            Declara <b>{{ $nombreRepresentante }}</b>, <b>ser representante legal de la PARTE EMPLEADORA</b>, quien se identifica con
+                            <b>{{ strtoupper($rep->tipo_identificacion) }}</b>, de Número <b>{{ $rep->num_identificacion }}</b> expedida a su favor por <b>{{ $descId }}</b>, así como <b>{{ $rep->descipcion_poder }}</b>
+                        @endif
+                    @endforeach--}}
+
                     La parte citada:
                     @foreach ($citados as $citado)
                         @if($solicitud->tipo_solicitud == 1)
                             @if($citado->id_abogado)
                                 @if ($citado->abogado->reprecentante == 'No')
-                                    <b>{{ $citado->abogado->nombres_patronal }} {{ $citado->abogado->primer_apellido_patronal }} {{ $citado->abogado->segundo_apellido_patronal }}</b>
+                                    <b>{{ $citado->abogado->nombres_patronal }} {{ $citado->abogado->primer_apellido_patronal }} {{ $citado->abogado->segundo_apellido_patronal }}</b> quien se identifica con
+                                    <b>{{ strtoupper($citado->abogado->tipo_identificacion) }}</b>, de Número <b>{{ $citado->abogado->num_identificacion}}</b> expedida a su favor por <b>{{ $citado->abogado->$descripcionIdentificacionP }}</b>,
+                                    y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
                                 @else
-                                    <b>{{ $citado->abogado->nombre_representante }} {{ $citado->abogado->primer_apellido_representante }} {{ $citado->abogado->segundo_apellido_representante }}</b>
-                                    en representación de <b>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido ?? ''}}</b>,  
+                                    <b>{{ $citado->abogado->nombre_representante }} {{ $citado->abogado->primer_apellido_representante }} {{ $citado->abogado->segundo_apellido_representante }}</b> quien se identifica con 
+                                    <b>{{ strtoupper($citado->abogado->tipo_identificacion) }}</b>, de Número <b>{{ $citado->abogado->num_identificacion }}</b> expedida a su favor por <b>{{ $citado->abogado->$descripcionIdentificacionP }}</b>, así como <b>{{  $citado->abogado->descipcion_poder }}</b>
+                                    en representación legal de <b>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido ?? ''}}</b>
                                 @endif
-                                @if($citado->abogado->tipo_identificacion)
+                                {{--@if($citado->abogado->tipo_identificacion)
                                 quien se identifica con <b>{{ strtoupper($citado->abogado->tipo_identificacion) }}</b>, de Número <b>{{ $citado->abogado->num_identificacion }}</b>,
-                                @endif
-                            @else
-                                <b>{{ $citado->nombre }}{{ $citado->primer_apellido ?? ''}} {{ $citado->segundo_apellido ?? ''}}</b>,
+                                @endif--}}
+                            {{--@else
+                                <b>{{ $citado->nombre }}{{ $citado->primer_apellido ?? ''}} {{ $citado->segundo_apellido ?? ''}}</b>,--}}
                             @endif
                         @else
                             <b>{{ $citado->nombre }}{{ $citado->primer_apellido ?? ''}} {{ $citado->segundo_apellido ?? ''}}</b>,
