@@ -511,6 +511,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/cumplimiento/rechazar/rati/{id}',      [SeerController::class, 'cumplimiento_rechazar_rati'])->name('cumplimiento_rechazar');
         //Audiencias diarias
         Route::post('/cumplimiento/pagar/audienia',         [SeerController::class, 'cumplimiento_pagar_audiencia'])->name('cumplimiento_pagar_audiencia');
+        Route::post('/cumplimiento/pagar/pena/audiencia',   [SeerController::class, 'cumplimiento_pagar_con_pena_audiencia'])->name('cumplimiento_pagar_pena_audiencia');
         Route::get('/cumplimiento/rechazara/{id}',          [SeerController::class, 'cumplimiento_rechazar_audiencia'])->name('cumplimiento_rechazar_audiencia');
         //Ratificaciones busqueda
         Route::post('/cumplimientos/consulta',              [SeerController::class, 'cumplimiento_pagar_busqueda_rati'])->name('cumplimiento_pagar_busqueda');

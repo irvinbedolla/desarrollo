@@ -9305,6 +9305,33 @@ class SeerController extends Controller
         return redirect()->route('cumplimiento_actual');
     }
 
+    public function cumplimiento_pagar_con_pena_audiencia(Request $request)
+    {
+        $data = $request->validate([
+            'id' => 'required|integer|exists:pago_solicitud,id',
+            'observaciones' => 'nullable|string',
+            'monto_pc' => 'required|numeric|min:0',
+        ]);
+
+        Pagos::find($data['id'])->update([
+            'estatus' => 'Pagado con pena convencional',
+            'observaciones' => $data['observaciones'] ?? null,
+            'monto_pc' => $data['monto_pc'],
+        ]);
+
+        $pago = Pagos::find($data['id']);
+        $id_solicitud = $pago['id_solicitud'];
+        $faltantes = Pagos::where('id_solicitud', $id_solicitud)
+            ->where('estatus', 'Pendiente')
+            ->get();
+
+        if (count($faltantes) == 0) {
+            SeerPerGeneral::find($id_solicitud)->update(['estatus' => 'Concluida']);
+        }
+
+        return redirect()->route('cumplimiento_actual');
+    }
+
     public function cumplimiento_rechazar_audiencia($id){
         $pagos = Pagos::find($id);
         $id_solicitud = $pagos["id_solicitud"];
