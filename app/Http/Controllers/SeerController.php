@@ -13880,7 +13880,7 @@ class SeerController extends Controller
             }
 
             DB::beginTransaction();
-            try {
+            //try {
                 // 1. Guardar SeerPerGeneral inicial
                 $general = SeerPerGeneral::create($solicitudData);
                 $id = $general->id;
@@ -13897,9 +13897,13 @@ class SeerController extends Controller
                         ]);
                     }
                 }
+                //dd($citadosData);
 
                 // 3. Guardar Solicitante
                 $solicitanteData['id_solicitud'] = $id;
+                $solicitanteData['edad'] = $citadosData['edad'];
+                $solicitanteData['fecha_nacimiento'] = $citadosData['fecha_nacimiento'];
+                $solicitanteData['nacionalidad'] = $citadosData['nacionalidad'];
                 SeerSolicitante::create($solicitanteData);
 
                 // 4. Guardar Caso Excepción (si existe)
@@ -13920,7 +13924,7 @@ class SeerController extends Controller
                     // Limpiar sesión
                     session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
                 }
-            } catch (\Exception $e) {
+            /* } catch (\Exception $e) {
                 DB::rollBack();
                     $solicitante = session('solicitante_data', []);
                     if (!empty($solicitante) && is_array($solicitante)) {
@@ -13936,7 +13940,7 @@ class SeerController extends Controller
                         }
                     }
 
-                    $citados = session('citados_data', /* [] */);
+                    $citados = session('citados_data');
                     if (!empty($citados) && is_array($citados)) {
                         foreach ($citados as $citado) { 
                             if (is_array($citado)) {
@@ -13956,7 +13960,7 @@ class SeerController extends Controller
                     session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
 
                 return redirect()->route('solicitudes_index')->with('error', 'Ocurrió un error al finalizar la solicitud. Se descartaron los datos de captura.');
-            }
+            } */
         }
 
         /* DB::beginTransaction();
@@ -14677,9 +14681,6 @@ class SeerController extends Controller
             // --- DATOS OBTENIDOS DEL FORMULARIO ($data) ---
             // Campos Obligatorios
             'id_solicitud'        => $id_solicitud,
-            'nacionalidad'        => $data['nacionalidad'],
-            'fecha_nacimiento'    => $data['fecha_nacimiento'],
-            'edad'                => $data['edad'],
             'puesto'              => $data['puesto'],
             'pago'                => $data['pago'],
             'horas_semana'        => $data['horas'],
@@ -14691,6 +14692,9 @@ class SeerController extends Controller
             'labora'              => $data['labora'] ?? 'No', // Usar 'No' si no viene
 
             // Campos Opcionales (usar el operador de fusión de null ?? para seguridad)
+            'edad'                => $data['edad'] ?? null,
+            'fecha_nacimiento'    => $data['fecha_nacimiento'] ?? null,
+            'nacionalidad'        => $data['nacionalidad'] ?? null,
             'tipo_persona'        => $data['tipo_persona'] ?? null,
             'lenguaje'            => $data['lenguaje'] ?? null,
             'tipo_discapacidad'   => $data['tipo_discapacidad'] ?? null,
@@ -15082,6 +15086,9 @@ class SeerController extends Controller
             'imagen_domicilio1' => $foto1,
             'imagen_domicilio2' => $foto2, 
             'estado_citado'     => $data["estado_citado"],
+            'edad'              => $data["edad"],
+            'fecha_nacimiento'  => $data["fecha_nacimiento"],
+            'nacionalidad'      => $data["nacionalidad"],
         );
         //$data_insert["notificacion"] =  $data["notificacion"];
         //Hacer un if para indicar la notificaacion

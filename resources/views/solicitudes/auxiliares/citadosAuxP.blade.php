@@ -82,7 +82,7 @@
                                 <div style="background-color:#D2D3D5; width:100%; height:40px;">
                                     <h3 class="text-center" style="color:black">Ingresa los datos del citado</h3>
                                 </div>    
-                                <p><span style="color:red;">*</span> Debes capturar al menos un citado</p>
+                                <p><span style="color:red;"><!-- * --></span> <!-- Debes capturar al menos un citado --></p>
 
                                 <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                                 <form class="needs-validation" novalidate id="form_concluir" method="POST" action="{{route('seer.citadosAuxP', ['id' => $id])}}" enctype="multipart/form-data">
@@ -104,7 +104,7 @@
                                             </div>
                                         </div> -->
 
-                                        <div class="col-xs-12 col-sm-12 col-md-2" id="campo_curp">
+                                        <div class="col-xs-12 col-sm-12 col-md-4" id="campo_curp">
                                             <div class="form-group">
                                                 <label for="name">CURP (Opcional)</label>
                                                 <input type="text" name="curp" maxlength="18" id="curp_input" oninput="validarInput(this)" class="form-control"> 
@@ -121,7 +121,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-2">
+                                        <div class="col-xs-12 col-sm-12 col-md-4">
                                             <div class="form-group">
                                                 <label for="name">RFC (Opcional)</label>
                                                 <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()">   
@@ -130,18 +130,8 @@
                                                 </div>-->
                                             </div>
                                         </div>
+                                        
 
-                                        <div class="col-xs-12 col-sm-12 col-md-2">
-                                            <label for="btncheck1">¿Requiere Traductor?</label>
-                                            <input type="checkbox" id="check_lenguaje" name="traductor" autocomplete="off">
-                                        </div>
-
-                                        <div class="col-xs-12 col-sm-12 col-md-4" id="lenguaje_señas" tyle="display:none">
-                                            <div class="form-group">
-                                                <label for="name">¿Qué tipo de lenguaje require?</label>
-                                                <input type="text" name="lenguaje" class="form-control" id="lenguajeRequerido" oninput="this.value = this.value.toUpperCase()">
-                                            </div>
-                                        </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12" id="tipoPersona_nombre" style="display:none;">
                                             <div class="row">
                                                 <div class="col-xs-12 col-sm-12 col-md-4">
@@ -176,29 +166,85 @@
                                             </div>
                                         </div>
                                     </div>
-                                    @if(!$session_notificacion)
-                                        <div class = "row">
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
-                                                <div class="form-group">
-                                                    <label for="name">¿Quién entregará los citatorios? <span style="color:red;">(*)</span></label>
-                                                    <select name="notificacion" class="form-control" required>
-                                                        <option value="">SELECCIONE</option>
-                                                        <option value="Trabajador" {{ old('notificacion') == 'Trabajador' ? 'selected' : '' }}>Solicitante</option>
-                                                        <option value="Centro" {{ old('notificacion') == 'Centro' ? 'selected' : '' }}>Centro de conciliación Laboral</option>
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        El campo ¿quién entregará los citatorios? es obligatorio.
-                                                    </div>
+                                    <div class="row">
+                                        <div id="div1" class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="form-group">
+                                                <label for="name">Fecha de Nacimiento <span style="color:red;">(*)</span></label>
+                                                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" onchange="validarfechaNacimiento(this)" class="form-control" required> 
+                                                <div class="invalid-feedback">
+                                                    El campo fecha de nacimiento es obligatoria.
                                                 </div>
                                             </div>
                                         </div>
-                                    @endif
+                                        <div id="div1" class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="form-group">
+                                                <label for="name">Edad<span style="color:red;">(*)</span></label>
+                                                <input type="number" min="0" name="edad" class="form-control" id="años_edad" required> 
+                                                <div class="invalid-feedback">
+                                                    El campo edad es obligatoria.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="form-group">
+                                                <label for="name">Nacionalidad <span style="color:red;">(*)</span></label>
+                                                <select name="nacionalidad" class="form-control" required>
+                                                    <option value="">SELECCIONE</option>
+                                                    <option value="Mexicana">MEXICANA</option>
+                                                    <option value="Otra">OTRA</option>
+                                                </select>
+                                                <div class="invalid-feedback">
+                                                    El campo nacionalidad es obligatoria.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-3">
+                                            <label for="btncheck1">¿Requiere Traductor?</label>
+                                            <input type="checkbox" id="check_lenguaje" name="traductor" autocomplete="off">
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-4" id="lenguaje_señas" tyle="display:none">
+                                            <div class="form-group">
+                                                <label for="name">¿Qué tipo de lenguaje require?</label>
+                                                <input type="text" name="lenguaje" class="form-control" id="lenguajeRequerido" oninput="this.value = this.value.toUpperCase()">
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <label for="btncheck1">¿Tiene alguna discapacidad?</label>
+                                            <input type="checkbox" id="check_discapacidad" name="discapacidad" autocomplete="off">
+                                        </div>  
+                                        <div class="col-xs-12 col-sm-12 col-md-4" id="discapacidad" style="display:none">
+                                            <div class="form-group">
+                                                <label for="name">¿Cuál es su discapacidad?</label>
+                                                <input type="text" name="tipo_discapacidad" class="form-control" id="discapacidadRequerida" oninput="this.value = this.value.toUpperCase()">
+                                                <div class="invalid-feedback">
+                                                    Debe especificar la discapacidad.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                    
                                     <div class="row"> 
                                         <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:30px;">
                                             <div class="form-group">
                                                 <h4 class="text-center">Dirección de la fuente de empleo</h4>
                                             </div>
-                                        </div>    
+                                        </div>
+
+                                        @if(!$session_notificacion)
+                                        <div class="col-xs-12 col-sm-12 col-md-3">
+                                            <div class="form-group">
+                                                <label for="name">¿Quién entregará los citatorios? <span style="color:red;">(*)</span></label>
+                                                <select name="notificacion" class="form-control" required>
+                                                    <option value="">SELECCIONE</option>
+                                                    <option value="Trabajador" {{ old('notificacion') == 'Trabajador' ? 'selected' : '' }}>Solicitante</option>
+                                                    <option value="Centro" {{ old('notificacion') == 'Centro' ? 'selected' : '' }}>Centro de conciliación Laboral</option>
+                                                </select>
+                                                <div class="invalid-feedback">
+                                                    El campo ¿quién entregará los citatorios? es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @endif
 
                                         <div class="col-xs-12 col-sm-12 col-md-3">
                                             <div class="form-group">
@@ -366,6 +412,20 @@
                                             <div class="form-group">
                                                 <label for="name">Referencia 2 (Opcional)</label>
                                                 <input type="file" class="form-control" name="foto2" accept="image/*">
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <div class="form-group">
+                                                <h4 class="text-center">En caso de ser mayor de edad subir su identificación y en caso de ser menor su identificación es su Acta de Nacimiento</h4>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-4">
+                                            <div class="form-group">
+                                                <label>Subir Identificación oficial <span style="color:red;">(*)</span></label>
+                                                <input type="file" id="documentoIdentificacion" name="documentoIdentificacion" class="form-control" accept=".pdf" required>
+                                                <div class="invalid-feedback">
+                                                    El documento con la identificación es obligatorio.
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
