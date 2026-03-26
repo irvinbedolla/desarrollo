@@ -134,7 +134,7 @@
                                                                 </button>
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $solicitud->id) }}"  target="_blank">Documentos Digitales</a></li>
-                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerPDFAudiencia', $solicitud->id) }}"  target="_blank">Acta de Audiencia</a></li>
+                                                                    <!--li><a class="btn btn-info" style="width: 100%" href="{{ route('VerPDFAudiencia', $solicitud->id) }}"  target="_blank">Acta de Audiencia</a></li-->
                                                                      @if(isset($solicitud->mostrar_ptu) && $solicitud->mostrar_ptu)
                                                                         <li><a class="dropdown-item" href="{{ route('PDFconvenioPTU_NO_S', $solicitud->id) }}" target="_blank" style="background-color: #d4edda; font-weight: bold;">Convenio PTU (No Labora)</a></li>
                                                                     @else
