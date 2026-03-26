@@ -9307,6 +9307,33 @@ class SeerController extends Controller
         return redirect()->route('cumplimiento_actual');
     }
 
+    public function cumplimiento_pagar_con_pena_audiencia(Request $request)
+    {
+        $data = $request->validate([
+            'id' => 'required|integer|exists:pago_solicitud,id',
+            'observaciones' => 'nullable|string',
+            'monto_pc' => 'required|numeric|min:0',
+        ]);
+
+        Pagos::find($data['id'])->update([
+            'estatus' => 'Pagado con pena convencional',
+            'observaciones' => $data['observaciones'] ?? null,
+            'monto_pc' => $data['monto_pc'],
+        ]);
+
+        $pago = Pagos::find($data['id']);
+        $id_solicitud = $pago['id_solicitud'];
+        $faltantes = Pagos::where('id_solicitud', $id_solicitud)
+            ->where('estatus', 'Pendiente')
+            ->get();
+
+        if (count($faltantes) == 0) {
+            SeerPerGeneral::find($id_solicitud)->update(['estatus' => 'Concluida']);
+        }
+
+        return redirect()->route('cumplimiento_actual');
+    }
+
     public function cumplimiento_rechazar_audiencia($id){
         $pagos = Pagos::find($id);
         $id_solicitud = $pagos["id_solicitud"];
@@ -9593,7 +9620,7 @@ class SeerController extends Controller
         $poderMap = !empty($idsAbogadoPoder)
             ? $abogadosPoder->keyBy('idAbogado')
             : collect();
-
+        $descripcionIdentificacionP = '';
         foreach ($citados as $c) {
             if (!empty($c->id_historial) && $historialMap->has($c->id_historial)) {
                 $c->abogado = $historialMap->get($c->id_historial);
@@ -9604,6 +9631,10 @@ class SeerController extends Controller
             } else {
                 $c->abogado = null;
                 $c->abogado_fuente = null;
+            }
+            if ($c->abogado && isset($c->abogado->tipo_identificacion)) {
+                $descripcionIdentificacionP = $this->descripcionIdentificacion($c->abogado->tipo_identificacion);
+                $c->abogado->$descripcionIdentificacionP = $descripcionIdentificacionP;
             }
         }
 
@@ -9695,8 +9726,8 @@ class SeerController extends Controller
         $identificacionSolicitante = $solicitante->identificacion;
         $descripcionIdentificacionS = $this->descripcionIdentificacion($identificacionSolicitante);
 
-        $identificacionPoder = $abogado->tipo_identificacion ?? null;
-        $descripcionIdentificacionP = $identificacionPoder ? $this->descripcionIdentificacion($identificacionPoder) : '';
+        //$identificacionPoder = $abogado->tipo_identificacion ?? null;
+        //$descripcionIdentificacionP = $identificacionPoder ? $this->descripcionIdentificacion($identificacionPoder) : '';
 
         /*if (!$abogado) {
             $abogado = (object) [
@@ -13906,9 +13937,13 @@ class SeerController extends Controller
                         ]);
                     }
                 }
+                //dd($citadosData);
 
                 // 3. Guardar Solicitante
                 $solicitanteData['id_solicitud'] = $id;
+                $solicitanteData['edad'] = $citadosData['edad'];
+                $solicitanteData['fecha_nacimiento'] = $citadosData['fecha_nacimiento'];
+                $solicitanteData['nacionalidad'] = $citadosData['nacionalidad'];
                 SeerSolicitante::create($solicitanteData);
 
                 // 4. Guardar Caso Excepción (si existe)
@@ -13945,7 +13980,7 @@ class SeerController extends Controller
                         }
                     }
 
-                    $citados = session('citados_data', /* [] */);
+                    $citados = session('citados_data');
                     if (!empty($citados) && is_array($citados)) {
                         foreach ($citados as $citado) { 
                             if (is_array($citado)) {
@@ -14686,9 +14721,6 @@ class SeerController extends Controller
             // --- DATOS OBTENIDOS DEL FORMULARIO ($data) ---
             // Campos Obligatorios
             'id_solicitud'        => $id_solicitud,
-            'nacionalidad'        => $data['nacionalidad'],
-            'fecha_nacimiento'    => $data['fecha_nacimiento'],
-            'edad'                => $data['edad'],
             'puesto'              => $data['puesto'],
             'pago'                => $data['pago'],
             'horas_semana'        => $data['horas'],
@@ -14700,6 +14732,9 @@ class SeerController extends Controller
             'labora'              => $data['labora'] ?? 'No', // Usar 'No' si no viene
 
             // Campos Opcionales (usar el operador de fusión de null ?? para seguridad)
+            'edad'                => $data['edad'] ?? null,
+            'fecha_nacimiento'    => $data['fecha_nacimiento'] ?? null,
+            'nacionalidad'        => $data['nacionalidad'] ?? null,
             'tipo_persona'        => $data['tipo_persona'] ?? null,
             'lenguaje'            => $data['lenguaje'] ?? null,
             'tipo_discapacidad'   => $data['tipo_discapacidad'] ?? null,
@@ -15091,6 +15126,9 @@ class SeerController extends Controller
             'imagen_domicilio1' => $foto1,
             'imagen_domicilio2' => $foto2, 
             'estado_citado'     => $data["estado_citado"],
+            'edad'              => $data["edad"],
+            'fecha_nacimiento'  => $data["fecha_nacimiento"],
+            'nacionalidad'      => $data["nacionalidad"],
         );
         //$data_insert["notificacion"] =  $data["notificacion"];
         //Hacer un if para indicar la notificaacion

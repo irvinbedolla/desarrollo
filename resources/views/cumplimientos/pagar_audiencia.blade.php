@@ -31,10 +31,12 @@
                                                     <td>${{number_format($pago->monto, 2)}}</td>
                                                     <td>{{$pago->estatus}}</td>
                                                     <td>
-                                                        @if($pago->estatus == "Pendiente")
+                                                        @if($pago->estatus == "Pendiente" || $pago->estatus == "Incomparecencia trabajador")
                                                             <button type="button" class="btn btn-info open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $pago->id }}">
                                                                 Pagar
                                                             </button>
+                                                        @endif
+                                                        @if($pago->estatus == "Pendiente")
                                                             <a class="btn btn-danger" href="{{ route('cumplimiento_rechazar', $pago->id) }}" onclick=consultar_estadistica();>Rechazar</a>
                                                             <form method="POST" action="{{ route('cumplimiento_incomparecencia', $pago->id) }}" style="display:inline;">
                                                                 @csrf
@@ -44,6 +46,11 @@
                                                                     No comparece trabajador
                                                                 </button>
                                                             </form>
+                                                        @endif
+                                                        @if($pago->estatus == "No pagado")
+                                                            <button type="button" class="btn btn-warning open-modal-pena" data-bs-toggle="modal" data-bs-target="#penaModal" data-id="{{ $pago->id }}">
+                                                                Pagar con pena convencional
+                                                            </button>
                                                         @endif
                                                     </td>
                                                     <td>
@@ -61,6 +68,10 @@
                                                                     PDF
                                                                 </a>
                                                             @endif
+                                                        @elseif($pago->estatus == "Pagado con pena convencional")
+                                                            <a class="btn btn-success" href="{{ route('PDFcumplimientoParcial', $pago->id) }}" target="_blank">
+                                                                PDF
+                                                            </a>
                                                         {{--@if($pago->estatus == "Pagado")
                                                             <a class="btn btn-success" href="{{ route('PDFcumplimientoParcial', $pago->id) }}" target="_blank">PDF</a>--}}
                                                         @elseif($pago->estatus == "No pagado")
@@ -111,6 +122,35 @@
     </form>
 </div>
 
+<div class="modal fade" id="penaModal" tabindex="-1" aria-labelledby="penaModalLabel" aria-hidden="true">
+    <form class='needs-validation novalidate' method='POST' action="{{ route('cumplimiento_pagar_pena_audiencia') }}">
+        @csrf
+        <input type="hidden" id="pena-modal-id" name="id" value="">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="penaModalLabel">Pagar con pena convencional</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Monto de pena convencional</label>
+                        <input type="number" step="0.01" min="0" name="monto_pc" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Observaciones</label>
+                        <textarea name="observaciones" style="width:100%"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
 <div id="nuevo_poder" style ="display: none;">
     <div>.</div>
     <div class="loader"></div>
@@ -121,6 +161,10 @@
         $('.open-modal').click(function() {
             const id = $(this).data('id'); // Obtiene el valor de data-id
             document.getElementById('modal-id').value = id;
+        });
+        $('.open-modal-pena').click(function() {
+            const id = $(this).data('id');
+            document.getElementById('pena-modal-id').value = id;
         });
     </script>
     <script src="../../public/assets/js/poderes/general.js"></script>

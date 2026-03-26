@@ -13,7 +13,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CitasExport;
+use App\Models\SeerCitados;
 use App\Models\SeerPerGeneral;
+use App\Models\SeerSolicitante;
 
 class CitaController extends Controller
 {
@@ -177,6 +179,8 @@ class CitaController extends Controller
         });
 
         $pagos = $query->get();
+        $id_solicitudes = $pagos->pluck('id_solicitud')->toArray();
+        
 
         $mapaColores = [
             'Pendiente'                  => '#EAE300',
@@ -187,13 +191,18 @@ class CitaController extends Controller
         
         $eventos = $pagos->map(function ($pago) use ($mapaColores) {
             $color = $mapaColores[$pago->estatus] ?? '#CCCCCC';
-
+            $solicitante = SeerSolicitante::where('id_solicitud', $pago->id_solicitud)->value('nombre');
+            $citado = SeerCitados::where('id_solicitud', $pago->id_solicitud)->first();
+            $citado_nombre = $citado
+            ? $citado->nombre . " " . ($citado->primer_apellido ?? "") . " " . ($citado->segundo_apellido ?? "")
+            : $pago->empresa_representante;
             return [
                 'id' => $pago->id,
                     'title' => $pago->NUE,
-                    'solicitante' => $pago->nombre_trabajador,
                     'start' => $pago->fecha->format('Y-m-d') . 'T' . $pago->hora->format('H:i:s'),
                     'extendedProps' => [
+                        'solicitante' => $solicitante ?? $pago->nombre_trabajador ??  'S/N',
+                        'citado' => $citado_nombre ?? 'S/N',
                         'nue' => $pago->NUE,
                         'descripcion' => $pago->descripcion,
                         'hora' => $pago->hora->format('h:i A'),

@@ -63,8 +63,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 return {
                     html: `
                         <div class="fc-event-content">
-                            <div class="fc-event-title">Solicitante:${info.event.title}</div>
-                            <div class="fc-event-title">Citado:${info.event.extendedProps.solicitante}</div>
+                            <div class="fc-event-title">Solicitante:${info.event.extendedProps.solicitante}</div>
+                            <div class="fc-event-title">Citado:${info.event.extendedProps.citado}</div>
                             <div class="fc-event-title">Conciliador:${info.event.extendedProps.conciliador}</div>
                             <div class="fc-event-time">
                                 <div class="color-indicator" style="background:${info.event.extendedProps.color}"></div>
