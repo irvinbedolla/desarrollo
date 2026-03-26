@@ -13880,7 +13880,7 @@ class SeerController extends Controller
             }
 
             DB::beginTransaction();
-            //try {
+            try {
                 // 1. Guardar SeerPerGeneral inicial
                 $general = SeerPerGeneral::create($solicitudData);
                 $id = $general->id;
@@ -13924,7 +13924,7 @@ class SeerController extends Controller
                     // Limpiar sesión
                     session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
                 }
-            /* } catch (\Exception $e) {
+            } catch (\Exception $e) {
                 DB::rollBack();
                     $solicitante = session('solicitante_data', []);
                     if (!empty($solicitante) && is_array($solicitante)) {
@@ -13960,7 +13960,7 @@ class SeerController extends Controller
                     session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
 
                 return redirect()->route('solicitudes_index')->with('error', 'Ocurrió un error al finalizar la solicitud. Se descartaron los datos de captura.');
-            } */
+            }
         }
 
         /* DB::beginTransaction();
