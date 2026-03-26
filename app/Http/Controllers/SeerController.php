@@ -4820,6 +4820,14 @@ class SeerController extends Controller
             $citado->save();
         }
 
+        $citados = SeerCitados::where('id_solicitud', $data["id"])->get();
+        foreach ($citados as $citado) {
+            if (!$citado->audiencia_id) {
+                $citado->audiencia_id = $audienciaId;
+                $citado->save();
+            }
+        }
+
         $curpBase = $data['curp_solicitante'];
 
         // CURP (PDF)
