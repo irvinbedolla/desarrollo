@@ -7474,6 +7474,8 @@ class SeerController extends Controller
             $numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
             Audiencias::where('id_solicitud',$data["id"])
             ->orderBy('id_solicitud','desc')
+            ->latest()
+            ->first()
             ->update([
                 'numero_audiencia'  =>  $numAudiencia+1,
                 'folio_audiencia'   =>  $numero_audiencia[0],
