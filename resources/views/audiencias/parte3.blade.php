@@ -50,6 +50,7 @@
                             <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('concluir_audiencia_conciliador')}}">
                                 @csrf
                                 <input type="hidden" name="id" value="{{ $id }}">
+                                <input type="hidden" name="audiencia_id" value="{{ request()->query('audiencia_id') }}">
                                 <input type="hidden" name="audiencia_hora" id="audiencia_hora" value="{{ $audiencia_hora }}">
                                 <input type="hidden" name="audiencia_fecha" id="audiencia_fecha" value="{{ $audiencia_fecha }}">
                                 <div class="row">

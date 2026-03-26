@@ -424,7 +424,7 @@
                                         <br><button id="btn-acta" type="button" class="btn btn-info" name="bandera" value="4">Acta de Audiencia</button>
                                     </div>
                                         <div class="col-xs-12 col-sm-12 col-md-2">
-                                            <br><a href="{{ route('audiencias.parte3', $id) }}?bandera=5" class="btn btn-danger" name="bandera" value="5">Regresar</a>
+                                            <br><a href="{{ route('audiencias.parte3', $id) . '?bandera=5&audiencia_id=' . request()->query('audiencia_id') }}" class="btn btn-danger" name="bandera" value="5">Regresar</a>
                                         </div>
                                 </div>
                             </form>
@@ -1463,7 +1463,7 @@ function clonarCheckboxes() {
         let form = document.getElementById('form_roles');
         form.action = "{{ route('terminar_audiencia', $id) }}";
         form.submit();
-        setTimeout(() => { window.open("{{ route('VerPDFAudiencia', $id) }}", "_blank"); }, 700);
+        setTimeout(() => { window.open("{{ route('VerPDFAudiencia', $id) . '?audiencia_id=' . request()->query('audiencia_id') }}", "_blank"); }, 700);
     });
 
     // Terminar → guarda solo si no se guardó antes
@@ -1683,7 +1683,7 @@ function clonarCheckboxes() {
                     .then(resp => resp.json())
                     .then(data => {
                         if (data.status === 'success') {
-                            let urlPdf = "{{ route('VerPDFAudiencia', ':id') }}";
+                            let urlPdf = "{{ route('VerPDFAudiencia', ':id') . '?audiencia_id=' . request()->query('audiencia_id') }}";
                             urlPdf = urlPdf.replace(':id', idSolicitud);
                             window.open(urlPdf, '_blank');
                         } else {

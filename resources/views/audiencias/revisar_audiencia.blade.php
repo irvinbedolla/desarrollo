@@ -1221,7 +1221,7 @@
                                                                     <td style="padding: 5px 0; border: none; text-align: right;">
                                                                         @if($audiencia->estatus == 'Pendiente' || $audiencia->estatus == 'Archivada')
                                                                         @else
-                                                                            <a class="btn btn-info btn-xs" href="{{ route('VerPDFAudiencia', $audiencia->id_solicitud) }}" target="_blank">
+                                                                            <a class="btn btn-info btn-xs" href="{{ route('VerPDFAudiencia', $audiencia->id_solicitud) . '?audiencia_id=' . $audiencia->id }}" target="_blank">
                                                                                 Visualizar
                                                                             </a>
                                                                         @endif

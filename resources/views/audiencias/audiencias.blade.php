@@ -318,6 +318,7 @@
                     @csrf
                     <input type="hidden" id="modal-id" name="citado" value="">
                     <input type="hidden" name="solicitud" value="{{$solicitud->id}}">
+                    <input type="hidden" name="audiencia_id" value="{{ request()->query('audiencia_id') }}">
                     <table id="tabla1" class="table-striped" style="width:100%">
                         <thead style="background-color: #4A001F;">   
                             <!--<th style="display: none;">ID</th>-->
@@ -1454,6 +1455,7 @@
                         @csrf
                         <input type="hidden" name="id" value="{{$id}}">
                         <input type="hidden" name="bandera" value="{{$hayRepresentante}}">
+                        <input type="hidden" name="audiencia_id" value="{{ request()->query('audiencia_id') }}">
                         <button type="submit" class="btn btn-success" @if($casoMultasCentroSinComparecencia) disabled @endif>
                             Continuar
                         </button>
@@ -1480,6 +1482,7 @@
                         @csrf
                         <input type="hidden" name="id" value="{{$id}}">
                         <input type="hidden" name="bandera" value="{{$hayRepresentante}}">
+                        <input type="hidden" name="audiencia_id" value="{{ request()->query('audiencia_id') }}">
                         <button type="submit" class="btn btn-success" @if($bloquearContinuar) disabled @endif>
                             Continuar
                         </button>

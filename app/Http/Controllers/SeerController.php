@@ -6410,6 +6410,7 @@ class SeerController extends Controller
     public function seleccionar_abogado(Request $request){
         $data = $request->all();
         $id = $data["solicitud"];
+        $audienciaId = $request->input('audiencia_id');
 
         $sessionKey = "audiencia_data_{$id}";
 
@@ -6438,7 +6439,7 @@ class SeerController extends Controller
         }
 
         session()->flash('preserve_edit_session', true);
-        return redirect()->route('inicioAudiencia',compact('id'));
+        return redirect()->route('inicioAudiencia', ['id' => $id, 'audiencia_id' => $audienciaId]);
         
     }
 
@@ -6842,6 +6843,7 @@ class SeerController extends Controller
     public function audiencia_parte2(Request $request){
         $data = $request->all();
         $id = $data["id"];
+    $audienciaId = $request->input('audiencia_id');
 
         $sessionKey = "audiencia_data_{$id}";
         
@@ -6895,7 +6897,7 @@ class SeerController extends Controller
  
         //Si la bandera es 0 selecciono a todos los representantes puede avanzar
         if($data["bandera"] == 0){
-            return redirect()->route('audiencias.parte3',compact('id'));
+            return redirect()->route('audiencias.parte3', ['id' => $id, 'audiencia_id' => $audienciaId]);
         }
         //Si la bandera es 1 le fanto un representante por lo tanto va a generar nueva audiencia o va multar
         else{
@@ -6909,7 +6911,7 @@ class SeerController extends Controller
                     $nuevo_citado->notificacion = 'Centro';
                     $nuevo_citado->save();
                 }
-                return redirect()->route('audiencias.parte3',compact('id'));
+                return redirect()->route('audiencias.parte3', ['id' => $id, 'audiencia_id' => $audienciaId]);
             }
             else if($citados->notificacion == "Centro" || $citados->notificacion == "Exhorto"){
                 //Si va por el centro se van a generar las multas a los que no tiene reprecentante legal
@@ -6937,7 +6939,7 @@ class SeerController extends Controller
                     $update = SeerPerGeneral::find($id)->update(['estatus' => 'No conciliacion']);
                 }
                 else{*/
-                    return redirect()->route('audiencias.parte3',compact('id'));
+                    return redirect()->route('audiencias.parte3', ['id' => $id, 'audiencia_id' => $audienciaId]);
                 //}                
             }
             return redirect()->route('todas_audiencias');
@@ -7286,7 +7288,7 @@ class SeerController extends Controller
                 $sessionKey = 'audiencia_conclucion_data_' . $id_solicitud;
                 session([$sessionKey => $data]);
                 session()->put('preserve_edit_session', true);
-                return redirect()->route('vista_previa', ['id_solicitud' => $id_solicitud]);
+                return redirect()->route('vista_previa', ['id_solicitud' => $id_solicitud, 'audiencia_id' => ($data['audiencia_id'] ?? null)]);
             }
             // ---------------------------
 
@@ -9470,10 +9472,17 @@ class SeerController extends Controller
         return redirect()->route('agenda');
     }
 
-    public function VerPDFAudiencia($id){
+    public function VerPDFAudiencia($id, Request $request){
         $solicitud = SeerPerGeneral::find($id);
         $pagos = Pagos::where('id_solicitud',$id)->get();
+
+        $audienciaId = $request->query->get('audiencia_id');
+        if (is_array($audienciaId)) {
+            $audienciaId = $audienciaId[0] ?? null;
+        }
+
         $hayCentro = false;
+        $hayNULL = false;
         // Primero revisamos si hay datos temporales en sesión (vista previa)
         $sessionKey = 'audiencia_conclucion_data_' . $id;
         $sessionData = session()->get($sessionKey);
@@ -9511,7 +9520,7 @@ class SeerController extends Controller
         ->orderByDesc('id')
         ->first();*/
         $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
-        $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
+        $audiencia = $audiencia->where("audiencias.id", "=", $audienciaId)
         ->first();
         /*$audiencia = SeerPerGeneral::join("audiencias", "audiencias.id_solicitud", "=", "seer_general.id")
             ->where("audiencias.id_solicitud", "=", $solicitud->id)
