@@ -204,7 +204,7 @@
                             a) Que la parte <b>TRABAJADORA</b> fue contratada en los términos señalados en la declaración inmediata anterior. 
                         </p>
                         <p class="sangria">
-                            b) Que con motivo del citatorio de fecha <b>{{ \Carbon\Carbon::parse($ultimoCitatorio->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> emitido por el Centro de Conciliación Laboral 
+                            b) Que con motivo del citatorio de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha_confirmacion)->translatedFormat('d \d\e F \d\e\l Y') }}</b> emitido por el Centro de Conciliación Laboral 
                             del Estado de Michoacán de Ocampo, la parte <b>EMPLEADORA</b> comparece para desahogar la etapa de conciliación prejudicial conforme a los artículos 33, 53 fracción I y 
                             684-E, fracción VI de la Ley Federal del Trabajo.
                         </p> 
@@ -366,7 +366,7 @@
                             exigir el cumplimiento del pago total de la cantidad pactada ante la autoridad competente, a parte de los días que transcurran de pena convencional.</p>
                     @endif   
                     @if($cantidadPagos == 1)            
-                        <p><b>SEXTA.</b> La parte <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($solicitud->updated_at)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará a la parte <b>TRABAJADORA en</b> <b>{{ $cantidadPagos }}</b> 
+                        <p><b>SEXTA.</b> La parte <b>EMPLEADORA</b> manifiesta en fecha <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> que pagará a la parte <b>TRABAJADORA en</b> <b>{{ $cantidadPagos }}</b> 
                             exhibición, hasta culminar la cantidad de 
                             <b>${{ number_format($datosAudiencia->monto, 2) }} {{ $montoTexto }} M.N</b>, tal como se muestra:
                         </p>
@@ -438,7 +438,7 @@
                     <div class="salto-inteligente"></div>
                     <div class="contenedor-firmas">             
                     <p>Enteradas las <b>PARTES</b> del alcance legal del presente convenio que se eleva a la categoria de cosa juzgada, conforme al artículo 684-E fracción XIII, mismo que se firma en <b>{{ $solicitud->delegacion }}</b> 
-                        de Michoacán de Ocampo a los <b>{{ \Carbon\Carbon::parse($solicitud->updated_at)->translatedFormat('d \d\í\a\s \d\e F \d\e\l Y') }}</b>, ante la fe de <b>{{ strtoupper($conciliador->name) }}</b>, funcionario(a) conciliador(a), quien 
+                        de Michoacán de Ocampo a los <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\í\a\s \d\e F \d\e\l Y') }}</b>, ante la fe de <b>{{ strtoupper($conciliador->name) }}</b>, funcionario(a) conciliador(a), quien 
                         lo sanciona en este mismo acto. <b>Doy fe.</b>
                     </p>
                     <br><br>
@@ -483,7 +483,7 @@
                         </tr>
                     </table><br>
                     <p style="font-size: 10px;">
-                            LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DEL CONVENIO DE CONCILIACIÓN DE FECHA <b>{{ \Carbon\Carbon::parse($solicitud->updated_at)->translatedFormat('d \d\e F \d\e\l Y') }}</b> EXPEDIENTE NÚMERO <b>{{ $solicitud->NUE }}</b> DEL CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO.
+                            LAS PRESENTES FIRMAS FORMAN PARTE INTEGRA DEL CONVENIO DE CONCILIACIÓN DE FECHA <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> EXPEDIENTE NÚMERO <b>{{ $solicitud->NUE }}</b> DEL CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO.
                     </p> 
                 </div>        
             </div>
