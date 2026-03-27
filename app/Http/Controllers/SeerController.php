@@ -5910,6 +5910,65 @@ class SeerController extends Controller
         return redirect()->route('todas_audiencias');
     }
 
+    public function guardar_audiencia_archivo_parte3(Request $request){
+        $data = $request->all();
+        $user = auth()->user();
+        $fecha_actual = date('y-m-d');
+        $audiencia_id = $data['audiencia_id'] ?? $request->query('audiencia_id');
+
+        //Guardar registro en SeerConciliador
+        $numero_audiencias = SeerPerConciliador::find($data["id"]);
+        if(!isset($numero_audiencias)){
+            $num_audi = 0;
+        }
+        else{
+            $num_audi = $numero_audiencias->numero_audiencias;
+        }
+        $num_audi = $num_audi+1;
+
+        $numero_audiencia = $this->GeneraAudiencia($data["id"]);
+        
+        $data_conciliador = [
+            'id_solicitud'          => $data["id"],
+            'numero_audiencia'      => $numero_audiencia[0],
+            'estatus_conciliacion'  => 'Archivada en Audiencia',
+            'numero_audiencias'     => $num_audi,
+            'fecha_conclucion'      =>  $fecha_actual,
+            'consecutivo'           =>  $numero_audiencia[1],
+            'resolicion_primera'        => $data['primera'] ?? null,
+            'resolicion_justificacion'  => $data['justificacion'] ?? null,
+            'resolicion_segunda'        => $data['segunda'] ?? null,
+            'conclucion'            => 'Archivada',
+            'audiencia_id' => $audiencia_id
+        ];
+        
+        SeerPerConciliador::create($data_conciliador);  
+
+        SeerPerGeneral::find($data["id"])
+        ->update([
+            'fecha_terminacion' => $fecha_actual, 
+            'estatus'           => 'Archivada',
+            'observaciones'     => $data["observaciones"], 
+        ]);
+
+        $numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
+        Audiencias::where('id_solicitud',$data["id"])
+        ->latest()
+        ->first()
+        ->update([
+            'numero_audiencia'  =>  $numAudiencia+1,
+            'folio_audiencia'   =>  $numero_audiencia[0],
+            'estatus'           => 'Archivada en Audiencia',
+        ]);
+   
+        try {
+            session()->forget(["audiencia_conclucion_data_{$data['id']}", "convenio_citados_{$data['id']}", "acta_citados_{$data['id']}", "audiencia_data_{$data['id']}", 'preserve_edit_session']);
+        } catch (\Exception $e) {
+        }
+
+        return redirect()->route('todas_audiencias');
+    }
+
     public function emitir_multas(Request $request){
         $data = $request->all();
         $user = auth()->user();
@@ -6986,6 +7045,14 @@ class SeerController extends Controller
     }
 
     public function audienciaParte3($id){
+        $audiencia_id = request()->query('audiencia_id');
+        if (is_null($audiencia_id) || $audiencia_id === '') {
+            $audiencia_id = Audiencias::where('id_solicitud', $id)->latest('id')->value('id');
+            if (!is_null($audiencia_id) && $audiencia_id !== '') {
+                return redirect()->route('audiencias.parte3', ['id' => $id, 'audiencia_id' => $audiencia_id]);
+            }
+        }
+
         $solicitud = SeerPerGeneral::find($id);
         $conciliadorId = $solicitud->conciliador_id;
         $sede = $solicitud["delegacion"];
@@ -7073,7 +7140,7 @@ class SeerController extends Controller
 
         $bandera = request()->query('bandera', null);
 
-        return view('/audiencias/parte3',compact('id', 'sede','representantes', 'fechaConfirmacion', 'NUE', 'previewData', 'audiencia_fecha', 'audiencia_hora', 'bandera', 'conciliadorId', 'direccion_c', 'montoPena'));
+        return view('/audiencias/parte3',compact('id', 'sede','representantes', 'fechaConfirmacion', 'NUE', 'previewData', 'audiencia_fecha', 'audiencia_hora', 'bandera', 'conciliadorId', 'direccion_c', 'montoPena', 'audiencia_id'));
     }
 
     public function historial_notificador(Request $request){
@@ -7437,7 +7504,6 @@ class SeerController extends Controller
                 'folio_audiencia'   =>  $numero_audiencia[0],
                 'pena_convencional'  =>  $data['pena_convencional'] ?? null,
                 'direccion_convenio'    =>  $data['direccion_convenio'] ?? null,
-                'estatus'           => 'Archivada',
             ]);
 
             //Actualiza el campo aparece_convenio de la tabla citados a los citados que responderán o los que pagarán los cumplimientos
@@ -10855,9 +10921,22 @@ class SeerController extends Controller
     }
 
     public function vista_previa($id){
+        $audiencia_id = request()->query('audiencia_id');
+        if (is_null($audiencia_id) || $audiencia_id === '') {
+            $audiencia_id = Audiencias::where('id_solicitud', $id)->latest('id')->value('id');
+            if (!is_null($audiencia_id) && $audiencia_id !== '') {
+                return redirect()->route('vista_previa', ['id_solicitud' => $id, 'audiencia_id' => $audiencia_id]);
+            }
+        }
+
         $id_usuario = auth()->user()->id;
         $user = User::find($id_usuario);           
-        $conciliadores  = SeerPerConciliador::where('id_solicitud',$id)->orderBy('id', 'desc')->first();
+        $conciliadores  = SeerPerConciliador::when(!empty($audiencia_id), function ($q) use ($audiencia_id) {
+                return $q->where('audiencia_id', $audiencia_id);
+            })
+            ->where('id_solicitud',$id)
+            ->orderBy('id', 'desc')
+            ->first();
         $solicitud      = SeerPerGeneral::find($id);
         $conciliador    = User::select('name')->where('id', $solicitud->conciliador_id)->first();
 

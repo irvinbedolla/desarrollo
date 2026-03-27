@@ -257,9 +257,13 @@
 
 <!-- Modal para archivar audiencia-->
 <div class="modal fade" id="ModalArchivar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <form class='needs-validation novalidate'  method='POST' action="{{route('archivar_audiencia')}}">
+    <form class='needs-validation novalidate'  method='POST' action="{{route('archivar_audiencia_parte3')}}">
         @csrf
         <input type="text" id="solicitud-id" name="id" value="{{ $id }}">
+        <input type="hidden" name="audiencia_id" value="{{ request()->query('audiencia_id') }}">
+        <input type="hidden" name="primera" id="archivar_primera" value="">
+        <input type="hidden" name="justificacion" id="archivar_justificacion" value="">
+        <input type="hidden" name="segunda" id="archivar_segunda" value="">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -932,6 +936,13 @@
             else if (valorSeleccionado === 'Archivada por incomparecencia') {
                 const confirmar = confirm("¿Estás seguro de que deseas archivar esta audiencia?");
                 if (confirmar) {
+                    var primeraValA = $('textarea[name="primera"]').val() || '';
+                    var justificacionValA = $('textarea[name="justificacion"]').val() || '';
+                    var segundaValA = $('textarea[name="segunda"]').val() || '';
+                    $('#archivar_primera').val(primeraValA);
+                    $('#archivar_justificacion').val(justificacionValA);
+                    $('#archivar_segunda').val(segundaValA);
+
                     $('#ModalArchivar').modal('show');
                     document.getElementById('no_conciliacion').style.display = "none";
                     document.getElementById('archivada').style.display = "block";

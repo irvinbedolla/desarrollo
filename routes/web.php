@@ -329,6 +329,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/eliminar_motivo_buzon/{id}/{id_motivo}',     [SeerController::class, 'eliminar_motivo_buzon'])->name('eliminar_motivo_buzon');
         Route::get('/solicitude/{id}',                      [SeerController::class, 'regresa_eliminar'])->name('regresa_eliminar');
         Route::post('/solicitud/archivar_audiencia',        [SeerController::class, 'guardar_audiencia_archivo'])->name('archivar_audiencia');
+        Route::post('/solicitud/archivar_audienciaParte3',        [SeerController::class, 'guardar_audiencia_archivo_parte3'])->name('archivar_audiencia_parte3');
         Route::post('/solicitud/emitir_multas',             [SeerController::class, 'emitir_multas'])->name('emitir_multas');
         Route::post('/solicitud/editar',                    [SeerController::class, 'editar_solicitud_con'])->name('editar_solicitud');
         Route::post('/historial/auxiliar',                  [SeerController::class, 'historial_auxiliar'])->name('historial_auxiliar');

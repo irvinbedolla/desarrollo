@@ -1219,7 +1219,7 @@
                                                                         <strong>Estatus:</strong> {{ $audiencia->estatus ?? 'Pendiente' }}
                                                                     </td>
                                                                     <td style="padding: 5px 0; border: none; text-align: right;">
-                                                                        @if($audiencia->estatus == 'Pendiente' || $audiencia->estatus == 'Archivada')
+                                                                        @if($audiencia->estatus == 'Pendiente' || $audiencia->estatus == 'Archivada' || $audiencia->estatus == 'Incompetencia' || $audiencia->estatus == 'Reagendada' || $audiencia->estatus == 'Desistimiento')
                                                                         @else
                                                                             <a class="btn btn-info btn-xs" href="{{ route('VerPDFAudiencia', $audiencia->id_solicitud) . '?audiencia_id=' . $audiencia->id }}" target="_blank">
                                                                                 Visualizar
@@ -1280,11 +1280,11 @@
                                                                 <strong>Estatus: {{ $audiencia->estatus_conciliacion }}  @if($audiencia->estatus_conciliacion === 'Pendiente')<span>Pendiente</span></strong>
                                                             </div>
                                                         {{--<a class="btn btn-info"
-                                                            href="{{ route('VerPDFAudiencia', $audiencia->id_solicitud) }}"
+                                                            href="{{ route('VerPDFAudiencia', $audiencia->id_solicitud) . '?audiencia_id=' . $audiencia->id }}"
                                                             target="_blank">Visualizar</a>--}}
                                                            {{-- @if(!($audiencia->estatus_conciliacion === 'Pendiente' && $datosIncompletos))
                                                                 <a class="btn btn-info"
-                                                                href="{{ route('VerPDFAudiencia', $audiencia->id_solicitud) }}"
+                                                                href="{{ route('VerPDFAudiencia', $audiencia->id_solicitud) . '?audiencia_id=' . $audiencia->id }}"
                                                                 target="_blank">
                                                                     Visualizar
                                                                 </a>
