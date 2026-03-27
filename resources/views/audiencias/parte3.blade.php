@@ -287,6 +287,7 @@
     <form class='needs-validation novalidate'  method='POST' action="{{route('reagendar_audiencia_parte3')}}">
         @csrf
         <input type="hidden" id="modal-id-reagendar" name="id" value="">
+        <input type="hidden" name="audiencia_id" value="{{ request()->query('audiencia_id') }}">
         <input type="hidden" id="fechaConfirmacion" value= "{{ $fechaConfirmacion }}">
         <input type="hidden" name="primera" id="reagenda_primera" value="">
         <input type="hidden" name="justificacion" id="reagenda_justificacion" value="">

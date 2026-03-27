@@ -5228,19 +5228,19 @@ class SeerController extends Controller
             switch($Audiencia[3]){
             //Morelia
                 case 45:
-                    $sala = "Sala 1"; break; //Daniel Buitron
+                    $sala = "Sala 2"; break; //Daniel Buitron
                 case 39:
-                    $sala = "Sala 2"; break; //Rosa Isela
+                    $sala = "Sala 3"; break; //Rosa Isela
                 case 14:
-                    $sala = "Sala 3"; break; //Natalia Itzel
+                    $sala = "Sala 4"; break; //Natalia Itzel
                 case 42:
-                    $sala = "Sala 4"; break; //Rocio Estefania
+                    $sala = "Sala 5"; break; //Rocio Estefania
                 case 38:
-                    $sala = "Sala 5"; break; //Luz Ireri
+                    $sala = "Sala 6"; break; //Luz Ireri
                 case 54:
-                    $sala = "Sala 6"; break; //Juan Rosales
+                    $sala = "Sala 7"; break; //Juan Rosales
                 case 36:
-                    $sala = "Sala 7"; break; //Susy Areli
+                    $sala = "Sala 8"; break; //Susy Areli
             //Uruapan
                 case 33:
                     $sala = "Sala 8"; break; //Eduardo Israel
@@ -6691,6 +6691,7 @@ class SeerController extends Controller
         $data = $request->all();
         $user = auth()->user();
         $fecha_actual = date('y-m-d');
+        $audiencia_id = $data['audiencia_id'] ?? $request->query('audiencia_id');
 
         //Guardar registro en SeerConciliador
         $numero_audiencias = SeerPerConciliador::find($data["id"]);
@@ -6706,12 +6707,13 @@ class SeerController extends Controller
         //Se va insertar un registro en audiencias 
         $data_conciliador = [
             'id_solicitud'          => $data["id"],
+            'audiencia_id'          => $audiencia_id,
             'numero_audiencia'      => $numero_audiencia[0],
             'numero_audiencias'     => $num_audi,
             'validado'              => 'Validado',
             'fecha_conclucion'      =>  $fecha_actual,
             'consecutivo'           =>  $numero_audiencia[1],
-            'estatus_conciliacion'  => 'Regenerada',
+            'estatus_conciliacion'  => 'No conciliacion se reagenda',
             'resolicion_primera'        => $data['primera'] ?? null,
             'resolicion_justificacion'  => $data['justificacion'] ?? null,
             'resolicion_segunda'        => $data['segunda'] ?? null,
@@ -6771,6 +6773,22 @@ class SeerController extends Controller
                     'delegacion'       => null,
                     'estatus'          => 'Pendiente'
                 ]);
+            }
+
+            $hayCentro = false;
+
+            $citadosPorCentro = SeerCitados::where('id_solicitud', $data["id"])->get();
+            foreach ($citadosPorCentro as $citado){
+                if($citado->notificacion == "Centro"){
+                    $hayCentro = true;
+                    break;
+                }
+            }
+
+            if($hayCentro){
+                $citados = SeerCitados::where('id_solicitud', $data["id"])->where('tipo_notificacion', '!=', 'Multa')->where('notificacion', '!=', 'Trabajador')->whereNotNULL("id_abogado")->get();
+            } else {
+                $citados = SeerCitados::where('id_solicitud', $data["id"])->where('tipo_notificacion', '!=', 'Multa')->whereNotNULL("id_abogado")->get();
             }
 
             $citados = SeerCitados::where('id_solicitud', $data["id"])->where('tipo_notificacion', '!=', 'Multa')->whereNotNULL("id_abogado")->get();
@@ -7272,6 +7290,7 @@ class SeerController extends Controller
         $hayCentro = false;
 
         $id_solicitud = $data["id"];
+        $audiencia_id = $data['audiencia_id'] ?? $request->query('audiencia_id');
         $monto = 0;
         $fecha_actual = date('y-m-d');
         $id = auth()->user()->id;
@@ -7439,6 +7458,7 @@ class SeerController extends Controller
             //Actualizar Audiencia
             $data_conciliador = [
                 'id_solicitud'          => $data["id"],
+                'audiencia_id'          => $audiencia_id,
                 'numero_audiencia'      => $numero_audiencia["0"],
                 'numero_audiencias'     => $numero_audiencia["1"],
                 'estatus_conciliacion'  => $data["conclucion"],
@@ -9533,7 +9553,10 @@ class SeerController extends Controller
             ];
         } else {
             // Si no hay sesión, traemos el registro de la BD (el más reciente si hay varios)
-            $datosAudiencia = SeerPerConciliador::where('id_solicitud', $id)->latest()->first();
+            $datosAudiencia = SeerPerConciliador::where('audiencia_id', $audienciaId)->first();
+            if(!$datosAudiencia){
+                $datosAudiencia = SeerPerConciliador::where('id_solicitud', $id)->latest()->first();
+            }
             //->orderBy('numero_audiencias', 'DESC')->first();
         }
         $solicitante = SeerSolicitante::where('id_solicitud',$solicitud["id"])->first();
@@ -11218,6 +11241,7 @@ class SeerController extends Controller
     public function terminar_audiencia(Request $request){
         $data = $request->all();
         $id_solicitud = $data["id"];
+        $audiencia_id = $data['audiencia_id'] ?? $request->query('audiencia_id');
         // --- MERGE SESSION (Vista Previa) ---
         $sessionKey = "audiencia_conclucion_data_{$data['id']}";
         if(session()->has($sessionKey)){
@@ -11309,11 +11333,16 @@ class SeerController extends Controller
                     Deducciones::create($data_deduccion);
                 }
             }
-            //Actualizar o Crear Audiencia Conciliador
-            $conciliadorRecord = SeerPerConciliador::where('id_solicitud',$data["id"])->orderBy('id', 'desc')->first();
+            $conciliadorRecord = SeerPerConciliador::when(!empty($audiencia_id), function ($q) use ($audiencia_id) {
+                    return $q->where('audiencia_id', $audiencia_id);
+                })
+                ->where('id_solicitud', $data["id"])
+                ->orderBy('id', 'desc')
+                ->first();
             
             $data_conciliador = [
                 'id_solicitud'          => $data["id"],
+                'audiencia_id'          => $audiencia_id,
                 'estatus_conciliacion'  => $data["conclucion"],
                 'monto'                 => $monto,
                 'tipo'                  => $data["tipo_audiencia"],
@@ -11329,7 +11358,7 @@ class SeerController extends Controller
                 'tipo_audiencia'        =>  $data["tipo_audiencia"],
             ];
             
-            if($conciliadorRecord){
+            if($conciliadorRecord && (!empty($audiencia_id) ? ((int)$conciliadorRecord->audiencia_id === (int)$audiencia_id) : true)){
                 $conciliadorRecord->update($data_conciliador);
             } else {
                  $solicitante = SeerSolicitante::where('id_solicitud',$data["id"])->first();
@@ -11352,7 +11381,6 @@ class SeerController extends Controller
                     ->update([
                         'numero_audiencia'  =>  $numAudiencia+1,
                         'folio_audiencia'   =>  $numero_audiencia[0],
-                        'estatus'           => 'Archivada',
                         'pena_convencional'  =>  $data['pena_convencional'],
                         'direccion_convenio'    =>  $data['direccion_convenio'],
                     ]);

@@ -264,6 +264,7 @@
                             <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('terminar_audiencia')}}">
                                 @csrf
                                 <input type="hidden" name="id" value="{{ $id }}">
+                                <input type="hidden" name="audiencia_id" value="{{ request()->query('audiencia_id') }}">
                                 <div class="row">
                                     <div id="justificacion"><br>
                                         <div class="col-xs-12 col-sm-12 col-md-12"  style="border:1px solid black;">
