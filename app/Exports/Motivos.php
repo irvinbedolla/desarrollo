@@ -68,36 +68,34 @@ class Motivos implements FromView
     {
         $user = Auth::user();
         $sedeUsuario = $user->delegacion ?? '';
+        
         $grupos = [
             'Morelia' => ['Morelia', 'Zitácuaro'],
             'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
             'Zamora'  => ['Zamora', 'Sahuayo']
         ];
 
-        // 1. OBTENER EL MOTIVO PRINCIPAL (UNICO) POR SOLICITUD
-        $motivoPrincipalSub = DB::table('seer_motivos')
-            ->select('id_solicitud', DB::raw('MIN(id_motivo) as id_motivo_principal'))
-            ->groupBy('id_solicitud');
-
-        // 2. OBTENER EL SOLICITANTE PRINCIPAL (UNICO) POR SOLICITUD
-        // Esto evita que si hay 2 solicitantes en una solicitud, se cuente doble.
-        $solicitanteUnicoSub = DB::table('seer_solicitante')
-            ->select('id_solicitud', DB::raw('MIN(sexo) as sexo_principal')) // MIN('H','M') tomará uno consistentemente
-            ->groupBy('id_solicitud');
-
-        // 3. CONSULTA BASE (Para reutilizar filtros)
-        $queryBase = DB::table('seer_general')
-            ->joinSub($motivoPrincipalSub, 'principal', function ($join) {
-                $join->on('seer_general.id', '=', 'principal.id_solicitud');
-            })
-            ->joinSub($solicitanteUnicoSub, 'solicitante', function ($join) {
-                $join->on('seer_general.id', '=', 'solicitante.id_solicitud');
-            })
-            ->join('catalogo_motivos', 'catalogo_motivos.id', '=', 'principal.id_motivo_principal')
+        $solicitudes = DB::table('seer_general')
+            ->join('users', 'users.id', '=', 'seer_general.user_id')
+            ->join('seer_motivos', 'seer_motivos.id_solicitud', '=', 'seer_general.id')
+            ->join('catalogo_motivos', 'catalogo_motivos.id', '=', 'seer_motivos.id_motivo')
+            ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
+            ->leftJoin('seer_citados', 'seer_citados.id_solicitud', '=', 'seer_general.id')
             ->where(function($query) {
-                $query->where('seer_general.incidencia', 0)
-                      ->orWhereNull('seer_general.incidencia');
+                    $query->where('seer_general.incidencia', 0)
+                        ->orWhereNull('seer_general.incidencia');
+                })
+            
+            // Join para Pagos (Filtrado por tipo)
+            ->leftJoin('pago_solicitud', function($join) {
+                $join->on('pago_solicitud.id_solicitud', '=', 'seer_general.id')
+                    ->whereIn('pago_solicitud.tipo_pago', ["Audiencia", "Conciliador"]);
             })
+
+            // --- NUEVO JOIN PARA AUDIENCIAS ---
+            ->leftJoin('audiencias', 'audiencias.id_solicitud', '=', 'seer_general.id')
+            // ----------------------------------
+            
             ->whereBetween('seer_general.fecha', [$this->fecha_inicial, $this->fecha_final])
             ->when($this->sede !== "Todos", function ($q) use ($sedeUsuario, $grupos) {
                 if ($this->sede === "TodosDelegado") {
@@ -105,22 +103,46 @@ class Motivos implements FromView
                     return $q->whereIn('seer_general.delegacion', $delegaciones);
                 }
                 return $q->where("seer_general.delegacion", $this->sede);
-            });
+            })
+            ->select(
+                'seer_general.id',
+                DB::raw('MIN(seer_motivos.id_motivo) as id_motivo_principal'),
+                DB::raw('MIN(seer_solicitante.sexo) as sexo_principal'),
+                'catalogo_motivos.motivo as categoria'
+            )
+            ->groupBy(
+                'users.name', 
+                'seer_general.id', 
+                'seer_general.NUE',
+                'seer_general.consecutivo', 
+                'seer_general.fecha', 
+                'seer_general.estatus', 
+                'seer_general.delegacion', 
+                'seer_general.actividad', 
+                'seer_solicitante.nombre',
+                'seer_general.tipo_solicitud',
+                'seer_solicitante.sexo',
+                'catalogo_motivos.motivo'
+            )
+            ->orderBy('seer_general.consecutivo', 'desc');
 
-        // 4. EJECUTAR CONTEOS DE SOLICITUDES
-        $solicitudes = (clone $queryBase)
+        
+        // Usamos la subconsulta del PASO 1 como origen de datos (FROM)
+        $resultados = DB::table(DB::raw("({$solicitudes->toSql()}) as base_limpia"))
+            ->mergeBindings($solicitudes) // Une los parámetros de fecha y sede a la consulta
+            ->leftJoin('catalogo_motivos', 'catalogo_motivos.id', '=', 'base_limpia.id_motivo_principal')
             ->select(
                 DB::raw($this->getSqlCase('catalogo_motivos.motivo') . " as categoria"),
-                DB::raw("COUNT(seer_general.id) as total_general"),
-                DB::raw("SUM(CASE WHEN solicitante.sexo_principal = 'H' THEN 1 ELSE 0 END) as total_hombres"),
-                DB::raw("SUM(CASE WHEN solicitante.sexo_principal = 'M' THEN 1 ELSE 0 END) as total_mujeres")
+                DB::raw("COUNT(*) as total_general"),
+                DB::raw("SUM(CASE WHEN base_limpia.sexo_principal = 'H' THEN 1 ELSE 0 END) as total_hombres"),
+                DB::raw("SUM(CASE WHEN base_limpia.sexo_principal = 'M' THEN 1 ELSE 0 END) as total_mujeres")
             )
             ->groupBy(DB::raw($this->getSqlCase('catalogo_motivos.motivo')))
             ->get();
 
 
         return view('excel.motivos', [
-            'solicitudes'               => $this->formatearResultados($solicitudes),
+            'solicitudes' => $this->formatearResultados($solicitudes),
         ]);
     }
 }
