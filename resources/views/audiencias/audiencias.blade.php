@@ -1497,6 +1497,7 @@
     <form class="needs-validation novalidate" method="POST" action="{{route('emitir_multas')}}">
         @csrf
         <input type="hidden" name="id" value="{{ $id }}">
+        <input type="hidden" name="audiencia_id" value="{{ request()->query('audiencia_id') }}">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">

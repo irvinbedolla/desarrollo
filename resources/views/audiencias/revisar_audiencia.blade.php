@@ -1243,9 +1243,9 @@
                                                     <h4 class="text-center"><strong>Multas</strong></h4>
                                                     <hr>
                                                     <div class="form-group">
-                                                        @foreach($historial_audiencias as $audiencia_historial)
+                                
                                                             @foreach($citados as $citado) 
-                                                                @if($audiencia_historial->estatus !== 'Pendiente' && $citado->tipo_notificacion === 'Multa')
+                                                                @if($citado->tipo_notificacion === 'Multa' && $citado->resulte_responsable === 'No')
                                                                     <div class="row" style="margin-bottom: 5px; border-bottom: 1px dotted #ccc; padding: 5px 0;">
                                                                         <div class="col-sm-5">
                                                                             <label>Nombre Citado</label><br>
@@ -1264,7 +1264,7 @@
 
                                                                 @endif
                                                             @endforeach
-                                                        @endforeach
+                                                        
                                                     </div>
                                                 </div>
                                             </div>
