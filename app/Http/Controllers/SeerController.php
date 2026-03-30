@@ -6038,8 +6038,11 @@ class SeerController extends Controller
             $existeMulta = SeerCitados::where('id_solicitud', $data["id"])
                 ->where('tipo_notificacion', 'Multa')
                 ->where('nombre', $citado->nombre)
-                ->where(function($query) use ($citado) {
-                    if (!empty($citado->audiencia_id)) {
+                ->where(function($query) use ($citado, $data) {
+                    $audiencia_id = $data['audiencia_id'] ?? request()->query('audiencia_id');
+                    if (!empty($audiencia_id)) {
+                        $query->where('audiencia_id', $audiencia_id);
+                    } elseif (!empty($citado->audiencia_id)) {
                         $query->where('audiencia_id', $citado->audiencia_id);
                     } else {
                         $query->whereNull('audiencia_id');
@@ -6051,6 +6054,7 @@ class SeerController extends Controller
                 $nuevo_citado = $citado->replicate();
                 $nuevo_citado->tipo_notificacion = 'Multa';
                 $nuevo_citado->estatus = 'Sin asignar';
+                $nuevo_citado->audiencia_id = $data['audiencia_id'] ?? request()->query('audiencia_id') ?? $citado->audiencia_id;
                 $nuevo_citado->id_notificador = 0;
                 $citado->id_abogado = 0;
                 $nuevo_citado->save();
