@@ -1023,6 +1023,8 @@
                                                                                 <span style="color:blue">No Notificado</span>
                                                                             @elseif($notificado->estatus === "No exitosa no se constituye")
                                                                                 <span style="color:blue">No se Constituye</span>
+                                                                            @elseif($notificado->estatus === "Notificada en Audiencia")
+                                                                            <span style="color:blue">Notificada en Audiencia</span>
                                                                             @else
                                                                                 <span style="color:blue">Sin Notificar</span>
                                                                             @endif
@@ -1043,7 +1045,7 @@
                                                                             @elseif($notificado->estatus === "No notificada" || $notificado->estatus === "Exitosa por Instructivo")
                                                                                 <a class="btn btn-success btn-xs" href="{{ route('PDFInstructivo', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}" target="_blank">Visualizar</a>
                                                                             @elseif($notificado->estatus === "No exitosa no se constituye")
-                                                                                <a class="btn btn-success btn-xs" href="{{ route('PDFNoExitosaInt', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}" target="_blank">Visualizar</a>
+                                                                                <a class="btn btn-success btn-xs" href="{{ route('PDFnotificadoNoexitosaNS', ['id' => $citado->id, 'id_solicitud' => $citado->id_solicitud]) }}" target="_blank">Visualizar</a>
                                                                             @else
                                                                                 <a class="btn btn-secondary btn-xs" disabled>Visualizar</a>
                                                                             @endif

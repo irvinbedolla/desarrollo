@@ -10399,6 +10399,103 @@ class SeerController extends Controller
         return $pdf->stream($nombreArchivo);                      
     }
 
+    public function PDFnotificadoNoexitosaNS($id, $id_solicitud){
+        $solicitud = SeerPerGeneral::find($id_solicitud);
+        $solicitante  = SeerPerGeneral::join("seer_solicitante","seer_solicitante.id_solicitud","=","seer_general.id");
+        $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
+        ->first();
+    
+        $citado = SeerPerGeneral::join("seer_citados", "seer_citados.id_solicitud", "=", "seer_general.id")
+        ->where("seer_citados.id", $id)
+        ->first();
+        if (!empty($citado->medio)) {
+            $citado->medio = json_decode($citado->medio);
+        }
+
+        $municipioCitado = null;
+        if ($citado && $citado->municipio_citado) {
+            $municipio = \App\Models\Municipios::find($citado->municipio_citado);
+            $municipioCitado = $municipio ? $municipio->nombre : null;
+        }
+        $estadoCitado = null;
+        if ($citado && $citado->estado_citado) {
+            $estado = \App\Models\Estados::find($citado->estado_citado);
+            $estadoCitado = $estado ? $estado->nombre : null;
+        }
+        $audiencias = \DB::table('audiencias')
+        ->where('id_solicitud', $id_solicitud)
+        ->orderBy('created_at', 'asc')
+        ->get();
+
+        $totalAudiencias = $audiencias->count();
+        $fechaCitatorio = null;
+
+        if ($totalAudiencias == 1 && $citado->notificacion == "Centro") {
+            //if ($citado->notificacion == "Centro") {
+                $fechaCitatorio = $audiencias->first()->created_at;
+            //} 
+        } elseif ($totalAudiencias == 2) {
+            $primeraAudiencia = $audiencias->first();
+            $segundaAudiencia = $audiencias->get(1);
+            if ($citado->notificacion == "Centro") {
+                $fechaCitatorio = $segundaAudiencia->created_at;
+            } 
+        }
+        elseif ($totalAudiencias > 2) {
+            $fechaCitatorio = $audiencias->last()->created_at;
+        }
+        $id_notificador = $citado->id_notificador;
+ 
+        $notificador = User::where('id', $id_notificador)
+            ->select('name')
+            ->first();
+ 
+        /*$imagenes = [];
+ 
+        for ($i = 1; $i <= 3; $i++) {
+            $path = storage_path("app/documentos_notificacion/{$citado->id}-foto{$i}.jpg");
+ 
+            if (file_exists($path)) {
+                $imagenes[] = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($path));
+            } else {
+                $imagenes[] = null;
+            }
+        }*/
+        $imagenes = [];
+    
+        $camposImagen = [
+            $citado->documento ?? null,
+            $citado->documento1 ?? null,
+            $citado->documento2 ?? null,
+        ];
+        
+        foreach ($camposImagen as $img) {    
+            if (!$img || $img === 'Sin documento') {
+                $imagenes[] = null;
+                continue;
+            }
+        
+            $path = storage_path("app/documentos_notificacion/{$img}");
+        
+            if (file_exists($path)) {
+                $mime = mime_content_type($path);
+                $imagenes[] = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
+            } else {
+                $imagenes[] = null;
+            }
+        }
+             
+        $html = view('PDF/Solicitudes/razonNoExitosaNS', compact('id', 'solicitud','citado','solicitante','notificador','imagenes','municipioCitado','estadoCitado','fechaCitatorio'))->render();
+ 
+        $pdf = \PDF::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true); 
+ 
+        $nombreArchivo = 'Razón_NotificaciónNInt' . $solicitud->empresa .'.pdf';
+        return $pdf->stream($nombreArchivo);                      
+    }
+
     //Guarda el expediente
     public function guardar_expediente(Request $request){
         $data = $request->all();
