@@ -195,9 +195,11 @@
                         </td>
                     </tr>
                 </table><br>
+                <!--
                 <b>
                     Notifíquese personalmente a la parte citada dentro de los próximos 15 días hábiles y por buzón electrónico a la parte solicitante.<br>
                 </b>
+                -->
                     Así lo proveyó <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}</b>, funcionario(a) conciliador(a) adscrito al Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <b>Doy fe.</b>
                 </p><br>
                 <p><center><b>___________________________________<br>{{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br>FUNCIONARIO/A CONCILIADOR/A<br>{{$cargo_conciliador}} </b></center> </p>                

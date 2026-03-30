@@ -75,27 +75,15 @@ class Motivos implements FromView
             'Zamora'  => ['Zamora', 'Sahuayo']
         ];
 
-        $solicitudes = DB::table('seer_general')
-            ->join('users', 'users.id', '=', 'seer_general.user_id')
-            ->join('seer_motivos', 'seer_motivos.id_solicitud', '=', 'seer_general.id')
-            ->join('catalogo_motivos', 'catalogo_motivos.id', '=', 'seer_motivos.id_motivo')
-            ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
-            ->leftJoin('seer_citados', 'seer_citados.id_solicitud', '=', 'seer_general.id')
+        // PASO 1: Crear una base de datos temporal con IDs únicos (427 filas)
+        // Usamos leftJoin para no perder registros que no tengan motivo o sexo capturado
+        $baseUnica = DB::table('seer_general')
+            ->leftJoin('seer_motivos', 'seer_motivos.id_solicitud', '=', 'seer_general.id')
+            ->leftJoin('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
             ->where(function($query) {
-                    $query->where('seer_general.incidencia', 0)
-                        ->orWhereNull('seer_general.incidencia');
-                })
-            
-            // Join para Pagos (Filtrado por tipo)
-            ->leftJoin('pago_solicitud', function($join) {
-                $join->on('pago_solicitud.id_solicitud', '=', 'seer_general.id')
-                    ->whereIn('pago_solicitud.tipo_pago', ["Audiencia", "Conciliador"]);
+                $query->where('seer_general.incidencia', 0)
+                    ->orWhereNull('seer_general.incidencia');
             })
-
-            // --- NUEVO JOIN PARA AUDIENCIAS ---
-            ->leftJoin('audiencias', 'audiencias.id_solicitud', '=', 'seer_general.id')
-            // ----------------------------------
-            
             ->whereBetween('seer_general.fecha', [$this->fecha_inicial, $this->fecha_final])
             ->when($this->sede !== "Todos", function ($q) use ($sedeUsuario, $grupos) {
                 if ($this->sede === "TodosDelegado") {
@@ -106,30 +94,17 @@ class Motivos implements FromView
             })
             ->select(
                 'seer_general.id',
+                // Si hay 2 motivos, MIN asegura que solo tomamos el primero
                 DB::raw('MIN(seer_motivos.id_motivo) as id_motivo_principal'),
-                DB::raw('MIN(seer_solicitante.sexo) as sexo_principal'),
-                'catalogo_motivos.motivo as categoria'
+                // Si hay 2 solicitantes, MIN asegura un solo sexo para el conteo
+                DB::raw('MIN(seer_solicitante.sexo) as sexo_principal')
             )
-            ->groupBy(
-                'users.name', 
-                'seer_general.id', 
-                'seer_general.NUE',
-                'seer_general.consecutivo', 
-                'seer_general.fecha', 
-                'seer_general.estatus', 
-                'seer_general.delegacion', 
-                'seer_general.actividad', 
-                'seer_solicitante.nombre',
-                'seer_general.tipo_solicitud',
-                'seer_solicitante.sexo',
-                'catalogo_motivos.motivo'
-            )
-            ->orderBy('seer_general.consecutivo', 'desc');
+            ->groupBy('seer_general.id');
 
-        
+        // PASO 2: Realizar el conteo final agrupado por el CASE SQL
         // Usamos la subconsulta del PASO 1 como origen de datos (FROM)
-        $resultados = DB::table(DB::raw("({$solicitudes->toSql()}) as base_limpia"))
-            ->mergeBindings($solicitudes) // Une los parámetros de fecha y sede a la consulta
+        $resultados = DB::table(DB::raw("({$baseUnica->toSql()}) as base_limpia"))
+            ->mergeBindings($baseUnica) // Une los parámetros de fecha y sede a la consulta
             ->leftJoin('catalogo_motivos', 'catalogo_motivos.id', '=', 'base_limpia.id_motivo_principal')
             ->select(
                 DB::raw($this->getSqlCase('catalogo_motivos.motivo') . " as categoria"),
@@ -140,9 +115,8 @@ class Motivos implements FromView
             ->groupBy(DB::raw($this->getSqlCase('catalogo_motivos.motivo')))
             ->get();
 
-
         return view('excel.motivos', [
-            'solicitudes' => $this->formatearResultados($solicitudes),
+            'solicitudes' => $this->formatearResultados($resultados),
         ]);
     }
 }

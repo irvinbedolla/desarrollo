@@ -8454,7 +8454,13 @@ class SeerController extends Controller
         ->select('users.name')
         ->first();
 
-        $citados = SeerCitados::where('id_solicitud', $id)->get();
+        $citados = SeerCitados::whereIn('id', function ($query) use ($id) {
+            $query->selectRaw('MAX(id)')
+                ->from('seer_citados')
+                ->where('id_solicitud', $id)
+                //->where('resulte_responsable', 'No')
+                ->groupBy('nombre', 'primer_apellido', 'segundo_apellido');
+        })->get();
        
         $audiencia  = SeerPerGeneral::join("audiencias","audiencias.id_solicitud","=","seer_general.id");
         $audiencia = $audiencia->where("audiencias.id_solicitud", "=", $solicitud["id"])
