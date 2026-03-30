@@ -5750,7 +5750,7 @@ class SeerController extends Controller
             })
             ->get();
         
-        $solicitud = SeerPerGeneral::find($id);
+        $solicitud = SeerPerGeneral::find($id); //obtiene todo de seergeneral
         $conciliador = User::select('id','name')->where('id', $solicitud->conciliador_id)->first();
 
         $NUE = $solicitud->NUE;
@@ -5758,7 +5758,9 @@ class SeerController extends Controller
             $NUE = 'Sin NUE';
         }
 
-    
+        $tipo_solicitud = $solicitud->tipo_solicitud; //obtiene el tipo de solicitud
+        $audienciaId = Audiencias::where('id_solicitud', $solicitud->id)->first()->id;
+        
         $fechaConfirmacion = SeerPerGeneral::where('id', $id)->value('fecha_confirmacion');
         if(is_null($fechaConfirmacion)) {
             $fechaConfirmacion = now();
@@ -5853,7 +5855,12 @@ class SeerController extends Controller
         //SeerPerGeneral::find($id)->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
         $estados        = Estados::all();
         $municipios     = Municipios::all();
-        return view('/audiencias/audiencias',compact('id','audiencia_id','solicitudes','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios', 'fechaConfirmacion', 'allCentro', 'NUE'));
+        if($tipo_solicitud == "1"){
+            return view('/audiencias/audiencias',compact('id','audiencia_id','solicitudes','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios', 'fechaConfirmacion', 'allCentro', 'NUE'));
+        }
+        else{
+            return redirect()->route('audiencias.parte3', ['id' => $id, 'audiencia_id' => $audienciaId]);
+        }
     }
 
     public function guardar_audiencia_archivo(Request $request){
@@ -7073,7 +7080,7 @@ class SeerController extends Controller
             $fechaConfirmacion = now();
             $fechaConfirmacion = $fechaConfirmacion->format('Y-m-d');
         }
-
+        
         $representantes = SeerCitados::
         leftjoin('abogados', 'abogados.idAbogado', '=', 'seer_citados.id_abogado')
         ->leftJoin('persona_fisica', 'persona_fisica.id', '=', 'seer_citados.id_fisica')
@@ -7133,14 +7140,13 @@ class SeerController extends Controller
         }
 
         $montoPena = is_numeric($dato_pena) ? $dato_pena : 0;
-        
 
         $sessionKey = 'audiencia_conclucion_data_' . $id;
         $previewData = session($sessionKey, null);
 
         $bandera = request()->query('bandera', null);
 
-        return view('/audiencias/parte3',compact('id', 'sede','representantes', 'fechaConfirmacion', 'NUE', 'previewData', 'audiencia_fecha', 'audiencia_hora', 'bandera', 'conciliadorId', 'direccion_c', 'montoPena', 'audiencia_id'));
+        return view('/audiencias/parte3',compact('id', 'sede', 'fechaConfirmacion', 'NUE', 'previewData', 'audiencia_fecha', 'audiencia_hora', 'bandera', 'conciliadorId', 'direccion_c', 'montoPena', 'audiencia_id'));
     }
 
     public function historial_notificador(Request $request){
@@ -11036,6 +11042,7 @@ class SeerController extends Controller
             ->first();
         $solicitud      = SeerPerGeneral::find($id);
         $conciliador    = User::select('name')->where('id', $solicitud->conciliador_id)->first();
+        $tipo_solicitud = $solicitud->tipo_solicitud;
 
         $allCentro = 1;
         $citadosCentro = SeerCitados::where('id_solicitud', $id)->latest()->get();
@@ -11171,7 +11178,7 @@ class SeerController extends Controller
         }
         // --------------------------
 
-        return view('/audiencias/audiencia_revisar',compact('id','conciliadores','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios','conceptos','pagos','deducciones'));
+        return view('/audiencias/audiencia_revisar',compact('id','conciliadores','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios','conceptos','pagos','deducciones', 'tipo_solicitud'));
     }
 
     public function editar_solicitud_audiencia(Request $request) {
@@ -12605,7 +12612,7 @@ class SeerController extends Controller
     
             return $audiencia;
         });
-    
+        
         return view('audiencias.todas_audiencias', compact('audiencias', 'isAudiencia'));
     }
 
