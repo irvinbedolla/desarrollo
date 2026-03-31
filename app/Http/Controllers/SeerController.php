@@ -6713,9 +6713,10 @@ class SeerController extends Controller
         ];        
         SeerPerConciliador::create($data_conciliador);
         
-        \DB::transaction(function() use ($user, $data) {
+        \DB::transaction(function() use ($user, $data, $request) {
             //Obtener la audiencia mas reciente
             $audienciaOld = Audiencias::where('id_solicitud', $data["id"])->orderBy('id', 'desc')->first();
+            $audiencia_id = $data['audiencia_id'] ?? $request->query('audiencia_id');
 
             if ($audienciaOld) {
                 // Marcar la audiencia existente como reagendada
@@ -6769,12 +6770,14 @@ class SeerController extends Controller
 
             $citados = SeerCitados::where('id_solicitud', $data["id"])->get();
             foreach($citados as $citado){
-                if($citado->notificacion == "Trabajador"){
-                        $nuevo_citado = $citado->replicate();
-                        $nuevo_citado->notificacion = 'Centro';
-                        $nuevo_citado->audiencia_id = $audiencia->id;
-                        $nuevo_citado->save();
+                if (!$citado->audiencia_id) {
+                    $citado->audiencia_id = $audiencia_id;
+                    $citado->save();
                 }
+                $nuevo_citado = $citado->replicate();
+                $nuevo_citado->notificacion = 'Centro';
+                $nuevo_citado->audiencia_id = $audiencia->id;
+                $nuevo_citado->save();
             }
         });
     
@@ -8940,7 +8943,18 @@ class SeerController extends Controller
         $solicitantes = SeerSolicitante::where("id_solicitud", $id)->get();
         
         // Citados
-        $dbCitados = SeerCitados::where("id_solicitud", $id)->get();
+        $dbCitados = SeerCitados::where("id_solicitud", $id)
+            ->when($audiencia_id, function($query) use ($audiencia_id, $id) {
+                //Obtenemos la audiencia más antigua en el tiempo
+                $primera_audiencia = Audiencias::where('id_solicitud', $id)->orderBy('fecha', 'asc')->orderBy('id', 'asc')->first();
+                $query->where(function($q) use ($audiencia_id, $primera_audiencia) {
+                    $q->where('audiencia_id', $audiencia_id);
+                    if ($primera_audiencia && $primera_audiencia->id == $audiencia_id) {
+                        $q->orWhereNull('audiencia_id');
+                    }
+                });
+            })
+            ->get();
         $citadosDelete = session('citados_edicion_delete', []);
         $citadosNew = session('citados_edicion_new', []);
 

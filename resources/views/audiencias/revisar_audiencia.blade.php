@@ -598,7 +598,7 @@
                                                         <input type="date" class="form-control" name="fecha_salida" value="<?=$solicitante["fecha_salida"];?>">   
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
+                                                <div class="col-xs-12 col-sm-6 col-md-4">
                                                     <div class="form-group">
                                                         <label for="name">Horario laboral<span style="color:red;"> (*)</span></label>
                                                         <input type="text" name="jornada" class="form-control" value="<?=$solicitante["jornada"];?>" required>
@@ -1455,7 +1455,7 @@
                     <div class="row">                                    
                         <div class="col-xs-12 col-sm-12 col-md-6">
                             <div class="form-group">
-                                <label for="name">Agregar "Quien resulte responsable" <span style="color:red;">(*)</span></label>
+                                <label for="name">¿Agregar "Quien resulte responsable"? <span style="color:red;">(*)</span></label>
                                 <select name="responsable" id="responsable" class="form-control" required>
                                     <option value="">SELECCIONE</option>
                                     <option value="Si">Si</option>
@@ -1466,66 +1466,78 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-6">
-                            <div class="form-group">
-                                <label for="name">¿Quién entregará las notificaciones? <span style="color:red;">(*)</span></label>
-                                <select name="notificacion" class="form-control" required>
-                                    <option value="">SELECCIONE</option>
-                                    <option value="Trabajador">Solicitante</option>
-                                    <option value="Centro">Centro de conciliación Laboral</option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    El campo es obligatorio.
-                                </div>
+                        @php
+                            $hasCitados = isset($citados) && count($citados) > 0;
+                            $defaultNotificacion = '';
+                            if ($hasCitados) {
+                                $hasCentro = $citados->where('notificacion', 'Centro')->count() > 0;
+                                $defaultNotificacion = $hasCentro ? 'Centro' : 'Trabajador';
+                            }
+                        @endphp
+                        @if($hasCitados)
+                            <input type="hidden" name="notificacion" value="{{ $defaultNotificacion }}">
+                        @else
+                            <div class="col-xs-12 col-sm-12 col-md-6">
+                              <div class="form-group">
+                                  <label for="name">¿Quién entregará las notificaciones? <span style="color:red;">(*)</span></label>
+                                  <select name="notificacion" class="form-control" required>
+                                      <option value="">SELECCIONE</option>
+                                      <option value="Trabajador">Solicitante</option>
+                                      <option value="Centro">Centro de conciliación Laboral</option>
+                                  </select>
+                                  <div class="invalid-feedback">
+                                      El campo es obligatorio.
+                                  </div>
+                              </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-12 col-md-2">
-                                <div class="form-group">
-                                    <label for="name">Tipo de persona <span style="color:red;">(*)</span></label>
-                                    <select name="tipo" id="tipo" class="form-control" required>
-                                        <option value="">Seleccione</option>
-                                        <option value="Fisica">Física</option>
-                                        <option value="Moral">Moral</option>
-                                    </select>
-                                    <div class="invalid-feedback">
-                                        El tipo de persona es obligatorio.
-                                    </div>
-                                </div>
-                            </div>
+                        @endif
+                          <div class="row">
+                              <div class="col-xs-12 col-sm-12 col-md-2">
+                                  <div class="form-group">
+                                      <label for="name">Tipo de persona <span style="color:red;">(*)</span></label>
+                                      <select name="tipo" id="tipo" class="form-control" required>
+                                          <option value="">Seleccione</option>
+                                          <option value="Fisica">Física</option>
+                                          <option value="Moral">Moral</option>
+                                      </select>
+                                      <div class="invalid-feedback">
+                                          El tipo de persona es obligatorio.
+                                      </div>
+                                  </div>
+                              </div>
 
-                            <div class="col-xs-12 col-sm-12 col-md-4" id="campo_curp">
-                                <div class="form-group">
-                                    <label for="name">CURP (Opcional)</label>
-                                    <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control"> 
-                                    <pre id="resultado"></pre>
-                                    <div class="invalid-feedback">
-                                        El nombre es obligatorio.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xs-12 col-sm-12 col-md-4" id="tipoPersona_razon" style="display:none;">
-                                <div class="form-group">
-                                    <label for="name">Razón social <span style="color:red;">(*)</span></label>
-                                    <input type="text" name="razon" id="razon" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
-                                    <div class="invalid-feedback">
-                                        La razón social es obligatorio.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xs-12 col-sm-12 col-md-3">
-                                <div class="form-group">
-                                    <label for="name">RFC (Opcional)</label>
-                                    <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()"> 
-                                    <div class="invalid-feedback">
-                                         El campo RFC es obligatorio.
-                                    </div>
-                                </div>
-                            </div>
+                              <div class="col-xs-12 col-sm-12 col-md-4" id="campo_curp">
+                                  <div class="form-group">
+                                      <label for="name">CURP (Opcional)</label>
+                                      <input type="text" name="curp" id="curp_input" oninput="validarInput(this)" class="form-control"> 
+                                      <pre id="resultado"></pre>
+                                      <div class="invalid-feedback">
+                                          El nombre es obligatorio.
+                                      </div>
+                                  </div>
+                              </div>
+                              <div class="col-xs-12 col-sm-12 col-md-4" id="tipoPersona_razon" style="display:none;">
+                                  <div class="form-group">
+                                      <label for="name">Razón social <span style="color:red;">(*)</span></label>
+                                      <input type="text" name="razon" id="razon" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
+                                      <div class="invalid-feedback">
+                                          La razón social es obligatorio.
+                                      </div>
+                                  </div>
+                              </div>
+                              <div class="col-xs-12 col-sm-12 col-md-3">
+                                  <div class="form-group">
+                                      <label for="name">RFC (Opcional)</label>
+                                      <input type="text" name="rfc" class="form-control" minlength="13" maxlength="13" oninput="this.value = this.value.toUpperCase()"> 
+                                      <div class="invalid-feedback">
+                                           El campo RFC es obligatorio.
+                                      </div>
+                                  </div>
+                              </div>
     
-                            <div class="col-xs-12 col-sm-12 col-md-3">
-                                <div class="form-group">
-                                    <label for="name">¿Requiere algún traductor? <span style="color:red;">(*)</span></label>
+                              <div class="col-xs-12 col-sm-12 col-md-3">
+                                  <div class="form-group">
+                                      <label for="name">¿Requiere algún traductor? <span style="color:red;">(*)</span></label>
                                         <select name="traductor" id="traductor_modal" class="form-control" required>
                                        <option value="">SELECCIONE</option>
                                        <option value="Si">Si</option>

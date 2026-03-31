@@ -44,7 +44,7 @@
                                 foreach ($representantes as $r) {
                                     if (($r->notificacion ?? null) === 'Centro') {
                                         $totalCentroTop++;
-                                        $tieneComparecenciaTop = (!is_null($r->id_abogado) || !is_null($r->id_fisica));
+                                        $tieneComparecenciaTop = ($r->id_abogado > 0 || !is_null($r->id_fisica));
                                         if (!$tieneComparecenciaTop) {
                                             $totalCentroSinComparecenciaTop++;
                                         }
@@ -1311,6 +1311,7 @@
     <form class='needs-validation novalidate'  method='POST' action="{{route('reagendar_audiencia')}}">
         @csrf
         <input type="hidden" id="modal-id-reagendar" name="id" value="">
+        <input type="hidden" name="audiencia_id" value="{{ request()->query('audiencia_id') }}">
         <input type="hidden" id="fechaConfirmacion" value= "{{ $fechaConfirmacion }}">
         <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
