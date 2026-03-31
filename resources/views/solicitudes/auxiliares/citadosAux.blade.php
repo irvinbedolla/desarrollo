@@ -175,8 +175,9 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class = "row">
                                     @if(!$session_notificacion)
-                                        <div class = "row">
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">¿Quién entregará los citatorios? <span style="color:red;">(*)</span></label>
@@ -190,8 +191,24 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        
                                     @endif
+                                    
+                                        <div class="col-xs-12 col-sm-12 col-md-3">
+                                            <div class="form-group">
+                                                <label for="name">¿Agregar "Quien resulte responsable"? <span style="color:red;">(*)</span></label>
+                                                <select name="responsable" id="responsable" class="form-control" required>
+                                                    <option value="">SELECCIONE</option>
+                                                    <option value="Si">Si</option>
+                                                    <option value="No">No</option>
+                                                </select>
+                                                <div class="invalid-feedback">
+                                                    El campo es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
                                     <div class="row"> 
                                         <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:30px;">
                                             <div class="form-group">

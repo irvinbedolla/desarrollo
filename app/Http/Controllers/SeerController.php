@@ -15343,41 +15343,45 @@ class SeerController extends Controller
 
         //Validar si existe quien resulta responsable con la misma direccion
 
-        $data_insert["nombre"] = "QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN " .
-        $data["vialidad"] . " " . $data["calle"] . ", NÚMERO " . $data["exterior"];
-        if (!empty($data["interior"])) {
-            $data_insert["nombre"] .= " INT. " . $data["interior"];
-        }
-        $data_insert["nombre"] .= " COLONIA " . $data["colonia"] . ", " . $municipioNombre . ", " . $estadoNombre . ", C.P. " . $data["cp"] . ".";
+        if($data["responsable"] == "Si"){
+            $data_insert["nombre"] = "QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN " .
+            $data["vialidad"] . " " . $data["calle"] . ", NÚMERO " . $data["exterior"];
+            if (!empty($data["interior"])) {
+                $data_insert["nombre"] .= " INT. " . $data["interior"];
+            }
+            $data_insert["nombre"] .= " COLONIA " . $data["colonia"] . ", " . $municipioNombre . ", " . $estadoNombre . ", C.P. " . $data["cp"] . ".";
 
-        // Marcar este nuevo registro como el "quien resulte" y crear solo si no existe ya uno igual
-        $data_insert['resulte_responsable'] = 'Si';
-        $direccionNombre = $data_insert["nombre"];
-        
-        if ($data["id"] == 'session') {
-            $citados = session('citados_data', []);
-            $existe = false;
-            foreach ($citados as $citado) {
-                if ($citado['nombre'] == $direccionNombre && $citado['resulte_responsable'] == 'Si') {
-                    $existe = true;
-                    break;
+            // Marcar este nuevo registro como el "quien resulte" y crear solo si no existe ya uno igual
+            $data_insert['resulte_responsable'] = 'Si';
+            $direccionNombre = $data_insert["nombre"];
+            
+            if ($data["id"] == 'session') {
+                $citados = session('citados_data', []);
+                $existe = false;
+                foreach ($citados as $citado) {
+                    if ($citado['nombre'] == $direccionNombre && $citado['resulte_responsable'] == 'Si') {
+                        $existe = true;
+                        break;
+                    }
+                }
+                if (!$existe) {
+                    $citados[] = $data_insert;
+                    session(['citados_data' => $citados]);
+                }
+            } else {
+                $existe = SeerCitados::where('id_solicitud', $data['id'])
+                            ->where('nombre', $direccionNombre)
+                            ->where('resulte_responsable', 'Si')
+                            ->exists();
+                if (!$existe) {
+                    SeerCitados::create($data_insert);
                 }
             }
-            if (!$existe) {
-                $citados[] = $data_insert;
-                session(['citados_data' => $citados]);
-            }
-        } else {
-            $existe = SeerCitados::where('id_solicitud', $data['id'])
-                        ->where('nombre', $direccionNombre)
-                        ->where('resulte_responsable', 'Si')
-                        ->exists();
-            if (!$existe) {
-                SeerCitados::create($data_insert);
-            }
         }
+        
         return back()->with('success', 'Citado agregado correctamente, puedes agregar otro o continuar.');
     }
+
     public function guardar_citadoAuxP(Request $request, $id){
         $data = $request->all();
         $imagen_domicilio1 = "Sin documento";
