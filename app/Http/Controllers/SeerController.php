@@ -12710,7 +12710,7 @@ class SeerController extends Controller
                 ->where('tipo_pago', 'Ratificacion');
             }])
             ->orderBy('created_at', 'desc')
-            ->limit(500);
+            ->limit(1000);
 
         // Aplicamos filtros de seguridad según Rol
         if (in_array($userRole, ["Auxiliar", "Excepcion"])) {
