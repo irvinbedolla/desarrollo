@@ -9761,10 +9761,12 @@ class SeerController extends Controller
                         ->where('notificacion', 'Centro')
                         ->where('tipo_notificacion', '!=', 'Multa')
                         ->where('resulte_responsable', 'No')
+                        ->whereNotNull('id_abogado')
                         ->get();
         } else {
             $citados = SeerCitados::where('id_solicitud', $id)
                         ->where('resulte_responsable', 'No')
+                        ->whereNotNull('id_abogado')
                         ->get();
         }
 
@@ -9811,13 +9813,6 @@ class SeerController extends Controller
                 $c->abogado->$descripcionIdentificacionP = $descripcionIdentificacionP;
             }
         }
-
-            /*$abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
-                ->where('seer_citados.aparece_convenio', 1)
-                ->where('id_solicitud',$id)
-                ->select('abogados.nombres_patronal','abogados.primer_apellido_patronal','abogados.segundo_apellido_patronal','abogados.descipcion_poder','abogados.tipo_identificacion','abogados.num_identificacion')
-                ->first();*/
-        //}
 
         // Si hubo datos de preview en sesión, construir prestaciones/deducciones/pagos desde sesión
         if ($sessionData && is_array($sessionData)) {
@@ -9924,7 +9919,7 @@ class SeerController extends Controller
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true); 
 
-        $nombreArchivo = 'acta_de_audiencia_' . $solicitud->trabajador .'.pdf';
+        $nombreArchivo = 'acta_de_audiencia_' . $solicitante->nombre .'.pdf';
         return $pdf->stream($nombreArchivo);            
     }
 
@@ -14042,8 +14037,8 @@ class SeerController extends Controller
                 // Limpiar sesión
                 session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
             }
-
-        } catch (\Exception $e) {
+        } 
+        catch (\Exception $e) {
             DB::rollBack();
                 $solicitante = session('solicitante_data', []);
                 if (!empty($solicitante) && is_array($solicitante)) {
@@ -14133,72 +14128,9 @@ class SeerController extends Controller
 
         Mail::to($solicitante->email)->send(new SolicitudMail($pdfContent, $variables));
 
-
-        /*
-        //Revisar si ya existe el correo
-        $solicitante = SeerSolicitante::where('id_solicitud',$id)->first();
-        $nombre = $solicitante["nombre"]." ".$solicitante["primer_apellido"]." ".$solicitante["segundo_apellido"];
-        $folio = $solicitante["id_solicitud"];
-        $delegacion = SeerPerGeneral::find($id);
-        $usuario = User::
-        where('profile_photo_path',$solicitante['curp'])
-        ->orWhere('email',$solicitante["email"])
-         ->first();
-
-        if(!isset($usuario)){
-            $data_insertar_user= array(
-                'name'              => $nombre,
-                'email'             => $solicitante["email"],
-                'delegacion'        => $delegacion["delegacion"],
-                'type'              => "Seer",
-                'remember_token'    => $solicitante["curp"],
-                'profile_photo_path'=> $solicitante["curp"]
-            ); 
-            //Genrar un random del uno al 100 y agregarlo a la contraseña
-            $numero_aleatorio = mt_rand(1, 1000);
-
-            //Hacemos un hash del campo que tiene el password
-            $data_insertar_user['password'] = Hash::make("CCLMICHOACAN".$numero_aleatorio);
-            $usuario = User::create($data_insertar_user);
-            $usuario->assignRole(('Solicitante'));
-            $mensaje = " el correo:".$usuario["email"]." y la contraseña:CCLMICHOACAN".$numero_aleatorio." para continuar tú trámite.";
-
-            $solicitud = SeerPerGeneral::find($id);
-            $citados = SeerCitados::where('id_solicitud', $id)->get();
-
-            $pdf = \PDF::loadView('PDF/Solicitudes/acuseSolicitud', compact('id','solicitud','solicitante','citados'))->setPaper('a4', 'portrait')
-            ->setOption('isHtml5ParserEnabled', true)->setOption('isPhpEnabled', true);
-            $nombreArchivo = 'acuse_solicitud_' . $nombre .'.pdf';
-            $pdfContent = $pdf->output();
-
-            $variables = [
-                'Nombre'           => $nombre,
-                'Contraseña'       => "CCLMICHOACAN".$numero_aleatorio,
-                'email'            => $usuario["email"],
-                'NumFolio'         => $folio,
-            ];
-            Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
-        }
-        else{
-            $mensaje = " el correo:".$usuario["email"]." ya esta registrado en Si Concilio su solicitud sera asignado al usuario existente.";
-            $solicitud = SeerPerGeneral::find($id);
-            $citados = SeerCitados::where('id_solicitud', $id)->get();
-            $pdf = \PDF::loadView('PDF/Solicitudes/acuseSolicitud', compact('id','solicitud','solicitante','citados'))->setPaper('a4', 'portrait')
-            ->setOption('isHtml5ParserEnabled', true)->setOption('isPhpEnabled', true);
-            $nombreArchivo = 'acuse_solicitud_' . $nombre .'.pdf';
-            $pdfContent = $pdf->output();
-
-            $variables = [
-                'Nombre'           => $nombre,
-                'Contraseña'       => "Ya esta registrada",
-                'email'             => $solicitante["email"],
-                'NumFolio'         => $folio,
-            ];
-            Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
-        }
-        */
         return view('solicitudes.auxiliares.avisoAux',compact('id','mensaje','delegacion'));
     }
+
     public function guardar_solicitudAuxP($id){
         $id_usuario = auth()->user()->id;
         if ($id == 'session') {
@@ -15206,6 +15138,7 @@ class SeerController extends Controller
         /*}
         return view('solicitudes.citados',compact('estados','id','citados','municipios'));*/
     }
+
     public function guardar_citadoAux(Request $request){
         $data = $request->all();
         $imagen_domicilio1 = "Sin documento";
@@ -15224,19 +15157,6 @@ class SeerController extends Controller
         }
         $foto1 = $imagen_domicilio1;
         $foto2 = $imagen_domicilio2;
-        //validando información
-        /*$request->validate([
-            'id'                => 'required',
-            'colonia'           => 'required',
-            'vialidad'          => 'required',
-            'cp'                => 'required|numeric',
-            'calle'             => 'required',
-            'exterior'          => 'required',
-            'referencia'        => 'required',
-            'municipio_citado'  => 'required',
-            'estado_citado'     => 'required',
-            'vialidad'          => 'required'
-        ]);*/
         
         $data_insert=array(
             'id_solicitud'      => $data["id"],
@@ -15251,18 +15171,7 @@ class SeerController extends Controller
             'imagen_domicilio2' => $foto2, 
             'estado_citado'     => $data["estado_citado"],
         );
-        //$data_insert["notificacion"] =  $data["notificacion"];
-        //Hacer un if para indicar la notificaacion
-        /*$valor = session()->get('citados_data');
-        if($valor[0]){
-            $data_insert["notificacion"] = $valor[0]['notificacion'];
-            
-        }
-        else{
-            $data_insert["notificacion"] =  $data["notificacion"];
-        }*/
         
-        //dd($valor);
         $data_insert["notificacion"] = session('citados_data.0.notificacion', $data['notificacion'] ?? null);
         
 
@@ -15343,7 +15252,7 @@ class SeerController extends Controller
 
         //Validar si existe quien resulta responsable con la misma direccion
 
-        if($data["responsable"] == "Si"){
+        if($data["resulte_responsable"] == "Si"){
             $data_insert["nombre"] = "QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN " .
             $data["vialidad"] . " " . $data["calle"] . ", NÚMERO " . $data["exterior"];
             if (!empty($data["interior"])) {

@@ -197,7 +197,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-3">
                                             <div class="form-group">
                                                 <label for="name">¿Agregar "Quien resulte responsable"? <span style="color:red;">(*)</span></label>
-                                                <select name="responsable" id="responsable" class="form-control" required>
+                                                <select name="resulte_responsable" id="responsable" class="form-control" required>
                                                     <option value="">SELECCIONE</option>
                                                     <option value="Si">Si</option>
                                                     <option value="No">No</option>

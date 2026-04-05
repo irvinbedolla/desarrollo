@@ -90,14 +90,12 @@
                                             Estado de Michoacán de Ocampo, el cual tiene como objetivo agilizar el proceso de conciliación prejudicial dentro de las 
                                             audiencias de conciliación, así como para las ratificaciones de convenio. </h5><br><br>
                                             Antes de iniciar el registro, asegúrate de contar con los siguientes requisitos: <br><br>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red;">(**) </span>Identificación Oficial del empleador.<br>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red;">(**)</span> Identificación Oficial del Representante Legal (en los casos que así se requiera).<br>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red;">(**)</span> Documento que acredite la personería (Carta Poder, Instrumento Notarial).<br>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Constancia de Situación Fiscal (obligatorio en caso de ser Persona Moral).<br>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Correo electrónico.<br>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Número de celular.<br>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* Domicilio de la fuente fiscal.<br><br>
-                                            Será indispensable, que los requisitos con <span style="color:red;">(**)</span>, se tengan en documento PDF, no mayor a 20 MB.
+                                            &nbsp;&nbsp;&nbsp;&nbsp;1)Poder Notarial/Acta Constitutiva.<span style="color:red;">* </span><br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;2)Documento que acredite personalidad y representación del solicitante (poder general para pleitos y cobranzas).<span style="color:red;">* </span><br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;3)Identificación Oficial Vigente del representante legal (INE, pasaporte, cédula profesional).<span style="color:red;">* </span><br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;4)Datos de la Empresa como: Registro Federal de Contribuyentes (RFC) de la empresa o patrón, razón social y domicilio.<br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;5)Datos de Contacto: Correo electrónico y número telefónico.<br>
+                                            Será indispensable, que los requisitos con <span style="color:red;">*</span>, se tengan en documento PDF, no mayor a 10 MB.
                                         <br><br>
                                     </div>
                                 </div>

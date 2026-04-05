@@ -105,62 +105,38 @@
                     Ley Federal del Trabajo, artículo 27 de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, y artículo 20 del Reglamento Interior del 
                     Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, <b>declara abierta</b> la Audiencia de Conciliación Prejudicial en la que comparecen: <br><br>
 
-                    {{--@if(isset($abogado) && !empty($abogado->tipo_identificacion) && !empty($abogado->num_identificacion))
-                    La parte citada <b>@if(is_null($abogado->nombres_patronal) && is_null($abogado->primer_apellido_patronal))
-                           {{ $abogado->nombre_representante }} {{ $abogado->primer_apellido_representante }} {{ $abogado->segundo_apellido_representante }}
-                       @else {{ $abogado->nombres_patronal }} {{ $abogado->primer_apellido_patronal }} {{ $abogado->segundo_apellido_patronal }} @endif</b>se identifica con 
-                    <b>{{ mb_strtoupper($abogado->tipo_identificacion, 'UTF-8') }}</b>, de Número <b>{{ $abogado->num_identificacion }}</b> expedida a su favor por 
-                    <b>{{ $descripcionIdentificacionP }}</b> y, por la parte solicitante <b>{{ $solicitante->nombre }}</b> quien se identifica con 
-                    @else
-                    La parte citada <b>(SIN DATOS DE REPRESENTANTE LEGAL)</b> y, por la parte solicitante <b>{{ $solicitante->nombre }}</b> quien se identifica con 
-                    @endif --}}
-                   {{--
-                        @if(!$tieneRepresentante)
-                            La parte citada: <b>{{ $rep->nombres_patronal }} {{ $rep->primer_apellido_patronal }} {{ $rep->segundo_apellido_patronal }}</b> quien se identifica con
-                            <b>{{ strtoupper($rep->tipo_identificacion) }}</b>, de Número <b>{{ $rep->num_identificacion }}</b> expedida a su favor por <b>{{ $descId }}</b>,
-                            y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
-                        @else
-                            Declara <b>{{ $nombreRepresentante }}</b>, <b>ser representante legal de la PARTE EMPLEADORA</b>, quien se identifica con
-                            <b>{{ strtoupper($rep->tipo_identificacion) }}</b>, de Número <b>{{ $rep->num_identificacion }}</b> expedida a su favor por <b>{{ $descId }}</b>, así como <b>{{ $rep->descipcion_poder }}</b>
-                        @endif
-                    @endforeach 
-                        
-                       {{-- @if(!$tieneRepresentante)
-                            La parte EMPLEADORA <b>{{ $rep->nombres_patronal }} {{ $rep->primer_apellido_patronal }} {{ $rep->segundo_apellido_patronal }}</b> quien se identifica con
-                            <b>{{ strtoupper($rep->tipo_identificacion) }}</b>, de Número <b>{{ $rep->num_identificacion }}</b> expedida a su favor por <b>{{ $descId }}</b>,
-                            y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
-                        @else
-                            Declara <b>{{ $nombreRepresentante }}</b>, <b>ser representante legal de la PARTE EMPLEADORA</b>, quien se identifica con
-                            <b>{{ strtoupper($rep->tipo_identificacion) }}</b>, de Número <b>{{ $rep->num_identificacion }}</b> expedida a su favor por <b>{{ $descId }}</b>, así como <b>{{ $rep->descipcion_poder }}</b>
-                        @endif
-                    @endforeach--}}
+                    La parte <b>solicitante  {{ $solicitante->nombre }}</b> se identifica con <b>{{ strtoupper($solicitante->identificacion) }}</b>, Número <b>{{ $solicitante->num_identificacion }}</b> 
+                    expedida a su favor por <b>{{ $descripcionIdentificacionS }}</b>, se declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p> 
+
+                    La parte solicitante manifiesta que presento solicitud el dia: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} para iniciar el procedimiento de conciliacion 
+                    prejudicial ante el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <br><br>
+
 
                     La parte citada:
                     @foreach ($citados as $citado)
                         @if($solicitud->tipo_solicitud == 1)
-                            @if($citado->id_abogado)
-                                @if ($citado->abogado->reprecentante == 'No')
-                                    <b>{{ $citado->abogado->nombres_patronal }} {{ $citado->abogado->primer_apellido_patronal }} {{ $citado->abogado->segundo_apellido_patronal }}</b> quien se identifica con
-                                    <b>{{ strtoupper($citado->abogado->tipo_identificacion) }}</b>, de Número <b>{{ $citado->abogado->num_identificacion}}</b> expedida a su favor por <b>{{ $citado->abogado->$descripcionIdentificacionP }}</b>,
-                                    y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
+                            @if($citado->tipo_persona == "Moral")
+                                <b>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido ?? ''}}, comparece a través de su representante legal {{ $citado->nombre_representante }} {{ $citado->primer_apellido_representante }} {{ $citado->segundo_apellido_representante }}</b> quien se identifica con 
+                                <b>{{ strtoupper($citado->abogado->tipo_identificacion) }}</b>, de Número <b>{{ $citado->abogado->num_identificacion }}</b> expedida a su favor por <b>{{ $citado->abogado->$descripcionIdentificacionP }}</b>, en términos de la  <b>{{  $citado->abogado->descipcion_poder }},</b> 
+                                identificaciones que concuerdan  con sus rasgos fisicos y que en este acto se agrega copia de las mismas al expediente para los efectos legales y administrativos correspondientes.<br>
+                            @else
+                                @if($citado->abogado->reprecentante == "Si")
+                                    <b>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido ?? ''}}, comparece a través de su representante legal {{ $citado->nombre_representante }} {{ $citado->primer_apellido_representante }} {{ $citado->segundo_apellido_representante }}</b> quien se identifica con 
+                                    <b>{{ strtoupper($citado->abogado->tipo_identificacion) }}</b>, de Número <b>{{ $citado->abogado->num_identificacion }}</b> expedida a su favor por <b>{{ $citado->abogado->$descripcionIdentificacionP }}</b>, en términos de la  <b>{{  $citado->abogado->descipcion_poder }}</b>
+                                    </b><br>
                                 @else
-                                    <b>{{ $citado->abogado->nombre_representante }} {{ $citado->abogado->primer_apellido_representante }} {{ $citado->abogado->segundo_apellido_representante }}</b> quien se identifica con 
-                                    <b>{{ strtoupper($citado->abogado->tipo_identificacion) }}</b>, de Número <b>{{ $citado->abogado->num_identificacion }}</b> expedida a su favor por <b>{{ $citado->abogado->$descripcionIdentificacionP }}</b>, así como <b>{{  $citado->abogado->descipcion_poder }}</b>
-                                    en representación legal de <b>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido ?? ''}}</b>
+                                    <b>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido ?? ''}}</b> quien comparece por derecho propio y se identifica con
+                                    <b>{{ strtoupper($citado->abogado->tipo_identificacion) }}</b>, de Número <b>{{ $citado->abogado->num_identificacion}}</b> expedida a su favor por <b>{{ $citado->abogado->$descripcionIdentificacionP }}</b>,
+                                    y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.<br>
                                 @endif
-                                {{--@if($citado->abogado->tipo_identificacion)
-                                quien se identifica con <b>{{ strtoupper($citado->abogado->tipo_identificacion) }}</b>, de Número <b>{{ $citado->abogado->num_identificacion }}</b>,
-                                @endif--}}
-                            {{--@else
-                                <b>{{ $citado->nombre }}{{ $citado->primer_apellido ?? ''}} {{ $citado->segundo_apellido ?? ''}}</b>,--}}
                             @endif
                         @else
                             <b>{{ $citado->nombre }}{{ $citado->primer_apellido ?? ''}} {{ $citado->segundo_apellido ?? ''}}</b>,
                         @endif
-                    @endforeach y, por la parte solicitante <b>{{ $solicitante->nombre }}</b> quien se identifica con 
-                    <b>{{ mb_strtoupper($solicitante->identificacion, 'UTF-8') }}</b>, de Número <b>{{ $solicitante->num_identificacion }}</b> expedida a su favor por 
-                    <b>{{ $descripcionIdentificacionS }}</b>, identificaciones que concuerdan fisionómicamente con las partes y, que, en este acto, se agrega copia cotejada al 
-                    expediente electrónico para que conste como corresponda; documentos que les son devueltos por ser innecesaria su retención. <br><br>
+                    @endforeach 
+                    
+                    
+                    
                     {{-- La parte citada <b>{{ $solicitante->nombre }}</b> quien se identifica con 
                     <b>{{ strtoupper($solicitante->identificacion) }}</b>, de Número <b>{{ $solicitante->num_identificacion }}</b> expedida a su favor por 
                     <b>{{ $descripcionIdentificacionS }}</b> y, por la parte solicitante
@@ -171,6 +147,10 @@
                     <b>{{ $descripcionIdentificacionP }}</b>, identificaciones que concuerdan fisionómicamente con las partes y, que, en este acto, se agrega copia cotejada al 
                     expediente electrónico para que conste como corresponda; documentos que les son devueltos por ser innecesaria su retención. <br><br>--}}
 
+
+
+
+                    <br><br>
                     Por tanto, esta Autoridad Conciliadora se encuentra en condiciones para desahogar la <b>Audiencia de Conciliación Prejudicial.</b><br><br>
 
                     Se hace del conocimiento del trabajador(a) que podrá comparecer asistido por abogado(a) o persona de su confianza, pero no se reconocerá a ésta como apoderado, por tratarse 
@@ -295,14 +275,14 @@
                                 <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
                                 <b>
                                     {{ $solicitante->nombre }}<br>
-                                    LA PARTE TRABAJADORA
+                                    SOLICITANTE
                                 </b>
                                 </td>
                                 <td style="width:50%; vertical-align:top; padding:0 20px;">
                                 <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
                                 <b>
                                     {{-- {{ $abogado->nombres_patronal }} {{ $abogado->primer_apellido_patronal }} {{ $abogado->segundo_apellido_patronal }}<br> --}}
-                                    LA PARTE EMPLEADORA
+                                    CITADO(S)
                                 </b>
                             </td>        
                         </tr>
