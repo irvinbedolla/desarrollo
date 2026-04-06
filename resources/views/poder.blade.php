@@ -81,7 +81,7 @@
                                     </div>
                                 @endif
                                 <div style="background-color:#D2D3D5">
-                                    <h3 class="text-center" style="color:black">Registro de Representación Patronal/Legal</h3>
+                                    <h3 class="text-center" style="color:black">Registro de Representación Patronal/Legal(REPLE MICH)</h3>
                                 </div>    
                                 <br><br>
                                 <div class="col-xs-12 col-sm-12 col-md-12">

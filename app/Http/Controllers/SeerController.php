@@ -4182,7 +4182,7 @@ class SeerController extends Controller
                 'email'            => $solicitante["email"],
                 'NumFolio'         => $folio,
             ];
-            Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
+            //Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
         }
         else{
             $mensaje = " el correo:".$usuario["email"]." ya esta registrado en Si Concilio su solicitud sera asignado al usuario existente.";
@@ -4199,18 +4199,8 @@ class SeerController extends Controller
                 'email'            => $solicitante["email"],
                 'NumFolio'         => $folio,
             ];
-            Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
+            //Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
         }
-        /*
-        return view('solicitudes.aviso', [
-            'url' => route('aviso'),
-            'datos' => [
-                'id' => $id,
-                'mensaje' => $mensaje,
-                'delegacion' => $delegacion
-            ]
-        ]);
-        */
 
         return view('solicitudes.avisoCentro',compact('id','mensaje','delegacion'));
     }
@@ -4455,7 +4445,7 @@ class SeerController extends Controller
                 'email'            => $solicitante["email"],
                 'NumFolio'         => $folio,
             ];
-            Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
+            //Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
         }
         else{
             $mensaje = " el correo:".$usuario["email"]." ya esta registrado en Si Concilio su solicitud sera asignado al usuario existente.";
@@ -4472,7 +4462,7 @@ class SeerController extends Controller
                 'email'            => $solicitante["email"],
                 'NumFolio'         => $folio,
             ];
-            Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
+            //Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
         }
         /*
         return view('solicitudes.aviso', [
@@ -5388,7 +5378,7 @@ class SeerController extends Controller
                 'mensaje'   => "Tu solicitud ha sido confirmada exitosamente revisa tu buzón electrónico en: https://siconcilio.cclmichoacan.gob.mx/ para continuar tu tramite." ,
             ];
             // El método Mail::to() toma el email del destinatario
-            Mail::to($user['email'])->send(new MailAceptacionRechazo($user));
+            //Mail::to($user['email'])->send(new MailAceptacionRechazo($user));
         //}
 
         DB::commit();
@@ -9964,7 +9954,7 @@ class SeerController extends Controller
         ];
 
         // El método Mail::to() toma el email del destinatario
-        Mail::to($user['email'])->send(new MailAceptacionRechazo($user));
+        //Mail::to($user['email'])->send(new MailAceptacionRechazo($user));
 
 
         return redirect()->route('solicitudes_pendientes');
@@ -10969,14 +10959,14 @@ class SeerController extends Controller
             ->leftjoin('estados', 'seer_citados.estado_citado', '=', 'estados.id')
             ->whereIn('seer_general.delegacion', $delegaciones)
             ->select('seer_citados.*','seer_general.NUE','municipios.nombre as municipio_citado','estados.nombre as estado_citado')
-            ->orderBy('created_at', 'desc')->limit(2000)->get();
+            ->orderBy('created_at', 'desc')->limit(3000)->get();
         }
         else{
             $notificaciones = SeerCitados::join('seer_general','seer_general.id','seer_citados.id_solicitud')
             ->leftjoin('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
             ->leftjoin('estados', 'seer_citados.estado_citado', '=', 'estados.id')
             ->select('seer_citados.*','seer_general.NUE','municipios.nombre as municipio_citado','estados.nombre as estado_citado')
-            ->orderBy('created_at', 'desc')->limit(2000)->get();
+            ->orderBy('created_at', 'desc')->limit(3000)->get();
         }
        
         return view('/notificaciones.index_busqueda',compact('notificaciones'));
@@ -14126,7 +14116,7 @@ class SeerController extends Controller
         'NumFolio'   => $id,
         ];
 
-        Mail::to($solicitante->email)->send(new SolicitudMail($pdfContent, $variables));
+        //Mail::to($solicitante->email)->send(new SolicitudMail($pdfContent, $variables));
 
         return view('solicitudes.auxiliares.avisoAux',compact('id','mensaje','delegacion'));
     }
@@ -14375,7 +14365,7 @@ class SeerController extends Controller
         'NumFolio'   => $id,
         ];
 
-        Mail::to($solicitante->email)->send(new SolicitudMail($pdfContent, $variables));
+        //Mail::to($solicitante->email)->send(new SolicitudMail($pdfContent, $variables));
 
 
         /*
@@ -15623,7 +15613,7 @@ class SeerController extends Controller
                     ->orWhere('incidencia', 0);
             })
             ->orderBy('created_at', 'desc')
-            ->limit(1500);
+            ->limit(2500);
     
         // 2. Definimos el mapa de delegaciones para evitar IFs repetitivos
         $mapaDelegaciones = [
