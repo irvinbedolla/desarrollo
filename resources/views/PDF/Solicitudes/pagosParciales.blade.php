@@ -87,6 +87,8 @@
                             </tr>
                     </table>
                 </div><br><br><br><br><br>
+
+                <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br><br>
                 <p><b>
                     Trabajador(a): {{ $solicitanteNombre }} <br> 
                     Empresa/Patrón: @foreach ($citados as $citado)
@@ -130,15 +132,6 @@
                                         DEL ESTADO DE MICHOACÁN DE OCAMPO
                                 </b>
                             </td>
-
-                            @if ($delegacion == 'Morelia' || $delegacion == 'Zamora' || $delegacion == 'Uruapan')
-                                <td style="width:50%; vertical-align:top; padding:0 5px;"><b>Vo. Bo.</b><br><br><br><br>
-                                    <div style="border-top: 2px solid #000; width:90%; margin: 0 auto 5px auto;"></div>
-                                    <b>{{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
-                                        {{ $nombramiento_delegado }}                          
-                                    </b>
-                                </td>
-                            @endif
                         </tr>
                     </table>
                     <br>
