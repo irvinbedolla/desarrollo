@@ -104,8 +104,8 @@
                             <td>{{ $solicitud->NUE }} </td>
                         </tr> 
                     </table>
-                </div><br><br><br><br>
-                <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br><br>
+                </div><br><br><br>
+                <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br>
                 <p><b>FECHA DE EMISIÓN DEL CITATORIO: </b>{{ \Carbon\Carbon::parse($fechaEmision)->translatedFormat('d \d\e F \d\e\l Y') }}<br>
                 <b>ASUNTO:</b> CITATORIO DE AUDIENCIA DE CONCILIACIÓN<br>
                 <b> SOLICITANTE:</b> {{ $solicitante->nombre }}<br>
@@ -150,7 +150,7 @@
                     </p>
                 @endif
 
-                <br><br><br><br><br>
+                <br><br><br><br>
                 <p><center><b>___________________________________<br> {{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
                         DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center> </p>
             </div>
