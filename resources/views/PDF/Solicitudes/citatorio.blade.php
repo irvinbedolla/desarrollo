@@ -150,6 +150,17 @@
                     </p>
                 @endif
 
+                @php
+                    $longitud = mb_strlen($citado->nombre);
+                    $forzarSalto = $longitud > 245;
+                @endphp
+
+                @if($forzarSalto)
+                    <div style="page-break-before: always;"><br><br><br><br><br><br></div>
+                @else
+                    <br><br><br><br>
+                @endif
+
                 <br><br><br>
                 <p><center><b>___________________________________<br> {{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
                         DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center> </p>
