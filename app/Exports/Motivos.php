@@ -78,8 +78,9 @@ class Motivos implements FromView
         // PASO 1: Crear una base de datos temporal con IDs únicos (427 filas)
         // Usamos leftJoin para no perder registros que no tengan motivo o sexo capturado
         $baseUnica = DB::table('seer_general')
-            ->leftJoin('seer_motivos', 'seer_motivos.id_solicitud', '=', 'seer_general.id')
-            ->leftJoin('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
+            ->join('users', 'users.id', '=', 'seer_general.user_id')
+            ->join('seer_motivos', 'seer_motivos.id_solicitud', '=', 'seer_general.id')
+            ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
             ->where(function($query) {
                 $query->where('seer_general.incidencia', 0)
                     ->orWhereNull('seer_general.incidencia');
@@ -94,8 +95,8 @@ class Motivos implements FromView
             })
             ->select(
                 'seer_general.id',
-                // Si hay 2 motivos, MIN asegura que solo tomamos el primero
-                DB::raw('MIN(seer_motivos.id_motivo) as id_motivo_principal'),
+                // Subconsulta para el primer motivo ingresado
+                DB::raw('(SELECT id_motivo FROM seer_motivos WHERE id_solicitud = seer_general.id ORDER BY id ASC LIMIT 1) as id_motivo_principal'),
                 // Si hay 2 solicitantes, MIN asegura un solo sexo para el conteo
                 DB::raw('MIN(seer_solicitante.sexo) as sexo_principal')
             )

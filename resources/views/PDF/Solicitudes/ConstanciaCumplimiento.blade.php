@@ -108,7 +108,7 @@
                         </tr>  
                     </table>
                 </div><br><br><br>
-               
+                <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br><br>
                 <p><b>
                     Trabajador(a): {{ $solicitud->solicitante->nombre }} {{ $solicitud->solicitante->primero_trabajador }} {{ $solicitud->solicitante->segundo_trabajador }} <br> 
                     Empleador(a): @foreach ($solicitud->citados as $citado)
@@ -195,12 +195,6 @@
                                                 FUNCIONARIO/A CONCILIADOR/A<br>
                                                 DEL CENTRO DE CONCILIACIÓN LABORAL
                                                 DEL ESTADO DE MICHOACÁN DE OCAMPO
-                                    </b>
-                                </td>
-                                <td style="width:60%; vertical-align:top; padding:0 10px;"><b>Vo. Bo.</b><br><br><br><br>
-                                    <div style="width:80%; margin: 0 auto 5px auto;"></div>
-                                    <b>{{ mb_strtoupper($delegado->name, 'UTF-8') }}<br>
-                                        {{ $nombramiento_delegado }}            
                                     </b>
                                 </td>
                             </tr>

@@ -345,19 +345,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/solicitud/guardarCitatoriosT',        [SeerController::class, 'guardar_citatoriosT'])->name('subir_citatoriosT'); //Subir los citatorios entregados por el trabajador ya firmados
         Route::get('solicitudes',                           [SeerController::class, 'solicitudesAuxiliares'])->name('solicitud');
         Route::get('tipoIndustriaA/{tipo_solicitud}',       [SeerController::class, 'IndustriasAux'])->name('solicitud.industriaAuxiliar');
-            Route::get('tipoIndustriaAP/{tipo_solicitud}',       [SeerController::class, 'IndustriasAuxP'])->name('solicitud.industriaAuxiliarP');
+        Route::get('tipoIndustriaAP/{tipo_solicitud}',      [SeerController::class, 'IndustriasAuxP'])->name('solicitud.industriaAuxiliarP');
         Route::get('TrabajadorA/{tipo_solicitud}',          [SeerController::class, 'inicioSolicitud_auxiliar'])->name('trabajadorAuxiliar');
-            Route::get('TrabajadorAP/{tipo_solicitud}',          [SeerController::class, 'inicioSolicitud_auxiliarP'])->name('trabajadorAuxiliarP');
+        Route::get('TrabajadorAP/{tipo_solicitud}',         [SeerController::class, 'inicioSolicitud_auxiliarP'])->name('trabajadorAuxiliarP');
         Route::post('/agregar_solicitanteA',                [SeerController::class, 'solicitud_parte1Aux'])->name('agregaSolicitanteA');
-            Route::post('/agregar_solicitanteAP',                [SeerController::class, 'solicitud_parte1AuxP'])->name('agregaSolicitanteAP');
+        Route::post('/agregar_solicitanteAP',               [SeerController::class, 'solicitud_parte1AuxP'])->name('agregaSolicitanteAP');
         Route::post('guardar_solicitanteA',                 [SeerController::class, 'solicitud_parte2Aux'])->name('guardaSolicitanteA');
-            Route::post('guardar_solicitanteAP',                 [SeerController::class, 'solicitud_parte2AuxP'])->name('guardaSolicitanteAP');
+        Route::post('guardar_solicitanteAP',                [SeerController::class, 'solicitud_parte2AuxP'])->name('guardaSolicitanteAP');
         Route::get('/agrega_citadoA/{id}',                  [SeerController::class, 'vista_citadoAux'])->name('agrega_citadoAux');
-            Route::get('/agrega_citadoAP/{id}',                  [SeerController::class, 'vista_citadoAuxP'])->name('agrega_citadoAuxP');
+        Route::get('/agrega_citadoAP/{id}',                 [SeerController::class, 'vista_citadoAuxP'])->name('agrega_citadoAuxP');
         Route::post('/guardar_citadoA',                     [SeerController::class, 'guardar_citadoAux'])->name('seer.citadosAux');
-            Route::post('/guardar_citadoAP/{id}',                     [SeerController::class, 'guardar_citadoAuxP'])->name('seer.citadosAuxP');
+        Route::post('/guardar_citadoAP/{id}',               [SeerController::class, 'guardar_citadoAuxP'])->name('seer.citadosAuxP');
         Route::get('/finalizaAux/{id}',                     [SeerController::class, 'guardar_solicitudAux'])->name('seer.finalizaAux');
-            Route::post('/finalizaAuxP/{id}',                     [SeerController::class, 'guardar_solicitudAuxP'])->name('seer.finalizaAuxP');
+        Route::post('/finalizaAuxP/{id}',                   [SeerController::class, 'guardar_solicitudAuxP'])->name('seer.finalizaAuxP');
         Route::get('/VerpdfcumplimientoTotal/{id}',         [SeerController::class, 'VerPDFCumplimientoTotal'])->name('PDFcumplimientoTotal');
     //Fin de Solicitudes
     //PDF Solicitudes    
