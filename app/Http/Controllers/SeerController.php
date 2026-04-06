@@ -6056,9 +6056,9 @@ class SeerController extends Controller
                 $nuevo_citado->estatus = 'Sin asignar';
                 $nuevo_citado->audiencia_id = $data['audiencia_id'] ?? request()->query('audiencia_id') ?? $citado->audiencia_id;
                 $nuevo_citado->id_notificador = 0;
-                $citado->id_abogado = 0;
+                //$citado->id_abogado = 0;
                 $nuevo_citado->save();
-                $citado->save();
+                //$citado->save();
             }
         }
 
@@ -7071,9 +7071,9 @@ class SeerController extends Controller
                         $nuevo_citado->estatus = 'Sin asignar';
                         $nuevo_citado->audiencia_id = $data['audiencia_id'] ?? request()->query('audiencia_id') ?? $citado->audiencia_id;
                         $nuevo_citado->id_notificador = 0;
-                        $citado->id_abogado = 0;
+                        //$citado->id_abogado = 0;
                         $nuevo_citado->save();
-                        $citado->save();
+                        //$citado->save();
                     }
                 }
 
