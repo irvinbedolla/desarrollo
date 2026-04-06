@@ -11775,7 +11775,7 @@ class SeerController extends Controller
     public function obtenerCumplimientos(Request $request)
     {
         $fecha_inicio_str = $request->input('start', now()->format('Y-m-d'));
-        $fecha_fin_str = $request->input('end', now()->addDays(700)->format('Y-m-d'));
+        $fecha_fin_str = $request->input('end', now()->addDays(800)->format('Y-m-d'));
 
         $fecha_inicio_dt = (new \DateTime($fecha_inicio_str))->setTime(0, 0, 0);
         $fecha_fin_dt = (new \DateTime($fecha_fin_str))->setTime(23, 59, 59);
@@ -11914,7 +11914,7 @@ class SeerController extends Controller
     public function obtenerCumplimientosFiltrado(Request $request)
     {
         $fecha_inicio_str = $request->input('start', now()->format('Y-m-d'));
-        $fecha_fin_str = $request->input('end', now()->addDays(700)->format('Y-m-d'));
+        $fecha_fin_str = $request->input('end', now()->addDays(800)->format('Y-m-d'));
 
         $fecha_inicio_dt = (new \DateTime($fecha_inicio_str))->setTime(0, 0, 0);
         $fecha_fin_dt = (new \DateTime($fecha_fin_str))->setTime(23, 59, 59);
