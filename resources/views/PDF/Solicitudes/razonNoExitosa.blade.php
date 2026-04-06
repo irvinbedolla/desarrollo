@@ -203,11 +203,11 @@
                         A mayor abundamiento, verifico que cerca del domicilio se encuentran los siguientes puntos de referencia:
                         <b>{{$citado->abundar_area}}.</b> De igual forma, he constatado que se trata de un inmueble 
                         con las siguientes características:
-                        @if($citado->problema_diligencia === 'NO ACCESO AL INMUEBLE')
+                        {{--@if($citado->problema_diligencia === 'NO ACCESO AL INMUEBLE')
                             <b>{{$citado->especificar}}.</b><br><br>
-                        @else
+                        @else--}}
                         <b>{{$citado->abundar_inmueble}}.</b><br><br>
-                        @endif
+                        {{--@endif--}}
                         {{-- Aqui se llama al tipo de problema --}}
                         @if($textoProblemaBasico !== '')
                             {!! $textoProblemaBasico !!}
