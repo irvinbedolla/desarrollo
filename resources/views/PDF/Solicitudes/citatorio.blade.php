@@ -150,7 +150,7 @@
                     </p>
                 @endif
 
-                <br><br><br><br>
+                <br><br><br>
                 <p><center><b>___________________________________<br> {{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
                         DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center> </p>
             </div>
