@@ -8946,10 +8946,10 @@ class SeerController extends Controller
         $dbCitados = SeerCitados::where("id_solicitud", $id)
             ->when($audiencia_id, function($query) use ($audiencia_id, $id) {
                 //Obtenemos la audiencia más antigua en el tiempo
-                $primera_audiencia = Audiencias::where('id_solicitud', $id)->orderBy('fecha', 'asc')->orderBy('id', 'asc')->first();
+                $primera_audiencia = Audiencias::where('id_solicitud', $id)->orderBy('id', 'asc')->first();
                 $query->where(function($q) use ($audiencia_id, $primera_audiencia) {
                     $q->where('audiencia_id', $audiencia_id);
-                    if ($primera_audiencia && $primera_audiencia->id == $audiencia_id) {
+                    if ($primera_audiencia && $primera_audiencia->id == (int)$audiencia_id) {
                         $q->orWhereNull('audiencia_id');
                     }
                 });
