@@ -12957,7 +12957,8 @@ class SeerController extends Controller
             $foto2 = $folio->imagen_domicilio2;
         }
         
-        $fecha_actualizar = Carbon::parse($data["fecha"] . ' ' . $data["hora"]);
+        //$fecha_actualizar = Carbon::parse($data["fecha"] . ' ' . $data["hora"]);
+        $fecha_actualizar =\Carbon\Carbon::parse($data["fecha"] . ' ' . $data["hora"]);
         DB::table('seer_citados')->where('id', $data["id"])
         ->update([
             //'tipo_persona'             => $data["tipo"],
@@ -12979,7 +12980,8 @@ class SeerController extends Controller
             'imagen_domicilio1'        => $foto1,
             'imagen_domicilio2'        => $foto2,
             'estado_citado'            => $data["estado_citado"],
-            'updated_at'               => $fecha_actualizar,
+            'fecha'                    => $fecha_actualizar
+            //'updated_at'               => $fecha_actualizar,
         ]);
 
         if($data["estatus"] == "Sin asignar"){
