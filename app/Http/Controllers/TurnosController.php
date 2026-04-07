@@ -913,7 +913,7 @@ class TurnosController extends Controller
         while ($fecha <= $fin) {
             if ($fecha->format('N') < 6) { 
                 $slotDt = new \DateTime($fecha->format('Y-m-d') . ' 08:30:00');
-                $slotEndDt = new \DateTime($fecha->format('Y-m-d') . ' 14:30:00');
+                $slotEndDt = new \DateTime($fecha->format('Y-m-d') . ' 16:00:00');
 
                 while ($slotDt <= $slotEndDt) {
                         $hora_str = $slotDt->format('H:i:s');
