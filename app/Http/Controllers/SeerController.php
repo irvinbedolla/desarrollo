@@ -6028,16 +6028,6 @@ class SeerController extends Controller
             $existeMulta = SeerCitados::where('id_solicitud', $data["id"])
                 ->where('tipo_notificacion', 'Multa')
                 ->where('nombre', $citado->nombre)
-                ->where(function($query) use ($citado, $data) {
-                    $audiencia_id = $data['audiencia_id'] ?? request()->query('audiencia_id');
-                    if (!empty($audiencia_id)) {
-                        $query->where('audiencia_id', $audiencia_id);
-                    } elseif (!empty($citado->audiencia_id)) {
-                        $query->where('audiencia_id', $citado->audiencia_id);
-                    } else {
-                        $query->whereNull('audiencia_id');
-                    }
-                })
                 ->exists();
 
             if (!$existeMulta) {
@@ -6046,9 +6036,7 @@ class SeerController extends Controller
                 $nuevo_citado->estatus = 'Sin asignar';
                 $nuevo_citado->audiencia_id = $data['audiencia_id'] ?? request()->query('audiencia_id') ?? $citado->audiencia_id;
                 $nuevo_citado->id_notificador = 0;
-                //$citado->id_abogado = 0;
                 $nuevo_citado->save();
-                //$citado->save();
             }
         }
 
@@ -6948,7 +6936,7 @@ class SeerController extends Controller
     public function audiencia_parte2(Request $request){
         $data = $request->all();
         $id = $data["id"];
-    $audienciaId = $request->input('audiencia_id');
+        $audienciaId = $request->input('audiencia_id');
 
         $sessionKey = "audiencia_data_{$id}";
         
@@ -7043,16 +7031,6 @@ class SeerController extends Controller
                     $existeMulta = SeerCitados::where('id_solicitud', $data["id"])
                         ->where('tipo_notificacion', 'Multa')
                         ->where('nombre', $citado->nombre)
-                        ->where(function($query) use ($citado, $data) {
-                            $audiencia_id = $data['audiencia_id'] ?? request()->query('audiencia_id');
-                            if (!empty($audiencia_id)) {
-                                $query->where('audiencia_id', $audiencia_id);
-                            } elseif (!empty($citado->audiencia_id)) {
-                                $query->where('audiencia_id', $citado->audiencia_id);
-                            } else {
-                                $query->whereNull('audiencia_id');
-                            }
-                        })
                         ->exists();
 
                     if (!$existeMulta) {
@@ -7061,9 +7039,7 @@ class SeerController extends Controller
                         $nuevo_citado->estatus = 'Sin asignar';
                         $nuevo_citado->audiencia_id = $data['audiencia_id'] ?? request()->query('audiencia_id') ?? $citado->audiencia_id;
                         $nuevo_citado->id_notificador = 0;
-                        //$citado->id_abogado = 0;
                         $nuevo_citado->save();
-                        //$citado->save();
                     }
                 }
 
