@@ -52,7 +52,7 @@ use App\Http\Controllers\IncidenciasBusquedaController;
         return view('../public/welcome');
     });
 
-    Route::get('levantar_solicitud',                    [SeerController::class, 'solicitudesLinea'])->name('solicitudEnLinea');
+    Route::get('inicioSolicitud',                    [SeerController::class, 'solicitudesLinea'])->name('solicitudEnLinea');
     Route::get('tipoIndustria/{tipo_solicitud}',        [SeerController::class, 'Industrias'])->name('solicitud.industria');
     Route::get('tipoIndustriaP/{tipo_solicitud}',      [SeerController::class, 'Industrias_p'])->name('solicitud.industria_p'); //Solicitud patronal
     Route::get('/registro_tercer_encuentro',            [SeerController::class, 'registro_tercer_encuentro'])->name('registro_tercer_encuentro');

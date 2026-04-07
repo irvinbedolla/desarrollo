@@ -9877,6 +9877,7 @@ class SeerController extends Controller
                 'num_identificacion' => null,
             ];
         }*/
+        
         $html = view('PDF/Solicitudes/ActaAudiencia', compact('id','solicitud','conciliador','prestaciones','deducciones','deduccionesTexto','pagoTotal','descripcionIdentificacionS',
         'descripcionIdentificacionP','conceptosTexto','solicitante','audiencia','datosAudiencia','citados'))->render();
 
@@ -10668,7 +10669,7 @@ class SeerController extends Controller
         $estadoEmpresa = $estado ? $estado->nombre : 'No definido';
         $abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
         ->where('id_solicitud',$id)
-        ->select('abogados.nombres_patronal','abogados.primer_apellido_patronal','abogados.segundo_apellido_patronal','abogados.descipcion_poder','abogados.tipo_identificacion',
+        ->select('abogados.nombre_representante','abogados.nombre_representante','abogados.segundo_apellido_representante','abogados.descipcion_poder','abogados.tipo_identificacion',
         'abogados.num_identificacion','estado_patronal','municipio_patronal','tipo_vialidad_patronal','vialidad_patronal','num_ext_patronal','mun_int_patronal','colonia_patronal','cp_patronal')
         ->first();
         $delegacion = $solicitud->delegacion;
@@ -12957,7 +12958,8 @@ class SeerController extends Controller
             $foto2 = $folio->imagen_domicilio2;
         }
         
-        $fecha_actualizar = Carbon::parse($data["fecha"] . ' ' . $data["hora"]);
+        //$fecha_actualizar = Carbon::parse($data["fecha"] . ' ' . $data["hora"]);
+        $fecha_actualizar =\Carbon\Carbon::parse($data["fecha"] . ' ' . $data["hora"]);
         DB::table('seer_citados')->where('id', $data["id"])
         ->update([
             //'tipo_persona'             => $data["tipo"],
@@ -12979,7 +12981,8 @@ class SeerController extends Controller
             'imagen_domicilio1'        => $foto1,
             'imagen_domicilio2'        => $foto2,
             'estado_citado'            => $data["estado_citado"],
-            'updated_at'               => $fecha_actualizar,
+            'fecha'                    => $fecha_actualizar
+            //'updated_at'               => $fecha_actualizar,
         ]);
 
         if($data["estatus"] == "Sin asignar"){

@@ -116,12 +116,12 @@
                     @foreach ($citados as $citado)
                         @if($solicitud->tipo_solicitud == 1)
                             @if($citado->tipo_persona == "Moral")
-                                <b>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido ?? ''}}, comparece a través de su representante legal {{ $citado->nombre_representante }} {{ $citado->primer_apellido_representante }} {{ $citado->segundo_apellido_representante }}</b> quien se identifica con 
+                                <b>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido ?? ''}}, comparece a través de su representante legal {{ $citado->abogado->nombre_representante }} {{ $citado->abogado->primer_apellido_representante }} {{ $citado->abogado->segundo_apellido_representante }}</b> quien se identifica con 
                                 <b>{{ strtoupper($citado->abogado->tipo_identificacion) }}</b>, de Número <b>{{ $citado->abogado->num_identificacion }}</b> expedida a su favor por <b>{{ $citado->abogado->$descripcionIdentificacionP }}</b>, en términos de la  <b>{{  $citado->abogado->descipcion_poder }},</b> 
                                 identificaciones que concuerdan  con sus rasgos fisicos y que en este acto se agrega copia de las mismas al expediente para los efectos legales y administrativos correspondientes.<br>
                             @else
                                 @if($citado->abogado->reprecentante == "Si")
-                                    <b>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido ?? ''}}, comparece a través de su representante legal {{ $citado->nombre_representante }} {{ $citado->primer_apellido_representante }} {{ $citado->segundo_apellido_representante }}</b> quien se identifica con 
+                                    <b>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido ?? ''}}, comparece a través de su representante legal {{ $citado->abogado->nombre_representante }} {{ $citado->abogado->primer_apellido_representante }} {{ $citado->abogado->segundo_apellido_representante }}</b> quien se identifica con 
                                     <b>{{ strtoupper($citado->abogado->tipo_identificacion) }}</b>, de Número <b>{{ $citado->abogado->num_identificacion }}</b> expedida a su favor por <b>{{ $citado->abogado->$descripcionIdentificacionP }}</b>, en términos de la  <b>{{  $citado->abogado->descipcion_poder }}</b>
                                     </b><br>
                                 @else

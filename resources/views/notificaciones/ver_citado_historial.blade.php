@@ -253,7 +253,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6"><br>
                                         <div class="form-group">
                                             <label for="name">Fecha de Notificación</label>
-                                            <input type="date" name="fecha" class="form-control" value="{{ $folio->updated_at->format('Y-m-d') }}" > 
+                                            <input type="date" name="fecha" class="form-control" value="{{ \Carbon\Carbon::parse($folio->fecha)->format('Y-m-d') }}" >
                                             <div class="invalid-feedback">
                                                 El nombre es obligatorio.
                                             </div>
@@ -263,7 +263,7 @@
                                     <div class="col-xs-12 col-sm-12 col-md-6"><br>
                                         <div class="form-group">
                                             <label for="name">Hora de Notificación</label>
-                                            <input type="time" name="hora" class="form-control" value="{{ $folio->updated_at->format('H:i:m') }}" > 
+                                            <input type="time" name="hora" class="form-control" value="{{ \Carbon\Carbon::parse($folio->fecha)->format('H:i') }}">
                                             <div class="invalid-feedback">
                                                 El nombre es obligatorio.
                                             </div>
