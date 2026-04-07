@@ -6795,7 +6795,7 @@ class SeerController extends Controller
         ];        
         SeerPerConciliador::create($data_conciliador);  
         
-        \DB::transaction(function() use ($user, $data) {
+    \DB::transaction(function() use ($user, $data) {
             //Obtener la audiencia mas reciente
             $audienciaOld = Audiencias::where('id_solicitud', $data["id"])->orderBy('id', 'desc')->first();
 
@@ -6850,29 +6850,38 @@ class SeerController extends Controller
                 ]);
             }
 
-            $hayCentro = false;
+            $hayCentro = SeerCitados::where('id_solicitud', $data["id"])
+                //->where('audiencia_id', $audienciaOld->id ?? null)
+                ->where('notificacion', 'Centro')
+                ->exists();
 
-            $citadosPorCentro = SeerCitados::where('id_solicitud', $data["id"])->get();
-            foreach ($citadosPorCentro as $citado){
-                if($citado->notificacion == "Centro"){
-                    $hayCentro = true;
-                    break;
-                }
-            }
-
-            if($hayCentro){
-                $citados = SeerCitados::where('id_solicitud', $data["id"])->where('tipo_notificacion', '!=', 'Multa')->where('notificacion', '!=', 'Trabajador')->whereNotNULL("id_abogado")->get();
+            if ($hayCentro) {
+                $citados = SeerCitados::where('id_solicitud', $data["id"])
+                    //->where('audiencia_id', $audienciaOld->id ?? null)
+                    ->where('tipo_notificacion', '!=', 'Multa')
+                    ->where('notificacion', 'Centro')
+                    ->whereNotNull('id_abogado')
+                    ->get();
             } else {
-                $citados = SeerCitados::where('id_solicitud', $data["id"])->where('tipo_notificacion', '!=', 'Multa')->whereNotNULL("id_abogado")->get();
+                $citados = SeerCitados::where('id_solicitud', $data["id"])
+                    //->where('audiencia_id', $audienciaOld->id ?? null)
+                    ->where('tipo_notificacion', '!=', 'Multa')
+                    ->where('notificacion', 'Trabajador')
+                    ->get();
             }
 
-            $citados = SeerCitados::where('id_solicitud', $data["id"])->where('tipo_notificacion', '!=', 'Multa')->whereNotNULL("id_abogado")->get();
-            foreach($citados as $citado){
+            foreach ($citados as $citado) {
                 $nuevo_citado = $citado->replicate();
                 $nuevo_citado->notificacion = 'Centro';
                 $nuevo_citado->tipo_notificacion = 'Citatorio';
-                $nuevo_citado->estatus = 'Notificada en Audiencia';
-                $nuevo_citado->audiencia_id = $audiencia->id;
+                $nuevo_citado->audiencia_id = $audiencia->id; // nueva audiencia
+
+                if (!$citado->id_abogado) {
+                    $nuevo_citado->estatus = 'Sin asignar';
+                    $nuevo_citado->id_notificador = 0;
+                } else {
+                    $nuevo_citado->estatus = 'Notificada en Audiencia';
+                }
 
                 $nuevo_citado->save();
             }
@@ -6995,15 +7004,6 @@ class SeerController extends Controller
         //Si la bandera es 1 le fanto un representante por lo tanto va a generar nueva audiencia o va multar
         else{
             if($citados->notificacion == "Trabajador"){
-                //Voy a insertar nuevos citadorios pero como multa
-                $citado_notificacion = SeerCitados::where("id_solicitud",$data["id"])->get();
-                $cont = count($citado_notificacion);
-                for($i = 0; $i < $cont; $i++) {
-                    $citado_copiar = SeerCitados::find($citado_notificacion[$i]["id"]);
-                    $nuevo_citado = $citado_copiar->replicate();
-                    $nuevo_citado->notificacion = 'Centro';
-                    $nuevo_citado->save();
-                }
                 return redirect()->route('audiencias.parte3', ['id' => $id, 'audiencia_id' => $audienciaId]);
             }
             else if($citados->notificacion == "Centro" || $citados->notificacion == "Exhorto"){
