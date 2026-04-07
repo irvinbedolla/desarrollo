@@ -8,6 +8,9 @@
     .btn-invisible {
         display: none;
     }
+    #modalCitados table.table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(0, 0, 0, 0.08); /* ajusta el último valor (0.08) para más o menos opacidad */
+    }
 </style>
 @endsection
 @section('content')
@@ -324,7 +327,6 @@
                             <!--<th style="display: none;">ID</th>-->
                             <th style="color: #fff;">Folio</th>
                             <th style="color: #fff;">Nombre</th>
-                            <th style="color: #fff;">RFC</th>
                             <th style="color: #fff;">Representante</th>
                             <th style="color: #fff;">Acciones</th>
                         </thead>
@@ -333,8 +335,7 @@
                                 <tr>
                                     <td>{{$abogado->idAbogado}}</td>
                                     <td>{{$abogado->nombres_patronal}} {{$abogado->primer_apellido_patronal}} {{$abogado->segundo_apellido_patronal}}</td>
-                                    <td>{{$abogado->rfc_patronal}}</td>
-                                    <td>{{$abogado->nombre_representante}} {{$abogado->primer_apellido_representante}} {{$abogado->segundo_apellido_representante}}</td>
+                                    <td style="color: #191717;">{{$abogado->nombre_representante}} {{$abogado->primer_apellido_representante}} {{$abogado->segundo_apellido_representante}}</td>
                                     <td>
                                         @php
                                             //Vigencia vencida => fechaVigencia menor a hoy
