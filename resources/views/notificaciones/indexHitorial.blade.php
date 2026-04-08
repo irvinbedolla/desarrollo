@@ -40,7 +40,7 @@
                                                         <td>{{$notificacion->notificador_nombre}}</td>
                                                         <td>
                                                             @if($notificacion->estatus == "Pendiente" || $notificacion->estatus == "Sin asignar")
-                                                                <a class="btn btn-primary" href="{{ route('editar_citado', $notificacion->id) }}" onclick="consultar_estadistica();">Editar</a>
+                                                                <a class="btn btn-primary" href="{{ route('editar_citado', $notificacion->id_citado) }}" onclick="consultar_estadistica();">Editar</a>
                                                             @else
                                                                 Concluida
                                                             @endif
