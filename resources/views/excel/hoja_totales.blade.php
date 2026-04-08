@@ -2,12 +2,12 @@
     <thead>
         <tr>
             <th style="background-color: #4CAF50; color: #ffffff; font-weight: bold; text-align: center;" colspan="6">
-                RESUMEN DE NOTIFICACIONES POR NOTIFICADOR
+                RESUMEN DE NOTIFICACIONES POR NOTIFICADOR (Filtrado por domicilio)
             </th>
         </tr>
         <tr>
             <th style="background-color: #D3D3D3; font-weight: bold; width: 300px;">Notificador</th>
-            <th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">Total Citatorios</th>
+            <th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">Total Citatorios por Domicilio</th>
             <th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">Exitosas</th>
             <th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">No Exitosas</th>
             <th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">Pendientes</th>

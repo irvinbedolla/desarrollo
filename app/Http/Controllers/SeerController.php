@@ -1443,6 +1443,8 @@ class SeerController extends Controller
             // 2. Consulta Unificada para Audiencias
             $audienciasData = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
                 ->whereIn('pago_solicitud.tipo_pago', ["Audiencia","Conciliador"])
+                ->join('audiencias', 'audiencias.id_solicitud', '=', 'pago_solicitud.id_solicitud')
+                ->whereIn('audiencias.estatus', ['Conciliacion', 'Reinstalacion'])
                 ->when($sede !== "Todos", function ($q) use ($sede) {
                     if ($sede === "TodosDelegado") {
                         $id = auth()->user()->id;
@@ -1465,7 +1467,7 @@ class SeerController extends Controller
                     return $q->where('pago_solicitud.delegacion', $sede);
                 })
                 ->selectRaw("
-                    COUNT(pago_solicitud.id) as total_count,
+                    COUNT(DISTINCT audiencias.id) as total_count,
                     SUM(pago_solicitud.monto) as total_monto
                 ")
             ->first();

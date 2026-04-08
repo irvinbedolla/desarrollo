@@ -75,7 +75,7 @@ class NotificacionesExport implements WithMultipleSheets
             ->select(
                 'seer_general.NUE','seer_general.actividad','seer_general.delegacion',
                 'seer_citados.fecha','seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido',
-                'seer_citados.calle','seer_citados.n_ext','seer_citados.colonia','seer_citados.calle','seer_citados.estatus',
+                'seer_citados.calle','seer_citados.n_ext','seer_citados.colonia','seer_citados.calle','seer_citados.estatus', 'seer_citados.notificacion',
                 'seer_solicitante.nombre as nombre_solicitante', 'notificador.name as nombre_notificador', 'auxiliar.name as auxiliar','municipios.nombre as municipio')
             ->get()
         

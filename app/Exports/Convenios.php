@@ -37,6 +37,7 @@ class Convenios implements FromView
         // 1. Consulta de Turnos con contadores y sumas individuales
         // Asumimos que en el modelo Turnos existe la relación: public function pagos() { return $this->hasMany(Pagos::class, 'id_solicitud'); }
         $convenios = Audiencias::whereBetween('audiencias.fecha', [$this->fecha_inicial, $this->fecha_final])
+            ->whereIn('audiencias.estatus', ['Conciliacion', 'Reinstalacion'])
             ->join('seer_general', 'seer_general.id', '=', 'audiencias.id_solicitud')
             ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
             ->join('seer_citados', 'seer_citados.id_solicitud','=', 'seer_general.id')

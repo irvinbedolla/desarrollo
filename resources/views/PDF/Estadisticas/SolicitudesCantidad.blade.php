@@ -144,7 +144,7 @@
                         </tbody>
                     </table>
 
-                    <div class="section-title">Reporte General de Audiencia</div>
+                    <div class="section-title">Reporte General de Convenio</div>
                         <table class="table-report">
                             <thead>
                                 <tr>
@@ -155,7 +155,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="text-left">Total de Audiencias</td>
+                                    <td class="text-left">Total de Audiencias con Convenio</td>
                                     <td>{{ $pagosAudiencias->audiencias }}</td>
                                     <td class="bold">${{ number_format($pagosAudienciasMonto->audienciasMonto, 2) }}</td>
                                 </tr>

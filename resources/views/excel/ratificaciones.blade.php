@@ -14,6 +14,7 @@
                     <th width="25" style="background-color: #869b9c; color: #ffffff;">Tipo</th>
                     <th width="60" style="background-color: #869b9c; color: #ffffff;">Empleador</th>
                     <th width="60" style="background-color: #869b9c; color: #ffffff;">Trabajador</th>
+                    <th width="50" style="background-color: #869b9c; color: #ffffff;">Motivo</th>
                     <th width="30" style="background-color: #869b9c; color: #ffffff;">Monto Total</th> 
                     <th width="30" style="background-color: #869b9c; color: #ffffff;">Giro Comercial</th>
                     <!--
@@ -39,6 +40,7 @@
                         <td style=" text-align: center;">Patronal</td>
                         <td style=" text-align: center;">{{ $estadistica->empresa }} {{ $estadistica->primero_empresa }} {{ $estadistica->segundo_empresa }}</td>
                         <td style=" text-align: center;">{{ $estadistica->trabajador }} {{ $estadistica->primero_trabajador }} {{ $estadistica->segundo_trabajador }}</td>
+                        <td style=" text-align: center;">{{ $estadistica->motivo }}</td>
                         <td style=" text-align: center;">${{ number_format($estadistica->monto, 2) }}</td>
                         <td style=" text-align: center;">{{ $estadistica->categoria }}</td>
                         <!--
