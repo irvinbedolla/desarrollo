@@ -122,9 +122,9 @@
                         En el documento NOTIFICACIÓN PARA LA CELEBRACIÓN DE LA AUDIENCIA DE CONCILIACIÓN se le señalará fecha y hora para la celebración de la audiencia de conciliación a la que deberá 
                         comparecer <b>presencialmente</b> en las instalaciones del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, ubicada en <b>{{$direccion_sede}}</b><br><br>
                         
-                        Atendiendo la fracción VII del artículo 689-E de la Ley Federal del Trabajo, las trabajadoras y los trabajadores, deberán acudir personalmente a la audiencia conciliatoria, sin 
+                        <!--Atendiendo la fracción VII del artículo 689-E de la Ley Federal del Trabajo, las trabajadoras y los trabajadores, deberán acudir personalmente a la audiencia conciliatoria, sin 
                         impedimento de poderse acompañar de una persona de su confianza, pero no se reconocerá a ésta como apoderado, por tratarse de un procedimiento de conciliación y no de un juicio; no 
-                        obstante, el trabajador también podrá ser asistido por un licenciado en derecho, abogado o un Procurador de la Defensa del Trabajo. <br><br>
+                        obstante, el trabajador también podrá ser asistido por un licenciado en derecho, abogado o un Procurador de la Defensa del Trabajo. <br><br>-->
                         @if($solicitud->tipo_solicitud == 1)
                             Atendiendo la fracción VII del artículo 689-E de la Ley Federal del Trabajo, las trabajadoras y los trabajadores, deberán acudir personalmente a la audiencia conciliatoria, sin 
                             impedimento de poderse acompañar de una persona de su confianza, pero no se reconocerá a ésta como apoderado, por tratarse de un procedimiento de conciliación y no de un juicio; no 
