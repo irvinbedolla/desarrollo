@@ -1222,6 +1222,8 @@ class SeerController extends Controller
                     ->groupBy('seer_general.delegacion')
                     ->get();
 
+            $ratificacionesTotal= $dataTurnos->sum('ratificaciones');
+
             //Notificadores
                 $notificaciones = DB::table('seer_general')
                     ->join('seer_citados', 'seer_general.id', '=', 'seer_citados.id_solicitud')
@@ -1312,7 +1314,7 @@ class SeerController extends Controller
                 $solicitudesConTotal = $solicitudes->push((object)$granTotal);   
                 $notificacionesConTotal = $notificaciones->push((object)$total_notificaciones);
                
-            $pdf = \PDF::loadView('PDF/Estadisticas/reporte_cuantitativo_sede', compact('fecha_inicial','fecha_final','solicitudes','audiencias','notificaciones'));
+            $pdf = \PDF::loadView('PDF/Estadisticas/reporte_cuantitativo_sede', compact('fecha_inicial','fecha_final','solicitudes','audiencias','notificaciones', 'ratificacionesTotal'));
             $pdf->setPaper('legal', 'landscape');
             return $pdf->stream('archivo.pdf');
         }

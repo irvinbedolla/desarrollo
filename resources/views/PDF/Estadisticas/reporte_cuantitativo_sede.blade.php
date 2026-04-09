@@ -103,10 +103,23 @@
         @endphp
         <div class="kpi-container">
             <div class="kpi-card" style="margin-left: 2%;">
-                <span style="font-size: 9px; color: #666;">AUDIENCIAS CELEBRADAS</span>
+                <span style="font-size: 9px; color: #666;">AUDIENCIAS DE CONCILIACIÓN CELEBRADAS</span>
                 <span class="kpi-value">{{ $audiencias->sum('total_audiencias') }}</span>
                 <span style="font-size: 8px; color: #888;">TOTAL REGIONAL</span>
             </div>
+
+            <div class="kpi-card" style="margin-left: 2%;">
+                <span style="font-size: 9px; color: #666;">AUDIENCIAS DE RATIFICACIÓN CELEBRADAS</span>
+                <span class="kpi-value">{{ $ratificacionesTotal }}</span>
+                <span style="font-size: 8px; color: #888;">TOTAL REGIONAL</span>
+            </div>
+
+            <div class="kpi-card" style="margin-left: 2%;">
+                <span style="font-size: 9px; color: #666;">TOTAL AUDIENCIAS CELEBRADAS</span>
+                <span class="kpi-value">{{ $audiencias->sum('total_audiencias') + $ratificacionesTotal}}</span>
+                <span style="font-size: 8px; color: #888;">TOTAL REGIONAL</span>
+            </div>
+
             <div class="kpi-card" style="margin-left: 2%;">
                 <span style="font-size: 9px; color: #666;">NOTIFICACIONES EXITOSAS</span>
                 <span class="kpi-value">{{ $notificaciones->sum('exitosamente') }}</span>
