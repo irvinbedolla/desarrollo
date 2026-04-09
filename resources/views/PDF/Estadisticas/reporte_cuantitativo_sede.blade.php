@@ -154,7 +154,7 @@
                     <td>{{ $s->incompetencia }}</td>
                     <td class="bold">{{ $s->cumplimientoRatificacion + $s->cumplimientoAudiencia }}</td>
                     <td class="monto">${{ number_format($s->cumplimientoAudienciaMonto, 2) }}</td>
-                    <td class="monto">${{ number_format($s->cumplimientoRatificacionMonto, 2) }}</td>
+                    <td class="monto">${{ number_format($s->ratificacionesMonto, 2) }}</td>
                 </tr>
                 @endforeach
             </tbody>

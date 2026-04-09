@@ -77,7 +77,7 @@ class ReporteMexicoRati implements FromView
         $reportesSolicitudes = SeerPerGeneral::whereBetween('seer_general.fecha', [$this->fecha_inicial, $this->fecha_final])
             ->join('seer_citados','seer_citados.id_solicitud','seer_general.id')
             ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
-            ->whereNotIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
+            ->whereNotIn('seer_general.estatus', ['Pendiente', 'Prevencion','Confirmado'])
             ->leftJoin('users', 'users.id', '=', 'seer_general.user_id')
             ->leftJoin('estados', 'estados.id', '=', 'seer_solicitante.estado')
             ->leftJoin('municipios', 'municipios.id', '=', 'seer_solicitante.municipio_domicilio')

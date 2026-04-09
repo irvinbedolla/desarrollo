@@ -972,7 +972,7 @@ class SeerController extends Controller
                         $join->on('seer_general.id', '=', 'seer_citados.id_solicitud')
                             ->where('seer_citados.tipo_notificacion', '=', 'Multa');
                     })
-                    ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
+                    ->whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
                     ->when($sede !== "Todos", function ($q) use ($sede) {
                         if ($sede === "TodosDelegado") {
                             $id = auth()->user()->id;
@@ -1020,7 +1020,7 @@ class SeerController extends Controller
                     )
                     ->groupBy('users.id', 'users.name')
                     ->get();
-                
+               
             //Notificadores
                 $notificaciones = DB::table('users')
                     ->join('seer_citados', 'users.id', '=', 'seer_citados.id_notificador')
@@ -1135,13 +1135,12 @@ class SeerController extends Controller
                         DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.id END) as cumplimientoRatificacionPagado"),
                         DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoRatificacionMontoPagado")
                     )
-                    ->groupBy('seer_general.delegacion') // <--- Cambio clave
+                    ->groupBy('seer_general.delegacion')
                     ->get()
                     ->keyBy('sede_nombre'); // Ahora indexamos por el nombre de la sede
 
 
                 $dataTurnos = DB::table('turnos')
-                    // Nota: Usamos id_solicitud según la estructura de tu tabla pago_solicitud
                     ->join('pago_solicitud', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
                     ->whereBetween('turnos.fecha', [$fecha_inicial, $fecha_final])
                     ->when($sede !== "Todos", function ($q) use ($sede, $userActual) {
@@ -1164,15 +1163,16 @@ class SeerController extends Controller
                         DB::raw('SUM(pago_solicitud.monto) as ratificacionesMonto') // Monto real del pago
                     )
                     ->groupBy('turnos.delegacion')
-                    ->get();
+                    ->get()
+                    ->keyBy('sede_nombre');
 
                 // 3. Unir los resultados en una sola colección
                 foreach ($solicitudes as $id => $solicitud) {
-                    $turno = $dataTurnos->get($id);
+                    $turno = $dataTurnos->get($solicitud->sede_nombre);
                     $solicitud->ratificaciones = $turno ? $turno->ratificaciones : 0;
                     $solicitud->ratificacionesMonto = $turno ? $turno->ratificacionesMonto : 0;
                 }
-
+dd($solicitudes);
             //Audiencias
                 $audiencias = DB::table('seer_general')
                     ->join('audiencias', 'seer_general.id', '=', 'audiencias.id_solicitud')
@@ -1222,7 +1222,7 @@ class SeerController extends Controller
                     ->groupBy('seer_general.delegacion')
                     ->get();
 
-            $ratificacionesTotal= $dataTurnos->sum('ratificaciones');
+                $ratificacionesTotal= $dataTurnos->sum('ratificaciones');
 
             //Notificadores
                 $notificaciones = DB::table('seer_general')
@@ -1403,7 +1403,6 @@ class SeerController extends Controller
                 ->join('turnos', 'turnos.id', 'pago_solicitud.id_solicitud')
                 ->where('pago_solicitud.tipo_pago', 'Ratificacion')
                 ->when($sede !== "Todos", function ($q) use ($sede) {
-                    // Si es el caso especial de Delegado, filtramos por el array de sedes
                     if ($sede === "TodosDelegado") {
                         $id = auth()->user()->id;
                         $user = User::find($id);
@@ -1433,7 +1432,47 @@ class SeerController extends Controller
                     SUM(CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN pago_solicitud.monto ELSE 0 END) as pendiente_monto
                 ")
             ->first();
-    
+            $promediosRatificaciones = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
+                ->join('turnos', 'turnos.id', 'pago_solicitud.id_solicitud')
+                ->where('pago_solicitud.tipo_pago', 'Ratificacion')
+                ->when($sede !== "Todos", function ($q) use ($sede) {
+                    if ($sede === "TodosDelegado") {
+                        $user = User::find(auth()->id());
+                        $sedeUsuario = $user->delegacion;
+                        
+                        $mapping = [
+                            'Morelia' => ['Morelia', 'Zitácuaro'],
+                            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+                            'Zamora'  => ['Zamora', 'Sahuayo']
+                        ];
+
+                        if (isset($mapping[$sedeUsuario])) {
+                            return $q->whereIn('pago_solicitud.delegacion', $mapping[$sedeUsuario]);
+                        }
+                    }
+                    return $q->where('pago_solicitud.delegacion', $sede);
+                })
+                ->selectRaw("
+                    pago_solicitud.delegacion as sede,
+                    COUNT(pago_solicitud.id) as total_pagos,
+                    COUNT(DISTINCT DATE(pago_solicitud.fecha)) as dias_con_actividad
+                ")
+                ->groupBy('pago_solicitud.delegacion')
+                ->get()
+                ->map(function ($item) {
+                    // Calculamos el promedio evitando división por cero
+                    $promedio = $item->dias_con_actividad > 0 
+                        ? $item->total_pagos / $item->dias_con_actividad 
+                        : 0;
+
+                    return [
+                        'sede'               => $item->sede,
+                        'total_pagos'        => $item->total_pagos,
+                        'dias_con_actividad' => $item->dias_con_actividad,
+                        'promedio_diario'    => $promedio
+                    ];
+            });
+
             // Reasignar a tus variables originales para no romper la vista Blade
             $pagosRatificacion               = (object)['ratificaciones' => $ratificacionesData->total_count];
             $pagosRatificacionMonto          = (object)['ratificacionesMonto' => $ratificacionesData->total_monto];
@@ -1473,11 +1512,9 @@ class SeerController extends Controller
                     SUM(pago_solicitud.monto) as total_monto
                 ")
             ->first();
-    
             // Reasignar a tus variables originales
             $pagosAudiencias      = (object)['audiencias' => $audienciasData->total_count];
             $pagosAudienciasMonto = (object)['audienciasMonto' => $audienciasData->total_monto];
-    
             // 3. Consulta para Promedios por Sede
             $promediosPagos = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
                 ->when($sede !== "Todos", function ($q) use ($sede) {
@@ -1517,7 +1554,6 @@ class SeerController extends Controller
                         'promedio_diario'    => $promedio
                     ];
             });
-                
             $usuariosTotal = Turnos::whereBetween('turnos.fecha', [$fecha_inicial, $fecha_final])
                 ->join('users', 'users.id', 'turnos.user_id')
                 // Aplicamos el filtro de sede solo si no es "Todos"
@@ -1657,7 +1693,7 @@ class SeerController extends Controller
             $pdf = \PDF::loadView('PDF/Estadisticas/SolicitudesCantidad',compact('fecha_inicial','fecha_final','solicitudes','usuariosTotal','usuariosDias','promedios'
                 ,'pagosRatificacion','pagosRatificacionMonto'
                 ,'pagosAudiencias','pagosAudienciasMonto','pagosRatificacionPagado','pagosRatificacionMontoPagado'
-                ,'pagosRatificacionPendiente','pagosRatificacionMontoPendiente','promediosPagos'));
+                ,'pagosRatificacionPendiente','pagosRatificacionMontoPendiente','promediosPagos','promediosRatificaciones'));
             return $pdf->stream('Productividad.pdf');
 
 
