@@ -115,7 +115,7 @@ class NotificacionesExport implements WithMultipleSheets
                 'total' => $row->count(),
                 'notificadas' => $row->whereIn('estatus', ['Notificada','Finalizado exitosamente','Recibe pero no firma','Exitosa por Instructivo'])->count(),
                 'no_notificadas' => $row->whereIn('estatus', ['No notificada','No exitosa se constituye','No exitosa no se constituye'])->count(),
-                'pendientes' => $row->whereIn('estatus', ['Pendiente'])->count(),
+                'pendientes' => $row->whereIn('estatus', ['Pendiente', 'Sin asignar'])->count(),
                 'exhorto' => $row->whereIn('estatus', ['Exhorto'])->count(),
             ];
         });
