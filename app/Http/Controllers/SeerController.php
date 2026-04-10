@@ -74,15 +74,41 @@ class SeerController extends Controller
 {   
 
     public function ver_identificacion_solicitante($idSolicitud)
-    {
-        $sol = SeerSolicitante::where('id_solicitud', $idSolicitud)->firstOrFail();
-        $fileName = $sol->documentoIdentificacion;
+    {   
+        $tipo = SeerPerGeneral::where('id', $idSolicitud)->value('tipo_solicitud');
+
+        $fileName = null;
+        $baseDir  = null;
+
+        //Si es solicitud patronal visualizamos el documentos desde el Storage de abogados
+        if ($tipo == 2) {
+            $solicitante = SeerSolicitante::where('id_solicitud', $idSolicitud)->first();
+
+            if ($solicitante && !empty($solicitante->poder_id)) {
+                $poder = Poder::where('idAbogado', $solicitante->poder_id)->first();
+
+                if ($poder && !empty($poder->ineDocumento) && $poder->ineDocumento !== 'Sin documento') {
+                    $fileName = $poder->ineDocumento;
+                    $baseDir  = 'documentos_abogados/';
+                }
+            }
+        }
+
+        if (!$fileName) {
+            $solicitante = isset($solicitante)
+                ? $solicitante
+                : SeerSolicitante::where('id_solicitud', $idSolicitud)->firstOrFail();
+
+            $fileName = $solicitante->documentoIdentificacion;
+            $baseDir  = 'documentosSolicitud/';
+        }
 
         if (!$fileName || $fileName === 'Sin documento') {
             abort(404, 'Documento no encontrado.');
         }
 
-        $path = 'documentosSolicitud/' . $fileName;
+        $path = $baseDir . $fileName;
+
         if (!Storage::exists($path)) {
             abort(404, 'Documento no encontrado en almacenamiento.');
         }
@@ -14162,7 +14188,7 @@ dd($solicitudes);
             }
 
             DB::beginTransaction();
-            try {
+            //try {
                 // 1. Guardar SeerPerGeneral inicial
                 $general = SeerPerGeneral::create($solicitudData);
                 $id = $general->id;
@@ -14206,7 +14232,7 @@ dd($solicitudes);
                     // Limpiar sesión
                     session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
                 }
-            } catch (\Exception $e) {
+            /*} catch (\Exception $e) {
                 DB::rollBack();
                     $solicitante = session('solicitante_data', []);
                     if (!empty($solicitante) && is_array($solicitante)) {
@@ -14242,7 +14268,7 @@ dd($solicitudes);
                     session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
 
                 return redirect()->route('solicitudes_index')->with('error', 'Ocurrió un error al finalizar la solicitud. Se descartaron los datos de captura.');
-            }
+            }*/
         }
 
         /* DB::beginTransaction();
@@ -14895,17 +14921,17 @@ dd($solicitudes);
 
         // Conversión de identificación
         $idenMap = [
-            'Credencial de Elector' => 'Credencial de elector',
+            'Credencial de elector' => 'Credencial de elector',
             'Pasaporte' => 'Pasaporte',
-            'Cédula Profesional' => 'Cédula profesional',
-            'Licencia de Conducir' => 'Licencia de conducir',
-            'Otros' => 'Otros',
-            'Credencial de INAPAM' => 'Credencial de inapam',
-            'Cartilla Militar' => 'Cartilla militar',
-            'Documento Migratorio' => 'Documento migratorio',
-            'Constancia de Identidad' => 'Constancia de identidad'
+            'Cédula profesional' => 'Cédula profesional',
+            'Licencia de conducir' => 'Licencia de conducir',
+            'Otro' => 'Otro',
+            'Credencial de inapam' => 'Credencial de inapam',
+            'Cartilla militar' => 'Cartilla militar',
+            'Documento migratorio' => 'Documento migratorio',
+            'Constancia de identidad' => 'Constancia de identidad'
         ];
-        $idenMapeado = $idenMap[$poder['tipo_identificacion']] ?? 'Otros';
+        $idenMapeado = $idenMap[$poder['tipo_identificacion']] ?? 'Otro';
         
         /* $data_insert=array(
             'id_solicitud'         => $data["id"],
@@ -14940,58 +14966,119 @@ dd($solicitudes);
             'descripcionSolicitud' => $data["descripcionSolicitud"],
         ); */ 
 
-        $data_insert = [
+        if($poder['reprecentante'] == 'Si'){
+            $data_insert = [
+                // --- DATOS OBTENIDOS DEL REGISTRO DEL PODER ($poder) ---
+                'curp'                => $poder['curp_representante'],
+                'nombre'              => $nombreCompleto,
+                'sexo'                => $sexoMapeado,
+                'email'               => $poder['correo_representante'],
+                'telefono1'           => $poder['numero_representante'],
+                'identificacion'      => $idenMapeado,
+                'num_identificacion'  => $poder['num_identificacion'],
+                'estado_domicilio'    => $poder['estado_patronal'],
+                'estado'              => $poder['estado_patronal'],
+                'municipio_domicilio' => $poder['municipio_patronal'],
+                'tipo_vialidad'       => $poder['tipo_vialidad_patronal'],
+                'calle'               => $poder['vialidad_patronal'],
+                'num_ext'             => $poder['num_ext_patronal'],
+                'num_int'             => $poder['mun_int_patronal'], // Puede ser NULL
+                'colonia'             => $poder['colonia_patronal'],
+                'codigo_postal'       => $poder['cp_patronal'],
+                'rfc'                 => $poder['rfc_patronal'],
+
+                // --- DATOS OBTENIDOS DEL FORMULARIO ($data) ---
+                // Campos Obligatorios
+                'id_solicitud'        => $id_solicitud,
+                'puesto'              => $data['puesto'],
+                'pago'                => $data['pago'],
+                'horas_semana'        => $data['horas'],
+                'fecha_ingreso'       => $data['fecha_ingreso'],
+                'descripcionSolicitud'=> $data['descripcionSolicitud'],
+                'jornada'             => $data['jornada'],
+                'traductor'           => $data['traductor'] ?? 'No', //Usar 'No' si no viene
+                'discapacidad'        => $data['discapacidad'] ?? 'No', // Usar 'No' si no viene
+                'labora'              => $data['labora'] ?? 'No', // Usar 'No' si no viene
+
+                // Campos Opcionales (usar el operador de fusión de null ?? para seguridad)
+                'edad'                => $data['edad'] ?? null,
+                'fecha_nacimiento'    => $data['fecha_nacimiento'] ?? null,
+                'nacionalidad'        => $data['nacionalidad'] ?? null,
+                'tipo_persona'        => $data['tipo_persona'] ?? null,
+                'lenguaje'            => $data['lenguaje'] ?? null,
+                'tipo_discapacidad'   => $data['tipo_discapacidad'] ?? null,
+                'telefono2'           => $data['telefono2'] ?? null,
+                'referencia'          => $data['referencia'] ?? null,
+                'calle2'              => $data['calle2'] ?? null,
+                'calle3'              => $data['calle3'] ?? null,
+                'nss'                 => $data['nss'] ?? null,
+                'periodo_pago'        => $data['periodo_pago'] ?? null,
+                'fecha_salida'        => $data['fecha_salida'] ?? null,
+                
+                // Campos de documentos (se llenarán si se suben archivos)
+                'documentoCurp'           => $data['documentoCurp'] ?? null,
+                'documentoIdentificacion' => $data['documentoIdentificacion'] ?? null,
+
+                'poder_id' => $poder['idAbogado']
+            ];
+        } else {
+            $data_insert = [
             // --- DATOS OBTENIDOS DEL REGISTRO DEL PODER ($poder) ---
-            'curp'                => $poder['curp_representante'],
-            'nombre'              => $nombreCompleto,
-            'sexo'                => $sexoMapeado,
-            'email'               => $poder['correo_representante'],
-            'telefono1'           => $poder['numero_representante'],
-            'identificacion'      => $idenMapeado,
-            'num_identificacion'  => $poder['num_identificacion'],
-            'estado_domicilio'    => $poder['estado_patronal'],
-            'estado'              => $poder['estado_patronal'],
-            'municipio_domicilio' => $poder['municipio_patronal'],
-            'tipo_vialidad'       => $poder['tipo_vialidad_patronal'],
-            'calle'               => $poder['vialidad_patronal'],
-            'num_ext'             => $poder['num_ext_patronal'],
-            'num_int'             => $poder['mun_int_patronal'], // Puede ser NULL
-            'colonia'             => $poder['colonia_patronal'],
-            'codigo_postal'       => $poder['cp_patronal'],
-            'rfc'                 => $poder['rfc_patronal'],
+                'curp'                => $poder['curp_patronal'],
+                'nombre'              => $nombreCompleto,
+                'sexo'                => $sexoMapeado,
+                'email'               => $poder['email_patronal'],
+                'telefono1'           => $poder['telefono_patronal'],
+                'identificacion'      => $poder['tipo_identificacion'],
+                'num_identificacion'  => $poder['num_identificacion'],
+                'estado_domicilio'    => $poder['estado_patronal'],
+                'estado'              => $poder['estado_patronal'],
+                'municipio_domicilio' => $poder['municipio_patronal'],
+                'tipo_vialidad'       => $poder['tipo_vialidad_patronal'],
+                'calle'               => $poder['vialidad_patronal'],
+                'num_ext'             => $poder['num_ext_patronal'],
+                'num_int'             => $poder['mun_int_patronal'], // Puede ser NULL
+                'colonia'             => $poder['colonia_patronal'],
+                'codigo_postal'       => $poder['cp_patronal'],
+                'rfc'                 => $poder['rfc_patronal'],
 
-            // --- DATOS OBTENIDOS DEL FORMULARIO ($data) ---
-            // Campos Obligatorios
-            'id_solicitud'        => $id_solicitud,
-            'puesto'              => $data['puesto'],
-            'pago'                => $data['pago'],
-            'horas_semana'        => $data['horas'],
-            'fecha_ingreso'       => $data['fecha_ingreso'],
-            'descripcionSolicitud'=> $data['descripcionSolicitud'],
-            'jornada'             => $data['jornada'],
-            'traductor'           => $data['traductor'] ?? 'No', //Usar 'No' si no viene
-            'discapacidad'        => $data['discapacidad'] ?? 'No', // Usar 'No' si no viene
-            'labora'              => $data['labora'] ?? 'No', // Usar 'No' si no viene
+                // --- DATOS OBTENIDOS DEL FORMULARIO ($data) ---
+                // Campos Obligatorios
+                'id_solicitud'        => $id_solicitud,
+                'puesto'              => $data['puesto'],
+                'pago'                => $data['pago'],
+                'horas_semana'        => $data['horas'],
+                'fecha_ingreso'       => $data['fecha_ingreso'],
+                'descripcionSolicitud'=> $data['descripcionSolicitud'],
+                'jornada'             => $data['jornada'],
+                'traductor'           => $data['traductor'] ?? 'No', //Usar 'No' si no viene
+                'discapacidad'        => $data['discapacidad'] ?? 'No', // Usar 'No' si no viene
+                'labora'              => $data['labora'] ?? 'No', // Usar 'No' si no viene
 
-            // Campos Opcionales (usar el operador de fusión de null ?? para seguridad)
-            'edad'                => $data['edad'] ?? null,
-            'fecha_nacimiento'    => $data['fecha_nacimiento'] ?? null,
-            'nacionalidad'        => $data['nacionalidad'] ?? null,
-            'tipo_persona'        => $data['tipo_persona'] ?? null,
-            'lenguaje'            => $data['lenguaje'] ?? null,
-            'tipo_discapacidad'   => $data['tipo_discapacidad'] ?? null,
-            'telefono2'           => $data['telefono2'] ?? null,
-            'referencia'          => $data['referencia'] ?? null,
-            'calle2'              => $data['calle2'] ?? null,
-            'calle3'              => $data['calle3'] ?? null,
-            'nss'                 => $data['nss'] ?? null,
-            'periodo_pago'        => $data['periodo_pago'] ?? null,
-            'fecha_salida'        => $data['fecha_salida'] ?? null,
-            
-            // Campos de documentos (se llenarán si se suben archivos)
-            'documentoCurp'           => $data['documentoCurp'] ?? null,
-            'documentoIdentificacion' => $data['documentoIdentificacion'] ?? null,
-        ];
+                // Campos Opcionales (usar el operador de fusión de null ?? para seguridad)
+                'edad'                => $data['edad'] ?? null,
+                'fecha_nacimiento'    => $data['fecha_nacimiento'] ?? null,
+                'nacionalidad'        => $data['nacionalidad'] ?? null,
+                'tipo_persona'        => $data['tipo_persona'] ?? null,
+                'lenguaje'            => $data['lenguaje'] ?? null,
+                'tipo_discapacidad'   => $data['tipo_discapacidad'] ?? null,
+                'telefono2'           => $data['telefono2'] ?? null,
+                'referencia'          => $data['referencia'] ?? null,
+                'calle2'              => $data['calle2'] ?? null,
+                'calle3'              => $data['calle3'] ?? null,
+                'nss'                 => $data['nss'] ?? null,
+                'periodo_pago'        => $data['periodo_pago'] ?? null,
+                'fecha_salida'        => $data['fecha_salida'] ?? null,
+                
+                // Campos de documentos (se llenarán si se suben archivos)
+                'documentoCurp'           => $data['documentoCurp'] ?? null,
+                'documentoIdentificacion' => $data['documentoIdentificacion'] ?? null,
+
+                'poder_id' => $poder['idAbogado']
+            ];
+        }
+
+        
 
         /* if(isset($data["rfc"])){
             $data_insert["rfc"] =  $data["rfc"];
@@ -15411,14 +15498,6 @@ dd($solicitudes);
         }
         if (isset($data["tipo"])) {
             $data_insert["tipo_persona"] = $data["tipo"];
-        
-            if ($data["tipo"] == "Moral" && isset($data["razon"])) {
-                $data_insert["nombre"] = $data["razon"];
-            }
-        
-            if ($data["tipo"] == "Fisica" && isset($data["nombre"])) {
-                $data_insert["nombre"] = $data["nombre"];
-            }
         }
 
         //Se van a generar el citatorio
@@ -15444,18 +15523,7 @@ dd($solicitudes);
         $municipioNombre = $municipio ? mb_strtoupper($municipio->nombre, 'UTF-8') : '';
         $estadoNombre = $estado ? mb_strtoupper($estado->nombre, 'UTF-8') : '';
 
-        //Validar si existe quien resulta responsable con la misma direccion
-
-        $data_insert["nombre"] = "QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN " .
-        $data["vialidad"] . " " . $data["calle"] . ", NÚMERO " . $data["exterior"];
-        if (!empty($data["interior"])) {
-            $data_insert["nombre"] .= " INT. " . $data["interior"];
-        }
-        $data_insert["nombre"] .= " COLONIA " . $data["colonia"] . ", " . $municipioNombre . ", " . $estadoNombre . ", C.P. " . $data["cp"] . ".";
-
-        // Marcar este nuevo registro como el "quien resulte" y crear solo si no existe ya uno igual
-        $data_insert['resulte_responsable'] = 'Si';
-        $direccionNombre = $data_insert["nombre"];
+        $data_insert['resulte_responsable'] = 'No';
         
         /* if ($data["id"] == 'session') {
             $citados = session('citados_data', []);
