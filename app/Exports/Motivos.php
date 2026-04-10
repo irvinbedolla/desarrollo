@@ -75,9 +75,8 @@ class Motivos implements FromView
             'Zamora'  => ['Zamora', 'Sahuayo']
         ];
 
-        // PASO 1: Crear una base de datos temporal con IDs únicos (427 filas)
-        // Usamos leftJoin para no perder registros que no tengan motivo o sexo capturado
-        $baseUnica = DB::table('seer_general')
+        // Solicitudes Totales
+            $solicitudesTotales = DB::table('seer_general')
             ->join('users', 'users.id', '=', 'seer_general.user_id')
             ->join('seer_motivos', 'seer_motivos.id_solicitud', '=', 'seer_general.id')
             ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
@@ -102,10 +101,8 @@ class Motivos implements FromView
             )
             ->groupBy('seer_general.id');
 
-        // PASO 2: Realizar el conteo final agrupado por el CASE SQL
-        // Usamos la subconsulta del PASO 1 como origen de datos (FROM)
-        $resultados = DB::table(DB::raw("({$baseUnica->toSql()}) as base_limpia"))
-            ->mergeBindings($baseUnica) // Une los parámetros de fecha y sede a la consulta
+            $resultados = DB::table(DB::raw("({$solicitudesTotales->toSql()}) as base_limpia"))
+            ->mergeBindings($solicitudesTotales) // Une los parámetros de fecha y sede a la consulta
             ->leftJoin('catalogo_motivos', 'catalogo_motivos.id', '=', 'base_limpia.id_motivo_principal')
             ->select(
                 DB::raw($this->getSqlCase('catalogo_motivos.motivo') . " as categoria"),
@@ -116,8 +113,172 @@ class Motivos implements FromView
             ->groupBy(DB::raw($this->getSqlCase('catalogo_motivos.motivo')))
             ->get();
 
+        // Solicitudes Totales
+            $solicitudesConfirmadas = DB::table('seer_general')
+            ->join('users', 'users.id', '=', 'seer_general.user_id')
+            ->join('seer_motivos', 'seer_motivos.id_solicitud', '=', 'seer_general.id')
+            ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
+            ->where(function($query) {
+                $query->where('seer_general.incidencia', 0)
+                    ->orWhereNull('seer_general.incidencia');
+            })
+            ->whereBetween('seer_general.fecha', [$this->fecha_inicial, $this->fecha_final])
+            ->when($this->sede !== "Todos", function ($q) use ($sedeUsuario, $grupos) {
+                if ($this->sede === "TodosDelegado") {
+                    $delegaciones = $grupos[$sedeUsuario] ?? [$sedeUsuario];
+                    return $q->whereIn('seer_general.delegacion', $delegaciones);
+                }
+                return $q->where("seer_general.delegacion", $this->sede);
+            })
+            ->select(
+                'seer_general.id',
+                // Subconsulta para el primer motivo ingresado
+                DB::raw('(SELECT id_motivo FROM seer_motivos WHERE id_solicitud = seer_general.id ORDER BY id ASC LIMIT 1) as id_motivo_principal'),
+                // Si hay 2 solicitantes, MIN asegura un solo sexo para el conteo
+                DB::raw('MIN(seer_solicitante.sexo) as sexo_principal')
+            )
+            ->groupBy('seer_general.id');
+
+            $resultadosConfirmadas = DB::table(DB::raw("({$solicitudesConfirmadas->toSql()}) as base_limpia"))
+            ->mergeBindings($solicitudesConfirmadas) // Une los parámetros de fecha y sede a la consulta
+            ->leftJoin('catalogo_motivos', 'catalogo_motivos.id', '=', 'base_limpia.id_motivo_principal')
+            ->select(
+                DB::raw($this->getSqlCase('catalogo_motivos.motivo') . " as categoria"),
+                DB::raw("COUNT(*) as total_general"),
+                DB::raw("SUM(CASE WHEN base_limpia.sexo_principal = 'H' THEN 1 ELSE 0 END) as total_hombres"),
+                DB::raw("SUM(CASE WHEN base_limpia.sexo_principal = 'M' THEN 1 ELSE 0 END) as total_mujeres")
+            )
+            ->groupBy(DB::raw($this->getSqlCase('catalogo_motivos.motivo')))
+            ->get();
+
+        //Ratificaciones
+            $ratificaciones = DB::table('turnos')
+            ->where(function($query) {
+                $query->where('turnos.incidencia', 0)
+                    ->orWhereNull('turnos.incidencia');
+            })
+            ->whereBetween('turnos.fecha', [$this->fecha_inicial, $this->fecha_final])
+            ->when($this->sede !== "Todos", function ($q) use ($sedeUsuario, $grupos) {
+                if ($this->sede === "TodosDelegado") {
+                    $delegaciones = $grupos[$sedeUsuario] ?? [$sedeUsuario];
+                    return $q->whereIn('turnos.delegacion', $delegaciones);
+                }
+                return $q->where("turnos.delegacion", $this->sede);
+            })
+            ->select(
+                'turnos.id',
+                DB::raw("
+                    CASE 
+                        WHEN turnos.motivo = 'Terminación voluntaria de la relación de trabajo' THEN 7
+                        WHEN turnos.motivo = 'Pago de prestaciones' THEN 2
+                        ELSE 0 
+                    END as id_motivo_principal
+                "),
+                DB::raw('MIN(turnos.sexo) as sexo_principal')
+            )
+            ->groupBy('turnos.id', 'turnos.motivo');
+
+            // PASO 2: Realizar el conteo final agrupado por el CASE SQL
+            $resultadosRatificaciones = DB::table(DB::raw("({$ratificaciones->toSql()}) as base_limpia"))
+            ->mergeBindings($ratificaciones) // Une los parámetros de fecha y sede a la consulta
+            ->leftJoin('catalogo_motivos', 'catalogo_motivos.id', '=', 'base_limpia.id_motivo_principal')
+            ->select(
+                DB::raw($this->getSqlCase('catalogo_motivos.motivo') . " as categoria"),
+                DB::raw("COUNT(*) as total_general"),
+                DB::raw("SUM(CASE WHEN base_limpia.sexo_principal = 'H' THEN 1 ELSE 0 END) as total_hombres"),
+                DB::raw("SUM(CASE WHEN base_limpia.sexo_principal = 'M' THEN 1 ELSE 0 END) as total_mujeres")
+            )
+            ->groupBy(DB::raw($this->getSqlCase('catalogo_motivos.motivo')))
+            ->get();
+
+        //Ratificaciones Confirmadas
+            $ratificacionesConfirmadas = DB::table('turnos')
+            ->where(function($query) {
+                $query->where('turnos.incidencia', 0)
+                    ->orWhereNull('turnos.incidencia');
+            })
+            ->whereBetween('turnos.fecha', [$this->fecha_inicial, $this->fecha_final])
+            ->when($this->sede !== "Todos", function ($q) use ($sedeUsuario, $grupos) {
+                if ($this->sede === "TodosDelegado") {
+                    $delegaciones = $grupos[$sedeUsuario] ?? [$sedeUsuario];
+                    return $q->whereIn('turnos.delegacion', $delegaciones);
+                }
+                return $q->where("turnos.delegacion", $this->sede);
+            })
+            ->whereIn('turnos.estatus',["Concluida","Concluida Pagos"])
+            ->select(
+                'turnos.id',
+                DB::raw("
+                    CASE 
+                        WHEN turnos.motivo = 'Terminación voluntaria de la relación de trabajo' THEN 7
+                        WHEN turnos.motivo = 'Pago de prestaciones' THEN 2
+                        ELSE 0 
+                    END as id_motivo_principal
+                "),
+                DB::raw('MIN(turnos.sexo) as sexo_principal')
+            )
+            ->groupBy('turnos.id', 'turnos.motivo');
+
+            // PASO 2: Realizar el conteo final agrupado por el CASE SQL
+            $resultadosratificacionesConfirmadas = DB::table(DB::raw("({$ratificacionesConfirmadas->toSql()}) as base_limpia"))
+                ->mergeBindings($ratificacionesConfirmadas) // Une los parámetros de fecha y sede a la consulta
+                ->leftJoin('catalogo_motivos', 'catalogo_motivos.id', '=', 'base_limpia.id_motivo_principal')
+                ->select(
+                    DB::raw($this->getSqlCase('catalogo_motivos.motivo') . " as categoria"),
+                    DB::raw("COUNT(*) as total_general"),
+                    DB::raw("SUM(CASE WHEN base_limpia.sexo_principal = 'H' THEN 1 ELSE 0 END) as total_hombres"),
+                    DB::raw("SUM(CASE WHEN base_limpia.sexo_principal = 'M' THEN 1 ELSE 0 END) as total_mujeres")
+                )
+                ->groupBy(DB::raw($this->getSqlCase('catalogo_motivos.motivo')))
+                ->get();
+
+        //ARCHIVADAS POR FALTA DE INTERES
+            $Archivadas = DB::table('seer_general')
+            ->join('users', 'users.id', '=', 'seer_general.user_id')
+            ->join('seer_motivos', 'seer_motivos.id_solicitud', '=', 'seer_general.id')
+            ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
+            ->where(function($query) {
+                $query->where('seer_general.incidencia', 0)
+                    ->orWhereNull('seer_general.incidencia');
+            })
+            ->whereBetween('seer_general.fecha', [$this->fecha_inicial, $this->fecha_final])
+            ->when($this->sede !== "Todos", function ($q) use ($sedeUsuario, $grupos) {
+                if ($this->sede === "TodosDelegado") {
+                    $delegaciones = $grupos[$sedeUsuario] ?? [$sedeUsuario];
+                    return $q->whereIn('seer_general.delegacion', $delegaciones);
+                }
+                return $q->where("seer_general.delegacion", $this->sede);
+            })
+            ->where('seer_general.estatus',"Archivada")
+            ->select(
+                'seer_general.id',
+                // Subconsulta para el primer motivo ingresado
+                DB::raw('(SELECT id_motivo FROM seer_motivos WHERE id_solicitud = seer_general.id ORDER BY id ASC LIMIT 1) as id_motivo_principal'),
+                // Si hay 2 solicitantes, MIN asegura un solo sexo para el conteo
+                DB::raw('MIN(seer_solicitante.sexo) as sexo_principal')
+            )
+            ->groupBy('seer_general.id');
+
+            $resultadosArchivadas = DB::table(DB::raw("({$Archivadas->toSql()}) as base_limpia"))
+                ->mergeBindings($Archivadas) // Une los parámetros de fecha y sede a la consulta
+                ->leftJoin('catalogo_motivos', 'catalogo_motivos.id', '=', 'base_limpia.id_motivo_principal')
+                ->select(
+                    DB::raw($this->getSqlCase('catalogo_motivos.motivo') . " as categoria"),
+                    DB::raw("COUNT(*) as total_general"),
+                    DB::raw("SUM(CASE WHEN base_limpia.sexo_principal = 'H' THEN 1 ELSE 0 END) as total_hombres"),
+                    DB::raw("SUM(CASE WHEN base_limpia.sexo_principal = 'M' THEN 1 ELSE 0 END) as total_mujeres")
+                )
+                ->groupBy(DB::raw($this->getSqlCase('catalogo_motivos.motivo')))
+                ->get();
+        
+        //Fin de consultas
+        //Return
         return view('excel.motivos', [
-            'solicitudes' => $this->formatearResultados($resultados),
+            'solicitudes'                           => $this->formatearResultados($resultados),
+            'solicitudesConfirmadas'                => $this->formatearResultados($resultadosConfirmadas),
+            'ratificaciones'                        => $this->formatearResultados($resultadosRatificaciones),
+            'resultadosratificacionesConfirmadas'   => $this->formatearResultados($resultadosratificacionesConfirmadas),
+            'archivadas'                            => $this->formatearResultados($resultadosArchivadas),
         ]);
     }
 }

@@ -723,18 +723,18 @@ class SeerController extends Controller
                 $conciliadores = User::role('Conciliador')->select('id','name')->get();
                 $i = 0;
                 foreach ($conciliadores as $conciliador) {
-                    $conciliacion  = SeerPerGeneral::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final])
-                    ->join("seer_conciliadores","seer_conciliadores.id_solicitud","=","seer_general.id")
-                    ->select(DB::raw('count(seer_conciliadores.id) as Conciliacion'))
+                    $conciliacion  = SeerPerGeneral::whereBetween('audiencias.fecha',[$fecha_inicial,$fecha_final])
+                    ->join("audiencias","audiencias.id_solicitud","=","seer_general.id")
+                    ->select(DB::raw('count(audiencias.id) as Conciliacion'))
                     ->where('seer_general.conciliador_id',$conciliador->id)
-                    ->where('seer_conciliadores.estatus_conciliacion','Conciliacion')
+                    ->whereIn('seer_general.estatus',['Conciliacion','Concluida'])
                     ->first();
         
-                    $noconciliacion  = SeerPerGeneral::whereBetween('seer_general.fecha',[$fecha_inicial,$fecha_final])
-                    ->join("seer_conciliadores","seer_conciliadores.id_solicitud","=","seer_general.id")
-                    ->select(DB::raw('count(seer_conciliadores.id) as NoConciliacion'))
+                    $noconciliacion  = SeerPerGeneral::whereBetween('audiencias.fecha',[$fecha_inicial,$fecha_final])
+                    ->join("audiencias","audiencias.id_solicitud","=","seer_general.id")
+                    ->select(DB::raw('count(audiencias.id) as NoConciliacion'))
                     ->where('seer_general.conciliador_id',$conciliador->id)
-                    ->where('seer_conciliadores.estatus_conciliacion','No conciliacion')
+                    ->where('seer_general.estatus','No conciliacion')
                     ->first();
         
                     $conciliadores[$i]->conciliador     = $conciliacion->Conciliacion;
@@ -1198,7 +1198,7 @@ class SeerController extends Controller
                     $solicitud->ratificaciones = $turno ? $turno->ratificaciones : 0;
                     $solicitud->ratificacionesMonto = $turno ? $turno->ratificacionesMonto : 0;
                 }
-dd($solicitudes);
+
             //Audiencias
                 $audiencias = DB::table('seer_general')
                     ->join('audiencias', 'seer_general.id', '=', 'audiencias.id_solicitud')
