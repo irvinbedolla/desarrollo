@@ -124,7 +124,7 @@
             <div class="kpi-container">
                 
                 <div class="kpi-card" style="margin-left: 3%;">
-                    <span style="font-size: 10px; color: #666;">TOTAL RECAUDADO (AUD + RAT)</span><br>
+                    <span style="font-size: 10px; color: #666;">TOTAL MONTO (AUD + RAT)</span><br>
                     <span class="kpi-value">${{ number_format($solicitudes->sum('cumplimientoAudienciaMonto') + $solicitudes->sum('cumplimientoRatificacionMonto'), 2) }}</span>
                 </div>
 
@@ -160,21 +160,26 @@
                     <td>{{ $s->incompetencia }}</td>
                     <td>{{ $s->cumplimientoRatificacion + $s->cumplimientoAudiencia }}</td>
                     <td class="monto">${{ number_format($s->cumplimientoAudienciaMonto, 2) }}</td>
-                    <td class="monto">${{ number_format($s->cumplimientoRatificacionMonto, 2) }}</td>
+                    <td class="monto">${{ number_format($s->ratificacionesMonto, 2) }}</td>
                 </tr>
                 @php
-                    $t['s'] += $s->solicitudes; $t['c'] += $s->confirmadas;
-                    $t['r'] += $s->ratificaciones; $t['i'] += $s->incompetencia;
+                    $t['s'] += $s->solicitudes; 
+                    $t['c'] += $s->confirmadas;
+                    $t['r'] += $s->ratificaciones; 
+                    $t['i'] += $s->incompetencia;
                     $t['cu'] += ($s->cumplimientoRatificacion + $s->cumplimientoAudiencia);
-                    $t['ma'] += $s->cumplimientoAudienciaMonto; $t['mr'] += $s->cumplimientoRatificacionMonto;
+                    $t['ma'] +=  $s->cumplimientoAudienciaMonto; 
+                    $t['mr'] += $s->ratificacionesMonto;
                 @endphp
                 @endforeach
             </tbody>
             <tfoot>
                 <tr>
                     <td>TOTALES</td>
-                    <td>{{ $t['s'] }}</td><td>{{ $t['c'] }}</td>
-                    <td>{{ $t['r'] }}</td><td>{{ $t['i'] }}</td>
+                    <td>{{ $t['s'] }}</td>
+                    <td>{{ $t['c'] }}</td>
+                    <td>{{ $t['r'] }}</td>
+                    <td>{{ $t['i'] }}</td>
                     <td>{{ $t['cu'] }}</td>
                     <td>${{ number_format($t['ma'], 2) }}</td>
                     <td>${{ number_format($t['mr'], 2) }}</td>
