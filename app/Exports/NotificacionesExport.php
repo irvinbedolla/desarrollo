@@ -109,7 +109,7 @@ class NotificacionesExport implements WithMultipleSheets
         });
 
         // 3. Calculamos los totales
-        $totalesPorNotificador = $notificacionesDireccion->groupBy('nombre_notificador')->map(function ($row) {
+        $totalesPorNotificador = $notificacionesDomicilio->groupBy('nombre_notificador')->map(function ($row) {
             return [
                 'nombre' => $row->first()->nombre_notificador ?? 'Sin asignar',
                 'total' => $row->count(),

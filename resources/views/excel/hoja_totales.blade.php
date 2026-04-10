@@ -7,7 +7,7 @@
         </tr>
         <tr>
             <th style="background-color: #D3D3D3; font-weight: bold; width: 300px;">Notificador</th>
-            <th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">Total Citatorios por Domicilio</th>
+            <th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">Total Citatorios</th>
             <th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">Exitosas</th>
             <th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">No Exitosas</th>
             <th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">Pendientes</th>
