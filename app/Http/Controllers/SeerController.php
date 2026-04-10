@@ -6036,6 +6036,7 @@ class SeerController extends Controller
 
             if (!$existeMulta) {
                 $nuevo_citado = $citado->replicate();
+                $nuevo_citado->fecha = NULL;
                 $nuevo_citado->tipo_notificacion = 'Multa';
                 $nuevo_citado->estatus = 'Sin asignar';
                 $nuevo_citado->audiencia_id = $data['audiencia_id'] ?? request()->query('audiencia_id') ?? $citado->audiencia_id;
@@ -6757,6 +6758,7 @@ class SeerController extends Controller
                     $citado->save();
                 }
                 $nuevo_citado = $citado->replicate();
+                $nuevo_citado->fecha = NULL;
                 $nuevo_citado->notificacion = 'Centro';
                 $nuevo_citado->audiencia_id = $audiencia->id;
                 $nuevo_citado->save();
@@ -6876,6 +6878,8 @@ class SeerController extends Controller
 
             foreach ($citados as $citado) {
                 $nuevo_citado = $citado->replicate();
+                $formattedDate = now()->toDateTimeString();
+                $nuevo_citado->fecha = $formattedDate;
                 $nuevo_citado->notificacion = 'Centro';
                 $nuevo_citado->tipo_notificacion = 'Citatorio';
                 $nuevo_citado->audiencia_id = $audiencia->id; // nueva audiencia
@@ -7039,6 +7043,7 @@ class SeerController extends Controller
 
                     if (!$existeMulta) {
                         $nuevo_citado = $citado->replicate();
+                        $nuevo_citado->fecha = NULL;
                         $nuevo_citado->tipo_notificacion = 'Multa';
                         $nuevo_citado->estatus = 'Sin asignar';
                         $nuevo_citado->audiencia_id = $data['audiencia_id'] ?? request()->query('audiencia_id') ?? $citado->audiencia_id;
