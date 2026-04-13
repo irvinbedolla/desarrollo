@@ -192,38 +192,58 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 12%;">Nombre</th>
-                    <th>Audiencias</th>
-                    <th>Cumpl.</th>
-                    <th>Monto</th>
-                    <th>Conv.</th>
-                    <th>Falta Int.</th>
-                    <th>Incomp.</th>
-                    <th>Multas</th>
-                    <th>Virtual</th>
+                    <th style="width: 18%;">Sede</th>
+                    <th>Audiencias Programadas</th>
+                    <th>Audiencias Celebradas</th>
+                    <th>Convenios</th>
+                    <th>Falta de Int.</th>
+                    <th>Incompetencia</th>
                     <th>1 Aud.</th>
                     <th>2 Aud.</th>
                     <th>3+ Aud.</th>
                 </tr>
             </thead>
             <tbody>
+                @php
+                    $audienicas = ['t'=>0, 'n'=>0, 'nn'=>0, 'p'=>0, 'e'=>0, 'nesc'=>0, 'nensc'=>0, 'ex'=>0, 'f'=>0];
+                @endphp
                 @foreach($audiencias as $a)
-                <tr>
-                    <td>{{ $a->name }}</td>
-                    <td>{{ $a->total_audiencias }}</td>
-                    <td>{{ $a->cumplimientoAudiencia }}</td>
-                    <td class="monto">${{ number_format($a->cumplimientoAudienciaMonto, 2) }}</td>
-                    <td>{{ $a->cumplimientoAudienciaConvenio }}</td>
-                    <td>{{ $a->cumplimientoAudienciaFalta }}</td>
-                    <td>{{ $a->cumplimientoAudienciaIncompetencia }}</td>
-                    <td>{{ $a->multas }}</td>
-                    <td>{{ $a->audiencias_virtuales }}</td>
-                    <td>{{ $a->una_audiencia }}</td>
-                    <td>{{ $a->dos_audiencias }}</td>
-                    <td>{{ $a->tres_audiencias }}</td>
-                </tr>
+                    <tr>
+                        <td>{{ $a->name }}</td>
+                        <td>{{ $a->audienencias_programadas ?? 0 }}</td>
+                        <td>{{ $a->audienencias_celebradas }}</td>
+                        <td>{{ $a->convenios}}</td>
+                        <td>{{ $a->achivada }}</td>
+                        <td>{{ $a->incompetencia ?? 0 }}</td>
+                        <td>{{ $a->una_audiencia }}</td>
+                        <td>{{ $a->dos_audiencias }}</td>
+                        <td>{{ $a->tres_audiencias }}</td>
+                    </tr>
+                    @php 
+                            $audienicas['t'] += $a->audienencias_programadas;
+                            $audienicas['n'] += $a->audienencias_celebradas;
+                            $audienicas['nn'] += $a->convenios;
+                            $audienicas['p'] += $a->achivada;
+                            $audienicas['nesc'] += $a->incompetencia;
+                            $audienicas['nensc'] += $a->una_audiencia;
+                            $audienicas['ex'] += $a->dos_audiencias;
+                            $audienicas['f'] += $a->tres_audiencias;
+                        @endphp
                 @endforeach
             </tbody>
+            <tfoot>
+                    <tr>
+                        <td class="text-left">TOTALES GENERALES</td>
+                        <td>{{ $audienicas['t'] }}</td>
+                        <td>{{ $audienicas['n'] }}</td>
+                        <td>{{ $audienicas['nn'] }}</td>
+                        <td>{{ $audienicas['p'] }}</td>
+                        <td>{{ $audienicas['nesc'] }}</td>
+                        <td>{{ $audienicas['nensc'] }}</td>
+                        <td>{{ $audienicas['ex'] }}</td>
+                        <td>{{ $audienicas['f'] }}</td>
+                    </tr>
+                </tfoot>
         </table>
 
         <div class="page-break"></div> <div class="section-header">Gestión de Notificaciones por Notificador</div>

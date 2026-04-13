@@ -136,8 +136,7 @@
                     <th>Confirmadas</th>
                     <th>Efect. %</th>
                     <th>Ratif.</th>
-                    <th>Incomp.</th>
-                    <th>Cumpl.</th>
+                    <th>Cumplimientos</th>
                     <th>Monto Aud.</th>
                     <th>Monto Rat.</th>
                 </tr>
@@ -151,7 +150,6 @@
                     <td>{{ $s->confirmadas }}</td>
                     <td class="efectividad">{{ number_format($efect, 1) }}%</td>
                     <td>{{ $s->ratificaciones ?? 0 }}</td>
-                    <td>{{ $s->incompetencia }}</td>
                     <td class="bold">{{ $s->cumplimientoRatificacion + $s->cumplimientoAudiencia }}</td>
                     <td class="monto">${{ number_format($s->cumplimientoAudienciaMonto, 2) }}</td>
                     <td class="monto">${{ number_format($s->ratificacionesMonto, 2) }}</td>
@@ -165,11 +163,11 @@
             <thead>
                 <tr>
                     <th style="width: 18%;">Sede</th>
-                    <th>Audiencias</th>
-                    <th>Cumpl.</th>
-                    <th>Monto Aud.</th>
-                    <th>Multas</th>
-                    <th>Virtuales</th>
+                    <th>Audiencias Programadas</th>
+                    <th>Audiencias Celebradas</th>
+                    <th>Convenios</th>
+                    <th>Falta de Int.</th>
+                    <th>Incompetencia</th>
                     <th>1 Aud.</th>
                     <th>2 Aud.</th>
                     <th>3+ Aud.</th>
@@ -179,11 +177,11 @@
                 @foreach($audiencias as $a)
                 <tr>
                     <td class="text-left bold">{{ $a->sede_nombre }}</td>
-                    <td>{{ $a->total_audiencias ?? 0 }}</td>
-                    <td>{{ $a->cumplimientoAudiencia }}</td>
-                    <td class="monto">${{ number_format($a->cumplimientoAudienciaMonto, 2) }}</td>
-                    <td>{{ $a->multas ?? 0 }}</td>
-                    <td>{{ $a->audiencias_virtuales ?? 0 }}</td>
+                    <td>{{ $a->audienencias_programadas ?? 0 }}</td>
+                    <td>{{ $a->audienencias_celebradas }}</td>
+                    <td>{{ $a->convenios}}</td>
+                    <td>{{ $a->achivada }}</td>
+                    <td>{{ $a->incompetencia ?? 0 }}</td>
                     <td>{{ $a->una_audiencia }}</td>
                     <td>{{ $a->dos_audiencias }}</td>
                     <td>{{ $a->tres_audiencias }}</td>
