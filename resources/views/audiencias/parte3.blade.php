@@ -1315,6 +1315,36 @@
                 return toYMD(dt);
             }
 
+            async function addNaturalAndInhabilDays(fechaConfirmacionStr, n, centro) {
+                let inhabiles = [];
+                try {
+                    const res = await fetch(`{{ url('/api/dias-inhabiles-centro') }}?centro=${encodeURIComponent(centro)}`);
+                    const data = await res.json();
+                    inhabiles = data.filter(r => r.user_id === null);
+                } catch(e) {
+                    console.error("Error fetching dias inhabiles", e);
+                }
+
+                function isDiaInhabil(dtStr) {
+                    for(let i=0; i<inhabiles.length; i++) {
+                        if(dtStr >= inhabiles[i].fecha_inicio && dtStr <= inhabiles[i].fecha_final) return true;
+                    }
+                    return false;
+                }
+
+                const [y, m, d] = fechaConfirmacionStr.split('-').map(Number);
+                let dt = new Date(y, m - 1, d);
+                let added = 0;
+                while (added < n) {
+                    dt.setDate(dt.getDate() + 1);
+                    let dtStr = toYMD(dt);
+                    if (!isDiaInhabil(dtStr)) {
+                        added++;
+                    }
+                }
+                return toYMD(dt);
+            }
+
             function addBusinessDaysYMD(ymd, n) {
                 const [y, m, d] = ymd.split('-').map(Number);
                 let dt = new Date(y, m - 1, d); // local
@@ -1326,7 +1356,7 @@
                 return toYMD(dt);
             }
 
-            (function(){
+            (async function(){
 
                 const fechaMinima = calcularFechaMinima();
                 const fechaMinimaStr = fechaMinima.toISOString().slice(0,10);
@@ -1337,7 +1367,13 @@
                 const startOfWeekStr = fechaSemanaInicio.toISOString().slice(0,10);
 
                 const fechaConfirmacion = document.getElementById('fechaConfirmacion').value;
-                const fechaLimite = fechaConfirmacion ? addDaysYMD(fechaConfirmacion, 45) : null;
+                const sede = $('#sedeReagendar').val();
+                let fechaLimite = null;
+                if (fechaConfirmacion && sede) {
+                    fechaLimite = await addNaturalAndInhabilDays(fechaConfirmacion, 46, sede);
+                } else if (fechaConfirmacion) {
+                    fechaLimite = addDaysYMD(fechaConfirmacion, 45); // fallback
+                }
 
 
                 calendarReagendar = new FullCalendar.Calendar(calEl, {

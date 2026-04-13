@@ -1146,8 +1146,12 @@ select[name="municipio_citado"] option {
                                             </div><br>
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
+                                                @if ($general->tipo_solicitud == 1) 
                                                 <label for="password">Identificación Oficial <span style="color:red;">(*)</span></label><br>
+                                                @elseif ($general->tipo_solicitud == 2)
+                                                <label for="password">Identificación Oficial del Representante / Persona Apoderada <span style="color:red;">(*)</span></label><br>
                                                 <a target="_blank" class="btn btn-primary" href="{{ route('documento_identificacion_solicitante_ver', $id) }}">Consultar Documento PDF</a><br>
+                                                @endif
                                             </div>
                                             @if($general->tipo_solicitud != 2)
                                              <div class="col-xs-12 col-sm-12 col-md-6">
@@ -1160,8 +1164,8 @@ select[name="municipio_citado"] option {
                                             @foreach ($solicitantes as $solicitante)
                                                <div class="col-xs-12 col-sm-12 col-md-6 mt-3">
                                                     <div class="form-group">
-                                                        <label for="name">Tipo de Identificación<span style="color:red;"> (*)</span></label>
-                                                        <select name="tipoIdentificacion" class="form-control" required>
+                                                        <label for="name">Tipo de Identificación<span style="color:red;" ></span> (*)</span></label>
+                                                        <select name="tipoIdentificacion" class="form-control" required @if ($general->tipo_solicitud == 2 && $solicitante['identificacion'] != NULL) disabled @endif>
                                                             <option value="">SELECCIONE</option>
                                                             <option value="Credencial de elector"          {{ $solicitante['identificacion'] == 'Credencial de elector' ? "selected" : '' }}   >Credencial de elector</option>
                                                             <option value="Pasaporte"        {{ $solicitante['identificacion'] == 'Pasaporte' ? "selected" : '' }} >Pasaporte</option>
@@ -1173,6 +1177,9 @@ select[name="municipio_citado"] option {
                                                             <option value="Documento migratorio"        {{ $solicitante['identificacion'] == 'Documento migratorio' ? "selected" : '' }} >Documento migratorio</option>
                                                             <option value="Constancia de identidad"        {{ $solicitante['identificacion'] == 'Constancia de identidad' ? "selected" : '' }} >Constancia de identidad</option>                                                 
                                                         </select>
+                                                        @if ($general->tipo_solicitud == 2 && $solicitante['identificacion'] != NULL)
+                                                            <input type="hidden" name="tipoIdentificacion" value="{{ $solicitante['identificacion'] }}">
+                                                        @endif
                                                         <div class="invalid-feedback">
                                                             El campo Tipo de Identificación es obligatorio.
                                                         </div>
@@ -1182,7 +1189,7 @@ select[name="municipio_citado"] option {
                                                 <div class="col-xs-12 col-sm-12 col-md-6 mt-3">
                                                     <div class="form-group">
                                                         <label for="name">Número de identificación<span style="color:red;"> (*)</span></label>
-                                                        <input type="text" name="numeroIdentificacion" maxlength="20" class="form-control" value="{{ $solicitante['num_identificacion'] ?? '' }}" required>
+                                                        <input type="text" name="numeroIdentificacion" maxlength="20" class="form-control" value="{{ $solicitante['num_identificacion'] ?? '' }}" required @if ($general->tipo_solicitud == 2 && $solicitante['num_identificacion'] != NULL) readonly @endif>
                                                             
                                                         <div class="invalid-feedback">
                                                             El campo Número de Identificación es obligatorio.
