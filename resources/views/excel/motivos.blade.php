@@ -84,7 +84,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($ratificaciones as $nombreCategoria => $valores)
+                    @foreach($resultadosratificacionesConfirmadas as $nombreCategoria => $valores)
                         <tr>
                             <td style="text-align: left;">{{ $nombreCategoria }}</td>
                             <td style="text-align: center;">{{ $valores['h'] }}</td>
@@ -96,9 +96,9 @@
                 <tfoot>
                     <tr style="background-color: #f2f2f2; font-weight: bold;">
                         <td style="text-align: right;">TOTAL GENERAL:</td>
-                        <td style="text-align: center;">{{ $ratificaciones->sum('h') }}</td>
-                        <td style="text-align: center;">{{ $ratificaciones->sum('m') }}</td>
-                        <td style="text-align: center;">{{ $ratificaciones->sum('total') }}</td>
+                        <td style="text-align: center;">{{ $resultadosratificacionesConfirmadas->sum('h') }}</td>
+                        <td style="text-align: center;">{{ $resultadosratificacionesConfirmadas->sum('m') }}</td>
+                        <td style="text-align: center;">{{ $resultadosratificacionesConfirmadas->sum('total') }}</td>
                     </tr>
                 </tfoot>
             </table>
@@ -186,7 +186,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($archivadas as $nombreCategoria => $valores)
+                    @foreach($programadas as $nombreCategoria => $valores)
                         <tr>
                             <td style="text-align: left;">{{ $nombreCategoria }}</td>
                             <td style="text-align: center;">{{ $valores['h'] }}</td>
@@ -198,9 +198,9 @@
                 <tfoot>
                     <tr style="background-color: #f2f2f2; font-weight: bold;">
                         <td style="text-align: right;">TOTAL GENERAL:</td>
-                        <td style="text-align: center;">{{ $archivadas->sum('h') }}</td>
-                        <td style="text-align: center;">{{ $archivadas->sum('m') }}</td>
-                        <td style="text-align: center;">{{ $archivadas->sum('total') }}</td>
+                        <td style="text-align: center;">{{ $programadas->sum('h') }}</td>
+                        <td style="text-align: center;">{{ $programadas->sum('m') }}</td>
+                        <td style="text-align: center;">{{ $programadas->sum('total') }}</td>
                     </tr>
                 </tfoot>
             </table>
@@ -220,7 +220,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($archivadas as $nombreCategoria => $valores)
+                    @foreach($celebradas as $nombreCategoria => $valores)
                         <tr>
                             <td style="text-align: left;">{{ $nombreCategoria }}</td>
                             <td style="text-align: center;">{{ $valores['h'] }}</td>
@@ -232,9 +232,9 @@
                 <tfoot>
                     <tr style="background-color: #f2f2f2; font-weight: bold;">
                         <td style="text-align: right;">TOTAL GENERAL:</td>
-                        <td style="text-align: center;">{{ $archivadas->sum('h') }}</td>
-                        <td style="text-align: center;">{{ $archivadas->sum('m') }}</td>
-                        <td style="text-align: center;">{{ $archivadas->sum('total') }}</td>
+                        <td style="text-align: center;">{{ $celebradas->sum('h') }}</td>
+                        <td style="text-align: center;">{{ $celebradas->sum('m') }}</td>
+                        <td style="text-align: center;">{{ $celebradas->sum('total') }}</td>
                     </tr>
                 </tfoot>
             </table>
@@ -254,7 +254,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($archivadas as $nombreCategoria => $valores)
+                    @foreach($convenios as $nombreCategoria => $valores)
                         <tr>
                             <td style="text-align: left;">{{ $nombreCategoria }}</td>
                             <td style="text-align: center;">{{ $valores['h'] }}</td>
@@ -266,9 +266,9 @@
                 <tfoot>
                     <tr style="background-color: #f2f2f2; font-weight: bold;">
                         <td style="text-align: right;">TOTAL GENERAL:</td>
-                        <td style="text-align: center;">{{ $archivadas->sum('h') }}</td>
-                        <td style="text-align: center;">{{ $archivadas->sum('m') }}</td>
-                        <td style="text-align: center;">{{ $archivadas->sum('total') }}</td>
+                        <td style="text-align: center;">{{ $convenios->sum('h') }}</td>
+                        <td style="text-align: center;">{{ $convenios->sum('m') }}</td>
+                        <td style="text-align: center;">{{ $convenios->sum('total') }}</td>
                     </tr>
                 </tfoot>
             </table>
@@ -288,7 +288,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($archivadas as $nombreCategoria => $valores)
+                    @foreach($incompetencia as $nombreCategoria => $valores)
                         <tr>
                             <td style="text-align: left;">{{ $nombreCategoria }}</td>
                             <td style="text-align: center;">{{ $valores['h'] }}</td>
@@ -300,9 +300,9 @@
                 <tfoot>
                     <tr style="background-color: #f2f2f2; font-weight: bold;">
                         <td style="text-align: right;">TOTAL GENERAL:</td>
-                        <td style="text-align: center;">{{ $archivadas->sum('h') }}</td>
-                        <td style="text-align: center;">{{ $archivadas->sum('m') }}</td>
-                        <td style="text-align: center;">{{ $archivadas->sum('total') }}</td>
+                        <td style="text-align: center;">{{ $incompetencia->sum('h') }}</td>
+                        <td style="text-align: center;">{{ $incompetencia->sum('m') }}</td>
+                        <td style="text-align: center;">{{ $incompetencia->sum('total') }}</td>
                     </tr>
                 </tfoot>
             </table>
@@ -322,7 +322,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($archivadas as $nombreCategoria => $valores)
+                    @foreach($archivadaAudiencia as $nombreCategoria => $valores)
                         <tr>
                             <td style="text-align: left;">{{ $nombreCategoria }}</td>
                             <td style="text-align: center;">{{ $valores['h'] }}</td>
@@ -334,9 +334,9 @@
                 <tfoot>
                     <tr style="background-color: #f2f2f2; font-weight: bold;">
                         <td style="text-align: right;">TOTAL GENERAL:</td>
-                        <td style="text-align: center;">{{ $archivadas->sum('h') }}</td>
-                        <td style="text-align: center;">{{ $archivadas->sum('m') }}</td>
-                        <td style="text-align: center;">{{ $archivadas->sum('total') }}</td>
+                        <td style="text-align: center;">{{ $archivadaAudiencia->sum('h') }}</td>
+                        <td style="text-align: center;">{{ $archivadaAudiencia->sum('m') }}</td>
+                        <td style="text-align: center;">{{ $archivadaAudiencia->sum('total') }}</td>
                     </tr>
                 </tfoot>
             </table>
