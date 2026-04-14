@@ -119,7 +119,7 @@
                         FECHA DE EMISIÓN DE DOCUMENTOS: {{ \Carbon\Carbon::parse($audiencia->created_at)->translatedFormat('d \d\e F \d\e\l Y') }}.<br>
                     </b></p>
 
-                    <p> Con fecha <b>{{ \Carbon\Carbon::parse($audiencia->created_at)->translatedFormat('d \d\e F \d\e\l Y') }}</b> siendo las <b>{{ \Carbon\Carbon::now()->translatedFormat('H:i') }}</b> horas, ante esta 
+                    <p> Con fecha <b>{{ \Carbon\Carbon::parse($audiencia->created_at)->translatedFormat('d \d\e F \d\e\l Y') }}</b> siendo las <b>{{ \Carbon\Carbon::parse($audiencia->created_at)->translatedFormat('H:i') }}</b> horas, ante esta 
                         Autoridad Conciliadora, <b>{{ $solicitante->nombre }}</b>, me doy por notificado(a) personalmente de la fecha para la celebración de la Audiencia de Conciliación derivada de 
                         la solicitud con número de identificación único <b>{{ $solicitud->NUE }}</b>, misma que tendrá verificativo el día 
                         <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{ $audiencia->hora }}</b> horas, en la sala <b>{{ $audiencia->sala }}</b> de la Delegación 
