@@ -155,10 +155,9 @@
             const valoresSedesAudiencia         = @json($sedes_audiencias_valores);
             const etiquetasSedesNotificacion    = @json($sedes_notificaciones_labels);
             const valoresSedesNotificacion      = @json($sedes_notificaciones_valores);
-            const etiquetasResumen = @json($labels_resumen);
-            const valoresResumen = @json($valores_resumen);
+            const etiquetasResumen              = @json($labels_resumen);
+            const valoresResumen                = @json($valores_resumen);
 
-            // 1. Efectividad
             new ApexCharts(document.querySelector("#chart-efectividad"), {
                 chart: { type: 'bar', height: 350, toolbar: { show: false } },
                 colors: [colorPrimario],
@@ -166,7 +165,6 @@
                 xaxis: { categories: datosEfectividad.labels }
             }).render();
 
-            // 2. Cantidades
             new ApexCharts(document.querySelector("#chart-cantidades"), {
                 chart: { type: 'bar', height: 350, toolbar: { show: false } },
                 colors: [colorPrimario, colorSecundario],
@@ -177,7 +175,6 @@
                 xaxis: { categories: ['Total', 'Pagados', 'Pendientes'] }
             }).render();
 
-            // 3. Montos
             new ApexCharts(document.querySelector("#chart-montos"), {
                 chart: { type: 'bar', height: 350, toolbar: { show: false } },
                 colors: [colorPrimario, colorSecundario],
@@ -239,7 +236,6 @@
                 }
             }).render();
 
-            // 4. Rendimiento por Auxiliar (Adaptada a ApexCharts Horizontal)
             new ApexCharts(document.querySelector("#chart-auxiliares"), {
                 chart: { type: 'bar', height: 400, toolbar: { show: false } },
                 plotOptions: {
@@ -265,7 +261,6 @@
                 }
             }).render();
 
-            // FUNCIÓN DE EXPORTACIÓN
             function exportToPDF(containerId, fileName) {
                 const element = document.getElementById(containerId);
                 html2canvas(element, {
@@ -283,7 +278,6 @@
                 });
             }
 
-            // 5. Productividad por Auxiliar (Migrado a ApexCharts)
             new ApexCharts(document.querySelector("#chart-productividad"), {
                 chart: { 
                     type: 'bar', 

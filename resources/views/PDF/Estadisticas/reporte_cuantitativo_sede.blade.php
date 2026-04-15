@@ -101,31 +101,6 @@
             $total_conf = $solicitudes->sum('confirmadas');
             $perc_conf = ($total_sol > 0) ? ($total_conf / $total_sol) * 100 : 0;
         @endphp
-        <div class="kpi-container">
-            <div class="kpi-card" style="margin-left: 2%;">
-                <span style="font-size: 9px; color: #666;">AUDIENCIAS DE CONCILIACIÓN CELEBRADAS</span>
-                <span class="kpi-value">{{ $audiencias->sum('total_audiencias') }}</span>
-                <span style="font-size: 8px; color: #888;">TOTAL REGIONAL</span>
-            </div>
-
-            <div class="kpi-card" style="margin-left: 2%;">
-                <span style="font-size: 9px; color: #666;">AUDIENCIAS DE RATIFICACIÓN CELEBRADAS</span>
-                <span class="kpi-value">{{ $ratificacionesTotal }}</span>
-                <span style="font-size: 8px; color: #888;">TOTAL REGIONAL</span>
-            </div>
-
-            <div class="kpi-card" style="margin-left: 2%;">
-                <span style="font-size: 9px; color: #666;">TOTAL AUDIENCIAS CELEBRADAS</span>
-                <span class="kpi-value">{{ $audiencias->sum('total_audiencias') + $ratificacionesTotal}}</span>
-                <span style="font-size: 8px; color: #888;">TOTAL REGIONAL</span>
-            </div>
-
-            <div class="kpi-card" style="margin-left: 2%;">
-                <span style="font-size: 9px; color: #666;">NOTIFICACIONES EXITOSAS</span>
-                <span class="kpi-value">{{ $notificaciones->sum('exitosamente') }}</span>
-                <span style="font-size: 8px; color: #888;">TOTAL REGIONAL</span>
-            </div>
-        </div>
 
         <div class="section-header">Resumen de Solicitudes y Ratificaciones</div>
         <table class="table-report">

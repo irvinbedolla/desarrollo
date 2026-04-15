@@ -919,7 +919,7 @@ class SeerController extends Controller
             return view('PDF/Estadisticas/Graficas',compact('labels','data','ratificacionesData', 'audienciasData','nombres_rati', 'totales_rati', 'detalleSolicitantes','nombres', 'totales', 'sedes_labels', 'sedes_valores', 'solicitudes',
             'dataTurnos', 'sedes_rati_labels', 'sedes_rati_valores','audiencias', 'sedes_audiencias_labels', 'sedes_audiencias_valores','notificaciones', 'sedes_notificaciones_labels', 'sedes_notificaciones_valores',
             'labels_resumen', 
-    'valores_resumen'));
+            'valores_resumen'));
 
             //return view('PDF.Estadisticas.graficaSolicitudes', compact('nombres', 'totales', 'detalleSolicitantes'));
 
@@ -1524,7 +1524,7 @@ class SeerController extends Controller
 
                 //$audienciasConTotal = $audiencias->push((object)$total_audiencias);
                 //$solicitudesConTotal = $solicitudes->push((object)$granTotal);   
-                $notificacionesConTotal = $notificaciones->push((object)$total_notificaciones);
+                //$notificacionesConTotal = $notificaciones->push((object)$total_notificaciones);
                
             
 
@@ -9970,11 +9970,13 @@ class SeerController extends Controller
                         ->where('notificacion', 'Centro')
                         ->where('tipo_notificacion', '!=', 'Multa')
                         ->where('resulte_responsable', 'No')
+                        ->where('audiencia_id', $audienciaId)
                         ->whereNotNull('id_abogado')
                         ->get();
         } else {
             $citados = SeerCitados::where('id_solicitud', $id)
                         ->where('resulte_responsable', 'No')
+                        ->where('audiencia_id', $audienciaId)
                         ->whereNotNull('id_abogado')
                         ->get();
         }
@@ -10120,7 +10122,7 @@ class SeerController extends Controller
                 'num_identificacion' => null,
             ];
         }*/
-        
+       
         $html = view('PDF/Solicitudes/ActaAudiencia', compact('id','solicitud','conciliador','prestaciones','deducciones','deduccionesTexto','pagoTotal','descripcionIdentificacionS',
         'descripcionIdentificacionP','conceptosTexto','solicitante','audiencia','datosAudiencia','citados'))->render();
 

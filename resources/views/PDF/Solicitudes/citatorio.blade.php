@@ -150,16 +150,6 @@
                     </p>
                 @endif
 
-                @php
-                    $longitud = mb_strlen($citado->nombre);
-                    $forzarSalto = $longitud > 245;
-                @endphp
-
-                @if($forzarSalto)
-                    <div style="page-break-before: always;"><br><br><br><br><br><br></div>
-                @else
-                    <br><br><br><br>
-                @endif
 
                 <br><br><br>
                 <p><center><b>___________________________________<br> {{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
@@ -168,7 +158,7 @@
             <script type="text/php">
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");
-                    $size = 10;
+                    $size = 8;
                     $y = $pdf->get_height() - 44;
                     $x = ($pdf->get_width() / 2) - 50;
                     $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
