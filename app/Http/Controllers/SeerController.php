@@ -1436,7 +1436,7 @@ class SeerController extends Controller
 
                 $ratificacionesTotal= $dataTurnos->sum('ratificaciones');
 
-            //Notificadores
+                // Notificadores - Centro
                 $notificaciones = DB::table('seer_general')
                     ->join('seer_citados', 'seer_general.id', '=', 'seer_citados.id_solicitud')
                     ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
@@ -1455,10 +1455,8 @@ class SeerController extends Controller
                         return $q->where("seer_general.delegacion", $sede);
                     })
                     ->select(
-                        'seer_general.delegacion as sede_nombre', // Agrupamos por este campo
+                        'seer_general.delegacion as sede_nombre',
                         DB::raw('COUNT(seer_citados.id) as Todas_notificaciones'),
-                            
-                        // Conteos condicionales por estatus
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Notificada' THEN 1 ELSE 0 END) as notificada"),
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'No notificada' THEN 1 ELSE 0 END) as notificacion_Nonotificada"),
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Pendiente' THEN 1 ELSE 0 END) as notificacion_pendientes"),
@@ -1466,10 +1464,43 @@ class SeerController extends Controller
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'No exitosa se constituye' THEN 1 ELSE 0 END) as notificacion_NESC"),
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'No exitosa no se constituye' THEN 1 ELSE 0 END) as notificacion_NENSC"),
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Finalizado exitosamente' THEN 1 ELSE 0 END) as exitosamente"),
-                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Recibe pero no firma' THEN 1 ELSE 0 END) as firma")
+                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Recibe pero no firma' THEN 1 ELSE 0 END) as firma"),
+                        DB::raw("SUM(CASE WHEN seer_citados.notificacion = 'Centro' THEN 1 ELSE 0 END) as total_centro"),
                     )
                     ->groupBy('seer_general.delegacion')
                     ->get();
+
+                // Notificadores - Solicitante
+                $notificacionesSol = DB::table('seer_general')
+                    ->join('seer_citados', 'seer_general.id', '=', 'seer_citados.id_solicitud')
+                    ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
+                    ->where('seer_citados.estatus', '!=', 'Sin asignar')
+                    ->where('seer_citados.notificacion', 'Trabajador')
+                    ->when($sede !== "Todos", function ($q) use ($sede, $userActual) {
+                        if ($sede === "TodosDelegado") {
+                            $mapaSedes = [
+                                'Morelia' => ['Morelia', 'Zitácuaro'],
+                                'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+                                'Zamora'  => ['Zamora', 'Sahuayo'],
+                            ];
+                            $delegaciones = $mapaSedes[$userActual->delegacion] ?? [$userActual->delegacion];
+                            return $q->whereIn('seer_general.delegacion', $delegaciones);
+                        }
+                        return $q->where("seer_general.delegacion", $sede);
+                    })
+                    ->select(
+                        'seer_general.delegacion as sede_nombre',
+                        DB::raw('COUNT(seer_citados.id) as Todas_notificaciones'),
+                        DB::raw("SUM(CASE WHEN seer_citados.notificacion = 'Trabajador' THEN 1 ELSE 0 END) as total_solicitante"),
+                    )
+                    ->groupBy('seer_general.delegacion')
+                    ->get();
+
+                $notificacionesSolIndexed = $notificacionesSol->keyBy('sede_nombre');
+                foreach ($notificaciones as $notificacion) {
+                    $sede = $notificacion->sede_nombre;
+                    $notificacion->total_solicitante = isset($notificacionesSolIndexed[$sede]) ? $notificacionesSolIndexed[$sede]->total_solicitante : 0;
+                }
 
             //Totales
                 // 2. Cálculo del Gran Total usando la colección de Laravel
@@ -1484,6 +1515,7 @@ class SeerController extends Controller
                     'notificacion_NENSC'        => $notificaciones->sum('notificacion_NENSC'),
                     'exitosamente'              => $notificaciones->sum('exitosamente'),
                     'firma'                     => $notificaciones->sum('firma'),
+                    'total_centro'              => $notificaciones->sum('total_centro'),
                 ];
 
 
@@ -1528,7 +1560,7 @@ class SeerController extends Controller
                
             
 
-            $pdf = \PDF::loadView('PDF/Estadisticas/reporte_cuantitativo_sede', compact('fecha_inicial','fecha_final','solicitudes','audiencias','notificaciones', 'ratificacionesTotal'));
+            $pdf = \PDF::loadView('PDF/Estadisticas/reporte_cuantitativo_sede', compact('fecha_inicial','fecha_final','solicitudes','audiencias','notificaciones', 'notificacionesSol', 'ratificacionesTotal'));
             $pdf->setPaper('legal', 'landscape');
             return $pdf->stream('archivo.pdf');
         }
@@ -1723,12 +1755,20 @@ class SeerController extends Controller
                 })
                 ->selectRaw("
                     COUNT(DISTINCT audiencias.id) as total_count,
-                    SUM(pago_solicitud.monto) as total_monto
+                    SUM(pago_solicitud.monto) as total_monto,
+                    COUNT(CASE WHEN pago_solicitud.estatus = 'Pagado' THEN 1 END) as pagado_audiencias_count,
+                    SUM(CASE WHEN pago_solicitud.estatus = 'Pagado' THEN pago_solicitud.monto ELSE 0 END) as pagado_audiencias_monto,
+                    COUNT(CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN 1 END) as pendiente_audiencias_count,
+                    SUM(CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN pago_solicitud.monto ELSE 0 END) as pendiente_audiencias_monto
                 ")
             ->first();
             // Reasignar a tus variables originales
             $pagosAudiencias      = (object)['audiencias' => $audienciasData->total_count];
             $pagosAudienciasMonto = (object)['audienciasMonto' => $audienciasData->total_monto];
+            $pagosAudienciasPagado         = (object)['audiencias' => $audienciasData->pagado_audiencias_count];
+            $pagosAudienciasMontoPagado    = (object)['audienciasMonto' => $audienciasData->pagado_audiencias_monto];
+            $pagosAudienciaPendiente      = (object)['audiencias' => $audienciasData->pendiente_audiencias_count];
+            $pagosAudienciaMontoPendiente = (object)['audienciasMonto' => $audienciasData->pendiente_audiencias_monto];
             // 3. Consulta para Promedios por Sede
             $promediosPagos = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
                 ->when($sede !== "Todos", function ($q) use ($sede) {
@@ -1904,7 +1944,7 @@ class SeerController extends Controller
             $pdf = \PDF::loadView('PDF/Estadisticas/SolicitudesCantidad',compact('fecha_inicial','fecha_final','solicitudes','usuariosTotal','usuariosDias','promedios'
                 ,'pagosRatificacion','pagosRatificacionMonto'
                 ,'pagosAudiencias','pagosAudienciasMonto','pagosRatificacionPagado','pagosRatificacionMontoPagado'
-                ,'pagosRatificacionPendiente','pagosRatificacionMontoPendiente','promediosPagos','promediosRatificaciones'));
+                ,'pagosRatificacionPendiente','pagosRatificacionMontoPendiente', 'pagosAudienciasPagado', 'pagosAudienciasMontoPagado', 'pagosAudienciaPendiente', 'pagosAudienciaMontoPendiente','promediosPagos','promediosRatificaciones'));
             return $pdf->stream('Productividad.pdf');
         }
         else if($data["tipo_reporte"] == "Convenios"){

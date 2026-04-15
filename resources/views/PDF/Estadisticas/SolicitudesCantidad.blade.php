@@ -164,6 +164,16 @@
                                     <td class="text-left">Total de Audiencias con Convenio</td>
                                     <td>{{ $pagosAudiencias->audiencias }}</td>
                                     <td class="bold">${{ number_format($pagosAudienciasMonto->audienciasMonto, 2) }}</td>
+                                <tr>
+                                    <td class="text-left">Audiencias Pagadas</td>
+                                    <td>{{ $pagosAudienciasPagado->audiencias }}</td>
+                                    <td class="text-success">${{ number_format($pagosAudienciasMontoPagado->audienciasMonto, 2) }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-left">Audiencias Pendientes</td>
+                                    <td>{{ $pagosAudienciaPendiente->audiencias }}</td>
+                                    <td class="text-danger">${{ number_format($pagosAudienciaMontoPendiente->audienciasMonto, 2) }}</td>
+                                </tr>
                                 </tr>
                             </tbody>
                         </table>

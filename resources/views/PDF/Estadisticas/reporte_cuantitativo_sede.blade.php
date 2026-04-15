@@ -197,7 +197,30 @@
                 @endforeach
             </tbody>
         </table>
+
+        <div class="section-header">Total de Notificaciones</div>
+        <table class="table-report">
+            <thead>
+                <tr>
+                    <th style="width: 18%;">Sede</th>
+                    <th>Notificadas por el Centro</th>
+                    <th>Notificadas por el Solicitante</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($notificaciones as $n)
+                @php $efect_n = ($n->Todas_notificaciones > 0) ? ($n->exitosamente / $n->Todas_notificaciones)*100 : 0; @endphp
+                <tr>
+                    <td class="text-left bold">{{ $n->sede_nombre }}</td>
+                    <td>{{ $n->total_centro }}</td>
+                    <td>{{ $n->total_solicitante }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+
         <p style="font-size: 8px; color: #888;">*NESC: No exitosa se constituye / **NENSC: No exitosa no se constituye</p>
+        
 
     </main>
 
