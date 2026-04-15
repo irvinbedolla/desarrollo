@@ -11,6 +11,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CitasExport;
 use App\Http\Controllers\SeerController;
 use App\Models\Audiencias;
+use App\Models\SeerCitados;
 use Illuminate\Support\Facades\Auth;
 
 class AudienciasController extends Controller
@@ -94,6 +95,11 @@ class AudienciasController extends Controller
                     $color = '#CCCCCC';
                 }
 
+                    $citado = SeerCitados::where('id_solicitud', $audiencia->id_solicitud)->first();
+                    $citadoNombre = $citado
+                        ? trim($citado->nombre . " " . ($citado->primer_apellido ?? "") . " " . ($citado->segundo_apellido ?? ""))
+                        : 'S/N';
+
                     $eventos[] = [
                         
                     'id' => $audiencia->id,
@@ -102,6 +108,8 @@ class AudienciasController extends Controller
                     'solicitante' => $audiencia->nombre,
                     'start' => $audiencia->fecha->format('Y-m-d') . 'T' . $audiencia->hora->format('H:i:s'),
                     'extendedProps' => [
+                        'solicitante' => $audiencia->nombre,
+                        'citado' => $citadoNombre,
                         'audiencia_id' => $audiencia->id,
                         'id_solicitud' => $audiencia->id_solicitud,
                         'hora' => $audiencia->hora->format('h:i A'),
@@ -372,6 +380,7 @@ class AudienciasController extends Controller
                         'tipo' => $tipo,
                         'conciliador' => $rati->name,
                         'solicitante' => $trabajador,
+                        'citado' => $rati->empresa,
                     ]
                 ];
         }

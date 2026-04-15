@@ -119,6 +119,8 @@ class CitaController extends Controller
                 'title' => $pago->NUE,
                 'start' => $pago->fecha->format('Y-m-d') . 'T' . $pago->hora->format('H:i:s'),
                 'extendedProps' => [
+                    'solicitante' => $nombre_trabajador,
+                    'citado' => $empresa_turno,
                     'nue' => $pago->NUE,
                     'descripcion' => $pago->descripcion,
                     'hora' => $pago->hora->format('h:i A'),
@@ -278,6 +280,8 @@ class CitaController extends Controller
                     'solicitante' => $pago->nombre_trabajador,
                     'start' => $pago->fecha->format('Y-m-d') . 'T' . $pago->hora->format('H:i:s'),
                     'extendedProps' => [
+                        'solicitante' => $pago->nombre_trabajador,
+                        'citado' => $pago->empresa_representante,
                         'nue' => $pago->NUE,
                         'descripcion' => $pago->descripcion,
                         'hora' => $pago->hora->format('h:i A'),
