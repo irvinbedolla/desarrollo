@@ -105,12 +105,36 @@
             <div id="chart-pastel"></div>
         </div>
 
-        <div class="chart-card" id="container-pastelAudiencia">
+        <div class="chart-card" id="container-pastelRati">
             <div class="chart-header">
                 <h2 class="chart-title">Ratificaciones por Sede</h2>
+                <button class="btn-export" onclick="exportToPDF('container-auxiliares', 'pastelRati')">Descargar Reporte</button>
+            </div>
+            <div id="chart-pastelRati"></div>
+        </div>
+
+        <div class="chart-card" id="container-pastelAudiencia">
+            <div class="chart-header">
+                <h2 class="chart-title">Audiencias por Sede</h2>
                 <button class="btn-export" onclick="exportToPDF('container-auxiliares', 'pastelAudiencia')">Descargar Reporte</button>
             </div>
             <div id="chart-pastelAudiencia"></div>
+        </div>
+
+        <div class="chart-card" id="container-pastelNotificacion">
+            <div class="chart-header">
+                <h2 class="chart-title">Notificaciones por Sede</h2>
+                <button class="btn-export" onclick="exportToPDF('container-auxiliares', 'pastelNotificacion')">Descargar Reporte</button>
+            </div>
+            <div id="chart-pastelNotificacion"></div>
+        </div>
+
+        <div class="chart-card" id="container-resumen-general">
+            <div class="chart-header">
+                <h2 class="chart-title">Total de Actuaciones por Sede</h2>
+                <p style="font-size: 11px; color: #888;">(Suma de Solicitudes, Ratificaciones, Audiencias y Notificaciones)</p>
+            </div>
+            <div id="chart-resumen-general"></div>
         </div>
 
         <script>
@@ -129,7 +153,10 @@
             const valoresSedesRati              = @json($sedes_rati_valores);
             const etiquetasSedesAudiencia       = @json($sedes_audiencias_labels);
             const valoresSedesAudiencia         = @json($sedes_audiencias_valores);
-
+            const etiquetasSedesNotificacion    = @json($sedes_notificaciones_labels);
+            const valoresSedesNotificacion      = @json($sedes_notificaciones_valores);
+            const etiquetasResumen = @json($labels_resumen);
+            const valoresResumen = @json($valores_resumen);
 
             // 1. Efectividad
             new ApexCharts(document.querySelector("#chart-efectividad"), {
@@ -399,7 +426,7 @@
                 tooltip: {
                     y: {
                         formatter: function (val) {
-                            return val + " dataTurnos";
+                            return val + " audiencias";
                         }
                     }
                 },
@@ -417,6 +444,88 @@
             }
             var pastelAudiencia = new ApexCharts(document.querySelector("#chart-pastelAudiencia"), optionsPieAudiencia);
             pastelAudiencia.render();
+
+            var optionsPieNotificacion = {
+                chart: {
+                    type: 'pie', // Cambia a 'donut' si prefieres ese estilo
+                    height: 380,
+                },
+                colors: ['#869b9c', '#5a6a6b', '#3f4d4e', '#a5b7b8', '#ced9d9'], // Paleta acorde a tus colores
+                labels: etiquetasSedesNotificacion, // Ejemplo: ["Morelia", "Uruapan", ...]
+                series: valoresSedesNotificacion,  // Ejemplo: [150, 80, ...]
+                legend: {
+                    position: 'bottom'
+                },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function (val, opts) {
+                        // Muestra el número real además del porcentaje
+                        return opts.w.config.series[opts.seriesIndex];
+                    }
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return val + " notificaciones";
+                        }
+                    }
+                },
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            width: 200
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }]
+            }
+            var pastelNotificacion = new ApexCharts(document.querySelector("#chart-pastelNotificacion"), optionsPieNotificacion);
+            pastelNotificacion.render();
+
+            var optionsResumen = {
+                chart: {
+                    type: 'donut', // 'donut' se ve muy bien para resúmenes generales
+                    height: 400
+                },
+                colors: ['#869b9c', '#5a6a6b', '#3f4d4e', '#a5b7b8', '#ced9d9', '#d16d6a'], 
+                labels: etiquetasResumen,
+                series: valoresResumen,
+                legend: {
+                    position: 'bottom'
+                },
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            labels: {
+                                show: true,
+                                total: {
+                                    show: true,
+                                    label: 'TOTAL',
+                                    formatter: function (w) {
+                                        return w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function (val, opts) {
+                        return opts.w.config.series[opts.seriesIndex];
+                    }
+                },
+                tooltip: {
+                    y: {
+                        formatter: (val) => val + " Actuaciones"
+                    }
+                }
+            };
+
+            new ApexCharts(document.querySelector("#chart-resumen-general"), optionsResumen).render();
 
         </script>
     </main>

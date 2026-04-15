@@ -798,7 +798,7 @@ class SeerController extends Controller
                 $sedes_valores = $solicitudes->pluck('numeroSolicitudes')->toArray();
                 
                 
-                $dataTurnos = DB::table('turnos')
+            $dataTurnos = DB::table('turnos')
                     ->join('pago_solicitud', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
                     ->whereBetween('turnos.fecha', [$fecha_inicial, $fecha_final])
                     ->where(function($query) {
@@ -831,7 +831,7 @@ class SeerController extends Controller
                 // Extraer valores (Número de solicitudes por cada sede)
                 $sedes_rati_valores = $dataTurnos->pluck('ratificaciones')->toArray();
 
-                $audiencias = DB::table('seer_general')
+            $audiencias = DB::table('seer_general')
                     ->join('users', 'users.id', '=', 'seer_general.user_id')
                     ->join('seer_motivos', 'seer_motivos.id_solicitud', '=', 'seer_general.id')
                     ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
@@ -865,10 +865,61 @@ class SeerController extends Controller
                 // Extraer valores (Número de solicitudes por cada sede)
                 $sedes_audiencias_valores = $audiencias->pluck('total_audiencias')->toArray();
 
+            $notificaciones = DB::table('seer_general')
+                ->join('seer_citados', 'seer_general.id', '=', 'seer_citados.id_solicitud')
+                ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
+                ->where('seer_citados.estatus', '!=', 'Sin asignar')
+                ->where('seer_citados.notificacion', 'Centro')
+                ->when($sede !== "Todos", function ($q) use ($sede, $userActual) {
+                    if ($sede === "TodosDelegado") {
+                        $mapaSedes = [
+                            'Morelia' => ['Morelia', 'Zitácuaro'],
+                            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+                            'Zamora'  => ['Zamora', 'Sahuayo'],
+                        ];
+                        $delegaciones = $mapaSedes[$userActual->delegacion] ?? [$userActual->delegacion];
+                        return $q->whereIn('seer_general.delegacion', $delegaciones);
+                    }
+                    return $q->where("seer_general.delegacion", $sede);
+                })
+                ->select(
+                    'seer_general.delegacion as sede_nombre', // Agrupamos por este campo
+                    DB::raw("COUNT(DISTINCT CASE WHEN seer_citados.estatus IN ('Notificada','Finalizado exitosamente','Exitosa por Instructivo','No exitosa se constituye') THEN seer_citados.id END) as notificada"),
+                )
+                ->groupBy('seer_general.delegacion')
+                ->get();
+                // Extraer etiquetas (Nombres de las sedes)
+                $sedes_notificaciones_labels = $notificaciones->pluck('sede_nombre')->toArray();
+                // Extraer valores (Número de solicitudes por cada sede)
+                $sedes_notificaciones_valores = $notificaciones->pluck('notificada')->toArray();
+
+            $resumenGeneral = [];
+            // 1. Sumar Solicitudes
+            foreach ($solicitudes as $item) {
+                $resumenGeneral[$item->sede_nombre] = ($resumenGeneral[$item->sede_nombre] ?? 0) + $item->numeroSolicitudes;
+            }
+            // 2. Sumar Ratificaciones
+            foreach ($dataTurnos as $item) {
+                $resumenGeneral[$item->sede_nombre] = ($resumenGeneral[$item->sede_nombre] ?? 0) + $item->ratificaciones;
+            }
+            // 3. Sumar Audiencias
+            foreach ($audiencias as $item) {
+                $resumenGeneral[$item->sede_nombre] = ($resumenGeneral[$item->sede_nombre] ?? 0) + $item->total_audiencias;
+            }
+            // 4. Sumar Notificaciones
+            foreach ($notificaciones as $item) {
+                $resumenGeneral[$item->sede_nombre] = ($resumenGeneral[$item->sede_nombre] ?? 0) + $item->notificada;
+            }
+
+            // Preparamos los datos finales para la gráfica
+            $labels_resumen = array_keys($resumenGeneral);
+            $valores_resumen = array_values($resumenGeneral);
 
             //Grafica    
             return view('PDF/Estadisticas/Graficas',compact('labels','data','ratificacionesData', 'audienciasData','nombres_rati', 'totales_rati', 'detalleSolicitantes','nombres', 'totales', 'sedes_labels', 'sedes_valores', 'solicitudes',
-            'dataTurnos', 'sedes_rati_labels', 'sedes_rati_valores','audiencias', 'sedes_audiencias_labels', 'sedes_audiencias_valores'));
+            'dataTurnos', 'sedes_rati_labels', 'sedes_rati_valores','audiencias', 'sedes_audiencias_labels', 'sedes_audiencias_valores','notificaciones', 'sedes_notificaciones_labels', 'sedes_notificaciones_valores',
+            'labels_resumen', 
+    'valores_resumen'));
 
             //return view('PDF.Estadisticas.graficaSolicitudes', compact('nombres', 'totales', 'detalleSolicitantes'));
 
