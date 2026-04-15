@@ -1220,12 +1220,17 @@ class SeerController extends Controller
                     ->get();
                
             //Notificadores
-                $notificaciones = DB::table('users')
-                    ->join('seer_citados', 'users.id', '=', 'seer_citados.id_notificador')
-                    ->join('seer_general', 'seer_citados.id_solicitud', '=', 'seer_general.id')
-                    ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
-                    ->where('seer_citados.estatus', '!=', 'Sin asignar')
-                    ->where('seer_citados.notificacion', 'Centro')
+                $notificaciones = SeerPerGeneral::whereBetween('seer_citados.fecha', [$fecha_inicial, $fecha_final])
+                    ->join('catalogo_rama', 'catalogo_rama.id', '=', 'seer_general.id_rama')
+                    ->join('seer_citados', 'seer_general.id', '=', 'seer_citados.id_solicitud')
+                    ->join('seer_solicitante', 'seer_general.id', '=', 'seer_solicitante.id_solicitud')
+                    ->join('users as auxiliar', 'auxiliar.id', '=', 'seer_general.user_id')
+                    ->join('municipios','municipios.id','seer_citados.municipio_citado')
+                    ->leftJoin('users as notificador', 'notificador.id', '=', 'seer_citados.id_notificador')
+                    ->where(function($query) {
+                        $query->where('seer_general.incidencia', 0)
+                        ->orWhereNull('seer_general.incidencia');
+                    })
                     ->when($sede !== "Todos", function ($q) use ($sede) {
                         if ($sede === "TodosDelegado") {
                             $id = auth()->user()->id;
@@ -1247,9 +1252,11 @@ class SeerController extends Controller
                         }
                         return $q->where("seer_general.delegacion", $sede);
                     })
+                    //->when($this->auxiliar !== "Todos", function ($q) { return $q->where('seer_general.user_id', $this->auxiliar); })
+                    //->when($this->notificador !== "Todos", function ($q) { return $q->where('seer_citados.id_notificador', $this->notificador); })
                     ->select(
-                        'users.id as user_id', 
-                        'users.name',
+                        'auxiliar.id as user_id', 
+                        'auxiliar.name',
                         // Total base
                         DB::raw('COUNT(seer_citados.id) as Todas_notificaciones'),
                         
@@ -1263,8 +1270,8 @@ class SeerController extends Controller
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Finalizado exitosamente' THEN 1 ELSE 0 END) as exitosamente"),
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Recibe pero no firma' THEN 1 ELSE 0 END) as firma")
                     )
-                    ->groupBy('users.id', 'users.name')
-                    ->get();    
+                    ->groupBy('auxiliar.id', 'auxiliar.name')
+                    ->get();
                 
                 
             
@@ -1437,26 +1444,46 @@ class SeerController extends Controller
                 $ratificacionesTotal= $dataTurnos->sum('ratificaciones');
 
                 // Notificadores - Centro
-                $notificaciones = DB::table('seer_general')
+                $notificaciones = SeerPerGeneral::whereBetween('seer_citados.fecha', [$fecha_inicial, $fecha_final])
+                    ->join('catalogo_rama', 'catalogo_rama.id', '=', 'seer_general.id_rama')
                     ->join('seer_citados', 'seer_general.id', '=', 'seer_citados.id_solicitud')
-                    ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
-                    ->where('seer_citados.estatus', '!=', 'Sin asignar')
-                    ->where('seer_citados.notificacion', 'Centro')
-                    ->when($sede !== "Todos", function ($q) use ($sede, $userActual) {
+                    ->join('seer_solicitante', 'seer_general.id', '=', 'seer_solicitante.id_solicitud')
+                    ->join('users as auxiliar', 'auxiliar.id', '=', 'seer_general.user_id')
+                    ->join('municipios','municipios.id','seer_citados.municipio_citado')
+                    ->leftJoin('users as notificador', 'notificador.id', '=', 'seer_citados.id_notificador')
+                    ->where(function($query) {
+                        $query->where('seer_general.incidencia', 0)
+                        ->orWhereNull('seer_general.incidencia');
+                    })
+                    ->when($sede !== "Todos", function ($q) use ($sede) {
                         if ($sede === "TodosDelegado") {
-                            $mapaSedes = [
-                                'Morelia' => ['Morelia', 'Zitácuaro'],
-                                'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
-                                'Zamora'  => ['Zamora', 'Sahuayo'],
-                            ];
-                            $delegaciones = $mapaSedes[$userActual->delegacion] ?? [$userActual->delegacion];
-                            return $q->whereIn('seer_general.delegacion', $delegaciones);
+                            $id = auth()->user()->id;
+                            $user = User::find($id);
+                            $sedeUsuario = $user->delegacion;
+            
+                            if($sedeUsuario == "Morelia"){
+                                $delegaciones = ['Morelia', 'Zitácuaro'];
+                                return $q->whereIn('seer_general.delegacion', $delegaciones);
+                            }
+                            else if($sedeUsuario == "Uruapan"){
+                                $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
+                                return $q->whereIn('seer_general.delegacion', $delegaciones);
+                            }
+                            else if($sedeUsuario == "Zamora"){
+                                $delegaciones = ['Zamora', 'Sahuayo'];
+                                return $q->whereIn('seer_general.delegacion', $delegaciones);
+                            }
                         }
                         return $q->where("seer_general.delegacion", $sede);
                     })
+                    //->when($this->auxiliar !== "Todos", function ($q) { return $q->where('seer_general.user_id', $this->auxiliar); })
+                    //->when($this->notificador !== "Todos", function ($q) { return $q->where('seer_citados.id_notificador', $this->notificador); })
                     ->select(
-                        'seer_general.delegacion as sede_nombre',
+                        'seer_general.delegacion as sede_nombre', // Agrupamos por este campo
+                        // Total base
                         DB::raw('COUNT(seer_citados.id) as Todas_notificaciones'),
+                        
+                        // Conteos condicionales por estatus
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Notificada' THEN 1 ELSE 0 END) as notificada"),
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'No notificada' THEN 1 ELSE 0 END) as notificacion_Nonotificada"),
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Pendiente' THEN 1 ELSE 0 END) as notificacion_pendientes"),
@@ -1464,8 +1491,7 @@ class SeerController extends Controller
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'No exitosa se constituye' THEN 1 ELSE 0 END) as notificacion_NESC"),
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'No exitosa no se constituye' THEN 1 ELSE 0 END) as notificacion_NENSC"),
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Finalizado exitosamente' THEN 1 ELSE 0 END) as exitosamente"),
-                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Recibe pero no firma' THEN 1 ELSE 0 END) as firma"),
-                        DB::raw("SUM(CASE WHEN seer_citados.notificacion = 'Centro' THEN 1 ELSE 0 END) as total_centro"),
+                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Recibe pero no firma' THEN 1 ELSE 0 END) as firma")
                     )
                     ->groupBy('seer_general.delegacion')
                     ->get();
@@ -10010,13 +10036,13 @@ class SeerController extends Controller
                         ->where('notificacion', 'Centro')
                         ->where('tipo_notificacion', '!=', 'Multa')
                         ->where('resulte_responsable', 'No')
-                        ->where('audiencia_id', $audienciaId)
+                        //->where('audiencia_id', $audienciaId)
                         ->whereNotNull('id_abogado')
                         ->get();
         } else {
             $citados = SeerCitados::where('id_solicitud', $id)
                         ->where('resulte_responsable', 'No')
-                        ->where('audiencia_id', $audienciaId)
+                        //->where('audiencia_id', $audienciaId)
                         ->whereNotNull('id_abogado')
                         ->get();
         }
