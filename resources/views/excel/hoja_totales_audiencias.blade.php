@@ -12,7 +12,7 @@
             <th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">Finalización 1 audiencia</th>
             <th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">Finalización 2 audiencias</th>
             <th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">Finalización 3 audiencias</th>
-            <th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">Total Audiencias</th>
+            <!--<th style="background-color: #D3D3D3; font-weight: bold; width: 150px;">Total Audiencias</th>-->
         </tr>
     </thead>
     <tbody>
@@ -24,7 +24,7 @@
             <td style="text-align: center;">{{ $t['final_1'] ?? 0 }}</td>
             <td style="text-align: center;">{{ $t['final_2'] ?? 0 }}</td>
             <td style="text-align: center;">{{ $t['final_3'] ?? 0 }}</td>
-            <td style="text-align: center;">{{ $t['total'] }}</td>
+            <!--<td style="text-align: center;">{{ $t['total'] }}</td>-->
         </tr>
         @endforeach
     </tbody>
