@@ -107,13 +107,13 @@
                     Fecha de registro de la solicitud: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}<br>
                     Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ \Carbon\Carbon::parse($audiencia->hora)->format('H:i') }} hrs.<br>
                     Funcionario(a) conciliador(a) responsable: {{ $conciliador->name }}<br>
-                    Asistencia del citado: @if($citado->aparece_convenio==1)Si @else No @endif
+                    Asistencia del citado: @if($citado->id_abogado!=null)Si @else No @endif
                 </b>
                     <center><b>CONSTANCIA DE NO CONCILIACIÓN</b></center><br>
                 </p> 
                 <p>
                     <!--Cuando el citado SI se presenta-->
-                    @if($citado->aparece_convenio==1)
+                    @if($citado->id_abogado!=null)
                         <b>Motivación:</b> Una vez agotada la etapa de conciliación prejudicial, trás dialogar ambas partes y no llegar a un acuerdo conciliatorio, se dejan a salvo los derechos de las partes 
                         para solicitar una nueva fecha de audiencia en términos del artículo 684-E, fracción VIII, último párrafo.<br><br>
 
@@ -123,7 +123,7 @@
                         la presente <b>CONSTANCIA DE NO CONCILIACIÓN</b>.<br><br>
                     @endif
                     <!--Cuando el citado NO se presenta-->
-                    @if($citado->aparece_convenio==0 || $citado->aparece_convenio=='null')
+                    @if($citado->id_abogado==0 || $citado->id_abogado=='null')
                         <b>Motivación:</b> Toda vez que a la audiencia de conciliación, sólo comparecio el solicitante, esta autoridad conciliatoria emite constancia de haber agotado la etapa de conciliación prejudicial obligatoria.<br><br>
 
                         Con fundamento en el artículo 684-E, fracción X y 684-F, de la Ley Federal del Trabajo y artículos 5, primer párrafo y 8, fracción I y IV de la 

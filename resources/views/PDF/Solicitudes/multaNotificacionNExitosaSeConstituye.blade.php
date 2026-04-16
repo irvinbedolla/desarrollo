@@ -176,7 +176,7 @@
 
                         @if($citado->quien_atiende == "OTRA PERSONA") {{-- CUANDO TIPO DE PROBLEMA ES NO LABORA, NO HABITA --}}
                             Mismos que coinciden con las señaladas en la solicitud de conciliación. Asimismo, por los informes que en tal sentido me proporciona la persona con quien se entiende la presente diligencia quien dice llamarse 
-                            <b>{{$citado->nombre_notificacion}}, QUIEN @if($citado->identificacion_notificacion=="NO PROPORCIONA")NO SE IDENTIFICA, @if($citado->motivo_identificacion!=null){{$citado->motivo_identificacion}}.@endif</b>. Procedo 
+                            <b>{{$citado->nombre_notificacion}}, QUIEN @if($citado->identificacion_notificacion=="NO PROPORCIONA")NO SE IDENTIFICA, @elseif($citado->motivo_identificacion!=null){{$citado->motivo_identificacion}}.@endif</b>. Procedo 
                             a especificar su media filiación, que incluye los siguientes rasgos: <b>SEXO {{$citado->genero}}, TEZ {{$citado->tez}}, EDAD {{$citado->edad_filiacion}} AÑOS, ALTURA {{$citado->altura}} M., COMPLEXIÓN {{$citado->complexion}}, 
                             CABELLO {{$citado->cabello}}, OJOS {{$citado->ojos}} Y SEÑAS PARTICULARES: {{$citado->particulares}}. LO ANTERIOR SE HACE DE MANERA APROXIMADA, YA QUE EL SUSCRITO NO ES PERITO EN LA MATERIA.</b> quien <b>{{$citado->relacion_notificacion}}</b> 
                             en el domicilio en que se actúa. Enseguida me identifico en este acto con credencial expedida por el Centro de Conciliación Laboral, oficina estatal {{mb_strtoupper($solicitud->delegacion,'UTF-8')}} que me acredita como Notificador y le 
