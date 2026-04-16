@@ -104,8 +104,8 @@
                             <td>{{ $solicitud->NUE }} </td>
                         </tr> 
                     </table>
-                </div><br><br><br><br>
-                <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br><br>
+                </div><br><br><br>
+                <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br>
                 <p><b>FECHA DE EMISIÓN DEL CITATORIO: </b>{{ \Carbon\Carbon::parse($fechaEmision)->translatedFormat('d \d\e F \d\e\l Y') }}<br>
                 <b>ASUNTO:</b> CITATORIO DE AUDIENCIA DE CONCILIACIÓN<br>
                 <b> SOLICITANTE:</b> {{ $solicitante->nombre }}<br>
@@ -150,14 +150,25 @@
                     </p>
                 @endif
 
-                <br><br><br><br><br>
+                @php
+                    $longitud = mb_strlen($citado->nombre);
+                    $forzarSalto = $longitud > 300;
+                @endphp
+
+                @if($forzarSalto)
+                    <div style="page-break-before: always;"><br><br><br><br><br><br></div>
+                @else
+                    <br><br><br><br>
+                @endif
+
+                <br><br><br>
                 <p><center><b>___________________________________<br> {{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
                         DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center> </p>
             </div>
             <script type="text/php">
                 if (isset($pdf)) {
                     $font = $fontMetrics->get_font("Arial", "normal");
-                    $size = 10;
+                    $size = 8;
                     $y = $pdf->get_height() - 44;
                     $x = ($pdf->get_width() / 2) - 50;
                     $text = "Página {PAGE_NUM} de {PAGE_COUNT}";

@@ -257,9 +257,13 @@
 
 <!-- Modal para archivar audiencia-->
 <div class="modal fade" id="ModalArchivar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <form class='needs-validation novalidate'  method='POST' action="{{route('archivar_audiencia')}}">
+    <form class='needs-validation novalidate'  method='POST' action="{{route('archivar_audiencia_parte3')}}">
         @csrf
         <input type="text" id="solicitud-id" name="id" value="{{ $id }}">
+        <input type="hidden" name="audiencia_id" value="{{ request()->query('audiencia_id') }}">
+        <input type="hidden" name="primera" id="archivar_primera" value="">
+        <input type="hidden" name="justificacion" id="archivar_justificacion" value="">
+        <input type="hidden" name="segunda" id="archivar_segunda" value="">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -287,6 +291,7 @@
     <form class='needs-validation novalidate'  method='POST' action="{{route('reagendar_audiencia_parte3')}}">
         @csrf
         <input type="hidden" id="modal-id-reagendar" name="id" value="">
+        <input type="hidden" name="audiencia_id" value="{{ request()->query('audiencia_id') }}">
         <input type="hidden" id="fechaConfirmacion" value= "{{ $fechaConfirmacion }}">
         <input type="hidden" name="primera" id="reagenda_primera" value="">
         <input type="hidden" name="justificacion" id="reagenda_justificacion" value="">
@@ -931,6 +936,13 @@
             else if (valorSeleccionado === 'Archivada por incomparecencia') {
                 const confirmar = confirm("¿Estás seguro de que deseas archivar esta audiencia?");
                 if (confirmar) {
+                    var primeraValA = $('textarea[name="primera"]').val() || '';
+                    var justificacionValA = $('textarea[name="justificacion"]').val() || '';
+                    var segundaValA = $('textarea[name="segunda"]').val() || '';
+                    $('#archivar_primera').val(primeraValA);
+                    $('#archivar_justificacion').val(justificacionValA);
+                    $('#archivar_segunda').val(segundaValA);
+
                     $('#ModalArchivar').modal('show');
                     document.getElementById('no_conciliacion').style.display = "none";
                     document.getElementById('archivada').style.display = "block";
@@ -1303,6 +1315,36 @@
                 return toYMD(dt);
             }
 
+            async function addNaturalAndInhabilDays(fechaConfirmacionStr, n, centro) {
+                let inhabiles = [];
+                try {
+                    const res = await fetch(`{{ url('/api/dias-inhabiles-centro') }}?centro=${encodeURIComponent(centro)}`);
+                    const data = await res.json();
+                    inhabiles = data.filter(r => r.user_id === null);
+                } catch(e) {
+                    console.error("Error fetching dias inhabiles", e);
+                }
+
+                function isDiaInhabil(dtStr) {
+                    for(let i=0; i<inhabiles.length; i++) {
+                        if(dtStr >= inhabiles[i].fecha_inicio && dtStr <= inhabiles[i].fecha_final) return true;
+                    }
+                    return false;
+                }
+
+                const [y, m, d] = fechaConfirmacionStr.split('-').map(Number);
+                let dt = new Date(y, m - 1, d);
+                let added = 0;
+                while (added < n) {
+                    dt.setDate(dt.getDate() + 1);
+                    let dtStr = toYMD(dt);
+                    if (!isDiaInhabil(dtStr)) {
+                        added++;
+                    }
+                }
+                return toYMD(dt);
+            }
+
             function addBusinessDaysYMD(ymd, n) {
                 const [y, m, d] = ymd.split('-').map(Number);
                 let dt = new Date(y, m - 1, d); // local
@@ -1314,7 +1356,7 @@
                 return toYMD(dt);
             }
 
-            (function(){
+            (async function(){
 
                 const fechaMinima = calcularFechaMinima();
                 const fechaMinimaStr = fechaMinima.toISOString().slice(0,10);
@@ -1325,7 +1367,13 @@
                 const startOfWeekStr = fechaSemanaInicio.toISOString().slice(0,10);
 
                 const fechaConfirmacion = document.getElementById('fechaConfirmacion').value;
-                const fechaLimite = fechaConfirmacion ? addDaysYMD(fechaConfirmacion, 45) : null;
+                const sede = $('#sedeReagendar').val();
+                let fechaLimite = null;
+                if (fechaConfirmacion && sede) {
+                    fechaLimite = await addNaturalAndInhabilDays(fechaConfirmacion, 46, sede);
+                } else if (fechaConfirmacion) {
+                    fechaLimite = addDaysYMD(fechaConfirmacion, 45); // fallback
+                }
 
 
                 calendarReagendar = new FullCalendar.Calendar(calEl, {

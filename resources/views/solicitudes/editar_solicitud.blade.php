@@ -500,7 +500,256 @@ select[name="municipio_citado"] option {
                                                         <input type="text" class="form-control" name="calle3_solicitante" value="<?=$solicitante["calle3"];?>">   
                                                     </div>
                                                 </div>
-                                                
+
+                                                @if($general->tipo_solicitud == 2)
+                                                    @if(optional($solicitante->poder)->reprecentante == 'Si')
+                                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                                            <div class="form-group">
+                                                                <h4 class="text-center">Datos del representante</h4>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                                        <div class="form-group">
+                                                            <h5 class="text-center" style="color:#CEA845">Información del Representante Legal</h5>
+                                                        </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                                            <div class="form-group">
+                                                                <h5 class="text-center">Datos de identificación</h5>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="name">Nombre(s) del representante<span style="color:red;">(*)</span></label>
+                                                                <input type="text" name="nombre_representante_pF" value="{{ $solicitante->poder->nombre_representante }}" class="form-control" oninput="this.value = this.value.toUpperCase()" disabled> 
+                                                                <div class="invalid-feedback">
+                                                                    El nombre es obligatorio.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="name">Primer apellido <span style="color:red;">(*)</span></label>
+                                                                <input type="text" name="primer_representante_pF" value="{{ $solicitante->poder->primer_apellido_representante }}" class="form-control" oninput="this.value = this.value.toUpperCase()" disabled> 
+                                                                <div class="invalid-feedback">
+                                                                    El primer apellido es obligatorio.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="name">Segundo apellido <span style="color:red;">(*)</span></label>
+                                                                <input type="text" name="segundo_representante_pF" value="{{ $solicitante->poder->segundo_apellido_representante }}" class="form-control" oninput="this.value = this.value.toUpperCase()" disabled> 
+                                                                <div class="invalid-feedback">
+                                                                    El segundo apellido es obligatorio.
+                                                                </div>
+                                                            </div>
+                                                        </div>  
+                                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="">CURP</label>
+                                                                <input type="text" class="form-control" name="curp_representante_pF" value="{{$solicitante->poder->curp_representante }}" minlength="18" maxlength="18" oninput="this.value = this.value.toUpperCase()" disabled>
+                                                                <div class="invalid-feedback">
+                                                                    La CURP es obligatoria.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="name">Sexo <span style="color:red;">(*)</span></label>
+                                                                <select name="sexo_representante_pF" id="sexo_representante_pF" class="form-control" disabled>
+                                                                    <option value="">Seleccione</option>
+                                                                    <option value="Femenino"    {{ $solicitante->poder["sexo_representante"] == "Femenino" ? "selected" : '' }}>Femenino</option>
+                                                                    <option value="Masculino"   {{ $solicitante->poder["sexo_representante"] == "Masculino" ? "selected" : '' }}>Masculino</option>
+                                                                    <option value="Prefiero no responder">Prefiero no responder</option>
+                                                                </select>
+                                                                <div class="invalid-feedback">
+                                                                    El tipo de persona es obligatorio.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                                        <div class="form-group">
+                                                                <h5 class="text-center">Datos de contacto</h5>
+                                                            </div>
+                                                        </div> 
+
+                                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="">Correo electrónico <span style="color:red;">(*)</span></label>
+                                                                <input type="email" class="form-control" name="correo_representante_pF" value="{{$solicitante->poder->correo_representante }}" disabled>
+                                                                <div class="invalid-feedback">
+                                                                    El Correo electrónico es obligatorio.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="">Teléfono <span style="color:red;">(*)</span></label>
+                                                                <input type="text" class="form-control"  name="telefono_representante_pF" value="{{$solicitante->poder->numero_representante }}" maxlength="10" pattern="[0-9]+" disabled>
+                                                                <div class="invalid-feedback">
+                                                                    El telefono es obligatorio.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="name">Identificación Oficial<span style="color:red;">(*)</span></label>
+                                                                    <select  name="tipo_identificacion_pFCR" class="form-control" disabled>
+                                                                        <option value="">Seleccione el tipo de indentificación</option>
+                                                                        <option value="Credencial de elector" {{ $solicitante->poder["tipo_identificacion"] == "Credencial de elector" ? "selected" : '' }} >Credencial de Elector</option>
+                                                                        <option value="Pasaporte" {{ $solicitante->poder["tipo_identificacion"] == "Pasaporte" ? "selected" : '' }}>Pasaporte</option>
+                                                                        <option value="Cédula profesional" {{ $solicitante->poder["tipo_identificacion"] == "Cédula profesional" ? "selected" : '' }}>Cédula Profesional</option>
+                                                                        <option value="Licencia de conducir" {{ $solicitante->poder["tipo_identificacion"] == "Licencia de conducir" ? "selected" : '' }}>Licencia de Conducir</option>
+                                                                        <option value="Credencial de inapam" {{ $solicitante->poder["tipo_identificacion"] == "Credencial de inapam" ? "selected" : '' }}>Credencial de INAPAM</option>
+                                                                        <option value="Cartilla militar" {{ $solicitante->poder["tipo_identificacion"] == "Cartilla militar" ? "selected" : '' }}>Cartilla Militar</option>
+                                                                        <option value="Documento migratorio" {{ $solicitante->poder["tipo_identificacion"] == "Documento migratorio" ? "selected" : '' }}>Documento Migratorio</option>
+                                                                        <option value="Constancia de identidad" {{ $solicitante->poder["tipo_identificacion"] == "Constancia de identidad" ? "selected" : '' }}>Constancia de Identidad</option>
+                                                                        <option value="Otro" {{ $solicitante->poder["tipo_identificacion"] == "Otro" ? "selected" : '' }}>Otros</option>
+                                                                    </select>
+                                                                    <div class="invalid-feedback">
+                                                                        Este campo identificación es obligatorio.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xs-12 col-sm-12 col-md-6"> 
+                                                                <div class="form-group">
+                                                                    <label for="name">Núm de identificación <span style="color:red;">(*)</span> <span data-bs-toggle="modal" data-bs-target="#helpModal" style="cursor: pointer;">❓</span></label>
+                                                                    <input type="text" name="num_identificacion_pFCR" class="form-control" oninput="this.value = this.value.toUpperCase()"  value="{{$solicitante->poder->num_identificacion }}" disabled> 
+                                                                    <div class="invalid-feedback">
+                                                                        El campo núm. de identificación es obligatorio.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                                            <div class="form-group">
+                                                                <h5 class="text-center" style="color:#CEA845">Datos de la documentación que acredite la personeria</h5>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-12 col-sm-12 col-md-4">  
+                                                            <div class="form-group">
+                                                                <label for="name">Tipo de documento <span style="color:red;">(*)</span></label>
+                                                                <select name="tipo_documento_pF" id="tipo_documento_pF" class="form-control" disabled>
+                                                                    <option value="">Seleccione</option>
+                                                                    <option value="Carta Poder" {{ $solicitante->poder["tipo_documento_representante"] == "Carta Poder" ? "selected" : '' }}>Carta Poder</option>
+                                                                    <option value="Instrumento Notarial" {{ $solicitante->poder["tipo_documento_representante"] == "Instrumento Notarial" ? "selected" : '' }}>Instrumento Notarial</option>
+                                                                </select>
+                                                                <div class="invalid-feedback">
+                                                                    El campo es obligatorio.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-4">
+                                                            <div class="form-group">
+                                                                <label for="">Fecha expedición <span style="color:red;">(*)</span></label>
+                                                                <input type="date" class="form-control" name="fecha_expedicion_pF" value="{{$solicitante->poder->fechaRegistro }}" disabled>
+                                                                <div class="invalid-feedback">
+                                                                    La fecha es obligatoria.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-4">
+                                                            <div class="form-group">
+                                                                <label for="">Fecha vigencia</label>
+                                                                <input type="date" class="form-control" name="fecha_vigencia_pF" value="{{$solicitante->poder->fechaVigencia }}" disabled>
+                                                                <div class="invalid-feedback">
+                                                                    La fecha es obligatoria.
+                                                                </div>
+                                                            </div>
+                                                        </div>  
+                                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                                            <div class="form-group">
+                                                                <label for="">Descripción del documento que acredite la personaria</label>
+                                                                <textarea class="form-control" aria-describedby="basic-addon1" name="descripcion_pF" disabled>{{$solicitante->poder->descipcion_poder}}</textarea>
+                                                                <div class="invalid-feedback">
+                                                                    La descripción es obligatoria.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                                            <div class="form-group">
+                                                                <h5 class="text-center" style="color:#CEA845">Documentos</h5>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                @if($solicitante->poder->tipo == 'Fisica')
+                                                                    <label>*Identificación del Empleador</label><br>
+                                                                @else
+                                                                    <label>*Acta Constitutiva</label><br>
+                                                                @endif
+                                                                <a target="_blank" class="btn btn-primary" href="../storage/app/documentos_abogados/{{$solicitante->poder->ineDocumento}}">Existente</a>
+                                                                <div class="invalid-feedback">
+                                                                    La Identificación es obligatoria.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label>*Identificación del Representante Legal</label><br>
+                                                                @if($solicitante->poder->representacionDocumento != NULL)
+                                                                    <a target="_blank" class="btn btn-primary" href="../storage/app/documentos_abogados/{{$solicitante->poder->representacionDocumento}}">Existente</a>
+                                                                @endif
+                                                                <div class="invalid-feedback">
+                                                                    El documento de representación es obligatorio.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label>*Documento que acredite la personería</label><br>
+                                                                @if($solicitante->poder->cedulaDocumento != NULL)
+                                                                    <a target="_blank" class="btn btn-primary" href="../storage/app/documentos_abogados/{{$solicitante->poder->cedulaDocumento}}">Existente</a>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label>Anexo (Documentos Complementarios)</label><br>
+                                                                @if($solicitante->poder->anexo_documeto != "Sin anexo")
+                                                                    <a target="_blank" class="btn btn-primary" href="../storage/app/documentos_abogados/{{$solicitante->poder->anexo_documeto}}">Existente</a>
+                                                                @else
+                                                                    <a class="btn btn-secondary disabled" href="#" tabindex="-1" aria-disabled="true">Sin anexo</a>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    @else
+                                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                                            <div class="form-group">
+                                                                <h4 class="text-center">Documentos del representante</h4>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label>*Identificación del Empleador</label><br>
+                                                                <a target="_blank" class="btn btn-primary" href="../storage/app/documentos_abogados/{{$solicitante->poder->ineDocumento}}">Existente</a>
+                                                                <div class="invalid-feedback">
+                                                                    La Identificación es obligatoria.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label>Anexo (Documentos Complementarios)</label><br>
+                                                                @if($solicitante->poder->anexo_documeto != "Sin anexo")
+                                                                    <a target="_blank" class="btn btn-primary" href="../storage/app/documentos_abogados/{{$solicitante->poder->anexo_documeto}}">Existente</a>
+                                                                @else
+                                                                    <a class="btn btn-secondary disabled" href="#" tabindex="-1" aria-disabled="true">Sin anexo</a>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+
+                                                    @endif
+                                                @endif
                                                 
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="form-group">
@@ -897,20 +1146,26 @@ select[name="municipio_citado"] option {
                                             </div><br>
 
                                             <div class="col-xs-12 col-sm-12 col-md-6">
+                                                @if ($general->tipo_solicitud == 1) 
                                                 <label for="password">Identificación Oficial <span style="color:red;">(*)</span></label><br>
+                                                @elseif ($general->tipo_solicitud == 2)
+                                                <label for="password">Identificación Oficial del Representante / Persona Apoderada <span style="color:red;">(*)</span></label><br>
                                                 <a target="_blank" class="btn btn-primary" href="{{ route('documento_identificacion_solicitante_ver', $id) }}">Consultar Documento PDF</a><br>
+                                                @endif
                                             </div>
+                                            @if($general->tipo_solicitud != 2)
                                              <div class="col-xs-12 col-sm-12 col-md-6">
                                                 <label for="password">Reemplazar Identificación Oficial</label><br>
                                                 <input type="file" name="documentoIdentificacion" accept=".pdf" class="form-control">
                                             </div>
+                                            @endif
                                             <br>
 
                                             @foreach ($solicitantes as $solicitante)
                                                <div class="col-xs-12 col-sm-12 col-md-6 mt-3">
                                                     <div class="form-group">
-                                                        <label for="name">Tipo de Identificación<span style="color:red;"> (*)</span></label>
-                                                        <select name="tipoIdentificacion" class="form-control" required>
+                                                        <label for="name">Tipo de Identificación<span style="color:red;" ></span> (*)</span></label>
+                                                        <select name="tipoIdentificacion" class="form-control" required @if ($general->tipo_solicitud == 2 && $solicitante['identificacion'] != NULL) disabled @endif>
                                                             <option value="">SELECCIONE</option>
                                                             <option value="Credencial de elector"          {{ $solicitante['identificacion'] == 'Credencial de elector' ? "selected" : '' }}   >Credencial de elector</option>
                                                             <option value="Pasaporte"        {{ $solicitante['identificacion'] == 'Pasaporte' ? "selected" : '' }} >Pasaporte</option>
@@ -922,6 +1177,9 @@ select[name="municipio_citado"] option {
                                                             <option value="Documento migratorio"        {{ $solicitante['identificacion'] == 'Documento migratorio' ? "selected" : '' }} >Documento migratorio</option>
                                                             <option value="Constancia de identidad"        {{ $solicitante['identificacion'] == 'Constancia de identidad' ? "selected" : '' }} >Constancia de identidad</option>                                                 
                                                         </select>
+                                                        @if ($general->tipo_solicitud == 2 && $solicitante['identificacion'] != NULL)
+                                                            <input type="hidden" name="tipoIdentificacion" value="{{ $solicitante['identificacion'] }}">
+                                                        @endif
                                                         <div class="invalid-feedback">
                                                             El campo Tipo de Identificación es obligatorio.
                                                         </div>
@@ -931,7 +1189,7 @@ select[name="municipio_citado"] option {
                                                 <div class="col-xs-12 col-sm-12 col-md-6 mt-3">
                                                     <div class="form-group">
                                                         <label for="name">Número de identificación<span style="color:red;"> (*)</span></label>
-                                                        <input type="text" name="numeroIdentificacion" maxlength="20" class="form-control" value="{{ $solicitante['num_identificacion'] ?? '' }}" required>
+                                                        <input type="text" name="numeroIdentificacion" maxlength="20" class="form-control" value="{{ $solicitante['num_identificacion'] ?? '' }}" required @if ($general->tipo_solicitud == 2 && $solicitante['num_identificacion'] != NULL) readonly @endif>
                                                             
                                                         <div class="invalid-feedback">
                                                             El campo Número de Identificación es obligatorio.

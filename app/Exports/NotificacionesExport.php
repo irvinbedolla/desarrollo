@@ -24,11 +24,12 @@ class NotificacionesExport implements WithMultipleSheets
         $user = auth()->user();
         $sedeUsuario = $user->delegacion;
 
-        $notificaciones = SeerPerGeneral::whereBetween('seer_general.fecha', [$this->fecha_inicial, $this->fecha_final])
+        $notificaciones = SeerPerGeneral::whereBetween('seer_citados.fecha', [$this->fecha_inicial, $this->fecha_final])
             ->join('catalogo_rama', 'catalogo_rama.id', '=', 'seer_general.id_rama')
             ->join('seer_citados', 'seer_general.id', '=', 'seer_citados.id_solicitud')
             ->join('seer_solicitante', 'seer_general.id', '=', 'seer_solicitante.id_solicitud')
             ->join('users as auxiliar', 'auxiliar.id', '=', 'seer_general.user_id')
+            ->join('municipios','municipios.id','seer_citados.municipio_citado')
             ->leftJoin('users as notificador', 'notificador.id', '=', 'seer_citados.id_notificador')
             ->where(function($query) {
                 $query->where('seer_general.incidencia', 0)
@@ -51,11 +52,12 @@ class NotificacionesExport implements WithMultipleSheets
             ->orderBy('seer_citados.fecha')
             ->get();
 
-        $notificacionesDomicilio = SeerPerGeneral::whereBetween('seer_general.fecha', [$this->fecha_inicial, $this->fecha_final])
+        $notificacionesDomicilio = SeerPerGeneral::whereBetween('seer_citados.fecha', [$this->fecha_inicial, $this->fecha_final])
             ->join('catalogo_rama', 'catalogo_rama.id', '=', 'seer_general.id_rama')
             ->join('seer_citados', 'seer_general.id', '=', 'seer_citados.id_solicitud')
             ->join('seer_solicitante', 'seer_general.id', '=', 'seer_solicitante.id_solicitud')
             ->join('users as auxiliar', 'auxiliar.id', '=', 'seer_general.user_id')
+            ->join('municipios','municipios.id','seer_citados.municipio_citado')
             ->leftJoin('users as notificador', 'notificador.id', '=', 'seer_citados.id_notificador')
             ->where(function($query) {
                 $query->where('seer_general.incidencia', 0)
@@ -73,9 +75,27 @@ class NotificacionesExport implements WithMultipleSheets
             ->select(
                 'seer_general.NUE','seer_general.actividad','seer_general.delegacion',
                 'seer_citados.fecha','seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido',
-                'seer_citados.calle','seer_citados.n_ext','seer_citados.colonia','seer_citados.calle','seer_citados.estatus',
-                'seer_solicitante.nombre as nombre_solicitante', 'notificador.name as nombre_notificador', 'auxiliar.name as auxiliar')
-            ->get();
+                'seer_citados.calle','seer_citados.n_ext','seer_citados.colonia','seer_citados.calle','seer_citados.estatus', 'seer_citados.notificacion',
+                'seer_solicitante.nombre as nombre_solicitante', 'notificador.name as nombre_notificador', 'auxiliar.name as auxiliar','municipios.nombre as municipio')
+            ->get()
+        
+            ->map(function ($item) {
+                $estatusActual = trim($item->estatus);
+
+                $estatusInvalidos = [
+                    'Sin asignar', 
+                    //'No exitosa se constituye', 
+                    'Pendiente', 
+                    //'No notificada'
+                ];
+
+                if (in_array($item->estatus, $estatusInvalidos)) {
+                    $item->fecha = null;
+                    //$item->hora = null;
+                }
+
+                return $item;
+            });
 
         // 2. Filtramos la colección con limpieza de texto (Case-insensitive y Trim)
         $notificacionesDireccion = $notificacionesDomicilio->unique(function ($item) {
@@ -89,13 +109,13 @@ class NotificacionesExport implements WithMultipleSheets
         });
 
         // 3. Calculamos los totales
-        $totalesPorNotificador = $notificacionesDireccion->groupBy('nombre_notificador')->map(function ($row) {
+        $totalesPorNotificador = $notificacionesDomicilio->groupBy('nombre_notificador')->map(function ($row) {
             return [
                 'nombre' => $row->first()->nombre_notificador ?? 'Sin asignar',
                 'total' => $row->count(),
                 'notificadas' => $row->whereIn('estatus', ['Notificada','Finalizado exitosamente','Recibe pero no firma','Exitosa por Instructivo'])->count(),
                 'no_notificadas' => $row->whereIn('estatus', ['No notificada','No exitosa se constituye','No exitosa no se constituye'])->count(),
-                'pendientes' => $row->whereIn('estatus', ['Pendiente'])->count(),
+                'pendientes' => $row->whereIn('estatus', ['Pendiente', 'Sin asignar'])->count(),
                 'exhorto' => $row->whereIn('estatus', ['Exhorto'])->count(),
             ];
         });
@@ -104,7 +124,7 @@ class NotificacionesExport implements WithMultipleSheets
         // 4. Retornamos las hojas pasando los datos específicos a cada una
         return [
             new NotificacionesTotalesSheet($totalesPorNotificador), // Hoja 1
-            new NotificacionesDetalleSheet($notificaciones),       // Hoja 2
+            new NotificacionesDetalleSheet($notificacionesDomicilio),       // Hoja 2
         ];
     }
 }

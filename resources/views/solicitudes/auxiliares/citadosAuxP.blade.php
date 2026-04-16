@@ -414,12 +414,12 @@
                                                 <input type="file" class="form-control" name="foto2" accept="image/*">
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                        <!--div class="col-xs-12 col-sm-12 col-md-12">
                                             <div class="form-group">
                                                 <h4 class="text-center">En caso de ser mayor de edad subir su identificación y en caso de ser menor su identificación es su Acta de Nacimiento</h4>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-4">
+                                        <div-- class="col-xs-12 col-sm-12 col-md-4">
                                             <div class="form-group">
                                                 <label>Subir Identificación oficial <span style="color:red;">(*)</span></label>
                                                 <input type="file" id="documentoIdentificacion" name="documentoIdentificacion" class="form-control" accept=".pdf" required>
@@ -427,7 +427,7 @@
                                                     El documento con la identificación es obligatorio.
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div-->
                                     </div>
 
                                     <div class="col-xs-12 col-sm-12 col-md-12">

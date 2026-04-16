@@ -2,7 +2,7 @@
     <thead>
         <tr>
             <th style="background-color: #4CAF50; color: #ffffff; font-weight: bold; text-align: center;" colspan="6">
-                RESUMEN DE NOTIFICACIONES POR NOTIFICADOR
+                RESUMEN DE NOTIFICACIONES POR NOTIFICADOR (Filtrado por domicilio)
             </th>
         </tr>
         <tr>

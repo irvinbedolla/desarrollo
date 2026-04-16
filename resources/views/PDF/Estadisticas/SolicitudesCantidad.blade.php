@@ -94,26 +94,8 @@
                     </td>
                 </tr>
             </table>
-                </div><br><br><br>
-                <!-- Reporte Solicitudes Monto -->
-                <div class="section-title">Reporte General de Solicitudes</div>
-                    <table class="table-report">
-                        <tr>
-                            <th style="width: 40%;">Usuario</th>
-                            <th>Solicitudes</th>
-                            <th>Confirmadas</th>
-                        </tr>
-                        <tbody> 
-                           @foreach($solicitudes as $usuario)
-                                <tr>
-                                    <td class="text-left">{{ $usuario->name }}</td>
-                                    <td>{{ $usuario->solicitudes }}</td>
-                                    <td>{{ $usuario->confirmadas }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                </div><br>
+                
 
                 <!-- Reporte cumplimientos Monto -->
                 <div class="section-title">Reporte General de Ratificaciones</div>
@@ -144,7 +126,31 @@
                         </tbody>
                     </table>
 
-                    <div class="section-title">Reporte General de Audiencia</div>
+                    <div class="section-title">Promedio Ratificaciones Diarias</div>
+                        <table class="table-report">
+                            <thead>
+                                <tr>
+                                    <th>Sede</th>
+                                    <th>Pagos Totales</th>
+                                    <th>Días Activos</th>
+                                    <th>Promedio Diario</th>
+                                </tr>
+                            </thead>
+                            <tbody> 
+                                @foreach($promediosRatificaciones as $info)
+                                    <tr>
+                                        <td class="font-bold">{{ $info['sede'] }}</td>
+                                        <td class="text-center">{{ $info['total_pagos'] }}</td>
+                                        <td class="text-center">{{ $info['dias_con_actividad'] }}</td>
+                                        <td class="text-center font-bold" style="color: #2c3e50; font-size: 12px;">
+                                            {{ number_format($info['promedio_diario'], 2) }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table> 
+
+                    <div class="section-title">Reporte Cumplimientos derivados de Convenio(s)</div>
                         <table class="table-report">
                             <thead>
                                 <tr>
@@ -155,37 +161,47 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="text-left">Total de Audiencias</td>
+                                    <td class="text-left">Total de Audiencias con Convenio</td>
                                     <td>{{ $pagosAudiencias->audiencias }}</td>
                                     <td class="bold">${{ number_format($pagosAudienciasMonto->audienciasMonto, 2) }}</td>
+                                <tr>
+                                    <td class="text-left">Audiencias Pagadas</td>
+                                    <td>{{ $pagosAudienciasPagado->audiencias }}</td>
+                                    <td class="text-success">${{ number_format($pagosAudienciasMontoPagado->audienciasMonto, 2) }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-left">Audiencias Pendientes</td>
+                                    <td>{{ $pagosAudienciaPendiente->audiencias }}</td>
+                                    <td class="text-danger">${{ number_format($pagosAudienciaMontoPendiente->audienciasMonto, 2) }}</td>
+                                </tr>
                                 </tr>
                             </tbody>
                         </table>
 
-                    <div class="section-title">Promedio Diario por Sede</div>
-                    <table class="table-report">
-                        <thead>
-                            <tr>
-                                <th>Sede</th>
-                                <th>Pagos Totales</th>
-                                <th>Días Activos</th>
-                                <th>Promedio Diario</th>
-                            </tr>
-                        </thead>
-                        <tbody> 
-                            @foreach($promediosPagos as $info)
+                    <div class="section-title">Promedio Cumplimientos de Convenio</div>
+                        <table class="table-report">
+                            <thead>
                                 <tr>
-                                    <td class="font-bold">{{ $info['sede'] }}</td>
-                                    <td class="text-center">{{ $info['total_pagos'] }}</td>
-                                    <td class="text-center">{{ $info['dias_con_actividad'] }}</td>
-                                    <td class="text-center font-bold" style="color: #2c3e50; font-size: 12px;">
-                                        {{ number_format($info['promedio_diario'], 2) }}
-                                    </td>
+                                    <th>Sede</th>
+                                    <th>Pagos Totales</th>
+                                    <th>Días Activos</th>
+                                    <th>Promedio Diario</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table> 
-                </div>
+                            </thead>
+                            <tbody> 
+                                @foreach($promediosPagos as $info)
+                                    <tr>
+                                        <td class="font-bold">{{ $info['sede'] }}</td>
+                                        <td class="text-center">{{ $info['total_pagos'] }}</td>
+                                        <td class="text-center">{{ $info['dias_con_actividad'] }}</td>
+                                        <td class="text-center font-bold" style="color: #2c3e50; font-size: 12px;">
+                                            {{ number_format($info['promedio_diario'], 2) }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table> 
+                    </div>
 
                 <!-- Reporte cumplimientos Ratificaciones -->
                 <div class="section-title">Reporte Por Usuario</div>
@@ -208,27 +224,25 @@
                 </div>
 
 
-                <div class="section-title">Productividad por Sede</div>
+                <!-- Reporte Solicitudes Monto -->
+                <div class="section-title">Reporte General de Solicitudes Por Usuario</div>
                     <table class="table-report">
-                        <thead>
-                            <tr>
-                                <th>Sede</th>
-                                <th>Pagos Totales</th>
-                                <th>Días Activos</th>
-                                <th>Promedio Diario</th>
-                            </tr>
-                        </thead>
+                        <tr>
+                            <th style="width: 40%;">Usuario</th>
+                            <th>Solicitudes</th>
+                            <th>Confirmadas</th>
+                        </tr>
                         <tbody> 
-                            @foreach($promediosPagos as $info)
+                           @foreach($solicitudes as $usuario)
                                 <tr>
-                                    <td class="bold text-left">{{ $info['sede'] }}</td>
-                                    <td>{{ $info['total_pagos'] }}</td>
-                                    <td>{{ $info['dias_con_actividad'] }}</td>
-                                    <td class="bold">{{ number_format($info['promedio_diario'], 2) }}</td>
+                                    <td class="text-left">{{ $usuario->name }}</td>
+                                    <td>{{ $usuario->solicitudes }}</td>
+                                    <td>{{ $usuario->confirmadas }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
+                </div>
 
             <script type="text/php">
                 if (isset($pdf)) {

@@ -101,18 +101,6 @@
             $total_conf = $solicitudes->sum('confirmadas');
             $perc_conf = ($total_sol > 0) ? ($total_conf / $total_sol) * 100 : 0;
         @endphp
-        <div class="kpi-container">
-            <div class="kpi-card" style="margin-left: 2%;">
-                <span style="font-size: 9px; color: #666;">AUDIENCIAS CELEBRADAS</span>
-                <span class="kpi-value">{{ $audiencias->sum('total_audiencias') }}</span>
-                <span style="font-size: 8px; color: #888;">TOTAL REGIONAL</span>
-            </div>
-            <div class="kpi-card" style="margin-left: 2%;">
-                <span style="font-size: 9px; color: #666;">NOTIFICACIONES EXITOSAS</span>
-                <span class="kpi-value">{{ $notificaciones->sum('exitosamente') }}</span>
-                <span style="font-size: 8px; color: #888;">TOTAL REGIONAL</span>
-            </div>
-        </div>
 
         <div class="section-header">Resumen de Solicitudes y Ratificaciones</div>
         <table class="table-report">
@@ -123,8 +111,7 @@
                     <th>Confirmadas</th>
                     <th>Efect. %</th>
                     <th>Ratif.</th>
-                    <th>Incomp.</th>
-                    <th>Cumpl.</th>
+                    <th>Cumplimientos</th>
                     <th>Monto Aud.</th>
                     <th>Monto Rat.</th>
                 </tr>
@@ -138,10 +125,9 @@
                     <td>{{ $s->confirmadas }}</td>
                     <td class="efectividad">{{ number_format($efect, 1) }}%</td>
                     <td>{{ $s->ratificaciones ?? 0 }}</td>
-                    <td>{{ $s->incompetencia }}</td>
                     <td class="bold">{{ $s->cumplimientoRatificacion + $s->cumplimientoAudiencia }}</td>
                     <td class="monto">${{ number_format($s->cumplimientoAudienciaMonto, 2) }}</td>
-                    <td class="monto">${{ number_format($s->cumplimientoRatificacionMonto, 2) }}</td>
+                    <td class="monto">${{ number_format($s->ratificacionesMonto, 2) }}</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -152,11 +138,11 @@
             <thead>
                 <tr>
                     <th style="width: 18%;">Sede</th>
-                    <th>Audiencias</th>
-                    <th>Cumpl.</th>
-                    <th>Monto Aud.</th>
-                    <th>Multas</th>
-                    <th>Virtuales</th>
+                    <th>Audiencias Programadas</th>
+                    <th>Audiencias Celebradas</th>
+                    <th>Convenios</th>
+                    <th>Falta de Int.</th>
+                    <th>Incompetencia</th>
                     <th>1 Aud.</th>
                     <th>2 Aud.</th>
                     <th>3+ Aud.</th>
@@ -166,11 +152,11 @@
                 @foreach($audiencias as $a)
                 <tr>
                     <td class="text-left bold">{{ $a->sede_nombre }}</td>
-                    <td>{{ $a->total_audiencias ?? 0 }}</td>
-                    <td>{{ $a->cumplimientoAudiencia }}</td>
-                    <td class="monto">${{ number_format($a->cumplimientoAudienciaMonto, 2) }}</td>
-                    <td>{{ $a->multas ?? 0 }}</td>
-                    <td>{{ $a->audiencias_virtuales ?? 0 }}</td>
+                    <td>{{ $a->audienencias_programadas ?? 0 }}</td>
+                    <td>{{ $a->audienencias_celebradas }}</td>
+                    <td>{{ $a->convenios}}</td>
+                    <td>{{ $a->achivada }}</td>
+                    <td>{{ $a->incompetencia ?? 0 }}</td>
                     <td>{{ $a->una_audiencia }}</td>
                     <td>{{ $a->dos_audiencias }}</td>
                     <td>{{ $a->tres_audiencias }}</td>
@@ -211,7 +197,30 @@
                 @endforeach
             </tbody>
         </table>
+
+        <div class="section-header">Total de Notificaciones</div>
+        <table class="table-report">
+            <thead>
+                <tr>
+                    <th style="width: 18%;">Sede</th>
+                    <th>Notificadas por el Centro</th>
+                    <th>Notificadas por el Solicitante</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($notificaciones as $n)
+                @php $efect_n = ($n->Todas_notificaciones > 0) ? ($n->exitosamente / $n->Todas_notificaciones)*100 : 0; @endphp
+                <tr>
+                    <td class="text-left bold">{{ $n->sede_nombre }}</td>
+                    <td>{{ $n->total_centro }}</td>
+                    <td>{{ $n->total_solicitante }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+
         <p style="font-size: 8px; color: #888;">*NESC: No exitosa se constituye / **NENSC: No exitosa no se constituye</p>
+        
 
     </main>
 

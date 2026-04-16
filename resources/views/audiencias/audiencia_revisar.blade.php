@@ -264,6 +264,7 @@
                             <form class='needs-validation novalidate' id='form_roles' method='POST' action="{{route('terminar_audiencia')}}">
                                 @csrf
                                 <input type="hidden" name="id" value="{{ $id }}">
+                                <input type="hidden" name="audiencia_id" value="{{ request()->query('audiencia_id') }}">
                                 <div class="row">
                                     <div id="justificacion"><br>
                                         <div class="col-xs-12 col-sm-12 col-md-12"  style="border:1px solid black;">
@@ -1475,6 +1476,7 @@ function clonarCheckboxes() {
     </script>
 <script>
     // Deshabilitar los botones "Terminar", "Convenio" y "Acta" si ningún checkbox está marcado
+    const tipoSolicitud = String(@json($tipo_solicitud)); 
     (function () {
     // Obtener referencias a los botones
         const termBtn = document.querySelector('button[name="bandera"][value="1"]');
@@ -1508,19 +1510,29 @@ function clonarCheckboxes() {
         }
       }
 
-      // Actualizar al cargar y cuando cambien checkboxes
-      document.addEventListener('DOMContentLoaded', updateVisibilidadBotones);
-      document.addEventListener('change', function (e) {
-        if (e.target && e.target.matches('input[type="checkbox"][name^="aparece_convenio"]')) {
-          updateVisibilidadBotones();
-        }
-      });
+      document.addEventListener('DOMContentLoaded', function() {
+            if(tipoSolicitud === "1"){
+                updateVisibilidadBotones();
+            }
+        });
 
-      // Ejecutar inmediatamente por si el DOM ya está listo
-      updateVisibilidadBotones();
+        document.addEventListener('change', function (e) {
+            if (e.target && e.target.matches('input[type="checkbox"][name^="aparece_convenio"]')) {
+                if(tipoSolicitud === "1"){
+                    updateVisibilidadBotones();
+                }
+            }
+        });
+
+        // Ejecutar inmediatamente por si el DOM ya está listo
+        if(tipoSolicitud === "1"){
+            updateVisibilidadBotones();
+        }
+      
     })();
   </script>
     <script>
+        
         // Deshabilitar el botón "Terminar" si ningún checkbox está marcado
         (function () {
             const termBtn = document.querySelector('button[name="bandera"][value="1"]');
@@ -1548,29 +1560,30 @@ function clonarCheckboxes() {
                     convBtn.setAttribute('aria-disabled', 'true');
                 }
             }
-
-            // Actualizar al cargar y cuando cambien checkboxes
-            document.addEventListener('DOMContentLoaded', function() {
-                updateTerminar();
-                updateConvenio();
-            });
-            document.addEventListener('change', function (e) {
-                if (e.target && e.target.matches('input[type="checkbox"][name^="aparece_convenio"]')) {
+            if(tipoSolicitud ==="1"){
+                // Actualizar al cargar y cuando cambien checkboxes
+                document.addEventListener('DOMContentLoaded', function() {
                     updateTerminar();
                     updateConvenio();
-                }
-            });
+                });
+                document.addEventListener('change', function (e) {
+                    if (e.target && e.target.matches('input[type="checkbox"][name^="aparece_convenio"]')) {
+                        updateTerminar();
+                        updateConvenio();
+                    }
+                });
 
-            // Ejecutar inmediatamente por si el DOM ya está listo
-            updateTerminar();
-            updateConvenio();
+                // Ejecutar inmediatamente por si el DOM ya está listo
+                updateTerminar();
+                updateConvenio();
+            }
         })();
     </script>
 
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            
+
             // Lógica para el botón CONVENIO con AJAX
             const btnConvenio = document.getElementById('btn-convenio1');
             
@@ -1599,7 +1612,7 @@ function clonarCheckboxes() {
                         }
                     });
 
-                    if(idsSeleccionados.length === 0){
+                    if(idsSeleccionados.length === 0 && tipoSolicitud === "1"){
                         Swal.fire({
                             icon: 'warning',
                             title: 'Atención',
@@ -1662,7 +1675,7 @@ function clonarCheckboxes() {
                         if(match && match[1]) idsSeleccionados.push(match[1]);
                     });
 
-                    if (idsSeleccionados.length === 0) {
+                    if (idsSeleccionados.length === 0 && tipoSolicitud === "1") {
                         Swal.fire({
                             icon: 'warning',
                             title: 'Atención',

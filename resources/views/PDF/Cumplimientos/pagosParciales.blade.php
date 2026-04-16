@@ -99,6 +99,8 @@
                             </tr>
                     </table>
                 </div><br><br><br><br>
+                <p><center><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p><br><br>
+
                 <p><b>
                     Trabajador(a): {{ $solicitud->nombre_trabajador }} <br> 
                     Empresa/Patrón: {{ $solicitud->empresa_representante }}<br>

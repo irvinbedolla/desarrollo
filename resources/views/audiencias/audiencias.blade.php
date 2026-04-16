@@ -8,6 +8,9 @@
     .btn-invisible {
         display: none;
     }
+    #modalCitados table.table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(0, 0, 0, 0.08); /* ajusta el último valor (0.08) para más o menos opacidad */
+    }
 </style>
 @endsection
 @section('content')
@@ -44,7 +47,7 @@
                                 foreach ($representantes as $r) {
                                     if (($r->notificacion ?? null) === 'Centro') {
                                         $totalCentroTop++;
-                                        $tieneComparecenciaTop = (!is_null($r->id_abogado) || !is_null($r->id_fisica));
+                                        $tieneComparecenciaTop = ($r->id_abogado > 0 || !is_null($r->id_fisica));
                                         if (!$tieneComparecenciaTop) {
                                             $totalCentroSinComparecenciaTop++;
                                         }
@@ -324,7 +327,6 @@
                             <!--<th style="display: none;">ID</th>-->
                             <th style="color: #fff;">Folio</th>
                             <th style="color: #fff;">Nombre</th>
-                            <th style="color: #fff;">RFC</th>
                             <th style="color: #fff;">Representante</th>
                             <th style="color: #fff;">Acciones</th>
                         </thead>
@@ -333,8 +335,7 @@
                                 <tr>
                                     <td>{{$abogado->idAbogado}}</td>
                                     <td>{{$abogado->nombres_patronal}} {{$abogado->primer_apellido_patronal}} {{$abogado->segundo_apellido_patronal}}</td>
-                                    <td>{{$abogado->rfc_patronal}}</td>
-                                    <td>{{$abogado->nombre_representante}} {{$abogado->primer_apellido_representante}} {{$abogado->segundo_apellido_representante}}</td>
+                                    <td style="color: #191717;">{{$abogado->nombre_representante}} {{$abogado->primer_apellido_representante}} {{$abogado->segundo_apellido_representante}}</td>
                                     <td>
                                         @php
                                             //Vigencia vencida => fechaVigencia menor a hoy
@@ -1311,6 +1312,7 @@
     <form class='needs-validation novalidate'  method='POST' action="{{route('reagendar_audiencia')}}">
         @csrf
         <input type="hidden" id="modal-id-reagendar" name="id" value="">
+        <input type="hidden" name="audiencia_id" value="{{ request()->query('audiencia_id') }}">
         <input type="hidden" id="fechaConfirmacion" value= "{{ $fechaConfirmacion }}">
         <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
@@ -1497,6 +1499,7 @@
     <form class="needs-validation novalidate" method="POST" action="{{route('emitir_multas')}}">
         @csrf
         <input type="hidden" name="id" value="{{ $id }}">
+        <input type="hidden" name="audiencia_id" value="{{ request()->query('audiencia_id') }}">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1993,6 +1996,36 @@
                 return toYMD(dt);
             }
 
+            async function addNaturalAndInhabilDays(fechaConfirmacionStr, n, centro) {
+                let inhabiles = [];
+                try {
+                    const res = await fetch(`{{ url('/api/dias-inhabiles-centro') }}?centro=${encodeURIComponent(centro)}`);
+                    const data = await res.json();
+                    inhabiles = data.filter(r => r.user_id === null);
+                } catch(e) {
+                    console.error("Error fetching dias inhabiles", e);
+                }
+
+                function isDiaInhabil(dtStr) {
+                    for(let i=0; i<inhabiles.length; i++) {
+                        if(dtStr >= inhabiles[i].fecha_inicio && dtStr <= inhabiles[i].fecha_final) return true;
+                    }
+                    return false;
+                }
+
+                const [y, m, d] = fechaConfirmacionStr.split('-').map(Number);
+                let dt = new Date(y, m - 1, d);
+                let added = 0;
+                while (added < n) {
+                    dt.setDate(dt.getDate() + 1);
+                    let dtStr = toYMD(dt);
+                    if (!isDiaInhabil(dtStr)) {
+                        added++;
+                    }
+                }
+                return toYMD(dt);
+            }
+
             function isWeekend(dt){
                 const day = dt.getDay();
                 return day === 0 || day === 6;
@@ -2080,7 +2113,13 @@
                 const startOfWeekStr = fechaSemanaInicio.toISOString().slice(0,10);
 
                 const fechaConfirmacion = document.getElementById('fechaConfirmacion').value;
-                const fechaLimite = fechaConfirmacion ? addDaysYMD(fechaConfirmacion, 45) : null;
+                const sede = $('#sedeReagendar').val();
+                let fechaLimite = null;
+                if (fechaConfirmacion && sede) {
+                    fechaLimite = await addNaturalAndInhabilDays(fechaConfirmacion, 46, sede);
+                } else if (fechaConfirmacion) {
+                    fechaLimite = addDaysYMD(fechaConfirmacion, 46); // fallback
+                }
 
 
                 calendarReagendar = new FullCalendar.Calendar(calEl, {

@@ -59,13 +59,28 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    @if($audiencia->estatus == "Conciliacion" || $audiencia->estatus == "Concluida Pagos")
+                                                    @if($audiencia->estatus_modelo == "Conciliacion" || $audiencia->estatus_modelo == "Concluida Pagos")
                                                         <a class="btn btn-primary" href="{{ route('audiencia_cumplimientos', $audiencia->id_solicitud) }}">Cumplimiento</a>
                                                     @endif
                                                 </td>
                                                 <td>
                                                     <button type="button" class="btn btn-warning open-expediente-modal" data-bs-toggle="modal" data-bs-target="#expediente" data-id="{{ $audiencia->id_solicitud }}">Subir Documento</button>
-                                                    @if($audiencia->estatus == "Archivada")
+                                                    
+                                                    @if($audiencia->estatus_modelo == "Archivada en Audiencia")
+                                                        <div class="dropdown">
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    Documentos
+                                                                </button>
+                                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerDocumentosAudiencia', $audiencia->id_solicitud) }}"  target="_blank">Documentos Digitales</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('PDFfalltaInteres', $audiencia->id_solicitud) }}"        target="_blank">Acta de Archivo</a></li>
+                                                                    <li><a class="btn btn-info" style="width: 100%" href="{{ route('VerPDFAudiencia', $audiencia->id_solicitud) . '?audiencia_id=' . $audiencia->id }}"  target="_blank">Acta de Audiencia</a></li>
+                                                                    <li><button type="button" class="btn btn-info btn-mostrar-registros" style="width: 100%" data-bs-toggle="modal" data-bs-target="#documentos" data-id="{{ $audiencia->id_solicitud }}">Citatorios</button></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    @elseif($audiencia->estatus == "Archivada")
                                                         <div class="dropdown">
                                                             <div class="dropdown">
                                                                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">

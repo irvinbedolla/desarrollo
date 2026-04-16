@@ -83,8 +83,10 @@
                                 <td>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido }} </td>
                             </tr>
                     </table>
-                </div><br><br><br><br><br>
+                </div><br><br><br><br><br><br><br><br><br><br>
+                
                 <p><center><b>CERTIFICACIÓN:</b></center></p><br>
+
                 <p>
                     En la Ciudad de <b>{{ $solicitud->delegacion }}</b>, Michoacán, siendo las <b>{{ \Carbon\Carbon::now()->format('H:i') }}</b> horas, del día 
                     <b>{{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}</b>, fecha y hora señalada para la Audiencia de Conciliación dentro del 
@@ -93,17 +95,17 @@
                     de Michoacán de Ocampo, en ejercicio de mis facultades establecidas en el artículo 684-E fracción IV de la Ley Federal del Trabajo y 20 fracción 
                     I, XIII y XVI del Reglamento Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, hago constar la siguiente:
                 </p>
-                <p><center><b>CERTIFICACIÓN:</b></center></p><br>
+
                 <p>
-                    Que comparece a la audiencia de Conciliación señalada para el día hoy, la <b>C. {{ $abogado->nombres }} {{ $abogado->primer_apellido }} {{ $abogado->segundo_apellido }}</b>, quien se identifica con credencial de 
-                    elector ___________________________ y  manifiesta ser representante legal de la parte citada <b>{{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido }}</b>; 
+                    Que comparece a la audiencia de Conciliación señalada para el día hoy, la <b>C. ________________________________ </b>, quien se identifica con credencial de 
+                    elector ___________________________ y  manifiesta ser representante legal de la parte citada <b>________________________________</b>; 
                     sin exhibir documento alguno que acredite (o con documento insuficiente describir el documento y adjuntar copia en el expediente para constancia legal) la personería ostentada; 
                     por tanto, esta actuante se ve impedida a dar trámite a la presente audiencia; por lo que una vez cerciorado que la persona fue legalmente notificado el 
                     día <b>{{ \Carbon\Carbon::parse($citado->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>___</b>hrs por parte de personal notificador del Centro; se hace efectivo el apercibimiento decretado en el 
                     citatorio tener a las partes por inconformes de todo arreglo conciliatorio, emitiendo ACTA DE MULTA y la CONSTANCIA DE HABER AGOTADO LA CONCILIACIÓN, dejando 
                     a salvo los derechos de la parte solicitante, y para los efectos legales a que haya lugar.- Notifíquese  
                     <br><br>
-                        <b>{{ $abogado->poder }}</b>
+                        
                     <br><br>
                     Así y con fundamento en los artículos 684-E fracción IV, X, XIV, 684-F, 684-H, 684-I, y demás relativos de la Ley Federal del Trabajo; artículo 8, 27 de la Ley 
                     Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo; relacionados con las fracciones I, VII, XIII, XVI y XVII del artículo 20 

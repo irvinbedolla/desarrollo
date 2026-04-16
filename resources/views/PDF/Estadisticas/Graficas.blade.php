@@ -59,7 +59,7 @@
     <main>
         <div class="chart-card" id="container-efectividad">
             <div class="chart-header">
-                <h2 class="chart-title">Efectividad General</h2>
+                <h2 class="chart-title">Efectividad por Conciliador</h2>
                 <button class="btn-export" onclick="exportToPDF('container-efectividad', 'efectividad')">Descargar Reporte</button>
             </div>
             <div id="chart-efectividad"></div>
@@ -67,7 +67,7 @@
 
         <div class="chart-card" id="container-cantidades">
             <div class="chart-header">
-                <h2 class="chart-title">Cumplimientos por Cantidad</h2>
+                <h2 class="chart-title">Cumplimientos Cantidad</h2>
                 <button class="btn-export" onclick="exportToPDF('container-cantidades', 'cantidades')">Descargar Reporte</button>
             </div>
             <div id="chart-cantidades"></div>
@@ -91,25 +91,73 @@
 
         <div class="chart-card" id="container-productividad">
             <div class="chart-header">
-                <h2 class="chart-title">Solictudse por Auxiliar</h2>
+                <h2 class="chart-title">Solictud por Auxiliar</h2>
                 <button class="btn-export" onclick="exportToPDF('container-productividad', 'productividad')">Descargar Reporte</button>
             </div>
             <div id="chart-productividad"></div>
         </div>
 
+        <div class="chart-card" id="container-pastel">
+            <div class="chart-header">
+                <h2 class="chart-title">Solicitudes por Sede</h2>
+                <button class="btn-export" onclick="exportToPDF('container-auxiliares', 'pastel')">Descargar Reporte</button>
+            </div>
+            <div id="chart-pastel"></div>
+        </div>
+
+        <div class="chart-card" id="container-pastelRati">
+            <div class="chart-header">
+                <h2 class="chart-title">Ratificaciones por Sede</h2>
+                <button class="btn-export" onclick="exportToPDF('container-auxiliares', 'pastelRati')">Descargar Reporte</button>
+            </div>
+            <div id="chart-pastelRati"></div>
+        </div>
+
+        <div class="chart-card" id="container-pastelAudiencia">
+            <div class="chart-header">
+                <h2 class="chart-title">Audiencias por Sede</h2>
+                <button class="btn-export" onclick="exportToPDF('container-auxiliares', 'pastelAudiencia')">Descargar Reporte</button>
+            </div>
+            <div id="chart-pastelAudiencia"></div>
+        </div>
+
+        <div class="chart-card" id="container-pastelNotificacion">
+            <div class="chart-header">
+                <h2 class="chart-title">Notificaciones por Sede</h2>
+                <button class="btn-export" onclick="exportToPDF('container-auxiliares', 'pastelNotificacion')">Descargar Reporte</button>
+            </div>
+            <div id="chart-pastelNotificacion"></div>
+        </div>
+
+        <div class="chart-card" id="container-resumen-general">
+            <div class="chart-header">
+                <h2 class="chart-title">Total de Actuaciones por Sede</h2>
+                <p style="font-size: 11px; color: #888;">(Suma de Solicitudes, Ratificaciones, Audiencias y Notificaciones)</p>
+            </div>
+            <div id="chart-resumen-general"></div>
+        </div>
 
         <script>
             const colorPrimario = '#869b9c';
             const colorSecundario = '#5a6a6b';
 
             // Datos desde Blade
-            const datosEfectividad = { data: @json($data), labels: @json($labels) };
-            const datosRat = @json($ratificacionesData);
-            const datosAud = @json($audienciasData);
-            const etiquetasAux = @json($nombres_rati);
-            const valoresAux = @json($totales_rati);
+            const datosEfectividad              = { data: @json($data), labels: @json($labels) };
+            const datosRat                      = @json($ratificacionesData);
+            const datosAud                      = @json($audienciasData);
+            const etiquetasAux                  = @json($nombres_rati);
+            const valoresAux                    = @json($totales_rati);
+            const etiquetasSedes                = @json($sedes_labels);
+            const valoresSedes                  = @json($sedes_valores);
+            const etiquetasSedesRati            = @json($sedes_rati_labels);
+            const valoresSedesRati              = @json($sedes_rati_valores);
+            const etiquetasSedesAudiencia       = @json($sedes_audiencias_labels);
+            const valoresSedesAudiencia         = @json($sedes_audiencias_valores);
+            const etiquetasSedesNotificacion    = @json($sedes_notificaciones_labels);
+            const valoresSedesNotificacion      = @json($sedes_notificaciones_valores);
+            const etiquetasResumen              = @json($labels_resumen);
+            const valoresResumen                = @json($valores_resumen);
 
-            // 1. Efectividad
             new ApexCharts(document.querySelector("#chart-efectividad"), {
                 chart: { type: 'bar', height: 350, toolbar: { show: false } },
                 colors: [colorPrimario],
@@ -117,7 +165,6 @@
                 xaxis: { categories: datosEfectividad.labels }
             }).render();
 
-            // 2. Cantidades
             new ApexCharts(document.querySelector("#chart-cantidades"), {
                 chart: { type: 'bar', height: 350, toolbar: { show: false } },
                 colors: [colorPrimario, colorSecundario],
@@ -128,19 +175,67 @@
                 xaxis: { categories: ['Total', 'Pagados', 'Pendientes'] }
             }).render();
 
-            // 3. Montos
             new ApexCharts(document.querySelector("#chart-montos"), {
                 chart: { type: 'bar', height: 350, toolbar: { show: false } },
                 colors: [colorPrimario, colorSecundario],
+                plotOptions: {
+                    bar: {
+                        borderRadius: 4,
+                        dataLabels: {
+                            position: 'top', // Pone el número arriba de la barra
+                        },
+                    }
+                },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function (val) {
+                        // Esto quita los decimales infinitos y pone el signo $
+                        return "$" + Number(val).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    },
+                    offsetY: -20,
+                    style: {
+                        fontSize: '10px',
+                        colors: ["#304758"]
+                    }
+                },
                 series: [
-                    { name: 'Ratificaciones ($)', data: [datosRat.total_monto, datosRat.pagado_monto, datosRat.pendiente_monto] },
-                    { name: 'Audiencias ($)', data: [datosAud.total_monto, datosAud.pagado_monto, datosAud.pendiente_monto] }
+                    { 
+                        name: 'Ratificaciones ($)', 
+                        data: [
+                            parseFloat(datosRat.total_monto || 0), 
+                            parseFloat(datosRat.pagado_monto || 0), 
+                            parseFloat(datosRat.pendiente_monto || 0)
+                        ] 
+                    },
+                    { 
+                        name: 'Audiencias ($)', 
+                        data: [
+                            parseFloat(datosAud.total_monto || 0), 
+                            parseFloat(datosAud.pagado_monto || 0), 
+                            parseFloat(datosAud.pendiente_monto || 0)
+                        ] 
+                    }
                 ],
-                xaxis: { categories: ['Total', 'Pagados', 'Pendientes'] },
-                yaxis: { labels: { formatter: (val) => "$" + val.toLocaleString() } }
+                xaxis: { 
+                    categories: ['Total', 'Pagados', 'Pendientes'] 
+                },
+                yaxis: {
+                    labels: {
+                        formatter: function (val) {
+                            // Formato para el eje lateral (Eje Y)
+                            return "$" + Number(val).toLocaleString('es-MX');
+                        }
+                    }
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return "$" + Number(val).toLocaleString('es-MX', { minimumFractionDigits: 2 });
+                        }
+                    }
+                }
             }).render();
 
-            // 4. Rendimiento por Auxiliar (Adaptada a ApexCharts Horizontal)
             new ApexCharts(document.querySelector("#chart-auxiliares"), {
                 chart: { type: 'bar', height: 400, toolbar: { show: false } },
                 plotOptions: {
@@ -160,13 +255,12 @@
                     style: { fontSize: '12px', colors: [colorSecundario] }
                 },
                 title: {
-                    text: 'TOTAL DE RATIFICACIONES POR AUXILIAR',
+                    text: '',
                     align: 'left',
                     style: { color: colorSecundario, fontSize: '14px' }
                 }
             }).render();
 
-            // FUNCIÓN DE EXPORTACIÓN
             function exportToPDF(containerId, fileName) {
                 const element = document.getElementById(containerId);
                 html2canvas(element, {
@@ -184,7 +278,6 @@
                 });
             }
 
-            // 5. Productividad por Auxiliar (Migrado a ApexCharts)
             new ApexCharts(document.querySelector("#chart-productividad"), {
                 chart: { 
                     type: 'bar', 
@@ -216,7 +309,7 @@
                     }
                 },
                 title: {
-                    text: 'DETALLE DE REGISTROS POR AUXILIAR',
+                    text: '',
                     align: 'left',
                     style: { 
                         color: colorSecundario, 
@@ -225,6 +318,209 @@
                     }
                 }
             }).render();
+
+            var optionsPie = {
+                chart: {
+                    type: 'pie', // Cambia a 'donut' si prefieres ese estilo
+                    height: 380,
+                },
+                colors: ['#869b9c', '#5a6a6b', '#3f4d4e', '#a5b7b8', '#ced9d9'], // Paleta acorde a tus colores
+                labels: etiquetasSedes, // Ejemplo: ["Morelia", "Uruapan", ...]
+                series: valoresSedes,  // Ejemplo: [150, 80, ...]
+                legend: {
+                    position: 'bottom'
+                },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function (val, opts) {
+                        // Muestra el número real además del porcentaje
+                        return opts.w.config.series[opts.seriesIndex];
+                    }
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return val + " solicitudes";
+                        }
+                    }
+                },
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            width: 200
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }]
+            }
+            var chartPie = new ApexCharts(document.querySelector("#chart-pastel"), optionsPie);
+            chartPie.render();
+
+            var optionsPieRati = {
+                chart: {
+                    type: 'pie', // Cambia a 'donut' si prefieres ese estilo
+                    height: 380,
+                },
+                colors: ['#869b9c', '#5a6a6b', '#3f4d4e', '#a5b7b8', '#ced9d9'], // Paleta acorde a tus colores
+                labels: etiquetasSedesRati, // Ejemplo: ["Morelia", "Uruapan", ...]
+                series: valoresSedesRati,  // Ejemplo: [150, 80, ...]
+                legend: {
+                    position: 'bottom'
+                },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function (val, opts) {
+                        // Muestra el número real además del porcentaje
+                        return opts.w.config.series[opts.seriesIndex];
+                    }
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return val + " dataTurnos";
+                        }
+                    }
+                },
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            width: 200
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }]
+            }
+            var pastelRati = new ApexCharts(document.querySelector("#chart-pastelRati"), optionsPieRati);
+            pastelRati.render();
+
+            var optionsPieAudiencia = {
+                chart: {
+                    type: 'pie', // Cambia a 'donut' si prefieres ese estilo
+                    height: 380,
+                },
+                colors: ['#869b9c', '#5a6a6b', '#3f4d4e', '#a5b7b8', '#ced9d9'], // Paleta acorde a tus colores
+                labels: etiquetasSedesAudiencia, // Ejemplo: ["Morelia", "Uruapan", ...]
+                series: valoresSedesAudiencia,  // Ejemplo: [150, 80, ...]
+                legend: {
+                    position: 'bottom'
+                },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function (val, opts) {
+                        // Muestra el número real además del porcentaje
+                        return opts.w.config.series[opts.seriesIndex];
+                    }
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return val + " audiencias";
+                        }
+                    }
+                },
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            width: 200
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }]
+            }
+            var pastelAudiencia = new ApexCharts(document.querySelector("#chart-pastelAudiencia"), optionsPieAudiencia);
+            pastelAudiencia.render();
+
+            var optionsPieNotificacion = {
+                chart: {
+                    type: 'pie', // Cambia a 'donut' si prefieres ese estilo
+                    height: 380,
+                },
+                colors: ['#869b9c', '#5a6a6b', '#3f4d4e', '#a5b7b8', '#ced9d9'], // Paleta acorde a tus colores
+                labels: etiquetasSedesNotificacion, // Ejemplo: ["Morelia", "Uruapan", ...]
+                series: valoresSedesNotificacion,  // Ejemplo: [150, 80, ...]
+                legend: {
+                    position: 'bottom'
+                },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function (val, opts) {
+                        // Muestra el número real además del porcentaje
+                        return opts.w.config.series[opts.seriesIndex];
+                    }
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return val + " notificaciones";
+                        }
+                    }
+                },
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            width: 200
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }]
+            }
+            var pastelNotificacion = new ApexCharts(document.querySelector("#chart-pastelNotificacion"), optionsPieNotificacion);
+            pastelNotificacion.render();
+
+            var optionsResumen = {
+                chart: {
+                    type: 'donut', // 'donut' se ve muy bien para resúmenes generales
+                    height: 400
+                },
+                colors: ['#869b9c', '#5a6a6b', '#3f4d4e', '#a5b7b8', '#ced9d9', '#d16d6a'], 
+                labels: etiquetasResumen,
+                series: valoresResumen,
+                legend: {
+                    position: 'bottom'
+                },
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            labels: {
+                                show: true,
+                                total: {
+                                    show: true,
+                                    label: 'TOTAL',
+                                    formatter: function (w) {
+                                        return w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function (val, opts) {
+                        return opts.w.config.series[opts.seriesIndex];
+                    }
+                },
+                tooltip: {
+                    y: {
+                        formatter: (val) => val + " Actuaciones"
+                    }
+                }
+            };
+
+            new ApexCharts(document.querySelector("#chart-resumen-general"), optionsResumen).render();
+
         </script>
     </main>
 </body>

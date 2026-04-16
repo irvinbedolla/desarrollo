@@ -119,10 +119,10 @@
                         FECHA DE EMISIÓN DE DOCUMENTOS: {{ \Carbon\Carbon::parse($audiencia->created_at)->translatedFormat('d \d\e F \d\e\l Y') }}.<br>
                     </b></p>
 
-                    <p> Con fecha <b>{{ \Carbon\Carbon::parse($audiencia->created_at)->translatedFormat('d \d\e F \d\e\l Y') }}</b> siendo las <b>{{ \Carbon\Carbon::now()->translatedFormat('H:i') }}</b> horas, ante esta 
+                    <p> Con fecha <b>{{ \Carbon\Carbon::parse($audiencia->created_at)->translatedFormat('d \d\e F \d\e\l Y') }}</b> siendo las <b>{{ \Carbon\Carbon::parse($audiencia->created_at)->translatedFormat('H:i') }}</b> horas, ante esta 
                         Autoridad Conciliadora, <b>{{ $solicitante->nombre }}</b>, me doy por notificado(a) personalmente de la fecha para la celebración de la Audiencia de Conciliación derivada de 
                         la solicitud con número de identificación único <b>{{ $solicitud->NUE }}</b>, misma que tendrá verificativo el día 
-                        <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{ $audiencia->hora }}</b> horas, en la sala <b>{{ $audiencia->sala }}</b> de la Delegación 
+                        <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{ $audiencia->hora }}</b> horas, en la <b>{{ $audiencia->sala }}</b> de la Delegación 
                         Regional de {{ $solicitud->delegacion }} del Centro de Conciliación Laboral 
                         del Estado de Michoacán de Ocampo, con domicilio en <b>{{$direccion_sede}}</b>.<br><br>
 
@@ -131,10 +131,11 @@
                     <br><br><br><br><br><br><br>
                     <div class="row">
                         <div class="col-12 text-center">
+                            
                             <div style="display: inline-block; margin-right: 50px;">
                                 <p><center><b>___________________________________<br> {{ $solicitante->nombre }} <br> SOLICITANTE</b></center></p>
                             </div>
-                                    
+                        
                             <div style="display: inline-block; margin-right: 50px;">
                                 <p><center><b>___________________________________<br> {{ $conciliador->name }} <br> FUNCIONARIO/A CONCILIADOR/A</b></center> </p>
                             </div>
