@@ -174,21 +174,54 @@
                 {{-- Bloquear toda la sede --}}
                 <div class="mb-4 p-3 border rounded">
                     <h5 class="mb-2"><b>Bloquear toda la sede</b></h5>
-                    <p>Este bloqueo aplica para TODAS las audiencias de esta sede.</p>
+                    <!--<p>Este bloqueo aplica para TODAS las audiencias de esta sede.</p>-->
 
                     <form action="{{ route('bloqueoSede') }}" method="POST">
                         @csrf
                         <input type="hidden" name="sede_id" id="modal_sede_id" value="">
+                        <div class=" row mb-3">
+                            <div class="col-md-6">
+                                <label><b>Bloquear en:</b></label>
+                                <select name="tipo" class="form-control" required>
+                                    <option value="">Seleccione</option>
+                                    @foreach($opciones_tipo as $tipo)
+                                        <option value="{{ $tipo }}">{{ $tipo }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
 
-                        <div class="form-group">
-                            <label><b>Fecha de inicio:</b></label>
-                            <input type="date" name="fecha_inicio" class="form-control" required>
+                            <div class="col-md-6">
+                                <label><b>Tipo de bloqueo:</b></label>
+                                <select name="descripcion" class="form-control" required>
+                                    <option value="">Seleccione</option>
+                                    @foreach($opciones_descripcion as $opcion)
+                                        <option value="{{ $opcion }}">{{ $opcion }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label><b>Fecha final:</b></label>
-                            <input type="date" name="fecha_final" class="form-control" required>
+                        <div class=" row mb-3">
+                            <div class="col-md-6">
+                                <label><b>Fecha de inicio:</b></label>
+                                <input type="date" name="fecha_inicio" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label><b>Fecha final:</b></label>
+                                <input type="date" name="fecha_final" class="form-control" required>
+                            </div>
                         </div>
 
+                        <div class=" row mb-3">
+                            <div class="col-md-6">
+                                <label><b>Hora inicio:</b></label>
+                                <input type="time" name="hora_inicio" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label><b>Hora fin:</b></label>
+                                <input type="time" name="hora_final" class="form-control" required>
+                            </div>
+                        </div>
                         <button type="submit" class="btn btn-danger mt-2">Bloquear sede completa</button>
                     </form>
                 </div>
@@ -203,41 +236,68 @@
                     <form action="{{ route('bloqueoConciliador') }}" method="POST">
                         @csrf
 
-                        <div class="form-group">
-                            <label><b>Conciliador:</b></label>
-                            <select name="conciliador_id" class="form-control" required>
-                                <option value="">Seleccione</option>
-                                @foreach($conciliadores as $con)
-                                    <option value="{{ $con->id }}">{{ $con->name }}</option>
-                                @endforeach
-                            </select>
+                        <div class=" row mb-3">
+                            <div class="col-md-12">
+                                <label><b>Conciliador:</b></label>
+                                <select name="conciliador_id" class="form-control" required>
+                                    <option value="">Seleccione</option>
+                                    @foreach($conciliadores as $con)
+                                        <option value="{{ $con->id }}">{{ $con->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label><b>Fecha de inicio:</b></label>
-                            <input type="date" name="fecha_inicio" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label><b>Fecha final:</b></label>
-                            <input type="date" name="fecha_final" class="form-control" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label><b>Hora inicio:</b></label>
-                            <input type="time" name="hora_inicio" class="form-control" required>
+                        <div class=" row mb-3">
+                            <div class="col-md-6">
+                                <label><b>Fecha de inicio:</b></label>
+                                <input type="date" name="fecha_inicio" class="form-control" required>
+                            </div>
+                    
+                            <div class="col-md-6">
+                                <label><b>Fecha final:</b></label>
+                                <input type="date" name="fecha_final" class="form-control" required>
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label><b>Hora fin:</b></label>
-                            <input type="time" name="hora_final" class="form-control" required>
+                        <div class=" row mb-3">
+                            <div class="col-md-6">
+                                <label><b>Hora inicio:</b></label>
+                                <input type="time" name="hora_inicio" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label><b>Hora fin:</b></label>
+                                <input type="time" name="hora_final" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class=" row mb-3">
+                            <div class="col-md-6">
+                                <label><b>Bloquear en:</b></label>
+                                <select name="tipo" class="form-control" required>
+                                    <option value="">Seleccione</option>
+                                    @foreach($opciones_tipo as $tipo)
+                                        <option value="{{ $tipo }}">{{ $tipo }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-6"><br>
+                                <select name="descripcion" class="form-control" required>
+                                    <option value="">Seleccione</option>
+                                    @foreach($opciones_descripcion as $opcion)
+                                        <option value="{{ $opcion }}" {{ $opcion == 'No inhabil' ? 'selected' : '' }}>
+                                            {{ $opcion }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
 
                         <button type="submit" class="btn btn-warning mt-2">Bloquear conciliador</button>
                     </form>
                 </div>
-
             </div>
-
         </div>
     </div>
 </div>

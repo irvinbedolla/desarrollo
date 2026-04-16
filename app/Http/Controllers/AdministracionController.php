@@ -100,7 +100,23 @@ class AdministracionController extends Controller
             }
         }
 
-        return view('administracion.index_sedes', compact('sedes','conciliadores','bloqueos'));
+        $dias_inhabiles = 'dias_inhabiles';
+        $col_descripcion = 'descripcion';
+        $col_tipo = 'tipo';
+
+        $typeDesc = DB::select("SHOW COLUMNS FROM {$dias_inhabiles} WHERE Field = '{$col_descripcion}'")[0]->Type;
+        preg_match('/^enum\((.*)\)$/', $typeDesc, $matchesDesc);
+        $opciones_descripcion = array_map(function($value) {
+            return trim($value, "'");
+        }, explode(',', $matchesDesc[1]));
+
+        $typeTipo = DB::select("SHOW COLUMNS FROM {$dias_inhabiles} WHERE Field = '{$col_tipo}'")[0]->Type;
+        preg_match('/^enum\((.*)\)$/', $typeTipo, $matchesTipo);
+        $opciones_tipo = array_map(function($value) {
+            return trim($value, "'");
+        }, explode(',', $matchesTipo[1]));
+ 
+        return view('administracion.index_sedes', compact('sedes','conciliadores','bloqueos','opciones_descripcion','opciones_tipo'));
     } 
 
     public function genera_retroceso()
@@ -217,11 +233,15 @@ class AdministracionController extends Controller
             'sede_id'        => 'required',
             'fecha_inicio'   => 'required|date',
             'fecha_final'    => 'required|date|after_or_equal:fecha_inicio',
+            'tipo'           => 'required',
+            'descripcion'    => 'required',
         ]);
         
         $existe = DiasInhabiles::where('centro', $request->sede_id)
         ->whereDate('fecha_inicio', '<=', $request->fecha_final)
         ->whereDate('fecha_final', '>=', $request->fecha_inicio)
+        ->whereDate('horario_inicio', '>=', "00:00:00")
+        ->whereDate('horario_final', '<=', "23:59:59")
         ->exists();
         if ($existe) {
             return back()->withErrors('Ya existe un bloqueo para esta sede en ese rango de fechas.');
@@ -264,6 +284,8 @@ class AdministracionController extends Controller
             'horario_final'  => $request->hora_final,
             'centro'         => Auth::user()->delegacion,
             'user_id'        => $request->conciliador_id,
+            'descripcion'    => $request->descripcion,
+            'tipo'           => "No inhabil",
         ]);
 
         return back()->with('success', 'El conciliador fue bloqueado correctamente.');
