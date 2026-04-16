@@ -5575,9 +5575,9 @@ class SeerController extends Controller
                 case 41:
                     $sala = "Sala 10"; break; //Hugo Mundo                       
             //Zamora
-                case 22:
+                case 2437:
                     $sala = "Sala 11"; break; //Victor Ándres
-                case 25:
+                case 2438:
                     $sala = "Sala 12"; break; //Beatriz Adriana
                 /*case 51:
                     $sala = "Sala 3"; break; //No existe*/
