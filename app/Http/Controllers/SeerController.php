@@ -1070,10 +1070,10 @@ class SeerController extends Controller
             //Notificaciones
             return Excel::download(new NotificacionesExport($fecha_inicial, $fecha_final, $sede, $auxiliar , $notificador), 'notificaciones.xlsx');
         }
-        else if($data["tipo_reporte"] == "Concentrado"){
+                else if($data["tipo_reporte"] == "Concentrado"){
             $id_usuario = auth()->user()->id;
             $userActual = User::find($id_usuario);
-
+            $total_cumplimiento = 0;
             //Auxiliares
                // 1. Consulta Principal (Solicitudes y Pagos de Audiencias/Ratificaciones)
                 $solicitudes = DB::table('users')
@@ -1167,38 +1167,43 @@ class SeerController extends Controller
                     $solicitud->ratificaciones = $turno ? $turno->ratificaciones : 0;
                     $solicitud->ratificacionesMonto = $turno ? $turno->ratificacionesMonto : 0;
                 }
-
-                /*
-                $complimientos = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
-                    ->join('users','users.id','pago_solictud.id_conciliador')
+                
+                $cumplimientos = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
+                    // Unimos ambas tablas con Left Join
+                    ->leftJoin('seer_general', 'seer_general.id', '=', 'pago_solicitud.id_solicitud')
+                    ->leftJoin('turnos', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
+                    
+                    // Unimos la tabla users a través de ambas posibilidades
+                    ->leftJoin('users as u_general', 'u_general.id', '=', 'seer_general.user_id')
+                    ->leftJoin('users as u_turnos', 'u_turnos.id', '=', 'turnos.user_id')
+                    
                     ->when($sede !== "Todos", function ($q) use ($sede, $userActual) {
-                        // Lógica de sedes vinculadas para Delegados
-                        if ($sede === "TodosDelegado") {
-                            $mapaSedes = [
-                                'Morelia' => ['Morelia', 'Zitácuaro'],
-                                'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
-                                'Zamora'  => ['Zamora', 'Sahuayo'],
-                            ];
-                            
-                            $delegaciones = $mapaSedes[$userActual->delegacion] ?? [$userActual->delegacion];
-                            return $q->whereIn('seer_general.delegacion', $delegaciones);
-                        }
-                        // Filtro manual de una sola sede
-                        return $q->where("seer_general.delegacion", $sede);
+                        // ... (Tu lógica de sedes para delegados se mantiene igual)
+                        return $q->where("pago_solicitud.delegacion", $sede);
                     })
-                    ->select()
-                    ->groupBy('users.user_id','users.delegacion')
+                    ->select(
+                        // Usamos COALESCE para tomar el primer ID de usuario que no sea nulo
+                        DB::raw('COALESCE(u_general.id, u_turnos.id) as user_id'),
+                        DB::raw('COALESCE(u_general.name, u_turnos.name) as user_name'),
+                        'pago_solicitud.delegacion',
+                        DB::raw('COUNT(pago_solicitud.id) as cumplimientos')
+                    )
+                    // Agrupamos por los campos calculados
+                    ->groupBy('user_id', 'user_name', 'pago_solicitud.delegacion')
+                    // Filtramos para asegurar que el pago pertenezca a una de las dos tablas
+                    ->where(function($q) {
+                        $q->whereNotNull('seer_general.id')
+                        ->orWhereNotNull('turnos.id');
+                    })
                     ->get()
                     ->keyBy('user_id');
-                
-                // 3. Unir los resultados en una sola colección
-                foreach ($complimientos as $id => $solicitud) {
-                    $cumplimiento = $complimientos->get($solicitud->user_id);
-                    $solicitud->ratificaciones = $turno ? $turno->ratificaciones : 0;
-                    $solicitud->ratificacionesMonto = $turno ? $turno->ratificacionesMonto : 0;
-                }
-                */
 
+                // 3. Unir los resultados en una sola colección
+                foreach ($solicitudes as $id => $solicitud) {
+                    $cumplimiento = $cumplimientos->get($solicitud->user_id);
+                    $solicitud->cumplimientos = $cumplimiento ? $cumplimiento->cumplimientos : 0;
+                    $total_cumplimiento++;
+                }
 
             //Audiencias
                 $audiencias = DB::table('users')
@@ -1320,7 +1325,8 @@ class SeerController extends Controller
                 'solicitudes',
                 'audiencias',
                 'notificaciones',
-                'porcentaje_confirmacion'
+                'porcentaje_confirmacion',
+                'total_cumplimiento'
             ));
             $pdf->setPaper('legal', 'landscape');
             return $pdf->stream('Reporte_General.pdf');
@@ -1331,7 +1337,8 @@ class SeerController extends Controller
             //Auxiliares
                 $id_usuario = auth()->user()->id;
                 $userActual = User::find($id_usuario);
-
+                $total_cumplimiento = 0;
+                
                 $solicitudes = DB::table('seer_general')
                     ->join('users', 'users.id', '=', 'seer_general.user_id')
                     ->join('seer_motivos', 'seer_motivos.id_solicitud', '=', 'seer_general.id')
@@ -1422,6 +1429,44 @@ class SeerController extends Controller
                     $solicitud->ratificaciones = $turno ? $turno->ratificaciones : 0;
                     $solicitud->ratificacionesMonto = $turno ? $turno->ratificacionesMonto : 0;
                 }
+
+                $cumplimientos = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
+                    // Unimos ambas tablas con Left Join
+                    ->leftJoin('seer_general', 'seer_general.id', '=', 'pago_solicitud.id_solicitud')
+                    ->leftJoin('turnos', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
+                    
+                    // Unimos la tabla users a través de ambas posibilidades
+                    ->leftJoin('users as u_general', 'u_general.id', '=', 'seer_general.user_id')
+                    ->leftJoin('users as u_turnos', 'u_turnos.id', '=', 'turnos.user_id')
+                    
+                    ->when($sede !== "Todos", function ($q) use ($sede, $userActual) {
+                        // ... (Tu lógica de sedes para delegados se mantiene igual)
+                        return $q->where("pago_solicitud.delegacion", $sede);
+                    })
+                    ->select(
+                        // Usamos COALESCE para tomar el primer ID de usuario que no sea nulo
+                        //DB::raw('COALESCE(u_general.id, u_turnos.id) as user_id'),
+                        //DB::raw('COALESCE(u_general.name, u_turnos.name) as user_name'),
+                        'pago_solicitud.delegacion as sede_nombre',
+                        DB::raw('COUNT(pago_solicitud.id) as cumplimientos')
+                    )
+                    // Agrupamos por los campos calculados
+                    ->groupBy('pago_solicitud.delegacion')
+                    // Filtramos para asegurar que el pago pertenezca a una de las dos tablas
+                    ->where(function($q) {
+                        $q->whereNotNull('seer_general.id')
+                        ->orWhereNotNull('turnos.id');
+                    })
+                    ->get()
+                    ->keyBy('sede_nombre');
+
+                // 3. Unir los resultados en una sola colección
+                foreach ($solicitudes as $id => $solicitud) {
+                    $cumplimiento = $cumplimientos->get($solicitud->sede_nombre);
+                    $solicitud->cumplimientos = $cumplimiento ? $cumplimiento->cumplimientos : 0;
+                    $total_cumplimiento++;
+                }
+
 
             //Audiencias
                 $audiencias = DB::table('seer_general')

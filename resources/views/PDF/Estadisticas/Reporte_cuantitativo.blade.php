@@ -158,7 +158,7 @@
                     <td>{{ $s->confirmadas }}</td>
                     <td>{{ $s->ratificaciones }}</td>
                     <td>{{ $s->incompetencia }}</td>
-                    <td>{{ $s->cumplimientoRatificacion + $s->cumplimientoAudiencia }}</td>
+                    <td>{{ $s->cumplimientos }}</td>
                     <td class="monto">${{ number_format($s->cumplimientoAudienciaMonto, 2) }}</td>
                     <td class="monto">${{ number_format($s->ratificacionesMonto, 2) }}</td>
                 </tr>
@@ -180,7 +180,7 @@
                     <td>{{ $t['c'] }}</td>
                     <td>{{ $t['r'] }}</td>
                     <td>{{ $t['i'] }}</td>
-                    <td>{{ $t['cu'] }}</td>
+                    <td>{{ $total_cumplimiento }}</td>
                     <td>${{ number_format($t['ma'], 2) }}</td>
                     <td>${{ number_format($t['mr'], 2) }}</td>
                 </tr>
