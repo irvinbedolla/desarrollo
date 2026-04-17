@@ -116,6 +116,7 @@
                                                 <th style="color: #fff;">Citado</th>
                                                 <th style="color: #fff;">Dirección</th>
                                                 <th style="color: #fff;">Estatus</th>
+                                                <th style="color: #fff;">Tipo</th>
                                                 <th style="color: #fff;">Detalles</th>
                                                 <th style="color: #fff;">Acciones</th>
                                             </thead>
@@ -132,6 +133,7 @@
                                                             @endif {{mb_strtoupper($estadistica->municipio_citado ?? 'SIN MUNICIPIO', 'UTF-8')}}
                                                         </td>
                                                         <td>{{$estadistica->estatus}}</td>
+                                                        <td>{{$estadistica->tipo_notificacion}}</td>
                                                         <td>
                                                             <a class="btn btn-info" href="{{ route('seer_detalles', $estadistica->id) }}" onclick=nuevo_estadistica();>Consultar</a>
                                                         </td>

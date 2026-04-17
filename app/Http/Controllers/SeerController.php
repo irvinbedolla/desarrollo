@@ -159,7 +159,7 @@ class SeerController extends Controller
             ->where('seer_citados.estatus', 'Pendiente')
             ->select('seer_citados.id','seer_general.NUE','seer_solicitante.nombre as nombre_solicitado','seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido',
             'municipios.nombre as municipio_citado','seer_citados.colonia','seer_citados.calle',
-            'seer_citados.n_ext','seer_citados.estatus')
+            'seer_citados.n_ext','seer_citados.estatus','seer_citados.tipo_notificacion')
             ->get();
         }
         //Si es otro usuario le va mostrar unicamente las del ese usuario
