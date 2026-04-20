@@ -891,7 +891,11 @@ class TurnosController extends Controller
         $fecha_fin = now()->addDays(20)->format('Y-m-d');
         $sede = $request->input('sede'); // Obtener sede de la solicitud
 
-        $inhabiles = DiasInhabiles::whereNull('user_id')->where('centro', $sede)->get(); //Obtenemos días inhabiles
+        $inhabiles = DiasInhabiles::whereNull('user_id')
+            ->where('centro', $sede)
+            ->whereIn('descripcion', ['Inhabil', 'No inhabil'])
+            ->whereIn('tipo', ['Ratificaciones', 'Todos'])
+            ->get(); //Obtenemos días inhabiles
 
         /* Obtener turnos ocupados filtrando por sede
         $ocupados = Turnos::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
@@ -928,11 +932,17 @@ class TurnosController extends Controller
                             ->count();
 
                         $esInhabil = false;
+                        $esNoInhabil = false;
                         foreach($inhabiles as $dia){
                             $fechaInhabilInicio = $dia->fecha_inicio . 'T' . $dia->horario_inicio;
                             $fechaInhabilFinal = $dia->fecha_final . 'T' . $dia->horario_final;
                             if($slotStart >= $fechaInhabilInicio && $slotStart <= $fechaInhabilFinal){
-                                $esInhabil = true;
+                                if ($dia->descripcion === 'No inhabil') {
+                                    $esNoInhabil = true;
+                                } else {
+                                    $esInhabil = true;
+                                }
+                                break;
                             }
                         }
 
@@ -960,14 +970,15 @@ class TurnosController extends Controller
                             ];
                         } else if ($esInhabil){
                             $todosLosEventos[] = [
-                                'title' => 'No disponible',
+                                'title' => 'Inhábil',
                                 'start' => $slotStart,
                                 'color' => '#3B78DB',
                                 'extendedProps' => ['estado' => 'inhabil', 'espacios_disponibles' => 0]
                             ];
-                        } else if ($ahora > $currentCita){
+                        } else if ($esNoInhabil || $ahora > $currentCita){
+                            $titulo = $esNoInhabil ? 'No disponible' : 'Expirado';
                             $todosLosEventos[] = [
-                                'title' => 'Expirado',
+                                'title' => $titulo,
                                 'start' => $slotStart,
                                 'color' => '#F59727',
                                 'extendedProps' => ['estado' => 'expirado', 'espacios_disponibles' => 0]

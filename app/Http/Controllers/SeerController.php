@@ -12300,6 +12300,8 @@ class SeerController extends Controller
                     });
                 }
             })
+            ->whereIn('descripcion', ['Inhabil', 'No inhabil'])
+            ->whereIn('tipo', ['Cumplimientos', 'Todos'])
             ->where(function($query) use ($fecha_inicio_dt, $fecha_fin_dt) {
                 $query->where('fecha_inicio', '<=', $fecha_fin_dt)
                     ->where('fecha_final', '>=', $fecha_inicio_dt);
@@ -12359,11 +12361,16 @@ class SeerController extends Controller
                     $ocupado = ($conteoOcupados >= 2);
 
                     $esInhabil = false;
+                    $esNoInhabil = false;
                     foreach($inhabiles as $dia){
                         $fechaInhabilInicio = $dia->fecha_inicio . 'T' . $dia->horario_inicio;
                         $fechaInhabilFinal = $dia->fecha_final . 'T' . $dia->horario_final;
                         if($slotStart >= $fechaInhabilInicio && $slotStart <= $fechaInhabilFinal){
-                            $esInhabil = true;
+                            if ($dia->descripcion === 'No inhabil') {
+                                $esNoInhabil = true;
+                            } else {
+                                $esInhabil = true;
+                            }
                             break;
                         }
                     }
@@ -12374,7 +12381,7 @@ class SeerController extends Controller
                         $estado = 'ocupado';
                     } elseif ($esInhabil) {
                         $estado = 'inhabil';
-                    } elseif ($ahora > $slot) {
+                    } elseif ($esNoInhabil || $ahora > $slot) {
                         $estado = 'expirado';
                     } else {
                         $estado = 'disponible';
@@ -12394,8 +12401,9 @@ class SeerController extends Controller
                             ];
                             break;
                         case 'expirado':
+                            $titulo = $esNoInhabil ? 'No disponible' : 'Expirado';
                             $todosLosEventos[] = [
-                                'title' => 'Expirado', 'start' => $slotStart,
+                                'title' => $titulo, 'start' => $slotStart,
                                 'color' => '#F59727', 'extendedProps' => ['estado' => 'expirado']
                             ];
                             break;
@@ -12481,6 +12489,8 @@ class SeerController extends Controller
             // Solo inhábiles generales de la sede principal (sin subsedes y sin user_id del conciliador)
             $inhabiles = DiasInhabiles::where('centro', $sede)
                 ->whereNull('user_id')
+                ->whereIn('descripcion', ['Inhabil', 'No inhabil'])
+                ->whereIn('tipo', ['Audiencias', 'Todos'])
                 ->where(function ($query) use ($fecha_inicio, $fecha_fin) {
                     $query->where('fecha_inicio', '<=', $fecha_fin)
                         ->where('fecha_final', '>=', $fecha_inicio);
@@ -12515,6 +12525,8 @@ class SeerController extends Controller
                             ->where('user_id', $id_conciliador);
                     });
                 })
+                ->whereIn('descripcion', ['Inhabil', 'No inhabil'])
+                ->whereIn('tipo', ['Audiencias', 'Todos'])
                 ->where(function ($query) use ($fecha_inicio, $fecha_fin) {
                     $query->where('fecha_inicio', '<=', $fecha_fin)
                         ->where('fecha_final', '>=', $fecha_inicio);
@@ -12550,11 +12562,16 @@ class SeerController extends Controller
                     $ocupado = $audienciasEnSlot >= 2;
                     
                     $esInhabil = false;
+                    $esNoInhabil = false;
                     foreach($inhabiles as $dia){
                         $fechaInhabilInicio = $dia->fecha_inicio . 'T' . $dia->horario_inicio;
                         $fechaInhabilFinal = $dia->fecha_final . 'T' . $dia->horario_final;
                         if($slotStart >= $fechaInhabilInicio && $slotStart <= $fechaInhabilFinal){
-                            $esInhabil = true;
+                            if ($dia->descripcion === 'No inhabil') {
+                                $esNoInhabil = true;
+                            } else {
+                                $esInhabil = true;
+                            }
                             break;
                         }
                     }
@@ -12566,6 +12583,8 @@ class SeerController extends Controller
                         $estado = 'ocupado';
                     } elseif ($esInhabil) {
                         $estado = 'inhabil';
+                    } elseif ($esNoInhabil) {
+                        $estado = 'expirado';
                     } elseif ($ahora > $slot) {
                         $estado = 'expirado';
                     } else {
