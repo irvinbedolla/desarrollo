@@ -6908,10 +6908,11 @@ class SeerController extends Controller
         $solicitud = SeerPerGeneral::find($id);
         $solicitante = SeerSolicitante::where('id_solicitud',$solicitud["id"])->first();
        
-        $conciliador  = User::join("audiencias","audiencias.id_conciliador","=","users.id");
-        $conciliador = $conciliador->where("audiencias.id_solicitud", "=", $id)
-        ->select('users.name')
-        ->first();
+        $conciliador  = User::join("audiencias","audiencias.id_conciliador","=","users.id")
+            ->where("audiencias.id_solicitud", "=", $solicitud["id"])
+            ->latest('audiencias.created_at')
+            ->select('users.name')
+            ->first();
         $citados = SeerCitados::where("id_solicitud",$id)
         ->where('tipo_notificacion', '!=', 'Multa')
         ->select('nombre','primer_apellido','segundo_apellido')
@@ -8241,6 +8242,7 @@ class SeerController extends Controller
 
         $conciliador = User::join("audiencias", "audiencias.id_conciliador", "=", "users.id")
         ->where("audiencias.id_solicitud", "=", $id)
+        ->latest('audiencias.created_at')
         ->select("users.name")
         ->first();
         $delegacion = $solicitud->delegacion;
@@ -9159,8 +9161,9 @@ class SeerController extends Controller
             ->where("seer_solicitante.id_solicitud", "=", $solicitud->id)
             ->first();
 
-        $conciliador = User::join("seer_general", "seer_general.conciliador_id", "=", "users.id")
-            ->where("seer_general.conciliador_id", "=", $solicitud->conciliador_id)
+        $conciliador  = User::join("audiencias","audiencias.id_conciliador","=","users.id")
+            ->where("audiencias.id_solicitud", "=", $solicitud["id"])
+            ->latest('audiencias.created_at')
             ->select('users.name')
             ->first();
 
@@ -9926,8 +9929,9 @@ class SeerController extends Controller
 
             $salario_diario = $this->calcularSalarioDiario($solicitante->pago, $solicitante->periodo_pago);
     
-            $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
-            $conciliador = $conciliador->where("seer_general.id", "=", $general["id"])
+            $conciliador  = User::join("audiencias","audiencias.id_conciliador","=","users.id")
+            ->where("audiencias.id_solicitud", "=", $solicitud["id"])
+            ->latest('audiencias.created_at')
             ->select('users.name')
             ->first();
             $html = view('PDF/IncumplimientoAudiencia', compact('id', 'solicitud','conciliador','salario_diario','pagos','general', 'citados', 'solicitante'))->render();
@@ -10062,6 +10066,7 @@ class SeerController extends Controller
         $pagos = Pagos::where('id_solicitud', $id)->where('id_solicitud', 'Audiencia')->get();
         $conciliador = User::join('audiencias', 'audiencias.id_conciliador', '=', 'users.id')
             ->where('audiencias.id_solicitud', $solicitud['id'])
+            ->latest('audiencias.created_at')
             ->select('users.name')
             ->orderByDesc('audiencias.id')
             ->first();
@@ -12816,8 +12821,9 @@ class SeerController extends Controller
                 })
                 ->values();
 
-            $conciliador  = User::join("seer_general","seer_general.conciliador_id","=","users.id");
-            $conciliador = $conciliador->where("seer_general.id", "=", $pagos->id_solicitud)
+            $conciliador  = User::join("audiencias","audiencias.id_conciliador","=","users.id")
+            ->where("audiencias.id_solicitud", "=", $solicitud["id"])
+            ->latest('audiencias.created_at')
             ->select('users.name')
             ->first();
             $html = view('PDF/Cumplimientos/incomparecenciaTrabajadorAudiencia', compact('id','solicitud','conciliador',/*'salario_diario',*/'pagos','delegado','citados','representantes', 'solicitante'))->render();
@@ -13635,6 +13641,7 @@ class SeerController extends Controller
                 ->first();
             $conciliador  = User::join("audiencias","audiencias.id_conciliador","=","users.id")
             ->where("audiencias.id_solicitud", "=", $solicitud["id"])
+            ->latest('audiencias.created_at')
             ->select('users.name')
             ->first();
             $delegacion = $solicitud->delegacion;
@@ -15973,6 +15980,7 @@ class SeerController extends Controller
         $pagos = Pagos::where('id_solicitud', $id)->where('tipo_pago','Audiencia')->get();
         $conciliador  = User::join("audiencias","audiencias.id_conciliador","=","users.id");
         $conciliador = $conciliador->where("audiencias.id_solicitud", "=", $id)
+        ->latest('audiencias.created_at')
         ->select('users.name')
         ->first();
         $delegacion = $solicitud->delegacion;
@@ -16754,8 +16762,9 @@ class SeerController extends Controller
         $solicitante = SeerPerGeneral::join("seer_solicitante", "seer_solicitante.id_solicitud", "=", "seer_general.id")
             ->where("seer_solicitante.id_solicitud", "=", $solicitud->id)
             ->first();
-        $conciliador = User::join("seer_general", "seer_general.conciliador_id", "=", "users.id")
-            ->where("seer_general.conciliador_id", "=", $solicitud->conciliador_id)
+        $conciliador  = User::join("audiencias","audiencias.id_conciliador","=","users.id")
+            ->where("audiencias.id_solicitud", "=", $solicitud["id"])
+            ->latest('audiencias.created_at')
             ->select('users.name')
             ->first();
         $audiencia = SeerPerGeneral::join("audiencias", "audiencias.id_solicitud", "=", "seer_general.id")
