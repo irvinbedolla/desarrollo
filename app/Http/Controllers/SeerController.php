@@ -4526,6 +4526,26 @@ class SeerController extends Controller
         $nombre = $solicitante["nombre"]." ".$solicitante["primer_apellido"]." ".$solicitante["segundo_apellido"];
         $folio = $solicitante["id_solicitud"];
         $delegacion = SeerPerGeneral::find($id);
+
+        $mapaSedes = [
+            'Morelia' => ['Morelia', 'Zitácuaro'],
+            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+            'Zamora'  => ['Zamora', 'Sahuayo'],
+        ];
+
+        $sedesABuscar = isset($mapaSedes[$delegacion]) 
+                ? $mapaSedes[$delegacion] 
+                : [$delegacion];
+
+        $delegacion = SeerPerGeneral::find($id);
+        $delegado = User::whereHas('roles', function ($query) {
+            return $query->where('name', '=', 'Delegado');
+        })
+        ->whereIn('delegacion', $sedesABuscar)
+        ->first();
+       
+        SeerPerGeneral::find($id)->update(['delegado_id' => $delegado->id]);
+
         $usuario = User::
         where('profile_photo_path',$solicitante['curp'])
         ->orWhere('email',$solicitante["email"])
@@ -4789,6 +4809,27 @@ class SeerController extends Controller
         $nombre = $solicitante["nombre"]." ".$solicitante["primer_apellido"]." ".$solicitante["segundo_apellido"];
         $folio = $solicitante["id_solicitud"];
         $delegacion = SeerPerGeneral::find($id);
+        
+        $mapaSedes = [
+            'Morelia' => ['Morelia', 'Zitácuaro'],
+            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+            'Zamora'  => ['Zamora', 'Sahuayo'],
+        ];
+
+        $sedesABuscar = isset($mapaSedes[$delegacion]) 
+                ? $mapaSedes[$delegacion] 
+                : [$delegacion];
+
+        $delegacion = SeerPerGeneral::find($id);
+        $delegado = User::whereHas('roles', function ($query) {
+            return $query->where('name', '=', 'Delegado');
+        })
+        ->whereIn('delegacion', $sedesABuscar)
+        ->first();
+       
+        SeerPerGeneral::find($id)->update(['delegado_id' => $delegado->id]);
+
+
         $usuario = User::
         where('profile_photo_path',$solicitante['curp'])
         ->orWhere('email',$solicitante["email"])
@@ -14456,6 +14497,25 @@ class SeerController extends Controller
         }
 
         $delegacion = SeerPerGeneral::find($id);
+
+        $mapaSedes = [
+            'Morelia' => ['Morelia', 'Zitácuaro'],
+            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+            'Zamora'  => ['Zamora', 'Sahuayo'],
+        ];
+
+        $sedesABuscar = isset($mapaSedes[$delegacion]) 
+                ? $mapaSedes[$delegacion] 
+                : [$delegacion];
+
+        $delegacion = SeerPerGeneral::find($id);
+        $delegado = User::whereHas('roles', function ($query) {
+            return $query->where('name', '=', 'Delegado');
+        })
+        ->whereIn('delegacion', $sedesABuscar)
+        ->first();
+       
+        SeerPerGeneral::find($id)->update(['delegado_id' => $delegado->id]);
         // 1. Carga de relaciones necesarias (Eager Loading para evitar múltiples consultas)
         $solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
         $solicitud = SeerPerGeneral::find($id);
@@ -14705,6 +14765,26 @@ class SeerController extends Controller
         } */
 
         $delegacion = SeerPerGeneral::find($id);
+
+        $mapaSedes = [
+            'Morelia' => ['Morelia', 'Zitácuaro'],
+            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+            'Zamora'  => ['Zamora', 'Sahuayo'],
+        ];
+
+        $sedesABuscar = isset($mapaSedes[$delegacion]) 
+                ? $mapaSedes[$delegacion] 
+                : [$delegacion];
+
+        $delegacion = SeerPerGeneral::find($id);
+        $delegado = User::whereHas('roles', function ($query) {
+            return $query->where('name', '=', 'Delegado');
+        })
+        ->whereIn('delegacion', $sedesABuscar)
+        ->first();
+       
+        SeerPerGeneral::find($id)->update(['delegado_id' => $delegado->id]);
+
         // 1. Carga de relaciones necesarias (Eager Loading para evitar múltiples consultas)
         $solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
         $solicitud = SeerPerGeneral::find($id);

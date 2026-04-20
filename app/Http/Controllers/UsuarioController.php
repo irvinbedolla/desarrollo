@@ -16,7 +16,11 @@ class UsuarioController extends Controller
 {   
     public function index()
     {
-        $usuarios = User::all();
+        $relacionEloquent = 'roles';
+        $usuarios = User::whereHas($relacionEloquent, function ($query) {
+            return $query->where('name', '!=', 'Solicitante');
+        })
+        ->get();
         return view('usuarios.index',compact('usuarios'));
     }
 
