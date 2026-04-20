@@ -8852,7 +8852,7 @@ class SeerController extends Controller
             ->where('notificacion', 'Centro')
             ->whereIn('estatus', [
                 'Finalizado exitosamente', 
-                'Exitoso por Instructivo', 
+                'Exitosa por Instructivo', 
                 'No notificada',
                 'Notificada en Audiencia'
             ])

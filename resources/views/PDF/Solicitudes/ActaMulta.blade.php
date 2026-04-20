@@ -123,7 +123,8 @@
                 <center><p><b>CENTRO DE CONCILIACIÓN LABORAL DEL ESTADO DE MICHOACÁN DE OCAMPO<br><br>
                         ACTA DE MULTA POR INCOMPARECENCIA</b></p></center>
                 @php
-                    $fechaNotificacion = !empty($citado->fecha) ? \Carbon\Carbon::parse($citado->fecha) : null;
+                    //$fechaNotificacion = !empty($citado->fecha) ? \Carbon\Carbon::parse($citado->fecha) : null;
+                    $fechaNotificacion = !empty($citadoOriginal->fecha) ? \Carbon\Carbon::parse($citadoOriginal->fecha) : null;
                 @endphp
                 <p>En <b>{{ $direccion_sede }}</b> a <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, el(la) funcionario(a) 
                     conciliador(a) <b>{{ mb_strtoupper($conciliador->name, 'UTF-8') }}</b>, adscrito al Centro 
