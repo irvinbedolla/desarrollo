@@ -1102,6 +1102,7 @@ class TurnosController extends Controller
         // Obtener el número de pagos
         $pagosDif = Pagos::join("turnos", "turnos.id", "=", "pago_solicitud.id_solicitud")
             ->where("pago_solicitud.id_solicitud", "=", $id)
+            ->where("pago_solicitud.tipo_pago", "=", "Ratificacion")
             ->select(DB::raw('count(pago_solicitud.id_solicitud) as C_pagos'))
             ->first();
         $conciliador = User::join("turnos", "turnos.id_conciliador", "=", "users.id")
