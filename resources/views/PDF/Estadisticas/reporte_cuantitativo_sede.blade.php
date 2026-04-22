@@ -109,7 +109,7 @@
                     <th style="width: 18%;">Sede</th>
                     <th>Solicitudes</th>
                     <th>Confirmadas</th>
-                    <th>Efect. %</th>
+                    <!--th>Efect. %</th-->
                     <th>Ratif.</th>
                     <th>Cumplimientos</th>
                     <th>Monto Aud.</th>
@@ -123,10 +123,10 @@
                     <td class="text-left bold">{{ $s->sede_nombre }}</td>
                     <td>{{ $s->numeroSolicitudes ?? 0 }}</td>
                     <td>{{ $s->confirmadas }}</td>
-                    <td class="efectividad">{{ number_format($efect, 1) }}%</td>
+                    <!--td class="efectividad">{{ number_format($efect, 1) }}%</td-->
                     <td>{{ $s->ratificaciones ?? 0 }}</td>
                     <td class="bold">{{ $s->cumplimientos }}</td>
-                    <td class="monto">${{ number_format($s->cumplimientoAudienciaMonto, 2) }}</td>
+                    <td class="monto">${{ number_format($s->audienciasMonto, 2) }}</td>
                     <td class="monto">${{ number_format($s->ratificacionesMonto, 2) }}</td>
                 </tr>
                 @endforeach
@@ -141,6 +141,7 @@
                     <th>Audiencias Programadas</th>
                     <th>Audiencias Celebradas</th>
                     <th>Convenios</th>
+                    <th>No Conciliación</th>
                     <th>Falta de Int.</th>
                     <th>Incompetencia</th>
                     <th>1 Aud.</th>
@@ -155,6 +156,7 @@
                     <td>{{ $a->audienencias_programadas ?? 0 }}</td>
                     <td>{{ $a->audienencias_celebradas }}</td>
                     <td>{{ $a->convenios}}</td>
+                    <td>{{ $a->no_conciliacion}}</td>
                     <td>{{ $a->achivada }}</td>
                     <td>{{ $a->incompetencia ?? 0 }}</td>
                     <td>{{ $a->una_audiencia }}</td>
@@ -172,12 +174,14 @@
                     <th style="width: 18%;">Sede</th>
                     <th>Total</th>
                     <th>Exitosa</th>
-                    <th>Efect. %</th>
+                    <!--th>Efect. %</th-->
                     <th>No Notif.</th>
                     <th>Pend.</th>
                     <th>Exhorto</th>
-                    <th>NESC*</th>
-                    <th>NENSC**</th>
+                    <th>Notificadas por el Centro</th>
+                    <th>Notificadas por el Solicitante</th>
+                    <!--th>NESC*</th-->
+                    <!--th>NENSC**</th-->
                 </tr>
             </thead>
             <tbody>
@@ -187,12 +191,14 @@
                     <td class="text-left bold">{{ $n->sede_nombre }}</td>
                     <td>{{ $n->Todas_notificaciones ?? 0 }}</td>
                     <td class="bold">{{ $n->exitosamente }}</td>
-                    <td class="efectividad">{{ number_format($efect_n, 1) }}%</td>
+                    <!--td class="efectividad">{{ number_format($efect_n, 1) }}%</td-->
                     <td>{{ $n->notificacion_Nonotificada }}</td>
                     <td>{{ $n->notificacion_pendientes }}</td>
                     <td>{{ $n->notificacion_exhortos }}</td>
-                    <td>{{ $n->notificacion_NESC }}</td>
-                    <td>{{ $n->notificacion_NENSC }}</td>
+                    <td>{{ $n->notificadas_centro }}</td>
+                    <td>{{ $n->notificadas_trabajador }}</td>
+                    <!--td>{{ $n->notificacion_NESC }}</td-->
+                    <!--td>{{ $n->notificacion_NENSC }}</td-->
                 </tr>
                 @endforeach
             </tbody>

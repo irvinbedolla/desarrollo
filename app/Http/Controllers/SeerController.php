@@ -1070,7 +1070,7 @@ class SeerController extends Controller
             //Notificaciones
             return Excel::download(new NotificacionesExport($fecha_inicial, $fecha_final, $sede, $auxiliar , $notificador), 'notificaciones.xlsx');
         }
-                else if($data["tipo_reporte"] == "Concentrado"){
+        else if($data["tipo_reporte"] == "Concentrado"){
             $id_usuario = auth()->user()->id;
             $userActual = User::find($id_usuario);
             $total_cumplimiento = 0;
@@ -1305,7 +1305,7 @@ class SeerController extends Controller
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'No exitosa se constituye' THEN 1 ELSE 0 END) as notificacion_NESC"),
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'No exitosa no se constituye' THEN 1 ELSE 0 END) as notificacion_NENSC"),
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Finalizado exitosamente' THEN 1 ELSE 0 END) as exitosamente"),
-                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Recibe pero no firma' THEN 1 ELSE 0 END) as firma")
+                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Recibe pero no firma' THEN 1 ELSE 0 END) as firma"),
                     )
                     ->groupBy('auxiliar.id', 'auxiliar.name')
                     ->get();
@@ -1448,7 +1448,8 @@ class SeerController extends Controller
                         //DB::raw('COALESCE(u_general.id, u_turnos.id) as user_id'),
                         //DB::raw('COALESCE(u_general.name, u_turnos.name) as user_name'),
                         'pago_solicitud.delegacion as sede_nombre',
-                        DB::raw('COUNT(pago_solicitud.id) as cumplimientos')
+                        DB::raw('COUNT(pago_solicitud.id) as cumplimientos'),
+                        DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' AND pago_solicitud.estatus = 'Pagado' THEN pago_solicitud.monto ELSE 0 END) as audienciasMonto")
                     )
                     // Agrupamos por los campos calculados
                     ->groupBy('pago_solicitud.delegacion')
@@ -1464,6 +1465,7 @@ class SeerController extends Controller
                 foreach ($solicitudes as $id => $solicitud) {
                     $cumplimiento = $cumplimientos->get($solicitud->sede_nombre);
                     $solicitud->cumplimientos = $cumplimiento ? $cumplimiento->cumplimientos : 0;
+                    $solicitud->audienciasMonto = $cumplimiento ? $cumplimiento->audienciasMonto : 0;
                     $total_cumplimiento++;
                 }
 
@@ -1503,17 +1505,48 @@ class SeerController extends Controller
                         //Audienicas Programadas
                         DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Pendiente','Conciliacion','No conciliacion','Reagendada','Archivada','No conciliacion reagendada','Incompetencia','Reinstalacion','Desistimiento','Archivada en Audiencia') THEN seer_general.id END) as audienencias_programadas"),
                         //Audienicas Celebradas
-                        DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Conciliacion','Reinstalacion','No conciliacion reagendada') THEN seer_general.id END) as audienencias_celebradas"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Conciliacion','Reinstalacion','No conciliacion reagendada') OR (audiencias.estatus = 'No conciliacion' AND (SELECT resolicion_primera FROM seer_conciliadores WHERE id_solicitud = seer_general.id ORDER BY id DESC LIMIT 1) IS NOT NULL) THEN seer_general.id END) as audienencias_celebradas"),
                         //Audienicas Celebradas
                         DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Conciliacion') THEN seer_general.id END) as convenios"),
+                        //No conciliacion
+                        DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('No conciliacion') THEN seer_general.id END) as no_conciliacion"),
                         //Falta de interes
                         DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Archivada') THEN seer_general.id END) as achivada"),
                         //Incompetencia
                         DB::raw("COUNT(DISTINCT CASE WHEN seer_general.estatus IN ('Incompetencia') THEN seer_general.id END) as incompetencia"),
                         // Conteos por número de audiencias (Subconsultas optimizadas por sede)
-                        DB::raw("COUNT(DISTINCT CASE WHEN (SELECT COUNT(*) FROM audiencias a WHERE a.id_solicitud = seer_general.id) = 1 THEN seer_general.id END) as una_audiencia"),
-                        DB::raw("COUNT(DISTINCT CASE WHEN (SELECT COUNT(*) FROM audiencias a WHERE a.id_solicitud = seer_general.id) = 2 THEN seer_general.id END) as dos_audiencias"),
-                        DB::raw("COUNT(DISTINCT CASE WHEN (SELECT COUNT(*) FROM audiencias a WHERE a.id_solicitud = seer_general.id) >= 3 THEN seer_general.id END) as tres_audiencias")
+                        // 1 Audiencia finalizada
+                        DB::raw("COUNT(DISTINCT CASE WHEN (SELECT COUNT(*) FROM audiencias a WHERE a.id_solicitud = seer_general.id) = 1 
+                            AND (
+                                (SELECT a_last.estatus FROM audiencias a_last WHERE a_last.id_solicitud = seer_general.id ORDER BY a_last.id DESC LIMIT 1) IN ('Conciliacion','Reinstalacion','No conciliacion reagendada') 
+                                OR (
+                                    (SELECT a_last.estatus FROM audiencias a_last WHERE a_last.id_solicitud = seer_general.id ORDER BY a_last.id DESC LIMIT 1) = 'No conciliacion' 
+                                    AND (SELECT resolicion_primera FROM seer_conciliadores WHERE id_solicitud = seer_general.id ORDER BY id DESC LIMIT 1) IS NOT NULL
+                                )
+                            ) 
+                        THEN seer_general.id END) as una_audiencia"),
+
+                        // 2 Audiencias finalizadas
+                        DB::raw("COUNT(DISTINCT CASE WHEN (SELECT COUNT(*) FROM audiencias a WHERE a.id_solicitud = seer_general.id) = 2 
+                            AND (
+                                (SELECT a_last.estatus FROM audiencias a_last WHERE a_last.id_solicitud = seer_general.id ORDER BY a_last.id DESC LIMIT 1) IN ('Conciliacion','Reinstalacion','No conciliacion reagendada') 
+                                OR (
+                                    (SELECT a_last.estatus FROM audiencias a_last WHERE a_last.id_solicitud = seer_general.id ORDER BY a_last.id DESC LIMIT 1) = 'No conciliacion' 
+                                    AND (SELECT resolicion_primera FROM seer_conciliadores WHERE id_solicitud = seer_general.id ORDER BY id DESC LIMIT 1) IS NOT NULL
+                                )
+                            ) 
+                        THEN seer_general.id END) as dos_audiencias"),
+
+                        // 3+ Audiencias finalizadas
+                        DB::raw("COUNT(DISTINCT CASE WHEN (SELECT COUNT(*) FROM audiencias a WHERE a.id_solicitud = seer_general.id) >= 3 
+                            AND (
+                                (SELECT a_last.estatus FROM audiencias a_last WHERE a_last.id_solicitud = seer_general.id ORDER BY a_last.id DESC LIMIT 1) IN ('Conciliacion','Reinstalacion','No conciliacion reagendada') 
+                                OR (
+                                    (SELECT a_last.estatus FROM audiencias a_last WHERE a_last.id_solicitud = seer_general.id ORDER BY a_last.id DESC LIMIT 1) = 'No conciliacion' 
+                                    AND (SELECT resolicion_primera FROM seer_conciliadores WHERE id_solicitud = seer_general.id ORDER BY id DESC LIMIT 1) IS NOT NULL
+                                )
+                            ) 
+                        THEN seer_general.id END) as tres_audiencias")
                     )
                     ->groupBy('seer_general.delegacion')
                     ->get();
@@ -1568,7 +1601,9 @@ class SeerController extends Controller
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'No exitosa se constituye' THEN 1 ELSE 0 END) as notificacion_NESC"),
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'No exitosa no se constituye' THEN 1 ELSE 0 END) as notificacion_NENSC"),
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Finalizado exitosamente' THEN 1 ELSE 0 END) as exitosamente"),
-                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Recibe pero no firma' THEN 1 ELSE 0 END) as firma")
+                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Recibe pero no firma' THEN 1 ELSE 0 END) as firma"),
+                        DB::raw("SUM(CASE WHEN seer_citados.notificacion = 'Centro' THEN 1 ELSE 0 END) as notificadas_centro"),
+                        DB::raw("SUM(CASE WHEN seer_citados.notificacion = 'Trabajador' THEN 1 ELSE 0 END) as notificadas_trabajador")
                     )
                     ->groupBy('seer_general.delegacion')
                     ->get();

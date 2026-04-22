@@ -43,7 +43,7 @@ class ReporteMexicoRati implements FromView
 
         // --- CONSULTA 1: TURNOS ---
         $reportes = Turnos::whereBetween('turnos.fecha', [$this->fecha_inicial, $this->fecha_final])
-            ->whereNotIn('turnos.estatus', ['Pendiente', 'Prevencion'])
+            ->whereNotIn('turnos.estatus', ['Pendiente', 'Prevencion', 'Confirmado'])
             ->leftJoin('users', 'users.id', '=', 'turnos.user_id')
             ->leftJoin('estados', 'estados.id', '=', 'turnos.estado_rat')
             ->leftJoin('municipios', 'municipios.id', '=', 'turnos.municipio_rat')
@@ -124,6 +124,8 @@ class ReporteMexicoRati implements FromView
             })
             ->sortBy('NUE', SORT_NATURAL)
             ->values();
+
+        dd($reportesSolicitudes);
 
         return view('excel.reporte-mexico', ['reportes' => $todoJunto]);
     }
