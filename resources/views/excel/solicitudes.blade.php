@@ -10,6 +10,7 @@
                 <tr>
                     <!--th width="15" style="background-color: #869b9c; color: #ffffff;">Fecha</th-->
                     <th width="25" style="background-color: #869b9c; color: #ffffff;">NUE</th>
+                    <th width="25" style="background-color: #869b9c; color: #ffffff;">Fecha Confirmación</th>
                     <th width="60" style="background-color: #869b9c; color: #ffffff;">Motivo Solicitud</th>
                     <th width="25" style="background-color: #869b9c; color: #ffffff;">Genero</th>
                     <th width="40" style="background-color: #869b9c; color: #ffffff;">Empleador</th>
@@ -33,6 +34,7 @@
                     <tr>
                         <!--td style=" text-align: center;">{{ $estadistica->fecha }}</td-->
                         <td style=" text-align: center;">{{ $estadistica->NUE }}</td>
+                        <td style=" text-align: center;">{{ $estadistica->fecha_confirmacion }}</td>
                         <td style=" text-align: center;">{{ $estadistica->motivos }}</td>
                         <td style=" text-align: center;">{{ $estadistica->sexo }}</td>
                         <td style=" text-align: center;">{{ $estadistica->primer_citado }}</td>
