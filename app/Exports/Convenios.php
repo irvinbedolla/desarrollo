@@ -70,10 +70,10 @@ class Convenios implements FromView
                     SEPARATOR ', '
                 ) as citados"),
                 // Lógica de Pagos
-                DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pagado' THEN pago_solicitud.id END) as cantidad_pagados"),
-                DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN pago_solicitud.id END) as cantidad_pendientes"),
-                DB::raw("SUM(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pagado' THEN pago_solicitud.monto ELSE 0 END) as monto_pagado"),
-                DB::raw("SUM(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN pago_solicitud.monto ELSE 0 END) as monto_pendiente"),
+                DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pagado' AND pago_solicitud.fecha <= '{$this->fecha_final}' THEN pago_solicitud.id END) as cantidad_pagados"),
+                DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pendiente' OR (pago_solicitud.estatus = 'Pagado' AND pago_solicitud.fecha > '{$this->fecha_final}') THEN pago_solicitud.id END) as cantidad_pendientes"),
+                DB::raw("SUM(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pagado' AND pago_solicitud.fecha <= '{$this->fecha_final}' THEN pago_solicitud.monto ELSE 0 END) as monto_pagado"),
+                DB::raw("SUM(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pendiente' OR (pago_solicitud.estatus = 'Pagado' AND pago_solicitud.fecha > '{$this->fecha_final}') THEN pago_solicitud.monto ELSE 0 END) as monto_pendiente"),
             )
             ->groupBy(
                 'audiencias.fecha', 

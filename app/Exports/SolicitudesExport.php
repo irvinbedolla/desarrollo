@@ -65,6 +65,7 @@ class SolicitudesExport implements FromView
             'users.name as auxiliar',
             'seer_general.consecutivo as folio',
             'seer_general.fecha',
+            'seer_general.fecha_confirmacion',
             'seer_general.NUE',
             'seer_general.estatus',
             'seer_general.delegacion',
@@ -88,7 +89,7 @@ class SolicitudesExport implements FromView
             DB::raw("COUNT(DISTINCT audiencias.id) as total_audiencias"),
             // Formateamos como: FECHA (ESTATUS) y separamos cada audiencia con una coma
             DB::raw("GROUP_CONCAT(DISTINCT 
-            CONCAT(DATE_FORMAT(audiencias.fecha, '%d/%m/%Y'), ' (', audiencias.estatus, ')') 
+            CONCAT(audiencias.estatus) 
             ORDER BY audiencias.fecha ASC SEPARATOR ', ') as detalle_audiencias")
             //DB::raw("GROUP_CONCAT(DISTINCT audiencias.estatus SEPARATOR ', ') as estados_audiencias")
         )
@@ -98,6 +99,7 @@ class SolicitudesExport implements FromView
             'seer_general.NUE',
             'seer_general.consecutivo', 
             'seer_general.fecha', 
+            'seer_general.fecha_confirmacion',
             'seer_general.estatus', 
             'seer_general.delegacion', 
             'seer_general.actividad', 
