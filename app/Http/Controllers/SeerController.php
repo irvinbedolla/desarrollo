@@ -4809,7 +4809,7 @@ class SeerController extends Controller
         $nombre = $solicitante["nombre"]." ".$solicitante["primer_apellido"]." ".$solicitante["segundo_apellido"];
         $folio = $solicitante["id_solicitud"];
         $delegacion = SeerPerGeneral::find($id);
-        
+
         $mapaSedes = [
             'Morelia' => ['Morelia', 'Zitácuaro'],
             'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
@@ -10155,13 +10155,13 @@ class SeerController extends Controller
                         ->where('notificacion', 'Centro')
                         ->where('tipo_notificacion', '!=', 'Multa')
                         ->where('resulte_responsable', 'No')
-                        //->where('audiencia_id', $audienciaId)
+                        ->where('audiencia_id', $audienciaId)
                         ->whereNotNull('id_abogado')
                         ->get();
         } else {
             $citados = SeerCitados::where('id_solicitud', $id)
                         ->where('resulte_responsable', 'No')
-                        //->where('audiencia_id', $audienciaId)
+                        ->where('audiencia_id', $audienciaId)
                         ->whereNotNull('id_abogado')
                         ->get();
         }
@@ -14499,22 +14499,21 @@ class SeerController extends Controller
         $delegacion = SeerPerGeneral::find($id);
 
         $mapaSedes = [
-            'Morelia' => ['Morelia', 'Zitácuaro'],
-            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
-            'Zamora'  => ['Zamora', 'Sahuayo'],
+            'Morelia'           => ['Morelia'],
+            'Uruapan'           => ['Uruapan'],
+            'Zamora'            => ['Zamora'],
+            'Zitácuaro'         => ['Morelia'],
+            'Lázaro Cárdenas'   => ['Uruapan'],
+            'Sahuayo'           => ['Zamora']
         ];
-
-        $sedesABuscar = isset($mapaSedes[$delegacion]) 
-                ? $mapaSedes[$delegacion] 
-                : [$delegacion];
 
         $delegacion = SeerPerGeneral::find($id);
         $delegado = User::whereHas('roles', function ($query) {
             return $query->where('name', '=', 'Delegado');
         })
-        ->whereIn('delegacion', $sedesABuscar)
+        ->whereIn('delegacion', $mapaSedes)
         ->first();
-       
+  
         SeerPerGeneral::find($id)->update(['delegado_id' => $delegado->id]);
         // 1. Carga de relaciones necesarias (Eager Loading para evitar múltiples consultas)
         $solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
