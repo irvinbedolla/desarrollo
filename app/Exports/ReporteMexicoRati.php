@@ -125,8 +125,6 @@ class ReporteMexicoRati implements FromView
             ->sortBy('NUE', SORT_NATURAL)
             ->values();
 
-        dd($reportesSolicitudes);
-
         return view('excel.reporte-mexico', ['reportes' => $todoJunto]);
     }
 
