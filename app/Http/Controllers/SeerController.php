@@ -5503,6 +5503,12 @@ class SeerController extends Controller
     public function solicitud_confirmar(Request $request){
         $data = $request->all();
 
+        //Verificamos si ya existe una audiencia para esta solicitud
+        if (Audiencias::where('id_solicitud', $data["id"])->exists()) {
+            //Evitamos generar NUE duplicado e inserción duplicada devolviendo al usuario
+            return back()->withErrors('Esta solicitud ya ha sido confirmada o se está procesando actualmente. Revise el registro de audiencias existentes.');
+        }
+
         //Se va asignar el conciliador y la sala
         $id_user = auth()->user()->id;
         $user = User::find($id_user);
