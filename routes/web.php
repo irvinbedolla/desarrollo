@@ -31,6 +31,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\SeerPerGeneral;
 use App\Http\Controllers\IncidenciasController;
 use App\Http\Controllers\IncidenciasBusquedaController;
+use App\Http\Controllers\AsistenciaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -158,6 +159,10 @@ use App\Http\Controllers\IncidenciasBusquedaController;
     Route::get('constancia/final',          [SeerController::class, 'enviarConstanciaFinal']); //Genera el envio de la constancia final
     Route::get('generaPDFmasivo',           [SeerController::class, 'generaPDFS']);
     Route::get('constancia_individual',     [SeerController::class, 'constancia_individual']);
+
+    Route::get('asistencia/{id}',           [AsistenciaController::class, 'AsistenciaCrear']);
+    Route::get('QRAsistencia/{id}',         [AsistenciaController::class, 'generarQrUsuario']);
+    
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
