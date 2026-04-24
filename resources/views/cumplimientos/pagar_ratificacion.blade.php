@@ -50,7 +50,11 @@
                                                     </td>
                                                     <td>
                                                         @if($pago->estatus == "Pagado")
-                                                            <a class="btn btn-success" href="{{ route('PDFpagos', $pago->id) }}" target="_blank">PDF</a>
+                                                            @if($total == 1)
+                                                                <a class="btn btn-success" href="{{ route('PDFpagos', $pago->id) }}" target="_blank">PDF</a>
+                                                            @else
+                                                                <a class="btn btn-success" href="{{ route('PDFcumplimientoR', $pago->id_solicitud) }}"  target="_blank">PDF</a>
+                                                            @endif
                                                         @elseif($pago->estatus == "No pagado")
                                                             <a class="btn btn-info" href="{{ route('PDFincumplimientoRatificacion', $pago->id) }}" target="_blank">PDF</a>
                                                         @elseif($pago->estatus == "Incomparecencia trabajador")

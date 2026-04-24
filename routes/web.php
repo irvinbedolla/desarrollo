@@ -89,24 +89,15 @@ use App\Http\Controllers\AsistenciaController;
         Route::post('solicitud_solicitanteCentro',                  [SeerController::class, 'solicitud_parte2Centro'])->name('parte2Centro');
         Route::get('/agrega_citadoCentro/{id}',                     [SeerController::class, 'vista_citadoCentro'])->name('agregar_citadoCentro');
         Route::post('/agrega_citadoCentro',                         [SeerController::class, 'guardar_citadoCentro'])->name('seer.citadosCentro');
-    // Finalizar solicitud Centro: debe ser POST (acción con efectos: guarda en BD y genera acuse/correo)
-    Route::post('/finalizaCentro',                    [SeerController::class, 'guardar_solicitudCentro_post'])->name('seer.finalizaCentro');
-    // Mantener compatibilidad por si algún link viejo aún apunta a GET
-    Route::get('/finalizaCentro/{id}',                [SeerController::class, 'guardar_solicitudCentro'])->name('seer.finalizaCentro_get');
+        // Finalizar solicitud Centro: debe ser POST (acción con efectos: guarda en BD y genera acuse/correo)
+        Route::post('/finalizaCentro',                    [SeerController::class, 'guardar_solicitudCentro_post'])->name('seer.finalizaCentro');
+        // Mantener compatibilidad por si algún link viejo aún apunta a GET
+        Route::get('/finalizaCentro/{id}',                [SeerController::class, 'guardar_solicitudCentro'])->name('seer.finalizaCentro_get');
 
-    //Rutas fuera del login
-    Route::get('/pantalla', function () {
-        $fecha_actual = date('Y-m-d');
-        $turnos = DB::table('turnos')
-        ->leftjoin('users', 'users.id', '=', 'turnos.auxiliar')
-        ->select('users.id', 'turnos.id', 'turnos.tipo', 'turnos.auxiliar', 'turnos.lugar_auxiliar')
-        ->where('turnos.fecha', $fecha_actual)
-        ->where('turnos.estatus', 'no atendido')
-        ->limit(10)
-        ->paginate(10);
-
-        return view('pantalla', compact('turnos'));
-    });
+    //Rutas pantallas
+    Route::get('/pantallaMorelia',                  [HomeController::class, 'pantallaMorelia']);
+    Route::get('/pantallaUruapan',                  [HomeController::class, 'pantallaUruapan']);
+    Route::get('/pantallaZamora',                   [HomeController::class, 'pantallaZamora']);
 
     Route::get('publico',               [HomeController::class, 'publico'])->name('publico');
     Route::get('home',                  [HomeController::class, 'home'])->name('home');

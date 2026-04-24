@@ -2181,9 +2181,10 @@ class TurnosController extends Controller
         ->where('pago_solicitud.id_solicitud',$id)
         ->where('pago_solicitud.tipo_pago','Ratificacion')
         ->select('pago_solicitud.id','pago_solicitud.id_solicitud','turnos.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
-        ->get();
+        ->get(); 
+        $total = $solicitudes->count();
 
-        return view('/cumplimientos/pagar_ratificacion',compact('solicitudes'));
+        return view('/cumplimientos/pagar_ratificacion',compact('solicitudes','total'));
     }
 
     public function vista_previa_ratificacion($id){

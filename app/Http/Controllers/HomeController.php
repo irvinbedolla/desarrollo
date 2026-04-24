@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 use Auth, Hash;
 use App\Models\Recepcion;
 use App\Models\CitaDireccion;
+use App\Models\Pagos;
+use App\Models\Audiencias;
 
 class HomeController extends Controller
 {
@@ -29,18 +31,123 @@ class HomeController extends Controller
         return view('home');
     }
 
-    public function pantalla()
+    public function pantallaMorelia()
     {
-        $fecha_actual = date('Y-m-d');
-
-        $turnos = DB::table('turnos')
-        ->join('users', 'users.id', '=', 'turnos.auxiliar')
-        ->select('users.id', 'users.name', 'turnos.solicitante')
+        $fecha_actual = date('y-m-d');
+        //$fecha_actual = "2026-03-27";
+     
+        $turnos = Turnos::
+        join('users', 'users.id', '=', 'turnos.user_id')
+        ->select('users.id', 'users.name', 'turnos.empresa')
         ->where('turnos.fecha', $fecha_actual)
-        ->paginate(10);
+        ->where('turnos.delegacion','Morelia')
+        ->where('turnos.estatus','Pendiente')
+        ->select('turnos.NUE','turnos.empresa as nombre',DB::raw("'Ratificación' as tramite"))
+        ->orderBy('turnos.hora')
+        ->limit(7)
+        ->get();
 
-        return view('pantalla', compact('turnos'));
+        $cumplimientos = Pagos::where('pago_solicitud.fecha',$fecha_actual)
+        ->join('seer_general','seer_general.id','pago_solicitud.id_solicitud')
+        ->join('seer_solicitante','seer_solicitante.id_solicitud','pago_solicitud.id_solicitud')
+        ->where('pago_solicitud.estatus','Pendiente')
+        ->where('pago_solicitud.delegacion','Morelia')
+        ->select('seer_general.NUE','seer_solicitante.nombre',DB::raw("'Cumplimiento' as tramite"))
+        ->orderBy('pago_solicitud.hora')
+        ->limit(7)
+        ->get();
+
+        $audienencias = Audiencias::where('audiencias.fecha',$fecha_actual)
+        ->join('users', 'users.id', '=', 'audiencias.id_conciliador')
+        ->join('seer_general','seer_general.id','audiencias.id_solicitud')
+        ->join('seer_solicitante','seer_solicitante.id_solicitud','audiencias.id_solicitud')
+        ->where('audiencias.estatus','Pendiente')
+        ->where('audiencias.delegacion','Morelia')
+        ->select('users.name as NUE','seer_solicitante.nombre',DB::raw("'Audiencias' as tramite"))
+        ->limit(7)
+        ->get();
+
+        return view('pantalla', compact('cumplimientos','turnos','audienencias'));
     }
+
+    public function pantallaUruapan()
+    {
+        $fecha_actual = date('y-m-d');
+        //$fecha_actual = "2026-03-27";
+     
+        $turnos = Turnos::
+        join('users', 'users.id', '=', 'turnos.user_id')
+        ->select('users.id', 'users.name', 'turnos.empresa')
+        ->where('turnos.fecha', $fecha_actual)
+        ->where('turnos.delegacion','Morelia')
+        ->where('turnos.estatus','Pendiente')
+        ->select('turnos.NUE','turnos.empresa as nombre',DB::raw("'Ratificación' as tramite"))
+        ->orderBy('turnos.hora')
+        ->limit(7)
+        ->get();
+
+        $cumplimientos = Pagos::where('pago_solicitud.fecha',$fecha_actual)
+        ->join('seer_general','seer_general.id','pago_solicitud.id_solicitud')
+        ->join('seer_solicitante','seer_solicitante.id_solicitud','pago_solicitud.id_solicitud')
+        ->where('pago_solicitud.estatus','Pendiente')
+        ->where('pago_solicitud.delegacion','Morelia')
+        ->select('seer_general.NUE','seer_solicitante.nombre',DB::raw("'Cumplimiento' as tramite"))
+        ->orderBy('pago_solicitud.hora')
+        ->limit(7)
+        ->get();
+
+        $audienencias = Audiencias::where('audiencias.fecha',$fecha_actual)
+        ->join('users', 'users.id', '=', 'audiencias.id_conciliador')
+        ->join('seer_general','seer_general.id','audiencias.id_solicitud')
+        ->join('seer_solicitante','seer_solicitante.id_solicitud','audiencias.id_solicitud')
+        ->where('audiencias.estatus','Pendiente')
+        ->where('audiencias.delegacion','Morelia')
+        ->select('users.name as NUE','seer_solicitante.nombre',DB::raw("'Audiencias' as tramite"))
+        ->limit(7)
+        ->get();
+
+        return view('pantalla', compact('cumplimientos','turnos','audienencias'));
+    }
+
+    public function pantallaZamora()
+    {
+        $fecha_actual = date('y-m-d');
+        //$fecha_actual = "2026-03-27";
+     
+        $turnos = Turnos::
+        join('users', 'users.id', '=', 'turnos.user_id')
+        ->select('users.id', 'users.name', 'turnos.empresa')
+        ->where('turnos.fecha', $fecha_actual)
+        ->where('turnos.delegacion','Morelia')
+        ->where('turnos.estatus','Pendiente')
+        ->select('turnos.NUE','turnos.empresa as nombre',DB::raw("'Ratificación' as tramite"))
+        ->orderBy('turnos.hora')
+        ->limit(7)
+        ->get();
+
+        $cumplimientos = Pagos::where('pago_solicitud.fecha',$fecha_actual)
+        ->join('seer_general','seer_general.id','pago_solicitud.id_solicitud')
+        ->join('seer_solicitante','seer_solicitante.id_solicitud','pago_solicitud.id_solicitud')
+        ->where('pago_solicitud.estatus','Pendiente')
+        ->where('pago_solicitud.delegacion','Morelia')
+        ->select('seer_general.NUE','seer_solicitante.nombre',DB::raw("'Cumplimiento' as tramite"))
+        ->orderBy('pago_solicitud.hora')
+        ->limit(7)
+        ->get();
+
+        $audienencias = Audiencias::where('audiencias.fecha',$fecha_actual)
+        ->join('users', 'users.id', '=', 'audiencias.id_conciliador')
+        ->join('seer_general','seer_general.id','audiencias.id_solicitud')
+        ->join('seer_solicitante','seer_solicitante.id_solicitud','audiencias.id_solicitud')
+        ->where('audiencias.estatus','Pendiente')
+        ->where('audiencias.delegacion','Morelia')
+        ->select('users.name as NUE','seer_solicitante.nombre',DB::raw("'Audiencias' as tramite"))
+        ->limit(7)
+        ->get();
+
+        return view('pantalla', compact('cumplimientos','turnos','audienencias'));
+    }
+
 
     public function citas(){
         return view('turnos');
