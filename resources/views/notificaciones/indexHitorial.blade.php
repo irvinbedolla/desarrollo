@@ -104,9 +104,9 @@
                                                                         @if($notificacion->tipo_notificacion === "Citatorio")
                                                                             <li><a class="dropdown-item" style="width: 100%" href="{{ route('PDFnotificadoNoexitosaNS', [$notificacion->id_citado, $notificacion->id_solicitud]) }}"  target="_blank">Notificación</a></li>
                                                                         @endif
-                                                                        @if($notificacion->tipo_notificacion === "Multa")
+                                                                        {{--@if($notificacion->tipo_notificacion === "Multa")
                                                                             <li><a class="dropdown-item" style="width: 100%" href="{{ route('PDFmultaNotificacion', [$notificacion->id_citado, $notificacion->id_solicitud]) }}" target="_blank">Multa</a></li>
-                                                                        @endif
+                                                                        @endif--}}
                                                                         <button type="button" class="btn btn-warning open-expediente-modal" data-bs-toggle="modal" data-bs-target="#expediente" data-id="{{ $notificacion->id_solicitud }}">Subir Documento</button><br>
                                                                     </ul>
                                                             @endif

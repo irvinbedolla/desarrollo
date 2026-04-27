@@ -2967,20 +2967,20 @@ class SeerController extends Controller
         return match ($estatus) {
             "Finalizado exitosamente" => match ($tipo) {
                 "Citatorio" => route('PDFRazonNoticacion', [$registro->id, $registro->id_solicitud]),
-                "Multa"     => route('PDFmulta', [$registro->id, $registro->id_solicitud]),
+                "Multa"     => route('PDFmultaNotificacion', [$registro->id, $registro->id_solicitud]),
                 default     => null
             },
             "No notificada" => match ($tipo) {
                 "Citatorio" => route('PDFInstructivo', [$registro->id, $registro->id_solicitud]),
-                "Multa"     => route('PDFmulta', [$registro->id, $registro->id_solicitud]),
+                "Multa"     => route('VerPDFMultaInstructivo', [$registro->id, $registro->id_solicitud]),
                 default     => null
             },
             "No exitosa se constituye" => match ($tipo) {
                 "Citatorio" => route('VerPDFNoExitConstituye', [$registro->id, $registro->id_solicitud]),
-                "Multa"     => route('PDFmulta', [$registro->id, $registro->id_solicitud]),
+                "Multa"     => route('VerPDFMultaNoExitConstituye', [$registro->id, $registro->id_solicitud]),
                 default     => null
             },
-            "No exitosa no se constituye" => route('PDFNoExitosaInt', [$registro->id, $registro->id_solicitud]),
+            "No exitosa no se constituye" => route('PDFnotificadoNoexitosaNS', [$registro->id, $registro->id_solicitud]),
             default => null
         };
     }
