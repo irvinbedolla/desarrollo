@@ -2616,7 +2616,7 @@ class SeerController extends Controller
         return view('notificaciones.actualizarCitado', compact('id','municipios','estados', 'citado', 'NUE', 'nombre_estado', 'nombre_municipio', 'fecha_formateada', 'hora_formateada'));
     }
 
-    public function update_notificador(Request $request){
+    /*public function update_notificador(Request $request){
         $data = $request->all();
         $data['problema_diligencia'] = $request->input('problema_diligencia');
         $fechaEspecifica = Carbon::parse($request->fecha_notificacion . ' ' . $request->hora_notificacion);
@@ -2639,7 +2639,7 @@ class SeerController extends Controller
             $data['problema_diligencia'] =$data['problema_diligencia_2'];
         }*/
         // 3. SOLO si el usuario subió un archivo NUEVO en este request, lo guardamos y actualizamos la variable
-        if ($request->hasFile('foto')) {
+    /*    if ($request->hasFile('foto')) {
             $documento = $data["id"] . "-foto1.jpg";
             Storage::putFileAs('documentos_notificacion', $request->file('foto'), $documento);
         }
@@ -2850,8 +2850,140 @@ class SeerController extends Controller
             
         }
           
-    }
+    }*/
+    public function update_notificador(Request $request)
+    {
+        $data = $request->all();
+        $id_notificador_actual = auth()->id();
+        $fechaEspecifica = Carbon::parse($request->fecha_notificacion . ' ' . $request->hora_notificacion);
+        
+        // 1. Carga inicial optimizada
+    // $seercitado = SeerCitados::with(['solicitud', 'municipio', 'estado'])->findOrFail($data["id"]);
+        $seercitado = SeerCitados::find($data["id"]);
+        // 2. Manejo de archivos (se quedan los actuales o se suben nuevos)
+        $documentos = [
+            'doc'  => $request->hasFile('foto') ? $data["id"] . "-foto1.jpg" : ($seercitado->documento ?? "Sin documento"),
+            'doc1' => $request->hasFile('foto1') ? $data["id"] . "-foto2.jpg" : ($seercitado->documento1 ?? "Sin documento"),
+            'doc2' => $request->hasFile('foto2') ? $data["id"] . "-foto3.jpg" : ($seercitado->documento2 ?? "Sin documento")
+        ];
 
+        if ($request->hasFile('foto')) Storage::putFileAs('documentos_notificacion', $request->file('foto'), $documentos['doc']);
+        if ($request->hasFile('foto1')) Storage::putFileAs('documentos_notificacion', $request->file('foto1'), $documentos['doc1']);
+        if ($request->hasFile('foto2')) Storage::putFileAs('documentos_notificacion', $request->file('foto2'), $documentos['doc2']);
+
+        // 3. Lógica de Estatus y Exhorto
+        $esVistaPrevia = isset($data['vista_previa']) && (string)$data['vista_previa'] === '1';
+        $nuevo_estatus = $data['estatus'];
+        $notificacion_valor = $seercitado->notificacion;
+        $id_notificador_final = $id_notificador_actual;
+
+        // Si NO es vista previa y es EXHORTO, aplicamos reglas de reasignación
+        if (!$esVistaPrevia && $data["quien_atiende"] === 'EXHORTO') {
+            $nuevo_estatus = 'Exhorto';
+            $notificacion_valor = 'Exhorto';
+            $nombre_mun = $seercitado->municipio->nombre ?? '';
+
+            $id_notificador_final = match ($nombre_mun) {
+                'Morelia', 'Zitacuaro' => 57,
+                'Uruapan', 'Lázaro Cárdenas' => 58,
+                'Zamora', 'Sahuayo' => 59,
+                default => $id_notificador_actual,
+            };
+        }
+
+        // 4. Array de actualización
+        $updatePayload = [
+            'estatus'                     => $esVistaPrevia ? ($seercitado->estatus ?? $nuevo_estatus) : $nuevo_estatus,
+            'observaciones'               => $data["observaciones"] ?? null,
+            'documento'                   => $documentos['doc'],
+            'documento1'                  => $documentos['doc1'],
+            'documento2'                  => $documentos['doc2'],
+            'fecha'                       => $fechaEspecifica,
+            'quien_atiende'               => $data["quien_atiende"],
+            'medio'                       => ($data["quien_atiende"] === 'EXHORTO') ? null : ($data["medio"] ?? null),
+            'vialidad_notificacion'       => $data["vialidad_notificacion"] ?? null,
+            'abundar_area'                => $data["abundar_area"] ?? null,
+            'abundar_inmueble'            => $data["abundar_inmueble"] ?? null,
+            'nombre_notificacion'         => $data["nombre_notificacion"] ?? null,
+            'relacion_notificacion'       => $data["relacion_notificacion"] ?? null,
+            'puesto'                      => $data["puesto"] ?? null,
+            'identificacion_notificacion' => $data["identificacion_notificacion"] ?? null,
+            'motivo_identificacion'       => $data["motivo_identificacion"] ?? null,
+            'firma'                       => $data["firma"] ?? null,
+            'problema_diligencia'         => $data["problema_diligencia"] ?? null,
+            'genero'                      => $data["genero"] ?? null,
+            'tez'                         => $data["tez"] ?? null,
+            'edad_filiacion'              => $data["edad_filiacion"] ?? null,
+            'altura'                      => $data["altura"] ?? null,
+            'complexion'                  => $data["complexion"] ?? null,
+            'cabello'                     => $data["cabello"] ?? null,
+            'ojos'                        => $data["ojos"] ?? null,
+            'particulares'                => $data["particulares"] ?? null,
+            'especificar'                 => $data["especificar"] ?? null,
+            'giro_comercial'              => $data["giro_comercial"] ?? null,
+            'id_notificador'              => $id_notificador_final,
+            'notificacion'                => $notificacion_valor,
+            'num_identificacion'          => $data["num_identificacion"] ?? null,
+        ];
+
+        // 5. Ejecutar actualización masiva o individual
+        if ($data["tipo_llenado"] == 1) {
+            $seercitado->update($updatePayload);
+        } else {
+            SeerCitados::where('id_solicitud', $seercitado->id_solicitud)
+                ->where('id_notificador', $id_notificador_actual)
+                ->where('estatus', 'pendiente')
+                ->update($updatePayload);
+        }
+
+        // 6. CONTROL DE FLUJO (Vista Previa vs Finalizar)
+        if (!$esVistaPrevia) {
+            // Caso vista_previa == '0': Redirigir al listado
+            return redirect()->route('seer')->with('success', 'Registro actualizado correctamente.');
+        }
+
+        // Caso vista_previa == '1': Preparar datos para la vista
+        // Volvemos a refrescar el modelo para tener los datos guardados
+        $seercitado->refresh(); 
+
+        return view('notificaciones.vista_previa', [
+            'registro'           => $seercitado,
+            'municipios'         => Municipios::all(), 
+            'estados'            => Estados::all(),    
+            'NUE'                => $seercitado->solicitud->NUE ?? '',
+            'nombre_estado'      => $seercitado->estado->nombre ?? '',
+            'nombre_municipio'   => $seercitado->municipio->nombre ?? '',
+            'url_pdf'            => $this->obtenerRutaPdf($seercitado, $nuevo_estatus),
+            'hora_formateada'    => $fechaEspecifica->format('H:i'),
+            'fecha_formateada'   => $fechaEspecifica->format('Y-m-d'),
+            'tipo_llenado'       => $data["tipo_llenado"],
+            'estatusSeleccionado'=> $nuevo_estatus
+        ]);
+    }
+    private function obtenerRutaPdf($registro, $estatus)
+    {
+        $tipo = $registro->tipo_notificacion;
+        
+        return match ($estatus) {
+            "Finalizado exitosamente" => match ($tipo) {
+                "Citatorio" => route('PDFRazonNoticacion', [$registro->id, $registro->id_solicitud]),
+                "Multa"     => route('PDFmulta', [$registro->id, $registro->id_solicitud]),
+                default     => null
+            },
+            "No notificada" => match ($tipo) {
+                "Citatorio" => route('PDFInstructivo', [$registro->id, $registro->id_solicitud]),
+                "Multa"     => route('PDFmulta', [$registro->id, $registro->id_solicitud]),
+                default     => null
+            },
+            "No exitosa se constituye" => match ($tipo) {
+                "Citatorio" => route('VerPDFNoExitConstituye', [$registro->id, $registro->id_solicitud]),
+                "Multa"     => route('PDFmulta', [$registro->id, $registro->id_solicitud]),
+                default     => null
+            },
+            "No exitosa no se constituye" => route('PDFNoExitosaInt', [$registro->id, $registro->id_solicitud]),
+            default => null
+        };
+    }
     public function store_enlace(Request $request, $id_citado){
         $data = $request->all();
         $registrosActualizados = SeerCitados::where('id', $id_citado)->where('id_solicitud', $data["id"])
