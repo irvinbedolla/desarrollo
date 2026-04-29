@@ -113,6 +113,11 @@
                                                                 </button>
                                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><a class="dropdown-item" href="{{ route('VerDocumentosRatificacion', $solicitud->id) }}"  target="_blank">Identificaciones</a></li>
+                                                                    @if($solicitud->estatus == "Concluida" && $solicitud->motivo == "Pago de prestaciones" && $solicitud->PagoPTU == "1")
+                                                                        <li><a class="dropdown-item" href="{{ route('PDFconvenioPTU_NO_R', $solicitud->id) }}"  target="_blank">Convenio PTU</a></li>
+                                                                    @else
+                                                                        <li><a class="dropdown-item" href="{{ route('PDFconvenioratificacion', $solicitud->id) }}"  target="_blank">Convenio</a></li>
+                                                                    @endif
                                                                     <a class="btn btn-success" href="{{ route('PDFincumplimiento', $solicitud->id) }}"  target="_blank">Incumplimiento</a>
                                                                 </ul>
                                                             </div>
