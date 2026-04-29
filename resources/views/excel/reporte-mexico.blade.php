@@ -48,7 +48,8 @@
                     <th style=" text-align: center;">{{ $solicitud->nombres_patronal }}{{ $solicitud->primer_apellido_patronal }}{{ $solicitud->segundo_apellido_patronal  }}</th>
                     <th style=" text-align: center;">{{ $solicitud->motivo }}</th>
                     <th style=" text-align: center;">${{ number_format($solicitud->total, 2) }}</th>
-                    <th style=" text-align: center;">{{ $solicitud->estatus }}</th>
+                    {{--<th style=" text-align: center;">{{ $solicitud->estatus }}</th>--}}
+                    <th style="text-align: center;">{{ $solicitud->estatus == 'Concluida' ? 'Conciliacion' : $solicitud->estatus }}</th>
                     @php
                         $total = $total + $solicitud->total;
                 @endphp

@@ -74,9 +74,10 @@ class ReporteMexicoRati implements FromView
             ->get();
 
         // --- CONSULTA 2: SEER GENERAL ---
-        $reportesSolicitudes = SeerPerGeneral::whereBetween('seer_general.fecha', [$this->fecha_inicial, $this->fecha_final])
+        $reportesSolicitudes = SeerPerGeneral::whereBetween('seer_general.fecha_terminacion', [$this->fecha_inicial, $this->fecha_final])
             ->join('seer_citados','seer_citados.id_solicitud','seer_general.id')
             ->join('seer_solicitante','seer_solicitante.id_solicitud','seer_general.id')
+            ->join('audiencias', 'audiencias.id', '=', 'audiencias.id_solicitud')
             ->whereNotIn('seer_general.estatus', ['Pendiente', 'Prevencion','Confirmado'])
             ->leftJoin('users', 'users.id', '=', 'seer_general.user_id')
             ->leftJoin('estados', 'estados.id', '=', 'seer_solicitante.estado')
@@ -111,7 +112,7 @@ class ReporteMexicoRati implements FromView
             ->selectSub($subconsultaPagosSeer, 'total') 
             ->groupBy('seer_general.id', 'seer_general.NUE')
             ->get();
-
+        
         // --- COMBINACIÓN Y ORDENAMIENTO ---
         $todoJunto = $reportes->concat($reportesSolicitudes)
             ->map(function($item) {
