@@ -83,7 +83,8 @@ class AudienciasExport implements WithMultipleSheets
                 //DB::raw("SUM(CASE WHEN audiencias.estatus NOT IN ('Conciliacion','No conciliacion reagendada','No conciliacion') THEN 1 ELSE 0 END) as total_prog"),
                 DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Pendiente','Conciliacion','No conciliacion','Reagendada','Archivada','No conciliacion reagendada','Incompetencia','Reinstalacion','Desistimiento','Archivada en Audiencia') THEN seer_general.id END) as total_prog"),
                 //DB::raw("SUM(CASE WHEN audiencias.estatus IN ('Conciliacion','No conciliacion','No conciliacion reagendada','Reinstalacion') THEN 1 ELSE 0 END) as total_celeb"),
-                DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Conciliacion','Reinstalacion','No conciliacion reagendada') THEN seer_general.id END) as total_celeb"),
+                //DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Conciliacion','Reinstalacion','No conciliacion reagendada') THEN seer_general.id END) as total_celeb"),
+                DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Conciliacion','No conciliacion','Reagendada','Archivada','No conciliacion reagendada','Incompetencia','Reinstalacion','Desistimiento','Archivada en Audiencia') THEN seer_general.id END) as total_celeb"),
                 //Número de expedientes que tienen exactamente 1, 2 o 3 audiencias y que ya no tienen ninguna audiencia en estatus 'Pendiente'.
                 DB::raw("COUNT(DISTINCT CASE WHEN a_count.total_audiencias = 1 AND a_count.pendientes = 0 THEN seer_general.id END) as final_1"),
                 DB::raw("COUNT(DISTINCT CASE WHEN a_count.total_audiencias = 2 AND a_count.pendientes = 0 THEN seer_general.id END) as final_2"),
