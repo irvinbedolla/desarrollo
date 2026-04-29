@@ -1850,10 +1850,12 @@ class SeerController extends Controller
             $pagosRatificacionMontoPendiente = (object)['ratificacionesMonto' => $ratificacionesData->pendiente_monto];
     
             // 2. Consulta Unificada para Audiencias
-            $audienciasData = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
-                ->whereIn('pago_solicitud.tipo_pago', ["Audiencia","Conciliador"])
-                ->join('audiencias', 'audiencias.id_solicitud', '=', 'pago_solicitud.id_solicitud')
+            $audienciasData = Audiencias::whereBetween('audiencias.fecha', [$fecha_inicial, $fecha_final])
                 ->whereIn('audiencias.estatus', ['Conciliacion', 'Reinstalacion'])
+                ->join('pago_solicitud','pago_solicitud.id_solicitud','=','audiencias.id_solicitud')
+                //->whereIn('pago_solicitud.tipo_pago', ["Audiencia","Conciliador"])
+                //->join('audiencias', 'audiencias.id_solicitud', '=', 'pago_solicitud.id_solicitud')
+                //->whereIn('audiencias.estatus', ['Conciliacion', 'Reinstalacion'])
                 ->when($sede !== "Todos", function ($q) use ($sede) {
                     if ($sede === "TodosDelegado") {
                         $id = auth()->user()->id;
@@ -1878,10 +1880,10 @@ class SeerController extends Controller
                 ->selectRaw("
                     COUNT(DISTINCT audiencias.id) as total_count,
                     SUM(pago_solicitud.monto) as total_monto,
-                    COUNT(CASE WHEN pago_solicitud.estatus = 'Pagado' THEN 1 END) as pagado_audiencias_count,
-                    SUM(CASE WHEN pago_solicitud.estatus = 'Pagado' THEN pago_solicitud.monto ELSE 0 END) as pagado_audiencias_monto,
+                    COUNT(CASE WHEN pago_solicitud.estatus = 'Pagado' AND pago_solicitud.fecha <= '{$fecha_final}' THEN pago_solicitud.id END) as pagado_audiencias_count,
+                    SUM(CASE WHEN pago_solicitud.estatus = 'Pagado' AND pago_solicitud.fecha <= '{$fecha_final}' THEN pago_solicitud.monto ELSE 0 END) as pagado_audiencias_monto,
                     COUNT(CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN 1 END) as pendiente_audiencias_count,
-                    SUM(CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN pago_solicitud.monto ELSE 0 END) as pendiente_audiencias_monto
+                    SUM(CASE WHEN pago_solicitud.estatus = 'Pendiente' OR (pago_solicitud.estatus = 'Pagado' AND pago_solicitud.fecha > '{$fecha_final}') THEN pago_solicitud.monto ELSE 0 END) as pendiente_audiencias_monto
                 ")
             ->first();
             // Reasignar a tus variables originales
