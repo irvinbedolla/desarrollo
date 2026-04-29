@@ -84,11 +84,29 @@ class AudienciasExport implements WithMultipleSheets
                 DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Pendiente','Conciliacion','No conciliacion','Reagendada','Archivada','No conciliacion reagendada','Incompetencia','Reinstalacion','Desistimiento','Archivada en Audiencia') THEN seer_general.id END) as total_prog"),
                 //DB::raw("SUM(CASE WHEN audiencias.estatus IN ('Conciliacion','No conciliacion','No conciliacion reagendada','Reinstalacion') THEN 1 ELSE 0 END) as total_celeb"),
                 //DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Conciliacion','Reinstalacion','No conciliacion reagendada') THEN seer_general.id END) as total_celeb"),
-                DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Conciliacion','No conciliacion','Reagendada','Archivada','No conciliacion reagendada','Incompetencia','Reinstalacion','Desistimiento','Archivada en Audiencia') THEN seer_general.id END) as total_celeb"),
-                //Número de expedientes que tienen exactamente 1, 2 o 3 audiencias y que ya no tienen ninguna audiencia en estatus 'Pendiente'.
-                DB::raw("COUNT(DISTINCT CASE WHEN a_count.total_audiencias = 1 AND a_count.pendientes = 0 THEN seer_general.id END) as final_1"),
-                DB::raw("COUNT(DISTINCT CASE WHEN a_count.total_audiencias = 2 AND a_count.pendientes = 0 THEN seer_general.id END) as final_2"),
-                DB::raw("COUNT(DISTINCT CASE WHEN a_count.total_audiencias = 3 AND a_count.pendientes = 0 THEN seer_general.id END) as final_3")
+                DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Conciliacion','Reinstalacion','No conciliacion reagendada') OR (audiencias.estatus = 'No conciliacion' AND (SELECT resolicion_primera FROM seer_conciliadores WHERE id_solicitud = seer_general.id ORDER BY id DESC LIMIT 1) IS NOT NULL) THEN seer_general.id END) as total_celeb"),
+                
+                DB::raw("COUNT(DISTINCT CASE WHEN a_count.total_audiencias = 1 AND (
+                    (SELECT a_last.estatus FROM audiencias a_last WHERE a_last.id_solicitud = seer_general.id ORDER BY a_last.id DESC LIMIT 1) IN ('Conciliacion','Reinstalacion','No conciliacion reagendada')
+                    OR (
+                        (SELECT a_last.estatus FROM audiencias a_last WHERE a_last.id_solicitud = seer_general.id ORDER BY a_last.id DESC LIMIT 1) = 'No conciliacion'
+                        AND (SELECT sc.resolicion_primera FROM seer_conciliadores sc WHERE sc.id_solicitud = seer_general.id ORDER BY sc.id DESC LIMIT 1) IS NOT NULL
+                    )
+                ) THEN seer_general.id END) as final_1"),
+                DB::raw("COUNT(DISTINCT CASE WHEN a_count.total_audiencias = 2 AND (
+                    (SELECT a_last.estatus FROM audiencias a_last WHERE a_last.id_solicitud = seer_general.id ORDER BY a_last.id DESC LIMIT 1) IN ('Conciliacion','Reinstalacion','No conciliacion reagendada')
+                    OR (
+                        (SELECT a_last.estatus FROM audiencias a_last WHERE a_last.id_solicitud = seer_general.id ORDER BY a_last.id DESC LIMIT 1) = 'No conciliacion'
+                        AND (SELECT sc.resolicion_primera FROM seer_conciliadores sc WHERE sc.id_solicitud = seer_general.id ORDER BY sc.id DESC LIMIT 1) IS NOT NULL
+                    )
+                ) THEN seer_general.id END) as final_2"),
+                DB::raw("COUNT(DISTINCT CASE WHEN a_count.total_audiencias >= 3 AND (
+                    (SELECT a_last.estatus FROM audiencias a_last WHERE a_last.id_solicitud = seer_general.id ORDER BY a_last.id DESC LIMIT 1) IN ('Conciliacion','Reinstalacion','No conciliacion reagendada')
+                    OR (
+                        (SELECT a_last.estatus FROM audiencias a_last WHERE a_last.id_solicitud = seer_general.id ORDER BY a_last.id DESC LIMIT 1) = 'No conciliacion'
+                        AND (SELECT sc.resolicion_primera FROM seer_conciliadores sc WHERE sc.id_solicitud = seer_general.id ORDER BY sc.id DESC LIMIT 1) IS NOT NULL
+                    )
+                ) THEN seer_general.id END) as final_3")
             )
             ->groupBy('users.id', 'users.name')
             ->get();
@@ -141,7 +159,16 @@ class AudienciasExport implements WithMultipleSheets
                 'seer_solicitante.nombre as nombre_solicitante',
                 'conciliador.name as nombre_conciliador',
                 'seer_general.delegacion',
-                'audiencias.estatus'
+                DB::raw("CASE 
+                    WHEN audiencias.estatus = 'No conciliacion'
+                         AND (SELECT sc.resolicion_primera
+                              FROM seer_conciliadores sc
+                              WHERE sc.id_solicitud = seer_general.id
+                              ORDER BY sc.id DESC
+                              LIMIT 1) IS NULL
+                    THEN CONCAT(audiencias.estatus, ' (Incomparecencia)')
+                    ELSE audiencias.estatus
+                END as estatus")
             )
             //->distinct() 
             ->orderBy('seer_general.consecutivo', 'desc')

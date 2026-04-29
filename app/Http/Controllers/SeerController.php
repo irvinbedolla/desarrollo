@@ -1455,13 +1455,13 @@ class SeerController extends Controller
                     ->join('audiencias', 'seer_general.id', '=', 'audiencias.id_solicitud')
                     ->leftJoin('pago_solicitud', function($join) {
                         $join->on('seer_general.id', '=', 'pago_solicitud.id_solicitud')
-                            ->where('pago_solicitud.tipo_pago', '=', ['Audiencia','Conciliador']);
+                            ->whereIn('pago_solicitud.tipo_pago', ['Audiencia','Conciliador']);
                     })
                     ->leftJoin('seer_citados', function($join) {
                         $join->on('seer_general.id', '=', 'seer_citados.id_solicitud')
                             ->where('seer_citados.tipo_notificacion', '=', 'Multa');
                     })
-                    ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
+                    ->whereBetween('audiencias.fecha', [$fecha_inicial, $fecha_final])
                     ->when($sede !== "Todos", function ($q) use ($sede, $userActual) {
                         if ($sede === "TodosDelegado") {
                             $mapaSedes = [

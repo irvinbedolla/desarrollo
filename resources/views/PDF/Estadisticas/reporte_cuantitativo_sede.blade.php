@@ -206,7 +206,8 @@
 
         
 
-        <p style="font-size: 8px; color: #888;">*NESC: No exitosa se constituye / **NENSC: No exitosa no se constituye</p>
+        <p style="font-size: 10px; color: #888;">*NESC: No exitosa se constituye / **NENSC: No exitosa no se constituye</p>
+        <p style="font-size: 10px; color: #888;">1 AUD, 2 AUD y 3 AUD representan expedientes en conjunto (solicitudes), no audiencias individuales.</p>
         
 
     </main>
