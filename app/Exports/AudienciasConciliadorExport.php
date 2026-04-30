@@ -2,23 +2,38 @@
 
 namespace App\Exports;
 
-use Maatwebsite\Excel\Concerns\WithMultipleSheets;
-use Illuminate\Support\Facades\DB;
+use App\Models\SeerPerGeneral;
+use App\Models\Pagos;
+use App\Models\Audiencias;
+use App\Models\User; // Importación necesaria
+use Illuminate\Contracts\View\View;
+use Maatwebsite\Excel\Concerns\FromView;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
-class AudienciasConciliadorExport implements WithMultipleSheets
+class AudienciasConciliadorExport implements FromView
 {
-    protected $fecha_inicial, $fecha_final, $sede;
+    protected $fecha_inicial;
+    protected $fecha_final;
+    protected $sede;
 
-    public function __construct($fecha_inicial, $fecha_final, $sede)
+    public function __construct(string $fecha_inicial, string $fecha_final, string $sede)
     {
         $this->fecha_inicial = $fecha_inicial;
         $this->fecha_final = $fecha_final;
-        $this->sede = $sede;    
+        $this->sede = $sede;
     }
 
-    public function sheets(): array
+    public function view(): View
     {
+        $user = Auth::user();
+        $sedeUsuario = $user->delegacion ?? '';
+        $grupos = [
+            'Morelia' => ['Morelia', 'Zitácuaro'],
+            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+            'Zamora'  => ['Zamora', 'Sahuayo']
+        ];
+
         $user = Auth::user();
         $sedeUsuario = $user->delegacion ?? '';
         
@@ -28,6 +43,7 @@ class AudienciasConciliadorExport implements WithMultipleSheets
             'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
             'Zamora'  => ['Zamora', 'Sahuayo']
         ];
+
         $aplicarFiltros = function ($q) use ($sedeUsuario, $grupos) {
             // Filtramos por la fecha de creación de la solicitud (igual que en Motivos)
             $q->whereBetween("audiencias.fecha", [$this->fecha_inicial, $this->fecha_final]);
@@ -49,6 +65,7 @@ class AudienciasConciliadorExport implements WithMultipleSheets
             ->join('seer_general', 'seer_general.id', '=', 'audiencias.id_solicitud')
             ->join('seer_solicitante', 'seer_general.id', '=', 'seer_solicitante.id_solicitud')
             ->join('users as conciliador', 'conciliador.id', '=', 'seer_general.conciliador_id')
+            ->join('seer_citados', 'seer_citados.id_solicitud', '=', 'seer_general.id')
             ->where(fn($q) => $aplicarFiltros($q))
             /*
             ->when($this->conciliador !== "Todos", function ($q) {
@@ -59,14 +76,25 @@ class AudienciasConciliadorExport implements WithMultipleSheets
                 'audiencias.fecha',
                 'audiencias.hora',
                 'seer_solicitante.nombre as nombre_solicitante',
-                'conciliador.name as nombre_conciliador'
+                'conciliador.name as nombre_conciliador',
+                DB::raw('SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT 
+                CONCAT_WS(" ", seer_citados.nombre, seer_citados.primer_apellido, seer_citados.segundo_apellido) 
+                ORDER BY seer_citados.id ASC SEPARATOR "|"), "|", 1) as primer_citado'),
                 ) 
-            //->distinct() 
-            ->orderBy('seer_general.consecutivo', 'desc')
-            ->get()
-            ->map(fn($item) => (array) $item)
-            ->toArray();
-dd("llego");
-         return view('excel.audienciasConciliador', ['detalle' => $detalle]);
+        ->groupBy(
+            'seer_general.NUE',
+            'audiencias.fecha',
+            'audiencias.hora',
+            'seer_solicitante.nombre',
+            'conciliador.name'
+        )
+        ->orderBy('audiencias.fecha', 'asc')
+        ->orderBy('audiencias.hora', 'asc')
+        ->get();
+
+
+        return view('excel.audienciasConcliliador', [
+            'audiencias' => $detalle
+        ]);
     }
 }
