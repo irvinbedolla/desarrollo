@@ -5113,8 +5113,6 @@ class SeerController extends Controller
             )
             ->where('validado_conciliador', 'Pendiente')
             ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
-            ->whereNull('seer_general.incidencia')
-            ->orWhere('seer_general.incidencia', 0)
             ->orderBy('seer_general.fecha');
 
         // 3. Aplicamos lógica de filtros por Rol (Sin repetir la consulta)
@@ -5143,6 +5141,7 @@ class SeerController extends Controller
 
             $query->whereIn('seer_general.delegacion', $delegacionesPermitidas);
         }
+        $query->whereNull('seer_general.incidencia')->orWhere('seer_general.incidencia', 0);
 
         // 4. Ejecución final
         $solicitudes = $query->get();
