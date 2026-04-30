@@ -93,7 +93,7 @@
     }
 
     .nombre-texto {
-        font-size: 1.3rem;
+        font-size: 0.8rem;
         color: #444;
         text-transform: uppercase;
     }
@@ -230,7 +230,7 @@
         }
 
         // Ejecutar rotación cada 10 segundos
-        setInterval(rotar, 15000);
+        setInterval(rotar, 3000);
     </script>
 </body>
 </html>

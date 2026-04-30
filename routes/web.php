@@ -605,6 +605,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 		Route::post('/incidencias/desmarcar',            [IncidenciasBusquedaController::class, 'desmarcar'])->name('incidencias.busqueda.desmarcar');
     //Fin Búsqueda incidencias
 
+    //Subida Masiva
+        Route::get('/subida_doc/index',         [HomeController::class, 'indexSubida'])->name('subir_doc_masivo');
+        Route::post('pagos/import',             [HomeController::class, 'importPago'])->name('pagos.import');
+        Route::post('concepto/import',          [HomeController::class, 'importConcepto'])->name('concecto.import');
+    //Fin Subida Masiva
+
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);
         Route::resource('/user-management/roles', RoleManagementController::class);
