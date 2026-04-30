@@ -10312,7 +10312,7 @@ class SeerController extends Controller
                             ->where('resulte_responsable', 'No')
                             ->get();*/
 
-            $citadosPorCentro = SeerCitados::where('id_solicitud', $id)->get();
+            $citadosPorCentro = SeerCitados::where('id_solicitud', $id)->where('audiencia_id', $audienciaId)->get();
             foreach($citadosPorCentro as $citado){
                 if($citado->notificacion == 'Centro'){
                     $hayCentro = true;
