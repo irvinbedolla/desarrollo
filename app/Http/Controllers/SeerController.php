@@ -13882,6 +13882,11 @@ class SeerController extends Controller
                     ->first();
             }
             $html = view('PDF/Cumplimientos/pagosParciales', compact('id', 'solicitud','conciliador','pagos','delegado'))->render();
+        }else if($pagos->tipo_pago = 'Ratificacion'){
+            $solicitud = Turnos::where('id', $pagos->id_solicitud)->first();
+            $conciliador = User::where('id', $solicitud->id_conciliador)->select('name')->first();
+            $pagosDif = Pagos::where('id_solicitud', $solicitud->id)->where('tipo_pago', 'Ratificacion')->count();
+            $html = view('PDF/pagosParciales', compact('id', 'solicitud','conciliador','pagos', 'pagosDif'))->render();
         }else{
             $solicitud = SeerPerGeneral::find($pagos["id_solicitud"]);
             $audiencia = Audiencias::where('id_solicitud', $pagos["id_solicitud"])
@@ -13948,6 +13953,8 @@ class SeerController extends Controller
                 ->where('pago_solicitud.id_solicitud',$idSolicitud)
                 ->select('pago_solicitud.id','pago_solicitud.id_solicitud','turnos.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
                 ->get();
+
+                dd($cumplimientos);
             } else {
                 $cumplimientos = Pagos::join('seer_general','seer_general.id',"=",'pago_solicitud.id_solicitud')
                 ->where('pago_solicitud.id_solicitud',$idSolicitud)
