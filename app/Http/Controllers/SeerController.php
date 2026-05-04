@@ -70,7 +70,7 @@ use App\Models\ForoNacional;
 use App\Exports\Motivos;
 use App\Exports\AudienciasExport;
 use App\Exports\AudienciasConciliadorExport;
-
+use App\Exports\AudienciasPORConciliadorExport;
 
 class SeerController extends Controller
 {   
@@ -1236,7 +1236,13 @@ class SeerController extends Controller
                         'users.name',
                         // Conteo base de audiencias
                         DB::raw('COUNT(DISTINCT audiencias.id) as total_audiencias'),
-                        
+                        DB::raw('COUNT(DISTINCT audiencias.id) as audienencias_programadas'),
+                        DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Conciliacion','No conciliacion','Reagendada','Archivada','No conciliacion reagendada','Reinstalacion','Desistimiento',
+                        'Archivada en Audiencia') THEN audiencias.id END) as audienencias_celebradas"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Conciliacion','Reinstalacion') THEN audiencias.id END) as convenios"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Archivada','Archivada en Audiencia') THEN audiencias.id END) as achivada"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Incompetencia') THEN audiencias.id END) as incompetencia"),
+
                         // Cumplimientos y Montos (Pagos)
                         DB::raw('COUNT(DISTINCT pago_solicitud.id) as cumplimientoAudiencia'),
                         DB::raw('SUM(pago_solicitud.monto) as cumplimientoAudienciaMonto'),
@@ -1314,7 +1320,7 @@ class SeerController extends Controller
                 
                 
             
-           // Cálculo de efectividad global para el encabezado del reporte
+            // Cálculo de efectividad global para el encabezado del reporte
             $total_gral_solicitudes = $solicitudes->sum('solicitudes');
             $total_gral_confirmadas = $solicitudes->sum('confirmadas');
             $porcentaje_confirmacion = ($total_gral_solicitudes > 0) 
@@ -17272,7 +17278,178 @@ class SeerController extends Controller
         $id = $user->id;
         $userRole = $user->roles->pluck('name')->first(); // Tomamos el primer rol principal
 
-        //$reportes
+        return view('estadisticas.estadisticaUsuario',compact('userRole'));
     }
 
+    public function generaReporteUsuario(Request $request){
+        $data = $request->all();
+        $user = auth()->user()->load('roles');
+        $id = $user->id;
+
+        $fecha_inicial = $data["fecha_inicial"];
+        $fecha_final   = $data["fecha_final"];
+        $tipo_reporte  = $data["tipo_reporte"];
+
+        if($tipo_reporte == "AudienciaConciliador"){
+            return Excel::download(new AudienciasPORConciliadorExport($fecha_inicial, $fecha_final, $id), 'audienciasConciliador.xlsx');
+        }else if($tipo_reporte == "ProductividadConciliador"){
+            $total_cumplimiento = 0;
+            //Auxiliares
+                $solicitudes = DB::table('seer_general')
+                    ->leftJoin('pago_solicitud', 'seer_general.id', '=', 'pago_solicitud.id_solicitud')
+                    ->join('users','users.id', "=", 'seer_general.user_id')
+                    ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
+                    ->where('seer_general.user_id', "=" , $id)
+                    ->select(
+                        'users.id as user_id', 
+                        'users.name',
+                        DB::raw('COUNT(DISTINCT seer_general.id) as solicitudes'),
+                        DB::raw("COUNT(DISTINCT CASE WHEN seer_general.estatus NOT IN ('Pendiente','Prevencion','Rechazado') THEN seer_general.id END) as confirmadas"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN seer_general.estatus = 'Incompetencia' THEN seer_general.id END) as incompetencia"),
+                        
+                        // Totales de Audiencia (General)
+                        DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' THEN pago_solicitud.id END) as cumplimientoAudiencia"),
+                        DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoAudienciaMonto"),
+                        
+                        // Totales de Audiencia (Pagado)
+                        DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.id END) as cumplimientoAudienciaPagado"),
+                        DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoAudienciaMontPagado"),
+
+                        // Totales de Ratificación vía Pago (General)
+                        DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' THEN pago_solicitud.id END) as cumplimientoRatificacion"),
+                        DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoRatificacionMonto"),
+
+                        // Totales de Ratificación vía Pago (Pagado)
+                        DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.id END) as cumplimientoRatificacionPagado"),
+                        DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoRatificacionMontoPagado")
+                    )
+                    ->groupBy('users.id', 'users.name')
+                    ->get()
+                    ->keyBy('user_id');
+
+                // 2. Consulta de Turnos (La parte de Ratificaciones que viene de otra tabla)
+                $dataTurnos = DB::table('turnos')
+                    ->join('pago_solicitud', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
+                    ->whereBetween('turnos.fecha', [$fecha_inicial, $fecha_final])
+                    ->where('turnos.user_id','=',$id)
+                    ->select(
+                        'turnos.user_id',
+                        DB::raw('COUNT(turnos.id) as ratificaciones'),
+                        DB::raw('SUM(turnos.monto) as ratificacionesMonto')
+                    )
+                    ->groupBy('turnos.user_id')
+                    ->get()
+                    ->keyBy('user_id');
+
+                // 3. Unir los resultados en una sola colección
+                foreach ($solicitudes as $id => $solicitud) {
+                    $turno = $dataTurnos->get($id);
+                    $solicitud->ratificaciones = $turno ? $turno->ratificaciones : 0;
+                    $solicitud->ratificacionesMonto = $turno ? $turno->ratificacionesMonto : 0;
+                }
+                
+                $cumplimientos = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
+                    // Unimos ambas tablas con Left Join
+                    ->leftJoin('seer_general', 'seer_general.id', '=', 'pago_solicitud.id_solicitud')
+                    ->leftJoin('turnos', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
+                    
+                    // Unimos la tabla users a través de ambas posibilidades
+                    ->leftJoin('users as u_general', 'u_general.id', '=', 'seer_general.user_id')
+                    ->leftJoin('users as u_turnos', 'u_turnos.id', '=', 'turnos.user_id')
+                    ->select(
+                        // Usamos COALESCE para tomar el primer ID de usuario que no sea nulo
+                        DB::raw('COALESCE(u_general.id, u_turnos.id) as user_id'),
+                        DB::raw('COALESCE(u_general.name, u_turnos.name) as user_name'),
+                        'pago_solicitud.delegacion',
+                        DB::raw('COUNT(pago_solicitud.id) as cumplimientos')
+                    )
+                    // Agrupamos por los campos calculados
+                    ->groupBy('user_id', 'user_name', 'pago_solicitud.delegacion')
+                    // Filtramos para asegurar que el pago pertenezca a una de las dos tablas
+                    ->where(function($q) {
+                        $q->whereNotNull('seer_general.id')
+                        ->orWhereNotNull('turnos.id');
+                    })
+                    ->get()
+                    ->keyBy('user_id');
+
+                // 3. Unir los resultados en una sola colección
+                foreach ($solicitudes as $id => $solicitud) {
+                    $cumplimiento = $cumplimientos->get($solicitud->user_id);
+                    $solicitud->cumplimientos = $cumplimiento ? $cumplimiento->cumplimientos : 0;
+                    $total_cumplimiento++;
+                }
+
+            //Audiencias
+                $audiencias = DB::table('seer_general')
+                    ->join('users','users.id', "=", 'seer_general.user_id')
+                    ->join('audiencias', 'seer_general.id', '=', 'audiencias.id_solicitud')
+                    // Left Joins para traer datos de otras tablas sin perder registros de la principal
+                    ->leftJoin('pago_solicitud', function($join) {
+                        $join->on('seer_general.id', '=', 'pago_solicitud.id_solicitud')
+                            ->whereIN('pago_solicitud.tipo_pago', ['Conciliador','Audiencia']);
+                    })
+                    ->leftJoin('seer_citados', function($join) {
+                        $join->on('seer_general.id', '=', 'seer_citados.id_solicitud')
+                            ->where('seer_citados.tipo_notificacion', '=', 'Multa');
+                    })
+                    ->whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
+                    ->where('seer_general.user_id', "=" , $id)
+                    ->select(
+                        'users.id as user_id',
+                        'users.name',
+                        // Conteo base de audiencias
+                        DB::raw('COUNT(DISTINCT audiencias.id) as audienencias_programadas'),
+                        DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Conciliacion','No conciliacion','Reagendada','Archivada','No conciliacion reagendada','Reinstalacion','Desistimiento',
+                        'Archivada en Audiencia') THEN audiencias.id END) as audienencias_celebradas"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Conciliacion','Reinstalacion') THEN audiencias.id END) as convenios"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Archivada','Archivada en Audiencia') THEN audiencias.id END) as achivada"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Incompetencia') THEN audiencias.id END) as incompetencia"),
+
+                        // Cumplimientos y Montos (Pagos)
+                        DB::raw('COUNT(DISTINCT pago_solicitud.id) as cumplimientoAudiencia'),
+                        DB::raw('SUM(pago_solicitud.monto) as cumplimientoAudienciaMonto'),
+                        
+                        // Estatus específicos (Convenio, Falta de Interés, Incompetencia)
+                        DB::raw("COUNT(DISTINCT CASE WHEN seer_general.estatus IN ('Concluida', 'Conciliacion') THEN seer_general.id END) as cumplimientoAudienciaConvenio"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN seer_general.estatus = 'Archivada' THEN seer_general.id END) as cumplimientoAudienciaFalta"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN seer_general.estatus = 'Incompetencia' THEN seer_general.id END) as cumplimientoAudienciaIncompetencia"),
+                        
+                        // Multas y Virtuales
+                        DB::raw("COUNT(DISTINCT seer_citados.id) as multas"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN seer_general.tipo = 'Virtual' THEN seer_general.id END) as audiencias_virtuales"),
+
+                        // Dentro del select de la consulta anterior:
+                        DB::raw("COUNT(DISTINCT CASE WHEN (SELECT COUNT(*) FROM audiencias a WHERE a.id_solicitud = seer_general.id) = 1 THEN seer_general.id END) as una_audiencia"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN (SELECT COUNT(*) FROM audiencias a WHERE a.id_solicitud = seer_general.id) = 2 THEN seer_general.id END) as dos_audiencias"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN (SELECT COUNT(*) FROM audiencias a WHERE a.id_solicitud = seer_general.id) >= 3 THEN seer_general.id END) as tres_audiencias")
+                    )
+                    ->groupBy('users.id', 'users.name')
+                    ->get();
+            
+            //Notificadores
+                $notificaciones = array();
+                
+                
+            
+                // Cálculo de efectividad global para el encabezado del reporte
+                $total_gral_solicitudes = $solicitudes->sum('solicitudes');
+                $total_gral_confirmadas = $solicitudes->sum('confirmadas');
+                $porcentaje_confirmacion = ($total_gral_solicitudes > 0) 
+                    ? ($total_gral_confirmadas / $total_gral_solicitudes) * 100 
+                    : 0;
+
+            $pdf = \PDF::loadView('PDF/Estadisticas/reporteGeneralConciliador', compact(
+                    'fecha_inicial',
+                    'fecha_final',
+                    'solicitudes',
+                    'audiencias',
+                    'notificaciones',
+                    'porcentaje_confirmacion',
+                    'total_cumplimiento'
+                ));
+            $pdf->setPaper('legal', 'landscape');
+            return $pdf->stream('Reporte_General.pdf');
+        }
+    }
 }
