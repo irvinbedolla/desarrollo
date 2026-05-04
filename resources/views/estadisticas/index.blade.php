@@ -11,19 +11,19 @@
                     <div class="card">
                         <div class="card-body">
                             @can('crear-seer')
-                                @if($userRole[0] == "Auxiliar" || $userRole[0] == "Excepcion")
+                                @if($userRole == "Auxiliar" || $userRole == "Excepcion")
                                     <a class="btn btn-warning" href="{{ route('create_persona_solicitud') }}"   onclick=nuevo_estadistica();>Solicitud</a>
                                     <a class="btn btn-warning" href="{{ route('create_persona_ratificacion') }}"onclick=nuevo_estadistica();>Ratificación</a>
                                     <a class="btn btn-warning" href="{{ route('create_asesoria') }}"            onclick=nuevo_estadistica();>Asesorias-{{$asesorias->total}}</a>
                                 @endif
-                                @if($userRole[0] == "Conciliador")
+                                @if($userRole == "Conciliador")
                                     <a class="btn btn-warning" href="{{ route('index_colectivas') }}"   onclick=nuevo_estadistica();>Colectivas</a>
                                 @endif
                                     <a class="btn btn-warning" href="{{ route('reporte_diario') }}"   target="_black">Reporte</a>
                             @endcan
                             
-                            @can('ver-seer')
-                                @if($userRole[0] == "Auxiliar" || $userRole[0] == "Excepcion")
+                            
+                                @if($userRole == "Auxiliar" || $userRole[0] == "Excepcion")
                                     <div class="table-responsive">
                                         <table id="example" class="table table-striped mt-1">
                                             <thead style="background-color: #4A001F;">
@@ -74,7 +74,7 @@
                                         </table>
                                     </div>
                                 @endif
-                                @if($userRole[0] == "Conciliador")
+                                @if($userRole == "Conciliador")
                                     <div class="table-responsive">
                                         <table id="example" class="table table-striped mt-1">
                                             <thead style="background-color: #4A001F;">
@@ -106,7 +106,7 @@
                                         </table>
                                     </div>
                                 @endif
-                                @if($userRole[0] == "Notificador")
+                                @if($userRole == "Notificador")
                                     <div class="table-responsive">
                                         <table id="example" class="table table-striped mt-1" style="text-align:center">
                                             <thead style="background-color: #4A001F;">
@@ -146,7 +146,7 @@
                                         </table>
                                     </div>
                                 @endif
-                                @if($userRole[0] == "Delegado")
+                                @if($userRole == "Delegado")
                                     <div class="table-responsive">
                                         <table id="example" class="table table-striped mt-1">
                                             <thead style="background-color: #4A001F;">
@@ -222,7 +222,7 @@
                                         </table>
                                     </div>
                                 @endif
-                                @if($userRole[0] == "Enlace")
+                                @if($userRole == "Enlace")
                                     <div class="table-responsive">
                                         <table id="example" class="table table-striped mt-1" style="text-align:center">
                                             <thead style="background-color: #4A001F;">
@@ -264,7 +264,7 @@
                                         </table>
                                     </div>
                                 @endif
-                            @endcan
+                            
                             <!-- Centramos la paginación a la derecha-->
                             <div class="pagination justify-content-end">
                             </div>                        

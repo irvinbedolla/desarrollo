@@ -611,6 +611,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('concepto/import',          [HomeController::class, 'importConcepto'])->name('concecto.import');
     //Fin Subida Masiva
 
+    //Reportes conciliciador, auxiliares y notificaciones
+        Route::get('/indexConciliadores/Reportes',         [SeerController::class, 'indexCAN'])->name('reportes_conciliador');
+    //Fin de reportes
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);
         Route::resource('/user-management/roles', RoleManagementController::class);
