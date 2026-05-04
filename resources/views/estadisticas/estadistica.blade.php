@@ -214,7 +214,7 @@
                  $('#reporte-audiencias').css('display','none');
                 $('#Grafica').css('display','block');
             }
-            else if(valorCambiado == "Ratificaciones" || valorCambiado == "Convenios"){
+            else if(valorCambiado == "Ratificaciones" || valorCambiado == "Convenios" || valorCambiado == "AudienciaConciliador" || valorCambiado == "Motivos"){
                 $('#PDF').css('display','none');
                 $('#Excel').css('display','block');
                 $('#Excel-PDF').css('display','none');

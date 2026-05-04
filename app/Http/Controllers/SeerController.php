@@ -430,60 +430,51 @@ class SeerController extends Controller
     }
 
     public function estadistica(){
-        $id = auth()->user()->id;
-        $user = User::find($id);
-        $roles = Role::pluck('name','name')->all();
-        $userRole = $user->roles->pluck('name')->all();
-        $relacionEloquent = 'roles';
-    
-        if($userRole[0] == "Super Usuario" || $userRole[0] == "Administrador" || $userRole[0] == "Estadistica"){
-            $usuariosconciliador = User::whereHas($relacionEloquent, function ($query) {
-                return $query->where('name', '=', 'Conciliador');
-            })
-            ->get();
-            $usuariosauxiliares = User::whereHas($relacionEloquent, function ($query) {
-                return $query->where('name', '=', 'Auxiliar');
-            })
-            ->get();
-            $usuariosnotificadores = User::whereHas($relacionEloquent, function ($query) {
-                return $query->where('name', '=', 'Notificador');
-            })
-            ->get();
+        // 1. Carga del usuario con sus roles en una sola consulta
+        $user = auth()->user()->load('roles');
+        $userRole = $user->roles->pluck('name')->first(); // Usamos first() para mayor claridad
+        $delegacionUser = $user->delegacion;
+
+        // 2. Definición de variables iniciales
+        $usuariosconciliadores = collect();
+        $usuariosauxiliares = collect();
+        $usuariosnotificadores = collect();
+        $estadisticas = collect();
+
+        // 3. Lógica según Rol
+        if (in_array($userRole, ["Super Usuario", "Administrador", "Estadistica"])) {
+            // Traemos todos los usuarios con sus roles para filtrar en memoria (más rápido que 4 consultas separadas)
+            $todosUsuarios = User::with('roles')->get();
+            
+            $usuariosconciliadores = $todosUsuarios->filter(fn($u) => $u->hasRole('Conciliador'));
+            $usuariosauxiliares = $todosUsuarios->filter(fn($u) => $u->hasRole('Auxiliar'));
+            $usuariosnotificadores = $todosUsuarios->filter(fn($u) => $u->hasRole('Notificador'));
+            
             $estadisticas = Sedes::all();
-            $usuariosconciliadores = User::whereHas($relacionEloquent, function ($query) {
-                return $query->where('name', '=', 'Conciliador');
-            })
-            ->get();
-            $estadisticas = Sedes::all();
+
+        } elseif (in_array($userRole, ["Enlace", "Delegado"])) {
+            // Consultas filtradas por delegación
+            $usuariosBase = User::where('delegacion', $delegacionUser)->with('roles')->get();
+
+            $usuariosconciliadores = $usuariosBase->filter(fn($u) => $u->hasRole('Conciliador'));
+            $usuariosauxiliares = $usuariosBase->filter(fn($u) => $u->hasRole('Auxiliar'));
+            $usuariosnotificadores = $usuariosBase->filter(fn($u) => $u->hasRole('Notificador'));
+
+            // Optimización de Sedes: Unificamos la búsqueda de la sede y sus oficinas de apoyo
+            $sedePrincipal = Sedes::where('nombre', $delegacionUser)->first();
+            
+            if ($sedePrincipal) {
+                $estadisticas = Sedes::where('nombre', $delegacionUser)
+                    ->orWhere('oficina_apoyo', $sedePrincipal->id)
+                    ->get();
+            }
         }
-        else if($userRole[0] == "Enlace" || $userRole[0] == "Delegado"){
-            $usuariosconciliador = User::whereHas($relacionEloquent, function ($query) {
-                return $query->where('name', '=', 'Conciliador');
-            })
-            ->where('delegacion', $user["delegacion"])
-            ->get();
-            $usuariosauxiliares = User::whereHas($relacionEloquent, function ($query) {
-                return $query->where('name', '=', 'Auxiliar');
-            })
-            ->where('delegacion', $user["delegacion"])
-            ->get();
-            $usuariosnotificadores = User::whereHas($relacionEloquent, function ($query) {
-                return $query->where('name', '=', 'Notificador');
-            })
-            ->where('delegacion', $user["delegacion"])
-            ->get();
-            $usuariosconciliadores = User::whereHas($relacionEloquent, function ($query) {
-                return $query->where('name', '=', 'Conciliador');
-            })
-            ->get();
-            $estadisticas = Sedes::all();
-            $esta = Sedes::where('nombre', $user["delegacion"])->first();
-            $estadisticas = Sedes::where('nombre', $user["delegacion"])->ORwhere('oficina_apoyo', $esta["id"])->get();
-        }
+
+        // 4. Carga de catálogos (Considera usar caché si estos datos no cambian seguido)
         $estados = Estados::all();
         $municipios = Municipios::all();
     
-        return view('estadisticas.estadistica', compact('user','userRole','estadisticas','usuariosconciliador','usuariosauxiliares','usuariosnotificadores','estados','municipios','usuariosconciliadores'));
+        return view('estadisticas.estadistica', compact('user','userRole','estadisticas','usuariosauxiliares','usuariosnotificadores','estados','municipios','usuariosconciliadores'));
     }
     
     public function mostrar_reporte(Request $request){
@@ -17266,6 +17257,15 @@ class SeerController extends Controller
 
         $nombreArchivo = 'multaNotificada_' . $solicitud->empresa .'.pdf';
         return $pdf->stream($nombreArchivo); 
+    }
+
+    public function indexCAN(){
+        //cargar la vista  y mandar la
+        $user = auth()->user()->load('roles');
+        $id = $user->id;
+        $userRole = $user->roles->pluck('name')->first(); // Tomamos el primer rol principal
+
+        //$reportes
     }
 
 }
