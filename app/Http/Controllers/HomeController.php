@@ -13,6 +13,9 @@ use App\Models\Recepcion;
 use App\Models\CitaDireccion;
 use App\Models\Pagos;
 use App\Models\Audiencias;
+use App\Imports\PagoSolicitudImport;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ConceptoPagoImport;
 
 class HomeController extends Controller
 {
@@ -33,36 +36,38 @@ class HomeController extends Controller
 
     public function pantallaMorelia()
     {
-        $fecha_actual = date('y-m-d');
-        //$fecha_actual = "2026-03-27";
+        //$fecha_actual = date('y-m-d');
+        $fecha_actual = "2026-03-21";
      
         $turnos = Turnos::
         join('users', 'users.id', '=', 'turnos.user_id')
         ->select('users.id', 'users.name', 'turnos.empresa')
-        ->where('turnos.fecha', $fecha_actual)
-        ->where('turnos.delegacion','Morelia')
-        ->where('turnos.estatus','Pendiente')
+        //->where('turnos.fecha', $fecha_actual)
+        //->where('turnos.delegacion','Morelia')
+        //->where('turnos.estatus','Pendiente')
         ->select('turnos.NUE','turnos.empresa as nombre',DB::raw("'Ratificación' as tramite"))
         ->orderBy('turnos.hora')
         ->limit(7)
         ->get();
 
-        $cumplimientos = Pagos::where('pago_solicitud.fecha',$fecha_actual)
-        ->join('seer_general','seer_general.id','pago_solicitud.id_solicitud')
+        $cumplimientos = Pagos::
+        //where('pago_solicitud.fecha',$fecha_actual)
+        join('seer_general','seer_general.id','pago_solicitud.id_solicitud')
         ->join('seer_solicitante','seer_solicitante.id_solicitud','pago_solicitud.id_solicitud')
         ->where('pago_solicitud.estatus','Pendiente')
-        ->where('pago_solicitud.delegacion','Morelia')
+        //->where('pago_solicitud.delegacion','Morelia')
         ->select('seer_general.NUE','seer_solicitante.nombre',DB::raw("'Cumplimiento' as tramite"))
         ->orderBy('pago_solicitud.hora')
         ->limit(7)
         ->get();
 
-        $audienencias = Audiencias::where('audiencias.fecha',$fecha_actual)
-        ->join('users', 'users.id', '=', 'audiencias.id_conciliador')
+        $audienencias = Audiencias::
+        //where('audiencias.fecha',$fecha_actual)
+        join('users', 'users.id', '=', 'audiencias.id_conciliador')
         ->join('seer_general','seer_general.id','audiencias.id_solicitud')
         ->join('seer_solicitante','seer_solicitante.id_solicitud','audiencias.id_solicitud')
         ->where('audiencias.estatus','Pendiente')
-        ->where('audiencias.delegacion','Morelia')
+        //->where('audiencias.delegacion','Morelia')
         ->select('users.name as NUE','seer_solicitante.nombre',DB::raw("'Audiencias' as tramite"))
         ->limit(7)
         ->get();
@@ -504,5 +509,31 @@ class HomeController extends Controller
 
         return back()->with('success', 'Debes ingresar a '. 
         ' http://siconcilio.cclmichoacan.gob.mx/ en el apartado de buzón electrónico con'.$mensaje  ); 
+    }
+
+    public function indexSubida(){
+        return view('cargaExcel/index');
+    }
+
+    public function importPago(Request $request) 
+    {
+        $request->validate([
+            'file' => 'required|mimes:csv,txt'
+        ]);
+
+        Excel::import(new PagoSolicitudImport, $request->file('file'));
+        
+        return back()->with('success', '¡Registros migrados correctamente!');
+    }
+
+    public function importConcepto(Request $request) 
+    {
+        $request->validate([
+            'file' => 'required|mimes:csv,txt'
+        ]);
+
+        Excel::import(new ConceptoPagoImport, $request->file('file'));
+        
+        return back()->with('success', '¡Registros migrados correctamente!');
     }
 }

@@ -69,6 +69,8 @@ use App\Mail\ForoMail;
 use App\Models\ForoNacional;
 use App\Exports\Motivos;
 use App\Exports\AudienciasExport;
+use App\Exports\AudienciasConciliadorExport;
+
 
 class SeerController extends Controller
 {   
@@ -138,92 +140,108 @@ class SeerController extends Controller
             'Content-Disposition' => 'inline; filename="' . $downloadName . '"',
         ]);
     }
+
     public function index()
     {
-        $id = auth()->user()->id;
-        $user = User::find($id);
-        $roles = Role::pluck('name','name')->all();
-        $userRole = $user->roles->pluck('name')->all();
-        $fecha_actual = date('y-m-d');
-        $estadisticas = "";
-        $personas = "";
-        $sede = $user->delegacion;
+        // 1. Carga del usuario con sus roles de una sola vez
+        $user = auth()->user()->load('roles');
+        $id = $user->id;
+        $userRole = $user->roles->pluck('name')->first(); // Tomamos el primer rol principal
+        $fecha_actual = now()->format('Y-m-d'); // Carbon es más limpio que date()
         
-        //Si es delegado le va salir todo lo de su delegacion de todos los roles
-       if($userRole[0] == "Notificador"){
-            $personas = null;
-            $estadisticas = SeerPerGeneral::where('seer_citados.id_notificador', $id)
-            ->join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
-            ->join('seer_solicitante','seer_solicitante.id_solicitud','=','seer_general.id')
-            ->join('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
-            ->where('seer_citados.estatus', 'Pendiente')
-            ->select('seer_citados.id','seer_general.NUE','seer_solicitante.nombre as nombre_solicitado','seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido',
-            'municipios.nombre as municipio_citado','seer_citados.colonia','seer_citados.calle',
-            'seer_citados.n_ext','seer_citados.estatus','seer_citados.tipo_notificacion')
-            ->get();
-        }
-        //Si es otro usuario le va mostrar unicamente las del ese usuario
-        else if($userRole[0] == "Auxiliar" || $userRole[0] == "Excepcion"){
-            $personas     = SeerPerGeneral_old::where('fecha', $fecha_actual)->where('user_id', $id)
-            ->join('seer_auxiliares','seer_auxiliares.id_solicitud',"=",'seer_general_old.id')
-            ->select("seer_general_old.id","seer_general_old.fecha","seer_general_old.NUE","seer_general_old.solicitante","seer_auxiliares.tipo_solicitud","seer_general_old.validado_conciliador")
-            ->get();
-            $estadisticas = null;
-            $asesorias    = SeerAsesoria::where('fecha', $fecha_actual)->where('id_usuario', $id)
-            ->selectRaw('count(seer_asesorias.id) as total')
-            ->first();
-            return view('estadisticas.index',compact('estadisticas','userRole','personas','asesorias'));
-        }
-        else if($userRole[0] == "Conciliador"){
-            //solo le van aparecer solicitudes
-            $personas = SeerPerGeneral_old::where('conciliador_id', $id)
-            ->join('seer_auxiliares','seer_auxiliares.id_solicitud',"=",'seer_general_old.id')
-            ->where('seer_auxiliares.tipo_solicitud','Solicitud')
-            ->where('seer_general_old.validado_conciliador','Pendiente')
-            ->get();
-            $estadisticas = null;
-        }
-        else if($userRole[0] == "Delegado"){
-            $estadisticas = null;
-        }
-        if($userRole[0] == "Enlace"){
-            if($delegacion == "Morelia"){
-                $delegaciones = ["Morelia", "Zitácuaro"];
-            }
-            else if($delegacion == "Uruapan"){
-                $delegaciones = ["Uruapan", "Lázaro Cárdenas"];
-            }
-            else if($delegacion == "Zamora"){
-                $delegaciones = ["Zamora", "Sahuayo"];
-            }
+        // Inicialización de variables
+        $estadisticas = null;
+        $personas = null;
+        $asesorias = null;
 
-            
-            $personas = User::whereHas('roles', function ($query) {
-                return $query->where('name', '=', 'Notificador');
-            })
-            ->whereIn('delegacion', $delegaciones)
-            ->get();
+        // 2. Mapa de delegaciones para rol "Enlace"
+        $mapaSedes = [
+            'Morelia' => ['Morelia', 'Zitácuaro'],
+            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+            'Zamora'  => ['Zamora', 'Sahuayo'],
+        ];
 
-            $estadisticas = SeerPerGeneral_old::join('seer_citados_old', 'seer_citados_old.id_solicitud', '=', 'seer_general_old.id')
-            ->join('seer_auxiliares', 'seer_auxiliares.id_solicitud', '=', 'seer_general_old.id')
-            ->leftJoin('seer_citados', 'seer_citados.id_solicitud', '=', 'seer_general_old.id')
-            ->leftJoin('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
-            ->select(
-                'seer_citados_old.id as id_citado_old',
-                'seer_general_old.NUE',
-                'seer_general_old.solicitante',
-                'seer_citados_old.nombre',
-                'seer_citados_old.direccion',
-                'seer_citados_old.estatus',
-                'municipios.nombre as municipio_nombre',
-            )
-            ->where('seer_general_old.delegacion', $user['delegacion'])
-            ->where('seer_citados_old.id_notificador', 0)
-            ->where('seer_auxiliares.notificacion', '!=', 'Trabajador')
-            ->get();
+        // 3. Switch Case para manejo de Roles (más limpio que múltiples if/else)
+        switch ($userRole) {
+            case 'Notificador':
+                $estadisticas = SeerPerGeneral::join('seer_citados','seer_citados.id_solicitud','=','seer_general.id')
+                    ->join('seer_solicitante','seer_solicitante.id_solicitud','=','seer_general.id')
+                    ->join('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
+                    ->where('seer_citados.id_notificador', $id)
+                    ->where('seer_citados.estatus', 'Pendiente')
+                    ->select(
+                        'seer_citados.id','seer_general.NUE','seer_solicitante.nombre as nombre_solicitado',
+                        'seer_citados.nombre','seer_citados.primer_apellido','seer_citados.segundo_apellido',
+                        'municipios.nombre as municipio_citado','seer_citados.colonia','seer_citados.calle',
+                        'seer_citados.n_ext','seer_citados.estatus','seer_citados.tipo_notificacion'
+                    )->get();
+                break;
+
+            case 'Auxiliar':
+                $personas = SeerPerGeneral_old::where('fecha', $fecha_actual)
+                    ->where('user_id', $id)
+                    ->join('seer_auxiliares','seer_auxiliares.id_solicitud',"=",'seer_general_old.id')
+                    ->select("seer_general_old.id","seer_general_old.fecha","seer_general_old.NUE",
+                            "seer_general_old.solicitante","seer_auxiliares.tipo_solicitud",
+                            "seer_general_old.validado_conciliador")
+                    ->get();
+
+                $asesorias = SeerAsesoria::where('fecha', $fecha_actual)
+                    ->where('id_usuario', $id)
+                    ->count(); // count() es más directo que selectRaw + first()
+                
+                // Retorno temprano para evitar procesar el resto de la función
+                return view('estadisticas.index', compact('estadisticas','userRole','personas','asesorias'));
+                
+            case 'Excepcion':
+                $personas = SeerPerGeneral_old::where('fecha', $fecha_actual)
+                    ->where('user_id', $id)
+                    ->join('seer_auxiliares','seer_auxiliares.id_solicitud',"=",'seer_general_old.id')
+                    ->select("seer_general_old.id","seer_general_old.fecha","seer_general_old.NUE",
+                            "seer_general_old.solicitante","seer_auxiliares.tipo_solicitud",
+                            "seer_general_old.validado_conciliador")
+                    ->get();
+
+                $asesorias = SeerAsesoria::where('fecha', $fecha_actual)
+                    ->where('id_usuario', $id)
+                    ->count(); // count() es más directo que selectRaw + first()
+                
+                // Retorno temprano para evitar procesar el resto de la función
+                return view('estadisticas.index', compact('estadisticas','userRole','personas','asesorias'));
+
+            case 'Conciliador':
+                $personas = SeerPerGeneral_old::where('conciliador_id', $id)
+                    ->join('seer_auxiliares','seer_auxiliares.id_solicitud',"=",'seer_general_old.id')
+                    ->where('seer_auxiliares.tipo_solicitud','Solicitud')
+                    ->where('seer_general_old.validado_conciliador','Pendiente')
+                    ->get();
+                break;
+
+            case 'Enlace':
+                $delegaciones = $mapaSedes[$user->delegacion] ?? [$user->delegacion];
+
+                // Optimizamos la búsqueda de notificadores con Eloquent
+                $personas = User::role('Notificador')
+                    ->whereIn('delegacion', $delegaciones)
+                    ->get();
+
+                $estadisticas = SeerPerGeneral_old::join('seer_citados_old', 'seer_citados_old.id_solicitud', '=', 'seer_general_old.id')
+                    ->join('seer_auxiliares', 'seer_auxiliares.id_solicitud', '=', 'seer_general_old.id')
+                    ->leftJoin('seer_citados', 'seer_citados.id_solicitud', '=', 'seer_general_old.id')
+                    ->leftJoin('municipios', 'seer_citados.municipio_citado', '=', 'municipios.id')
+                    ->where('seer_general_old.delegacion', $user->delegacion)
+                    ->where('seer_citados_old.id_notificador', 0)
+                    ->where('seer_auxiliares.notificacion', '!=', 'Trabajador')
+                    ->select(
+                        'seer_citados_old.id as id_citado_old', 'seer_general_old.NUE',
+                        'seer_general_old.solicitante', 'seer_citados_old.nombre',
+                        'seer_citados_old.direccion', 'seer_citados_old.estatus',
+                        'municipios.nombre as municipio_nombre'
+                    )->get();
+                break;
         }
 
-        return view('estadisticas.index',compact('estadisticas','userRole','personas'));
+        return view('estadisticas.index', compact('estadisticas','userRole','personas', 'asesorias'));
     }
 
     public function create()
@@ -2096,6 +2114,9 @@ class SeerController extends Controller
         else if ($data["tipo_reporte"] == "Audiencias"){
             $conciliador = $data['conciliador'] ?? 'Todos';
             return Excel::download(new AudienciasExport($fecha_inicial, $fecha_final, $sede, $conciliador), 'audiencias.xlsx');
+        }
+        else if($data["tipo_reporte"] == "AudienciaConciliador"){
+            return Excel::download(new AudienciasConciliadorExport($fecha_inicial, $fecha_final, $sede), 'audienciasConciliador.xlsx');
         }
     }
 
