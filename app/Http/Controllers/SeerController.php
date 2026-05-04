@@ -1269,7 +1269,7 @@ class SeerController extends Controller
                     ->join('catalogo_rama', 'catalogo_rama.id', '=', 'seer_general.id_rama')
                     ->join('seer_citados', 'seer_general.id', '=', 'seer_citados.id_solicitud')
                     ->join('seer_solicitante', 'seer_general.id', '=', 'seer_solicitante.id_solicitud')
-                    ->join('users as auxiliar', 'auxiliar.id', '=', 'seer_general.user_id')
+                    //->join('users as auxiliar', 'auxiliar.id', '=', 'seer_general.user_id')
                     ->join('municipios','municipios.id','seer_citados.municipio_citado')
                     ->leftJoin('users as notificador', 'notificador.id', '=', 'seer_citados.id_notificador')
                     ->where(function($query) {
@@ -1300,8 +1300,8 @@ class SeerController extends Controller
                     //->when($this->auxiliar !== "Todos", function ($q) { return $q->where('seer_general.user_id', $this->auxiliar); })
                     //->when($this->notificador !== "Todos", function ($q) { return $q->where('seer_citados.id_notificador', $this->notificador); })
                     ->select(
-                        'auxiliar.id as user_id', 
-                        'auxiliar.name',
+                        'notificador.id as user_id', 
+                        'notificador.name',
                         // Total base
                         DB::raw('COUNT(seer_citados.id) as Todas_notificaciones'),
                         
@@ -1315,7 +1315,7 @@ class SeerController extends Controller
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Finalizado exitosamente' THEN 1 ELSE 0 END) as exitosamente"),
                         DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Recibe pero no firma' THEN 1 ELSE 0 END) as firma"),
                     )
-                    ->groupBy('auxiliar.id', 'auxiliar.name')
+                    ->groupBy('notificador.id', 'notificador.name')
                     ->get();
                 
                 
