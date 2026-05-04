@@ -367,7 +367,8 @@ class Motivos implements FromView
                 }
                 return $q->where("seer_general.delegacion", $this->sede);
             })
-            ->where('audiencias.estatus',"Archivada en Audiencia")
+            //->where('audiencias.estatus',"Archivada en Audiencia")
+            ->where('audiencias.estatus',"No conciliacion")
             ->select(
                 'seer_general.id',
                 // Subconsulta para el primer motivo ingresado
