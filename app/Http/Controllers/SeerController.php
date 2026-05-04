@@ -13276,7 +13276,7 @@ class SeerController extends Controller
         // Si es Super Usuario o Admin, no se agregan filtros adicionales (ve todo)
     
         //$audiencias = $query->orderBy('created_at', 'desc')->paginate(50);
-        $audiencias = $query->orderBy('created_at', 'desc')->limit(2000)->get();
+        $audiencias = $query->orderBy('created_at', 'desc')->limit(4500)->get();
         
         //$audiencias->through(function ($audiencia) {
         $audiencias->transform(function ($audiencia) {
@@ -13882,7 +13882,7 @@ class SeerController extends Controller
                     ->first();
             }
             $html = view('PDF/Cumplimientos/pagosParciales', compact('id', 'solicitud','conciliador','pagos','delegado'))->render();
-        }else if($pagos->tipo_pago = 'Ratificacion'){
+        }else if($pagos->tipo_pago == 'Ratificacion'){
             $solicitud = Turnos::where('id', $pagos->id_solicitud)->first();
             $conciliador = User::where('id', $solicitud->id_conciliador)->select('name')->first();
             $pagosDif = Pagos::where('id_solicitud', $solicitud->id)->where('tipo_pago', 'Ratificacion')->count();
