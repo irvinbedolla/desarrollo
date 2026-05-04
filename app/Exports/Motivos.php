@@ -328,7 +328,7 @@ class Motivos implements FromView
                 }
                 return $q->where("seer_general.delegacion", $this->sede);
             })
-            ->where('seer_general.estatus',"Incompetencia")
+            ->where('seer_general.estatus',"Incomparecencia")
             ->select(
                 'seer_general.id',
                 // Subconsulta para el primer motivo ingresado
@@ -355,6 +355,7 @@ class Motivos implements FromView
             ->join('seer_motivos', 'seer_motivos.id_solicitud', '=', 'seer_general.id')
             ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
             ->join('audiencias', 'audiencias.id_solicitud', 'seer_general.id')
+            ->join('seer_citados','seer_citados.id_solicitud', '=', 'seer_general.id')
             ->where(function($query) {
                 $query->where('seer_general.incidencia', 0)
                     ->orWhereNull('seer_general.incidencia');
@@ -369,6 +370,7 @@ class Motivos implements FromView
             })
             //->where('audiencias.estatus',"Archivada en Audiencia")
             ->where('audiencias.estatus',"No conciliacion")
+            ->whereNotNull('seer_citados.id_abogado')
             ->select(
                 'seer_general.id',
                 // Subconsulta para el primer motivo ingresado

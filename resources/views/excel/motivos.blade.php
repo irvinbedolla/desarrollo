@@ -272,12 +272,12 @@
                     </tr>
                 </tfoot>
             </table>
-        <!--  INCOMPETENCIA-->
+        <!--  INCOMPARECENCIA-->
             <table>
                 <thead>
                     <tr>
                         <th colspan="4" style="background-color: #002366; color: #ffffff; text-align: center; font-weight: bold;">
-                            9. INCOMPETENCIA	
+                            9. INCOMPARECENCIA	
                         </th>
                     </tr>
                     <tr style="background-color: #eeeeee; text-align: center;">
