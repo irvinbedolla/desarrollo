@@ -612,7 +612,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Fin Subida Masiva
 
     //Reportes conciliciador, auxiliares y notificaciones
-        Route::get('/indexConciliadores/Reportes',         [SeerController::class, 'indexCAN'])->name('reportes_conciliador');
+        Route::get('/indexConciliadores/Reportes',          [SeerController::class, 'indexCAN'])->name('reportes_conciliador');
+        Route::post('indexConciliadores/generar',           [SeerController::class, 'generaReporteUsuario'])->name('generaReporteUsuario');
+        
     //Fin de reportes
     Route::name('user-management.')->group(function () {
         Route::resource('/user-management/users', UserManagementController::class);

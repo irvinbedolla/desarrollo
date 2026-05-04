@@ -92,9 +92,9 @@
                                                 <label for="name">Sede</label>
                                                 <select class="form-control" name="sede" required>
                                                     <option value="">Seleccione</option>
-                                                    @if($userRole[0] == "Super Usuario" || $userRole[0] == "Estadisticas")
+                                                    @if($userRole == "Super Usuario" || $userRole == "Estadisticas")
                                                         <option value="Todos">Todos</option>
-                                                    @elseif($userRole[0] == "Delegado" || $userRole[0] == "Enlace")
+                                                    @elseif($userRole == "Delegado" || $userRole == "Enlace")
                                                         <option value="TodosDelegado">Todos</option>
                                                     @endif
                                                     @foreach($estadisticas as $aSport)
