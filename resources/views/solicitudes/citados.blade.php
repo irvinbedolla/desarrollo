@@ -115,7 +115,7 @@
                                         </div>
                                     @endif
                                     <div style="background-color:#D2D3D5; width:100%; height:40px;">
-                                        <h3 class="text-center" style="color:black">Ingresa los datos del citado</h3>
+                                        <h3 class="text-center" style="color:black">Ingresa los datos del citado(s)</h3>
                                     </div>    
                                     <p><span style="color:red;">*</span> Debes capturar al menos un citado</p>
 
@@ -364,7 +364,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-12">
                                                 <div class="form-group">
                                                 <label for="floatingTextarea">Referencias del domicilio <span style="color:red;">(*)</span></label>
-                                                    <textarea class="form-control" placeholder="Ingresa alguna referencia de como llegar" name="referencia" style="height: 100px;" oninput="this.value = this.value.toUpperCase()" required></textarea>
+                                                    <textarea class="form-control" placeholder="Ejemplo: Referencias visuales, como color de casa/portón, junto a: tienda, parque, escuela, etc." name="referencia" style="height: 100px;" oninput="this.value = this.value.toUpperCase()" required></textarea>
                                                     <div class="invalid-feedback">
                                                         El campo referencias es obligatorio.
                                                     </div>
@@ -386,7 +386,7 @@
                                             </div>                                     
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Referencia 1 <span style="color:red;">(*)</span></label>
+                                                    <label for="name">Imagen del lugar</label>
                                                     <input type="file" class="form-control" name="foto1" accept="image/*" required>
                                                     <div class="invalid-feedback">
                                                         El campo Referencia 1 es obligatorio.
@@ -395,7 +395,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
-                                                    <label for="name">Referencia 2 (Opcional)</label>
+                                                    <label for="name">Imagen de la fachada</label>
                                                     <input type="file" class="form-control" name="foto2" accept="image/*">
                                                 </div>
                                             </div>
@@ -485,14 +485,14 @@
                                                         @if($citados == 0)
                                                             <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar citado</button>
                                                         @endif
-                                                        @if($citados > 0)
-                                                            <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar citado</button>
-                                                        @endif
                                                     </div>
                                                     <div style="display:flex; flex-direction:column; align-items:flex-end;">
                                                         @if($citados > 0)
-                                                            <a href="{{ route('seer.finaliza',$id) }}" id="btn-conclude" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Concluir solicitud</a>
-                                                            <div id="conclude-warning" class="text-danger" style="display:none; margin-top:6px;">Guarde el citado antes de concluir</div>
+                                                            <div alig="center">
+                                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Agregar citado</button>
+                                                                <a href="{{ route('seer.finaliza',$id) }}" id="btn-conclude" class="btn btn-primary" style=" background-color:#CEA845;border-color:#CEA845;">Concluir solicitud</a>
+                                                                <div id="conclude-warning" class="text-danger" style="display:none; margin-top:6px;">Guarde el citado antes de concluir</div>
+                                                            </div>
                                                         @endif
                                                     </div>
                                                 </div>

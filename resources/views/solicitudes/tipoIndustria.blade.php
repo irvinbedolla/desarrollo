@@ -293,7 +293,7 @@
         <div class="modal-content">
             <div class="modal-header header-default font-size-14" style="height: 38px">
                 <div class="col-md-12">
-                    <center><h4>DATOS PERSONALES</h4></center>
+                    <center><h4>AVISO DE PRIVACIDAD</h4></center>
                 </div>
             </div>
             <div class="modal-body">
@@ -321,14 +321,14 @@
                             <div class="form-check form-check-inline">
                                 <input type="radio" id="radioAviso1" name="radioAviso" value="1" class="form-check-input pointer" data-parsley-multiple="radioAviso" 
                                         style="width: 18px; height: 18px; border: 2px solid #CEA845; accent-color: #CEA845;">
-                                <label class="form-check-label pointer" for="radioAviso1" style="font-size: 13px; color:black;">Sí acepto</label>
+                                <label class="form-check-label pointer" for="radioAviso1" style="font-size: 13px; color:black;">Sí, acepto.</label>
                             </div>
                         </div>
                         <div class="col-auto">
                             <div class="form-check form-check-inline">
                                 <input type="radio" id="radioAviso2" name="radioAviso" value="2" class="form-check-input pointer" data-parsley-multiple="radioAviso" 
                                         style="width: 18px; height: 18px; border: 2px solid #CEA845; accent-color: #CEA845;">
-                                <label class="form-check-label pointer" for="radioAviso2" style="font-size: 13px; color:black;">No acepto</label>
+                                <label class="form-check-label pointer" for="radioAviso2" style="font-size: 13px; color:black;">No, acepto.</label>
                             </div>
                         </div>
                     </div>
@@ -413,7 +413,7 @@
         <input type="hidden" name="_token" value="0l8yhzIG7ywVSd1eE3TP6ldlOPFNrqrT78i2Ezy6">
     </form>
     <div id="content" class="content "> 
-        <center><h3 style="color:black"><b>Solicitud</b></h3></center>
+        <center><h3 style="color:black"><b>COMPETENCIA POR ACTIVIDAD DEL EMPLEADOR</b></h3></center>
         <!-- end breadcrumb -->
         <hr class="red">
         <div class="panel panel-inverse">
@@ -1016,7 +1016,7 @@ Acude a la Oficina Estatal del Centro Federal de Conciliación y Registro Labora
                                                 </div>
                                             </div>
                                             <div>
-                                                <!--
+                                                
                                                 <button type="button" class="btn btn-primary" onclick="validarIndustria()" style="float: right; margin-top: 2%;"> Validar y Continuar <i class="fa fa-arrow-right"></i></button> -->
                                                 @if($tipo_solicitud == 2)
                                                     <button type="button" class="btn btn-primary" onclick="validarIndustria()" style="float: right; margin-top: 2%;"> Validar y Continuar <i class="fa fa-arrow-right"></i></button> -->

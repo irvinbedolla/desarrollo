@@ -5054,7 +5054,7 @@ class SeerController extends Controller
                 'email'            => $solicitante["email"],
                 'NumFolio'         => $folio,
             ];
-            //Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
+            Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
         }
         else{
             $mensaje = " el correo:".$usuario["email"]." ya esta registrado en Si Concilio su solicitud sera asignado al usuario existente.";
@@ -5071,7 +5071,7 @@ class SeerController extends Controller
                 'email'            => $solicitante["email"],
                 'NumFolio'         => $folio,
             ];
-            //Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
+            Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
         }
         /*
         return view('solicitudes.aviso', [
@@ -17427,8 +17427,8 @@ class SeerController extends Controller
                     ->groupBy('users.id', 'users.name')
                     ->get();
             
-            //Notificadores
-                $notificaciones = array();
+            
+            $notificaciones = array();
                 
                 
             
@@ -17448,6 +17448,181 @@ class SeerController extends Controller
                     'porcentaje_confirmacion',
                     'total_cumplimiento'
                 ));
+            $pdf->setPaper('legal', 'landscape');
+            return $pdf->stream('Reporte_General.pdf');
+        }
+        else if($tipo_reporte == "ProductividadAuxiliar"){
+            $total_cumplimiento = 0;
+            $solicitudes = DB::table('seer_general')
+                    ->leftJoin('pago_solicitud', 'seer_general.id', '=', 'pago_solicitud.id_solicitud')
+                    ->join('users','users.id', "=", 'seer_general.user_id')
+                    ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
+                    ->where('seer_general.user_id', "=" , $id)
+                    ->select(
+                        'users.id as user_id', 
+                        'users.name',
+                        DB::raw('COUNT(DISTINCT seer_general.id) as solicitudes'),
+                        DB::raw("COUNT(DISTINCT CASE WHEN seer_general.estatus NOT IN ('Pendiente','Prevencion','Rechazado') THEN seer_general.id END) as confirmadas"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN seer_general.estatus = 'Incompetencia' THEN seer_general.id END) as incompetencia"),
+                        
+                        // Totales de Audiencia (General)
+                        DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' THEN pago_solicitud.id END) as cumplimientoAudiencia"),
+                        DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoAudienciaMonto"),
+                        
+                        // Totales de Audiencia (Pagado)
+                        DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.id END) as cumplimientoAudienciaPagado"),
+                        DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoAudienciaMontPagado"),
+
+                        // Totales de Ratificación vía Pago (General)
+                        DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' THEN pago_solicitud.id END) as cumplimientoRatificacion"),
+                        DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoRatificacionMonto"),
+
+                        // Totales de Ratificación vía Pago (Pagado)
+                        DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.id END) as cumplimientoRatificacionPagado"),
+                        DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoRatificacionMontoPagado")
+                    )
+                    ->groupBy('users.id', 'users.name')
+                    ->get()
+                    ->keyBy('user_id');
+
+            $dataTurnos = DB::table('turnos')
+                    ->join('pago_solicitud', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
+                    ->whereBetween('turnos.fecha', [$fecha_inicial, $fecha_final])
+                    ->where('turnos.user_id','=',$id)
+                    ->select(
+                        'turnos.user_id',
+                        DB::raw('COUNT(turnos.id) as ratificaciones'),
+                        DB::raw('SUM(turnos.monto) as ratificacionesMonto')
+                    )
+                    ->groupBy('turnos.user_id')
+                    ->get()
+                    ->keyBy('user_id');
+
+                // 3. Unir los resultados en una sola colección
+                foreach ($solicitudes as $id => $solicitud) {
+                    $turno = $dataTurnos->get($id);
+                    $solicitud->ratificaciones = $turno ? $turno->ratificaciones : 0;
+                    $solicitud->ratificacionesMonto = $turno ? $turno->ratificacionesMonto : 0;
+                }
+                
+            $cumplimientos = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
+                    // Unimos ambas tablas con Left Join
+                    ->leftJoin('seer_general', 'seer_general.id', '=', 'pago_solicitud.id_solicitud')
+                    ->leftJoin('turnos', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
+                    
+                    // Unimos la tabla users a través de ambas posibilidades
+                    ->leftJoin('users as u_general', 'u_general.id', '=', 'seer_general.user_id')
+                    ->leftJoin('users as u_turnos', 'u_turnos.id', '=', 'turnos.user_id')
+                    ->select(
+                        // Usamos COALESCE para tomar el primer ID de usuario que no sea nulo
+                        DB::raw('COALESCE(u_general.id, u_turnos.id) as user_id'),
+                        DB::raw('COALESCE(u_general.name, u_turnos.name) as user_name'),
+                        'pago_solicitud.delegacion',
+                        DB::raw('COUNT(pago_solicitud.id) as cumplimientos')
+                    )
+                    // Agrupamos por los campos calculados
+                    ->groupBy('user_id', 'user_name', 'pago_solicitud.delegacion')
+                    // Filtramos para asegurar que el pago pertenezca a una de las dos tablas
+                    ->where(function($q) {
+                        $q->whereNotNull('seer_general.id')
+                        ->orWhereNotNull('turnos.id');
+                    })
+                    ->get()
+                    ->keyBy('user_id');
+
+                // 3. Unir los resultados en una sola colección
+                foreach ($solicitudes as $id => $solicitud) {
+                    $cumplimiento = $cumplimientos->get($solicitud->user_id);
+                    $solicitud->cumplimientos = $cumplimiento ? $cumplimiento->cumplimientos : 0;
+                    $total_cumplimiento++;
+                }
+            // Cálculo de efectividad global para el encabezado del reporte
+                $total_gral_solicitudes = $solicitudes->sum('solicitudes');
+                $total_gral_confirmadas = $solicitudes->sum('confirmadas');
+                $porcentaje_confirmacion = ($total_gral_solicitudes > 0) 
+                    ? ($total_gral_confirmadas / $total_gral_solicitudes) * 100 
+                    : 0;
+
+            $pdf = \PDF::loadView('PDF/Estadisticas/reporteGeneralAuxiliar', compact(
+                    'fecha_inicial',
+                    'fecha_final',
+                    'solicitudes',
+                    'porcentaje_confirmacion',
+                    'total_cumplimiento'
+                ));
+            $pdf->setPaper('legal', 'landscape');
+            return $pdf->stream('Reporte_General.pdf');
+        }
+        else if($tipo_reporte == "ProductividadNotificador"){
+                $notificaciones = SeerPerGeneral::whereBetween('seer_citados.fecha', [$fecha_inicial, $fecha_final])
+                    ->join('catalogo_rama', 'catalogo_rama.id', '=', 'seer_general.id_rama')
+                    ->join('seer_citados', 'seer_general.id', '=', 'seer_citados.id_solicitud')
+                    ->join('seer_solicitante', 'seer_general.id', '=', 'seer_solicitante.id_solicitud')
+                    //->join('users as auxiliar', 'auxiliar.id', '=', 'seer_general.user_id')
+                    ->join('municipios','municipios.id','seer_citados.municipio_citado')
+                    ->leftJoin('users as notificador', 'notificador.id', '=', 'seer_citados.id_notificador')
+                    ->where(function($query) {
+                        $query->where('seer_general.incidencia', 0)
+                        ->orWhereNull('seer_general.incidencia');
+                    })
+                    ->when($sede !== "Todos", function ($q) use ($sede) {
+                        if ($sede === "TodosDelegado") {
+                            $id = auth()->user()->id;
+                            $user = User::find($id);
+                            $sedeUsuario = $user->delegacion;
+            
+                            if($sedeUsuario == "Morelia"){
+                                $delegaciones = ['Morelia', 'Zitácuaro'];
+                                return $q->whereIn('seer_general.delegacion', $delegaciones);
+                            }
+                            else if($sedeUsuario == "Uruapan"){
+                                $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
+                                return $q->whereIn('seer_general.delegacion', $delegaciones);
+                            }
+                            else if($sedeUsuario == "Zamora"){
+                                $delegaciones = ['Zamora', 'Sahuayo'];
+                                return $q->whereIn('seer_general.delegacion', $delegaciones);
+                            }
+                        }
+                        return $q->where("seer_general.delegacion", $sede);
+                    })
+                    //->when($this->auxiliar !== "Todos", function ($q) { return $q->where('seer_general.user_id', $this->auxiliar); })
+                    //->when($this->notificador !== "Todos", function ($q) { return $q->where('seer_citados.id_notificador', $this->notificador); })
+                    ->select(
+                        'notificador.id as user_id', 
+                        'notificador.name',
+                        // Total base
+                        DB::raw('COUNT(seer_citados.id) as Todas_notificaciones'),
+                        
+                        // Conteos condicionales por estatus
+                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Notificada' THEN 1 ELSE 0 END) as notificada"),
+                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'No notificada' THEN 1 ELSE 0 END) as notificacion_Nonotificada"),
+                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Pendiente' THEN 1 ELSE 0 END) as notificacion_pendientes"),
+                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Exhorto' THEN 1 ELSE 0 END) as notificacion_exhortos"),
+                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'No exitosa se constituye' THEN 1 ELSE 0 END) as notificacion_NESC"),
+                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'No exitosa no se constituye' THEN 1 ELSE 0 END) as notificacion_NENSC"),
+                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Finalizado exitosamente' THEN 1 ELSE 0 END) as exitosamente"),
+                        DB::raw("SUM(CASE WHEN seer_citados.estatus = 'Recibe pero no firma' THEN 1 ELSE 0 END) as firma"),
+                    )
+                    ->groupBy('notificador.id', 'notificador.name')
+                    ->get();
+                
+                
+            
+            // Cálculo de efectividad global para el encabezado del reporte
+            $total_gral_solicitudes = $solicitudes->sum('solicitudes');
+            $total_gral_confirmadas = $solicitudes->sum('confirmadas');
+            $porcentaje_confirmacion = ($total_gral_solicitudes > 0) 
+                ? ($total_gral_confirmadas / $total_gral_solicitudes) * 100 
+                : 0;
+
+            $pdf = \PDF::loadView('PDF/Estadisticas/reporteGeneralNotificador', compact(
+                'fecha_inicial',
+                'fecha_final',
+                'notificaciones',
+                'porcentaje_confirmacion',
+                'total_cumplimiento'
+            ));
             $pdf->setPaper('legal', 'landscape');
             return $pdf->stream('Reporte_General.pdf');
         }

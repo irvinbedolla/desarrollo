@@ -33,17 +33,17 @@
                                                     <td>
                                                         @if($pago->estatus == "Pendiente" || $pago->estatus == "Incomparecencia trabajador")
                                                             <button type="button" class="btn btn-info open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-id="{{ $pago->id }}">
-                                                                Pagar
+                                                                Generar Cumplimiento
                                                             </button>
                                                         @endif
                                                         @if($pago->estatus == "Pendiente")
-                                                            <a class="btn btn-danger" href="{{ route('cumplimiento_rechazar', $pago->id) }}" onclick=consultar_estadistica();>Rechazar</a>
+                                                            <a class="btn btn-danger" href="{{ route('cumplimiento_rechazar', $pago->id) }}" onclick=consultar_estadistica();>Generar incumplimiento</a>
                                                             <form method="POST" action="{{ route('cumplimiento_incomparecencia', $pago->id) }}" style="display:inline;">
                                                                 @csrf
                                                                 <input type="hidden" name="fecha_audiencia" value="{{ $pago->fecha }}">
                                                                 <input type="hidden" name="hora_audiencia" value="{{ $pago->hora }}">
                                                                 <button type="submit" class="btn btn-danger" onclick="consultar_estadistica();">
-                                                                    No comparece trabajador
+                                                                    Genearar Incomparecencia
                                                                 </button>
                                                             </form>
                                                         @endif

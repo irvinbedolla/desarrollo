@@ -23,7 +23,7 @@
                             @endcan
                             
                             
-                                @if($userRole == "Auxiliar" || $userRole[0] == "Excepcion")
+                                @if($userRole == "Auxiliar" || $userRole == "Excepcion")
                                     <div class="table-responsive">
                                         <table id="example" class="table table-striped mt-1">
                                             <thead style="background-color: #4A001F;">

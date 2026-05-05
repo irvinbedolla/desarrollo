@@ -49,6 +49,32 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                        @elseif($userRole == "Auxiliar")
+                                            <div class="col-xs-12 col-sm-6 col-md-4">
+                                                <div class="form-group">
+                                                    <label multiple for="name">Tipo de reporte</label>
+                                                    <select id="reporte" class="form-control" name="tipo_reporte" required>
+                                                        <option value="">Seleccione</option>
+                                                        <option value="ProductividadAuxiliar">Productividad</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        Debes seleccionar un tipo de reporte.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @elseif($userRole == "Notificador")
+                                            <div class="col-xs-12 col-sm-6 col-md-4">
+                                                <div class="form-group">
+                                                    <label multiple for="name">Tipo de reporte</label>
+                                                    <select id="reporte" class="form-control" name="tipo_reporte" required>
+                                                        <option value="">Seleccione</option>
+                                                        <option value="ProductividadNotificador">Productividad</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        Debes seleccionar un tipo de reporte.
+                                                    </div>
+                                                </div>
+                                            </div>
                                         @endif
 
                                         <div class="col-xs-12 col-sm-6 col-md-4">
