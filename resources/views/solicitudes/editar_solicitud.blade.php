@@ -1148,6 +1148,7 @@ select[name="municipio_citado"] option {
                                             <div class="col-xs-12 col-sm-12 col-md-6">
                                                 @if ($general->tipo_solicitud == 1) 
                                                 <label for="password">Identificación Oficial <span style="color:red;">(*)</span></label><br>
+                                                <a class="btn btn-info" target="_blank" href="{{ route('documento_identificacion_solicitante_ver', $id) }}">Visualizar</a>
                                                 @elseif ($general->tipo_solicitud == 2)
                                                 <label for="password">Identificación Oficial del Representante / Persona Apoderada <span style="color:red;">(*)</span></label><br>
                                                 <a target="_blank" class="btn btn-primary" href="{{ route('documento_identificacion_solicitante_ver', $id) }}">Consultar Documento PDF</a><br>

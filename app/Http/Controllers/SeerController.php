@@ -3364,11 +3364,11 @@ class SeerController extends Controller
             'motivo_solicitud' => $data["motivo_solicitud"] ?? []
         );
        
-        session(['solicitud_trabajador_data' => $solicitud_data]);
+        session(['solicitud_data' => $solicitud_data]);
         
         // Limpiar sesiones anteriores
-        session()->forget('solicitante_trabajador_data');
-        session()->forget('citados_trabajador_data');
+        session()->forget('solicitante_data');
+        session()->forget('citados_data');
 
         $id = 'session';
 
@@ -3939,10 +3939,17 @@ class SeerController extends Controller
             ]);
         }*/
 
-        // Datos de excepción
-        $excepcion_data = [];
+        // Guardar en sesión
+        session(['solicitante_data' => $data_insert]);
+        
+        // Actualizar datos de solicitud en sesión con caso_excepcion
+        $solicitudData = session('solicitud_data', []);
+        $solicitudData['caso_excepcion'] = $data["excepcion"];
+        session(['solicitud_data' => $solicitudData]);
+
+        // Guardar datos de excepción si aplica
         if ($data["excepcion"] === "Si") {
-             $excepcion_data = [
+             $excepcionData = [
                 'frecuencia_hechos' => $data["frecuencia_hechos"] ?? null,
                 'cambios_situacionL' => $data["cambios_situacionL"] ?? null,
                 'comunico_hechos' => $data["comunico_hechos"] ?? null,
@@ -3957,16 +3964,8 @@ class SeerController extends Controller
                 'incidencia_directa' => $data["incidencia_directa"] ?? null,
                 'recibio_atencion' => $data["recibio_atencion"] ?? null,
             ];
+            session(['excepcion_data' => $excepcionData]);
         }
-        
-        // Guardar en sesión
-        $solicitante_data = [
-            'solicitante' => $data_insert,
-            'excepcion' => $data["excepcion"],
-            'excepcion_data' => $excepcion_data
-        ];
-        
-        session(['solicitante_trabajador_data' => $solicitante_data]);
 
        /* $id_general  = SeerPerGeneral::latest('id')->first();
         $id=$id_general["id"];
@@ -4306,7 +4305,8 @@ class SeerController extends Controller
             'imagen_domicilio2' => $foto2, 
             'estado_citado'     => $data["estado_citado"],
         );
-        $data_insert["notificacion"] =  $data["notificacion"];
+        
+        $data_insert["notificacion"] = session('citados_data.0.notificacion', $data['notificacion'] ?? null);
 
         if(isset($data["rfc"])){
             $data_insert["rfc"] =  $data["rfc"];
@@ -4360,9 +4360,18 @@ class SeerController extends Controller
             }
         }
 
-        //Se van a generar el citatorio
         $data_insert['resulte_responsable'] = 'No';
-        //SeerCitados::create($data_insert); 
+        
+        if ($data["id"] == 'session') {
+            $citados = session('citados_data', []);
+            $citados[] = $data_insert;
+            session(['citados_data' => $citados]);
+        } else {
+            SeerCitados::create($data_insert); 
+        }
+        /*$checando = session()->get('citados_data');
+        dd($checando);*/
+        
         // Si es persona física, elimina los apellidos para este citado
         if (isset($data["tipo"]) && $data["tipo"] === "Fisica") {
             unset($data_insert["primer_apellido"], $data_insert["segundo_apellido"]);
@@ -4375,18 +4384,43 @@ class SeerController extends Controller
 
         //Validar si existe quien resulta responsable con la misma direccion
 
-        $data_insert["nombre"] = "QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN " .
-        $data["vialidad"] . " " . $data["calle"] . ", NÚMERO " . $data["exterior"];
-        if (!empty($data["interior"])) {
-            $data_insert["nombre"] .= " INT. " . $data["interior"];
-        }
-        $data_insert["nombre"] .= " COLONIA " . $data["colonia"] . ", " . $municipioNombre . ", " . $estadoNombre . ", C.P. " . $data["cp"] . ".";
+        if($data["resulte_responsable"] == "Si"){
+            $data_insert["nombre"] = "QUIEN O QUIENES RESULTEN RESPONSABLES Y/O BENEFICIARIOS Y/O USUFRUCTUARIOS Y/O PROPIETARIOS DE LA FUENTE DE EMPLEO UBICADA EN " .
+            $data["vialidad"] . " " . $data["calle"] . ", NÚMERO " . $data["exterior"];
+            if (!empty($data["interior"])) {
+                $data_insert["nombre"] .= " INT. " . $data["interior"];
+            }
+            $data_insert["nombre"] .= " COLONIA " . $data["colonia"] . ", " . $municipioNombre . ", " . $estadoNombre . ", C.P. " . $data["cp"] . ".";
 
-        // Marcar este nuevo registro como el "quien resulte" y crear solo si no existe ya uno igual
-        $data_insert['resulte_responsable'] = 'Si';
-        $direccionNombre = $data_insert["nombre"];
+            // Marcar este nuevo registro como el "quien resulte" y crear solo si no existe ya uno igual
+            $data_insert['resulte_responsable'] = 'Si';
+            $direccionNombre = $data_insert["nombre"];
+            
+            if ($data["id"] == 'session') {
+                $citados = session('citados_data', []);
+                $existe = false;
+                foreach ($citados as $citado) {
+                    if ($citado['nombre'] == $direccionNombre && $citado['resulte_responsable'] == 'Si') {
+                        $existe = true;
+                        break;
+                    }
+                }
+                if (!$existe) {
+                    $citados[] = $data_insert;
+                    session(['citados_data' => $citados]);
+                }
+            } else {
+                $existe = SeerCitados::where('id_solicitud', $data['id'])
+                            ->where('nombre', $direccionNombre)
+                            ->where('resulte_responsable', 'Si')
+                            ->exists();
+                if (!$existe) {
+                    SeerCitados::create($data_insert);
+                }
+            }
+        }
         
-        if ($data['id'] == 'session') {
+        /*if ($data['id'] == 'session') {
             $citados_list = session('citados_trabajador_data', []);
             
             $citado_original = array(
@@ -4530,13 +4564,15 @@ class SeerController extends Controller
                 SeerCitados::create($data_insert); // Este usa el $data_insert modificado con el nombre largo
             }
         }
-        /*$existe = SeerCitados::where('id_solicitud', $data['id'])
+        $existe = SeerCitados::where('id_solicitud', $data['id'])
                     ->where('nombre', $direccionNombre)
                     ->where('resulte_responsable', 'Si')
                     ->exists();
         if (!$existe) {
             SeerCitados::create($data_insert);
         }*/
+
+        //dd(session('citados_data'));
         return back()->with('success', 'Citado agregado correctamente, puedes agregar otro o continuar.');
     }
 
@@ -4564,9 +4600,10 @@ class SeerController extends Controller
     public function vista_citado($id){
         $estados = Estados::all();
         $municipios = Municipios::all();
+        $session_notificacion = session('citados_data.0.notificacion');
         
         if ($id == 'session') {
-            $citados_data = session('citados_trabajador_data', []);
+            $citados_data = session('citados_data', []);
             $citados = count($citados_data);
         } else {
             $citados = SeerCitados::where('id_solicitud', $id)->count(); //LLeva el conteo de los citados agregados
@@ -4579,7 +4616,7 @@ class SeerController extends Controller
         /*if($tipo_generacion != 0){
             return view('solicitudes.auxiliares.citadosAux',compact('estados','id','citados','municipios'));
         }*/
-        return view('solicitudes.citados',compact('estados','id','citados','municipios'));
+        return view('solicitudes.citados',compact('estados','id','citados','municipios', 'session_notificacion'));
     }
 
     /*public function vista_solicitante($id){
@@ -4880,11 +4917,12 @@ class SeerController extends Controller
     public function guardar_solicitud($id){
         if ($id == 'session') {
              // Recuperar datos de sesión
-             $solicitud_data = session('solicitud_trabajador_data');
-             $solicitante_data = session('solicitante_trabajador_data');
-             $citado_data = session('citados_trabajador_data'); // Ya solo es un citado
+             $solicitud_data = session('solicitud_data');
+             $solicitante_data = session('solicitante_data');
+             $citadosData = session('citados_data', []);
+             $excepcionData = session('excepcion_data');         
 
-             //dd($'citado_data');
+             //dd(session('citados_data'));
              
              if (!$solicitud_data || !$solicitante_data) {
                  return redirect()->route('solicitudEnLinea')->with('error', 'Sesión expirada o datos incompletos.');
@@ -4904,6 +4942,16 @@ class SeerController extends Controller
                     'caso_excepcion'  =>  $solicitante_data['excepcion'] ?? 'No' // En caso de que no venga el campo, se asume "No"
                  ];
 
+                 // 2. Guardar Motivos
+                if (!empty($solicitudMotivos)) {
+                    foreach ($solicitudMotivos as $motivoId) {
+                        SeerMotivo::create([
+                            'id_solicitud'    => $id,
+                            'id_motivo'       => $motivoId,
+                        ]);
+                    }
+                }
+
                  SeerPerGeneral::create($general_insert);
                  $general_record = SeerPerGeneral::latest('id')->first();
                  $new_id = $general_record->id;
@@ -4919,35 +4967,33 @@ class SeerController extends Controller
                  }
                  
                  // 3. Crear SeerSolicitante
-                 $solicitante_insert = $solicitante_data;
-                 $solicitante_insert['id_solicitud'] = $new_id;
-                 SeerSolicitante::create($solicitante_insert);
+                 $solicitante_data['id_solicitud'] = $new_id;
+                 SeerSolicitante::create($solicitante_data);
                  
-                 // 4. Crear SeerCasosExcepcion
-                 /*if ($solicitante_data['excepcion'] === "Si") {
-                     $excepcion_insert = $solicitante_data['excepcion_data'];
-                     $excepcion_insert['id_solicitud'] = $new_id;
-                     SeerCasosExcepcion::create($excepcion_insert);
-                 }*/
-                 
-                 // 5. Crear SeerCitados
-                 //foreach ($citados_data as $citado) {
-                     $citado_data['id_solicitud'] = $new_id;
-                     SeerCitados::create($citado_data);
-                 //}
+                 // 4. Guardar Caso Excepción (si existe)
+                if ($excepcionData) {
+                    $excepcionData['id_solicitud'] = $new_id;
+                    SeerCasosExcepcion::create($excepcionData);
+                }
+
+                // 5. Guardar Citados
+                foreach ($citadosData as $citado) {
+                    $citado['id_solicitud'] = $new_id;
+                    SeerCitados::create($citado);
+                }
                  
                  DB::commit();
                  
-                 // Limpiar sesión
-                 session()->forget('solicitud_trabajador_data');
-                 session()->forget('solicitante_trabajador_data');
-                 session()->forget('citados_trabajador_data');
+                 if ($id == 'session' || session()->has('solicitud_data')) {
+                    // Limpiar sesión
+                    session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
+                }
                  
                  $id = $new_id; // Actualizar ID para el resto del flujo
                  
              } catch (\Exception $e) {
                 DB::rollBack();
-                    $solicitanteSess = session('solicitante_trabajador_data', []);
+                    $solicitanteSess = session('solicitante_data', []);
                     if (!empty($solicitanteSess) && is_array($solicitanteSess)) {
                         $solicitanteArr = [];
                         if (isset($solicitanteSess['solicitante']) && is_array($solicitanteSess['solicitante'])) {
@@ -4968,7 +5014,7 @@ class SeerController extends Controller
                         }
                     }
 
-                    $citados = session('citados_trabajador_data', []);
+                    $citados = session('citados_data', []);
                     if (!empty($citados) && is_array($citados)) {
                         foreach ($citados as $citado) {
                             if (is_array($citado)) {
@@ -4998,20 +5044,18 @@ class SeerController extends Controller
         $delegacion = SeerPerGeneral::find($id);
 
         $mapaSedes = [
-            'Morelia' => ['Morelia', 'Zitácuaro'],
-            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
-            'Zamora'  => ['Zamora', 'Sahuayo'],
+            'Morelia'           => ['Morelia'],
+            'Uruapan'           => ['Uruapan'],
+            'Zamora'            => ['Zamora'],
+            'Zitácuaro'         => ['Morelia'],
+            'Lázaro Cárdenas'   => ['Uruapan'],
+            'Sahuayo'           => ['Zamora']
         ];
 
-        $sedesABuscar = isset($mapaSedes[$delegacion]) 
-                ? $mapaSedes[$delegacion] 
-                : [$delegacion];
-
-        $delegacion = SeerPerGeneral::find($id);
         $delegado = User::whereHas('roles', function ($query) {
             return $query->where('name', '=', 'Delegado');
         })
-        ->whereIn('delegacion', $sedesABuscar)
+        ->whereIn('delegacion', $mapaSedes)
         ->first();
        
         SeerPerGeneral::find($id)->update(['delegado_id' => $delegado->id]);

@@ -206,6 +206,22 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <!--div class="col-xs-12 col-sm-12 col-md-3">
+                                                <div class="form-group">
+                                                    <label for="name">¿Agregar "Quien resulte responsable"? <span style="color:red;">(*)</span></label>
+                                                    <select name="resulte_responsable" id="responsable" class="form-control" required>
+                                                        <option value="">SELECCIONE</option>
+                                                        <option value="Si">Si</option>
+                                                        <option value="No">No</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        El campo es obligatorio.
+                                                    </div>
+                                                </div>
+                                            </!--div-->
+
+                                            <input type="hidden" name="resulte_responsable" id="responsable" value="Si" required>
                                             
                                         </div>
 
@@ -216,19 +232,7 @@
                                                 </div>
                                             </div>    
 
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
-                                                <div class="form-group">
-                                                    <label for="name">¿Quién entregará los citatorios? <span style="color:red;">(*)</span></label>
-                                                    <select name="notificacion" class="form-control" required>
-                                                        <option value="">SELECCIONE</option>
-                                                        <!--<option value="Trabajador">Yo</option>-->
-                                                        <option value="Centro">Centro de conciliación Laboral</option>
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        El campo ¿quién entregará los citatorios? es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <input type="hidden" name="notificacion" class="form-control" value="Centro" required>
 
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
