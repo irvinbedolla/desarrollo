@@ -10167,7 +10167,7 @@ class SeerController extends Controller
             $conciliador  = User::join("audiencias","audiencias.id_conciliador","=","users.id")
             ->where("audiencias.id_solicitud", "=", $solicitud["id"])
             ->latest('audiencias.created_at')
-            ->select('users.name')
+            ->select('users.name','audiencias.fecha','audiencias.hora')
             ->first();
             $html = view('PDF/IncumplimientoAudiencia', compact('id', 'solicitud','conciliador','salario_diario','pagos','general', 'citados', 'solicitante'))->render();
         }

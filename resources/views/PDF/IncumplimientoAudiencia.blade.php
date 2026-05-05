@@ -83,7 +83,7 @@
                     @foreach ($citados as $citado)
                     {{ $citado->nombre }} {{ $citado->primer_apellido ?? '' }} {{ $citado->segundo_apellido ?? '' }}<br>
                     @endforeach
-                    Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $solicitud->hora }} horas.<br> 
+                    Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($conciliador->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ $conciliador->hora }} horas.<br> 
                     Fecha en que se emite la constancia de incumplimiento: {{ \Carbon\Carbon::now()->translatedFormat('d \d\e F \d\e\l Y') }}<br>
                     Pena Convencional: Si<br>
                     Salario diario: ${{ number_format($salario_diario, 2) }} M.N.
