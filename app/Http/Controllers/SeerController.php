@@ -6039,7 +6039,7 @@ class SeerController extends Controller
             ];
             // El método Mail::to() toma el email del destinatario
             //Mail::to($user['email'])->send(new MailAceptacionRechazo($user));
-        //}
+        //} 
 
         DB::commit();
         session()->forget(['citados_edicion_new', 'citados_edicion_delete']);
