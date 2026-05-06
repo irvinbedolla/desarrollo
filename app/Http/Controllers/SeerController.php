@@ -14004,7 +14004,6 @@ class SeerController extends Controller
                 ->select('pago_solicitud.id','pago_solicitud.id_solicitud','turnos.NUE','pago_solicitud.fecha','pago_solicitud.hora','pago_solicitud.monto','pago_solicitud.descripcion','pago_solicitud.estatus','pago_solicitud.forma_pago')
                 ->get();
 
-                dd($cumplimientos);
             } else {
                 $cumplimientos = Pagos::join('seer_general','seer_general.id',"=",'pago_solicitud.id_solicitud')
                 ->where('pago_solicitud.id_solicitud',$idSolicitud)
