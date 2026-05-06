@@ -424,7 +424,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Salario <span style="color:red;">(*)</span></label>
-                                                    <input type="number" step="0.001" name="pago" class="form-control soloMontos" required> 
+                                                    <input type="text" inputmode="decimal" name="pago" class="form-control soloMontos" required>
                                                     <div class="invalid-feedback">
                                                         El campo salario es obligatorio.
                                                     </div>
@@ -1190,9 +1190,9 @@
 
                     if (archivo) {
                         // Aquí puedes ejecutar tu validación de 10MB
-                        const limite = 10 * 1024 * 1024;
+                        const limite = 5 * 1024 * 1024;
                         if (archivo.size > limite) {
-                            alert("El archivo no puede pasar de 10 Megas");
+                            alert("El archivo no puede pasar de 5 MB");
                             this.value = ""; // Limpiar el input
                         }
                     }

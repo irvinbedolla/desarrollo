@@ -289,15 +289,29 @@ document.querySelectorAll('.correoElectronico').forEach(input => {
 //Validación para los montos
 document.querySelectorAll('.soloMontos').forEach(input => {
 input.addEventListener('input', () => {
-  // Reemplaza todo lo que no sea dígito ni punto por vacío
-  input.value = input.value.replace(/[^0-9.]/g, '');
+  //Normalizamos coma a punto para evitar problemas de teclado
+  let value = input.value.replace(/,/g, '.');
 
-  // Permite solo un punto decimal (el primer punto que encuentre)
-  let parts = input.value.split('.');
-  if(parts.length > 2) {
-  // Si hay más de un punto, elimina todos los demás
-  input.value = parts[0] + '.' + parts.slice(1).join('');
+  //Permite solo dígitos y punto
+  value = value.replace(/[^0-9.]/g, '');
+
+  //Permite solo un punto decimal (el primero)
+  const firstDot = value.indexOf('.');
+  if (firstDot !== -1) {
+    const intPart = value.slice(0, firstDot);
+    let decPart = value.slice(firstDot + 1).replace(/\./g, '');
+
+    //Limita a máximo 3 decimales
+    decPart = decPart.slice(0, 3);
+    value = intPart + '.' + decPart;
   }
+
+  //Si empieza con punto, lo convertimos a 0.
+  if (value.startsWith('.')) {
+    value = '0' + value;
+  }
+
+  input.value = value;
 });
 });
 
