@@ -193,7 +193,7 @@
                         {{-- CUANDO NO ATIENEDE NADIE--}}
                         @if($citado->quien_atiende ==='NADIE' )
                             Procedí a tocar en repetidas ocasiones, 
-                            sin recibir respuesta. Y después de haber esperado un tiempo prudente, lógico y razonable, nadie acude a mi llamado, sin emabargo cuento con los medios de cercioramiento antes mencionados de que el domicilio 
+                            sin recibir respuesta. Y después de haber esperado un tiempo prudente, lógico y razonable, nadie acude a mi llamado, sin embargo cuento con los medios de cercioramiento antes mencionados de que el domicilio 
                             es el correcto y que el citado labora, habita o tiene su asiento de negocios en este domicilio con base en <b>{{$citado->observaciones}}</b>.
                         @elseif($citado->quien_atiende === 'OTRA PERSONA' || $citado->quien_atiende ==='CITADO O REPRESENTANTE')
                         {{-- CUANDO TE ATIENDEN, PERO NO QUIEREN RECIBIR --}}

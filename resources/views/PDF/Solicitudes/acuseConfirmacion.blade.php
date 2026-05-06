@@ -67,7 +67,7 @@
             $direccion_sede='PARACHO NO. 26, COL. 600 CASAS, C.P. 60950 LÁZARO CÁRDENAS, MICHOACÁN DE OCAMPO';
         }  
         if($solicitud->delegacion === 'Sahuayo') {
-            $direccion_sede='AV. UNIVERSIDAD SUR NO. 300, COL. LOMAS DE UNIVERSIDAD, C.P. 59103 SAHUAYO DE MORELOS, MICHOACÁN DE OCAMPO';
+            $direccion_sede='AV. UNIVERSIDAD SUR NO. 3000, COL. LOMAS DE UNIVERSIDAD, C.P. 59103 SAHUAYO DE MORELOS, MICHOACÁN DE OCAMPO';
         } 
     @endphp
 
@@ -128,6 +128,10 @@
                             
                             <br><br>
                             En el caso de personas morales empleadoras, se deberá comparecer a través de un representante legal con facultades suficientes y apegándose al artículo señalado con anterioridad.<br><br>
+                            @if($longitud_citados > 720)
+                                <div class="page-break"></div> 
+                                {{-- Esto forzará que lo que sigue (el texto legal) empiece en una hoja limpia --}}
+                            @endif
                             De conformidad con la fracción X del artículo 684-E de la Ley Federal del Trabajo, si a la audiencia de conciliación, sólo comparece el citado, se archivará el expediente por falta 
                             de interés del solicitante, reanudándose los plazos de prescripción a partir de día siguiente a la fecha de la audiencia.
                         @else
@@ -136,7 +140,7 @@
                             procedimiento de conciliación y no de un juicio, o asistido por un licenciado en derecho, abogado o Procurador de la
                             Defensa del Trabajo. <br><br>
                         
-                           Ahora bien, en el caso de personas morales empleadoras, deberán comparecer a través de un representante legal con
+                            Ahora bien, en el caso de personas morales empleadoras, deberán comparecer a través de un representante legal con
                             facultades suficientes para actuar en su representación y cumplir con los requisitos establecidos en el artículo 692 de la
                             Ley Federal del Trabajo; por lo que respecta a las personas físicas empleadoras podrán comparecer por su propio
                             derecho o a través de un representante legal con facultades suficientes para actuar en su representación y deberán
