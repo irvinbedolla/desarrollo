@@ -13927,9 +13927,8 @@ class SeerController extends Controller
     }
 
     public function ver_pago_cumplimiento($id_pago){
-
+        
         $pago = Pagos::where('id', $id_pago)->first();
-
         $idSolicitud = $pago->id_solicitud;
         $id_pago = $pago->id;
         $tipo = $pago->tipo_pago;
