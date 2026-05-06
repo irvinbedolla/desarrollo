@@ -348,6 +348,8 @@
                                         </div-->
                                         @endif
 
+                                        <input name="notificacion" type="hidden" value="Centro">
+
                                         <div class="col-xs-12 col-sm-12 col-md-3">
                                             <div class="form-group">
                                                 <label for="name">Tipo de vialidad <span style="color:red;">(*)</span></label>

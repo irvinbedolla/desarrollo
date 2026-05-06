@@ -569,7 +569,6 @@ class SeerController extends Controller
         else if ($data["tipo_reporte"] == "CumplimientosGrafica"){
             $id_usuario = auth()->user()->id;
             $userActual = User::find($id_usuario);
-
             // 1. Consulta Unificada para Ratificaciones
             $ratificacionesData = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
             ->join('turnos', 'turnos.id', 'pago_solicitud.id_solicitud')
@@ -1234,6 +1233,7 @@ class SeerController extends Controller
                     ->select(
                         'users.id as user_id',
                         'users.name',
+                        // Conteo base de audiencias
                         // Conteo base de audiencias
                         DB::raw('COUNT(DISTINCT audiencias.id) as total_audiencias'),
                         DB::raw('COUNT(DISTINCT audiencias.id) as audienencias_programadas'),
@@ -4845,7 +4845,6 @@ class SeerController extends Controller
     public function guardar_citado_patronal(Request $request, $id)
     {
         $data = $request->all();
-        //dd($data);
         
         // Validar campos requeridos
         $request->validate([
@@ -5959,6 +5958,13 @@ class SeerController extends Controller
                 'delegacion'        => $delegacion["delegacion"],
                 'estatus'           => 'Pendiente'
             );
+
+            $tipo_solicitud = SeerPerGeneral::where('id', $data['id'])->first();//->value('tipo_solicitud');
+            $poder = SeerSolicitante::where('id_solicitud', $data['id'])->first();
+            if($tipo_solicitud->tipo_solicitud == 2) {
+                $audiencia_insert["poder_id"] = $poder->poder_id;
+            }
+            
             $audiencia = Audiencias::create($audiencia_insert);
             $audiencia_id = $audiencia->id;
             //Actualizar genera
@@ -6386,6 +6392,8 @@ class SeerController extends Controller
             session(["audiencia_id_{$id}" => $audiencia_id]);
         }
 
+        $audiencia = Audiencias::where('id', $audiencia_id)->first();
+
         $id_usuario = auth()->user()->id;
         $user = User::find($id_usuario);
 
@@ -6462,45 +6470,51 @@ class SeerController extends Controller
         $solicitante = $sessionData['solicitante'];
         
         // Reconstruir $representantes desde la sesión
-        $representantes = collect();
-        foreach ($sessionData['citados'] as $citado) {
-             $rep = new \stdClass();
-             $rep->id = $citado->id;
-             $rep->nombre = $citado->nombre;
-             $rep->primer_apellido = $citado->primer_apellido;
-             $rep->segundo_apellido = $citado->segundo_apellido;
-             $rep->rfc = $citado->rfc;
-             $rep->id_abogado = $citado->id_abogado;
-             $rep->id_fisica = $citado->id_fisica;
-             $rep->notificacion = $citado->notificacion;
-             $rep->estatus = $citado->estatus;
-             
-             $rep->nombre_abogado = null;
-             $rep->primero_abogado = null;
-             $rep->segundo_abogado = null;
-             if ($citado->id_abogado) {
-                 $abogado = Poder::find($citado->id_abogado);
-                 if ($abogado) {
-                     $rep->nombre_abogado = $abogado->nombres_patronal;
-                     $rep->primero_abogado = $abogado->primer_apellido_patronal;
-                     $rep->segundo_abogado = $abogado->segundo_apellido_patronal;
-                 }
-             }
-             
-             $rep->nombre_fisica = null;
-             $rep->primer_fisica = null;
-             $rep->segundo_fisica = null;
-             if ($citado->id_fisica) {
-                 $fisica = PersonaFisica::find($citado->id_fisica);
-                 if ($fisica) {
-                     $rep->nombre_fisica = $fisica->nombre;
-                     $rep->primer_fisica = $fisica->primer_apellido;
-                     $rep->segundo_fisica = $fisica->segundo_apellido;
-                 }
-             }
-             
-             $representantes->push($rep);
+
+        if ($solicitud->tipo_solicitud == 1){
+            $representantes = collect();
+            foreach ($sessionData['citados'] as $citado) {
+                $rep = new \stdClass();
+                $rep->id = $citado->id;
+                $rep->nombre = $citado->nombre;
+                $rep->primer_apellido = $citado->primer_apellido;
+                $rep->segundo_apellido = $citado->segundo_apellido;
+                $rep->rfc = $citado->rfc;
+                $rep->id_abogado = $citado->id_abogado;
+                $rep->id_fisica = $citado->id_fisica;
+                $rep->notificacion = $citado->notificacion;
+                $rep->estatus = $citado->estatus;
+                
+                $rep->nombre_abogado = null;
+                $rep->primero_abogado = null;
+                $rep->segundo_abogado = null;
+                if ($citado->id_abogado) {
+                    $abogado = Poder::find($citado->id_abogado);
+                    if ($abogado) {
+                        $rep->nombre_abogado = $abogado->nombres_patronal;
+                        $rep->primero_abogado = $abogado->primer_apellido_patronal;
+                        $rep->segundo_abogado = $abogado->segundo_apellido_patronal;
+                    }
+                }
+                
+                $rep->nombre_fisica = null;
+                $rep->primer_fisica = null;
+                $rep->segundo_fisica = null;
+                if ($citado->id_fisica) {
+                    $fisica = PersonaFisica::find($citado->id_fisica);
+                    if ($fisica) {
+                        $rep->nombre_fisica = $fisica->nombre;
+                        $rep->primer_fisica = $fisica->primer_apellido;
+                        $rep->segundo_fisica = $fisica->segundo_apellido;
+                    }
+                }
+                
+                $representantes->push($rep);
+            }
+        } else if ($solicitud->tipo_solicitud == 2) {
+            $citados = $sessionData['citados'];
         }
+        
         $abogados = Poder::all();
         //SeerPerGeneral::find($id)->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
         $estados        = Estados::all();
@@ -6509,7 +6523,7 @@ class SeerController extends Controller
             return view('/audiencias/audiencias',compact('id','audiencia_id','solicitudes','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios', 'fechaConfirmacion', 'allCentro', 'NUE'));
         }
         else{
-            return redirect()->route('audiencias.parte3', ['id' => $id, 'audiencia_id' => $audienciaId]);
+            return view('/audiencias/audienciasPatronal',compact('id','audiencia_id','solicitudes', 'citados','solicitante','conciliador','solicitud','abogados','estados','municipios', 'fechaConfirmacion', 'allCentro', 'NUE', 'audiencia'));
         }
     }
 
@@ -6655,7 +6669,7 @@ class SeerController extends Controller
         
         SeerPerConciliador::create($data_conciliador);
 
-        SeerPerGeneral::find($data["id"])
+        $solicitud = SeerPerGeneral::find($data["id"])
         ->update([
             'fecha_terminacion' => $fecha_actual, 
             'estatus'           => 'No conciliacion',
@@ -6675,30 +6689,36 @@ class SeerController extends Controller
 
         //SeerCitados::where('id_solicitud', $data["id"])->where('notificacion', 'Centro')->whereIn('estatus', ['Notificada', 'Finalizado exitosamente'])->update(['tipo_notificacion' => 'Multa']);
 
-        $citados = SeerCitados::where('id_solicitud', $data["id"])->where('notificacion', 'Centro')->where('tipo_notificacion', '!=', 'Multa')->whereIn('estatus', ['Notificada', 'Finalizado exitosamente', 'Exitosa por Instructivo', 'No notificada', 'Notificada en Audiencia'])->get();
-        foreach($citados as $citado){
-            $tieneNotificadaEnAudiencia = $citados->where('nombre', $citado->nombre)
-                                                  ->where('estatus', 'Notificada en Audiencia')
-                                                  ->count() > 0;
+        if ($solicitud->tipo_solicitud == 1){
+            $citados = SeerCitados::where('id_solicitud', $data["id"])->where('notificacion', 'Centro')->where('tipo_notificacion', '!=', 'Multa')->whereIn('estatus', ['Notificada', 'Finalizado exitosamente', 'Exitosa por Instructivo', 'No notificada', 'Notificada en Audiencia'])->get();
+            foreach($citados as $citado){
+                $tieneNotificadaEnAudiencia = $citados->where('nombre', $citado->nombre)
+                                                    ->where('estatus', 'Notificada en Audiencia')
+                                                    ->count() > 0;
 
-            if ($tieneNotificadaEnAudiencia && $citado->estatus !== 'Notificada en Audiencia') {
-                continue;
+                if ($tieneNotificadaEnAudiencia && $citado->estatus !== 'Notificada en Audiencia') {
+                    continue;
+                }
+
+                $existeMulta = SeerCitados::where('id_solicitud', $data["id"])
+                    ->where('tipo_notificacion', 'Multa')
+                    ->where('nombre', $citado->nombre)
+                    ->exists();
+
+                if (!$existeMulta) {
+                    $nuevo_citado = $citado->replicate();
+                    $nuevo_citado->fecha = NULL;
+                    $nuevo_citado->tipo_notificacion = 'Multa';
+                    $nuevo_citado->estatus = 'Sin asignar';
+                    $nuevo_citado->audiencia_id = $data['audiencia_id'] ?? request()->query('audiencia_id') ?? $citado->audiencia_id;
+                    $nuevo_citado->id_notificador = 0;
+                    $nuevo_citado->save();
+                }
             }
-
-            $existeMulta = SeerCitados::where('id_solicitud', $data["id"])
-                ->where('tipo_notificacion', 'Multa')
-                ->where('nombre', $citado->nombre)
-                ->exists();
-
-            if (!$existeMulta) {
-                $nuevo_citado = $citado->replicate();
-                $nuevo_citado->fecha = NULL;
-                $nuevo_citado->tipo_notificacion = 'Multa';
-                $nuevo_citado->estatus = 'Sin asignar';
-                $nuevo_citado->audiencia_id = $data['audiencia_id'] ?? request()->query('audiencia_id') ?? $citado->audiencia_id;
-                $nuevo_citado->id_notificador = 0;
-                $nuevo_citado->save();
-            }
+        } else if ($solicitud->tipo_solicitud == 2) {
+            $citados = SeerCitados::where('id_solicitud', $data["id"])->update([
+                'comparecencia' => 'No',
+            ]);
         }
 
         return redirect()->route('todas_audiencias');
@@ -7148,32 +7168,143 @@ class SeerController extends Controller
         $sessionKey = "audiencia_data_{$id}";
 
         $ultimoRegistro = HistorialAbogado::where('id_abogado', $data["abogado"] ?? null)->latest()->first();
+        $solicitud = SeerPerGeneral::find($id);
 
-        if (session()->has($sessionKey)) {
-            $sessionData = session($sessionKey);
-            $citados = $sessionData['citados'];
-            
-            $citados = $citados->map(function ($citado) use ($data, $ultimoRegistro) {
-                if ((int)$citado->id == (int)$data["citado"]) {
-                    $citado->id_abogado = $data["abogado"];
-                    $citado->id_historial = $ultimoRegistro?->id;
+        if ($solicitud->tipo_solicitud == 1) {
+            if (session()->has($sessionKey)) {
+                $sessionData = session($sessionKey);
+                $citados = $sessionData['citados'];
+                
+                $citados = $citados->map(function ($citado) use ($data, $ultimoRegistro) {
+                    if ((int)$citado->id == (int)$data["citado"]) {
+                        $citado->id_abogado = $data["abogado"];
+                        $citado->id_historial = $ultimoRegistro?->id;
+                    }
+                    return $citado;
+                });
+
+                $sessionData['citados'] = $citados;
+                session([$sessionKey => $sessionData]);
+            } else {
+                SeerCitados::find($data["citado"])
+                ->update([
+                    'id_abogado'  => $data["abogado"],
+                    'id_historial'=> $ultimoRegistro?->id
+                ]);
+            }
+        } else if ($solicitud->tipo_solicitud == 2) {
+            $citadoId = $data["id"] ?? null;
+
+            if (session()->has($sessionKey)) {
+                $sessionData = session($sessionKey);
+                $citados = $sessionData['citados'];
+                
+                $citados = $citados->map(function ($citado) use ($citadoId) {
+                    if ($citadoId !== null && (int)$citado->id == (int)$citadoId) {
+                        $citado->comparecencia = 'Si';
+                    }
+                    return $citado;
+                });
+
+                $sessionData['citados'] = $citados;
+                session([$sessionKey => $sessionData]);
+            } else {
+                if ($citadoId !== null) {
+                    SeerCitados::find($citadoId)
+                        ->update([
+                            'comparecencia' => 'Si'
+                        ]);
                 }
-                return $citado;
-            });
-
-            $sessionData['citados'] = $citados;
-            session([$sessionKey => $sessionData]);
-        } else {
-            SeerCitados::find($data["citado"])
-            ->update([
-                'id_abogado'  => $data["abogado"],
-                'id_historial'=> $ultimoRegistro?->id
-            ]);
+            }
         }
 
         session()->flash('preserve_edit_session', true);
         return redirect()->route('inicioAudiencia', ['id' => $id, 'audiencia_id' => $audienciaId]);
         
+    }
+
+    public function guardar_comparecencia_citado(Request $request)
+    {
+        $request->validate([
+            'id' => 'required',
+            'solicitud' => 'required',
+            'audiencia_id' => 'nullable',
+            'tipo_identificacion_comparecencia' => 'required|string',
+            'num_identificacion_comparecencia' => 'required|string',
+            'identificacion_comparecencia' => 'nullable|file|mimes:pdf|max:5120'
+        ]);
+
+        $citadoId = $request->input('id');
+        $idSolicitud = $request->input('solicitud');
+        $audienciaId = $request->input('audiencia_id');
+        $tipoIdentificacion = $request->input('tipo_identificacion_comparecencia');
+        $numIdentificacion = $request->input('num_identificacion_comparecencia');
+
+        $docPath = null;
+        if ($request->hasFile('identificacion_comparecencia')) {
+            $archivo = $request->file('identificacion_comparecencia');
+            $fileName = $citadoId . "_identificacion_comparecencia_" . time() . ".pdf";
+            \Storage::putFileAs('documentosSolicitud', $archivo, $fileName);
+            $docPath = $fileName;
+        }
+
+        $sessionKey = "audiencia_data_{$idSolicitud}";
+
+        if (session()->has($sessionKey)) {
+            $sessionData = session($sessionKey);
+            
+            // Verificamos si en la sesión existen los citados
+            if (isset($sessionData['citados'])) {
+                $citados = $sessionData['citados']->map(function ($c) use ($citadoId, $tipoIdentificacion, $numIdentificacion, $docPath) {
+                    if ((int)$c->id == (int)$citadoId) {
+                        $c->comparecencia = 'Si';
+                        $c->tipo_identificacion_comparecencia = $tipoIdentificacion;
+                        $c->num_identificacion_comparecencia = $numIdentificacion;
+                        if ($docPath) {
+                            $c->identificacion_comparecencia = $docPath;
+                        }
+                    }
+                    return $c;
+                });
+                $sessionData['citados'] = $citados;
+            }
+            
+            // Caso de que sea patronal/citados por otro lado
+            if (isset($sessionData['audienciaPatronal'])) {
+                $patronales = $sessionData['audienciaPatronal']->map(function ($c) use ($citadoId, $tipoIdentificacion, $numIdentificacion, $docPath) {
+                    if ((int)$c->id == (int)$citadoId) {
+                        $c->comparecencia = 'Si';
+                        $c->tipo_identificacion_comparecencia = $tipoIdentificacion;
+                        $c->num_identificacion_comparecencia = $numIdentificacion;
+                        if ($docPath) {
+                            $c->identificacion_comparecencia = $docPath;
+                        }
+                    }
+                    return $c;
+                });
+                $sessionData['audienciaPatronal'] = $patronales;
+            }
+
+            session([$sessionKey => $sessionData]);
+        } else {
+            // Actualizamos en BD solo si NO hay sesión activa
+            $citadoDb = \App\Models\SeerCitados::find($citadoId);
+            if ($citadoDb) {
+                $updateData = [
+                    'comparecencia' => 'Si',
+                    'tipo_identificacion_comparecencia' => $tipoIdentificacion,
+                    'num_identificacion_comparecencia' => $numIdentificacion,
+                ];
+                if ($docPath) {
+                    $updateData['identificacion_comparecencia'] = $docPath;
+                }
+                $citadoDb->update($updateData);
+            }
+        }
+
+        session()->flash('preserve_edit_session', true);
+        return redirect()->route('inicioAudiencia', ['id' => $idSolicitud, 'audiencia_id' => $audienciaId])
+            ->with('success', 'Comparecencia registrada correctamente.');
     }
 
     public function mostrar_citadoC($id){
@@ -7417,6 +7548,7 @@ class SeerController extends Controller
                 $nuevo_citado = $citado->replicate();
                 $nuevo_citado->fecha = NULL;
                 $nuevo_citado->notificacion = 'Centro';
+                $nuevo_citado->id_abogado = NULL;
                 $nuevo_citado->audiencia_id = $audiencia->id;
                 $nuevo_citado->save();
             }
@@ -7430,6 +7562,7 @@ class SeerController extends Controller
         $user = auth()->user();
         $fecha_actual = date('y-m-d');
         $audiencia_id = $data['audiencia_id'] ?? $request->query('audiencia_id');
+        $solicitudTipo = SeerPerGeneral::where('id', $data["id"])->value('tipo_solicitud');
 
         //Guardar registro en SeerConciliador
         $numero_audiencias = SeerPerConciliador::find($data["id"]);
@@ -7458,7 +7591,7 @@ class SeerController extends Controller
         ];        
         SeerPerConciliador::create($data_conciliador);  
         
-    \DB::transaction(function() use ($user, $data) {
+        \DB::transaction(function() use ($solicitudTipo, $user, $data) {
             //Obtener la audiencia mas reciente
             $audienciaOld = Audiencias::where('id_solicitud', $data["id"])->orderBy('id', 'desc')->first();
 
@@ -7494,7 +7627,8 @@ class SeerController extends Controller
                     'hora'             => $data["hora"],
                     'sala'             => $audienciaOld->sala ?? null,
                     'delegacion'       => $audienciaOld->delegacion ?? null,
-                    'estatus'          => 'Pendiente'
+                    'estatus'          => 'Pendiente',
+                    'poder_id'         => $audienciaOld->poder_id ?? null
                 ]);
 
             } else {
@@ -7509,7 +7643,8 @@ class SeerController extends Controller
                     'hora'             => $data["hora"],
                     'sala'             => null,
                     'delegacion'       => null,
-                    'estatus'          => 'Pendiente'
+                    'estatus'          => 'Pendiente',
+                    'poder_id'         => $audienciaOld->poder_id ?? null
                 ]);
             }
 
@@ -7518,20 +7653,38 @@ class SeerController extends Controller
                 ->where('notificacion', 'Centro')
                 ->exists();
 
-            if ($hayCentro) {
+            if($solicitudTipo == 1){
+                if ($hayCentro) {
                 $citados = SeerCitados::where('id_solicitud', $data["id"])
                     //->where('audiencia_id', $audienciaOld->id ?? null)
                     ->where('tipo_notificacion', '!=', 'Multa')
                     ->where('notificacion', 'Centro')
                     ->whereNotNull('id_abogado')
                     ->get();
-            } else {
-                $citados = SeerCitados::where('id_solicitud', $data["id"])
-                    //->where('audiencia_id', $audienciaOld->id ?? null)
-                    ->where('tipo_notificacion', '!=', 'Multa')
-                    ->where('notificacion', 'Trabajador')
-                    ->get();
+                } else {
+                    $citados = SeerCitados::where('id_solicitud', $data["id"])
+                        //->where('audiencia_id', $audienciaOld->id ?? null)
+                        ->where('tipo_notificacion', '!=', 'Multa')
+                        ->where('notificacion', 'Trabajador')
+                        ->get();
+                }
+            } else if ($solicitudTipo == 2){
+                if ($hayCentro) {
+                    $citados = SeerCitados::where('id_solicitud', $data["id"])
+                        //->where('audiencia_id', $audienciaOld->id ?? null)
+                        ->where('tipo_notificacion', '!=', 'Multa')
+                        ->where('notificacion', 'Centro')
+                        ->where('comparecencia', 'Si')
+                        ->get();
+                } else {
+                    $citados = SeerCitados::where('id_solicitud', $data["id"])
+                        //->where('audiencia_id', $audienciaOld->id ?? null)
+                        ->where('tipo_notificacion', '!=', 'Multa')
+                        ->where('notificacion', 'Trabajador')
+                        ->get();
+                }
             }
+            
 
             foreach ($citados as $citado) {
                 $nuevo_citado = $citado->replicate();
@@ -7539,13 +7692,23 @@ class SeerController extends Controller
                 $nuevo_citado->fecha = $formattedDate;
                 $nuevo_citado->notificacion = 'Centro';
                 $nuevo_citado->tipo_notificacion = 'Citatorio';
+                $nuevo_citado->id_abogado = NULL;
                 $nuevo_citado->audiencia_id = $audiencia->id; // nueva audiencia
 
-                if (!$citado->id_abogado) {
-                    $nuevo_citado->estatus = 'Sin asignar';
-                    $nuevo_citado->id_notificador = 0;
-                } else {
-                    $nuevo_citado->estatus = 'Notificada en Audiencia';
+                if($solicitudTipo == 1) {
+                    if (!$citado->id_abogado) {
+                        $nuevo_citado->estatus = 'Sin asignar';
+                        $nuevo_citado->id_notificador = 0;
+                    } else {
+                        $nuevo_citado->estatus = 'Notificada en Audiencia';
+                    }
+                } else if ($solicitudTipo == 2) {
+                    if ($citado->comparecencia == NULL || $citado->comparecencia == 'No') {
+                        $nuevo_citado->estatus = 'Sin asignar';
+                        $nuevo_citado->id_notificador = 0;
+                    } else {
+                        $nuevo_citado->estatus = 'Notificada en Audiencia';
+                    }
                 }
 
                 $nuevo_citado->save();
@@ -7639,8 +7802,17 @@ class SeerController extends Controller
                     'nombre' => $citado->nombre,
                     'primer_apellido' => $citado->primer_apellido,
                     'segundo_apellido' => $citado->segundo_apellido,
-                    'id_historial' => $citado->id_historial
+                    'id_historial' => $citado->id_historial,
+                    'comparecencia' => $citado->comparecencia,
+                    'tipo_identificacion_comparecencia' => $citado->tipo_identificacion_comparecencia ?? null,
+                    'num_identificacion_comparecencia' => $citado->num_identificacion_comparecencia ?? null,
+                    'identificacion_comparecencia' => $citado->identificacion_comparecencia ?? null,
                 ]);
+                if (SeerCitados::where('id', $citado->id)->value('comparecencia') == NULL) {
+                    SeerCitados::where('id', $citado->id)->update([
+                        'comparecencia' => 'No'
+                    ]);
+                }
             }
             
             session()->forget($sessionKey);
@@ -7683,29 +7855,33 @@ class SeerController extends Controller
                 $cont = count($citados);
                 $cont_total = count($total_citados);*/
                 
-                $citados = SeerCitados::where('id_solicitud', $data["id"])->where('notificacion', 'Centro')->where('tipo_notificacion', '!=', 'Multa')->whereNULL("id_abogado")->whereIn('estatus', ['Notificada', 'Finalizado exitosamente', 'Exitosa por Instructivo', 'No notificada', 'Notificada en Audiencia'])->get();
-                foreach($citados as $citado){
-                    $tieneNotificadaEnAudiencia = $citados->where('nombre', $citado->nombre)
-                                                          ->where('estatus', 'Notificada en Audiencia')
-                                                          ->count() > 0;
+                $tipoSolicitud = SeerPerGeneral::where('id', $data['id'])->value('tipo_solicitud');
 
-                    if ($tieneNotificadaEnAudiencia && $citado->estatus !== 'Notificada en Audiencia') {
-                        continue;
-                    }
+                if ($tipoSolicitud == 1){
+                    $citados = SeerCitados::where('id_solicitud', $data["id"])->where('notificacion', 'Centro')->where('tipo_notificacion', '!=', 'Multa')->whereNULL("id_abogado")->whereIn('estatus', ['Notificada', 'Finalizado exitosamente', 'Exitosa por Instructivo', 'No notificada', 'Notificada en Audiencia'])->get();
+                    foreach($citados as $citado){
+                        $tieneNotificadaEnAudiencia = $citados->where('nombre', $citado->nombre)
+                                                            ->where('estatus', 'Notificada en Audiencia')
+                                                            ->count() > 0;
 
-                    $existeMulta = SeerCitados::where('id_solicitud', $data["id"])
-                        ->where('tipo_notificacion', 'Multa')
-                        ->where('nombre', $citado->nombre)
-                        ->exists();
+                        if ($tieneNotificadaEnAudiencia && $citado->estatus !== 'Notificada en Audiencia') {
+                            continue;
+                        }
 
-                    if (!$existeMulta) {
-                        $nuevo_citado = $citado->replicate();
-                        $nuevo_citado->fecha = NULL;
-                        $nuevo_citado->tipo_notificacion = 'Multa';
-                        $nuevo_citado->estatus = 'Sin asignar';
-                        $nuevo_citado->audiencia_id = $data['audiencia_id'] ?? request()->query('audiencia_id') ?? $citado->audiencia_id;
-                        $nuevo_citado->id_notificador = 0;
-                        $nuevo_citado->save();
+                        $existeMulta = SeerCitados::where('id_solicitud', $data["id"])
+                            ->where('tipo_notificacion', 'Multa')
+                            ->where('nombre', $citado->nombre)
+                            ->exists();
+
+                        if (!$existeMulta) {
+                            $nuevo_citado = $citado->replicate();
+                            $nuevo_citado->fecha = NULL;
+                            $nuevo_citado->tipo_notificacion = 'Multa';
+                            $nuevo_citado->estatus = 'Sin asignar';
+                            $nuevo_citado->audiencia_id = $data['audiencia_id'] ?? request()->query('audiencia_id') ?? $citado->audiencia_id;
+                            $nuevo_citado->id_notificador = 0;
+                            $nuevo_citado->save();
+                        }
                     }
                 }
 
@@ -8011,7 +8187,11 @@ class SeerController extends Controller
                 $sessionKey = 'audiencia_conclucion_data_' . $id_solicitud;
                 session([$sessionKey => $data]);
                 session()->put('preserve_edit_session', true);
-                return redirect()->route('vista_previa', ['id_solicitud' => $id_solicitud, 'audiencia_id' => ($data['audiencia_id'] ?? null)]);
+                if ($solicitudOriginal->tipo_solicitud == 1) {
+                    return redirect()->route('vista_previa', ['id_solicitud' => $id_solicitud, 'audiencia_id' => ($data['audiencia_id'] ?? null)]);
+                } else if ($solicitudOriginal->tipo_solicitud == 2) {
+                    return redirect()->route('vista_previa_patronal', ['id_solicitud' => $id_solicitud, 'audiencia_id' => ($data['audiencia_id'] ?? null)]);
+                }
             }
             // ---------------------------
 
@@ -8123,7 +8303,7 @@ class SeerController extends Controller
             ];
             SeerPerConciliador::create($data_conciliador);
 
-            SeerPerGeneral::find($data["id"])
+            $solicitud = SeerPerGeneral::find($data["id"])
             ->update([
                 'tipo'                  => $data["tipo_audiencia"],
                 'fecha_terminacion'     => $fecha_actual, 
@@ -8187,7 +8367,7 @@ class SeerController extends Controller
             ];
             SeerPerConciliador::create($data_conciliador);
 
-            SeerPerGeneral::find($data["id"])
+            $solicitud = SeerPerGeneral::find($data["id"])
             ->update([
                 'tipo'                  => "Presencial",
                 'fecha_terminacion'     => $fecha_actual, 
@@ -8246,8 +8426,11 @@ class SeerController extends Controller
         }
 
         if($data["valor"] == 1){
-            //session()->flash('show_modal', true);
-            return redirect()->route('vista_previa',compact('id_solicitud'));
+            if ($solicitud->tipo_solicitud == 1) {
+                return redirect()->route('vista_previa',compact('id_solicitud'));
+            } else if ($solicitud->tipo_solicitud == 2) {
+                return redirect()->route('vista_previa_patronal', compact('id_solicitud'));
+            }
         }
         if($data["valor"] == 2){
             return redirect()->route('audiencias.conciliador');
@@ -8317,7 +8500,7 @@ class SeerController extends Controller
     }
     
     // PDF Convenio para solicitudes
-    public function VerPDFConvenioSol($id){
+    public function VerPDFConvenioSol($id, Request $request){
         $solicitud = SeerPerGeneral::find($id); 
         // Priorizar datos temporales de la vista previa guardados en sesión
         $sessionKey = 'audiencia_conclucion_data_' . $id;
@@ -8487,6 +8670,16 @@ class SeerController extends Controller
         $solicitante = $solicitante->where("seer_solicitante.id_solicitud", "=", $solicitud["id"])
         ->first();
 
+        $audienciaId = $request->query->get('audiencia_id');
+        if (is_array($audienciaId)) {
+            $audienciaId = $audienciaId[0] ?? null;
+        }
+
+        $audienciaPoder = Audiencias::where('id', $audienciaId)->first();
+
+        $solicitantePoder = SeerSolicitante::where('id_solicitud', $solicitud["id"])->first();
+        $descripcionIdentificacionPoder = $this->descripcionIdentificacion($audienciaPoder->poder->tipo_identificacion);
+
         // $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
         $salario_diario = $this->calcularSalarioDiario($solicitante->pago, $solicitante->periodo_pago);
         $salario_mensual = $salario_diario * 30;
@@ -8498,118 +8691,152 @@ class SeerController extends Controller
 
         $idsSession = session()->get('convenio_citados_' . $id);
 
-        if ($idsSession !== null) {
-        // Si existen en sesión, filtramos por esos IDs específicos
-        $citados = SeerCitados::whereIn('id', $idsSession)
-                    ->where('id_solicitud', $id)
-                    ->get();
-        } else {
-            $allCentro = 1;
-            $citadosCentro = SeerCitados::where('id_solicitud', $id)->latest()->get();
-            foreach ($citadosCentro as $citado){
-                if($citado->notificacion == 'Centro'){
-                    $allCentro = 0;
-                    break;
+        if($solicitud->tipo_solicitud == 1){
+            if ($idsSession !== null) {
+            // Si existen en sesión, filtramos por esos IDs específicos
+            $citados = SeerCitados::whereIn('id', $idsSession)
+                        ->where('id_solicitud', $id)
+                        ->get();
+            } else {
+                $allCentro = 1;
+                $citadosCentro = SeerCitados::where('id_solicitud', $id)->latest()->get();
+                foreach ($citadosCentro as $citado){
+                    if($citado->notificacion == 'Centro'){
+                        $allCentro = 0;
+                        break;
+                    }
+                }
+                // Si no hay sesión (ej. el usuario recargó o entró directo), usamos la lógica de BD
+                if($allCentro == 0) {
+                    $citados = SeerCitados::where('id_solicitud', $id)
+                            ->where('aparece_convenio', 1)
+                            ->where('tipo_notificacion', '!=', 'Multa')
+                            ->where('notificacion', 'Centro')
+                            ->get();
+                }
+                else {
+                    $citados = SeerCitados::where('id_solicitud', $id)->where('aparece_convenio', 1)->get();
                 }
             }
-            // Si no hay sesión (ej. el usuario recargó o entró directo), usamos la lógica de BD
-            if($allCentro == 0) {
-                $citados = SeerCitados::where('id_solicitud', $id)
-                        ->where('aparece_convenio', 1)
-                        ->where('tipo_notificacion', '!=', 'Multa')
-                        ->where('notificacion', 'Centro')
-                        ->get();
+        } else if ($solicitud->tipo_solicitud == 2) {
+            $audienciaId = request()->query('audiencia_id');
+            if (is_array($audienciaId)) {
+                $audienciaId = $audienciaId[0] ?? null;
             }
-            else {
-                $citados = SeerCitados::where('id_solicitud', $id)->where('aparece_convenio', 1)->get();
+
+            if (!empty($audienciaId)) {
+                $citados = SeerCitados::where('id_solicitud', $id)
+                            ->where('audiencia_id', $audienciaId)
+                            ->get();
+            } else {
+                $hayNotificadosenAudiencia = SeerCitados::where('id_solicitud', $id)->where('estatus', 'Notificado en Audiencia')->exists();
+                $hayCentro = SeerCitados::where('id_solicitud', $id)->where('notificacion', 'Centro')->exists();
+
+                if ($hayNotificadosenAudiencia) {
+                    $citados = SeerCitados::where('id_solicitud', $id)->where('estatus', 'Notificado en Audiencia')->get();
+                } else if ($hayCentro) {
+                    $citados = SeerCitados::where('id_solicitud', $id)->where('notificacion', 'Centro')->get();
+                } else {
+                    $citados = SeerCitados::where('id_solicitud', $id)->get();
+                }
+            }
+
+            foreach ($citados as $citado) {
+                $citadoID = $citado->id ?? null;
+                if ($citadoID !== null) {
+                    $descripcionIdentificacionCitado[$citadoID] = $this->descripcionIdentificacion($citado->tipo_identificacion_comparecencia);
+                }
             }
         }
+        
 
         // Obtener TODOS los representantes/abogados distintos que correspondan a los citados incluidos en el convenio
         $citadoIdsParaConvenio = $citados instanceof \Illuminate\Support\Collection ? $citados->pluck('id')->filter()->values()->all() : [];
 
-        if (!empty($citadoIdsParaConvenio)) {
-            $citadosConHist = $citados->filter(fn($c) => !empty($c->id_historial));
-            $citadosSinHist = $citados->filter(fn($c) => empty($c->id_historial));
+        if($solicitud->tipo_solicitud == 1){
+            if (!empty($citadoIdsParaConvenio)) {
+                $citadosConHist = $citados->filter(fn($c) => !empty($c->id_historial));
+                $citadosSinHist = $citados->filter(fn($c) => empty($c->id_historial));
 
-            $abogadosConvenio = collect();
+                $abogadosConvenio = collect();
 
-            if ($citadosConHist->isNotEmpty()) {
-                $idsConHist = $citadosConHist->pluck('id')->filter()->values()->all();
+                if ($citadosConHist->isNotEmpty()) {
+                    $idsConHist = $citadosConHist->pluck('id')->filter()->values()->all();
 
-                $abogadosHist = \App\Models\HistorialAbogado::join('seer_citados as sc', 'sc.id_historial', '=', 'historial_abogados.id')
-                    ->where('sc.id_solicitud', $id)
-                    ->whereIn('sc.id', $idsConHist)
-                    ->select(
-                        'historial_abogados.id',
-                        'historial_abogados.nombres_patronal',
-                        'historial_abogados.primer_apellido_patronal',
-                        'historial_abogados.segundo_apellido_patronal',
-                        'historial_abogados.descipcion_poder',
-                        'historial_abogados.tipo_identificacion',
-                        'historial_abogados.num_identificacion',
-                        'historial_abogados.nombre_representante',
-                        'historial_abogados.primer_apellido_representante',
-                        'historial_abogados.segundo_apellido_representante',
-                        'historial_abogados.estado_patronal',
-                        'historial_abogados.municipio_patronal',
-                        'historial_abogados.tipo_vialidad_patronal',
-                        'historial_abogados.vialidad_patronal',
-                        'historial_abogados.num_ext_patronal',
-                        'historial_abogados.mun_int_patronal',
-                        'historial_abogados.colonia_patronal',
-                        'historial_abogados.cp_patronal',
-                        'historial_abogados.id_abogado as idAbogado'
-                    )
-                    ->distinct()
-                    ->get();
+                    $abogadosHist = \App\Models\HistorialAbogado::join('seer_citados as sc', 'sc.id_historial', '=', 'historial_abogados.id')
+                        ->where('sc.id_solicitud', $id)
+                        ->whereIn('sc.id', $idsConHist)
+                        ->select(
+                            'historial_abogados.id',
+                            'historial_abogados.nombres_patronal',
+                            'historial_abogados.primer_apellido_patronal',
+                            'historial_abogados.segundo_apellido_patronal',
+                            'historial_abogados.descipcion_poder',
+                            'historial_abogados.tipo_identificacion',
+                            'historial_abogados.num_identificacion',
+                            'historial_abogados.nombre_representante',
+                            'historial_abogados.primer_apellido_representante',
+                            'historial_abogados.segundo_apellido_representante',
+                            'historial_abogados.estado_patronal',
+                            'historial_abogados.municipio_patronal',
+                            'historial_abogados.tipo_vialidad_patronal',
+                            'historial_abogados.vialidad_patronal',
+                            'historial_abogados.num_ext_patronal',
+                            'historial_abogados.mun_int_patronal',
+                            'historial_abogados.colonia_patronal',
+                            'historial_abogados.cp_patronal',
+                            'historial_abogados.id_abogado as idAbogado'
+                        )
+                        ->distinct()
+                        ->get();
 
-                $abogadosConvenio = $abogadosConvenio->merge($abogadosHist);
-            }
+                    $abogadosConvenio = $abogadosConvenio->merge($abogadosHist);
+                }
 
-            if ($citadosSinHist->isNotEmpty()) {
-                $idsSinHist = $citadosSinHist->pluck('id')->filter()->values()->all();
+                if ($citadosSinHist->isNotEmpty()) {
+                    $idsSinHist = $citadosSinHist->pluck('id')->filter()->values()->all();
 
-                $abogadosPoder = Poder::join('seer_citados as sc', 'sc.id_abogado', '=', 'abogados.idAbogado')
-                    ->where('sc.id_solicitud', $id)
-                    ->whereIn('sc.id', $idsSinHist)
-                    ->select(
-                        'abogados.idAbogado',
-                        'abogados.nombres_patronal',
-                        'abogados.primer_apellido_patronal',
-                        'abogados.segundo_apellido_patronal',
-                        'abogados.descipcion_poder',
-                        'abogados.tipo_identificacion',
-                        'abogados.num_identificacion',
-                        'abogados.nombre_representante',
-                        'abogados.primer_apellido_representante',
-                        'abogados.segundo_apellido_representante',
-                        'abogados.estado_patronal',
-                        'abogados.municipio_patronal',
-                        'abogados.tipo_vialidad_patronal',
-                        'abogados.vialidad_patronal',
-                        'abogados.num_ext_patronal',
-                        'abogados.mun_int_patronal',
-                        'abogados.colonia_patronal',
-                        'abogados.cp_patronal'
-                    )
-                    ->distinct()
-                    ->get();
+                    $abogadosPoder = Poder::join('seer_citados as sc', 'sc.id_abogado', '=', 'abogados.idAbogado')
+                        ->where('sc.id_solicitud', $id)
+                        ->whereIn('sc.id', $idsSinHist)
+                        ->select(
+                            'abogados.idAbogado',
+                            'abogados.nombres_patronal',
+                            'abogados.primer_apellido_patronal',
+                            'abogados.segundo_apellido_patronal',
+                            'abogados.descipcion_poder',
+                            'abogados.tipo_identificacion',
+                            'abogados.num_identificacion',
+                            'abogados.nombre_representante',
+                            'abogados.primer_apellido_representante',
+                            'abogados.segundo_apellido_representante',
+                            'abogados.estado_patronal',
+                            'abogados.municipio_patronal',
+                            'abogados.tipo_vialidad_patronal',
+                            'abogados.vialidad_patronal',
+                            'abogados.num_ext_patronal',
+                            'abogados.mun_int_patronal',
+                            'abogados.colonia_patronal',
+                            'abogados.cp_patronal'
+                        )
+                        ->distinct()
+                        ->get();
 
-                $abogadosConvenio = $abogadosConvenio->merge($abogadosPoder);
-            }
+                    $abogadosConvenio = $abogadosConvenio->merge($abogadosPoder);
+                }
 
-            $abogadosConvenio = $abogadosConvenio->unique('idAbogado')->values();
+                $abogadosConvenio = $abogadosConvenio->unique('idAbogado')->values();
 
-            $abogado = $abogadosConvenio->first();
-            foreach ($abogadosConvenio as $rep) {
-                $repId = $rep->idAbogado ?? null;
-                if ($repId !== null) {
-                    $descripcionIdentificacionPMap[$repId] = $this->descripcionIdentificacion($rep->tipo_identificacion);
+                $abogado = $abogadosConvenio->first();
+                foreach ($abogadosConvenio as $rep) {
+                    $repId = $rep->idAbogado ?? null;
+                    if ($repId !== null) {
+                        $descripcionIdentificacionPMap[$repId] = $this->descripcionIdentificacion($rep->tipo_identificacion);
+                    }
                 }
             }
         }
-
+        
         //$citados = SeerCitados::where('id_solicitud', $id)->get();
         /*$citados = SeerCitados::where('id_solicitud', $id)
         ->where('aparece_convenio', 1)
@@ -8629,13 +8856,25 @@ class SeerController extends Controller
         $identificacionPoder = $abogado ? $abogado->tipo_identificacion : null;
         $descripcionIdentificacionP = $this->descripcionIdentificacion($identificacionPoder);
         $ultimoCitatorio = SeerCitados::where('id_solicitud', $id)->latest()->first();
-        $html = view('PDF/Solicitudes/convenioSolicitud', 
-        compact('id', 'solicitud', /*'dias_descanso',*/ 'salario_diario','salario_mensual','pagos','diarioTexto','penaTexto','mensualTexto','montoTexto',/*'vacacionesTexto',
-        'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
-        'gratificacionETexto','gratificacionFTexto','otrasTexto',*/'pagosDif','conciliador','prestaciones','solicitante','citados','audiencia','pagoTotal','abogado',
-        'conceptosTexto', 'deduccionesTexto','municipioEmpresa', 'estadoEmpresa','descripcionIdentificacionS', 'descripcionIdentificacionP','prestaciones','deducciones','datosAudiencia','delegado',
-        'abogadosConvenio', 'descripcionIdentificacionPMap','ultimoCitatorio'))
-        ->render();
+
+        if ($solicitud->tipo_solicitud == 1) {
+            $html = view('PDF/Solicitudes/convenioSolicitud',
+            compact('id', 'solicitud', /*'dias_descanso',*/ 'salario_diario','salario_mensual','pagos','diarioTexto','penaTexto','mensualTexto','montoTexto',/*'vacacionesTexto',
+            'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
+            'gratificacionETexto','gratificacionFTexto','otrasTexto',*/'pagosDif','conciliador','prestaciones','solicitante','citados','audiencia','pagoTotal','abogado',
+            'conceptosTexto', 'deduccionesTexto','municipioEmpresa', 'estadoEmpresa','descripcionIdentificacionS', 'descripcionIdentificacionP','prestaciones','deducciones','datosAudiencia','delegado',
+            'abogadosConvenio', 'descripcionIdentificacionPMap','ultimoCitatorio'))
+            ->render();
+        } else if ($solicitud->tipo_solicitud == 2) {
+            $html = view('PDF/Solicitudes/convenioSolicitud',
+            compact('id', 'solicitud', /*'dias_descanso',*/ 'salario_diario','salario_mensual','pagos','diarioTexto','penaTexto','mensualTexto','montoTexto',/*'vacacionesTexto',
+            'primaTexto','aguinaldoTexto','DSueldoTexto','antiguedadTexto','gratificacionATexto','gratificacionBTexto','gratificacionCTexto','gratificacionDTexto',
+            'gratificacionETexto','gratificacionFTexto','otrasTexto',*/'pagosDif','conciliador','prestaciones','solicitante','citados','audiencia','pagoTotal','abogado',
+            'conceptosTexto', 'deduccionesTexto','municipioEmpresa', 'estadoEmpresa', 'citados','descripcionIdentificacionS','prestaciones','deducciones','datosAudiencia','delegado',
+            'abogadosConvenio', 'descripcionIdentificacionPMap','ultimoCitatorio', 'solicitantePoder', 'descripcionIdentificacionPoder', 'descripcionIdentificacionCitado', 'audienciaPoder'))
+            ->render();
+        }
+
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
@@ -8830,30 +9069,54 @@ class SeerController extends Controller
 
         $idsSession = session()->get('convenio_citados_' . $id);
 
-        if ($idsSession !== null) {
-        // Si existen en sesión, filtramos por esos IDs específicos
-        $citados = SeerCitados::whereIn('id', $idsSession)
-                    ->where('id_solicitud', $id)
-                    ->get();
-        } else {
-            $allCentro = 1;
-            $citadosCentro = SeerCitados::where('id_solicitud', $id)->latest()->get();
-            foreach ($citadosCentro as $citado){
-                if($citado->notificacion == 'Centro'){
-                    $allCentro = 0;
-                    break;
+        if($solicitud->tipo_solicitud == 1){
+            if ($idsSession !== null) {
+            // Si existen en sesión, filtramos por esos IDs específicos
+            $citados = SeerCitados::whereIn('id', $idsSession)
+                        ->where('id_solicitud', $id)
+                        ->get();
+            } else {
+                $allCentro = 1;
+                $citadosCentro = SeerCitados::where('id_solicitud', $id)->latest()->get();
+                foreach ($citadosCentro as $citado){
+                    if($citado->notificacion == 'Centro'){
+                        $allCentro = 0;
+                        break;
+                    }
+                }
+                // Si no hay sesión (ej. el usuario recargó o entró directo), usamos la lógica de BD
+                if($allCentro == 0) {
+                    $citados = SeerCitados::where('id_solicitud', $id)
+                            ->where('aparece_convenio', 1)
+                            ->where('tipo_notificacion', '!=', 'Multa')
+                            ->where('notificacion', 'Centro')
+                            ->get();
+                }
+                else {
+                    $citados = SeerCitados::where('id_solicitud', $id)->where('aparece_convenio', 1)->get();
                 }
             }
-            // Si no hay sesión (ej. el usuario recargó o entró directo), usamos la lógica de BD
-            if($allCentro == 0) {
-                $citados = SeerCitados::where('id_solicitud', $id)
-                        ->where('aparece_convenio', 1)
-                        ->where('tipo_notificacion', '!=', 'Multa')
-                        ->where('notificacion', 'Centro')
-                        ->get();
+        } else if ($solicitud->tipo_solicitud == 2) {
+            $audienciaId = request()->query('audiencia_id');
+            if (is_array($audienciaId)) {
+                $audienciaId = $audienciaId[0] ?? null;
             }
-            else {
-                $citados = SeerCitados::where('id_solicitud', $id)->where('aparece_convenio', 1)->get();
+
+            if (!empty($audienciaId)) {
+                $citados = SeerCitados::where('id_solicitud', $id)
+                            ->where('audiencia_id', $audienciaId)
+                            ->get();
+            } else {
+                $hayNotificadosenAudiencia = SeerCitados::where('id_solicitud', $id)->where('estatus', 'Notificado en Audiencia')->exists();
+                $hayCentro = SeerCitados::where('id_solicitud', $id)->where('notificacion', 'Centro')->exists();
+
+                if ($hayNotificadosenAudiencia) {
+                    $citados = SeerCitados::where('id_solicitud', $id)->where('estatus', 'Notificado en Audiencia')->get();
+                } else if ($hayCentro) {
+                    $citados = SeerCitados::where('id_solicitud', $id)->where('notificacion', 'Centro')->get();
+                } else {
+                    $citados = SeerCitados::where('id_solicitud', $id)->get();
+                }
             }
         }
 
@@ -9508,6 +9771,8 @@ class SeerController extends Controller
         $user = auth()->user(); // Ya trae el objeto, no necesitas buscarlo por ID de nuevo
         $isAudiencia = $request->query('isAudiencia', null);
         $audiencia_id = $request->query('audiencia_id', null);
+
+        $audienciaCurrent = Audiencias::where('id', $audiencia_id)->first();
         
         // Usamos with() si existen relaciones definidas en el modelo para evitar el problema N+1
         $general = SeerPerGeneral::findOrFail($id);
@@ -9579,7 +9844,7 @@ class SeerController extends Controller
         return view('audiencias.revisar_audiencia', compact(
             'id','general','solicitantes','citados','ramas','estados','municipios',
             'mostrarMotivos','motivos','conciliadores', 'isAudiencia','notificaciones',
-            'historial_audiencias','datosIncompletos','citadosConMulta', 'ultimaEstatus', 'fecha_actual'
+            'historial_audiencias','datosIncompletos','citadosConMulta', 'ultimaEstatus', 'fecha_actual', 'audienciaCurrent'
         )); 
     }
 
@@ -10251,6 +10516,8 @@ class SeerController extends Controller
             $audienciaId = $audienciaId[0] ?? null;
         }
 
+        $audienciaPoder = Audiencias::where('id', $audienciaId)->first();
+
         $hayCentro = false;
         $hayNULL = false;
         // Primero revisamos si hay datos temporales en sesión (vista previa)
@@ -10304,46 +10571,44 @@ class SeerController extends Controller
         $prestaciones = Concepto::where('id_solicitud', $id)->where('tipo_pago', 'Audiencia')->get();
         $deducciones = Deducciones::where('id_solicitud', $id)->where('tipo_pago', 'Audiencia')->get();
 
-        // Soporte para selección específica de citados (guardada en sesión desde la vista)
+            // Soporte para selección específica de citados (guardada en sesión desde la vista)
             $idsSession = session()->get('acta_citados_' . $id);
 
-            
-            /*if ($idsSession !== null) {
-                $citados = SeerCitados::whereIn('id', $idsSession)
-                            ->where('id_solicitud', $id)
-                            ->where('resulte_responsable', 'No')
-                            ->get();*/
+            // Si la solicitud es patronal (tipo_solicitud == 2) -> incluir TODOS los citados de la audiencia (ignorando sesión y filtros)
+            if (isset($solicitud) && $solicitud->tipo_solicitud == 2) {
+                if (!empty($audienciaId)) {
+                    $citados = SeerCitados::where('id_solicitud', $id)
+                                ->where('audiencia_id', $audienciaId)
+                                ->get();
+                } else {
+                    $citados = SeerCitados::where('id_solicitud', $id)->get();
+                }
+            } else {
+                
+                $citadosPorCentro = SeerCitados::where('id_solicitud', $id)->get();
+                foreach($citadosPorCentro as $citado){
+                    if($citado->notificacion == 'Centro'){
+                        $hayCentro = true;
+                        break;
+                    }
+                }
 
-            $citadosPorCentro = SeerCitados::where('id_solicitud', $id)->where('audiencia_id', $audienciaId)->get();
-            foreach($citadosPorCentro as $citado){
-                if($citado->notificacion == 'Centro'){
-                    $hayCentro = true;
-                    break;
+                if($hayCentro){
+                    $citados = SeerCitados::where('id_solicitud', $id)
+                                ->where('notificacion', 'Centro')
+                                ->where('tipo_notificacion', '!=', 'Multa')
+                                ->where('resulte_responsable', 'No')
+                                ->where('audiencia_id', $audienciaId)
+                                ->whereNotNull('id_abogado')
+                                ->get();
+                } else {
+                    $citados = SeerCitados::where('id_solicitud', $id)
+                                ->where('resulte_responsable', 'No')
+                                ->where('audiencia_id', $audienciaId)
+                                ->whereNotNull('id_abogado')
+                                ->get();
                 }
             }
-
-            /*$abogado = Poder::join('seer_citados','seer_citados.id_abogado','abogados.idAbogado')
-                ->where('id_solicitud',$id)
-                ->whereIn('seer_citados.id', $idsSession)
-                ->select('abogados.nombres_patronal','abogados.primer_apellido_patronal','abogados.segundo_apellido_patronal','abogados.descipcion_poder','abogados.tipo_identificacion','abogados.num_identificacion')
-                ->first();*/
-
-        //} else {
-        if($hayCentro){
-            $citados = SeerCitados::where('id_solicitud', $id)
-                        ->where('notificacion', 'Centro')
-                        ->where('tipo_notificacion', '!=', 'Multa')
-                        ->where('resulte_responsable', 'No')
-                        ->where('audiencia_id', $audienciaId)
-                        ->whereNotNull('id_abogado')
-                        ->get();
-        } else {
-            $citados = SeerCitados::where('id_solicitud', $id)
-                        ->where('resulte_responsable', 'No')
-                        ->where('audiencia_id', $audienciaId)
-                        ->whereNotNull('id_abogado')
-                        ->get();
-        }
 
         $abogados = collect();
         $idsHistorial = $citados->pluck('id_historial')->filter()->unique()->values()->all();
@@ -10488,7 +10753,7 @@ class SeerController extends Controller
         }*/
        
         $html = view('PDF/Solicitudes/ActaAudiencia', compact('id','solicitud','conciliador','prestaciones','deducciones','deduccionesTexto','pagoTotal','descripcionIdentificacionS',
-        'descripcionIdentificacionP','conceptosTexto','solicitante','audiencia','datosAudiencia','citados'))->render();
+        'descripcionIdentificacionP','conceptosTexto','solicitante','audiencia','datosAudiencia','citados', 'audienciaPoder'))->render();
 
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -11442,8 +11707,18 @@ class SeerController extends Controller
     public function VerDocumentosAudiencia($id){
         $documento_general = SeerPerGeneral::find($id); 
         $documento_solicitante = SeerSolicitante::where('id_solicitud',$id)
-        ->select('documentoCurp','documentoIdentificacion')
+        //->select('documentoCurp','documentoIdentificacion')
         ->first(); 
+        
+        //Documento de comparecencia para citados patronales
+        $documentos_comparecencia = null;
+        if ($documento_general->tipo_solicitud == 2) {
+            $documentos_comparecencia = \App\Models\SeerCitados::where('id_solicitud', $id)
+                ->whereNotNull('identificacion_comparecencia')
+                ->where('identificacion_comparecencia', '!=', '')
+                ->get();
+        }
+
         //Documentos del abogado y citados
         $documento_abogado = Poder::find($documento_general["idAbogado"]);
         //Documentos perdona fisica
@@ -11456,8 +11731,7 @@ class SeerController extends Controller
          //Documentos subidos
         $documento_subidos = DocumentosSolicitud::where('id_solicitud',$id)->where('tramite','Audiencia')->get();
 
- 
-        return view('solicitudes.verDocumentos',compact('documento_general','documento_solicitante','documento_abogado','documento_fisica','documento_subidos'));
+        return view('solicitudes.verDocumentos',compact('documento_general','documento_solicitante','documento_abogado','documento_fisica','documento_subidos','documentos_comparecencia'));
      }
 
    //PDF Constancia de cumplimiento
@@ -11829,6 +12103,126 @@ class SeerController extends Controller
         // --------------------------
 
         return view('/audiencias/audiencia_revisar',compact('id','conciliadores','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios','conceptos','pagos','deducciones', 'tipo_solicitud'));
+    }
+
+    public function vista_previa_patronal($id){
+        $audiencia_id = request()->query('audiencia_id');
+        if (is_null($audiencia_id) || $audiencia_id === '') {
+            $audiencia_id = Audiencias::where('id_solicitud', $id)->latest('id')->value('id');
+            if (!is_null($audiencia_id) && $audiencia_id !== '') {
+                return redirect()->route('vista_previa', ['id_solicitud' => $id, 'audiencia_id' => $audiencia_id]);
+            }
+        }
+
+        $id_usuario = auth()->user()->id;
+        $user = User::find($id_usuario);           
+        $conciliadores  = SeerPerConciliador::when(!empty($audiencia_id), function ($q) use ($audiencia_id) {
+                return $q->where('audiencia_id', $audiencia_id);
+            })
+            ->where('id_solicitud',$id)
+            ->orderBy('id', 'desc')
+            ->first();
+        $solicitud      = SeerPerGeneral::find($id);
+        $conciliador    = User::select('name')->where('id', $solicitud->conciliador_id)->first();
+        $tipo_solicitud = $solicitud->tipo_solicitud;
+
+        // Patronal: show all citados (representantes in this view)
+        $representantes = SeerCitados::where('id_solicitud', $id)
+            ->where('audiencia_id', $audiencia_id)
+            ->select('id', 'nombre', 'primer_apellido', 'segundo_apellido', 'notificacion', 'estatus')
+            ->get();
+        
+        $solicitante = SeerSolicitante::where('id_solicitud', $id)->first();
+        $abogados = Poder::all();
+        SeerPerGeneral::find($id)->update(['conciliador' => $user->id, 'estatus' => 'Confirmado']);
+        $estados        = Estados::all();
+        $municipios     = Municipios::all();
+        $conceptos      = Concepto::where('id_solicitud',$id)->where('tipo_pago','Audiencia')->get();
+        $pagos          = Pagos::where('id_solicitud',$id)->whereIN('tipo_pago',['Audiencia','Conciliador'])->get();
+        $deducciones    = Deducciones::where('id_solicitud',$id)->where('tipo_pago','Audiencia')->get();
+
+        // --- VISTA PREVIA LOGIC ---
+        $sessionKey = 'audiencia_conclucion_data_' . $id;
+        
+        // Si no existe registro en BD, iniciamos uno vacío para no romper la vista
+        if(!$conciliadores) {
+            $conciliadores = new SeerPerConciliador();
+            // Inicializar valores por defecto para evitar warnings en la vista
+            $conciliadores->resolicion_primera = '';
+            $conciliadores->resolicion_justificacion = '';
+            $conciliadores->resolicion_segunda = '';
+            $conciliadores->conclucion = '';
+            $conciliadores->vacaciones = '';
+            $conciliadores->aguinaldo = '';
+            $conciliadores->otros = '';
+            $conciliadores->horario = '';
+            $conciliadores->comida = '';
+            $conciliadores->tipo_audiencia = '';
+        }
+
+        if(session()->has($sessionKey)){
+            $sData = session($sessionKey);
+
+            $conceptos = collect();
+            if(isset($sData['tipo_pago'])){
+                foreach($sData['tipo_pago'] as $k => $desc){
+                     $obj = new \stdClass();
+                     $obj->id = null;
+                     if($desc == "Otras" && isset($sData['otra_prestacion'][$k])) $desc = $sData['otra_prestacion'][$k];
+                     $obj->descripcion = $desc;
+                     $obj->monto = $sData['monto_pago'][$k] ?? 0;
+                     // Importante: session_index para eliminar
+                     $obj->session_index = $k;
+                     $conceptos->push($obj);
+                }
+            }
+
+            $deducciones = collect();
+            if(isset($sData['descripcion_deduccion'])){
+                foreach($sData['descripcion_deduccion'] as $k => $desc){
+                    $obj = new \stdClass();
+                    $obj->id = null;
+                    $obj->descripcion = $desc;
+                    $obj->monto = $sData['monto_deduccion'][$k] ?? 0;
+                    $obj->session_index = $k;
+                    $deducciones->push($obj);
+                }
+            }
+
+            $pagos = collect();
+            if(isset($sData['dias_pagos'])){
+                foreach($sData['dias_pagos'] as $k => $fecha){
+                    $obj = new \stdClass();
+                    $obj->id = null;
+                    $obj->fecha = $fecha;
+                    $obj->hora = $sData['hora_pagos'][$k] ?? '';
+                    $obj->monto = $sData['monto_pagos'][$k] ?? 0;
+                    $obj->descripcion = $sData['descripcion_pagos'][$k] ?? '';
+                    $obj->tipo_pago = $sData['tipo_pagoAgenda'][$k] ?? 'Audiencia'; 
+                    $obj->session_index = $k;
+                    $pagos->push($obj);
+                }
+            }
+            
+            // Hydrate Conciliadores fields from Session
+            $conciliadores->resolicion_primera = $sData['primera'] ?? $conciliadores->resolicion_primera;
+            $conciliadores->resolicion_justificacion = $sData['justificacion'] ?? $conciliadores->resolicion_justificacion;
+            $conciliadores->resolicion_segunda = $sData['segunda'] ?? $conciliadores->resolicion_segunda;
+            $conciliadores->conclucion = $sData['conclucion'] ?? $conciliadores->conclucion;
+            $conciliadores->vacaciones = $sData['vacaciones'] ?? $conciliadores->vacaciones;
+            $conciliadores->aguinaldo = $sData['aguinaldo'] ?? $conciliadores->aguinaldo;
+            $conciliadores->otros = $sData['otros'] ?? $conciliadores->otros;
+            $conciliadores->horario = $sData['horario'] ?? $conciliadores->horario;
+            $conciliadores->comida = $sData['comida'] ?? $conciliadores->comida;
+            $conciliadores->tipo_audiencia = $sData['tipo_audiencia'] ?? $conciliadores->tipo_audiencia;
+            // Ensure compatibility if view uses 'tipo'
+            $conciliadores->tipo = $conciliadores->tipo_audiencia;
+            $conciliadores->pena_convencional = $sData['pena_convencional'] ?? null;
+            $conciliadores->direccion_convenio = $sData['direccion_convenio'] ?? null;
+        }
+        // --------------------------
+
+        return view('/audiencias/audiencia_revisar_patronal',compact('id','conciliadores','representantes','solicitante','conciliador','solicitud','abogados','estados','municipios','conceptos','pagos','deducciones', 'tipo_solicitud'));
     }
 
     public function editar_solicitud_audiencia(Request $request) {
@@ -14482,34 +14876,51 @@ class SeerController extends Controller
     // Eliminar/Quitar representante legal asiganado al de iniciar la audiencia
     public function quitarRepresentante(Request $request)
     {
+        $data = $request->all();
         $id = $request->id;
-        
-        // Need to find solicitud id. 
+
         $citadoDB = SeerCitados::find($id);
         if (!$citadoDB) return back();
-        
-        $solicitudId = $citadoDB->id_solicitud;
-        $sessionKey = "audiencia_data_{$solicitudId}";
-        
-        if (session()->has($sessionKey)) {
-            $sessionData = session($sessionKey);
-            $sessionData['citados'] = $sessionData['citados']->map(function($citado) use ($id) {
-                if ($citado->id == $id) {
-                    $citado->id_abogado = null;
-                    $citado->id_fisica = null;
-                    $citado->id_historial = null;
-                }
-                return $citado;
-            });
-            session([$sessionKey => $sessionData]);
-        } else {
-            $citado = SeerCitados::findOrFail($id);
-            $citado->id_abogado = null;
-            $citado->id_fisica = null;
-            $citado->id_historial = null;
-            $citado->save();
-        }
 
+        $solicitudId = $citadoDB->id_solicitud;
+        $solicitud = SeerPerGeneral::find($solicitudId);
+        $sessionKey = "audiencia_data_{$solicitudId}";        
+        if($solicitud->tipo_solicitud == 1) {
+            if (session()->has($sessionKey)) {
+                $sessionData = session($sessionKey);
+                $sessionData['citados'] = $sessionData['citados']->map(function($citado) use ($id) {
+                    if ($citado->id == $id) {
+                        $citado->id_abogado = null;
+                        $citado->id_fisica = null;
+                        $citado->id_historial = null;
+                    }
+                    return $citado;
+                });
+                session([$sessionKey => $sessionData]);
+            } else {
+                $citado = SeerCitados::findOrFail($id);
+                $citado->id_abogado = null;
+                $citado->id_fisica = null;
+                $citado->id_historial = null;
+                $citado->save();
+            }
+        } else if ($solicitud->tipo_solicitud == 2) {
+            if (session()->has($sessionKey)) {
+                $sessionData = session($sessionKey);
+                $sessionData['citados'] = $sessionData['citados']->map(function($citado) use ($id) {
+                    if ($citado->id == $id) {
+                        $citado->comparecencia = 'No';
+                    }
+                    return $citado;
+                });
+                session([$sessionKey => $sessionData]);
+            } else {
+                $citado = SeerCitados::findOrFail($id);
+                $citado->comparecencia = 'No';
+                $citado->save();
+            }
+        }
+        
         session()->flash('preserve_edit_session', true);
         return back()->with('success', 'Representante eliminado correctamente.');
     }
@@ -14587,7 +14998,7 @@ class SeerController extends Controller
     public function guardar_solicitudAux($id){
         $id_usuario = auth()->user()->id;
         DB::beginTransaction();
-        try {
+        //try {
             if ($id == 'session') {
                 // Recuperar datos de la sesión
                 $solicitudData = session('solicitud_data');
@@ -14641,7 +15052,7 @@ class SeerController extends Controller
                 // Limpiar sesión
                 session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
             }
-        } 
+        /*} 
         catch (\Exception $e) {
             DB::rollBack();
                 $solicitante = session('solicitante_data', []);
@@ -14678,7 +15089,7 @@ class SeerController extends Controller
                 session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
 
             return redirect()->route('solicitudes_index')->with('error', 'Ocurrió un error al finalizar la solicitud. Se descartaron los datos de captura.');
-        }
+        }*/
 
         $delegacion = SeerPerGeneral::find($id);
 
@@ -14763,8 +15174,6 @@ class SeerController extends Controller
             $citadosData = session('citados_data'/* , [] */); // Ya solo es un citado
             $excepcionData = session('excepcion_data');
 
-            //dd($citadosData);
-
             if (!$solicitudData || !$solicitanteData || !$citadosData) {
                 return redirect()->back()->with('error', 'No hay datos de solicitud en la sesión.');
             }
@@ -14791,9 +15200,11 @@ class SeerController extends Controller
 
                 // 3. Guardar Solicitante
                 $solicitanteData['id_solicitud'] = $id;
-                $solicitanteData['edad'] = $citadosData['edad'];
-                $solicitanteData['fecha_nacimiento'] = $citadosData['fecha_nacimiento'];
-                $solicitanteData['nacionalidad'] = $citadosData['nacionalidad'];
+
+                $solicitanteData['edad'] = $citadosData['edad'] ?? 0;
+                $solicitanteData['fecha_nacimiento'] = $citadosData['fecha_nacimiento'] ?? '2000-01-01';
+                $solicitanteData['nacionalidad'] = $citadosData['nacionalidad'] ?? 'Mexicana';
+
                 SeerSolicitante::create($solicitanteData);
 
                 // 4. Guardar Caso Excepción (si existe)
@@ -14950,20 +15361,19 @@ class SeerController extends Controller
         $delegacion = SeerPerGeneral::find($id);
 
         $mapaSedes = [
-            'Morelia' => ['Morelia', 'Zitácuaro'],
-            'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
-            'Zamora'  => ['Zamora', 'Sahuayo'],
+            'Morelia'           => ['Morelia'],
+            'Uruapan'           => ['Uruapan'],
+            'Zamora'            => ['Zamora'],
+            'Zitácuaro'         => ['Morelia'],
+            'Lázaro Cárdenas'   => ['Uruapan'],
+            'Sahuayo'           => ['Zamora']
         ];
-
-        $sedesABuscar = isset($mapaSedes[$delegacion]) 
-                ? $mapaSedes[$delegacion] 
-                : [$delegacion];
 
         $delegacion = SeerPerGeneral::find($id);
         $delegado = User::whereHas('roles', function ($query) {
             return $query->where('name', '=', 'Delegado');
         })
-        ->whereIn('delegacion', $sedesABuscar)
+        ->whereIn('delegacion', $mapaSedes)
         ->first();
        
         SeerPerGeneral::find($id)->update(['delegado_id' => $delegado->id]);
@@ -15590,14 +16000,14 @@ class SeerController extends Controller
                 'rfc'                 => $poder['rfc_patronal'],
 
                 // --- DATOS OBTENIDOS DEL FORMULARIO ($data) ---
-                // Campos Obligatorios
+                
                 'id_solicitud'        => $id_solicitud,
-                'puesto'              => $data['puesto'],
-                'pago'                => $data['pago'],
-                'horas_semana'        => $data['horas'],
-                'fecha_ingreso'       => $data['fecha_ingreso'],
-                'descripcionSolicitud'=> $data['descripcionSolicitud'],
-                'jornada'             => $data['jornada'],
+                'puesto'              => $data['puesto'] ?? null,
+                'pago'                => $data['pago'] ?? null,
+                'horas_semana'        => $data['horas'] ?? null,
+                'fecha_ingreso'       => $data['fecha_ingreso'] ?? null,
+                'descripcionSolicitud'=> $data['descripcionSolicitud'] ?? null,
+                'jornada'             => $data['jornada'] ?? null,
                 'traductor'           => $data['traductor'] ?? 'No', //Usar 'No' si no viene
                 'discapacidad'        => $data['discapacidad'] ?? 'No', // Usar 'No' si no viene
                 'labora'              => $data['labora'] ?? 'No', // Usar 'No' si no viene
@@ -15645,14 +16055,13 @@ class SeerController extends Controller
                 'rfc'                 => $poder['rfc_patronal'],
 
                 // --- DATOS OBTENIDOS DEL FORMULARIO ($data) ---
-                // Campos Obligatorios
                 'id_solicitud'        => $id_solicitud,
-                'puesto'              => $data['puesto'],
-                'pago'                => $data['pago'],
-                'horas_semana'        => $data['horas'],
-                'fecha_ingreso'       => $data['fecha_ingreso'],
-                'descripcionSolicitud'=> $data['descripcionSolicitud'],
-                'jornada'             => $data['jornada'],
+                'puesto'              => $data['puesto'] ?? null,
+                'pago'                => $data['pago'] ?? null,
+                'horas_semana'        => $data['horas'] ?? null,
+                'fecha_ingreso'       => $data['fecha_ingreso'] ?? null,
+                'descripcionSolicitud'=> $data['descripcionSolicitud'] ?? null,
+                'jornada'             => $data['jornada'] ?? null,
                 'traductor'           => $data['traductor'] ?? 'No', //Usar 'No' si no viene
                 'discapacidad'        => $data['discapacidad'] ?? 'No', // Usar 'No' si no viene
                 'labora'              => $data['labora'] ?? 'No', // Usar 'No' si no viene
@@ -15999,6 +16408,8 @@ class SeerController extends Controller
         $imagen_domicilio1 = "Sin documento";
         $imagen_domicilio2 = "Sin documento";
 
+        $data['notificacion'] = 'Centro';
+
         $tempId = $data["id"] == 'session' ? uniqid('session_') : $data["id"];
 
         if ($request->hasFile('foto1')) {
@@ -16042,20 +16453,8 @@ class SeerController extends Controller
             'fecha_nacimiento'  => $data["fecha_nacimiento"],
             'nacionalidad'      => $data["nacionalidad"],
         );
-        //$data_insert["notificacion"] =  $data["notificacion"];
-        //Hacer un if para indicar la notificaacion
-        /*$valor = session()->get('citados_data');
-        if($valor[0]){
-            $data_insert["notificacion"] = $valor[0]['notificacion'];
-            
-        }
-        else{
-            $data_insert["notificacion"] =  $data["notificacion"];
-        }*/
-        
-        //dd($valor);
-       /*  $data_insert["notificacion"] = session('citados_data.0.notificacion', $data['notificacion'] ?? null); */
-       $data_insert["notificacion"] = session('citados_data.notificacion', $data['notificacion'] ?? null);
+        // Regla 1: siempre Centro
+        $data_insert["notificacion"] = $data['notificacion'];
         
 
         if(isset($data["rfc"])){
@@ -16150,6 +16549,33 @@ class SeerController extends Controller
             }
         } */
         /* return back()->with('success', 'Citado agregado correctamente, puedes agregar otro o continuar.') */;
+
+        // Actualizar en sesión los datos del solicitante con los Datos Laborales
+        // capturados en esta vista (AuxP), para que se usen al crear SeerSolicitante.
+        $solicitanteSession = session('solicitante_data', []);
+        if (!empty($solicitanteSession) && is_array($solicitanteSession)) {
+            $solicitanteSession['nss']                 = $data['seguro'] ?? ($solicitanteSession['nss'] ?? null);
+            $solicitanteSession['puesto']              = $data['puesto'] ?? ($solicitanteSession['puesto'] ?? null);
+            $solicitanteSession['periodo_pago']        = $data['periodo_pago'] ?? ($solicitanteSession['periodo_pago'] ?? null);
+            $solicitanteSession['pago']                = $data['pago'] ?? ($solicitanteSession['pago'] ?? null);
+            $solicitanteSession['horas_semana']        = $data['horas'] ?? ($solicitanteSession['horas_semana'] ?? null);
+            $solicitanteSession['jornada']             = $data['jornada'] ?? ($solicitanteSession['jornada'] ?? null);
+            $solicitanteSession['fecha_ingreso']       = $data['fecha_ingreso'] ?? ($solicitanteSession['fecha_ingreso'] ?? null);
+            $solicitanteSession['fecha_salida']        = $data['fecha_salida'] ?? ($solicitanteSession['fecha_salida'] ?? null);
+            $solicitanteSession['descripcionSolicitud']= $data['descripcionSolicitud'] ?? ($solicitanteSession['descripcionSolicitud'] ?? null);
+
+            // Checkbox de "¿Laboras actualmente?" => Si/No
+            if (isset($data['labora'])) {
+                $solicitanteSession['labora'] = 'Si';
+            } else {
+                if (!array_key_exists('labora', $solicitanteSession)) {
+                    $solicitanteSession['labora'] = 'No';
+                }
+            }
+
+            session(['solicitante_data' => $solicitanteSession]);
+        }
+
         // Guardar en sesión el citado
         session(['citados_data' => $data_insert]);
 

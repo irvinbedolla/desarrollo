@@ -396,6 +396,19 @@
                                                             <p class="mb-1"><strong>Vigencia:</strong> <span id="poder_vigencia">-</span></p>
                                                             <p class="mb-1"><strong>Estado del folio:</strong> <span id="poder_status_label">-</span></p>
                                                         </div>
+                                            <div id="resumen_poder" class="row" style="display:none; width:100%; margin-top:15px;">
+                                                <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
+                                                    <h3 class="text-center" style="color:black">Resumen del poder seleccionado</h3>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div class="card" style="margin-top:10px;">
+                                                        <div class="card-body">
+                                                            <p class="mb-1"><strong>Nombre patronal / persona moral:</strong> <span id="poder_nombre_patronal">-</span></p>
+                                                            <p class="mb-1"><strong>Representante:</strong> <span id="poder_nombre_representante">-</span></p>
+                                                            <p class="mb-1"><strong>Estatus del poder:</strong> <span id="poder_estatus">-</span></p>
+                                                            <p class="mb-1"><strong>Vigencia:</strong> <span id="poder_vigencia">-</span></p>
+                                                            <p class="mb-1"><strong>Estado del folio:</strong> <span id="poder_status_label">-</span></p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
