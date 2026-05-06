@@ -16,9 +16,9 @@
                                         <th style="color: #fff;">Folio</th>
                                         <th style="color: #fff;">Fecha Captura</th>
                                         <th style="color: #fff;">Solicitante</th>
-                                        <th style="color: #fff;">Rama IndustriaL</th>
+                                        <th style="color: #fff;">Rama Industrial</th>
                                         <th style="color: #fff;">Actividad Economica</th>
-                                        <th style="color: #fff;">Tipo Trabajador</th>
+                                        <th style="color: #fff;">Patronal / Trabajador</th>
                                         <th style="color: #fff;">Estatus</th>
                                         <th style="color: #fff;">Tipo Solicitud</th>
                                         <th style="color: #fff;">Delegacion</th>

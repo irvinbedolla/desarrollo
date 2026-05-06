@@ -466,13 +466,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/solicitud/indexB/{id}',                [SeerController::class, 'audienciaParte3'])->name('audiencias.parte3'); 
         Route::post('/solicitud/guardar',                   [SeerController::class, 'concluir_audiencia'])->name('concluir_audiencia');
         Route::post('/seleccionar_abogado',                 [SeerController::class, 'seleccionar_abogado'])->name('seleccionar_abogado');
+        Route::post('/seleccionar_representante_patronal',  [SeerController::class, 'seleccionar_representante_patronal'])->name('seleccionar_representante_patronal');
+        Route::post('/guardar_comparecencia_citado',        [SeerController::class, 'guardar_comparecencia_citado'])->name('guardar_comparecencia_citado');
         Route::post('/incompentencia_audiencia',            [SeerController::class, 'incopentencia_audiencia'])->name('incopentencia_audiencia');
         Route::post('/desistimiento_audiencia',             [SeerController::class, 'desistimiento_audiencia'])->name('desistimiento_audiencia');
         Route::get('/audieniecias/complimientos',           [SeerController::class, 'audiencias_cumplimiento'])->name('audiencias.cumplimiento');
         Route::post('/audiencia/consulta/solictud',         [SeerController::class, 'solicitudes_busqueda'])->name('solicitudes_busqueda');
         Route::post('/solicitud/guardarExpediente',         [SeerController::class, 'guardar_expediente'])->name('subir_expediente'); //Subir expediente 
         Route::post('/solicitud/guardarExpedienteR',        [TurnosController::class, 'guardar_expediente'])->name('subir_expediente_ratificacion'); //Subir expediente ratificacion
-        Route::get('/audieniecias/vista_previa/{id_solicitud}',             [SeerController::class, 'vista_previa'])->name('vista_previa');
+        Route::get('/audiencias/vista_previa/{id_solicitud}',             [SeerController::class, 'vista_previa'])->name('vista_previa');
+        Route::get('/audiencias/vista_previa_patronal/{id_solicitud}',             [SeerController::class, 'vista_previa_patronal'])->name('vista_previa_patronal');
         Route::post('/audiencia/guardar-seleccion-convenio', [SeerController::class, 'guardarSeleccionConvenioSession'])->name('guardar_seleccion_convenio');
         Route::post('/audiencia/guardar-seleccion-acta',    [SeerController::class, 'guardarSeleccionActaSession'])->name('guardar_seleccion_acta');
         Route::post('/solicitud/editar_audiencia',          [SeerController::class, 'editar_solicitud_audiencia'])->name('editar_solicitud_audiencia');

@@ -163,7 +163,7 @@
                     <b>Segundo.</b> Se le informa que el plazo de prescripción se reanuda a partir del día siguiente en que fue programada la audiencia, de conformidad con el artículo 684-E, 
                     fracción X de la Ley Federal del Trabajo.<br><br>
 
-                    <b>Tercero.</b> Conforme al artículo 521 fracción III, de la Ley Federal del Trabajo, se dejan a salvo los derechos del trabajador para solicitar nuevamente la conciliación 
+                    <b>Tercero.</b> Conforme al artículo 521 fracción III, de la Ley Federal del Trabajo, se dejan a salvo los derechos del @if ($solicitud->tipo_solicitud == 1) trabajador @else solicitante @endif para solicitar nuevamente la conciliación 
                     y con ello interrumpir nuevamente la prescripción.<br><br>
 
                     <b>Cuarto.</b> La interrupción de la prescripción cesa al día siguiente en que se emite esta Resolución, de conformidad con el artículo 521, fracción III de la Ley Federal 

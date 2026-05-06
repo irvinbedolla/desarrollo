@@ -674,7 +674,7 @@ select[name="municipio_citado"] option {
 
                                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                                             <div class="form-group">
-                                                                <h5 class="text-center" style="color:#CEA845">Documentos</h5>
+                                                                <h5 class="text-center" style="color:#CEA845">Documentos del Solicitante</h5>
                                                             </div>
                                                         </div>
 
@@ -750,108 +750,111 @@ select[name="municipio_citado"] option {
 
                                                     @endif
                                                 @endif
+
+                                                @if ($general->tipo_solicitud == 1) 
+                                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                                        <div class="form-group">
+                                                            <h4 class="text-center">Datos Laborales</h4>
+                                                        </div>
+                                                    </div>
+                                                        
+                                                    <div class="col-xs-12 col-sm-6 col-md-3">
+                                                        <div class="form-group">
+                                                            <label for="password">Seguro Social</label>
+                                                            <input type="text" class="form-control" name="nss" value="<?=$solicitante["nss"];?>">   
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-6 col-md-3">
+                                                        <div class="form-group">
+                                                            <label for="password">Puesto<span style="color:red;"> (*)</span></label>
+                                                            <input type="text" class="form-control" name="puesto" value="<?=$solicitante["puesto"];?>" required>
+                                                            <div class="invalid-feedback">
+                                                                El campo puesto es obligatorio.
+                                                            </div>   
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-3">
+                                                        <div class="form-group">
+                                                            <label for="name">Periodo de pago<span style="color:red;"> (*)</span></label>
+                                                            <select name="periodo_pago" class="form-control" required>
+                                                                <option value="">SELECCIONE</option>
+                                                                <option value="Semanal"      {{ $solicitante['periodo_pago'] == 'Semanal' ? "selected" : '' }}>SEMANAL</option>
+                                                                <option value="Quincenal"   {{ $solicitante['periodo_pago'] == 'Quincenal' ? "selected" : '' }}>QUINCENAL</option>
+                                                                <option value="Mensual"     {{ $solicitante['periodo_pago'] == 'Mensual' ? "selected" : '' }}>MENSUAL</option>
+                                                                <option value="Diario"      {{ $solicitante['periodo_pago'] == 'Diario' ? "selected" : '' }}>DIARIO</option>
+                                                            </select>
+                                                            <div class="invalid-feedback">
+                                                                El campo periodo de pago es obligatorio.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-6 col-md-3">
+                                                        <div class="form-group">
+                                                            <label for="password">Sueldo<span style="color:red;"> (*)</span></label>
+                                                            <input type="text" class="form-control" name="pago" value="<?=$solicitante["pago"];?>" required>
+                                                            <div class="invalid-feedback">
+                                                                El campo sueldo es obligatorio.
+                                                            </div>   
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-6 col-md-2">
+                                                        <div class="form-group">
+                                                            <label for="password">Fecha de ingreso<span style="color:red;"> (*)</span></label>
+                                                            <input type="date" class="form-control" name="fecha_ingreso" value="<?=$solicitante["fecha_ingreso"];?>" required>
+                                                            <div class="invalid-feedback">
+                                                                El campo fecha de ingreso es obligatorio.
+                                                            </div>   
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-6 col-md-2" id= "fechaSalida" hidden>
+                                                        <div class="form-group">
+                                                            <label for="password">Fecha de salida</label>
+                                                            <input type="date" class="form-control" name="fecha_salida" value="<?=$solicitante["fecha_salida"];?>">   
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="name">Horario laboral<span style="color:red;"> (*)</span></label>
+                                                            <input type="text" name="jornada" class="form-control" value="<?=$solicitante["jornada"];?>" required>
+                                                            <div class="invalid-feedback">
+                                                                El campo horario laboral es obligatoria.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="col-xs-12 col-sm-6 col-md-2">
+                                                        <div class="form-group">
+                                                            <label for="password">Horas trabajadas a la semana<span style="color:red;"> (*)</span></label>
+                                                            <input type="number" class="form-control" min="0" name="horas_semana" value="<?=$solicitante["horas_semana"];?>" required>
+                                                            <div class="invalid-feedback">
+                                                                El campo horas trabajadas es obligatorio.
+                                                            </div>   
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-6 col-md-2">
+                                                        <div class="form-group">
+                                                            <label for="password">Labora actualmente<span style="color:red;"> (*)</span></label>
+                                                            <!--input type="text" class="form-control" name="labora" id="laboraActualmenteValue" value="<?=$solicitante["labora"];?>" required-->
+                                                            <select name="labora" id="laboraActualmenteValue" class="form-control" required>
+                                                                <option value="Si" {{ $solicitante["labora"] == 'Si' ? "selected" : '' }}>SI</option>
+                                                                <option value="No"  {{ $solicitante['labora'] == 'No' ? "selected" : '' }}>NO</option>
+                                                            </select>
+                                                            <div class="invalid-feedback">
+                                                                El campo labora actualmente es obligatorio.
+                                                            </div>   
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                                        <div class="form-group">
+                                                            <label for="name">Describe brevemente el motivo de tu solicitud <span style="color:red;">(*)</span></label>
+                                                            <textarea class="form-control" name="descripcionSolicitud" required>{{ $solicitante["descripcionSolicitud"] ?? '' }}</textarea>
+                                                            <div class="invalid-feedback">
+                                                                El campo descripción del motivo de la solicitud es obligatorio.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
                                                 
-                                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                                    <div class="form-group">
-                                                        <h4 class="text-center">Datos del trabajo</h4>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
-                                                    <div class="form-group">
-                                                        <label for="password">Seguro Social</label>
-                                                        <input type="text" class="form-control" name="nss" value="<?=$solicitante["nss"];?>">   
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
-                                                    <div class="form-group">
-                                                        <label for="password">Puesto<span style="color:red;"> (*)</span></label>
-                                                        <input type="text" class="form-control" name="puesto" value="<?=$solicitante["puesto"];?>" required>
-                                                        <div class="invalid-feedback">
-                                                            El campo puesto es obligatorio.
-                                                        </div>   
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-3">
-                                                    <div class="form-group">
-                                                        <label for="name">Periodo de pago<span style="color:red;"> (*)</span></label>
-                                                        <select name="periodo_pago" class="form-control" required>
-                                                            <option value="">SELECCIONE</option>
-                                                            <option value="Semanal"      {{ $solicitante['periodo_pago'] == 'Semanal' ? "selected" : '' }}>SEMANAL</option>
-                                                            <option value="Quincenal"   {{ $solicitante['periodo_pago'] == 'Quincenal' ? "selected" : '' }}>QUINCENAL</option>
-                                                            <option value="Mensual"     {{ $solicitante['periodo_pago'] == 'Mensual' ? "selected" : '' }}>MENSUAL</option>
-                                                            <option value="Diario"      {{ $solicitante['periodo_pago'] == 'Diario' ? "selected" : '' }}>DIARIO</option>
-                                                        </select>
-                                                        <div class="invalid-feedback">
-                                                            El campo periodo de pago es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-3">
-                                                    <div class="form-group">
-                                                        <label for="password">Sueldo<span style="color:red;"> (*)</span></label>
-                                                        <input type="text" class="form-control" name="pago" value="<?=$solicitante["pago"];?>" required>
-                                                        <div class="invalid-feedback">
-                                                            El campo sueldo es obligatorio.
-                                                        </div>   
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-2">
-                                                    <div class="form-group">
-                                                        <label for="password">Fecha de ingreso<span style="color:red;"> (*)</span></label>
-                                                        <input type="date" class="form-control" name="fecha_ingreso" value="<?=$solicitante["fecha_ingreso"];?>" required>
-                                                        <div class="invalid-feedback">
-                                                            El campo fecha de ingreso es obligatorio.
-                                                        </div>   
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-2" id= "fechaSalida" hidden>
-                                                    <div class="form-group">
-                                                        <label for="password">Fecha de salida</label>
-                                                        <input type="date" class="form-control" name="fecha_salida" value="<?=$solicitante["fecha_salida"];?>">   
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-4">
-                                                    <div class="form-group">
-                                                        <label for="name">Horario laboral<span style="color:red;"> (*)</span></label>
-                                                        <input type="text" name="jornada" class="form-control" value="<?=$solicitante["jornada"];?>" required>
-                                                        <div class="invalid-feedback">
-                                                            El campo horario laboral es obligatoria.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            
-                                                <div class="col-xs-12 col-sm-6 col-md-2">
-                                                    <div class="form-group">
-                                                        <label for="password">Horas trabajadas a la semana<span style="color:red;"> (*)</span></label>
-                                                        <input type="number" class="form-control" min="0" name="horas_semana" value="<?=$solicitante["horas_semana"];?>" required>
-                                                        <div class="invalid-feedback">
-                                                            El campo horas trabajadas es obligatorio.
-                                                        </div>   
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-6 col-md-2">
-                                                    <div class="form-group">
-                                                        <label for="password">Labora actualmente<span style="color:red;"> (*)</span></label>
-                                                        <!--input type="text" class="form-control" name="labora" id="laboraActualmenteValue" value="<?=$solicitante["labora"];?>" required-->
-                                                        <select name="labora" id="laboraActualmenteValue" class="form-control" required>
-                                                            <option value="Si" {{ $solicitante["labora"] == 'Si' ? "selected" : '' }}>SI</option>
-                                                            <option value="No"  {{ $solicitante['labora'] == 'No' ? "selected" : '' }}>NO</option>
-                                                        </select>
-                                                        <div class="invalid-feedback">
-                                                            El campo labora actualmente es obligatorio.
-                                                        </div>   
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                                    <div class="form-group">
-                                                        <label for="name">Describe brevemente el motivo de tu solicitud <span style="color:red;">(*)</span></label>
-                                                        <textarea class="form-control" name="descripcionSolicitud" required>{{ $solicitante["descripcionSolicitud"] ?? '' }}</textarea>
-                                                        <div class="invalid-feedback">
-                                                            El campo descripción del motivo de la solicitud es obligatorio.
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             <!--div class="col-xs-12 col-sm-12 col-md-2" style="margin-top: 20px;">
                                                 <button type="submit" class="btn btn-info btn-block">Actualizar datos del solicitante</button>
                                             </div-->
@@ -866,12 +869,14 @@ select[name="municipio_citado"] option {
                                                 </div>
                                             </div><br>
                                             
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <a type="button" class="btn btn-warning open-modal mb-3" data-bs-toggle="modal" 
-                                                    data-bs-target="#exampleModal1" data-id="{{ $id }}">Agregar Citado</a>
-                                                <a type="button" class="btn btn-warning open-modal mb-3" data-bs-toggle="modal" 
-                                                    data-bs-target="#exampleModal2" data-id="{{ $id }}">Borrar Citado</a>
-                                            </div>
+                                            @if ($general->tipo_solicitud == 1)
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <a type="button" class="btn btn-warning open-modal mb-3" data-bs-toggle="modal" 
+                                                        data-bs-target="#exampleModal1" data-id="{{ $id }}">Agregar Citado</a>
+                                                    <a type="button" class="btn btn-warning open-modal mb-3" data-bs-toggle="modal" 
+                                                        data-bs-target="#exampleModal2" data-id="{{ $id }}">Borrar Citado</a>
+                                                </div>
+                                            @endif
 
                                             @foreach($citados as $citado)
                                                 @php
@@ -1132,6 +1137,112 @@ select[name="municipio_citado"] option {
                                                     <input type="hidden" name="imagen_domicilio2[]" value="{{ $citado->imagen_domicilio2 }}">
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-12"><br></div>
+
+                                                @if ($general->tipo_solicitud == 2)
+                                                    @foreach($solicitantes as $solicitante)
+                                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                                            <div class="form-group">
+                                                                <h4 class="text-center">Datos Laborales</h4>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
+                                                            <div class="form-group">
+                                                                <label for="password">Seguro Social</label>
+                                                                <input type="text" class="form-control" name="nss" value="<?=$solicitante["nss"];?>">   
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
+                                                            <div class="form-group">
+                                                                <label for="password">Puesto<span style="color:red;"> (*)</span></label>
+                                                                <input type="text" class="form-control" name="puesto" value="<?=$solicitante["puesto"];?>" required>
+                                                                <div class="invalid-feedback">
+                                                                    El campo puesto es obligatorio.
+                                                                </div>   
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-3">
+                                                            <div class="form-group">
+                                                                <label for="name">Periodo de pago<span style="color:red;"> (*)</span></label>
+                                                                <select name="periodo_pago" class="form-control" required>
+                                                                    <option value="">SELECCIONE</option>
+                                                                    <option value="Semanal"      {{ $solicitante['periodo_pago'] == 'Semanal' ? "selected" : '' }}>SEMANAL</option>
+                                                                    <option value="Quincenal"   {{ $solicitante['periodo_pago'] == 'Quincenal' ? "selected" : '' }}>QUINCENAL</option>
+                                                                    <option value="Mensual"     {{ $solicitante['periodo_pago'] == 'Mensual' ? "selected" : '' }}>MENSUAL</option>
+                                                                    <option value="Diario"      {{ $solicitante['periodo_pago'] == 'Diario' ? "selected" : '' }}>DIARIO</option>
+                                                                </select>
+                                                                <div class="invalid-feedback">
+                                                                    El campo periodo de pago es obligatorio.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
+                                                            <div class="form-group">
+                                                                <label for="password">Sueldo<span style="color:red;"> (*)</span></label>
+                                                                <input type="text" class="form-control" name="pago" value="<?=$solicitante["pago"];?>" required>
+                                                                <div class="invalid-feedback">
+                                                                    El campo sueldo es obligatorio.
+                                                                </div>   
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-6 col-md-2">
+                                                            <div class="form-group">
+                                                                <label for="password">Fecha de ingreso<span style="color:red;"> (*)</span></label>
+                                                                <input type="date" class="form-control" name="fecha_ingreso" value="<?=$solicitante["fecha_ingreso"];?>" required>
+                                                                <div class="invalid-feedback">
+                                                                    El campo fecha de ingreso es obligatorio.
+                                                                </div>   
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-6 col-md-2" id= "fechaSalida" hidden>
+                                                            <div class="form-group">
+                                                                <label for="password">Fecha de salida</label>
+                                                                <input type="date" class="form-control" name="fecha_salida" value="<?=$solicitante["fecha_salida"];?>">   
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-4">
+                                                            <div class="form-group">
+                                                                <label for="name">Horario laboral<span style="color:red;"> (*)</span></label>
+                                                                <input type="text" name="jornada" class="form-control" value="<?=$solicitante["jornada"];?>" required>
+                                                                <div class="invalid-feedback">
+                                                                    El campo horario laboral es obligatoria.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    
+                                                        <div class="col-xs-12 col-sm-6 col-md-2">
+                                                            <div class="form-group">
+                                                                <label for="password">Horas trabajadas a la semana<span style="color:red;"> (*)</span></label>
+                                                                <input type="number" class="form-control" min="0" name="horas_semana" value="<?=$solicitante["horas_semana"];?>" required>
+                                                                <div class="invalid-feedback">
+                                                                    El campo horas trabajadas es obligatorio.
+                                                                </div>   
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-6 col-md-2">
+                                                            <div class="form-group">
+                                                                <label for="password">Labora actualmente<span style="color:red;"> (*)</span></label>
+                                                                <!--input type="text" class="form-control" name="labora" id="laboraActualmenteValue" value="<?=$solicitante["labora"];?>" required-->
+                                                                <select name="labora" id="laboraActualmenteValue" class="form-control" required>
+                                                                    <option value="Si" {{ $solicitante["labora"] == 'Si' ? "selected" : '' }}>SI</option>
+                                                                    <option value="No"  {{ $solicitante['labora'] == 'No' ? "selected" : '' }}>NO</option>
+                                                                </select>
+                                                                <div class="invalid-feedback">
+                                                                    El campo labora actualmente es obligatorio.
+                                                                </div>   
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                                            <div class="form-group">
+                                                                <label for="name">Describe brevemente el motivo de tu solicitud <span style="color:red;">(*)</span></label>
+                                                                <textarea class="form-control" name="descripcionSolicitud" required>{{ $solicitante["descripcionSolicitud"] ?? '' }}</textarea>
+                                                                <div class="invalid-feedback">
+                                                                    El campo descripción del motivo de la solicitud es obligatorio.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                @endif
                                             @endforeach
                                             
                                         </div>
@@ -1150,7 +1261,7 @@ select[name="municipio_citado"] option {
                                                 <label for="password">Identificación Oficial <span style="color:red;">(*)</span></label><br>
                                                 <a class="btn btn-info" target="_blank" href="{{ route('documento_identificacion_solicitante_ver', $id) }}">Visualizar</a>
                                                 @elseif ($general->tipo_solicitud == 2)
-                                                <label for="password">Identificación Oficial del Representante / Persona Apoderada <span style="color:red;">(*)</span></label><br>
+                                                <label for="password">Identificación Oficial del Empleador / Representante <span style="color:red;">(*)</span></label><br>
                                                 <a target="_blank" class="btn btn-primary" href="{{ route('documento_identificacion_solicitante_ver', $id) }}">Consultar Documento PDF</a><br>
                                                 @endif
                                             </div>

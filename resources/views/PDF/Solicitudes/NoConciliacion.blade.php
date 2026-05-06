@@ -107,29 +107,63 @@
                     Fecha de registro de la solicitud: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}<br>
                     Fecha y hora de audiencia: {{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} a las {{ \Carbon\Carbon::parse($audiencia->hora)->format('H:i') }} hrs.<br>
                     Funcionario(a) conciliador(a) responsable: {{ $conciliador->name }}<br>
-                    Asistencia del citado: @if($citado->id_abogado!=null)Si @else No @endif
+                    Asistencia del citado: 
+                    @if($solicitud->tipo_solicitud == 1) 
+                        @if($citado->id_abogado!=null)
+                        Si 
+                        @else 
+                        No 
+                        @endif 
+                    @else 
+                        @if($citado->comparecencia == 'Si')
+                        Si
+                        @else
+                        No
+                        @endif
+                    @endif
                 </b>
                     <center><b>CONSTANCIA DE NO CONCILIACIÓN</b></center><br>
                 </p> 
                 <p>
-                    <!--Cuando el citado SI se presenta-->
-                    @if($citado->id_abogado!=null)
-                        <b>Motivación:</b> Una vez agotada la etapa de conciliación prejudicial, trás dialogar ambas partes y no llegar a un acuerdo conciliatorio, se dejan a salvo los derechos de las partes 
-                        para solicitar una nueva fecha de audiencia en términos del artículo 684-E, fracción VIII, último párrafo.<br><br>
+                    @if($solicitud->tipo_solicitud == 1)
+                        <!--Cuando el citado SI se presenta-->
+                        @if($citado->id_abogado!=null)
+                            <b>Motivación:</b> Una vez agotada la etapa de conciliación prejudicial, trás dialogar ambas partes y no llegar a un acuerdo conciliatorio, se dejan a salvo los derechos de las partes 
+                            para solicitar una nueva fecha de audiencia en términos del artículo 684-E, fracción VIII, último párrafo.<br><br>
 
-                        Con fundamento en los artículos 684-E, fracción VIII, tercer párrafo y 684-F, fracción VIII, de la Ley Federal del Trabajo y artículos 5, primer párrafo y 8, fracción I y IV de la 
-                        Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo y atendiendo los principios constitucionales de legalidad, imparcialidad, confiabilidad, eficacia, objetividad, 
-                        confidencialidad, profesionalismo, transparencia y publicidad, se expide con fecha <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
-                        la presente <b>CONSTANCIA DE NO CONCILIACIÓN</b>.<br><br>
-                    @endif
-                    <!--Cuando el citado NO se presenta-->
-                    @if($citado->id_abogado==0 || $citado->id_abogado=='null')
-                        <b>Motivación:</b> Toda vez que a la audiencia de conciliación, sólo comparecio el solicitante, esta autoridad conciliatoria emite constancia de haber agotado la etapa de conciliación prejudicial obligatoria.<br><br>
+                            Con fundamento en los artículos 684-E, fracción VIII, tercer párrafo y 684-F, fracción VIII, de la Ley Federal del Trabajo y artículos 5, primer párrafo y 8, fracción I y IV de la 
+                            Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo y atendiendo los principios constitucionales de legalidad, imparcialidad, confiabilidad, eficacia, objetividad, 
+                            confidencialidad, profesionalismo, transparencia y publicidad, se expide con fecha <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
+                            la presente <b>CONSTANCIA DE NO CONCILIACIÓN</b>.<br><br>
+                        @endif
+                        <!--Cuando el citado NO se presenta-->
+                        @if($citado->id_abogado==0 || $citado->id_abogado=='null')
+                            <b>Motivación:</b> Toda vez que a la audiencia de conciliación, sólo comparecio el solicitante, esta autoridad conciliatoria emite constancia de haber agotado la etapa de conciliación prejudicial obligatoria.<br><br>
 
-                        Con fundamento en el artículo 684-E, fracción X y 684-F, de la Ley Federal del Trabajo y artículos 5, primer párrafo y 8, fracción I y IV de la 
-                        Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo y atendiendo los principios constitucionales de legalidad, imparcialidad, confiabilidad, eficacia, objetividad, 
-                        confidencialidad, profesionalismo, transparencia y publicidad, se expide con fecha <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
-                        la presente <b>CONSTANCIA DE NO CONCILIACIÓN</b>.<br><br>
+                            Con fundamento en el artículo 684-E, fracción X y 684-F, de la Ley Federal del Trabajo y artículos 5, primer párrafo y 8, fracción I y IV de la 
+                            Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo y atendiendo los principios constitucionales de legalidad, imparcialidad, confiabilidad, eficacia, objetividad, 
+                            confidencialidad, profesionalismo, transparencia y publicidad, se expide con fecha <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
+                            la presente <b>CONSTANCIA DE NO CONCILIACIÓN</b>.<br><br>
+                        @endif
+                    @else
+                        @if($citado->comparecencia == 'Si')
+                            <b>Motivación:</b> Una vez agotada la etapa de conciliación prejudicial, trás dialogar ambas partes y no llegar a un acuerdo conciliatorio, se dejan a salvo los derechos de las partes 
+                            para solicitar una nueva fecha de audiencia en términos del artículo 684-E, fracción VIII, último párrafo.<br><br>
+
+                            Con fundamento en los artículos 684-E, fracción VIII, tercer párrafo y 684-F, fracción VIII, de la Ley Federal del Trabajo y artículos 5, primer párrafo y 8, fracción I y IV de la 
+                            Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo y atendiendo los principios constitucionales de legalidad, imparcialidad, confiabilidad, eficacia, objetividad, 
+                            confidencialidad, profesionalismo, transparencia y publicidad, se expide con fecha <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
+                            la presente <b>CONSTANCIA DE NO CONCILIACIÓN</b>.<br><br>
+
+                        <!--Cuando el citado NO se presenta-->
+                        @else
+                            <b>Motivación:</b> Toda vez que a la audiencia de conciliación, sólo comparecio el solicitante, esta autoridad conciliatoria emite constancia de haber agotado la etapa de conciliación prejudicial obligatoria.<br><br>
+
+                            Con fundamento en el artículo 684-E, fracción X y 684-F, de la Ley Federal del Trabajo y artículos 5, primer párrafo y 8, fracción I y IV de la 
+                            Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo y atendiendo los principios constitucionales de legalidad, imparcialidad, confiabilidad, eficacia, objetividad, 
+                            confidencialidad, profesionalismo, transparencia y publicidad, se expide con fecha <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> 
+                            la presente <b>CONSTANCIA DE NO CONCILIACIÓN</b>.<br><br>
+                        @endif
                     @endif
                     Finalmente, se dejan a salvo los derechos de los interesados para ejercer las acciones respectivas ante el Tribunal Laboral competente, en términos de los artículos 123, apartado A, 
                     fracción XX, de la Constitución Política de los Estados Unidos Mexicanos; 521, fracción III, 870 Bis, de la Ley Federal del Trabajo. <b>Doy fe</b>.

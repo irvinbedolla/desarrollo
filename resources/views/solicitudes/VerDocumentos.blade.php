@@ -20,10 +20,25 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>Identificación de Solicitante</td>
-                                            <td>{{$documento_solicitante->documentoIdentificacion}}</td>
-                                            <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento_solicitante->documentoIdentificacion}}">PDF</a></td>
+                                            @if ($documento_general->tipo_solicitud == 1)
+                                                <td>Identificación de Solicitante</td>
+                                                <td>{{$documento_solicitante->documentoIdentificacion}}</td>
+                                                <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$documento_solicitante->documentoIdentificacion}}">PDF</a></td>
+                                            @elseif ($documento_general->tipo_solicitud == 2)
+                                                <td>Identificación del representante del Solicitante</td>
+                                                <td>{{$documento_solicitante->documentoIdentificacion}}</td>
+                                                <td><a target='_blank' href="../storage/app/documentos_abogados/{{$documento_solicitante->poder->ineDocumento}}">PDF</a></td>
+                                            @endif
                                         </tr>
+                                        @if(isset($documentos_comparecencia) && count($documentos_comparecencia) > 0)
+                                            @foreach($documentos_comparecencia as $doc_citado)
+                                            <tr>
+                                                <td>Identificación de Citado: {{$doc_citado->nombre}} {{$doc_citado->primer_apellido}} {{$doc_citado->segundo_apellido}}</td>
+                                                <td>{{ basename($doc_citado->identificacion_comparecencia) }}</td>
+                                                <td><a target='_blank' href="../storage/app/documentosSolicitud/{{$doc_citado->identificacion_comparecencia}}">PDF</a></td>
+                                            </tr>
+                                            @endforeach
+                                        @endif
                                         @if(isset($documento_abogado))
                                             @if(count($documento_abogado) != 0)
                                                 @foreach($documento_abogado as $documento)

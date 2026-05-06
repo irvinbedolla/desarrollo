@@ -131,46 +131,72 @@
 
                 <p><center><b>D E C L A R A C I O N E S:</b></center></p><br>
 
-                <p><b>PRIMERA.</b> La parte <b>TRABAJADORA {{ $solicitante->nombre }}</b> se identifica con <b>{{ strtoupper($solicitante->identificacion) }}</b>, de Número <b>{{ $solicitante->num_identificacion }}</b> 
+                <p><b>PRIMERA.</b> 
+                @if($solicitud->tipo_solicitud == '1')
+                    La parte <b>TRABAJADORA {{ $solicitante->nombre }}</b> se identifica con <b>{{ strtoupper($solicitante->identificacion) }}</b>, de Número <b>{{ $solicitante->num_identificacion }}</b> 
                     expedida a su favor por <b>{{ $descripcionIdentificacionS }}</b> y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p> 
-
-                @php
-                    $listaAbogados = isset($abogadosConvenio) ? $abogadosConvenio : collect();
-                    if ($listaAbogados instanceof \Illuminate\Support\Collection === false) {
-                        $listaAbogados = collect($listaAbogados);
-                    }
-                    //Si por alguna razón no viene la colección, usamos $abogado
-                    if ($listaAbogados->count() === 0 && isset($abogado) && $abogado) {
-                        $listaAbogados = collect([$abogado]);
-                    }
-                @endphp
-
+                @else
+                    @if($audienciaPoder->poder->reprecentante == 'Si')
+                    La parte <b>EMPLEADORA {{ $solicitante->nombre }} </b> comparece a través de su representante legal <b>{{ $audienciaPoder->poder->nombre_representante }} {{ $audienciaPoder->poder->primer_apellido_representante }} {{ $audienciaPoder->poder->segundo_apellido_representante }}</b>, quien se
+                    identifica con <b>{{ $audienciaPoder->poder->tipo_identificacion }}</b>, de Número <b>{{ $audienciaPoder->poder->num_identificacion }}</b> expedida a su favor por <b>{{ $descripcionIdentificacionPoder }}</b>, así como <b>{{ $audienciaPoder->poder->descipcion_poder }}</b>.
+                    @elseif ($audienciaPoder->poder->reprecentante == 'No')
+                    La parte <b>EMPLEADORA {{ $solicitante->nombre }} {{ $solicitante->primer_apellido ?? '' }} {{ $solicitante->segundo_apellido ?? '' }} </b> se identifica con <b>{{ $audienciaPoder->poder->tipo_identificacion }}</b>, de número <b>{{ $audienciaPoder->poder->num_identificacion }}</b> expedida a su favor por <b>{{ $descripcionIdentificacionPoder }}</b>, declara ser una persona
+                    mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
+                    @endif    
+                @endif
+                
                 <p><b>SEGUNDA.</b>
-                    @foreach($listaAbogados as $idx => $rep)
+                @if($solicitud->tipo_solicitud == '1')
+                    @php
+                        $listaAbogados = isset($abogadosConvenio) ? $abogadosConvenio : collect();
+                        if ($listaAbogados instanceof \Illuminate\Support\Collection === false) {
+                            $listaAbogados = collect($listaAbogados);
+                        }
+                        //Si por alguna razón no viene la colección, usamos $abogado
+                        if ($listaAbogados->count() === 0 && isset($abogado) && $abogado) {
+                            $listaAbogados = collect([$abogado]);
+                        }
+                    @endphp
+                        @foreach($listaAbogados as $idx => $rep)
+                            @php
+                                $nombreRepresentante = trim(($rep->nombre_representante ?? '').' '.($rep->primer_apellido_representante ?? '').' '.($rep->segundo_apellido_representante ?? ''));
+                                $tieneRepresentante = $nombreRepresentante !== '';
+                                $descId = $descripcionIdentificacionP;
+                                if (isset($descripcionIdentificacionPMap) && isset($rep->idAbogado) && array_key_exists($rep->idAbogado, $descripcionIdentificacionPMap)) {
+                                    $descId = $descripcionIdentificacionPMap[$rep->idAbogado];
+                                }
+                            @endphp
+
+                            @if($idx > 0)
+                                <br><br>
+                            @endif
+
+                            @if(!$tieneRepresentante)
+                                La parte EMPLEADORA <b>{{ $rep->nombres_patronal }} {{ $rep->primer_apellido_patronal }} {{ $rep->segundo_apellido_patronal }}</b> quien se identifica con
+                                <b>{{ strtoupper($rep->tipo_identificacion) }}</b>, de Número <b>{{ $rep->num_identificacion }}</b> expedida a su favor por <b>{{ $descId }}</b>,
+                                y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
+                            @else
+                                Declara <b>{{ $nombreRepresentante }}</b>, <b>ser representante legal de la PARTE EMPLEADORA</b>, quien se identifica con
+                                <b>{{ strtoupper($rep->tipo_identificacion) }}</b>, de Número <b>{{ $rep->num_identificacion }}</b> expedida a su favor por <b>{{ $descId }}</b>, así como <b>{{ $rep->descipcion_poder }}</b>
+                            @endif
+                        @endforeach
+                    </p>
+                @else
+                    @foreach($citados as $citado)
                         @php
-                            $nombreRepresentante = trim(($rep->nombre_representante ?? '').' '.($rep->primer_apellido_representante ?? '').' '.($rep->segundo_apellido_representante ?? ''));
-                            $tieneRepresentante = $nombreRepresentante !== '';
-                            $descId = $descripcionIdentificacionP;
-                            if (isset($descripcionIdentificacionPMap) && isset($rep->idAbogado) && array_key_exists($rep->idAbogado, $descripcionIdentificacionPMap)) {
-                                $descId = $descripcionIdentificacionPMap[$rep->idAbogado];
+                            $descCitado = NULL;
+                            if (isset($descripcionIdentificacionCitado) && array_key_exists($citado->id, $descripcionIdentificacionCitado)) {
+                                $descCitado = $descripcionIdentificacionCitado[$citado->id];
                             }
                         @endphp
 
-                        @if($idx > 0)
-                            <br><br>
-                        @endif
-
-                        @if(!$tieneRepresentante)
-                            La parte EMPLEADORA <b>{{ $rep->nombres_patronal }} {{ $rep->primer_apellido_patronal }} {{ $rep->segundo_apellido_patronal }}</b> quien se identifica con
-                            <b>{{ strtoupper($rep->tipo_identificacion) }}</b>, de Número <b>{{ $rep->num_identificacion }}</b> expedida a su favor por <b>{{ $descId }}</b>,
-                            y declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
-                        @else
-                            Declara <b>{{ $nombreRepresentante }}</b>, <b>ser representante legal de la PARTE EMPLEADORA</b>, quien se identifica con
-                            <b>{{ strtoupper($rep->tipo_identificacion) }}</b>, de Número <b>{{ $rep->num_identificacion }}</b> expedida a su favor por <b>{{ $descId }}</b>, así como <b>{{ $rep->descipcion_poder }}</b>
-                        @endif
+                        La parte <b>TRABAJADORA {{ $citado->nombre}} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido ?? '' }}</b> se identifica con <b>{{ $citado->tipo_identificacion_comparecencia }}</b>, de número <b>{{ $citado->num_identificacion_comparecencia }}</b>
+                        expedida a favor por <b>{{ $descCitado }}</b>, declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
                     @endforeach
-                </p>
-
+                    </p>
+                @endif
+                
+                @if ($solicitud->tipo_solicitud == '1')
                 <b>TERCERA.</b> Declara la parte <b>TRABAJADORA</b>:
                     <p class="sangria">
                         a) Que fue contratada por la parte <b>EMPLEADORA</b> desde el <b>{{ \Carbon\Carbon::parse($solicitante->fecha_ingreso)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, para prestar sus 
@@ -207,7 +233,47 @@
                             b) Que con motivo del citatorio de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha_confirmacion)->translatedFormat('d \d\e F \d\e\l Y') }}</b> emitido por el Centro de Conciliación Laboral 
                             del Estado de Michoacán de Ocampo, la parte <b>EMPLEADORA</b> comparece para desahogar la etapa de conciliación prejudicial conforme a los artículos 33, 53 fracción I y 
                             684-E, fracción VI de la Ley Federal del Trabajo.
-                        </p> 
+                        </p>
+                        
+                    @else
+                    <b>TERCERA.</b> Declara la parte <b>EMPLEADORA</b>:
+                        <p class="sangria">
+                            a) Que el día <b>{{ \Carbon\Carbon::parse($solicitud->fecha_confirmacion)->translatedFormat('d \d\e F \d\e\l Y') }}</b> presentó solicitud para solicitar iniciar el procedimiento de conciliación 
+                            prejudicial ante el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.
+                        </p>
+                        <p class="sangria">     
+                            b) Que el Centro Estatal, fijó la audiencia de conciliación para el día <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b>.
+                        </p>
+                        <p class="sangria">
+                            c) Que la parte <b>TRABAJADORA</b> fue contratada en los términos señalados en la siguiente declaración. 
+                        </p>
+                    
+                    <b>CUARTA.</b> Declara la parte <b>TRABAJADORA</b>:
+                        <p class="sangria">
+                            a) Que fue contratada por la parte <b>EMPLEADORA</b> desde el <b>{{ \Carbon\Carbon::parse($solicitante->fecha_ingreso)->translatedFormat('d \d\e F \d\e\l Y') }}</b>, para prestar sus 
+                            servicios como <b>{{ $solicitante->puesto}},</b> puesto en el que se desempeñó 
+                            hasta el día <b>{{ \Carbon\Carbon::parse($solicitante->fecha_salida)->translatedFormat('d \d\e F \d\e\l Y') }}</b>.
+                        </p>
+
+                        <p class="sangria">                
+                            b) Que por el desempeño de sus labores contaba con las siguientes prestaciones:<br>
+                                - Salario mensual: <b>${{ number_format($salario_mensual, 2) }} {{ $mensualTexto }} M.N</b>. <br>
+                                - Vacaciones: <b>{{ $datosAudiencia->vacaciones}}</b> días al año.<br>
+                                - Aguinaldo: <b>{{ $datosAudiencia->aguinaldo }}</b> días al año.<br>
+                                - Otras prestaciones (bonos, vales de despensa, seguros de gastos médicos mayores etc): <b>{{ $datosAudiencia->otros }}</b>
+                        </p>
+                        <p class="sangria">
+                            c) Que desempeñaba sus actividades laborales en las siguientes condiciones: <br>
+                                - Horario: <b>{{ $datosAudiencia->horario }}.</b><br>
+                                - Horario de comida: <b>{{ $datosAudiencia->comida }}.</b><br>
+                                - Domicilio donde prestaba sus servicios: <b>{{ $datosAudiencia->direccion_convenio }}.</b>
+                        </p>
+                        <p class="sangria">
+                            d) Que con motivo del citatorio de fecha <b>{{ \Carbon\Carbon::parse($solicitud->fecha_confirmacion)->translatedFormat('d \d\e F \d\e\l Y') }}</b> emitido por el Centro de Conciliación Laboral 
+                            del Estado de Michoacán de Ocampo, la parte <b>EMPLEADORA</b> comparece para desahogar la etapa de conciliación prejudicial conforme a los artículos 33, 53 fracción I y 
+                            684-E, fracción VI de la Ley Federal del Trabajo.
+                        </p>
+                    @endif
                                    
                     <b>QUINTA.</b> Declaran las <b>PARTES</b>:  
                         <p class="sangria">
@@ -443,6 +509,7 @@
                     </p>
                     <br><br>
                     <table style="width:100%; text-align:center; border-collapse: collapse; margin-top:30px;">
+                        @if($solicitud->tipo_solicitud == '1')
                         <tr>
                             <td style="width:50%; vertical-align:top; padding:0 20px;">
                             <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
@@ -458,6 +525,26 @@
                             </b>
                             </td>
                         </tr>
+                        @else
+                        <tr>
+                            <td style="width:50%; vertical-align:top; padding:0 20px;">
+                            <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                            <b>
+                                {{ $solicitante->nombre }}<br>
+                                LA PARTE EMPLEADORA
+                            </b>
+                            </td>
+                            <td style="width:50%; vertical-align:top; padding:0 20px;">
+                            <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
+                            <b>
+                                @foreach ($citados as $citado)
+                                    {{ $citado->nombre }} {{ $citado->primer_apellido }} {{ $citado->segundo_apellido }}<br>
+                                @endforeach
+                                    LA PARTE TRABAJADORA
+                            </b>
+                            </td>
+                        </tr>
+                        @endif
                         <tr>
                             <td colspan="2" style="text-align:center; vertical-align:top; padding:0 10px;">
                                 <table style="width:60%; margin: 0 auto; border-collapse: collapse;">

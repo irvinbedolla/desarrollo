@@ -593,6 +593,14 @@ class PoderController extends Controller
                 $historialPayload['id_user'] = $id_usuario;
                 HistorialAbogado::create($historialPayload);
 
+                if ($request->has('from_audiencia_patronal') && $request->has('solicitud_id')) {
+                    $params = ['id_solicitud' => $request->input('solicitud_id')];
+                    if ($request->filled('audiencia_id')) {
+                        $params['audiencia_id'] = $request->input('audiencia_id');
+                    }
+                    return redirect()->route('vista_previa_patronal', $params);
+                }
+
                 return redirect()->route('poderes');
             }
             else if($data["representate"] == "Si"){
@@ -670,6 +678,14 @@ class PoderController extends Controller
                 $historialPayload['id_user'] = $id_usuario;
                 HistorialAbogado::create($historialPayload);
 
+                if ($request->has('from_audiencia_patronal') && $request->has('solicitud_id')) {
+                    $params = ['id_solicitud' => $request->input('solicitud_id')];
+                    if ($request->filled('audiencia_id')) {
+                        $params['audiencia_id'] = $request->input('audiencia_id');
+                    }
+                    return redirect()->route('vista_previa_patronal', $params);
+                }
+
                 return redirect()->route('poderes');
             }   
         }
@@ -744,6 +760,14 @@ class PoderController extends Controller
             $historialPayload['id_abogado'] = $poder->idAbogado;
             $historialPayload['id_user'] = $id_usuario;
             HistorialAbogado::create($historialPayload);
+
+            if ($request->has('from_audiencia_patronal') && $request->has('solicitud_id')) {
+                $params = ['id_solicitud' => $request->input('solicitud_id')];
+                if ($request->filled('audiencia_id')) {
+                    $params['audiencia_id'] = $request->input('audiencia_id');
+                }
+                return redirect()->route('vista_previa_patronal', $params);
+            }
 
             return redirect()->route('poderes');
         }

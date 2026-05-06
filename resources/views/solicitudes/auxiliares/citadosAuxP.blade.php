@@ -79,17 +79,116 @@
                                         </button>
                                     </div>
                                 @endif
-                                <div style="background-color:#D2D3D5; width:100%; height:40px;">
-                                    <h3 class="text-center" style="color:black">Ingresa los datos del citado</h3>
-                                </div>    
-                                <p><span style="color:red;"><!-- * --></span> <!-- Debes capturar al menos un citado --></p>
 
-                                <!--Se realiza el envío de datos con formulario de Laravel Collective-->
                                 <form class="needs-validation" novalidate id="form_concluir" method="POST" action="{{route('seer.citadosAuxP', ['id' => $id])}}" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" name="id" value="{{ $id }}">
+
+                                    <div class="row" id="datos_laborales">
+                                        <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
+                                            <h3 class="text-center" style="color:black">Datos Laborales del Citado</h3>
+                                        </div>  
+                                        <div class="col-xs-12 col-sm-12 col-md-3">
+                                            <div class="form-group">
+                                                <label for="name">Número de Seguro Social (Opcional)</label>
+                                                <input type="number" name="seguro" minlength="11" maxlength="12" class="form-control soloNumeros"> 
+                                                <div class="invalid-feedback">
+                                                    Debe tener 12 dígitos su número de seguridad social
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-3">
+                                            <div class="form-group">
+                                                <label for="name">Puesto <span style="color:red;">(*)</span></label>
+                                                <input type="text" name="puesto" maxlength="50" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
+                                                <div class="invalid-feedback">
+                                                    El campo puesto es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-3">
+                                            <div class="form-group">
+                                                <label for="name">Frecuencia de Pago <span style="color:red;">(*)</span></label>
+                                                <select name="periodo_pago" class="form-control" required>
+                                                    <option value="">SELECCIONE</option>
+                                                    <option value="Diario">DIARIO</option>
+                                                    <option value="Semanal">SEMANAL</option>
+                                                    <option value="Quincenal">QUINCENAL</option>
+                                                    <option value="Mensual">MENSUAL</option>
+                                                </select>
+                                                <div class="invalid-feedback">
+                                                    El campo frecuencia de pago es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-3">
+                                            <div class="form-group">
+                                                <label for="name">Salario <span style="color:red;">(*)</span></label>
+                                                <input type="number" step="0.001" name="pago" class="form-control soloMontos" required> 
+                                                <div class="invalid-feedback">
+                                                    El campo salario es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-3">
+                                            <div class="form-group">
+                                                <label for="name">Total de horas trabajadas por semana <span style="color:red;">(*)</span></label>
+                                                <input type="number" name="horas" min="0" class="form-control" required> 
+                                                <div class="invalid-feedback">
+                                                    El campo cantidad de horas trabajadas es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-1">
+                                            <div class="form-group">
+                                                <label for="btncheck1">¿Laboras actualmente?</label><br>
+                                                <input name="labora" type="checkbox" id="check_fecha" autocomplete="off"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div class="form-group">
+                                                <label for="name">Horario laboral <span style="color:red;">(*)</span></label>
+                                                <input type="text" name="jornada" maxlength="200" class="form-control" placeholder="Ejemplo: De lunes a viernes de 9AM a 5PM y Sábados de 9 AM a 2 PM" required>
+                                                <div class="invalid-feedback">
+                                                    El campo horario laboral es obligatoria.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-2"> 
+                                            <div class="form-group">
+                                                <label for="name">Fecha de Ingreso <span style="color:red;">(*)</span></label>
+                                                <input type="date" name="fecha_ingreso" class="form-control" required> 
+                                                <div class="invalid-feedback">
+                                                    El campo fecha de ingreso es obligatoria.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-2" id="fecha_fin">
+                                            <div class="form-group">
+                                                <label for="name">Fecha de Salida</label>
+                                                <input type="date" name="fecha_salida" class="form-control"> 
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-10">
+                                            <div class="form-group">
+                                                <label for="name">Describe brevemente el motivo de tu solicitud <span style="color:red;">(*)</span></label>
+                                                <textarea class="form-control" name="descripcionSolicitud" required></textarea>
+                                                <div class="invalid-feedback">
+                                                    El campo descripción del motivo de la solicitud es obligatorio.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="background-color:#D2D3D5; width:100%; height:40px;">
+                                        <h3 class="text-center" style="color:black">Datos Personales del Citado</h3>
+                                    </div>    
+                                    <p><span style="color:red;"><!-- * --></span> <!-- Debes capturar al menos un citado --></p>
+
                                     <div class="row" id="div_datos_citado">
                                         <input type="hidden" name="tipo" value="Fisica">
+                                        <input type="hidden" name="curp" value="">
+                                        <input type="hidden" name="rfc" value="">
                                         <!-- <div class="col-xs-12 col-sm-12 col-md-2">
                                             <div class="form-group">
                                                 <label for="name">Tipo de persona <span style="color:red;">(*)</span></label>
@@ -167,10 +266,13 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div id="div1" class="col-xs-12 col-sm-12 col-md-4">
+                                        <input type="hidden" name="fecha_nacimiento" value="2000-01-01">
+                                        <input type="hidden" name="edad" value="0">
+                                        <input type="hidden" name="nacionalidad" value="Mexicana">
+                                        <!-- <div id="div1" class="col-xs-12 col-sm-12 col-md-4">
                                             <div class="form-group">
                                                 <label for="name">Fecha de Nacimiento <span style="color:red;">(*)</span></label>
-                                                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" onchange="validarfechaNacimiento(this)" class="form-control" required> 
+                                                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" onchange="validarfechaNacimiento(this)" class="form-control" required>
                                                 <div class="invalid-feedback">
                                                     El campo fecha de nacimiento es obligatoria.
                                                 </div>
@@ -197,7 +299,7 @@
                                                     El campo nacionalidad es obligatoria.
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> -->
                                         <div class="col-xs-12 col-sm-12 col-md-3">
                                             <label for="btncheck1">¿Requiere Traductor?</label>
                                             <input type="checkbox" id="check_lenguaje" name="traductor" autocomplete="off">
@@ -226,12 +328,12 @@
                                     <div class="row"> 
                                         <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:30px;">
                                             <div class="form-group">
-                                                <h4 class="text-center">Dirección de la fuente de empleo</h4>
+                                                <h4 class="text-center">Dirección del Citado</h4>
                                             </div>
                                         </div>
 
                                         @if(!$session_notificacion)
-                                        <div class="col-xs-12 col-sm-12 col-md-3">
+                                        <!--div class="col-xs-12 col-sm-12 col-md-3">
                                             <div class="form-group">
                                                 <label for="name">¿Quién entregará los citatorios? <span style="color:red;">(*)</span></label>
                                                 <select name="notificacion" class="form-control" required>
@@ -243,7 +345,7 @@
                                                     El campo ¿quién entregará los citatorios? es obligatorio.
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div-->
                                         @endif
 
                                         <div class="col-xs-12 col-sm-12 col-md-3">

@@ -124,8 +124,19 @@
                         la solicitud con número de identificación único <b>{{ $solicitud->NUE }}</b>, misma que tendrá verificativo el día 
                         <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las <b>{{ $audiencia->hora }}</b> horas, en la <b>{{ $audiencia->sala }}</b> de la Delegación 
                         Regional de {{ $solicitud->delegacion }} del Centro de Conciliación Laboral 
-                        del Estado de Michoacán de Ocampo, con domicilio en <b>{{$direccion_sede}}</b>.<br><br>
+                        del Estado de Michoacán de Ocampo, con domicilio en <b>{{$direccion_sede}}</b>.             
+                    </p>
 
+                    @if ($solicitud->tipo_solicitud == 2)
+                    <p>
+                        En términos del artículo 684 E, fracciones VII y VIII, de la Ley Federal del Trabajo, el empleador podrá comparecer de manera presencial, en cuyo caso deberá identificarse con cualquier documento oficial; o bien, 
+                        a través de un representante, siempre que este cuente con facultades suficientes para obligarlo y lo acredite ante esta instancia.
+                    </p>
+                    <p>
+                        Se le exhorta a presentarse con al menos 15 minutos de anticipación a la hora señalada, a efecto de llevar el registro correspondiente de ingreso de este Centro de Conciliación y dar inicio de manera puntual a la audiencia prejudicial.
+                    </p>           
+                    @endif
+                    <p>
                         Asimismo, de conformidad con la fracción X del artículo 684-E, me hago conocedor que <b>de no comparecer se archivará el presente asunto por falta de interés</b>.
                     </p>
                     <br><br><br><br><br><br><br>

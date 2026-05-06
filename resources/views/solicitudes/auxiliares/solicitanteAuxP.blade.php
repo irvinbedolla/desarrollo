@@ -383,97 +383,19 @@
                                                     </div>
                                                 </div>
                                             </div> -->
-                                            <div id="datos_formulario" class="row" style="display:none; width:100%;">
-                                            <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
-                                                <h3 class="text-center" style="color:black">Datos Laborales</h3>
-                                            </div>  
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
-                                                <div class="form-group">
-                                                    <label for="name">Número de Seguro Social (Opcional)</label>
-                                                    <input type="number" name="seguro" minlength="11" maxlength="12" class="form-control soloNumeros"> 
-                                                    <div class="invalid-feedback">
-                                                        Debe tener 12 dígitos su número de seguridad social
-                                                    </div>
+                                            <div id="resumen_poder" class="row" style="display:none; width:100%; margin-top:15px;">
+                                                <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
+                                                    <h3 class="text-center" style="color:black">Resumen del poder seleccionado</h3>
                                                 </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
-                                                <div class="form-group">
-                                                    <label for="name">Puesto <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="puesto" maxlength="50" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
-                                                    <div class="invalid-feedback">
-                                                        El campo puesto es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
-                                                <div class="form-group">
-                                                    <label for="name">Frecuencia de Pago <span style="color:red;">(*)</span></label>
-                                                    <select name="periodo_pago" class="form-control" required>
-                                                        <option value="">SELECCIONE</option>
-                                                        <option value="Diario">DIARIO</option>
-                                                        <option value="Semanal">SEMANAL</option>
-                                                        <option value="Quincenal">QUINCENAL</option>
-                                                        <option value="Mensual">MENSUAL</option>
-                                                    </select>
-                                                    <div class="invalid-feedback">
-                                                        El campo frecuencia de pago es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
-                                                <div class="form-group">
-                                                    <label for="name">Salario <span style="color:red;">(*)</span></label>
-                                                    <input type="number" step="0.001" name="pago" class="form-control soloMontos" required> 
-                                                    <div class="invalid-feedback">
-                                                        El campo salario es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-3">
-                                                <div class="form-group">
-                                                    <label for="name">Total de horas trabajadas por semana <span style="color:red;">(*)</span></label>
-                                                    <input type="number" name="horas" min="0" class="form-control" required> 
-                                                    <div class="invalid-feedback">
-                                                        El campo cantidad de horas trabajadas es obligatorio.
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-1">
-                                                <div class="form-group">
-                                                    <label for="btncheck1">¿Laboras actualmente?</label><br>
-                                                    <input name="labora" type="checkbox" id="check_fecha" autocomplete="off"/>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="name">Horario laboral <span style="color:red;">(*)</span></label>
-                                                    <input type="text" name="jornada" maxlength="200" class="form-control" placeholder="Ejemplo: De lunes a viernes de 9AM a 5PM y Sábados de 9 AM a 2 PM" required>
-                                                    <div class="invalid-feedback">
-                                                        El campo horario laboral es obligatoria.
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-2"> 
-                                                <div class="form-group">
-                                                    <label for="name">Fecha de Ingreso <span style="color:red;">(*)</span></label>
-                                                    <input type="date" name="fecha_ingreso" class="form-control" required> 
-                                                    <div class="invalid-feedback">
-                                                        El campo fecha de ingreso es obligatoria.
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-2" id="fecha_fin">
-                                                <div class="form-group">
-                                                    <label for="name">Fecha de Salida</label>
-                                                    <input type="date" name="fecha_salida" class="form-control"> 
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-10">
-                                                <div class="form-group">
-                                                    <label for="name">Describe brevemente el motivo de tu solicitud <span style="color:red;">(*)</span></label>
-                                                    <textarea class="form-control" name="descripcionSolicitud" required></textarea>
-                                                    <div class="invalid-feedback">
-                                                        El campo descripción del motivo de la solicitud es obligatorio.
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div class="card" style="margin-top:10px;">
+                                                        <div class="card-body">
+                                                            <p class="mb-1"><strong>Nombre patronal / persona moral:</strong> <span id="poder_nombre_patronal">-</span></p>
+                                                            <p class="mb-1"><strong>Representante:</strong> <span id="poder_nombre_representante">-</span></p>
+                                                            <p class="mb-1"><strong>Estatus del poder:</strong> <span id="poder_estatus">-</span></p>
+                                                            <p class="mb-1"><strong>Vigencia:</strong> <span id="poder_vigencia">-</span></p>
+                                                            <p class="mb-1"><strong>Estado del folio:</strong> <span id="poder_status_label">-</span></p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -643,7 +565,7 @@
                                                         <div class="invalid-feedback">
                                                             El campo es obligatorio.
                                                         </div>
-                                                    </div>                                        
+                                                    </div>                                      
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-6">
                                                     <div class="form-group">
@@ -717,9 +639,9 @@
                                         </div>-->
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <div align="center">
-                                                <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;">Guardar</button>   
+                                                <button type="submit" id="btn-guardar-solicitante" class="btn btn-primary" style="background-color:#CEA845; border-color:#CEA845;" disabled>Guardar</button>
                                             </div>
-                                        </div>     
+                                        </div>
                                     </form>
                                 </div>
                             </div>
@@ -1179,7 +1101,13 @@
         document.addEventListener('DOMContentLoaded', function () {
             const folioInput = document.getElementById('folio_input');
             const abogadoInfoDiv = document.getElementById('abogado_info');
-            const datosFormulario = document.getElementById('datos_formulario');
+            const resumenPoder = document.getElementById('resumen_poder');
+            const botonGuardar = document.getElementById('btn-guardar-solicitante');
+            const spanNombrePatronal = document.getElementById('poder_nombre_patronal');
+            const spanNombreRepresentante = document.getElementById('poder_nombre_representante');
+            const spanEstatus = document.getElementById('poder_estatus');
+            const spanVigencia = document.getElementById('poder_vigencia');
+            const spanStatusLabel = document.getElementById('poder_status_label');
             let timeout = null;
 
             const baseUrl = "{{ url('/validar_folio_abogado') }}";
@@ -1190,6 +1118,8 @@
                 if (folio === '') {
                     abogadoInfoDiv.textContent = '';
                     abogadoInfoDiv.classList.remove('alert', 'alert-success', 'alert-danger');
+                    if (resumenPoder) resumenPoder.style.display = 'none';
+                    if (botonGuardar) botonGuardar.disabled = true;
                     return;
                 }
                 timeout = setTimeout(() => {
@@ -1217,15 +1147,29 @@
                         if (status === 'elegible') {
                             abogadoInfoDiv.textContent = `Representante: ${data.nombre} — ${msg}`;
                             abogadoInfoDiv.classList.add('alert', 'alert-success');
-                            if (datosFormulario) datosFormulario.style.display = '';
                         } else if (status === 'sin_vigencia' || status === 'requiere_validacion') {
                             abogadoInfoDiv.textContent = `Representante: ${data.nombre} — ${msg}`;
                             abogadoInfoDiv.classList.add('alert', 'alert-danger');
-                            if (datosFormulario) datosFormulario.style.display = 'none';
                         } else {
                             abogadoInfoDiv.textContent = `Representante: ${data.nombre}`;
                             abogadoInfoDiv.classList.add('alert', 'alert-success');
-                            if (datosFormulario) datosFormulario.style.display = 'none';
+                        }
+
+                        //Llenamps resumen del poder
+                        if (resumenPoder) {
+                            if (spanNombrePatronal) spanNombrePatronal.textContent = data.nombre || '-';
+                            let nombreCompletoRep = (data.nombre_representante + ' ' + data.primer_apellido_representante + ' ' + (data.segundo_apellido_representante || '')).trim();
+                            if (spanNombreRepresentante) spanNombreRepresentante.textContent = nombreCompletoRep ? nombreCompletoRep : 'Sin representante';
+                            if (spanEstatus) spanEstatus.textContent = (data.estatus || '').toString();
+                            if (spanVigencia) spanVigencia.textContent = data.fechaVigencia || 'Sin fecha';
+                            if (spanStatusLabel) spanStatusLabel.textContent = msg || '-';
+
+                            resumenPoder.style.display = '';
+                        }
+
+                        //Habilitar el botón Guardar dependiendo de la elegibilidad del poder
+                        if (botonGuardar) {
+                            botonGuardar.disabled = (status !== 'elegible');
                         }
                     })
                     .catch(error => {
@@ -1234,6 +1178,13 @@
                         abogadoInfoDiv.textContent = (error.message === 'Folio no encontrado')
                             ? 'El folio no existe. Por favor, verifica el número.'
                             : 'Ocurrió un error al buscar. Inténtalo de nuevo.';
+
+                        if (resumenPoder) {
+                            resumenPoder.style.display = 'none';
+                        }
+                        if (botonGuardar) {
+                            botonGuardar.disabled = true;
+                        }
                         console.error('Error:', error);
                     });
                 }, 500);

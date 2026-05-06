@@ -130,6 +130,19 @@
                     conciliación, imparcialidad, neutralidad, flexibilidad, legalidad, equidad, buena fe, información, honestidad, y
                     confidencialidad.
                 </p>
+
+                @if ($solicitud->tipo_solicitud == 2)
+                <p>
+                    Se hace del conocimiento del trabajador(a) que deberá comparecer a la audiencia de conciliación con identificación oficial vigente. Así mismo, se le exhorta a presentarse con al menos 15 minutos de anticipación a la hora señalada, 
+                    a efecto de llevar el registro correspondiente de ingreso de este Centro de Conciliación y dar inicio de manera puntual a la audiencia prejudicial; De igual manera, podrá comparecer asistido por abogado(a) o persona de su confianza, 
+                    pero no se reconocerá a ésta como apoderado, por tratarse de un Procedimiento de Conciliación y no de un juicio.
+                </p>
+
+                <p>
+                    Por lo que respecta al empleador, éste podrá comparecer presencialmente o a través de su representante, siempre y cuando cuente con las facultades suficientes para obligarse en su nombre y lo acredite ante esta instancia.
+                </p>
+                @endif
+
                 @if($citado->notificacion=="Centro")
                 <!--@(notificacion==centro)-->
                     <p>Este citatorio se notifica de manera personal conforme al artículo 739, 739 Ter fracción I, 742 fracción XIII, 743, 

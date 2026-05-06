@@ -2088,6 +2088,9 @@ class TurnosController extends Controller
                 return response()->json([
                     'success' => true,
                     'nombre'  => $nombre,
+                    'nombre_representante' => $representante->nombre_representante ?? '',
+                    'primer_apellido_representante' => $representante->primer_apellido_representante ?? '',
+                    'segundo_apellido_representante' => $representante->segundo_apellido_representante ?? '',
                     'estatus' => $representante->estatus,
                     'fechaVigencia' => $fechaVigencia,
                     'status' => $status,

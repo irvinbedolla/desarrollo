@@ -104,13 +104,23 @@
                     Laboral del Estado de Michoacán de Ocampo,  con fundamento en los artículos 33, 590-E, 590-F, 684-A, 684-B, 684-C, 684-D, 684-E, 684-F, 684-G y 684-I, de la 
                     Ley Federal del Trabajo, artículo 27 de la Ley Orgánica del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, y artículo 20 del Reglamento Interior del 
                     Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, <b>declara abierta</b> la Audiencia de Conciliación Prejudicial en la que comparecen: <br><br>
-
-                    La parte <b>solicitante  {{ $solicitante->nombre }}</b> se identifica con <b>{{ strtoupper($solicitante->identificacion) }}</b>, Número <b>{{ $solicitante->num_identificacion }}</b> 
-                    expedida a su favor por <b>{{ $descripcionIdentificacionS }}</b>, se declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.</p> 
-
+                    
+                    @if ($solicitud->tipo_solicitud == 1)
+                        La parte <b>solicitante  {{ $solicitante->nombre }}</b> se identifica con <b>{{ strtoupper($solicitante->identificacion) }}</b>, Número <b>{{ $solicitante->num_identificacion }}</b> 
+                        expedida a su favor por <b>{{ $descripcionIdentificacionS }}</b>, se declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
+                    @else
+                        @if($audienciaPoder->poder->reprecentante == 'Si')
+                            La parte <b>solicitante {{ $solicitante->nombre }}</b> comparece a través de su <b>representante legal {{ $audienciaPoder->poder->nombre_representante }} {{ $audienciaPoder->poder->primer_apellido_representante }} {{ $audienciaPoder->poder->segundo_apellido_representante }}</b>, quien se
+                            identifica con <b>{{ $audienciaPoder->poder->tipo_identificacion }}</b>, de Número <b>{{ $audienciaPoder->poder->num_identificacion }}</b> expedida a su favor por <b>{{ $descripcionIdentificacionS }}</b>, así como <b>{{ $audienciaPoder->poder->descipcion_poder }}</b>.
+                        @elseif($audienciaPoder->poder->reprecentante == 'No')
+                            La parte <b>solicitante {{ $solicitante->nombre }} </b> se identifica con <b>{{ $audienciaPoder->poder->tipo_identificacion }}</b>, de número <b>{{ $audienciaPoder->poder->num_identificacion }}</b> expedida a su favor por <b>{{ $descripcionIdentificacionS }}</b>, declara ser una persona
+                            mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
+                        @endif
+                    @endif
+                    </p> 
+                    
                     La parte solicitante manifiesta que presento solicitud el dia: {{ \Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y') }} para iniciar el procedimiento de conciliacion 
                     prejudicial ante el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo. <br><br>
-
 
                     La parte citada:
                     @foreach ($citados as $citado)
@@ -131,7 +141,14 @@
                                 @endif
                             @endif
                         @else
-                            <b>{{ $citado->nombre }}{{ $citado->primer_apellido ?? ''}} {{ $citado->segundo_apellido ?? ''}}</b>,
+                            @php
+                                $descCitado = NULL;
+                                if (isset($descripcionIdentificacionCitado) && array_key_exists($citado->id, $descripcionIdentificacionCitado)) {
+                                    $descCitado = $descripcionIdentificacionCitado[$citado->id];
+                                }
+                            @endphp
+                            <b>{{ $citado->nombre }} {{ $citado->primer_apellido ?? ''}} {{ $citado->segundo_apellido ?? ''}}</b>, quien se identifica con <b>{{ $citado->tipo_identificacion_comparecencia }}</b>, de número <b>{{ $citado->num_identificacion_comparecencia }}</b> 
+                            expedida a su favor por <b>{{ $descCitado }}</b>, se declara ser una persona mayor de edad, por lo que tiene plenas capacidades de goce y ejercicio para convenir o transigir.
                         @endif
                     @endforeach 
                     
@@ -151,7 +168,9 @@
 
 
                     <br><br>
-                    Por tanto, esta Autoridad Conciliadora se encuentra en condiciones para desahogar la <b>Audiencia de Conciliación Prejudicial.</b><br><br>
+                    De lo anterior, una vez realizando el respectivo cotejo con identificaciones, mismas que concuerdan fisionómicamente con las partes y, que en este acto, se agrega copia cotejada 
+                    al expediente electrónico para que conste como corresponda; esta Autoridad Conciliadora se encuentra en condiciones para desahogar la <b>Audiencia de Conciliación Prejudicial</b>.<br><br>
+
 
                     Se hace del conocimiento del trabajador(a) que podrá comparecer asistido por abogado(a) o persona de su confianza, pero no se reconocerá a ésta como apoderado, por tratarse 
                     de un Procedimiento de Conciliación y no de un juicio; por lo que respecta al empleador, éste podrá comparecer a través de su representante, siempre y cuando cuente con las 
@@ -281,6 +300,11 @@
                                 <td style="width:50%; vertical-align:top; padding:0 20px;">
                                 <div style="border-top: 2px solid #000; width:80%; margin: 0 auto 5px auto;"></div>
                                 <b>
+                                    @if($solicitud->tipo_solicitud == 2) 
+                                        @foreach ($citados as $citado)
+                                            {{ $citado->nombre }} {{ $citado->primer_apellido ?? '' }} {{ $citado->segundo_apellido ?? ''}}<br>
+                                        @endforeach
+                                    @endif
                                     {{-- {{ $abogado->nombres_patronal }} {{ $abogado->primer_apellido_patronal }} {{ $abogado->segundo_apellido_patronal }}<br> --}}
                                     CITADO(S)
                                 </b>
@@ -288,7 +312,7 @@
                         </tr>
                     </table>
                     <br><br><br>
-                    <p><center><b>_____________<br> {{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
+                    <p><center><b>__________________________________________________<br> {{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
                             DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center></p>         
                     <br>
                     <p style="font-size: 10px;">

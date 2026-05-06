@@ -103,6 +103,7 @@
                                                         <form action="{{ route('representante.quitar') }}" method="POST" class="mt-1">
                                                             @csrf
                                                             <input type="hidden" name="id" value="{{ $representante->id }}">
+                                                            <input type="hidden" name="solicitud" value="{{ $solicitud->id }}">
                                                             <button type="submit" class="btn btn-danger btn-sm w-100">
                                                                 Quitar representante
                                                             </button>
@@ -1442,30 +1443,13 @@ function clonarCheckboxes() {
     yaGuardado = true;
 }
 
-    // Actualizar → guarda inmediatamente
-    document.getElementById('btn-actualizar').addEventListener('click', function(e) {
-        clonarCheckboxes();
-    });
-
-    // Convenio → guarda antes de abrir PDF
-    /*document.getElementById('btn-convenio').addEventListener('click', function(e) {
-        e.preventDefault();
-        clonarCheckboxes();
-        let form = document.getElementById('form_roles');
-        form.action = "{{ route('terminar_audiencia', $id) }}";
-        form.submit();
-    setTimeout(() => { window.open("{{ ($conciliadores["conclucion"] ?? null) === 'Reinstalacion' ? route('PDFconvenioreinstalacion', $id) : route('PDFconveniosolicitud', $id) }}", "_blank"); }, 700);
-    });*/
-
-    // Acta → guarda antes de abrir PDF
-    document.getElementById('btn-acta').addEventListener('click', function(e) {
-        e.preventDefault();
-        clonarCheckboxes();
-        let form = document.getElementById('form_roles');
-        form.action = "{{ route('terminar_audiencia', $id) }}";
-        form.submit();
-        setTimeout(() => { window.open("{{ route('VerPDFAudiencia', $id) . '?audiencia_id=' . request()->query('audiencia_id') }}", "_blank"); }, 700);
-    });
+    // Actualizar → guarda inmediatamente (solo si existe el botón)
+    const btnActualizar = document.getElementById('btn-actualizar');
+    if (btnActualizar) {
+        btnActualizar.addEventListener('click', function(e) {
+            clonarCheckboxes();
+        });
+    }
 
     // Terminar → guarda solo si no se guardó antes
     document.getElementById('btn-terminar').addEventListener('click', function(e) {
@@ -1601,6 +1585,7 @@ function clonarCheckboxes() {
                     }
                     let idSolicitud = inputId.value;
 
+                    let audienciaId = document.querySelector('input[name="audiencia_id"]')?.value || document.querySelector('input[name="id_audiencia_recurso"]')?.value || '{{ request("audiencia_id") }}';
                     // 2. Recolectar IDs de los checkboxes marcados
                     let idsSeleccionados = [];
                     // Buscamos los checkboxes que empiezan con "aparece_convenio" y están marcados
@@ -1641,6 +1626,9 @@ function clonarCheckboxes() {
                             // Ajusta la URL base si tu ruta tiene prefijos
                             let urlPdf = "{{ ($conciliadores["conclucion"] ?? null) === 'Reinstalacion' ? route('PDFconvenioreinstalacion', ':id') : route('PDFconveniosolicitud', ':id') }}";
                             urlPdf = urlPdf.replace(':id', idSolicitud);
+                            if (typeof audienciaId !== 'undefined' && audienciaId) {
+                                urlPdf += '?audiencia_id=' + audienciaId;
+                            }
                             
                             window.open(urlPdf, "_blank");
                         } else {

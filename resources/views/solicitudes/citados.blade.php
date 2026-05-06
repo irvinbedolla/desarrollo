@@ -391,7 +391,7 @@
                                             <div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="form-group">
                                                     <label for="name">Imagen del lugar</label>
-                                                    <input type="file" class="form-control" name="foto1" accept="image/*" required>
+                                                    <input type="file" class="form-control" name="foto1" accept="image/*">
                                                     <div class="invalid-feedback">
                                                         El campo Referencia 1 es obligatorio.
                                                     </div>

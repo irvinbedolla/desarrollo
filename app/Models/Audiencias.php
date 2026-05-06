@@ -11,7 +11,7 @@ class Audiencias extends Model
 
     protected $table = 'audiencias';
     protected $primaryKey = 'id';
-    protected $fillable = ['id_solicitud','numero_audiencia','folio_audiencia', 'estatus', 'tipo', 'fecha','hora','id_conciliador','delegacion','sala','proxima_audiencia','pena_convencional','direccion_convenio', 'incidencia'];
+    protected $fillable = ['id_solicitud','numero_audiencia','folio_audiencia', 'estatus', 'tipo', 'fecha','hora','id_conciliador','delegacion','sala','proxima_audiencia','pena_convencional','direccion_convenio', 'incidencia', 'poder_id'];
 
     protected $casts = [
         'fecha' => 'date',
@@ -36,5 +36,9 @@ class Audiencias extends Model
 
     public function pagos() {
         return $this->hasMany(Pagos::class, 'id_solicitud', 'id_solicitud');
+    }
+
+    public function poder() {
+        return $this->belongsTo(Poder::class, 'poder_id', 'idAbogado');
     }
 }

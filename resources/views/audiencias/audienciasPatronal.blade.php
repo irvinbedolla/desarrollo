@@ -16,7 +16,7 @@
 @section('content')
     <section class="section">
         <div class="section-header">
-            <h3 class="page__heading">Audiencia iniciada</h3>
+            <h3 class="page__heading">Audiencia Patronal Iniciada</h3>
         </div>
         <div class="section-body">
             <div class="row">
@@ -35,6 +35,7 @@
                             <!--a href="" type="button" class="btn btn-info">
                                 Actualizar representantes
                             </!--a-->
+
                             @if ($allCentro == 1)
                             <button type="button" class="btn btn-info open-modal" data-bs-toggle="modal" data-bs-target="#ModalReagendar" data-id="{{ $id }}">
                                 Reagendar
@@ -44,10 +45,10 @@
                             @php
                                 $totalCentroTop = 0;
                                 $totalCentroSinComparecenciaTop = 0;
-                                foreach ($representantes as $r) {
-                                    if (($r->notificacion ?? null) === 'Centro') {
+                                foreach ($citados as $c) {
+                                    if (($c->notificacion ?? null) === 'Centro') {
                                         $totalCentroTop++;
-                                        $tieneComparecenciaTop = ($r->id_abogado > 0 || !is_null($r->id_fisica));
+                                        $tieneComparecenciaTop = ($c->comparecencia == 'Si');
                                         if (!$tieneComparecenciaTop) {
                                             $totalCentroSinComparecenciaTop++;
                                         }
@@ -78,9 +79,9 @@
                                             <th style="display:none">ID</th>
                                             <th style="color: #ffff;">Tipo parte</th>
                                             <th style="color: #ffff;">Nombre de la parte</th>
+                                            <th style="color: #ffff;">Representante legal</th>
                                             <th style="color: #ffff;">Notificación</th>
                                             <th style="color: #ffff;">Estatus Notificación</th>
-                                            <th style="color: #ffff;">Representante legal</th>
                                             <th style="color: #ffff;">Acciones</th>
                                             <th style="color: #ffff;"></th>
                                         </tr>
@@ -90,64 +91,66 @@
                                             <td style="display:none">{{$solicitante->id}}</td>
                                             <td style="color: #000000;"><b>Solicitante</b></td>
                                             <td>{{ $solicitante->nombre }}</td>
-                                            <td></td>
+                                            <td>@if($audiencia->poder->reprecentante == 'Si') {{ $audiencia->poder->nombre_representante }} {{ $audiencia->poder->primer_apellido_representante ?? ''}} {{ $audiencia->poder->segundo_apellido_representante ?? ''}} @else Sin representante legal @endif</td>
                                             <td></td>
                                             <td></td>
                                             <td>
-                                                <a type="button" class="btn btn-warning w-100 open-modal" data-bs-toggle="modal" data-bs-target="#exampleModal1" data-id="{{ $id }}">Editar</a>
+                                                
+
+                                                <div class="d-flex flex-column gap-1">
+                                                    <a type="button" class="btn btn-warning w-100 open-modal mt-1" data-bs-toggle="modal" data-bs-target="#exampleModal1" data-id="{{ $id }}">
+                                                        Editar
+                                                    </a>
+
+                                                    <button type="button" class="btn btn-info w-100 mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#ModalSeleccionarRepresentante">
+                                                        Seleccionar representante
+                                                    </button>
+                                                </div>
                                             </td>
                                             <td>
                                                 <button class="btn-invisible">Oculto</button>
                                             </td>
                                         </tr>
                                        
-                                        @foreach($representantes as $representante)
+                                        @foreach($citados as $citado)
                                             <tr>
-                                                <td  style="display:none">{{$representante->id}}</td>
+                                                <td  style="display:none">{{$citado->id}}</td>
                                                 <td style="color: #000000;"><b>Citado</b></td>
-                                                <td>{{$representante->nombre}} {{$representante->primer_apellido}} {{$representante->segundo_apellido}}</td>
+                                                <td>{{$citado->nombre}} {{$citado->primer_apellido}} {{$citado->segundo_apellido}}</td>
+                                                <td></td>
                                                 <td>
-                                                    @if ($representante->notificacion == 'Trabajador') 
+                                                    @if ($citado->notificacion == 'Trabajador') 
                                                         Solicitante
                                                     @else
-                                                        {{ $representante->notificacion }}
+                                                        {{ $citado->notificacion }}
                                                     @endif
                                                 </td>
-                                                <td>{{ $representante->estatus }}</td>
+                                                <td>{{ $citado->estatus }}</td>
                                                 <td>
-                                                    @if($representante->id_abogado == null && $representante->id_fisica == null)
-                                                        Por asignar
-                                                    @else
-                                                        @if($representante->id_abogado != null && $representante->id_fisica == null)
-                                                            {{ $representante->nombre_abogado }} {{ $representante->primero_abogado }} {{ $representante->segundo_abogado }}
-                                                        @else
-                                                            {{ $representante->nombre_fisica }} {{ $representante->primer_fisica }} {{ $representante->segundo_fisica }}
-                                                        @endif
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @if($representante->id_abogado == null && $representante->id_fisica == null)
-                                                        <button type="button" class="btn btn-primary w-100 mt-1 mb-1 text-nowrap open-modal" data-id="{{ $representante->id }}" data-bs-toggle="modal" data-bs-target="#modalCitados"> Registrar Comparecencia </button>
+                                                    @if($citado->comparecencia == null || $citado->comparecencia == 'No')
+                                                        <button type="button" class="btn btn-primary w-100 mt-1 mb-1 text-nowrap btn-abrir-modal-comparecencia" 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#ModalRegistrarComparecencia"
+                                                            data-id="{{ $citado->id }}"
+                                                            data-solicitud="{{ $solicitud->id }}"
+                                                            data-audiencia="{{ request()->query('audiencia_id') }}"
+                                                            data-tipo="{{ $citado->tipo_identificacion_comparecencia }}"
+                                                            data-num="{{ $citado->num_identificacion_comparecencia }}"
+                                                            data-doc="{{ $citado->identificacion_comparecencia }}">
+                                                            Registrar Comparecencia
+                                                        </button>
                                                     @else
                                                         <form action="{{ route('representante.quitar') }}" method="POST" class="mt-1">
                                                             @csrf
-                                                            <input type="hidden" name="id" value="{{ $representante->id }}">
+                                                            <input type="hidden" name="id" value="{{ $citado->id }}">
+                                                            <input type="hidden" name="solicitud" value="{{$solicitud->id}}">
                                                             <button type="submit" class="btn btn-danger btn-sm w-100">
-                                                                Quitar representante
+                                                                Quitar Comparecencia
                                                             </button>
                                                         </form>
                                                     @endif
                                                 </td>
-                                                <td>
-                                                    {{--@if($representante->id_abogado != null)
-                                                        <a class="btn btn-success mb-1 w-100" href="{{ route('PDFcompareceSP', $solicitud->id) }}"  target="_blank">Comparecencia sin Acreditación de Facultades</a>
-                                                    @endif--}}
-                                                    @if($representante->id_abogado == null)
-                                                        <a class="btn btn-success mb-1 w-100" href="{{ route('PDFcompareceSP', $solicitud->id) }}" target="_blank">Comparecencia sin Acreditación de Facultades</a>
-                                                    @else
-                                                        <button class="btn btn-secondary mb-1 w-100" disabled title="No hay una comparecencia registrada">Comparecencia sin Acreditación de Facultades</button>
-                                                    @endif
-                                                </td>
+                                                <td></td>
                                             </tr>
                                             @php $contador++; @endphp
                                         @endforeach       
@@ -162,6 +165,66 @@
         </div>
     </section>
 @endsection
+
+<!-- Modal Registrar Comparecencia -->
+<div class="modal fade" id="ModalRegistrarComparecencia" tabindex="-1" aria-hidden="true">
+    <!-- El "action" se apunta a un método POST nuevo en el controlador que guarde o actualice la identificación -->
+    <form class='needs-validation novalidate' method='POST' action="{{ route('guardar_comparecencia_citado') }}" enctype="multipart/form-data">
+        @csrf
+        <input type="hidden" name="id" id="comp_citado_id" value="">
+        <input type="hidden" name="solicitud" id="comp_solicitud_id" value="">
+        <input type="hidden" name="audiencia_id" id="comp_audiencia_id" value="">
+        
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Registrar Comparecencia del Citado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="tipo_identificacion_comparecencia">Tipo de Identificación <span style="color:red;">(*)</span></label>
+                            <select class="form-select" name="tipo_identificacion_comparecencia" id="comp_tipo_identificacion" required>
+                                <option value="">Seleccione...</option>
+                                <option value="Credencial de elector">Credencial de elector</option>
+                                <option value="Pasaporte">Pasaporte</option>
+                                <option value="Cédula profesional">Cédula profesional</option>
+                                <option value="Licencia de conducir">Licencia de conducir</option>
+                                <option value="Credencial de inapam">Credencial de INAPAM</option>
+                                <option value="Cartilla militar">Cartilla militar</option>
+                                <option value="Documento migratorio">Documento migratorio</option>
+                                <option value="Constancia de identidad">Constancia de identidad</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                            <div class="invalid-feedback">Por favor seleccione el tipo de identificación.</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="num_identificacion_comparecencia">Número de Identificación <span style="color:red;">(*)</span></label>
+                            <input type="text" class="form-control" name="num_identificacion_comparecencia" id="comp_num_identificacion" oninput="this.value = this.value.toUpperCase();" required>
+                            <div class="invalid-feedback">Por favor ingrese el número de identificación.</div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="identificacion_comparecencia">Documento de Identificación (PDF)</label>
+                            <input type="file" class="form-control" name="identificacion_comparecencia" id="comp_doc_input" accept=".pdf">
+                            
+                            <!-- Botón para ver documento si ya existe -->
+                            <div id="comp_doc_existente_container" class="mt-2" style="display: none;">
+                                <a id="comp_btn_ver_doc" href="#" target="_blank" class="btn btn-sm btn-info">Ver Documento Actual</a>
+                                <small class="text-muted ms-2">Si subes un nuevo archivo, se reemplazará el actual.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar y Registrar Comparecencia</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
 <!-- Modal Solicitantes -->
 <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <form class='needs-validation novalidate'  method='POST' action="{{route('editar_solicitud')}}">
@@ -302,75 +365,76 @@
     </form>
 </div>
 
-@php
-    $hoy = \Carbon\Carbon::now()->format('Y-m-d');
-    $isCurrent = true;
-@endphp
-
-<!-- Modal Citados -->
-<div class="modal fade" id="modalCitados" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- Modal Buscar Representantes (Poder) -->
+<div class="modal fade" id="ModalSeleccionarRepresentante" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Representantes Legales</h5>
+                <h5 class="modal-title">Seleccionar Representante Legal</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                @php
+                    $nP = $audiencia->poder->nombres_patronal ?? '';
+                    $pP = $audiencia->poder->primer_apellido_patronal ?? '';
+                    $sP = $audiencia->poder->segundo_apellido_patronal ?? '';
+                    // Buscar coincidencias
+                    $abogadosMatch = \App\Models\Poder::where('nombres_patronal', $nP)
+                        ->where('primer_apellido_patronal', $pP)
+                        ->where('segundo_apellido_patronal', $sP)
+                        ->get();
+                @endphp
+                
+                @if($abogadosMatch->count() > 0)
                 <div class="table-responsive">
-                <form method="POST" action="{{ route('seleccionar_abogado') }} ">
-                    @csrf
-                    <input type="hidden" id="modal-id" name="citado" value="">
-                    <input type="hidden" name="solicitud" value="{{$solicitud->id}}">
-                    <input type="hidden" name="audiencia_id" value="{{ request()->query('audiencia_id') }}">
-                    <table id="tabla1" class="table-striped" style="width:100%">
-                        <thead style="background-color: #4A001F;">   
-                            <!--<th style="display: none;">ID</th>-->
-                            <th style="color: #fff;">Folio</th>
-                            <th style="color: #fff;">Nombre</th>
-                            <th style="color: #fff;">Representante</th>
-                            <th style="color: #fff;">Acciones</th>
+                    <table class="table table-striped table-hover mt-3">
+                        <thead style="background-color: #4A001F;">
+                            <tr>
+                                <th style="color: #ffffff;">Folio</th>
+                                <th style="color: #ffffff;">Nombre de la patronal</th>
+                                <th style="color: #ffffff;">Nombre de representante</th>
+                                <th style="color: #ffffff;">Acción</th>
+                            </tr>
                         </thead>
-                        <tbody class="contenidobusqueda">
-                            @foreach($abogados as $abogado)
-                                <tr>
-                                    <td>{{$abogado->idAbogado}}</td>
-                                    <td>{{$abogado->nombres_patronal}} {{$abogado->primer_apellido_patronal}} {{$abogado->segundo_apellido_patronal}}</td>
-                                    <td style="color: #191717;">{{$abogado->nombre_representante}} {{$abogado->primer_apellido_representante}} {{$abogado->segundo_apellido_representante}}</td>
-                                    <td>
-                                        @php
-                                            //Vigencia vencida => fechaVigencia menor a hoy
-                                            $isVencido = (!is_null($abogado->fechaVigencia) && $abogado->fechaVigencia < $hoy);
-                                            $requiereValidacion = ($abogado->estatus != 'Validado');
-                                        @endphp
-                                        @if ($isVencido)
-                                            <button class="btn btn-info" onclick=editar_rol(); type="submit" name="abogado" value="{{$abogado->idAbogado}}" disabled>Seleccionar</button>
-                                            <span class="ms-2 text-danger fw-semibold">Sin vigencia</span>
-                                        @elseif ($requiereValidacion)
-                                            <button class="btn btn-info" onclick=editar_rol(); type="submit" name="abogado" value="{{$abogado->idAbogado}}" disabled>Seleccionar</button>
-                                            <span class="ms-2 text-danger fw-semibold">Requiere validación</span>
-                                        @else
-                                            <button class="btn btn-info" onclick=editar_rol(); type="submit" name="abogado" value="{{$abogado->idAbogado}}">Seleccionar</button>
-                                            <span class="ms-2 text-success fw-semibold">Elegible</span>
-                                        @endif
-                                    </td>
-                                </tr>
+                        <tbody>
+                            @foreach($abogadosMatch as $abogadoRow)
+                            <tr>
+                                <td>{{ $abogadoRow->idAbogado }}</td>
+                                <td>{{ trim($abogadoRow->nombres_patronal . ' ' . $abogadoRow->primer_apellido_patronal . ' ' . $abogadoRow->segundo_apellido_patronal) }}</td> 
+                                <td>
+                                    @if(trim($abogadoRow->nombre_representante . $abogadoRow->primer_apellido_representante . $abogadoRow->segundo_apellido_representante) !== '')
+                                        {{ trim($abogadoRow->nombre_representante . ' ' . $abogadoRow->primer_apellido_representante . ' ' . $abogadoRow->segundo_apellido_representante) }}
+                                    @else
+                                        Registro patronal sin representación
+                                    @endif
+                                </td>
+                                <td>
+                                    <form method="POST" action="{{ route('seleccionar_representante_patronal') }}">
+                                        @csrf
+                                        <input type="hidden" name="solicitud" value="{{ $id }}">
+                                        <input type="hidden" name="audiencia_id" value="{{ request()->query('audiencia_id') }}">
+                                        <input type="hidden" name="abogado" value="{{ $abogadoRow->idAbogado }}">
+                                        <input type="hidden" name="citado" value="{{ $solicitante->id }}">
+                                        <input type="hidden" name="id" value="{{ $solicitante->id }}"> 
+                                        <button type="submit" class="btn btn-success">Seleccionar</button>
+                                    </form>
+                                </td>
+                            </tr>
                             @endforeach
                         </tbody>
                     </table>
-                </form>
                 </div>
+                @else
+                    <div class="alert alert-warning mt-3">No se encontraron representantes registrados para {{ trim($nP.' '.$pP.' '.$sP) }}.</div>
+                @endif
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarCitados">Agregar Registro Patronal</button>
-                <!--
-                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalAgregarDerecho">Agregar por propio derecho</button>
-                <button type="button" class="btn btn-primary" data-id="{{ $id }}" data-bs-toggle="modal" data-bs-target="#modalActualizaCitados">Actualizar citado</button>
-                -->
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
 </div>
+
 <!-- Modal Agregar Citados -->
 <div class="modal fade" id="modalAgregarCitados" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <form class='needs-validation novalidate'  method='POST'  enctype="multipart/form-data" name="AgregarRepresentante" id="AgregarRepresentante" action="{{route('insertar_citado')}}">
@@ -1238,7 +1302,7 @@
                                                     <div class="form-group">
                                                         <label><span style="color:red;">*</span>Acta Constitutiva</label><br>
                                                         <input type="file" name="documentoIne_Moral" id="documentoIne_Moral" class="form-control" accept=".pdf" >
-                                                        <div class="invalid-feedback">
+                                                                                                               <div class="invalid-feedback">
                                                             La Identificación es obligatoria.
                                                         </div>
                                                     </div>
@@ -1276,7 +1340,7 @@
                                                     </div>
                                                 </div> 
                                             </div>
-                                    </div>                           
+                                        </div>                           
                     </div>
                 </div>
                 <!--<div class="modal-footer">
@@ -1311,7 +1375,7 @@
 <div class="modal fade" id="ModalReagendar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <form class='needs-validation novalidate'  method='POST' action="{{route('reagendar_audiencia')}}">
         @csrf
-        <input type="hidden" id="modal-id-reagendar" name="id" value="{{ $id }}">
+        <input type="hidden" id="modal-id-reagendar" name="id" value="">
         <input type="hidden" name="audiencia_id" value="{{ request()->query('audiencia_id') }}">
         <input type="hidden" id="fechaConfirmacion" value= "{{ $fechaConfirmacion }}">
         <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
@@ -1380,8 +1444,8 @@
 <div class="modal fade" id="ModalTerminar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     @php
         $hayRepresentante = 0;
-        foreach ($representantes as $representante) {
-            if (!is_null($representante->id_abogado) || !is_null($representante->id_fisica)) {
+        foreach ($citados as $citado) {
+            if ($citado->comparecencia == 'Si') {
                 $hayRepresentante = 1;
                 break;
             }
@@ -1389,9 +1453,9 @@
 
         $totalCitados = 0;
         $totalCitadosConComparecencia = 0;
-        foreach ($representantes as $representante) {
+        foreach ($citados as $citado) {
             $totalCitados++;
-            if (!is_null($representante->id_abogado) || !is_null($representante->id_fisica)) {
+            if ($citado->comparecencia == 'Si') {
                 $totalCitadosConComparecencia++;
             }
         }
@@ -1403,11 +1467,11 @@
         $hayNotificacionCentro = false;
         $totalCentro = 0;
         $totalCentroSinComparecencia = 0;
-        foreach ($representantes as $representante) {
-            if (($representante->notificacion ?? null) === 'Centro') {
+        foreach ($citados as $citado) {
+            if (($citado->notificacion ?? null) === 'Centro') {
                 $hayNotificacionCentro = true;
                 $totalCentro++;
-                $tieneComparecencia = (!is_null($representante->id_abogado) || !is_null($representante->id_fisica));
+                $tieneComparecencia = ($citado->comparecencia == 'Si');
                 if (!$tieneComparecencia) {
                     $totalCentroSinComparecencia++;
                 }
@@ -1417,8 +1481,8 @@
         $casoMultasCentroSinComparecencia = ($totalCentro >= 1 && $totalCentroSinComparecencia === $totalCentro);
 
         $hayAlMenosUnAbogado = 0;
-        foreach ($representantes as $representante) {
-            if (!is_null($representante->id_abogado)) {
+        foreach ($citados as $citado) {
+            if ($citado->comparecencia == 'Si') {
                 $hayAlMenosUnAbogado = 1;
                 break;
             }
@@ -1428,9 +1492,9 @@
         //$bloquearContinuar = (!$hayNotificacionCentro && !$todasComparecencias);
 
         $bandera = 0;
-        foreach ($representantes as $representante) {
-            if (($representante->notificacion ?? null) === 'Centro') {
-                $tieneRepresentante = (!is_null($representante->id_abogado) || !is_null($representante->id_fisica));
+        foreach ($citados as $citado) {
+            if (($citado->notificacion ?? null) === 'Centro') {
+                $tieneRepresentante = ($citado->comparecencia == 'Si');
                 if (!$tieneRepresentante) {
                     $bandera = 1;
                     break;
@@ -1444,9 +1508,9 @@
             <div class="modal-content">
                 <div class="modal-header">
                     @if($casoMultasCentroSinComparecencia)
-                        Ningún citado notificado por el Centro presenta comparecencia. Debes emitir multas.
+                        Ningún citado notificado por el Centro presenta comparecencia. Debes emitir constancias de no conciliación.
                     @elseif($bandera != 0)
-                        Se multará a los citados que no tengan un representante asignado y hayan sido notificados exitosamente.
+                        Continuar con la audiencia.
                     @else
                         Continuar con la audiencia.
                     @endif
@@ -1517,7 +1581,7 @@
                     </p>
                     <br>
                     <p class="mb-2">
-                        Se detectó que <b>los citados fueron notificados por el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo</b>, y que no ha sido registrada ninguna comparecencia.<br><br>Por lo tanto, al dar click en el botón "Emitir", se generarán la Constancias de No Conciliación, así como las <b>MULTAS</b> de los citados que hayan sido notificados <b>de manera exitosa</b>.
+                        Se detectó que <b>los citados fueron notificados por el Centro de Conciliación Laboral del Estado de Michoacán de Ocampo</b>, y que no ha sido registrada ninguna comparecencia.<br><br>Por lo tanto, al dar click en el botón "Emitir", se generarán la Constancias de No Conciliación.
                         Confirma para continuar con la <b>emisión de dichos documentos</b>.
                     </p>
                 </div>
@@ -2353,4 +2417,37 @@
 
     <script src="../../public/assets/js/validaciones.js"></script> 
     <script src="../../public/assets/js/poderes/general.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            $('.btn-abrir-modal-comparecencia').on('click', function() {
+                const idCitado = $(this).data('id');
+                const solicitud = $(this).data('solicitud');
+                const audiencia = $(this).data('audiencia');
+                
+                const tipo = $(this).data('tipo') || '';
+                const num = $(this).data('num') || '';
+                const doc = $(this).data('doc') || '';
+
+                $('#comp_citado_id').val(idCitado);
+                $('#comp_solicitud_id').val(solicitud);
+                $('#comp_audiencia_id').val(audiencia);
+                
+                $('#comp_tipo_identificacion').val(tipo);
+                $('#comp_num_identificacion').val(num);
+                
+                if(doc && doc !== '') {
+                    const basePath = "{{ url('storage/') }}";
+                    $('#comp_doc_existente_container').show();
+                    $('#comp_btn_ver_doc').attr('href', basePath + '/app/documentosSolicitud/' + doc);
+                    $('#comp_doc_input').removeAttr('required');
+                } else {
+                    $('#comp_doc_existente_container').hide();
+                    $('#comp_doc_input').attr('required', 'required');
+                }
+            });
+        });
+    </script>
+
+
 @endsection
