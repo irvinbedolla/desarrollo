@@ -71,6 +71,7 @@ use App\Exports\Motivos;
 use App\Exports\AudienciasExport;
 use App\Exports\AudienciasConciliadorExport;
 use App\Exports\AudienciasPORConciliadorExport;
+use App\Exports\CumplimientosProgramadosExport;
 
 class SeerController extends Controller
 {   
@@ -2114,6 +2115,9 @@ class SeerController extends Controller
         }
         else if($data["tipo_reporte"] == "AudienciaConciliador"){
             return Excel::download(new AudienciasConciliadorExport($fecha_inicial, $fecha_final, $sede), 'audienciasConciliador.xlsx');
+        }
+        else if($data["tipo_reporte"] == "CumplimientosProgramados"){
+            return Excel::download(new CumplimientosProgramadosExport($fecha_inicial, $fecha_final, $sede), 'CumplimientosProgramados.xlsx');
         }
     }
 
@@ -8489,7 +8493,7 @@ class SeerController extends Controller
 
         // $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
         $salario_diario = $this->calcularSalarioDiario($solicitante->pago, $solicitante->periodo_pago);
-        $salario_mensual = $salario_diario * 30;
+        $salario_mensual = $salario_diario * 31;
         $diarioTexto = $this->convertirNumerosALetras($salario_diario);
         $mensualTexto = $this->convertirNumerosALetras($salario_mensual);
         $montoTexto = $this->convertirNumerosALetras($datosAudiencia->monto);

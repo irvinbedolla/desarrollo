@@ -53,7 +53,8 @@
                                                     <option value="Concentrado">General</option>
                                                     <option value="GeneralSede">General por Sede</option>
                                                     <option value="SeguroSocial">Seguro Social</option>
-                                                     <option value="AudienciaConciliador">Audiencias por Conciliador</option>
+                                                    <option value="AudienciaConciliador">Audiencias por Conciliador</option>
+                                                    <option value="CumplimientosProgramados">Cumplimientos Programados</option>
                                                 </select>
                                                 <div class="invalid-feedback">
                                                     Debes seleccionar un tipo de reporte.
