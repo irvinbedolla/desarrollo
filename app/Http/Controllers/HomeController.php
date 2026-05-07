@@ -16,6 +16,7 @@ use App\Models\Audiencias;
 use App\Imports\PagoSolicitudImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ConceptoPagoImport;
+use App\Imports\TurnosImport;
 
 class HomeController extends Controller
 {
@@ -152,7 +153,6 @@ class HomeController extends Controller
 
         return view('pantalla', compact('cumplimientos','turnos','audienencias'));
     }
-
 
     public function citas(){
         return view('turnos');
@@ -536,4 +536,16 @@ class HomeController extends Controller
         
         return back()->with('success', '¡Registros migrados correctamente!');
     }
+
+    public function importTurnos(Request $request) 
+    {
+        $request->validate([
+            'file' => 'required|mimes:csv,txt'
+        ]);
+
+        Excel::import(new TurnosImport, $request->file('file'));
+        
+        return back()->with('success', '¡Registros migrados correctamente!');
+    }
+    
 }

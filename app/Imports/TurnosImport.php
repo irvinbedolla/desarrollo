@@ -2,20 +2,22 @@
 
 namespace App\Imports;
 
-use App\Models\PagoSolicitud;
+use App\Models\Turnos;
 use Maatwebsite\Excel\Concerns\ToModel;
 
-class TurnosImport implements ToModel
-{
-    /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
+class TurnosImport implements ToModel, WithHeadingRow{
+
     public function model(array $row)
     {
-        return new PagoSolicitud([
-            //
+        return new Turnos([
+            'id_solicitud' => $row['id_solicitud'],
+            'monto'        => $row['monto'],
+            'fecha'        => $row['fecha'], 
+            'hora'         => $row['hora'], 
+            'descripcion'  => $row['descripcion'],
+            'estatus'      => 'Pendiente',
+            'tipo_pago'    => $row['tipo_pago'] ?? 'Ratificacion',
+            'delegacion'   => $row['delegacion'] ?? 'Morelia',
         ]);
     }
 }
