@@ -118,7 +118,7 @@
                 <p><b>P R E S E N T E</b></p>
                 <p>En cumplimiento y observancia a la fracción XX, del artículo 123 Constitucional, apartado A; así como los de los
                     Principios Procesales contenidos en los artículos 684-E, 684-F fracción I y 685 de la Ley Federal del Trabajo, que
-                    regulan el procedimiento obligatorio prejudicial conciliatorio; se notifica al Representante legal de <b>C. {{ $citado->nombre }} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}</b> para 
+                    regulan el procedimiento obligatorio prejudicial conciliatorio; se notifica @if($solicitud->tipo_solicitud == 1 ) al Representante legal de @else al @endif <b>C. {{ $citado->nombre }} {{ $citado->primer_apellido}} {{ $citado->segundo_apellido}}</b> para 
                     que asista a la <b>Audiencia de Conciliación</b> 
                     de fecha <b>{{ \Carbon\Carbon::parse($audiencia->fecha)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las
                     <b>{{ \Carbon\Carbon::parse($audiencia->hora)->format('H:i') }}</b> horas, en la <b>{{ $audiencia->sala }}</b> de la Delegación Regional de <b>{{ $solicitud->delegacion}}</b> del Centro de Conciliación Laboral del

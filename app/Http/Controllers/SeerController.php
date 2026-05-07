@@ -125,6 +125,40 @@ class SeerController extends Controller
         ]);
     }
 
+    public function seleccionar_representante_patronal(Request $request)
+    {
+        $data = $request->validate([
+            'audiencia_id' => ['required', 'integer'],
+            'abogado'      => ['required', 'integer'],
+        ]);
+
+        $audiencia = Audiencias::find($data['audiencia_id']);
+        if (!$audiencia) {
+            return redirect()->route('inicioAudiencia', [
+                'id' => $request->input('solicitud'),
+                'audiencia_id' => $data['audiencia_id'],
+            ])->with('error', 'No se encontró la audiencia para asignar el representante.');
+        }
+
+        $poder = Poder::where('idAbogado', $data['abogado'])->first();
+        if (!$poder) {
+            return redirect()->route('inicioAudiencia', [
+                'id' => $request->input('solicitud') ?? $audiencia->id_solicitud,
+                'audiencia_id' => $data['audiencia_id'],
+            ])->with('error', 'No se encontró el representante seleccionado.');
+        }
+
+        $audiencia->poder_id = $poder->idAbogado;
+        $audiencia->save();
+
+        session()->flash('preserve_edit_session', true);
+
+        return redirect()->route('inicioAudiencia', [
+            'id' => $request->input('solicitud') ?? $audiencia->id_solicitud,
+            'audiencia_id' => $data['audiencia_id'],
+        ])->with('success', 'Representante legal asignado correctamente.');
+    }
+
     public function ver_documento_subido($id)
     {
         $doc = DocumentosSolicitud::findOrFail($id);
@@ -6564,7 +6598,7 @@ class SeerController extends Controller
         ->update([
             'fecha_terminacion' => $fecha_actual, 
             'estatus'           => 'Archivada',
-            'observaciones'     => $data["observaciones"], 
+            'observaciones'     => 'Archivada por falta de interés', 
         ]);
 
         $numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
@@ -6664,7 +6698,7 @@ class SeerController extends Controller
         $data_conciliador = [
             'id_solicitud'          => $data["id"],
             'numero_audiencia'      => $numero_audiencia[0],
-            'estatus_conciliacion'  => 'Archivado por incomparecencia',
+            'estatus_conciliacion'  => 'No conciliacion',
             'numero_audiencias'     => $num_audi,
             'fecha_conclucion'      =>  $fecha_actual,
             'consecutivo'           =>  $numero_audiencia[1],
@@ -6673,7 +6707,7 @@ class SeerController extends Controller
         
         SeerPerConciliador::create($data_conciliador);
 
-        $solicitud = SeerPerGeneral::find($data["id"])
+        SeerPerGeneral::find($data["id"])
         ->update([
             'fecha_terminacion' => $fecha_actual, 
             'estatus'           => 'No conciliacion',
@@ -6692,6 +6726,7 @@ class SeerController extends Controller
         ]);
 
         //SeerCitados::where('id_solicitud', $data["id"])->where('notificacion', 'Centro')->whereIn('estatus', ['Notificada', 'Finalizado exitosamente'])->update(['tipo_notificacion' => 'Multa']);
+        $solicitud = SeerPerGeneral::where('id', $data["id"])->first();
 
         if ($solicitud->tipo_solicitud == 1){
             $citados = SeerCitados::where('id_solicitud', $data["id"])->where('notificacion', 'Centro')->where('tipo_notificacion', '!=', 'Multa')->whereIn('estatus', ['Notificada', 'Finalizado exitosamente', 'Exitosa por Instructivo', 'No notificada', 'Notificada en Audiencia'])->get();
@@ -7384,8 +7419,10 @@ class SeerController extends Controller
         ]);
 
         $numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
-        Audiencias::where('id_solicitud',$data["id"])
-        ->orderBy('id_solicitud','desc')
+        $prueba = Audiencias::where('id_solicitud',$data["id"])
+        //->orderBy('id_solicitud','desc')
+        ->latest()
+        ->first()
         ->update([
             'numero_audiencia'  =>  $numAudiencia+1,
             'folio_audiencia'   =>  $numero_audiencia[0],
@@ -7433,7 +7470,8 @@ class SeerController extends Controller
 
         $numAudiencia = Audiencias::where('id_solicitud',$data["id"])->count();
         Audiencias::where('id_solicitud',$data["id"])
-        ->orderBy('id_solicitud','desc')
+        ->latest()
+        ->first()
         ->update([
             'numero_audiencia'  =>  $numAudiencia+1,
             'folio_audiencia'   =>  $numero_audiencia[0],

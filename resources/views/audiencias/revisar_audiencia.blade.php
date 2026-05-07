@@ -870,11 +870,6 @@
                                     </div>
                                     <div id="documentos" class="tabcontent">
                                         <div id="tabla_documentos" class="row">
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <div class="form-group">
-                                                    <h4 class="text-center">Datos Citado(s)</h4>
-                                                </div>
-                                            </div>
                                             
                                             @if((($general->estatus !== "Conciliacion") || ($general->estatus !== "No conciliacion") || ($general->estatus !== "Archivada")) && $general->tipo_solicitud == 1)
                                                 <div class="col-xs-12 col-sm-12 col-md-12"><br>
@@ -899,7 +894,15 @@
                                                             <h4 class="text-center">Citado por el Solicitante  <i class="bi bi-person-fill"></i></h4>
                                                         @endif
                                                     </div>
-                                                </div><br>
+                                                </div>
+                                                
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div class="form-group mt-3">
+                                                        <h4 class="text-center">Dirección del citado</h4>
+                                                    </div>
+                                                </div>
+                                                
+                                                <br>
                                                 <div class="col-xs-12 col-sm-6 col-md-4" id="nombre_wrap_{{$loop->index}}">
                                                     <div class="form-group">
                                                         <label for="password">Nombre<span style="color:red;"> (*)</span></label>
@@ -1169,7 +1172,7 @@
                                                     @foreach($solicitantes as $solicitante)
                                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                                             <div class="form-group">
-                                                                <h4 class="text-center">Datos Laborales</h4>
+                                                                <h4 class="text-center">Datos laborales del citado</h4>
                                                             </div>
                                                         </div>
                                                         

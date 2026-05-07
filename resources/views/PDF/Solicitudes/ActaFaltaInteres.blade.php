@@ -169,7 +169,7 @@
                     <b>Cuarto.</b> La interrupción de la prescripción cesa al día siguiente en que se emite esta Resolución, de conformidad con el artículo 521, fracción III de la Ley Federal 
                     del Trabajo.<br><br>
 
-                    <b>{{ $solicitud->observaciones }}</b>
+                    <!--b>{{ $solicitud->observaciones }}</b-->
                 </p>
 
                 <br>

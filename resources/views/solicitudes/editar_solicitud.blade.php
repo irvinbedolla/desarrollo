@@ -862,12 +862,7 @@ select[name="municipio_citado"] option {
                                         </div>
                                     </div>
                                     <div id="documentos" class="tabcontent">
-                                        <div id="tabla_documentos" class="row">
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <div class="form-group">
-                                                    <h4 class="text-center">Datos Citado(s)</h4>
-                                                </div>
-                                            </div><br>
+                                        <div id="tabla_documentos" class="row"><br>
                                             
                                             @if ($general->tipo_solicitud == 1)
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
@@ -886,7 +881,14 @@ select[name="municipio_citado"] option {
                                                     <div class="form-group">
                                                         <h4 class="text-center">Citado</h4>
                                                     </div>
-                                                </div><br>
+                                                </div>
+                                                
+                                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div class="form-group mt-2">
+                                                        <h4 class="text-center">Datos personales del citado</h4>
+                                                    </div>
+                                                </div>
+                                                <br>
                                                 <div class="col-xs-12 col-sm-6 col-md-4" id="nombre_wrap_{{$loop->index}}">
                                                     <div class="form-group">
                                                         <label for="password">Nombre<span style="color:red;"> (*)</span></label>
@@ -1142,7 +1144,7 @@ select[name="municipio_citado"] option {
                                                     @foreach($solicitantes as $solicitante)
                                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                                             <div class="form-group">
-                                                                <h4 class="text-center">Datos Laborales</h4>
+                                                                <h4 class="text-center">Datos laborales del citado</h4>
                                                             </div>
                                                         </div>
                                                         
@@ -1255,23 +1257,90 @@ select[name="municipio_citado"] option {
                                                     <h4 class="text-center">Documentos</h4>
                                                 </div>
                                             </div><br>
+                                                @if($general->tipo_solicitud == 1)
+                                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                                        <label for="password">Identificación Oficial <span style="color:red;">(*)</span></label><br>
+                                                        <a class="btn btn-info" target="_blank" href="{{ route('documento_identificacion_solicitante_ver', $id) }}">Visualizar</a>
+                                                    </div>
+    
+                                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                                        <label for="password">Reemplazar Identificación Oficial</label><br>
+                                                        <input type="file" name="documentoIdentificacion" accept=".pdf" class="form-control">
+                                                    </div>
+                                                    <br>
+                                                @else
+                                                    @if($solicitante->poder->reprecentante == 'Si')
+                                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                @if($solicitante->poder->tipo == 'Fisica')
+                                                                    <label>*Identificación del Empleador</label><br>
+                                                                @else
+                                                                    <label>*Acta Constitutiva</label><br>
+                                                                @endif
+                                                                <a target="_blank" class="btn btn-primary" href="../storage/app/documentos_abogados/{{$solicitante->poder->ineDocumento}}">Existente</a>
+                                                                <div class="invalid-feedback">
+                                                                    La Identificación es obligatoria.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label>*Identificación del Representante Legal</label><br>
+                                                                @if($solicitante->poder->representacionDocumento != NULL)
+                                                                    <a target="_blank" class="btn btn-primary" href="../storage/app/documentos_abogados/{{$solicitante->poder->representacionDocumento}}">Existente</a>
+                                                                @endif
+                                                                <div class="invalid-feedback">
+                                                                    El documento de representación es obligatorio.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label>*Documento que acredite la personería</label><br>
+                                                                @if($solicitante->poder->cedulaDocumento != NULL)
+                                                                    <a target="_blank" class="btn btn-primary" href="../storage/app/documentos_abogados/{{$solicitante->poder->cedulaDocumento}}">Existente</a>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label>Anexo (Documentos Complementarios)</label><br>
+                                                                @if($solicitante->poder->anexo_documeto != "Sin anexo")
+                                                                    <a target="_blank" class="btn btn-primary" href="../storage/app/documentos_abogados/{{$solicitante->poder->anexo_documeto}}">Existente</a>
+                                                                @else
+                                                                    <a class="btn btn-secondary disabled" href="#" tabindex="-1" aria-disabled="true">Sin anexo</a>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    @else
+                                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                                            <div class="form-group">
+                                                                <h4 class="text-center">Documentos del representante</h4>
+                                                            </div>
+                                                        </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-6">
-                                                @if ($general->tipo_solicitud == 1) 
-                                                <label for="password">Identificación Oficial <span style="color:red;">(*)</span></label><br>
-                                                <a class="btn btn-info" target="_blank" href="{{ route('documento_identificacion_solicitante_ver', $id) }}">Visualizar</a>
-                                                @elseif ($general->tipo_solicitud == 2)
-                                                <label for="password">Identificación Oficial del Empleador / Representante <span style="color:red;">(*)</span></label><br>
-                                                <a target="_blank" class="btn btn-primary" href="{{ route('documento_identificacion_solicitante_ver', $id) }}">Consultar Documento PDF</a><br>
+                                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label>*Identificación del Empleador</label><br>
+                                                                <a target="_blank" class="btn btn-primary" href="../storage/app/documentos_abogados/{{$solicitante->poder->ineDocumento}}">Existente</a>
+                                                                <div class="invalid-feedback">
+                                                                    La Identificación es obligatoria.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                                            <div class="form-group">
+                                                                <label>Anexo (Documentos Complementarios)</label><br>
+                                                                @if($solicitante->poder->anexo_documeto != "Sin anexo")
+                                                                    <a target="_blank" class="btn btn-primary" href="../storage/app/documentos_abogados/{{$solicitante->poder->anexo_documeto}}">Existente</a>
+                                                                @else
+                                                                    <a class="btn btn-secondary disabled" href="#" tabindex="-1" aria-disabled="true">Sin anexo</a>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    @endif
                                                 @endif
-                                            </div>
-                                            @if($general->tipo_solicitud != 2)
-                                             <div class="col-xs-12 col-sm-12 col-md-6">
-                                                <label for="password">Reemplazar Identificación Oficial</label><br>
-                                                <input type="file" name="documentoIdentificacion" accept=".pdf" class="form-control">
-                                            </div>
-                                            @endif
-                                            <br>
 
                                             @foreach ($solicitantes as $solicitante)
                                                <div class="col-xs-12 col-sm-12 col-md-6 mt-3">

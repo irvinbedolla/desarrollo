@@ -74,8 +74,8 @@
                                             <input type="hidden" name="tipo" value="Fisica">
                                             <div class="col-xs-12 col-sm-12 col-md-12" >
                                                 <div class="form-group">
-                                                    <label>En caso de no contar con un Folio Interno, puede registrarse en la siguiente liga:</label>
-                                                    <a href="{{ route('poder-crear'); }}" target="_black" class="btn btn-primary mt-2">Registrar</a>
+                                                    <label>En caso de no contar con un <b>Folio de Registro de Representación Patronal</b>, puede registrarse en la siguiente liga:</label>
+                                                    <a href="{{ route('poder-crear'); }}" target="_black" class="btn btn-primary mt-2 ml-2">Registrar</a>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-4">
@@ -385,7 +385,7 @@
                                             </div> -->
                                             <div id="resumen_poder" class="row" style="display:none; width:100%; margin-top:15px;">
                                                 <div class="col-xs-12 col-sm-12 col-md-12" style="background-color:#D2D3D5; width:100%; height:40px;">
-                                                    <h3 class="text-center" style="color:black">Resumen del poder seleccionado</h3>
+                                                    <h3 class="text-center" style="color:black">Detalles del Folio de Registro de Representación Patronal</h3>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <div class="card" style="margin-top:10px;">

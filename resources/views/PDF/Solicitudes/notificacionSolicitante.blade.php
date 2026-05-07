@@ -129,7 +129,7 @@
 
                     @if ($solicitud->tipo_solicitud == 2)
                     <p>
-                        En términos del artículo 684 E, fracciones VII y VIII, de la Ley Federal del Trabajo, el empleador podrá comparecer de manera presencial, en cuyo caso deberá identificarse con cualquier documento oficial; o bien, 
+                        En términos del artículo 684 E, fracciones VII y VIII, primer párrafo, de la Ley Federal del Trabajo, el empleador podrá comparecer de manera presencial, en cuyo caso deberá identificarse con cualquier documento oficial; o bien, 
                         a través de un representante, siempre que este cuente con facultades suficientes para obligarlo y lo acredite ante esta instancia.
                     </p>
                     <p>

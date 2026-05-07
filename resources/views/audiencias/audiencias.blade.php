@@ -1297,12 +1297,14 @@
                     <h5 class="modal-title" id="exampleModalLabel">Motivo del archivo de audiencia</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+                
                 <div class="modal-body">
-                    <textarea name="observaciones" style="width:100%"></textarea>
+                    Se archivará la audiencia con motivo de <b>falta de interés</b>
                 </div>
+                
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="submit" class="btn btn-danger">Archivar</button>
                 </div>
             </div>
         </div>

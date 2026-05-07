@@ -32,7 +32,7 @@
                                             <th style="color: #ffff;">Nombre de la parte</th>
                                             <th style="color: #ffff;">Notificación</th>
                                             <th style="color: #ffff;">Estatus Notificación</th>
-                                            <th style="color: #ffff;">Acciones</th>
+                                            <!--th style="color: #ffff;">Acciones</th-->
                                             <th style="color: #ffff;"></th>
                                         </tr>
                                     </thead>
@@ -43,13 +43,13 @@
                                             <td>{{ $solicitante->nombre }}</td>
                                             <td></td>
                                             <td></td>
-                                            <td>
+                                            <!--td>
                                                 @if(isset($solicitante->poder))
                                                     <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalEditarPoder">
                                                         Editar Poder Solicitante
                                                     </button>
                                                 @endif
-                                            </td>
+                                            </td-->
                                             <td></td>
                                         </tr>
                                         @php
