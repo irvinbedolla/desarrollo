@@ -8686,7 +8686,7 @@ class SeerController extends Controller
 
         // $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
         $salario_diario = $this->calcularSalarioDiario($solicitante->pago, $solicitante->periodo_pago);
-        $salario_mensual = $salario_diario * 31;
+        $salario_mensual = $salario_diario * 30;
         $diarioTexto = $this->convertirNumerosALetras($salario_diario);
         $mensualTexto = $this->convertirNumerosALetras($salario_mensual);
         $montoTexto = $this->convertirNumerosALetras($datosAudiencia->monto);

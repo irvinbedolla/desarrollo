@@ -612,6 +612,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/subida_doc/index',         [HomeController::class, 'indexSubida'])->name('subir_doc_masivo');
         Route::post('pagos/import',             [HomeController::class, 'importPago'])->name('pagos.import');
         Route::post('concepto/import',          [HomeController::class, 'importConcepto'])->name('concecto.import');
+        Route::post('turnos/import',            [HomeController::class, 'importTurnos'])->name('turnos.import');
     //Fin Subida Masiva
 
     //Reportes conciliciador, auxiliares y notificaciones

@@ -29,6 +29,16 @@
                                 <button type="submit" class="btn btn-primary">Cargar Registros</button>
                             </form>        
                         </div>
+                        <div class="card-body">
+                            <form action="{{ route('turnos.import') }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <div class="mb-3">
+                                    <label for="file" class="form-label">Subir CSV Ratificaciones</label>
+                                    <input type="file" name="file" class="form-control" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Cargar Registros</button>
+                            </form>        
+                        </div>
                     </div>
                 </div>
             </div>
