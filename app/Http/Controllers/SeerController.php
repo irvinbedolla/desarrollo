@@ -10684,7 +10684,12 @@ class SeerController extends Controller
                 }
             } else {
                 
-                $citadosPorCentro = SeerCitados::where('id_solicitud', $id)->get();
+                if($audienciaId != null){
+                    $citadosPorCentro = SeerCitados::where('id_solicitud', $id)->where('audiencia_id', $audienciaId)->get();
+                } else {
+                    $citadosPorCentro = SeerCitados::where('id_solicitud', $id)->get();
+                }
+                
                 foreach($citadosPorCentro as $citado){
                     if($citado->notificacion == 'Centro'){
                         $hayCentro = true;
@@ -10708,6 +10713,8 @@ class SeerController extends Controller
                                 ->get();
                 }
             }
+
+            dd($citados);
 
         $abogados = collect();
         $idsHistorial = $citados->pluck('id_historial')->filter()->unique()->values()->all();
