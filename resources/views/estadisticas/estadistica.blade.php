@@ -55,6 +55,8 @@
                                                     <option value="SeguroSocial">Seguro Social</option>
                                                     <option value="AudienciaConciliador">Audiencias por Conciliador</option>
                                                     <option value="CumplimientosProgramados">Cumplimientos Programados</option>
+                                                    <option value="ReporteMunicipio">Reporte por Municipios</option>
+                                                    <option value="ReporteActividad">Reporte por Actividad</option>
                                                 </select>
                                                 <div class="invalid-feedback">
                                                     Debes seleccionar un tipo de reporte.
@@ -199,7 +201,7 @@
                  $('#reporte-audiencias').css('display','none');
                 $('#Grafica').css('display','none');
             }
-            else if(valorCambiado == "Productividad"){
+            else if(valorCambiado == "Productividad" || valorCambiado == "ReporteMunicipio" || valorCambiado == "ReporteActividad"){
                 $('#PDF').css('display','block');
                 $('#Excel').css('display','none');
                 $('#Excel-PDF').css('display','none');
@@ -215,7 +217,7 @@
                  $('#reporte-audiencias').css('display','none');
                 $('#Grafica').css('display','block');
             }
-            else if(valorCambiado == "Ratificaciones" || valorCambiado == "Convenios" || valorCambiado == "AudienciaConciliador" || valorCambiado == "Motivos"){
+            else if(valorCambiado == "Ratificaciones" || valorCambiado == "Convenios" || valorCambiado == "AudienciaConciliador" || valorCambiado == "Motivos" || valorCambiado == "CumplimientosProgramados" || valorCambiado == "SeguroSocial"){
                 $('#PDF').css('display','none');
                 $('#Excel').css('display','block');
                 $('#Excel-PDF').css('display','none');

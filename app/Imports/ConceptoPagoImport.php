@@ -15,7 +15,7 @@ class ConceptoPagoImport implements ToModel, WithHeadingRow{
             'monto'        => $row['monto'],
             'descripcion'  => $row['descripcion'],
             'estatus'      => 'Pendiente',
-            'tipo_pago'    => $row['tipo_pago'] ?? 'Ratificacion',
+            'tipo_pago'    => 'Ratificacion',
             'delegacion'   => $row['delegacion'] ?? 'Morelia',
         ]);
     }

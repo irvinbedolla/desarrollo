@@ -1050,62 +1050,62 @@ class SeerController extends Controller
 
             return Excel::download(new SolicitudesExport($fecha_inicial, $fecha_final, $sede), 'Solicitudes.xlsx');
             /*
-            // Obtenemos los usuarios con sus solicitudes y pagos filtrados por fecha y sede
-            $detalleSolicitantes = DB::table('seer_general')
-            ->join('users', 'users.id', '=', 'seer_general.user_id')
-            ->join('seer_motivos', 'seer_motivos.id_solicitud', '=', 'seer_general.id')
-            ->join('catalogo_motivos', 'catalogo_motivos.id', '=', 'seer_motivos.id_motivo')
-            ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
-            ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
-            ->when($sede !== "Todos", function ($q) use ($sede) {
-                if ($sede === "TodosDelegado") {
-                    $id = auth()->user()->id;
-                    $user = User::find($id);
-                    $sedeUsuario = $user->delegacion;
+                // Obtenemos los usuarios con sus solicitudes y pagos filtrados por fecha y sede
+                $detalleSolicitantes = DB::table('seer_general')
+                ->join('users', 'users.id', '=', 'seer_general.user_id')
+                ->join('seer_motivos', 'seer_motivos.id_solicitud', '=', 'seer_general.id')
+                ->join('catalogo_motivos', 'catalogo_motivos.id', '=', 'seer_motivos.id_motivo')
+                ->join('seer_solicitante', 'seer_solicitante.id_solicitud', '=', 'seer_general.id')
+                ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
+                ->when($sede !== "Todos", function ($q) use ($sede) {
+                    if ($sede === "TodosDelegado") {
+                        $id = auth()->user()->id;
+                        $user = User::find($id);
+                        $sedeUsuario = $user->delegacion;
+        
+                        if($sedeUsuario == "Morelia"){
+                            $delegaciones = ['Morelia', 'Zitácuaro'];
+                            return $q->whereIn('seer_general.delegacion', $delegaciones);
+                        }
+                        else if($sedeUsuario == "Uruapan"){
+                            $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
+                            return $q->whereIn('seer_general.delegacion', $delegaciones);
+                        }
+                        else if($sedeUsuario == "Zamora"){
+                            $delegaciones = ['Zamora', 'Sahuayo'];
+                            return $q->whereIn('seer_general.delegacion', $delegaciones);
+                        }
+                    }
+                    return $q->where("seer_general.delegacion", $sede);
+                })
+                ->select(
+                    'users.name as auxiliar',
+                    'seer_general.consecutivo as folio',
+                    'seer_general.fecha',
+                    'seer_general.estatus',
+                    'seer_general.delegacion',
+                    'seer_general.actividad',
+                    'seer_solicitante.nombre',
+                    'seer_general.tipo_solicitud',
+                    DB::raw('GROUP_CONCAT(catalogo_motivos.motivo SEPARATOR ", ") as motivos')
+                )
+                ->groupBy(
+                    'users.name', 
+                    'seer_general.id', // Agrupar por el ID de la solicitud es clave
+                    'seer_general.consecutivo', 
+                    'seer_general.fecha', 
+                    'seer_general.estatus', 
+                    'seer_general.delegacion', 
+                    'seer_general.actividad', 
+                    'seer_solicitante.nombre',
+                    'seer_general.tipo_solicitud'
+                )
+                ->orderBy('seer_general.consecutivo', 'desc')
+                ->get();
     
-                    if($sedeUsuario == "Morelia"){
-                        $delegaciones = ['Morelia', 'Zitácuaro'];
-                        return $q->whereIn('seer_general.delegacion', $delegaciones);
-                    }
-                    else if($sedeUsuario == "Uruapan"){
-                        $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
-                        return $q->whereIn('seer_general.delegacion', $delegaciones);
-                    }
-                    else if($sedeUsuario == "Zamora"){
-                        $delegaciones = ['Zamora', 'Sahuayo'];
-                        return $q->whereIn('seer_general.delegacion', $delegaciones);
-                    }
-                }
-                return $q->where("seer_general.delegacion", $sede);
-            })
-            ->select(
-                'users.name as auxiliar',
-                'seer_general.consecutivo as folio',
-                'seer_general.fecha',
-                'seer_general.estatus',
-                'seer_general.delegacion',
-                'seer_general.actividad',
-                'seer_solicitante.nombre',
-                'seer_general.tipo_solicitud',
-                DB::raw('GROUP_CONCAT(catalogo_motivos.motivo SEPARATOR ", ") as motivos')
-            )
-            ->groupBy(
-                'users.name', 
-                'seer_general.id', // Agrupar por el ID de la solicitud es clave
-                'seer_general.consecutivo', 
-                'seer_general.fecha', 
-                'seer_general.estatus', 
-                'seer_general.delegacion', 
-                'seer_general.actividad', 
-                'seer_solicitante.nombre',
-                'seer_general.tipo_solicitud'
-            )
-            ->orderBy('seer_general.consecutivo', 'desc')
-            ->get();
- 
-            $pdf = \PDF::loadView('PDF/Estadisticas/SolicitudesDetallado',compact('fecha_inicial','fecha_final','detalleSolicitantes'));
-            $pdf->setPaper('a4', 'landscape');
-            return $pdf->stream('solicitudes.pdf');
+                $pdf = \PDF::loadView('PDF/Estadisticas/SolicitudesDetallado',compact('fecha_inicial','fecha_final','detalleSolicitantes'));
+                $pdf->setPaper('a4', 'landscape');
+                return $pdf->stream('solicitudes.pdf');
             */
         }
         else if($data["tipo_reporte"] == "Notificaciones"){
@@ -2152,6 +2152,62 @@ class SeerController extends Controller
         }
         else if($data["tipo_reporte"] == "CumplimientosProgramados"){
             return Excel::download(new CumplimientosProgramadosExport($fecha_inicial, $fecha_final, $sede), 'CumplimientosProgramados.xlsx');
+        }
+        else if($data["tipo_reporte"] == "ReporteMunicipio"){
+            $solicutudes_minicipio = DB::table('seer_general')
+                ->join('seer_solicitante','seer_solicitante.id_solicitud', "=", 'seer_general.id')
+                ->join('municipios', 'seer_solicitante.municipio_domicilio', '=', 'municipios.id')
+                ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
+                ->where('municipios.estado', "=", 16)
+                ->when($sede !== "Todos", function ($q) use ($sede) {
+                    if ($sede === "TodosDelegado") {
+                        $id = auth()->user()->id;
+                        $user = User::find($id);
+                        $sedeUsuario = $user->delegacion;
+        
+                        if($sedeUsuario == "Morelia"){
+                            $delegaciones = ['Morelia', 'Zitácuaro'];
+                            return $q->whereIn('seer_general.delegacion', $delegaciones);
+                        }
+                        else if($sedeUsuario == "Uruapan"){
+                            $delegaciones = ['Uruapan', 'Lázaro Cárdenas'];
+                            return $q->whereIn('seer_general.delegacion', $delegaciones);
+                        }
+                        else if($sedeUsuario == "Zamora"){
+                            $delegaciones = ['Zamora', 'Sahuayo'];
+                            return $q->whereIn('seer_general.delegacion', $delegaciones);
+                        }
+                    }
+                    return $q->where("seer_general.delegacion", $sede);
+                })
+                ->select(
+                    'seer_general.delegacion', // Campo para agrupar por sede
+                    'municipios.nombre as municipio', 
+                    DB::raw('COUNT(seer_general.id) as total_solicitudes')
+                )
+                ->groupBy('seer_general.delegacion', 'municipios.id', 'municipios.nombre')
+                ->orderByRaw("FIELD(seer_general.delegacion, 'Morelia', 'Zitácuaro', 'Uruapan', 'Lázaro Cárdenas', 'Zamora', 'Sahuayo') ASC")
+                ->orderBy('municipios.nombre', 'asc')
+                ->get();
+
+            $agrupados = $solicutudes_minicipio->groupBy('delegacion');
+
+            $pdf = \PDF::loadView('PDF/Estadisticas/reporteMunicipios', compact('agrupados'));
+            return $pdf->stream('Reporte_municipio.pdf');
+        }
+        else if($data["tipo_reporte"] == "ReporteActividad"){
+            $solicutudes_actividad = DB::table('seer_general')
+                ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
+                ->select(
+                    'seer_general.actividad',
+                    DB::raw('COUNT(seer_general.id) as total_solicitudes')
+                )
+                ->groupBy('seer_general.actividad')
+                ->orderBy('seer_general.actividad', 'asc')
+                ->get();
+
+            $pdf = \PDF::loadView('PDF/Estadisticas/reporteActividad', compact('solicutudes_actividad'));
+            return $pdf->stream('Reporte_actividad.pdf');
         }
     }
 

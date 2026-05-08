@@ -17,7 +17,7 @@
                                 <div class="table-responsive">
                                     <table id="example" class="table-striped" style="width:100%">
                                         <thead style="background-color: #4A001F;">
-                                            <th style="display: none;">ID</th>
+                                            <th style="color: #fff;">Folio</th>
                                             <th style="color: #fff;">Nombre</th>
                                             <th style="color: #fff;">E-mail</th>
                                             <th style="color: #fff;">Rol</th>
@@ -27,7 +27,7 @@
                                         <tbody class="contenidobusqueda">
                                             @foreach($usuarios as $usuario)
                                                 <tr>
-                                                    <td style="display: none;">{{$usuario->id}}</td>
+                                                    <td>{{$usuario->id}}</td>
                                                     <td>{{$usuario->name}}</td>
                                                     <td>{{$usuario->email}}</td>
                                                     <td>                                                
