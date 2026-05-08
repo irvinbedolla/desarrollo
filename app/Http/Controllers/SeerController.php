@@ -10714,8 +10714,6 @@ class SeerController extends Controller
                 }
             }
 
-            dd($citados);
-
         $abogados = collect();
         $idsHistorial = $citados->pluck('id_historial')->filter()->unique()->values()->all();
         $idsAbogadoPoder = $citados->pluck('id_abogado')->filter()->unique()->values()->all();
