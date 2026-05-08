@@ -8717,10 +8717,11 @@ class SeerController extends Controller
             $audienciaId = $audienciaId[0] ?? null;
         }
 
-        $audienciaPoder = Audiencias::where('id', $audienciaId)->first();
-
-        $solicitantePoder = SeerSolicitante::where('id_solicitud', $solicitud["id"])->first();
-        $descripcionIdentificacionPoder = $this->descripcionIdentificacion($solicitantePoder->poder->tipo_identificacion);
+        if ($solicitud->tipo_solicitud == 2) {
+            $audienciaPoder = Audiencias::where('id', $audienciaId)->first();
+            $solicitantePoder = SeerSolicitante::where('id_solicitud', $solicitud["id"])->first();
+            $descripcionIdentificacionPoder = $this->descripcionIdentificacion($audienciaPoder->poder->tipo_identificacion);
+        }
 
         // $dias_descanso = $solicitud->dias !== null ? 7 - $solicitud->dias : null;
         $salario_diario = $this->calcularSalarioDiario($solicitante->pago, $solicitante->periodo_pago);
