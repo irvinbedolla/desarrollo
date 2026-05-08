@@ -131,7 +131,7 @@
                 <div class="salto-inteligente"></div>
                 <div class="contenedor-firmas">
                     <p>
-                        Finalmemnte, se dejan a salvo los derechos de los interesados para continuar con el procedimiento de conciliación ante el Centro de Conciliación Laboral competente, en términos de los artículos 527 y 684-E fracción 
+                        Finalmente, se dejan a salvo los derechos de los interesados para continuar con el procedimiento de conciliación ante el Centro de Conciliación Laboral competente, en términos de los artículos 527 y 684-E fracción 
                         V párrafo segundo de la Ley Federal del Trabajo. Artículo 18 fracción XII del Reglamento Interior del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo.<b>Doy Fe.</b>
                     </p>
                     <table style="width: 100%; margin-top: 50px;">

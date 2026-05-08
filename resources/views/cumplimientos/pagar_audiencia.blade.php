@@ -37,7 +37,11 @@
                                                             </button>
                                                         @endif
                                                         @if($pago->estatus == "Pendiente")
+                                                            @if($pago->tipo_pago == 'Ratificacion')
                                                             <a class="btn btn-danger" href="{{ route('cumplimiento_rechazar', $pago->id) }}" onclick=consultar_estadistica();>Generar incumplimiento</a>
+                                                            @else
+                                                            <a class="btn btn-danger" href="{{ route('cumplimiento_rechazar_audiencia', $pago->id) }}" onclick=consultar_estadistica();>Generar incumplimiento</a>
+                                                            @endif
                                                             <form method="POST" action="{{ route('cumplimiento_incomparecencia', $pago->id) }}" style="display:inline;">
                                                                 @csrf
                                                                 <input type="hidden" name="fecha_audiencia" value="{{ $pago->fecha }}">
