@@ -464,21 +464,17 @@ class SeerController extends Controller
     
     }
 
-    public function estadistica(){
-        // 1. Carga del usuario con sus roles en una sola consulta
+    public function estadistica() {
         $user = auth()->user()->load('roles');
-        $userRole = $user->roles->pluck('name')->first(); // Usamos first() para mayor claridad
+        $userRole = $user->roles->pluck('name')->first();
         $delegacionUser = $user->delegacion;
 
-        // 2. Definición de variables iniciales
         $usuariosconciliadores = collect();
         $usuariosauxiliares = collect();
         $usuariosnotificadores = collect();
         $estadisticas = collect();
 
-        // 3. Lógica según Rol
         if (in_array($userRole, ["Super Usuario", "Administrador", "Estadistica"])) {
-            // Traemos todos los usuarios con sus roles para filtrar en memoria (más rápido que 4 consultas separadas)
             $todosUsuarios = User::with('roles')->get();
             
             $usuariosconciliadores = $todosUsuarios->filter(fn($u) => $u->hasRole('Conciliador'));
@@ -488,28 +484,36 @@ class SeerController extends Controller
             $estadisticas = Sedes::all();
 
         } elseif (in_array($userRole, ["Enlace", "Delegado"])) {
-            // Consultas filtradas por delegación
-            $usuariosBase = User::where('delegacion', $delegacionUser)->with('roles')->get();
-
-            $usuariosconciliadores = $usuariosBase->filter(fn($u) => $u->hasRole('Conciliador'));
-            $usuariosauxiliares = $usuariosBase->filter(fn($u) => $u->hasRole('Auxiliar'));
-            $usuariosnotificadores = $usuariosBase->filter(fn($u) => $u->hasRole('Notificador'));
-
-            // Optimización de Sedes: Unificamos la búsqueda de la sede y sus oficinas de apoyo
+            // 1. Buscamos la sede principal y sus oficinas de apoyo
             $sedePrincipal = Sedes::where('nombre', $delegacionUser)->first();
             
             if ($sedePrincipal) {
                 $estadisticas = Sedes::where('nombre', $delegacionUser)
                     ->orWhere('oficina_apoyo', $sedePrincipal->id)
                     ->get();
+
+                // 2. Extraemos todos los nombres de las sedes (Ej: ['Morelia', 'Zitácuaro'])
+                $nombresSedesPermitidas = $estadisticas->pluck('nombre')->toArray();
+
+                // 3. Filtramos la base de usuarios por este array de sedes
+                $usuariosBase = User::whereIn('delegacion', $nombresSedesPermitidas)
+                    ->with('roles')
+                    ->get();
+
+                // 4. Ahora los filtros por rol ya contemplan todas las sedes de la jurisdicción
+                $usuariosconciliadores = $usuariosBase->filter(fn($u) => $u->hasRole('Conciliador'));
+                $usuariosauxiliares = $usuariosBase->filter(fn($u) => $u->hasRole('Auxiliar'));
+                $usuariosnotificadores = $usuariosBase->filter(fn($u) => $u->hasRole('Notificador'));
             }
         }
 
-        // 4. Carga de catálogos (Considera usar caché si estos datos no cambian seguido)
         $estados = Estados::all();
         $municipios = Municipios::all();
-    
-        return view('estadisticas.estadistica', compact('user','userRole','estadisticas','usuariosauxiliares','usuariosnotificadores','estados','municipios','usuariosconciliadores'));
+
+        return view('estadisticas.estadistica', compact(
+            'user', 'userRole', 'estadisticas', 'usuariosauxiliares', 
+            'usuariosnotificadores', 'estados', 'municipios', 'usuariosconciliadores'
+        ));
     }
     
     public function mostrar_reporte(Request $request){

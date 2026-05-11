@@ -31,7 +31,7 @@ class AsistenciaController extends Controller
     {   
         // 1. Buscamos al usuario (si no existe, lanza un error 404)
         $usuario = User::findOrFail($id);
-        
+
         if($usuario == null){
             return "Codigo QR no Valido";
         }
@@ -82,7 +82,7 @@ class AsistenciaController extends Controller
     public function generarQrUsuario($id)
     {
         // Generamos la URL completa que debe leer la tablet
-        $url = "http://192.168.1.184/sistema-integral/asistencia/".$id;
+        $url = "https://siconcilio.cclmichoacan.gob.mx/asistencia/".$id;
 
         // Creamos el QR (en formato SVG por defecto)
         $codigoQR = QrCode::size(300)
