@@ -353,7 +353,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Núm. Int.</label>
-                                                        <input type="text" class="form-control" placeholder="Número interior" name="num_int_pF"  oninput="this.value = this.value.toUpperCase()">
+                                                        <input type="text" class="form-control" placeholder="Número interior" name="num_int_pF" data-no-required oninput="this.value = this.value.toUpperCase()">
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
@@ -497,12 +497,12 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-2"><br><label for="btncheck1">Sin fecha de vigencia</label>
-                                                    <input name="fecha_vigencia_pF" type="checkbox" class="btn-check" id="check_vigencia" autocomplete="off"/>
+                                                    <input name="fecha_vigencia_pF" type="checkbox" class="btn-check" id="check_vigencia" data-no-required autocomplete="off"/>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3" id="fecha_vigencia_pF">
                                                     <div class="form-group">
                                                         <label for="fecha_vigencia_pF">Fecha vigencia</label>
-                                                        <input type="date" class="form-control" aria-describedby="basic-addon1" name="fecha_vigencia_pF" id="fecha_vigencia_pF" min="<?= date("Y-m-d") ?>" >
+                                                        <input type="date" class="form-control" aria-describedby="basic-addon1" name="fecha_vigencia_pF" id="fecha_vigencia_pF" data-no-required min "<?= date("Y-m-d") ?>" >
                                                         <div class="invalid-feedback">
                                                             La fecha es obligatoria.
                                                         </div>
@@ -582,7 +582,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label>Anexo (Documentos Complementarios)</label><br>
-                                                        <input type="file" name="documentoAnexo_pF" id="documentoAnexo_pF" class="form-control" accept=".pdf">
+                                                        <input type="file" name="documentoAnexo_pF" id="documentoAnexo_pF" class="form-control" accept=".pdf" data-no-required>
                                                     </div>
                                                 </div>
                                                 
@@ -642,7 +642,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label>Anexo (Documentos Complementarios)</label><br>
-                                                        <input type="file" name="documentoAnexo_pFSR" id="documentoAnexo_pFSR" class="form-control" accept=".pdf">
+                                                        <input type="file" name="documentoAnexo_pFSR" id="documentoAnexo_pFSR" class="form-control" accept=".pdf" data-no-required>
                                                     </div>
                                                 </div>
                                             </div>
@@ -792,7 +792,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Núm. Int.</label>
-                                                        <input type="text" class="form-control" maxlength="30" placeholder="Número interior" name="num_int" oninput="this.value = this.value.toUpperCase()">
+                                                        <input type="text" class="form-control" maxlength="30" placeholder="Número interior" name="num_int" data-no-required oninput="this.value = this.value.toUpperCase()">
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3">
@@ -922,12 +922,12 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-2"><br><label for="btncheck1">Sin fecha de vigencia</label>
-                                                    <input name="fecha_vigencia_Moral" type="checkbox" class="btn-check" id="check_vigenciaM" autocomplete="off"/>
+                                                    <input name="fecha_vigencia_Moral" type="checkbox" class="btn-check" id="check_vigenciaM" data-no-required autocomplete="off"/>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-12 col-md-3" id="fecha_vigencia_Moral">
                                                     <div class="form-group">
                                                         <label for="fecha_vigencia_Moral">Fecha vigencia</label>
-                                                        <input type="date" class="form-control" aria-describedby="basic-addon1" name="fecha_vigencia_Moral" id="fecha_vigencia_Moral" min="<?= date("Y-m-d") ?>" >
+                                                        <input type="date" class="form-control" aria-describedby="basic-addon1" name="fecha_vigencia_Moral" id="fecha_vigencia_Moral" data-no-required min "<?= date("Y-m-d") ?>" >
                                                         <div class="invalid-feedback">
                                                             La fecha es obligatoria.
                                                         </div>
@@ -1010,7 +1010,7 @@
                                                 <div class="col-xs-12 col-sm-12 col-md-6">
                                                     <div class="form-group">
                                                         <label>Anexo (Documentos Complementarios)</label><br>
-                                                        <input type="file" name="documentoAnexo" id="documentoAnexo" class="form-control" accept=".pdf">
+                                                        <input type="file" name="documentoAnexo" id="documentoAnexo" class="form-control" accept=".pdf" data-no-required>
                                                     </div>
                                                 </div>
 
@@ -1086,233 +1086,173 @@
             
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.getElementById('tipo_persona').addEventListener('change', function() {
-            var selectTipo = document.getElementById('tipo_persona');
-            const nombreDiv = document.getElementById('persona_fisica');
-            const empresaDiv = document.getElementById('persona_moral');
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form');
+            const selectTipoPersona = document.getElementById('tipo_persona');
+            const selectRepresentante = document.getElementById('representate');
 
-            function toggleSectionDisabled(sectionEl, disabled) {
+            const seccionFisica = document.getElementById('persona_fisica');
+            const seccionMoral = document.getElementById('persona_moral');
+            const seccionConRepresentante = document.getElementById('Conrepresentante');
+            const seccionSinRepresentante = document.getElementById('Sinrepresentante');
+
+            // En este formulario muchos campos no traen el atributo required en el HTML.
+            // Por eso NO podemos basarnos en “required original” para aplicarlo dinámicamente.
+            // Regla: todo campo visible dentro de una sección activa (excepto hidden y botones)
+            // se vuelve required, salvo que se marque explícitamente con `data-no-required`.
+
+            // Limpia valores para que al cambiar de flujo no se queden datos “fantasma”.
+            function clearSectionValues(sectionEl) {
                 if (!sectionEl) return;
-                sectionEl.querySelectorAll('input, select, textarea, button').forEach(function (el) {
-                    el.disabled = disabled;
+                sectionEl.querySelectorAll('input, select, textarea').forEach(function (el) {
+                    const tag = el.tagName.toLowerCase();
+                    const type = (el.type || '').toLowerCase();
+
+                    if (type === 'hidden') return; // no tocar los hidden
+
+                    if (type === 'checkbox' || type === 'radio') {
+                        el.checked = false;
+                        return;
+                    }
+
+                    if (type === 'file') {
+                        el.value = '';
+                        return;
+                    }
+
+                    if (tag === 'select') {
+                        el.selectedIndex = 0;
+                        // Si es select2, intentamos refrescar sin romper si no existe.
+                        if (window.jQuery && jQuery(el).data('select2')) {
+                            jQuery(el).val('').trigger('change');
+                        }
+                        return;
+                    }
+
+                    el.value = '';
                 });
             }
-            
-            function actualizarTipoPersona() {
-                const valor = selectTipo.value;
 
-                nombreDiv.style.display = 'none';
-                empresaDiv.style.display = 'none';
+            // Activa/desactiva una sección:
+            // - disabled controla si se manda en submit
+            // - required se aplica solo si está visible, y NO es hidden, y NO está opt-out
+            function setSectionActive(sectionEl, active) {
+                if (!sectionEl) return;
 
-                toggleSectionDisabled(nombreDiv, true);
-                toggleSectionDisabled(empresaDiv, true);
+                sectionEl.style.display = active ? 'block' : 'none';
 
-                if (valor === 'Fisica') {
-                    nombreDiv.style.display = 'block';
-                    empresaDiv.style.display = 'none';
-                    toggleSectionDisabled(nombreDiv, false);
-                    toggleSectionDisabled(empresaDiv, true);
-                    /*
-                    //Poner los campos requeridos
-                    document.getElementById('nombre_pF').setAttribute('required', 'true');
-                    document.getElementById('primero_PF').setAttribute('required', 'true');
-                    document.getElementById('segundo_Pf').setAttribute('required', 'true');
-                    document.getElementById('curp_PF').setAttribute('required', 'true');
-                    document.getElementById('RFC_pF').setAttribute('required', 'true');
-                    document.getElementById('sexo_pf').setAttribute('required', 'true');
-                    document.getElementById('giro_pF').setAttribute('required', 'true');
-                    document.getElementById('electrónico_pF').setAttribute('required', 'true');
-                    document.getElementById('telefono_PF').setAttribute('required', 'true');
-                    document.getElementById('estado_pF').setAttribute('required', 'true');
-                    document.getElementById('municipio_pF').setAttribute('required', 'true');
-                    document.getElementById('vialidad_pF').setAttribute('required', 'true');
-                    document.getElementById('vialidad_calle_pF').setAttribute('required', 'true');
-                    document.getElementById('colonia_pF').setAttribute('required', 'true');
-                    document.getElementById('num_ext_pF').setAttribute('required', 'true');
-                    document.getElementById('cp_pF').setAttribute('required', 'true');
-                    document.getElementById('documentoRepresentacion_pF').setAttribute('required', 'true');
-                    document.getElementById('documentoIne_pF').setAttribute('required', 'true');
-                                   
-                         
-                    //Quitar los campos requeridos
-                    document.getElementById('razon').removeAttribute('required');
-                    document.getElementById('rfc_moral').removeAttribute('required');
-                    document.getElementById('giro_moral').removeAttribute('required');
-                    document.getElementById('estado_moral').removeAttribute('required');
-                    document.getElementById('municipio_moral').removeAttribute('required');
-                    document.getElementById('vialidad_Moral').removeAttribute('required');
-                    document.getElementById('vialidad_calleMoral').removeAttribute('required');
-                    document.getElementById('colonia_moral').removeAttribute('required');
-                    document.getElementById('num_ext_moral').removeAttribute('required');
-                    document.getElementById('cp_moral').removeAttribute('required');
-                    document.getElementById('nombre_representante_Moral').removeAttribute('required');
-                    document.getElementById('primer_Moral').removeAttribute('required');
-                    document.getElementById('segundo_Moral').removeAttribute('required');
-                    document.getElementById('curp_moral').removeAttribute('required');
-                    document.getElementById('sexo_Moral').removeAttribute('required');
-                    document.getElementById('correo_Moral').removeAttribute('required');
-                    document.getElementById('telefono_Moral').removeAttribute('required');
-                    document.getElementById('tipo_Moral').removeAttribute('required');
-                    document.getElementById('fecha_expedicicion_Moral').removeAttribute('required');
-                    document.getElementById('fecha_vigencia_Moral').removeAttribute('required');
-                    document.getElementById('descripcion_Moral').removeAttribute('required');
-                    document.getElementById('documentoIne_Moral').removeAttribute('required');
-                    document.getElementById('documentoRepresentacion_Moral').removeAttribute('required');
-                    document.getElementById('documentoPoder').removeAttribute('required');
-                    document.getElementById('tipo_identificacion_Moral').removeAttribute('required');
-                    document.getElementById('num_identificacion_Moral').removeAttribute('required');  
-                    */
-                } else if (valor === 'Moral') {
-                    empresaDiv.style.display = 'block';
-                    nombreDiv.style.display = 'none';
-                    toggleSectionDisabled(empresaDiv, false);
-                    toggleSectionDisabled(nombreDiv, true);
-                    /*
-                    //Las personas fisicas quitar requerido
-                    document.getElementById('nombre_pF').removeAttribute('required');
-                    document.getElementById('nombre_pF').removeAttribute('required');
-                    document.getElementById('primero_PF').removeAttribute('required');
-                    document.getElementById('segundo_Pf').removeAttribute('required');
-                    document.getElementById('curp_PF').removeAttribute('required');
-                    document.getElementById('RFC_pF').removeAttribute('required');
-                    document.getElementById('sexo_pf').removeAttribute('required');
-                    document.getElementById('giro_pF').removeAttribute('required');
-                    document.getElementById('electrónico_pF').removeAttribute('required');
-                    document.getElementById('telefono_PF').removeAttribute('required');
-                    document.getElementById('estado_pF').removeAttribute('required');
-                    document.getElementById('municipio_pF').removeAttribute('required');
-                    document.getElementById('vialidad_pF').removeAttribute('required');
-                    document.getElementById('vialidad_calle_pF').removeAttribute('required');
-                    document.getElementById('colonia_pF').removeAttribute('required');
-                    document.getElementById('num_ext_pF').removeAttribute('required');
-                    document.getElementById('cp_pF').removeAttribute('required');
-                    document.getElementById('tipo_identificacion_pF').removeAttribute('required');
-                    document.getElementById('num_identificacion_pF').removeAttribute('required');
-                    document.getElementById('tipo_identificacion_pF').removeAttribute('required');
-                    document.getElementById('num_identificacion_pF').removeAttribute('required'); 
-                    document.getElementById('tipo_identificacion_pFCR').removeAttribute('required');
-                    document.getElementById('num_identificacion_pFCR').removeAttribute('required'); 
-                    //Poner los campos requeridos
-                    document.getElementById('razon').setAttribute('required', 'true');
-                    document.getElementById('rfc_moral').setAttribute('required', 'true');
-                    document.getElementById('giro_moral').setAttribute('required', 'true');
-                    document.getElementById('estado_moral').setAttribute('required', 'true');
-                    document.getElementById('municipio_moral').setAttribute('required', 'true');
-                    document.getElementById('vialidad_Moral').setAttribute('required', 'true');
-                    document.getElementById('vialidad_calleMoral').setAttribute('required', 'true');
-                    document.getElementById('colonia_moral').setAttribute('required', 'true');
-                    document.getElementById('num_ext_moral').setAttribute('required', 'true');
-                    document.getElementById('cp_moral').setAttribute('required', 'true');
-                    document.getElementById('nombre_representante_Moral').setAttribute('required', 'true');
-                    document.getElementById('primer_Moral').setAttribute('required', 'true');
-                    document.getElementById('segundo_Moral').setAttribute('required', 'true');
-                    document.getElementById('curp_moral').setAttribute('required', 'true');
-                    document.getElementById('sexo_Moral').setAttribute('required', 'true');
-                    document.getElementById('correo_Moral').setAttribute('required', 'true');
-                    document.getElementById('telefono_Moral').setAttribute('required', 'true');
-                    document.getElementById('tipo_Moral').setAttribute('required', 'true');
-                    document.getElementById('fecha_expedicicion_Moral').setAttribute('required', 'true');
-                    document.getElementById('descripcion_Moral').setAttribute('required', 'true');
-                    document.getElementById('documentoIne_Moral').setAttribute('required', 'true');
-                    document.getElementById('documentoRepresentacion_Moral').setAttribute('required', 'true');
-                    document.getElementById('documentoPoder').setAttribute('required', 'true');
-                    document.getElementById('tipo_identificacion_Moral').setAttribute('required', 'true');
-                    document.getElementById('num_identificacion_Moral').setAttribute('required', 'true');  
-                    */
+                sectionEl.querySelectorAll('input, select, textarea, button').forEach(function (el) {
+                    el.disabled = !active;
+
+                    if (!(el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement)) {
+                        return;
+                    }
+
+                    const type = (el.type || '').toLowerCase();
+                    const shouldSkipRequired =
+                        type === 'hidden' ||
+                        el.disabled ||
+                        el.hasAttribute('data-no-required') ||
+                        el.getAttribute('aria-hidden') === 'true';
+
+                    if (active && !shouldSkipRequired) {
+                        el.setAttribute('required', 'required');
+                    } else {
+                        el.removeAttribute('required');
+                    }
+                });
+
+                // Si una sección se va a ocultar, limpiamos cualquier estado de validación visual
+                if (!active) {
+                    sectionEl.querySelectorAll('.is-invalid').forEach(function (el) {
+                        el.classList.remove('is-invalid');
+                    });
+                }
+            }
+
+            function applyRepresentanteFlow() {
+                if (!selectRepresentante) return;
+                const val = selectRepresentante.value;
+
+                if (val === 'Si') {
+                    setSectionActive(seccionConRepresentante, true);
+                    clearSectionValues(seccionSinRepresentante);
+                    setSectionActive(seccionSinRepresentante, false);
+                } else if (val === 'No') {
+                    setSectionActive(seccionSinRepresentante, true);
+                    clearSectionValues(seccionConRepresentante);
+                    setSectionActive(seccionConRepresentante, false);
                 } else {
-                    toggleSectionDisabled(nombreDiv, true);
-                    toggleSectionDisabled(empresaDiv, true);
+                    clearSectionValues(seccionConRepresentante);
+                    clearSectionValues(seccionSinRepresentante);
+                    setSectionActive(seccionConRepresentante, false);
+                    setSectionActive(seccionSinRepresentante, false);
                 }
             }
 
-            if (selectTipo) {
-                selectTipo.addEventListener('change', actualizarTipoPersona);
-                // Ejecutar al cargar por si ya tiene valor
-                actualizarTipoPersona();
-            }
-        });
-        document.getElementById('representate').addEventListener('change', function() {
-            var reprecentante = document.getElementById('representate');
-            const razonDiv = document.getElementById('Conrepresentante');
-            const propioDiv = document.getElementById('Sinrepresentante');
+            function applyTipoPersonaFlow() {
+                if (!selectTipoPersona) return;
+                const val = selectTipoPersona.value;
 
-            function toggleSectionDisabled(sectionEl, disabled) {
-                if (!sectionEl) return;
-                sectionEl.querySelectorAll('input, select, textarea, button').forEach(function (el) {
-                    el.disabled = disabled;
+                if (val === 'Fisica') {
+                    setSectionActive(seccionFisica, true);
+                    setSectionActive(seccionMoral, false);
+                    clearSectionValues(seccionMoral);
+
+                    applyRepresentanteFlow();
+                } else if (val === 'Moral') {
+                    // Moral activa
+                    setSectionActive(seccionMoral, true);
+                    setSectionActive(seccionFisica, false);
+                    clearSectionValues(seccionFisica);
+
+                    //En moral no aplica el flujo de representante de física
+                    if (selectRepresentante) {
+                        selectRepresentante.value = '';
+                    }
+                    clearSectionValues(seccionConRepresentante);
+                    clearSectionValues(seccionSinRepresentante);
+                    setSectionActive(seccionConRepresentante, false);
+                    setSectionActive(seccionSinRepresentante, false);
+                } else {
+                    //Ninguno seleccionado aún
+                    clearSectionValues(seccionFisica);
+                    clearSectionValues(seccionMoral);
+                    clearSectionValues(seccionConRepresentante);
+                    clearSectionValues(seccionSinRepresentante);
+                    setSectionActive(seccionFisica, false);
+                    setSectionActive(seccionMoral, false);
+                    setSectionActive(seccionConRepresentante, false);
+                    setSectionActive(seccionSinRepresentante, false);
+                }
+            }
+
+            //Eventos
+            if (selectTipoPersona) {
+                selectTipoPersona.addEventListener('change', applyTipoPersonaFlow);
+                applyTipoPersonaFlow();
+            }
+            if (selectRepresentante) {
+                selectRepresentante.addEventListener('change', applyRepresentanteFlow);
+            }
+
+            //En submit nos aseguramos de deshabilitar lo que esté oculto
+            if (form) {
+                form.addEventListener('submit', function (event) {
+                    [seccionFisica, seccionMoral, seccionConRepresentante, seccionSinRepresentante].forEach(function (sec) {
+                        if (!sec) return;
+                        const visible = sec.style.display !== 'none';
+                        sec.querySelectorAll('input, select, textarea, button').forEach(function (el) {
+                            el.disabled = !visible;
+                        });
+                    });
+
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
                 });
-            }
-
-            function actualizarRepresentante() {
-                const valor = reprecentante.value;
-
-                // Oculta ambos inicialmente
-                razonDiv.style.display = 'none';
-                propioDiv.style.display = 'none';
-
-                toggleSectionDisabled(razonDiv, true);
-                toggleSectionDisabled(propioDiv, true);
-                
-                if (valor === 'Si') {
-                    razonDiv.style.display = 'block';
-                    propioDiv.style.display = 'none';
-                    toggleSectionDisabled(razonDiv, false);
-                    toggleSectionDisabled(propioDiv, true);
-                    //Poner requeridos los campos
-                    /*
-                    document.getElementById('nombre_representante_pF').setAttribute('required', 'true');
-                    document.getElementById('primer_representante_pF').setAttribute('required', 'true');
-                    document.getElementById('segundo_representante_pF').setAttribute('required', 'true');
-                    document.getElementById('curp_representante_pF').setAttribute('required', 'true');
-                    document.getElementById('sexo_representante_pF').setAttribute('required', 'true');
-                    document.getElementById('correo_representante_pF').setAttribute('required', 'true');
-                    document.getElementById('telefono_representante_pF').setAttribute('required', 'true');
-                    document.getElementById('tipo_documento_pF').setAttribute('required', 'true');
-                    document.getElementById('fecha_expedicion_pF').setAttribute('required', 'true');
-                    //document.getElementById('fecha_vigencia_pF').setAttribute('required', 'true');
-                    document.getElementById('descripcion_pF').setAttribute('required', 'true');
-                    document.getElementById('documentoIne_pF').setAttribute('required', 'true');
-                    document.getElementById('documentoRepresentacion_pF').setAttribute('required', 'true');
-                    document.getElementById('documentoPoder_pF').setAttribute('required', 'true');              
-                    //Quitar requeridos los campos
-                    document.getElementById('documentoIne_pFSR').removeAttribute('required');
-                    document.getElementById('tipo_identificacion_pFCR').setAttribute('required', 'true');
-                    document.getElementById('num_identificacion_pFCR').setAttribute('required', 'true'); 
-                    */
-                } else if (valor === 'No') {
-                    razonDiv.style.display = 'none';
-                    propioDiv.style.display = 'block';
-                    toggleSectionDisabled(razonDiv, true);
-                    toggleSectionDisabled(propioDiv, false);
-                    //Poner requeridos los campos
-                    /*
-                    document.getElementById('documentoIne_pFSR').setAttribute('required', 'true');
-                    //Poner requeridos los campos
-                    document.getElementById('nombre_representante_pF').removeAttribute('required');
-                    document.getElementById('primer_representante_pF').removeAttribute('required');
-                    document.getElementById('segundo_representante_pF').removeAttribute('required');
-                    document.getElementById('curp_representante_pF').removeAttribute('required');
-                    document.getElementById('sexo_representante_pF').removeAttribute('required');
-                    document.getElementById('correo_representante_pF').removeAttribute('required');
-                    document.getElementById('telefono_representante_pF').removeAttribute('required');
-                    document.getElementById('tipo_documento_pF').removeAttribute('required');
-                    document.getElementById('fecha_expedicion_pF').removeAttribute('required');
-                    document.getElementById('fecha_vigencia_pF').removeAttribute('required');
-                    document.getElementById('descripcion_pF').removeAttribute('required');
-                    document.getElementById('documentoIne_pF').removeAttribute('required');
-                    document.getElementById('documentoRepresentacion_pF').removeAttribute('required');
-                    document.getElementById('documentoPoder_pF').removeAttribute('required'); 
-                    document.getElementById('tipo_identificacion_pF').setAttribute('required', 'true');
-                    document.getElementById('num_identificacion_pF').setAttribute('required', 'true'); 
-                    */
-                }
-            
-            }
-
-            if (reprecentante) {
-                reprecentante.addEventListener('change', actualizarRepresentante);
-                // Ejecutar al cargar por si ya tiene valor
-                actualizarRepresentante();
             }
         });
 
