@@ -87,6 +87,13 @@
                 <h2 style="color: #4A001F; text-align: center;">Realiza tu solicitud en línea</h2>
                 <center><img src="public/assets/images/Baner.png" class="responsive-img" width="750" height="350" alt="Descripción de la imagen"></center>
             </div>
+            @if (session('error'))
+                <div class="container" style="max-width: 900px; margin-top: 16px;">
+                    <div class="alert alert-danger" role="alert" style="margin-bottom: 0;">
+                        {{ session('error') }}
+                    </div>
+                </div>
+            @endif
             <br>
             <center><div class="card-group">
                 <div class="card">   <!-- Inicio Seer -->
@@ -98,7 +105,7 @@
                 </div>   <!-- fin Seer -->
                 <div class="card">   <!-- Inicio Seer -->
                     <div style="display: block; text-align: center;">
-                        <a href="{{ route('solicitud.industria_p', ['tipo_solicitud' =>2]) }}" class="button-link">
+                        <a href="#" class="button-link" aria-disabled="true" tabindex="-1" style="pointer-events: none; opacity: 0.5; background-color: #b9b9b9;">
                             SOY <br>PATRONAL INDIVIDUAL   
                         </a>
                     </div>  

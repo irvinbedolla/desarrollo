@@ -133,6 +133,7 @@ use App\Http\Controllers\AsistenciaController;
     Route::post('solicitud_solicitante',        [SeerController::class, 'solicitud_parte2'])->name('parte2');
     Route::get('vista_solicitante/{id}' ,       [SeerController::class, 'vista_solicitante'])->name('solicitante');
     Route::post('/delegacion/{municipioId}',    [SeerController::class, 'DelegacionPorMunicipio']); //Muestra la delegación que le corresponde según el municipio seleccionado
+    Route::get('/solicitudes/limite-diario',    [SeerController::class, 'check_limite_diario'])->name('solicitudes.check_limite_diario');
     Route::get('/munSolicitante/{id}',          [SeerController::class, 'obtenerMunicipio']);
     Route::get('/munCitado/{id}',               [SeerController::class, 'obtenerMunicipio']);
     //Ruta de agregar citados

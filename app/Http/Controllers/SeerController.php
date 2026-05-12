@@ -3430,7 +3430,7 @@ class SeerController extends Controller
             'actividad'       =>  $data["actividad_economica"],
             'delegacion'      =>  $data["delegacion"],
             'tipo_solicitud'  =>  $data["tipo_solicitud"],
-            'tipo_generacion' => auth()->check() ? auth()->id() :0,
+            'tipo_generacion' => 0,
             'consecutivo'    => $numero_consecutivo,    
             'año'            => $año_actual,
         );
@@ -3456,7 +3456,7 @@ class SeerController extends Controller
             'actividad'       =>  $data["actividad_economica"],
             'delegacion'      =>  $data["delegacion"],
             'tipo_solicitud'  =>  $data["tipo_solicitud"],
-            'tipo_generacion' => auth()->check() ? auth()->id() : 0,
+            'tipo_generacion' => 0,
             'consecutivo'     => $numero_consecutivo,
             'año'             => $año_actual,
             'motivo_solicitud' => $data["motivo_solicitud"] ?? []
@@ -5025,6 +5025,31 @@ class SeerController extends Controller
                  return redirect()->route('solicitudEnLinea')->with('error', 'Sesión expirada o datos incompletos.');
              }
 
+             //Si ya existen 5 solicitudes en seer_general para la delegación en la fecha de hoy no se guarda.
+             if (
+                 isset($solicitud_data['delegacion'], $solicitud_data['tipo_generacion'])
+                 && (string) $solicitud_data['tipo_generacion'] === '0'
+             ) {
+                 $delegacionLimite = (string) $solicitud_data['delegacion'];
+                 $hoy = now()->toDateString();
+                 $limiteDiario = 5;
+
+                 $conteoHoy = SeerPerGeneral::query()
+                     ->where('delegacion', $delegacionLimite)
+                     ->where('tipo_generacion', 0)
+                     ->whereDate('fecha', $hoy)
+                     ->count();
+
+                 if ($conteoHoy >= $limiteDiario) {
+                    if ($id == 'session' || session()->has('solicitud_data')) {
+                    // Limpiar sesión
+                    session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
+                    }
+                     return redirect()->route('solicitudEnLinea')
+                         ->with('error', "Página en mantenimiento.");
+                 }
+             }
+
              DB::beginTransaction();
              try {
                  // 1. Crear SeerPerGeneral
@@ -5081,7 +5106,7 @@ class SeerController extends Controller
                  
                  DB::commit();
                  
-                 if ($id == 'session' || session()->has('solicitud_data')) {
+                if ($id == 'session' || session()->has('solicitud_data')) {
                     // Limpiar sesión
                     session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
                 }
@@ -12029,6 +12054,32 @@ class SeerController extends Controller
         return response()->json([
             'success' => true,
             'delegacion_id' => $municipio->delegacion_id,
+        ]);
+    }
+
+    public function check_limite_diario(Request $request)
+    {
+        $data = $request->validate([
+            'delegacion' => ['required', 'string'],
+        ]);
+
+        $delegacion = $data['delegacion'];
+        $hoy = now()->toDateString();
+        $limite = 5;
+
+        $conteo = SeerPerGeneral::query()
+            ->where('delegacion', $delegacion)
+            ->where('tipo_generacion', 0)
+            ->whereDate('fecha', $hoy)
+            ->count();
+
+        return response()->json([
+            'success'    => true,
+            'delegacion' => $delegacion,
+            'hoy'        => $hoy,
+            'limite'     => $limite,
+            'conteo'     => $conteo,
+            'reached'    => $conteo >= $limite,
         ]);
     }
 

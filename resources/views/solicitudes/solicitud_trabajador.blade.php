@@ -31,6 +31,10 @@
            /* background-color: #6A0F49;/*<p style="color: #CEA845*/
             opacity: .8;
         }
+
+        .loader.hidden {
+            display: none;
+        }
         
     </style>   
 </head>
@@ -94,7 +98,7 @@
                                     <h6 class="text-center" style="color: #828282"><b>Requisitos para realizar tu solicitud:</b></h6> 
                                     <h6 class="text-center" style="color: #828282"><b>Teléfono, correo electrónico, identificación oficial(INE, PASAPORTE, LICENCIA DE CONDUCIR, CÉDULA PROFESIONAL), en caso de ser menor de edad tu identificación son tu CURP o Acta de Nacimiento.</b></h6> 
                                     <!--Se realiza el envío de datos con formulario de Laravel Collective-->
-                                    <form class="needs-validation" novalidate method="POST" action="{{route('parte1')}}">
+                                    <form id="form-parte1" class="needs-validation" novalidate method="POST" action="{{route('parte1')}}">
                                         @csrf
                                         <input type="hidden" name="tipo_solicitud" value="{{ $tipo_solicitud }}">
                                         <div class="row">
@@ -195,7 +199,7 @@
                                         </div>
                                         
                                         <div align="center">
-                                            <button type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color: #CEA845">Guardar</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <button id="btn-guardar" type="submit" class="btn btn-primary" style="background-color:#CEA845; border-color: #CEA845">Guardar</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             <a href="{{ route('publico'); }}" class="btn btn-primary" style=" background-color:#CEA845;border-color: #CEA845">Regresar</a>    
                                         </div>
                                     </form>
@@ -208,6 +212,8 @@
         </section>
     </div>
 
+    <div id="page-loader" class="loader hidden" aria-hidden="true"></div>
+
     <script src="../public/assets/js/estadistica/estadistica.js"></script>
     <script src="https://cdn.datatables.net/2.1.5/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.1.5/js/dataTables.bootstrap4.js"></script>
@@ -218,6 +224,53 @@
         //Solicitud en línea trabajador parte 1
         $(document).ready(function() {
             let motivosSeleccionados = [];
+
+            function showLoader() {
+                $('#page-loader').removeClass('hidden').attr('aria-hidden', 'false');
+            }
+
+            function hideLoader() {
+                $('#page-loader').addClass('hidden').attr('aria-hidden', 'true');
+            }
+
+            // Interceptar submit: validar límite diario por delegación.
+            $('#form-parte1').on('submit', function(e) {
+                // Dejar que el navegador marque inválidos si aplica
+                if (this.checkValidity && this.checkValidity() === false) {
+                    return;
+                }
+
+                e.preventDefault();
+
+                const delegacion = ($('#delegacion').val() || '').trim();
+                if (!delegacion) {
+                    // No bloquear; el propio required se encargará.
+                    this.submit();
+                    return;
+                }
+
+                // Consultar límite en backend
+                $.ajax({
+                    url: '{{ route('solicitudes.check_limite_diario') }}',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: { delegacion: delegacion },
+                    success: (resp) => {
+                        if (resp && resp.reached) {
+                            // Requerimiento: NO mostrar mensaje, solo loader infinito
+                            showLoader();
+                            $('#btn-guardar').prop('disabled', true);
+                            return;
+                        }
+                        showLoader();
+                        this.submit();
+                    },
+                    error: () => {
+                        showLoader();
+                        this.submit();
+                    }
+                });
+            });
 
             $('#motivo_solicitud').change(function() {
                 var opcionSeleccionada = $(this).val();
