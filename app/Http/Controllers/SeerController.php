@@ -10730,13 +10730,13 @@ class SeerController extends Controller
                     $citados = SeerCitados::where('id_solicitud', $id)
                                 ->where('notificacion', 'Centro')
                                 ->where('tipo_notificacion', '!=', 'Multa')
-                                ->where('resulte_responsable', 'No')
+                                //->where('resulte_responsable', 'No')
                                 ->where('audiencia_id', $audienciaId)
                                 ->whereNotNull('id_abogado')
                                 ->get();
                 } else {
                     $citados = SeerCitados::where('id_solicitud', $id)
-                                ->where('resulte_responsable', 'No')
+                                //->where('resulte_responsable', 'No')
                                 ->where('audiencia_id', $audienciaId)
                                 ->whereNotNull('id_abogado')
                                 ->get();
