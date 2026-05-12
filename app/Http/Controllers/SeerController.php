@@ -8825,7 +8825,7 @@ class SeerController extends Controller
             $citados = SeerCitados::whereIn('id', $idsSession)
                         ->where('id_solicitud', $id)
                         ->get();
-            } else {
+            } /*else {
                 $allCentro = 1;
                 $citadosCentro = SeerCitados::where('id_solicitud', $id)->latest()->get();
                 foreach ($citadosCentro as $citado){
@@ -8845,6 +8845,13 @@ class SeerController extends Controller
                 else {
                     $citados = SeerCitados::where('id_solicitud', $id)->where('aparece_convenio', 1)->get();
                 }
+            }*/
+            else {
+                $audienciaId = request()->query('audiencia_id');
+                $citados = SeerCitados::where('audiencia_id', $audienciaId)
+                        ->where('tipo_notificacion', '!=', 'Multa')
+                        ->where('aparece_convenio', 1)
+                        ->get();
             }
         } else if ($solicitud->tipo_solicitud == 2) {
             $audienciaId = request()->query('audiencia_id');
