@@ -1417,22 +1417,15 @@ class SeerController extends Controller
                         // Totales de Audiencia (Pagado)
                         DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.id END) as cumplimientoAudienciaPagado"),
                         DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoAudienciaMontPagado"),
-
-                        // Totales de Ratificación
-                        DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' THEN pago_solicitud.id END) as cumplimientoRatificacion"),
-                        DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoRatificacionMonto"),
-
-                        // Totales de Ratificación (Pagado)
-                        DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.id END) as cumplimientoRatificacionPagado"),
-                        DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Ratificacion' AND pago_solicitud.estatus = 'pagado' THEN pago_solicitud.monto ELSE 0 END) as cumplimientoRatificacionMontoPagado")
                     )
                     ->groupBy('seer_general.delegacion')
                     ->get()
                     ->keyBy('sede_nombre'); // Ahora indexamos por el nombre de la sede
 
-
                 $dataTurnos = DB::table('turnos')
-                    ->join('pago_solicitud', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
+                    //->join('pago_solicitud', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
+                    ->join('users', 'users.id', '=', 'turnos.id_conciliador')
+                    ->join('users as user_usuario', 'user_usuario.id', '=', 'turnos.user_id')
                     ->whereBetween('turnos.fecha', [$fecha_inicial, $fecha_final])
                     ->when($sede !== "Todos", function ($q) use ($sede, $userActual) {
                         // Lógica para Delegados (Ver sede propia y oficina de apoyo)
@@ -1451,7 +1444,7 @@ class SeerController extends Controller
                     ->select(
                         'turnos.delegacion as sede_nombre', // Agrupamos por nombre de sede
                         DB::raw('COUNT(DISTINCT turnos.id) as ratificaciones'),
-                        DB::raw('SUM(pago_solicitud.monto) as ratificacionesMonto') // Monto real del pago
+                        DB::raw('SUM(turnos.monto) as ratificacionesMonto') // Monto real del pago
                     )
                     ->groupBy('turnos.delegacion')
                     ->get()
@@ -1466,12 +1459,12 @@ class SeerController extends Controller
 
                 $cumplimientos = Pagos::whereBetween('pago_solicitud.fecha', [$fecha_inicial, $fecha_final])
                     // Unimos ambas tablas con Left Join
-                    ->leftJoin('seer_general', 'seer_general.id', '=', 'pago_solicitud.id_solicitud')
-                    ->leftJoin('turnos', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
+                    //->leftJoin('seer_general', 'seer_general.id', '=', 'pago_solicitud.id_solicitud')
+                    //->leftJoin('turnos', 'turnos.id', '=', 'pago_solicitud.id_solicitud')
                     
                     // Unimos la tabla users a través de ambas posibilidades
-                    ->leftJoin('users as u_general', 'u_general.id', '=', 'seer_general.user_id')
-                    ->leftJoin('users as u_turnos', 'u_turnos.id', '=', 'turnos.user_id')
+                    //->leftJoin('users as u_general', 'u_general.id', '=', 'seer_general.user_id')
+                    //->leftJoin('users as u_turnos', 'u_turnos.id', '=', 'turnos.user_id')
                     
                     ->when($sede !== "Todos", function ($q) use ($sede, $userActual) {
                         // ... (Tu lógica de sedes para delegados se mantiene igual)
@@ -1483,15 +1476,16 @@ class SeerController extends Controller
                         //DB::raw('COALESCE(u_general.name, u_turnos.name) as user_name'),
                         'pago_solicitud.delegacion as sede_nombre',
                         DB::raw('COUNT(pago_solicitud.id) as cumplimientos'),
-                        DB::raw("SUM(CASE WHEN pago_solicitud.tipo_pago = 'Audiencia' AND pago_solicitud.estatus = 'Pagado' THEN pago_solicitud.monto ELSE 0 END) as audienciasMonto")
+                        DB::raw("SUM(pago_solicitud.monto) as audienciasMonto")
                     )
                     // Agrupamos por los campos calculados
                     ->groupBy('pago_solicitud.delegacion')
                     // Filtramos para asegurar que el pago pertenezca a una de las dos tablas
+                    /*
                     ->where(function($q) {
                         $q->whereNotNull('seer_general.id')
                         ->orWhereNotNull('turnos.id');
-                    })
+                    })*/
                     ->get()
                     ->keyBy('sede_nombre');
 
@@ -13250,7 +13244,7 @@ class SeerController extends Controller
         ]);
 
         $fecha_inicio_str = $request->input('start', now()->format('Y-m-d'));
-        $fecha_fin_str = $request->input('end', now()->addDays(300)->format('Y-m-d'));
+        $fecha_fin_str = $request->input('end', now()->addDays(370)->format('Y-m-d'));
         
         $fecha_inicio = (new \DateTime($fecha_inicio_str))->setTime(0, 0, 0);
         $fecha_fin = (new \DateTime($fecha_fin_str))->setTime(23, 59, 59);

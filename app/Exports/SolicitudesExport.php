@@ -50,7 +50,7 @@ class SolicitudesExport implements FromView
         })
 
         // --- NUEVO JOIN PARA AUDIENCIAS ---
-        ->leftJoin('audiencias', 'audiencias.id_solicitud', '=', 'seer_general.id')
+        //->leftJoin('audiencias', 'audiencias.id_solicitud', '=', 'seer_general.id')
         // ----------------------------------
         
         ->whereBetween('seer_general.fecha', [$this->fecha_inicial, $this->fecha_final])
@@ -73,6 +73,7 @@ class SolicitudesExport implements FromView
             'seer_solicitante.nombre as solicitante_nombre',
             'seer_general.tipo_solicitud',
             'seer_solicitante.sexo',
+            'seer_solicitante.sexo as detalle_audiencias',
             DB::raw('GROUP_CONCAT(DISTINCT catalogo_motivos.motivo SEPARATOR ", ") as motivos'),            
             DB::raw('SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT 
                 CONCAT_WS(" ", seer_citados.nombre, seer_citados.primer_apellido, seer_citados.segundo_apellido) 
@@ -86,11 +87,11 @@ class SolicitudesExport implements FromView
 
             // --- LÓGICA DE AUDIENCIAS POR REGISTRO ---
             // Contamos el total de audiencias
-            DB::raw("COUNT(DISTINCT audiencias.id) as total_audiencias"),
+            //DB::raw("COUNT(DISTINCT audiencias.id) as total_audiencias"),
             // Formateamos como: FECHA (ESTATUS) y separamos cada audiencia con una coma
-            DB::raw("GROUP_CONCAT(DISTINCT 
-            CONCAT(audiencias.estatus) 
-            ORDER BY audiencias.fecha ASC SEPARATOR ', ') as detalle_audiencias")
+            //DB::raw("GROUP_CONCAT(DISTINCT 
+            //CONCAT(audiencias.estatus) 
+            //ORDER BY audiencias.fecha ASC SEPARATOR ', ') as detalle_audiencias")
             //DB::raw("GROUP_CONCAT(DISTINCT audiencias.estatus SEPARATOR ', ') as estados_audiencias")
         )
         ->groupBy(

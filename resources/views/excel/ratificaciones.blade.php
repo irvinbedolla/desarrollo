@@ -66,6 +66,7 @@
                     <td></td>
                     <td></td>
                     <td></td>
+                    <td></td>
                     <td style="font-weight: bold;">Total :</td>
                     <td style="font-weight: bold;">{{ number_format($totalPrice, 2) }}</td>
                 </tr>

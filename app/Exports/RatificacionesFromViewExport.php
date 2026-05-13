@@ -8,6 +8,7 @@ use App\Models\User; // Importación necesaria
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB; // IMPORTANTE: Agregar esto
 
 class RatificacionesFromViewExport implements FromView
 {
@@ -40,6 +41,7 @@ class RatificacionesFromViewExport implements FromView
             ->select('turnos.*', 'users.name as conciliador_name', 'user_usuario.name as auxiliar')
             
             // Contamos cuántos pagos tiene cada turno según su estatus
+            /*
             ->withCount([
                 'pagos as pagos_pendientes_count' => function ($query) {
                     $query->where('estatus', 'Pendiente');
@@ -55,7 +57,7 @@ class RatificacionesFromViewExport implements FromView
             ->withSum(['pagos as monto_pagados' => function ($query) {
                 $query->where('estatus', 'Pagado');
             }], 'monto')
-
+            */
             ->when($this->sede !== "Todos", function ($query) use ($sedeUsuario, $grupos) {
                 if ($this->sede === "TodosDelegado") {
                     $listaSedes = $grupos[$sedeUsuario] ?? [$sedeUsuario];
