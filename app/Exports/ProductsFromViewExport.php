@@ -73,7 +73,8 @@ class ProductsFromViewExport implements FromView
                 DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN pago_solicitud.id END) as cantidad_pendientes"),
                 DB::raw("SUM(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pagado' THEN pago_solicitud.monto ELSE 0 END) as monto_pagado"),
                 DB::raw("SUM(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN pago_solicitud.monto ELSE 0 END) as monto_pendiente"),
-                'users.name as conciliador_name'
+                'users.name as conciliador_name',
+                DB::raw("SUM(pago_solicitud.monto) as monto_totalR"),
             )
             ->groupBy(
                 'pago_solicitud.id_solicitud',
@@ -122,6 +123,8 @@ class ProductsFromViewExport implements FromView
                 DB::raw("COUNT(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN pago_solicitud.id END) as cantidad_pendientes"),
                 DB::raw("SUM(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pagado' THEN pago_solicitud.monto ELSE 0 END) as monto_pagado"),
                 DB::raw("SUM(DISTINCT CASE WHEN pago_solicitud.estatus = 'Pendiente' THEN pago_solicitud.monto ELSE 0 END) as monto_pendiente"),
+                
+                DB::raw("SUM(pago_solicitud.monto) as monto_totalA"),
                 'users.name as conciliador_name'
             )
             ->groupBy(
@@ -134,7 +137,7 @@ class ProductsFromViewExport implements FromView
                 'users.name'
             )
             ->get();
-            
+       
         return view('excel.cumplimientos', [
             'pagosRatificacion' => $pagosRatificacion,
             'pagosAudiencias'   => $pagosAudiencias

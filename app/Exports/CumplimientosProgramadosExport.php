@@ -52,6 +52,7 @@ class CumplimientosProgramadosExport implements FromView
                         THEN CONCAT_WS(' ', turnos.empresa, turnos.primero_empresa, turnos.segundo_empresa) 
                         ELSE pago_solicitud.empresa_representante END as nombre_empleador"),
                 DB::raw("pago_solicitud.delegacion as sede"),
+                DB::raw("pago_solicitud.monto as monto_totalR"),
                 'users.name as conciliador_name'
             )
             ->where('pago_solicitud.tipo_pago', "Ratificacion");
@@ -75,7 +76,8 @@ class CumplimientosProgramadosExport implements FromView
                         THEN CONCAT_WS(' ', seer_citados.nombre, seer_citados.primer_apellido, seer_citados.segundo_apellido) 
                         ELSE pago_solicitud.empresa_representante END as nombre_empleador"),
                 DB::raw("CASE WHEN pago_solicitud.id_solicitud != 0 THEN seer_general.delegacion ELSE pago_solicitud.delegacion END as sede"),
-                'users.name as conciliador_name'
+                'users.name as conciliador_name',
+                DB::raw("pago_solicitud.monto as monto_totalA"),
             )
             ->whereIn('pago_solicitud.tipo_pago', ["Audiencia", "Conciliador"]);
 
@@ -102,7 +104,7 @@ class CumplimientosProgramadosExport implements FromView
             ->orderBy('hora_programada', 'asc') // Hora de menor a mayor
             ->get();
         
-
+dd($resultadosUnificados);
         return view('excel.cumplimientosProgramados', [
             'cumplimientos' => $resultadosUnificados,
         ]);

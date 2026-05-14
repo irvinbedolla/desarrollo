@@ -1383,9 +1383,9 @@ class SeerController extends Controller
         else if($data["tipo_reporte"] == "GeneralSede"){
             //Auxiliares
                 $id_usuario = auth()->user()->id;
-                $userActual = User::find($id_usuario);
+                $userActual = $sede;
                 $total_cumplimiento = 0;
-                
+              
                 $solicitudes = DB::table('seer_general')
                     ->leftJoin('pago_solicitud', 'seer_general.id', '=', 'pago_solicitud.id_solicitud')
                     ->whereBetween('seer_general.fecha', [$fecha_inicial, $fecha_final])
@@ -1499,16 +1499,9 @@ class SeerController extends Controller
 
 
             //Audiencias
+                /*
                 $audiencias = DB::table('seer_general')
                     ->join('audiencias', 'seer_general.id', '=', 'audiencias.id_solicitud')
-                    ->leftJoin('pago_solicitud', function($join) {
-                        $join->on('seer_general.id', '=', 'pago_solicitud.id_solicitud')
-                            ->whereIn('pago_solicitud.tipo_pago', ['Audiencia','Conciliador']);
-                    })
-                    ->leftJoin('seer_citados', function($join) {
-                        $join->on('seer_general.id', '=', 'seer_citados.id_solicitud')
-                            ->where('seer_citados.tipo_notificacion', '=', 'Multa');
-                    })
                     ->whereBetween('audiencias.fecha', [$fecha_inicial, $fecha_final])
                     ->when($sede !== "Todos", function ($q) use ($sede, $userActual) {
                         if ($sede === "TodosDelegado") {
@@ -1522,24 +1515,76 @@ class SeerController extends Controller
                         }
                         return $q->where("seer_general.delegacion", $sede);
                     })
+                */
+
+                $grupos = [
+                    'Morelia' => ['Morelia', 'Zitácuaro'],
+                    'Uruapan' => ['Uruapan', 'Lázaro Cárdenas'],
+                    'Zamora'  => ['Zamora', 'Sahuayo']
+                ];
+
+                // 1. Definición de filtros de delegación para conciliadores y audiencias
+                $delegacionesBusqueda = [];
+                if ($sede !== "Todos") {
+                    if ($sede === "TodosDelegado") {
+                        $delegacionesBusqueda = $grupos[$sede] ?? [$sede];
+                    } else {
+                        $delegacionesBusqueda = [$sede];
+                    }
+                }
+
+                // Incluimos todas las variables necesarias en el 'use'
+                $aplicarFiltros = function ($q) use ($userActual, $grupos, $fecha_inicial, $fecha_final, $sede) {
+                    
+                    // Filtro de fechas
+                    $q->whereBetween("audiencias.fecha", [$fecha_inicial, $fecha_final]);
+                    
+                    // Filtro de sedes
+                    if ($sede !== "Todos") {
+                        if ($sede === "TodosDelegado") {
+                            // Usamos la propiedad 'delegacion' del objeto de usuario
+                            $nombreSedeUsuario = $userActual->delegacion; 
+                            $delegaciones = $grupos[$nombreSedeUsuario] ?? [$nombreSedeUsuario];
+                            
+                            $q->whereIn("audiencias.delegacion", $delegaciones);
+                        } else {
+                            // Filtro para una sede individual
+                            $q->where("audiencias.delegacion", $sede);
+                        }
+                    }
+                };
+
+                $audienciasPorExpediente = DB::table('audiencias')
+                ->select('id_solicitud', DB::raw('COUNT(*) as total_audiencias'))
+                ->where(fn($q) => $aplicarFiltros($q))
+                ->groupBy('id_solicitud');
+
+                $audiencias = DB::table('audiencias')
+                    ->join('seer_general', 'audiencias.id_solicitud', '=', 'seer_general.id')
+                    ->joinSub($audienciasPorExpediente, 'a_count', function ($join) {
+                        $join->on('a_count.id_solicitud', '=', 'seer_general.id');
+                    })
+                    ->where(fn($q) => $aplicarFiltros($q))
+                    // Filtramos para que solo aparezcan los conciliadores obtenidos arriba[cite: 1]
+                    //->whereIn('users.id', $conciliadoresIds)
+                    
                     ->select(
                         'seer_general.delegacion as sede_nombre', // Agrupamos por sede
                         DB::raw('COUNT(DISTINCT audiencias.id) as total_audiencias'),
                         
-                        // Cumplimientos y Montos
-                        DB::raw('COUNT(DISTINCT pago_solicitud.id) as cumplimientoAudiencia'),
-                        DB::raw('SUM(pago_solicitud.monto) as cumplimientoAudienciaMonto'),
-                        
                         // Estatus específicos
-                        DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Concluida', 'Conciliacion') THEN seer_general.id END) as cumplimientoAudienciaConvenio"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Concluida') THEN seer_general.id END) as cumplimientoAudienciaConvenio"),
                         DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus = 'Archivada' THEN seer_general.id END) as cumplimientoAudienciaFalta"),
                         DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus = 'Incompetencia' THEN seer_general.id END) as cumplimientoAudienciaIncompetencia"),
                         //Audienicas Programadas
-                        DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Pendiente','Conciliacion','No conciliacion','Reagendada','Archivada','No conciliacion reagendada','Incompetencia','Reinstalacion','Desistimiento','Archivada en Audiencia') THEN seer_general.id END) as audienencias_programadas"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Pendiente','Conciliacion','No conciliacion','Reagendada','Archivada','No conciliacion reagendada',
+                        'Incompetencia','Reinstalacion','Desistimiento','Archivada en Audiencia') THEN seer_general.id END) as audienencias_programadas"),
                         //Audienicas Celebradas
-                        DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Conciliacion','Reinstalacion','No conciliacion reagendada') OR (audiencias.estatus = 'No conciliacion' AND (SELECT resolicion_primera FROM seer_conciliadores WHERE id_solicitud = seer_general.id ORDER BY id DESC LIMIT 1) IS NOT NULL) THEN seer_general.id END) as audienencias_celebradas"),
+                        DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Conciliacion','Reinstalacion','No conciliacion reagendada') 
+                            OR (audiencias.estatus = 'No conciliacion' AND (SELECT resolicion_primera FROM seer_conciliadores WHERE id_solicitud = seer_general.id ORDER BY id DESC LIMIT 1) IS NOT NULL) 
+                            THEN seer_general.id END) as audienencias_celebradas"),
                         //Audienicas Celebradas
-                        DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('Conciliacion') THEN seer_general.id END) as convenios"),
+                        DB::raw("COUNT(CASE WHEN audiencias.estatus IN ('Conciliacion','Concluida') THEN seer_general.id END) as convenios"),
                         //No conciliacion
                         DB::raw("COUNT(DISTINCT CASE WHEN audiencias.estatus IN ('No conciliacion') THEN seer_general.id END) as no_conciliacion"),
                         //Falta de interes
@@ -8192,7 +8237,9 @@ class SeerController extends Controller
         $user = User::find($id);
         
         $hoy = \Carbon\Carbon::now();
-        $fecha_limite_natural = $hoy->copy()->addDays(45);
+        $fecha_limite_natural = $hoy->copy()->addDays(
+            
+        );
         // Margen de notificación
         $fecha_inicio_busqueda = ($notificion == "Trabajador") ? $hoy->copy()->addDays(7) : $hoy->copy()->addDays(19);
 

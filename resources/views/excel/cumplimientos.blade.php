@@ -56,7 +56,7 @@
                 </tr>
                 @php
                     // Suma los valores para el total
-                    $totalPrice += ($estadistica->monto_pagado + $estadistica->monto_pendiente);
+                    $totalPrice += $estadistica->monto_totalR;
                 @endphp
             @endforeach
         </tbody>
@@ -123,7 +123,7 @@
                     <td style=" text-align: center;">{{ $estadistica->estatus }}</td>
                 </tr>
                 @php
-                    $totalPrice += ($estadistica->monto_pagado + $estadistica->monto_pendiente);
+                    $totalPrice += $estadistica->monto_totalA;
                 @endphp
             @endforeach
         </tbody>
