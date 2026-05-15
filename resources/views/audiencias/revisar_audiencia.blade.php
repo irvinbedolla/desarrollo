@@ -1682,6 +1682,17 @@
                                                             @auth
                                                                 @hasanyrole('Enlace|Super Usuario')
                                                                     <button type="submit" class="btn btn-primary" name="toquen" value="1">Guardar Edición</button>
+                                                                    @if(in_array($general->estatus, ["No conciliacion", "Conciliacion", "Reinstalacion"])
+                                                                        && $isAudiencia != 'Si')
+                                                                        @hasanyrole('Enlace|Conciliador|Super Usuario')
+                                                                            @if(auth()->user()->hasAnyRole(['Super Usuario']) || Carbon\Carbon::today()->equalTo(\Carbon\Carbon::parse($general->fecha_confirmacion)))
+                                                                                <a class="btn btn-danger"
+                                                                                    href="{{ route('edicion_solConcluida', ['id' => $general->id, 'audiencia_id' => $audiencia->id]) }}" target="_blank">
+                                                                                    Editar finalización de audiencia
+                                                                                </a>
+                                                                            @endif
+                                                                        @endhasanyrole
+                                                                    @endif
                                                                 @endhasanyrole
                                                             @endauth
                                                         @endif

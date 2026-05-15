@@ -23,6 +23,9 @@
                                         <th style="color: #fff;">Estatus</th>
                                         <th style="color: #fff;">Revisar</th>
                                         <th style="color: #fff;">Documentos</th>
+                                        @if($userRole == "Enlace" || $userRole == "Super Usuario" || $userRole == "Conciliador")
+                                            <th style="color: #fff;">Editar</th>
+                                        @endif
                                     </thead>
                                     <tbody class="contenidobusqueda">
                                         @foreach($solicitudes as $solicitud)
@@ -197,6 +200,11 @@
                                                     @endif
 
                                                 </td>
+                                                @if($userRole == "Enlace" || $userRole == "Super Usuario" || $userRole == "Conciliador")
+                                                    <td>
+                                                        <a class="btn btn-success" href="{{ route('solicitud_audiencia', $solicitud->id) }}">Editar</a>
+                                                    </td>
+                                                @endif
                                             </tr>
                                         @endforeach
                                     </tbody>
