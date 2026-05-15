@@ -8208,9 +8208,7 @@ class SeerController extends Controller
         $user = User::find($id);
         
         $hoy = \Carbon\Carbon::now();
-        $fecha_limite_natural = $hoy->copy()->addDays(
-            
-        );
+        $fecha_limite_natural = $hoy->copy()->addDays(45);
         // Margen de notificación
         $fecha_inicio_busqueda = ($notificion == "Trabajador") ? $hoy->copy()->addDays(7) : $hoy->copy()->addDays(19);
 
