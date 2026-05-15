@@ -31,7 +31,7 @@
                         <td style=" text-align: center;">{{ $estadistica->primer_citado }}</td>
                         <td style=" text-align: center;">{{ $estadistica->solicitante_nombre }}</td>
                         <td style=" text-align: center;">{{ $estadistica->actividad }}</td>
-                        <td style=" text-align: center;">{{ $estadistica->detalle_audiencias }}</td>>
+                        <td style=" text-align: center;">{{ $estadistica->estatus }}</td>>
                     </tr>
                 @endforeach
             </tbody>
