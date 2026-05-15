@@ -50,7 +50,7 @@
                                                     <option value="Productividad">Productividad</option>
                                                     <option value="EstadisticaMexico">INEGI</option> 
                                                     <option value="Motivos">Motivos</option>
-                                                    <option value="Concentrado">General</option>
+                                                    <!--<option value="Concentrado">General</option>-->
                                                     <option value="GeneralSede">General por Sede</option>
                                                     <option value="AudienciaConciliador">Audiencias por Conciliador</option>
                                                     <option value="CumplimientosProgramados">Cumplimientos Programados</option>

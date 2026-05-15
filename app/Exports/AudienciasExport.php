@@ -44,14 +44,19 @@ class AudienciasExport implements WithMultipleSheets
             }
         };
 
-        /**
-         * REPORTE: DETALLE POR REGISTRO
-         */
+        $audienciasPorExpediente = DB::table('audiencias')
+                ->select('id_solicitud', DB::raw('COUNT(*) as total_audiencias'))
+                ->where(fn($q) => $aplicarFiltros($q))
+                ->groupBy('id_solicitud');
+
+
         $detalle = DB::table('audiencias')
             ->join('seer_general', 'seer_general.id', '=', 'audiencias.id_solicitud')
             ->join('seer_solicitante', 'seer_general.id', '=', 'seer_solicitante.id_solicitud')
             ->join('users as conciliador', 'conciliador.id', '=', 'seer_general.conciliador_id')
-            ->where(fn($q) => $aplicarFiltros($q))
+            ->joinSub($audienciasPorExpediente, 'a_count', function ($join) {
+                $join->on('a_count.id_solicitud', '=', 'seer_general.id');
+            })
             ->when($this->conciliador !== "Todos", function ($q) {
                 return $q->where('seer_general.conciliador_id', $this->conciliador);
             })
