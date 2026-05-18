@@ -60,6 +60,30 @@
                 line-height: 1.5;
                 text-align: justify;
             }
+
+            ul.lista-circulo {
+                margin: 0;
+                padding: 0;
+                padding-left: 22px;
+            }
+            ul.lista-circulo li {
+                list-style: none;
+                position: relative;
+                margin: 0 0 6px 0;
+                padding-left: 14px;
+                line-height: 1.5;
+                text-align: justify;
+            }
+            ul.lista-circulo li::before {
+                content: "";
+                position: absolute;
+                left: -22px;
+                top: 9px;
+                width: 6px;
+                height: 6px;
+                background: #000;
+                border-radius: 50%;
+            }
         </style>
     </head>
    
@@ -140,6 +164,24 @@
 
                 <p>
                     Por lo que respecta al empleador, éste podrá comparecer presencialmente o a través de su representante, siempre y cuando cuente con las facultades suficientes para obligarse en su nombre y lo acredite ante esta instancia.
+                </p>
+                @endif
+
+                @if ($solicitud->tipo_solicitud == 1)
+                <p>
+                    En términos del artículo 684-E fracción VII, la parte citada deberá asistir personalmente o por conducto de su representante; debiendo comparecer a la audiencia de conciliación con la documentación que acredite facultades suficientes:<br><br>
+                </p>
+
+                <ul class="lista-circulo">
+                    <li>Identificación oficial vigente (credencial para votar, cartilla militar, pasaporte, etc.,).</li>
+                    <li>En caso de acudir en representación de una persona física: Identificación oficial vigente, original o copia certificada del poder notarial, o carta poder firmada por el otorgante ante dos testigos, adjuntando copia de las identificaciones de quienes intervienen.</li>
+                    <li>En caso de acudir en representación de una persona moral: Identificación oficial vigente, original o copia certificada del instrumento notarial, o carta poder firmada y otorgada ante dos testigos, anexando el original o copia certificada del instrumento notarial que acredite que la persona que otorga el poder está legalmente autorizada para ello.</li>
+                </ul>
+
+                <p>
+                    <br>
+                    Se sugiere llegar con 15 minutos de anticipación de la hora señalada para el desahogo de la audiencia y llevar los registros de ingreso correspondientes, con la finalidad de dar inicio de manera puntual con su procedimiento de conciliación.
+
                 </p>
                 @endif
 
