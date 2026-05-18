@@ -6195,7 +6195,7 @@ class SeerController extends Controller
                 $nombreArchivo = 'acuse_solicitud.pdf';
                 $pdfContent = $pdf->output();
 
-            Mail::to($user['email'])->send(new MailAceptacion($user,$pdfContent));
+            Mail::to($user['email'])->send(new MailAceptacion($pdfContent,$user));
 
         DB::commit();
         session()->forget(['citados_edicion_new', 'citados_edicion_delete']);

@@ -15,12 +15,12 @@ class MailAceptacion extends Mailable
      use Queueable, SerializesModels;
     
     public $pdfContent;
-    public $variables; // Propiedad para pasar datos a la vista
+    public $user; // Propiedad para pasar datos a la vista
 
-    public function __construct($pdfContent, $variables)
+    public function __construct($pdfContent, $user)
     {
         $this->pdfContent = $pdfContent;
-        $this->variables = $variables;
+        $this->user = $user;
     }
 
     public function build()
@@ -30,7 +30,7 @@ class MailAceptacion extends Mailable
             // Pasa los datos dinámicos a la vista del email
             ->view('emails.confirmacion') 
             ->with([
-                'variables' => $this->variables,
+                'user' => $this->user,
             ])
                     
             // 2. Adjunta el PDF generado en memoria
