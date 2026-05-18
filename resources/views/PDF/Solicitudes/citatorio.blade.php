@@ -179,7 +179,6 @@
                 </ul>
 
                 <p>
-                    <br>
                     Se sugiere llegar con 15 minutos de anticipación de la hora señalada para el desahogo de la audiencia y llevar los registros de ingreso correspondientes, con la finalidad de dar inicio de manera puntual con su procedimiento de conciliación.
 
                 </p>
@@ -187,11 +186,15 @@
 
                 @if($citado->notificacion=="Centro")
                 <!--@(notificacion==centro)-->
+                    @if($solicitud->tipo_solicitud)
+                    <p>
+                        <br><br><br><br><br>
+                    </p>
+                    @endif
                     <p>Este citatorio se notifica de manera personal conforme al artículo 739, 739 Ter fracción I, 742 fracción XIII, 743, 
                         744 y 745 Ter de la Ley Federal del Trabajo.
                     </p>
                 <!--@(notificacion==centro)-->
-                    
                         @if($solicitud->tipo_solicitud == 1)
                             <p>Con fundamento en el artículo 684-E. fracción IV, así como el artículo 692 de la Ley Federal del Trabajo, se apercibe al citado que de no comparecer por sí, 
                             o por conducto de su representante legal, o bien por medio de apoderado con facultades suficientes 
