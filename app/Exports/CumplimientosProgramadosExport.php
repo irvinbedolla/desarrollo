@@ -104,7 +104,7 @@ class CumplimientosProgramadosExport implements FromView
             ->orderBy('hora_programada', 'asc') // Hora de menor a mayor
             ->get();
         
-dd($resultadosUnificados);
+
         return view('excel.cumplimientosProgramados', [
             'cumplimientos' => $resultadosUnificados,
         ]);

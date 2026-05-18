@@ -4479,7 +4479,7 @@ class SeerController extends Controller
             SeerCitados::create($data_insert); 
         }
         /*$checando = session()->get('citados_data');
-        dd($checando);*/
+        */
         
         // Si es persona física, elimina los apellidos para este citado
         if (isset($data["tipo"]) && $data["tipo"] === "Fisica") {
@@ -4681,7 +4681,6 @@ class SeerController extends Controller
             SeerCitados::create($data_insert);
         }*/
 
-        //dd(session('citados_data'));
         return back()->with('success', 'Citado agregado correctamente, puedes agregar otro o continuar.');
     }
 
@@ -5028,7 +5027,6 @@ class SeerController extends Controller
             $citadosData = session('citados_data', []);
             $excepcionData = session('excepcion_data');         
 
-            //dd(session('citados_data'));
              
             if (!$solicitud_data || !$solicitante_data) {
                 return redirect()->route('solicitudEnLinea')->with('error', 'Sesión expirada o datos incompletos.');
@@ -5246,10 +5244,13 @@ class SeerController extends Controller
                     'NumFolio'         => $folio,
                 ];
             }
-        */
-            $mensaje = " Solicitud recibida correctamente.";
+        */ 
+        
             $solicitud = SeerPerGeneral::find($id);
+            $solicitante  = SeerSolicitante::where("id_solicitud", "=", $solicitud["id"])->first();
+            $nombre = $solicitante["nombre"];
             $citados = SeerCitados::where('id_solicitud', $id)->get();
+
             $pdf = \PDF::loadView('PDF/Solicitudes/acuseSolicitud', compact('id','solicitud','solicitante','citados'))->setPaper('a4', 'portrait')
                 ->setOption('isHtml5ParserEnabled', true)->setOption('isPhpEnabled', true);
                 $nombreArchivo = 'acuse_solicitud_' . $nombre .'.pdf';
@@ -5262,7 +5263,7 @@ class SeerController extends Controller
                 'NumFolio'         => $folio,
             ];
             Mail::to($variables['email'])->send(new SolicitudMail($pdfContent, $variables));
-
+        
         return view('solicitudes.aviso',compact('id','mensaje','delegacion'));
     }
 
@@ -5851,6 +5852,7 @@ class SeerController extends Controller
         $listado_auxiliares = array();
         $relacionEloquent = 'roles';
         $fecha_actual = date('Y-m-d');
+        $id = $data["id"];
 
         DB::beginTransaction();
         try {
@@ -6174,22 +6176,26 @@ class SeerController extends Controller
             }
             SeerCitados::create($data_insert);
         }
+
+        $solicitud = SeerPerGeneral::find($id);
+        $solicitante  = SeerSolicitante::where("id_solicitud", "=", $id)->first();
+        $citados = SeerCitados::where('id_solicitud', $id)->get();
             
-            //Mandar un correo
+        //Mandar un correo
             $user = [
-                'nombre'    => $data["nombre_solicitante"],
+                'nombre'    => (string) $data["nombre_solicitante"],
                 'fecha'     => date('d-m-Y'),
-                'email'     => $data["email_solicitante"],
+                'email'     => (string) $data["email_solicitante"],
                 'id'        => $data["id"],
                 'mensaje'   => "Tu solicitud ha sido confirmada exitosamente." ,
             ];
+
             $pdf = \PDF::loadView('PDF/Solicitudes/acuseConfirmacion', compact('id','solicitud','solicitante','citados'))->setPaper('a4', 'portrait')
                 ->setOption('isHtml5ParserEnabled', true)->setOption('isPhpEnabled', true);
-                $nombreArchivo = 'acuse_solicitud_' . $nombre .'.pdf';
+                $nombreArchivo = 'acuse_solicitud.pdf';
                 $pdfContent = $pdf->output();
 
             Mail::to($user['email'])->send(new MailAceptacion($user,$pdfContent));
-        //} 
 
         DB::commit();
         session()->forget(['citados_edicion_new', 'citados_edicion_delete']);
@@ -13608,7 +13614,6 @@ class SeerController extends Controller
             $solicitante = SeerSolicitante::where('id_solicitud',$pagos->id_solicitud)->first();
             $solicitud = SeerPerGeneral::where('id', $pagos->id_solicitud)->first();
             $delegacion = $solicitud->delegacion;
-            $delegacion = $solicitud->delegacion;
             $delegado = User::where('delegacion', $delegacion)
             ->whereHas('roles', function ($query) {
                 $query->where('name', 'Delegado');
@@ -13642,9 +13647,12 @@ class SeerController extends Controller
             $conciliador  = User::join("audiencias","audiencias.id_conciliador","=","users.id")
             ->where("audiencias.id_solicitud", "=", $solicitud["id"])
             ->latest('audiencias.created_at')
-            ->select('users.name')
+            ->select('users.name','audiencias.fecha','audiencias.hora')
             ->first();
-            $html = view('PDF/Cumplimientos/incomparecenciaTrabajadorAudiencia', compact('id','solicitud','conciliador',/*'salario_diario',*/'pagos','delegado','citados','representantes', 'solicitante'))->render();
+
+            $complimientos = Pagos::find($id);
+
+            $html = view('PDF/Cumplimientos/incomparecenciaTrabajadorAudiencia', compact('id','solicitud','conciliador','complimientos','pagos','delegado','citados','representantes', 'solicitante'))->render();
         }
         $pdf = \PDF::loadHTML($html)
             ->setPaper('a4', 'portrait')
@@ -15380,7 +15388,6 @@ class SeerController extends Controller
                         ]);
                     }
                 }
-                //dd($citadosData);
 
                 // 3. Guardar Solicitante
                 $solicitanteData['id_solicitud'] = $id;
@@ -16530,8 +16537,6 @@ class SeerController extends Controller
         } else {
             SeerCitados::create($data_insert); 
         }
-        /*$checando = session()->get('citados_data');
-        dd($checando);*/
         
         // Si es persona física, elimina los apellidos para este citado
         if (isset($data["tipo"]) && $data["tipo"] === "Fisica") {
@@ -16693,7 +16698,6 @@ class SeerController extends Controller
             SeerCitados::create($data_insert); 
         } */
         /*$checando = session()->get('citados_data');
-        dd($checando);*/
         
         // Si es persona física, elimina los apellidos para este citado
         /* if (isset($data["tipo"]) && $data["tipo"] === "Fisica") {
@@ -17176,7 +17180,6 @@ class SeerController extends Controller
     public function vista_solicitanteP(Request $request)
     {
         $id = $request->input('id');
-        //dd($request);
         if (!$id) {
             return redirect()->route('publico');
         }
@@ -18254,7 +18257,6 @@ class SeerController extends Controller
         $id_solicitud = $data["id"];
         $audiencia_id = $data["audiencia_id"]; 
         $monto = 0;
-        //dd($request->all());
         $fecha_actual = date('y-m-d');
         $id = auth()->user()->id;
         $user = User::find($id);

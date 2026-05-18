@@ -14,7 +14,9 @@ class Pagos extends Model
     'empresa_representante','tipo_generacion','forma_pago','fecha_audiencia','hora_audiencia', 'incidencia', 'monto_pc'];
     protected $casts = [
         'fecha' => 'date',
-        'hora' => 'datetime:H:i'
+        'hora' => 'datetime:H:i',
+        'fecha_audiencia' => 'date:Y-m-d',
+        'hora_audiencia'  => 'datetime:H:i:s',
     ];
 
     public function turno()
@@ -39,4 +41,5 @@ class Pagos extends Model
         return $this->belongsTo(Turnos::class, 'id_solicitud'); 
         // Ajusta 'id_turno' según el nombre real de tu columna
     }
+
 }

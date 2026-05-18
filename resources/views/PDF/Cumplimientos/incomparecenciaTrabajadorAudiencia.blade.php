@@ -85,11 +85,11 @@
                     <br>
                 </b></p><br>  
                 <p>
-                    En la Ciudad de <b>{{ $solicitud->delegacion }}</b>, Michoacán, siendo las <b>{{\Carbon\Carbon::parse($solicitud->hora)->translatedFormat('h:i')}}</b> horas, del día 
-                    <b>{{\Carbon\Carbon::parse($solicitud->fecha)->translatedFormat('d \d\e F \d\e\l Y')}}</b>, fecha y hora señalada para El 
+                    En la Ciudad de <b>{{ $solicitud->delegacion }}</b>, Michoacán, siendo las <b>{{\Carbon\Carbon::parse($complimientos->updated_at)->translatedFormat('h:i')}}</b> horas, del día 
+                    <b>{{\Carbon\Carbon::parse($complimientos->fecha)->translatedFormat('d \d\e F \d\e\l Y')}}</b>, fecha y hora señalada para El 
                     Cumplimiento de Pago establecido en la Clausula 5° y 6° del Convenio de Conciliación celebrado en Audiencia 
-                    <b>{{ \Carbon\Carbon::parse($solicitud->fecha_audiencia)->translatedFormat('d \d\e F \d\e\l Y') }}</b> a las
-                    <b>{{ \Carbon\Carbon::parse($solicitud->hora_audiencia)->translatedFormat('h:i') }}</b> horas, dentro del número único de registro citado al rubro; ante la fe pública de la persona Conciliadora de nombre <b>{{$conciliador->name}}</b>, 
+                    <b>{{\Carbon\Carbon::parse($complimientos->fecha_audiencia)->translatedFormat('d \d\e F \d\e\l Y')}}</b> a las
+                    <b>{{\Carbon\Carbon::parse($complimientos->hora_audiencia)->translatedFormat('H:i')}} hrs</b> horas, dentro del número único de registro citado al rubro; ante la fe pública de la persona Conciliadora de nombre <b>{{$conciliador->name}}</b>, 
                     adscrita a la Delegación Regional <b>{{ $solicitud->delegacion }}</b> del Centro de Conciliación Laboral del Estado de Michoacán de Ocampo, en ejercicio de mis facultades 
                     establecidas en el artículo 684-E fracción XIII y XIV  párrafo cuarto de la Ley Federal del Trabajo y 20 fracción I, VI y XIII del Reglamento Interior del Centro de 
                     Conciliación Laboral del Estado de Michoacán de Ocampo, hago constar la siguiente:
