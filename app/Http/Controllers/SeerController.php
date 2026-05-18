@@ -59,8 +59,9 @@ use App\Mail\WelcomeMail;
 use App\Mail\SolicitudMail;
 use App\Models\PermisosConciliador;
 use App\Mail\CorreoAcuseConfirmacion;
+use App\Mail\MailRechazo;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\MailAceptacionRechazo;
+use App\Mail\MailAceptacion;
 use App\Exports\ReporteMexicoRati;
 use App\Exports\EmpresaSinSeguro;
 use App\Exports\SolicitudesExport;
@@ -4915,7 +4916,6 @@ class SeerController extends Controller
                 'email'            => $solicitante["email"],
                 'NumFolio'         => $folio,
             ];
-            //Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
         }
         else{
             $mensaje = " el correo:".$usuario["email"]." ya esta registrado en Si Concilio su solicitud sera asignado al usuario existente.";
@@ -4932,7 +4932,6 @@ class SeerController extends Controller
                 'email'            => $solicitante["email"],
                 'NumFolio'         => $folio,
             ];
-            //Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
         }
 
         return view('solicitudes.avisoCentro',compact('id','mensaje','delegacion'));
@@ -5023,47 +5022,47 @@ class SeerController extends Controller
 
     public function guardar_solicitud($id){
         if ($id == 'session') {
-             // Recuperar datos de sesión
-             $solicitud_data = session('solicitud_data');
-             $solicitante_data = session('solicitante_data');
-             $citadosData = session('citados_data', []);
-             $excepcionData = session('excepcion_data');         
+            // Recuperar datos de sesión
+            $solicitud_data = session('solicitud_data');
+            $solicitante_data = session('solicitante_data');
+            $citadosData = session('citados_data', []);
+            $excepcionData = session('excepcion_data');         
 
-             //dd(session('citados_data'));
+            //dd(session('citados_data'));
              
-             if (!$solicitud_data || !$solicitante_data) {
-                 return redirect()->route('solicitudEnLinea')->with('error', 'Sesión expirada o datos incompletos.');
-             }
+            if (!$solicitud_data || !$solicitante_data) {
+                return redirect()->route('solicitudEnLinea')->with('error', 'Sesión expirada o datos incompletos.');
+            }
 
-             //Si ya existen 5 solicitudes en seer_general para la delegación en la fecha de hoy no se guarda.
-             if (
-                 isset($solicitud_data['delegacion'], $solicitud_data['tipo_generacion'])
-                 && (string) $solicitud_data['tipo_generacion'] === '0'
-             ) {
-                 $delegacionLimite = (string) $solicitud_data['delegacion'];
-                 $hoy = now()->toDateString();
-                 $limiteDiario = 5;
+            //Si ya existen 5 solicitudes en seer_general para la delegación en la fecha de hoy no se guarda.
+            if (
+                isset($solicitud_data['delegacion'], $solicitud_data['tipo_generacion'])
+                && (string) $solicitud_data['tipo_generacion'] === '0'
+            ) {
+                $delegacionLimite = (string) $solicitud_data['delegacion'];
+                $hoy = now()->toDateString();
+                $limiteDiario = 5;
 
-                 $conteoHoy = SeerPerGeneral::query()
-                     ->where('delegacion', $delegacionLimite)
-                     ->where('tipo_generacion', 0)
-                     ->whereDate('fecha', $hoy)
-                     ->count();
+                $conteoHoy = SeerPerGeneral::query()
+                    ->where('delegacion', $delegacionLimite)
+                    ->where('tipo_generacion', 0)
+                    ->whereDate('fecha', $hoy)
+                    ->count();
 
-                 if ($conteoHoy >= $limiteDiario) {
+                if ($conteoHoy >= $limiteDiario) {
                     if ($id == 'session' || session()->has('solicitud_data')) {
                     // Limpiar sesión
                     session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
                     }
-                     return redirect()->route('solicitudEnLinea')
-                         ->with('error', "Página en mantenimiento.");
-                 }
-             }
+                    return redirect()->route('solicitudEnLinea')
+                        ->with('error', "Página en mantenimiento.");
+                }
+            }
 
-             DB::beginTransaction();
-             try {
-                 // 1. Crear SeerPerGeneral
-                 $general_insert = [
+            DB::beginTransaction();
+            try {
+                // 1. Crear SeerPerGeneral
+                $general_insert = [
                     'id_rama'         =>  $solicitud_data["id_rama"],
                     'actividad'       =>  $solicitud_data["actividad"],
                     'delegacion'      =>  $solicitud_data["delegacion"],
@@ -5072,7 +5071,7 @@ class SeerController extends Controller
                     'consecutivo'     =>  $solicitud_data["consecutivo"],
                     'año'             =>  $solicitud_data["año"],
                     'caso_excepcion'  =>  $solicitante_data['excepcion'] ?? 'No' // En caso de que no venga el campo, se asume "No"
-                 ];
+                ];
 
                  // 2. Guardar Motivos
                 if (!empty($solicitudMotivos)) {
@@ -5084,25 +5083,25 @@ class SeerController extends Controller
                     }
                 }
 
-                 SeerPerGeneral::create($general_insert);
-                 $general_record = SeerPerGeneral::latest('id')->first();
-                 $new_id = $general_record->id;
+                SeerPerGeneral::create($general_insert);
+                $general_record = SeerPerGeneral::latest('id')->first();
+                $new_id = $general_record->id;
                  
-                 // 2. Crear SeerMotivo
-                 if (!empty($solicitud_data["motivo_solicitud"])) {
+                // 2. Crear SeerMotivo
+                if (!empty($solicitud_data["motivo_solicitud"])) {
                     foreach ($solicitud_data["motivo_solicitud"] as $motivoId) {
                         SeerMotivo::create([
                             'id_solicitud'    => $new_id,
                             'id_motivo'       => $motivoId,
                         ]);
                     }
-                 }
+                }
                  
-                 // 3. Crear SeerSolicitante
-                 $solicitante_data['id_solicitud'] = $new_id;
-                 SeerSolicitante::create($solicitante_data);
+                // 3. Crear SeerSolicitante
+                $solicitante_data['id_solicitud'] = $new_id;
+                SeerSolicitante::create($solicitante_data);
                  
-                 // 4. Guardar Caso Excepción (si existe)
+                // 4. Guardar Caso Excepción (si existe)
                 if ($excepcionData) {
                     $excepcionData['id_solicitud'] = $new_id;
                     SeerCasosExcepcion::create($excepcionData);
@@ -5114,14 +5113,14 @@ class SeerController extends Controller
                     SeerCitados::create($citado);
                 }
                  
-                 DB::commit();
+                DB::commit();
                  
                 if ($id == 'session' || session()->has('solicitud_data')) {
                     // Limpiar sesión
                     session()->forget(['solicitud_data', 'solicitud_motivos', 'solicitante_data', 'citados_data', 'excepcion_data']);
                 }
                  
-                 $id = $new_id; // Actualizar ID para el resto del flujo
+                $id = $new_id; // Actualizar ID para el resto del flujo
                  
              } catch (\Exception $e) {
                 DB::rollBack();
@@ -5192,54 +5191,69 @@ class SeerController extends Controller
        
         SeerPerGeneral::find($id)->update(['delegado_id' => $delegado->id]);
 
+        /*
+            $usuario = User::
+            where('profile_photo_path',$solicitante['curp'])
+            ->orWhere('email',$solicitante["email"])
+            ->first();
 
-        $usuario = User::
-        where('profile_photo_path',$solicitante['curp'])
-        ->orWhere('email',$solicitante["email"])
-         ->first();
+            if(!isset($usuario)){
+                $data_insertar_user= array(
+                    'name'              => $nombre,
+                    'email'             => $solicitante["email"],
+                    'delegacion'        => $delegacion["delegacion"],
+                    'type'              => "Seer",
+                    'remember_token'    => $solicitante["curp"],
+                    'profile_photo_path'=> $solicitante["curp"]
+                ); 
+                //Genrar un random del uno al 100 y agregarlo a la contraseña
+                $numero_aleatorio = mt_rand(1, 1000);
 
-        if(!isset($usuario)){
-            $data_insertar_user= array(
-                'name'              => $nombre,
-                'email'             => $solicitante["email"],
-                'delegacion'        => $delegacion["delegacion"],
-                'type'              => "Seer",
-                'remember_token'    => $solicitante["curp"],
-                'profile_photo_path'=> $solicitante["curp"]
-            ); 
-            //Genrar un random del uno al 100 y agregarlo a la contraseña
-            $numero_aleatorio = mt_rand(1, 1000);
+                //Hacemos un hash del campo que tiene el password
+                $data_insertar_user['password'] = Hash::make("CCLMICHOACAN".$numero_aleatorio);
+                $usuario = User::create($data_insertar_user);
+                $usuario->assignRole(('Solicitante'));
+                $mensaje = " el correo:".$usuario["email"]." y la contraseña:CCLMICHOACAN".$numero_aleatorio." para continuar tú trámite.";
 
-            //Hacemos un hash del campo que tiene el password
-            $data_insertar_user['password'] = Hash::make("CCLMICHOACAN".$numero_aleatorio);
-            $usuario = User::create($data_insertar_user);
-            $usuario->assignRole(('Solicitante'));
-            $mensaje = " el correo:".$usuario["email"]." y la contraseña:CCLMICHOACAN".$numero_aleatorio." para continuar tú trámite.";
+                $solicitud = SeerPerGeneral::find($id);
+                $citados = SeerCitados::where('id_solicitud', $id)->get();
 
+                $pdf = \PDF::loadView('PDF/Solicitudes/acuseSolicitud', compact('id','solicitud','solicitante','citados'))->setPaper('a4', 'portrait')
+                ->setOption('isHtml5ParserEnabled', true)->setOption('isPhpEnabled', true);
+                $nombreArchivo = 'acuse_solicitud_' . $nombre .'.pdf';
+                $pdfContent = $pdf->output();
+
+                $variables = [
+                    'Nombre'           => $nombre,
+                    'Contraseña'       => "CCLMICHOACAN".$numero_aleatorio,
+                    'email'            => $solicitante["email"],
+                    'NumFolio'         => $folio,
+                ];
+            }
+            else{
+                $mensaje = " el correo:".$usuario["email"]." ya esta registrado en Si Concilio su solicitud sera asignado al usuario existente.";
+                $solicitud = SeerPerGeneral::find($id);
+                $citados = SeerCitados::where('id_solicitud', $id)->get();
+                $pdf = \PDF::loadView('PDF/Solicitudes/acuseSolicitud', compact('id','solicitud','solicitante','citados'))->setPaper('a4', 'portrait')
+                ->setOption('isHtml5ParserEnabled', true)->setOption('isPhpEnabled', true);
+                $nombreArchivo = 'acuse_solicitud_' . $nombre .'.pdf';
+                $pdfContent = $pdf->output();
+
+                $variables = [
+                    'Nombre'           => $nombre,
+                    'Contraseña'       => "Ya esta registrada",
+                    'email'            => $solicitante["email"],
+                    'NumFolio'         => $folio,
+                ];
+            }
+        */
+            $mensaje = " Solicitud recibida correctamente.";
             $solicitud = SeerPerGeneral::find($id);
             $citados = SeerCitados::where('id_solicitud', $id)->get();
-
             $pdf = \PDF::loadView('PDF/Solicitudes/acuseSolicitud', compact('id','solicitud','solicitante','citados'))->setPaper('a4', 'portrait')
-            ->setOption('isHtml5ParserEnabled', true)->setOption('isPhpEnabled', true);
-            $nombreArchivo = 'acuse_solicitud_' . $nombre .'.pdf';
-            $pdfContent = $pdf->output();
-
-            $variables = [
-                'Nombre'           => $nombre,
-                'Contraseña'       => "CCLMICHOACAN".$numero_aleatorio,
-                'email'            => $solicitante["email"],
-                'NumFolio'         => $folio,
-            ];
-            Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
-        }
-        else{
-            $mensaje = " el correo:".$usuario["email"]." ya esta registrado en Si Concilio su solicitud sera asignado al usuario existente.";
-            $solicitud = SeerPerGeneral::find($id);
-            $citados = SeerCitados::where('id_solicitud', $id)->get();
-            $pdf = \PDF::loadView('PDF/Solicitudes/acuseSolicitud', compact('id','solicitud','solicitante','citados'))->setPaper('a4', 'portrait')
-            ->setOption('isHtml5ParserEnabled', true)->setOption('isPhpEnabled', true);
-            $nombreArchivo = 'acuse_solicitud_' . $nombre .'.pdf';
-            $pdfContent = $pdf->output();
+                ->setOption('isHtml5ParserEnabled', true)->setOption('isPhpEnabled', true);
+                $nombreArchivo = 'acuse_solicitud_' . $nombre .'.pdf';
+                $pdfContent = $pdf->output();
 
             $variables = [
                 'Nombre'           => $nombre,
@@ -5247,18 +5261,7 @@ class SeerController extends Controller
                 'email'            => $solicitante["email"],
                 'NumFolio'         => $folio,
             ];
-            Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
-        }
-        /*
-        return view('solicitudes.aviso', [
-            'url' => route('aviso'),
-            'datos' => [
-                'id' => $id,
-                'mensaje' => $mensaje,
-                'delegacion' => $delegacion
-            ]
-        ]);
-        */
+            Mail::to($variables['email'])->send(new SolicitudMail($pdfContent, $variables));
 
         return view('solicitudes.aviso',compact('id','mensaje','delegacion'));
     }
@@ -5277,6 +5280,9 @@ class SeerController extends Controller
         $rol = $user->roles->first()->name ?? '';
         $id_usuario = $user->id;
         $delegacion_usuario = $user->delegacion;
+        // 1. Definimos las fechas dinámicas usando Carbon (7 días atrás y hoy)
+        $fechaInicio = Carbon::now()->subDays(7)->toDateString();
+        $fechaFin = Carbon::now()->toDateString();
 
         // 1. Mapa centralizado de sedes y sus oficinas de apoyo
         $mapaSedes = [
@@ -5307,6 +5313,7 @@ class SeerController extends Controller
             )
             ->where('validado_conciliador', 'Pendiente')
             ->whereIn('seer_general.estatus', ['Pendiente', 'Prevencion'])
+            ->whereBetween('seer_general.fecha', [$fechaInicio, $fechaFin])
             ->orderBy('seer_general.fecha');
 
         // 3. Aplicamos lógica de filtros por Rol (Sin repetir la consulta)
@@ -6174,10 +6181,14 @@ class SeerController extends Controller
                 'fecha'     => date('d-m-Y'),
                 'email'     => $data["email_solicitante"],
                 'id'        => $data["id"],
-                'mensaje'   => "Tu solicitud ha sido confirmada exitosamente revisa tu buzón electrónico en: https://siconcilio.cclmichoacan.gob.mx/ para continuar tu tramite." ,
+                'mensaje'   => "Tu solicitud ha sido confirmada exitosamente." ,
             ];
-            // El método Mail::to() toma el email del destinatario
-            //Mail::to($user['email'])->send(new MailAceptacionRechazo($user));
+            $pdf = \PDF::loadView('PDF/Solicitudes/acuseConfirmacion', compact('id','solicitud','solicitante','citados'))->setPaper('a4', 'portrait')
+                ->setOption('isHtml5ParserEnabled', true)->setOption('isPhpEnabled', true);
+                $nombreArchivo = 'acuse_solicitud_' . $nombre .'.pdf';
+                $pdfContent = $pdf->output();
+
+            Mail::to($user['email'])->send(new MailAceptacion($user,$pdfContent));
         //} 
 
         DB::commit();
@@ -10211,7 +10222,6 @@ class SeerController extends Controller
         $motivos = $motivos->filter(function($m) use ($motivosDelete) {
             return !in_array((string)$m->id, array_map('strval', $motivosDelete));
         })->values();
-        // -----------------------------
 
         return view('solicitudes.editar_solicitud', compact('id','general','solicitantes','citados','ramas','estados','municipios','mostrarMotivos','motivos','conciliadores'));
     }
@@ -10954,8 +10964,7 @@ class SeerController extends Controller
             'mensaje'   => $data["observaciones"] ,
         ];
 
-        // El método Mail::to() toma el email del destinatario
-        //Mail::to($user['email'])->send(new MailAceptacionRechazo($user));
+        Mail::to($user['email'])->send(new MailRechazo($user));
 
 
         return redirect()->route('solicitudes_pendientes');
@@ -15335,7 +15344,6 @@ class SeerController extends Controller
         'NumFolio'   => $id,
         ];
 
-        //Mail::to($solicitante->email)->send(new SolicitudMail($pdfContent, $variables));
 
         return view('solicitudes.auxiliares.avisoAux',compact('id','mensaje','delegacion'));
     }
@@ -15603,7 +15611,6 @@ class SeerController extends Controller
         'NumFolio'   => $id,
         ];
 
-        //Mail::to($solicitante->email)->send(new SolicitudMail($pdfContent, $variables));
 
 
         /*
@@ -15649,7 +15656,6 @@ class SeerController extends Controller
                 'email'            => $usuario["email"],
                 'NumFolio'         => $folio,
             ];
-            Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
         }
         else{
             $mensaje = " el correo:".$usuario["email"]." ya esta registrado en Si Concilio su solicitud sera asignado al usuario existente.";
@@ -15666,7 +15672,6 @@ class SeerController extends Controller
                 'email'             => $solicitante["email"],
                 'NumFolio'         => $folio,
             ];
-            Mail::to($usuario['email'])->send(new SolicitudMail($pdfContent, $variables));
         }
         */
         return view('solicitudes.auxiliares.avisoAux',compact('id','mensaje','delegacion'));

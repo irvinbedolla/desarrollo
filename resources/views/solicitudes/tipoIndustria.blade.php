@@ -374,8 +374,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="continuarBtn" class="btn btn-success">Continuar</button>
                 <button type="button" class="btn btn-secondary" onclick="cancelarProceso()">Cancelar</button>
+                <button id="continuarBtn" class="btn btn-success">Continuar</button>
             </div>
         </div>
     </div>

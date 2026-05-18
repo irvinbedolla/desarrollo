@@ -13,7 +13,6 @@
                             <div class="table-responsive">
                                 <table id="example" class="table-striped" style="width:100%">
                                     <thead style="background-color: #4A001F;">
-                                        <th style="color: #fff;">Folio</th>
                                         <th style="color: #fff;">Fecha Captura</th>
                                         <th style="color: #fff;">Solicitante</th>
                                         <th style="color: #fff;">Rama Industrial</th>
@@ -27,7 +26,6 @@
                                     <tbody class="contenidobusqueda">
                                         @foreach($solicitudes as $solicitud)
                                                 <tr>
-                                                    <td>{{$solicitud->consecutivo}}</td>
                                                     <td>{{$solicitud->fecha}}</td>
                                                     <td>{{$solicitud->nombre}}</td>
                                                     <td>{{$solicitud->rama_industrial}}</td>
