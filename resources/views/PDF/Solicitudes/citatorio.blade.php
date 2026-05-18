@@ -157,7 +157,7 @@
 
                 @if ($solicitud->tipo_solicitud == 2)
                 <p>
-                    Se hace del conocimiento del trabajador(a) que deberá comparecer a la audiencia de conciliación con identificación oficial vigente. Así mismo, se le exhorta a presentarse con al menos 15 minutos de anticipación a la hora señalada, 
+                    Se hace del conocimiento del trabajador(a) que deberá comparecer a la audiencia de conciliación con identificación oficial vigente en original y copia. Así mismo, se le exhorta a presentarse con al menos 15 minutos de anticipación a la hora señalada, 
                     a efecto de llevar el registro correspondiente de ingreso de este Centro de Conciliación y dar inicio de manera puntual a la audiencia prejudicial; De igual manera, podrá comparecer asistido por abogado(a) o persona de su confianza, 
                     pero no se reconocerá a ésta como apoderado, por tratarse de un Procedimiento de Conciliación y no de un juicio.
                 </p>
@@ -177,21 +177,21 @@
                     <li>En caso de acudir en representación de una persona física: Identificación oficial vigente, original o copia certificada del poder notarial, o carta poder firmada por el otorgante ante dos testigos, adjuntando copia de las identificaciones de quienes intervienen.</li>
                     <li>En caso de acudir en representación de una persona moral: Identificación oficial vigente, original o copia certificada del instrumento notarial, o carta poder firmada y otorgada ante dos testigos, anexando el original o copia certificada del instrumento notarial que acredite que la persona que otorga el poder está legalmente autorizada para ello.</li>
                 </ul>
+                <br>En cualquiera de los casos, será necesario presentar la documentación física y en formato pdf no mayor a 5 megabytes.
+
+                @if($solicitud->tipo_solicitud == 1)
+                    <div style="page-break-after: always;"></div>
+                    <br><br><br><br><br><br>
+                @endif
 
                 <p>
                     Se sugiere llegar con 15 minutos de anticipación de la hora señalada para el desahogo de la audiencia y llevar los registros de ingreso correspondientes, con la finalidad de dar inicio de manera puntual con su procedimiento de conciliación.
-
                 </p>
                 @endif
 
                 @if($citado->notificacion=="Centro")
                 <!--@(notificacion==centro)-->
-                    @if($solicitud->tipo_solicitud)
-                    <p>
-                        <br><br><br><br><br>
-                    </p>
-                    @endif
-                    <p>Este citatorio se notifica de manera personal conforme al artículo 739, 739 Ter fracción I, 742 fracción XIII, 743, 
+                    <p>Este citatorio se notifica de manera personal conforme a los artículos 739, 739 Ter fracción I, 742 fracción XIII, 743, 
                         744 y 745 Ter de la Ley Federal del Trabajo.
                     </p>
                 <!--@(notificacion==centro)-->
@@ -206,22 +206,19 @@
                     <p>
                         Con fundamento en los artículos 684-C último párrafo, 684-E antepenúltimo párrafo y 742 fracción XIII, el presente citatorio es entregado por el solicitante.
                     </p>
-                    @if($solicitud->tipo_solicitud == 1)
-                    <p>
-                        <br><br><br>
-                    </p>
-                    @endif
                 @endif
+                
+                @if ($solicitud->tipo_solicitud == 2)
+                    @php
+                        $longitud = mb_strlen($citado->nombre);
+                        $forzarSalto = $longitud > 200;
+                    @endphp
 
-                @php
-                    $longitud = mb_strlen($citado->nombre);
-                    $forzarSalto = $longitud > 300;
-                @endphp
-
-                @if($forzarSalto)
-                    <div style="page-break-before: always;"><br><br><br><br><br><br></div>
-                @else
-                    <br><br><br><br>
+                    @if($forzarSalto)
+                        <div style="page-break-before: always;"><br><br><br><br><br><br></div>
+                    @else
+                        <br><br><br>
+                    @endif
                 @endif
                 
                 <br><br><br>

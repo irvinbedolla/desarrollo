@@ -131,11 +131,11 @@
                     <p>
                         En términos del artículo 684 E, fracciones VII y VIII, primer párrafo, de la Ley Federal del Trabajo, el empleador podrá comparecer de manera presencial, en cuyo caso deberá identificarse con cualquier documento oficial; o bien, 
                         a través de un representante, siempre que este cuente con facultades suficientes para obligarlo y lo acredite ante esta instancia.
-                    </p>
+                    </p>         
+                    @endif
                     <p>
                         Se le exhorta a presentarse con al menos 15 minutos de anticipación a la hora señalada, a efecto de llevar el registro correspondiente de ingreso de este Centro de Conciliación y dar inicio de manera puntual a la audiencia prejudicial.
-                    </p>           
-                    @endif
+                    </p>  
                     <p>
                         Asimismo, de conformidad con la fracción X del artículo 684-E, me hago conocedor que <b>de no comparecer se archivará el presente asunto por falta de interés</b>.
                     </p>
