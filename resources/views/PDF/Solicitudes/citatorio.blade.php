@@ -206,6 +206,11 @@
                     <p>
                         Con fundamento en los artículos 684-C último párrafo, 684-E antepenúltimo párrafo y 742 fracción XIII, el presente citatorio es entregado por el solicitante.
                     </p>
+                    @if($solicitud->tipo_solicitud == 1)
+                    <p>
+                        <br><br><br>
+                    </p>
+                    @endif
                 @endif
 
                 @php
@@ -218,7 +223,7 @@
                 @else
                     <br><br><br><br>
                 @endif
-
+                
                 <br><br><br>
                 <p><center><b>___________________________________<br> {{ mb_strtoupper($conciliador->name, 'UTF-8') }} <br> FUNCIONARIO/A CONCILIADOR/A<br>
                         DEL CENTRO DE CONCILIACIÓN LABORAL<br>DEL ESTADO DE MICHOACÁN DE OCAMPO</b></center> </p>
