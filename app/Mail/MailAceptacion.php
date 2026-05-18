@@ -1,4 +1,6 @@
 <?php
+// Archivo: app/Mail/WelcomeMail.php
+
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
@@ -8,9 +10,9 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SolicitudMail extends Mailable
+class MailAceptacion extends Mailable
 {
-    use Queueable, SerializesModels;
+     use Queueable, SerializesModels;
     
     public $pdfContent;
     public $variables; // Propiedad para pasar datos a la vista
@@ -23,18 +25,17 @@ class SolicitudMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Solicitud Capturada')
+        return $this->subject('Actualizacion de solicitud')
                     
             // Pasa los datos dinámicos a la vista del email
-            ->view('emails.solicitud') 
+            ->view('emails.confirmacion') 
             ->with([
                 'variables' => $this->variables,
             ])
                     
             // 2. Adjunta el PDF generado en memoria
-            ->attachData($this->pdfContent, 'Acuse de solicitud.pdf', [
+            ->attachData($this->pdfContent, 'Documento.pdf', [
                 'mime' => 'application/pdf', 
             ]);
     }
-   
 }

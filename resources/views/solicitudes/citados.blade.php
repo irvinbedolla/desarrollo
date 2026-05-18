@@ -146,7 +146,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-3" id="tipoPersona_razon" style="display:none;">
+                                            <div class="col-xs-12 col-sm-12 col-md-6" id="tipoPersona_razon" style="display:none;">
                                                 <div class="form-group">
                                                     <label for="name">Razón social <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="razon" id="razon" class="form-control" oninput="this.value = this.value.toUpperCase()" > 
@@ -277,7 +277,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-1">
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="text">Núm. ext. <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="exterior" min="0" maxlength="50" class="form-control" oninput="this.value = this.value.toUpperCase()" required> 
@@ -287,7 +287,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-1">
+                                            <div class="col-xs-12 col-sm-12 col-md-3">
                                                 <div class="form-group">
                                                     <label for="name">Núm. int.</label>
                                                     <input type="text" name="interior" min="0" maxlength="50" class="form-control"  oninput="this.value = this.value.toUpperCase()"> 
@@ -304,7 +304,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xs-12 col-sm-12 col-md-1">
+                                            <div class="col-xs-12 col-sm-12 col-md-2">
                                                 <div class="form-group">
                                                     <label for="name">Código postal <span style="color:red;">(*)</span></label>
                                                     <input type="text" name="cp" class="form-control soloNumeros" minlength="5" maxlength="5" required> 
