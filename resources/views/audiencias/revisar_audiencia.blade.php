@@ -1304,7 +1304,7 @@
                                                         <div class="form-group">
                                                                 @foreach($citados as $citado) 
                                                                     <div class="row" style="margin-bottom: 5px; border-bottom: 1px dotted #ccc; padding: 5px 0;">
-                                                                        <div class="col-sm-5">
+                                                                        <div class="col-sm-4">
                                                                             <label>Nombre Citado</label><br>
                                                                             <strong>{{ $citado->nombre }} {{ $citado->primer_apellido ?? ''}} {{ $citado->segundo_apellido ?? ''}}</strong>
                                                                         </div>
@@ -1324,6 +1324,23 @@
                                                                                     title="Guarda la audiencia/solicitud para generar el citatorio">
                                                                                     Visualizar
                                                                                 </button>
+                                                                            @endif
+                                                                        </div>
+
+                                                                        <div class="col-sm-4">
+                                                                            <label>Comparecencia</label><br>
+                                                                            @if($general->tipo_solicitud == 1)
+                                                                                @if($citado->id_abogado)
+                                                                                <b>Si</b>
+                                                                                @else
+                                                                                <b>No</b>
+                                                                                @endif
+                                                                            @else
+                                                                                @if($citado->comparecencia == 'Si')
+                                                                                <b>Si</b>
+                                                                                @else
+                                                                                <b>No</b>
+                                                                                @endif
                                                                             @endif
                                                                         </div>
                                                                     </div>
