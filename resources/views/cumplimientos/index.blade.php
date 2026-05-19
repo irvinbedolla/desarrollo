@@ -10,6 +10,15 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
+                            <form action="{{ url()->current() }}" method="GET" class="mb-4">
+                                <div class="input-group" style="max-width: 450px;">
+                                    <input type="text" name="buscar" class="form-control" placeholder="Buscar por NUE o Nombre..." value="{{ request('buscar') }}">
+                                    <button class="btn btn-primary" type="submit" style="background-color: #4A001F; border-color: #4A001F;">Buscar</button>
+                                    @if(request('buscar'))
+                                        <a href="{{ url()->current() }}" class="btn btn-secondary">Limpiar</a>
+                                    @endif
+                                </div>
+                            </form>
                                 <div class="table-responsive">
                                     <table id="example" class="table-striped" style="width:100%">
                                         <thead style="background-color: #4A001F;">
